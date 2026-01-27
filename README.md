@@ -6,9 +6,15 @@ On-chain assertion contract for verifying view function return values and blockc
 
 The `Assertions` contract provides a comprehensive suite of assertion functions that can be used to validate on-chain state. It uses `staticcall` to execute view functions on target contracts and compares results against expected values, reverting with descriptive custom errors on failure.
 
-**Author:** Sembrestels  
-**License:** MIT  
-**Solidity:** ^0.8.28
+---
+
+### Deployed at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F)
+
+```
+0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
+```
+
+---
 
 ## Why Assertions?
 
@@ -53,12 +59,6 @@ Unlike off-chain simulations that can be fooled by MEV or state changes between 
 - **Chain ID assertions** - Ensure correct network
 - **Contract existence** - Check if address has code, verify code hash
 - **Custom error messages** - All assertions have overloaded versions accepting custom messages
-
-## Installation
-
-```bash
-pnpm install
-```
 
 ## Usage
 
@@ -407,6 +407,12 @@ All basic assertion types have tuple-indexed variants with an `N` suffix that ac
 
 ## Development
 
+### Install
+
+```bash
+pnpm install
+```
+
 ### Build
 
 ```bash
@@ -423,14 +429,6 @@ pnpm hardhat test
 
 ```bash
 pnpm hardhat ignition deploy ignition/modules/Assertions.ts --network <network>
-```
-
-## Deployment
-
-The contract is designed to be deployed at a deterministic address using CREATE2. The configured salt produces the vanity address:
-
-```
-0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
 ```
 
 ## License

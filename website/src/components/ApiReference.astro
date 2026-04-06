@@ -1,0 +1,132 @@
+---
+const sections = [
+  {
+    title: 'Uint256 Assertions',
+    fns: [
+      { name: 'assertEqCallUint', desc: 'Assert return equals expected' },
+      { name: 'assertNeCallUint', desc: 'Assert return not equals expected' },
+      { name: 'assertGtCallUint', desc: 'Assert return > expected' },
+      { name: 'assertLtCallUint', desc: 'Assert return < expected' },
+      { name: 'assertGeCallUint', desc: 'Assert return >= expected' },
+      { name: 'assertLeCallUint', desc: 'Assert return <= expected' },
+      { name: 'assertApproxEqCallUint', desc: 'Assert return ≈ expected (within delta)' },
+    ],
+  },
+  {
+    title: 'Address Assertions',
+    fns: [
+      { name: 'assertEqCallAddress', desc: 'Assert return equals expected address' },
+      { name: 'assertNeCallAddress', desc: 'Assert return not equals expected address' },
+    ],
+  },
+  {
+    title: 'Bool Assertions',
+    fns: [
+      { name: 'assertEqCallBool', desc: 'Assert return equals expected bool' },
+      { name: 'assertTrue', desc: 'Assert return is true' },
+      { name: 'assertFalse', desc: 'Assert return is false' },
+    ],
+  },
+  {
+    title: 'Bytes32 Assertions',
+    fns: [
+      { name: 'assertEqCallBytes32', desc: 'Assert return equals expected bytes32' },
+      { name: 'assertNeCallBytes32', desc: 'Assert return not equals expected bytes32' },
+    ],
+  },
+  {
+    title: 'Tuple-Indexed (N suffix)',
+    fns: [
+      { name: 'assertEqCallUintN', desc: 'Assert specific tuple element (uint256)' },
+      { name: 'assertGtCallUintN', desc: 'Assert tuple element > expected' },
+      { name: 'assertLtCallUintN', desc: 'Assert tuple element < expected' },
+      { name: 'assertGeCallUintN', desc: 'Assert tuple element >= expected' },
+      { name: 'assertLeCallUintN', desc: 'Assert tuple element <= expected' },
+      { name: 'assertEqCallAddressN', desc: 'Assert tuple element (address)' },
+      { name: 'assertEqCallBoolN', desc: 'Assert tuple element (bool)' },
+      { name: 'assertEqCallBytes32N', desc: 'Assert tuple element (bytes32)' },
+      { name: 'assertEqCallStringN', desc: 'Assert tuple element (string)' },
+      { name: 'assertApproxEqCallUintN', desc: 'Assert tuple element ≈ expected' },
+    ],
+  },
+  {
+    title: 'Array Assertions',
+    fns: [
+      { name: 'assertEqCallArrayLength', desc: 'Assert array length equals expected' },
+      { name: 'assertGtCallArrayLength', desc: 'Assert array length > expected' },
+      { name: 'assertGeCallArrayLength', desc: 'Assert array length >= expected' },
+    ],
+  },
+  {
+    title: 'Balance Assertions',
+    fns: [
+      { name: 'assertEqBalance', desc: 'Assert native balance equals expected' },
+      { name: 'assertGtBalance', desc: 'Assert native balance > expected' },
+      { name: 'assertLtBalance', desc: 'Assert native balance < expected' },
+      { name: 'assertGeBalance', desc: 'Assert native balance >= expected' },
+      { name: 'assertLeBalance', desc: 'Assert native balance <= expected' },
+      { name: 'assertApproxEqBalance', desc: 'Assert native balance ≈ expected' },
+    ],
+  },
+  {
+    title: 'Block Assertions',
+    fns: [
+      { name: 'assertEqBlockNumber', desc: 'Assert block.number equals expected' },
+      { name: 'assertGtBlockNumber', desc: 'Assert block.number > expected' },
+      { name: 'assertLtBlockNumber', desc: 'Assert block.number < expected' },
+      { name: 'assertGeBlockNumber', desc: 'Assert block.number >= expected' },
+      { name: 'assertLeBlockNumber', desc: 'Assert block.number <= expected' },
+      { name: 'assertEqBlockTimestamp', desc: 'Assert block.timestamp equals expected' },
+      { name: 'assertGtBlockTimestamp', desc: 'Assert block.timestamp > expected' },
+      { name: 'assertLtBlockTimestamp', desc: 'Assert block.timestamp < expected' },
+      { name: 'assertGeBlockTimestamp', desc: 'Assert block.timestamp >= expected' },
+      { name: 'assertLeBlockTimestamp', desc: 'Assert block.timestamp <= expected' },
+    ],
+  },
+  {
+    title: 'Chain & Contract',
+    fns: [
+      { name: 'assertEqChainId', desc: 'Assert chain ID equals expected' },
+      { name: 'assertHasCode', desc: 'Assert address has deployed code' },
+      { name: 'assertNoCode', desc: 'Assert address has no code' },
+      { name: 'assertEqCodeHash', desc: 'Assert address has specific code hash' },
+    ],
+  },
+];
+---
+
+<section class="py-24 px-6" id="api">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="font-mono font-bold text-3xl sm:text-4xl text-center mb-4">
+      API Reference
+    </h2>
+    <p class="text-center text-[var(--color-ink-2)] text-lg mb-16 max-w-2xl mx-auto">
+      All functions have overloaded versions accepting a custom error message.
+    </p>
+    <div class="flex flex-col gap-3">
+      {sections.map((section) => (
+        <details class="group rounded-xl border border-[var(--color-ink-3)]/15 bg-[var(--color-surface-2)] overflow-hidden">
+          <summary class="flex items-center justify-between px-6 py-4 cursor-pointer select-none hover:bg-[var(--color-bp-500)]/5 transition-colors">
+            <span class="font-mono font-semibold">{section.title}</span>
+            <span class="flex items-center gap-2">
+              <span class="text-xs text-[var(--color-ink-3)] font-mono">{section.fns.length}</span>
+              <svg class="size-4 text-[var(--color-ink-3)] transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </summary>
+          <div class="border-t border-[var(--color-ink-3)]/10">
+            <table class="w-full text-sm">
+              <tbody>
+                {section.fns.map((fn, i) => (
+                  <tr class={i > 0 ? 'border-t border-[var(--color-ink-3)]/5' : ''}>
+                    <td class="px-6 py-3 font-mono text-[var(--color-bp-400)] whitespace-nowrap">{fn.name}</td>
+                    <td class="px-6 py-3 text-[var(--color-ink-2)]">{fn.desc}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

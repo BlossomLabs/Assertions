@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Outfit', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --color-bp-50: #e8f4ff;
+  --color-bp-100: #B8D2E8;
+  --color-bp-200: #7ab0d4;
+  --color-bp-300: #4a90d9;
+  --color-bp-400: #1a7fd4;
+  --color-bp-500: #005BA6;
+  --color-bp-600: #004d8c;
+  --color-bp-700: #003d73;
+  --color-bp-800: #002b52;
+  --color-bp-900: #0c1a2e;
+  --color-bp-950: #080d18;
+
+  --color-ok: #22c55e;
+  --color-err: #ef4444;
+}
+
+:root {
+  --color-surface: #f0f4f8;
+  --color-surface-2: #ffffff;
+  --color-surface-3: #e2eaf2;
+  --color-ink: #0c1a2e;
+  --color-ink-2: #3a5068;
+  --color-ink-3: #6b8299;
+  --grid-opacity: 0.06;
+}
+
+:root.dark {
+  --color-surface: #080d18;
+  --color-surface-2: #0f1729;
+  --color-surface-3: #162035;
+  --color-ink: #e2eaf2;
+  --color-ink-2: #8da4b8;
+  --color-ink-3: #4a6478;
+  --grid-opacity: 0.08;
+}
+
+body {
+  background-color: var(--color-surface);
+  background-image:
+    linear-gradient(rgba(0, 91, 166, var(--grid-opacity)) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 91, 166, var(--grid-opacity)) 1px, transparent 1px);
+  background-size: 32px 32px;
+  color: var(--color-ink);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+::selection {
+  background-color: var(--color-bp-500);
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-bp-500);
+  border-radius: 3px;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out both;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }

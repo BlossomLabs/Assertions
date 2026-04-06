@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import WhyCards from '../components/WhyCards.astro';
+import Wizard from '../components/Wizard';
+import UseCases from '../components/UseCases.astro';
+import ApiReference from '../components/ApiReference.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout>
+  <Nav />
+  <main>
+    <Hero />
+    <WhyCards />
+    <Wizard client:visible />
+    <UseCases />
+    <ApiReference />
+  </main>
+  <Footer />
+</Layout>

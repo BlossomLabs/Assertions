@@ -1,0 +1,57 @@
+---
+const address = '0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F';
+---
+
+<section class="relative pt-32 pb-24 px-6 overflow-hidden">
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[var(--color-bp-500)]/5 blur-[120px]"></div>
+  </div>
+
+  <div class="relative max-w-4xl mx-auto text-center">
+    <div class="animate-fade-up">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-bp-500)]/30 bg-[var(--color-bp-500)]/10 text-[var(--color-bp-400)] text-sm font-mono mb-8">
+        <span class="size-2 rounded-full bg-[var(--color-ok)] animate-pulse"></span>
+        Live on Ethereum Mainnet
+      </div>
+    </div>
+
+    <h1 class="animate-fade-up delay-1 font-mono font-bold text-5xl sm:text-6xl md:text-7xl tracking-tight leading-[1.1] mb-6">
+      On-chain assertions<br />
+      <span class="text-[var(--color-bp-400)]">for safe governance</span>
+    </h1>
+
+    <p class="animate-fade-up delay-2 text-lg sm:text-xl text-[var(--color-ink-2)] max-w-2xl mx-auto mb-10 leading-relaxed">
+      Verify view function return values and blockchain state atomically.
+      If any assertion fails, the entire transaction reverts.
+    </p>
+
+    <div class="animate-fade-up delay-3 flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+      <a
+        href="#wizard"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold bg-[var(--color-bp-500)] text-white hover:bg-[var(--color-bp-400)] transition-colors shadow-lg shadow-[var(--color-bp-500)]/20"
+      >
+        Build an assertion
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+      </a>
+      <a
+        href="#api"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold border border-[var(--color-ink-3)]/30 hover:border-[var(--color-bp-400)] hover:bg-[var(--color-bp-500)]/5 transition-all"
+      >
+        API Reference
+      </a>
+    </div>
+
+    <div class="animate-fade-up delay-4">
+      <a
+        href={`https://etherscan.io/address/${address}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group inline-flex items-center gap-3 px-5 py-3 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-ink-3)]/15 hover:border-[var(--color-bp-400)]/50 transition-all"
+      >
+        <span class="text-sm text-[var(--color-ink-3)]">assertions.eth</span>
+        <code class="font-mono text-sm text-[var(--color-ink-2)] group-hover:text-[var(--color-bp-400)] transition-colors">{address}</code>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-ink-3)]"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+    </div>
+  </div>
+</section>

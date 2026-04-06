@@ -1,0 +1,41 @@
+---
+const cards = [
+  {
+    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+    title: 'DAO Proposals',
+    description: 'Embed pre/post-conditions in governance proposals. If a malicious or buggy proposal breaks invariants, the entire transaction reverts atomically.',
+  },
+  {
+    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+    title: 'Safe Transactions',
+    description: 'Batch assertion calls alongside your Safe multisig transactions. Verify balances, oracle prices, and permissions before and after execution.',
+  },
+  {
+    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
+    title: 'Invariant Enforcement',
+    description: 'Unlike off-chain simulations that can be fooled by MEV, on-chain assertions execute atomically. No partial execution, no unexpected outcomes.',
+  },
+];
+---
+
+<section class="py-24 px-6" id="why">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="font-mono font-bold text-3xl sm:text-4xl text-center mb-4">
+      Why Assertions?
+    </h2>
+    <p class="text-center text-[var(--color-ink-2)] text-lg mb-16 max-w-2xl mx-auto">
+      Production-grade on-chain guards for every critical transaction.
+    </p>
+    <div class="grid md:grid-cols-3 gap-6">
+      {cards.map((card, i) => (
+        <div class={`group relative p-8 rounded-2xl bg-[var(--color-surface-2)] border border-[var(--color-ink-3)]/15 hover:border-[var(--color-bp-400)]/40 transition-all duration-300 animate-fade-up delay-${i + 1}`}>
+          <div class="size-12 rounded-xl bg-[var(--color-bp-500)]/10 flex items-center justify-center text-[var(--color-bp-400)] mb-5">
+            <Fragment set:html={card.icon} />
+          </div>
+          <h3 class="font-mono font-semibold text-xl mb-3">{card.title}</h3>
+          <p class="text-[var(--color-ink-2)] leading-relaxed">{card.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

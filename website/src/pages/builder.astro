@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import AssertionBuilder from '../components/builder/AssertionBuilder';
+---
+
+<Layout
+  title="Build an Assertion — assertions.eth"
+  description="Compose a transaction batch, simulate it on a fork, let AI suggest protective on-chain assertions, and ship it as a wallet batch, Safe transaction, Governor proposal or Aragon OSx proposal."
+>
+  <Nav />
+  <main class="pt-28 pb-20 px-6">
+    <div class="max-w-6xl mx-auto">
+      <header class="mb-10 animate-fade-up">
+        <p class="font-mono text-sm text-[var(--color-bp-300)] mb-2">
+          Assertion Builder
+        </p>
+        <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight mb-3">
+          Build an Assertion
+        </h1>
+        <p class="text-[var(--color-ink-2)] max-w-2xl leading-relaxed">
+          Compose a transaction batch from any contract, simulate it on a fork,
+          and let AI insert on-chain assertions that make the whole thing revert
+          if the chain isn't in the state you expect. Execute it from your
+          wallet, a Safe, a Governor or an Aragon OSx DAO.
+        </p>
+      </header>
+      <div class="animate-fade-up delay-1">
+        <AssertionBuilder client:only="react" />
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>

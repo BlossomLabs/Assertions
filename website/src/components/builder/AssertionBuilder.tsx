@@ -1,0 +1,157 @@
+import "@evmcrispr/editor/style.css";
+
+import { EvmcrisprProvider } from "@evmcrispr/editor";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
+import { useAccount, WagmiProvider } from "wagmi";
+
+import { Composer } from "./Composer";
+import { ChatPanel } from "./ChatPanel";
+import { contextReady, executorAddress, type ExecutionContext } from "./context";
+import { ContextSelector } from "./ContextSelector";
+import { evml } from "./evml";
+import { ExecuteStep } from "./ExecuteStep";
+import { SimulationResults, useSimulation } from "./SimulateBar";
+import { useBuilderChatAgent } from "./useBuilderChatAgent";
+import { useScriptState } from "./useScriptState";
+import { transports, wagmiConfig } from "./wagmi";
+
+const queryClient = new QueryClient();
+
+const SUGGEST_PROMPT =
+  "Read my current script and suggest assertions for it: fetch the verified source of every contract it touches, work out what the batch does, and insert the assert commands (with `load assertions`) that best protect it — pre-assertions for the state it relies on, post-assertions for the outcome. Then simulate to confirm the protected batch still passes, and summarize what each assertion guards against.";
+
+function Section({
+  step,
+  title,
+  children,
+  dimmed = false,
+}: {
+  step: number;
+  title: string;
+  children: React.ReactNode;
+  dimmed?: boolean;
+}) {
+  return (
+    <section
+      className={`rounded-2xl border border-[var(--color-ink-3)]/20 bg-[var(--color-surface-2)] p-6 transition-opacity ${dimmed ? "opacity-50 pointer-events-none select-none" : ""}`}
+    >
+      <h2 className="flex items-center gap-3 font-mono font-semibold mb-5">
+        <span className="size-7 flex items-center justify-center rounded-full bg-[var(--color-bp-500)]/15 text-[var(--color-bp-300)] text-sm">
+          {step}
+        </span>
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+}
+
+function Builder() {
+  const { address, chain } = useAccount();
+  const chainId = chain?.id ?? 1;
+
+  const [context, setContext] = useState<ExecutionContext>({ kind: "eoa" });
+  const scriptState = useScriptState();
+  const simulation = useSimulation(chainId);
+  const [suggestPrompt, setSuggestPrompt] = useState<{
+    text: string;
+    nonce: number;
+  } | null>(null);
+
+  const executor = executorAddress(context, address);
+  const ready = contextReady(context, address);
+  const hasScript = scriptState.script.trim().length > 0;
+  const simulated = simulation.status === "success";
+
+  const agent = useBuilderChatAgent({ scriptState, executor, chainId });
+
+  return (
+    <div className="grid lg:grid-cols-[1fr_minmax(20rem,24rem)] gap-6 items-start">
+      <div className="space-y-6 min-w-0">
+        <Section step={1} title="Who executes it?">
+          <ContextSelector context={context} onChange={setContext} />
+        </Section>
+
+        <Section step={2} title="Compose the batch" dimmed={!ready}>
+          <Composer scriptState={scriptState} chainId={chainId} />
+        </Section>
+
+        <Section step={3} title="Simulate" dimmed={!ready || !hasScript}>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 flex-wrap">
+              <button
+                type="button"
+                disabled={simulation.status === "running" || !hasScript}
+                onClick={() =>
+                  void simulation.simulate(scriptState.script, executor)
+                }
+                className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-bp-500)] text-white hover:bg-[var(--color-bp-400)] disabled:opacity-40 transition-colors"
+              >
+                {simulation.status === "running"
+                  ? "Simulating…"
+                  : "Simulate batch"}
+              </button>
+              <button
+                type="button"
+                disabled={!simulated || agent.isRunning}
+                onClick={() =>
+                  setSuggestPrompt({ text: SUGGEST_PROMPT, nonce: Date.now() })
+                }
+                title={
+                  simulated
+                    ? "Ask the AI to insert protective assertions"
+                    : "Simulate successfully first"
+                }
+                className="px-4 py-2 rounded-lg text-sm font-medium border border-[var(--color-bp-400)] text-[var(--color-bp-300)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                ✦ Suggest assertions
+              </button>
+              {executor && (
+                <span className="text-xs font-mono text-[var(--color-ink-3)]">
+                  as {executor.slice(0, 6)}…{executor.slice(-4)}
+                </span>
+              )}
+            </div>
+            <SimulationResults state={simulation} />
+          </div>
+        </Section>
+
+        <Section
+          step={4}
+          title="Review & execute"
+          dimmed={!ready || !hasScript}
+        >
+          <ExecuteStep
+            block={scriptState.script}
+            context={context}
+            chainId={chainId}
+          />
+        </Section>
+      </div>
+
+      <aside className="rounded-2xl border border-[var(--color-ink-3)]/20 bg-[var(--color-surface-2)] p-6 lg:sticky lg:top-24 flex flex-col lg:h-[calc(100vh-8rem)] min-h-96">
+        <h2 className="font-mono font-semibold mb-4 flex items-center gap-2">
+          <span className="text-[var(--color-bp-300)]">✦</span> Assertion
+          assistant
+        </h2>
+        <div className="flex-1 min-h-0">
+          <ChatPanel agent={agent} suggestPrompt={suggestPrompt} />
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+export default function AssertionBuilder() {
+  // Providers live inside the island (Astro pages have no React root above).
+  return (
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <EvmcrisprProvider evml={evml} transports={transports}>
+          <Builder />
+        </EvmcrisprProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  );
+}

@@ -1,5 +1,9 @@
 # build output
 dist/
+# monaco assets synced from node_modules (scripts/copy-monaco.mjs)
+public/vs/
+# vendored EVMcrispr checkout (scripts/vendor-evmcrispr.mjs)
+.evmcrispr/
 # generated types
 .astro/
 

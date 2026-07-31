@@ -5,8 +5,14 @@
   "engines": {
     "node": ">=22.12.0"
   },
+  "evmcrispr": {
+    "repo": "https://github.com/EVMcrispr/evmcrispr.git",
+    "commit": "68280f46880aece4c47da4718b8f782e5769be72"
+  },
   "scripts": {
+    "predev": "node scripts/vendor-evmcrispr.mjs && node scripts/copy-monaco.mjs",
     "dev": "astro dev",
+    "prebuild": "node scripts/vendor-evmcrispr.mjs && node scripts/copy-monaco.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "deploy:ipfs": "astro build && node scripts/deploy-ipfs.js",
@@ -15,17 +21,27 @@
   "dependencies": {
     "@astrojs/react": "^6.0.0",
     "@evmcrispr/core": "^0.11.0",
+    "@evmcrispr/editor": "^0.11.0",
+    "@evmcrispr/module-aragonosx": "^0.11.0",
     "@evmcrispr/module-assertions": "^0.11.0",
+    "@evmcrispr/module-governor": "^0.11.0",
+    "@evmcrispr/module-safe": "^0.11.0",
+    "@evmcrispr/module-sim": "^0.11.0",
+    "@evmcrispr/sdk": "^0.11.0",
     "@tailwindcss/vite": "^4.3.2",
+    "@tanstack/react-query": "^5.101.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "astro": "^7.0.5",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "tailwindcss": "^4.3.2"
+    "tailwindcss": "^4.3.2",
+    "viem": "^2.54.1",
+    "wagmi": "^3.6.21"
   },
   "devDependencies": {
     "dotenv": "^17.4.1",
+    "monaco-editor": "0.56.0",
     "pinata": "^2.5.5"
   }
 }

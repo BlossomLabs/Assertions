@@ -1,4 +1,9 @@
-import type { SimulationResult } from "@evmcrispr/core";
+import {
+  type Action,
+  isBatchedAction,
+  isTransactionAction,
+  type SimulationResult,
+} from "@evmcrispr/core";
 import { useCallback, useRef, useState } from "react";
 import type { Address } from "viem";
 
@@ -64,6 +69,87 @@ export function useSimulation(chainId: number | undefined) {
   return { ...state, simulate, reset };
 }
 
+/** Assertions are read-only eth_calls; everything else is a real action.
+ *  Batches are counted by their contents, not as a single action. */
+function countActions(actions: Action[]): {
+  actions: number;
+  assertions: number;
+} {
+  let regular = 0;
+  let assertions = 0;
+  for (const action of actions) {
+    if (isBatchedAction(action)) {
+      const nested = countActions(action.actions);
+      regular += nested.actions;
+      assertions += nested.assertions;
+    } else if (isTransactionAction(action) && action.readOnly) {
+      assertions += 1;
+    } else {
+      regular += 1;
+    }
+  }
+  return { actions: regular, assertions };
+}
+
+function passedSummary(actions: Action[]): string {
+  const counts = countActions(actions);
+  const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
+  const parts: string[] = [];
+  if (counts.actions || !counts.assertions)
+    parts.push(plural(counts.actions, "action"));
+  if (counts.assertions) parts.push(plural(counts.assertions, "assertion"));
+  return `Simulation passed (${parts.join(", ")})`;
+}
+
+const LOG_EMOJI: Record<string, string> = {
+  success: "✅",
+  error: "❌",
+  warning: "⚠️",
+  waiting: "⏳",
+};
+
+/** Turn interpreter markers like `:success:` into emojis. */
+function formatLog(line: string): string {
+  return line.replace(
+    /:(success|error|warning|waiting):\s*/g,
+    (_match, name: string) => `${LOG_EMOJI[name]} `,
+  );
+}
+
+/** simulate() runs scripts that don't fork themselves inside a 2-line
+ *  `load sim` / `sim:fork (` prelude (see simulateScript in @evmcrispr/core),
+ *  so reported line numbers are shifted by 2 relative to the user's script. */
+function simWrapOffset(script: string): number {
+  const s = script.toLowerCase();
+  return s.includes("load sim") && s.includes("sim:fork") ? 0 : 2;
+}
+
+/** Rewrite interpreter source locations like `exec(4:0,4:23):` into the
+ *  script text they point at, quoted above the message:
+ *  ``Error on line 2: `exec $usdcTkn "pause()"`\n> Transaction reverted: …``.
+ *  Lines are 1-based and columns 0-based (see NodeError in @evmcrispr/sdk). */
+function humanizeLocations(text: string, script: string | null): string {
+  if (!script) return text;
+  const lines = script.split(/\r?\n/);
+  const offset = simWrapOffset(script);
+  return text.replace(
+    /(\S+)\((\d+):(\d+),(\d+):(\d+)\):\s*/g,
+    (match, _name, sl: string, sc: string, el: string, ec: string) => {
+      const startLine = Number(sl) - offset;
+      const lineText = startLine >= 1 ? lines[startLine - 1] : undefined;
+      if (lineText === undefined) return match;
+      const singleLine = Number(sl) === Number(el);
+      const snippet = (
+        singleLine
+          ? lineText.slice(Number(sc), Number(ec))
+          : lineText.slice(Number(sc))
+      ).trim();
+      if (!snippet) return match;
+      return `Error on line ${startLine}: \`${snippet}${singleLine ? "" : " …"}\`\n> `;
+    },
+  );
+}
+
 export function SimulationResults({
   state,
   stale = false,
@@ -99,18 +185,18 @@ export function SimulationResults({
       <p
         className={`text-sm font-medium ${ok ? "text-[var(--color-ok)]" : "text-[var(--color-err)]"}`}
       >
-        {ok
-          ? `Simulation passed (${result?.actions.length ?? 0} action${(result?.actions.length ?? 0) === 1 ? "" : "s"})`
-          : "Simulation failed"}
+        {ok ? passedSummary(result?.actions ?? []) : "Simulation failed"}
       </p>
       {result?.error && (
         <p className="text-xs font-mono text-[var(--color-err)] whitespace-pre-wrap break-all">
-          {result.error}
+          {humanizeLocations(result.error, state.simulatedScript)}
         </p>
       )}
       {!!result?.logs.length && (
         <pre className="text-xs font-mono text-[var(--color-ink-2)] whitespace-pre-wrap max-h-48 overflow-y-auto">
-          {result.logs.join("\n")}
+          {result.logs
+            .map((line) => humanizeLocations(formatLog(line), state.simulatedScript))
+            .join("\n")}
         </pre>
       )}
     </div>

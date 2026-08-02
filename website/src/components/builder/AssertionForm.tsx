@@ -4,6 +4,7 @@ import { isAddress, parseAbiItem } from "viem";
 import { normalize } from "viem/ens";
 import { usePublicClient } from "wagmi";
 
+import { BatchList } from "./BatchList";
 import { evml } from "./evml";
 import {
   canonicalType,
@@ -154,7 +155,7 @@ export function AssertionForm({
   chainId: number;
   executor: Address | undefined;
 }) {
-  const { script, insertAssertion } = scriptState;
+  const { script, insertAssertion, removeLine } = scriptState;
   const mainnetClient = usePublicClient({ chainId: 1 });
   const chainClient = usePublicClient({ chainId });
 
@@ -948,9 +949,12 @@ export function AssertionForm({
               </span>
             )}
           </p>
-          <pre className="p-3 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/20 font-mono text-xs overflow-x-auto whitespace-pre-wrap">
-            {script}
-          </pre>
+          <BatchList
+            script={script}
+            onRemoveLine={removeLine}
+            canRemove={(line) => line.startsWith("assertions:")}
+            hideLine={(line) => line === "load assertions"}
+          />
         </div>
       )}
     </div>

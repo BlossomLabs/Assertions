@@ -111,6 +111,9 @@ export function AbiForm({
         `exec ${target} "${activeSig}"${argStr ? ` ${argStr}` : ""}${valueOpt}`,
         sets,
       );
+      setAddressInput("");
+      setSelectedSig("");
+      setManualSig("");
       setArgs({});
       setValue("");
     } finally {

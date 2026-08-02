@@ -3,6 +3,7 @@ import type { editor } from "monaco-editor";
 import { Suspense, useRef, useState } from "react";
 
 import { AbiForm } from "./AbiForm";
+import { BatchList } from "./BatchList";
 import { isTxBuilderBatch, txBuilderToEvml } from "./safe-tx-builder";
 import type { useScriptState } from "./useScriptState";
 
@@ -96,9 +97,7 @@ export function Composer({
               <p className="text-xs text-[var(--color-ink-3)] mb-1.5">
                 Batch so far
               </p>
-              <pre className="p-3 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/20 font-mono text-xs overflow-x-auto whitespace-pre-wrap">
-                {script}
-              </pre>
+              <BatchList script={script} onRemoveLine={scriptState.removeLine} />
             </div>
           )}
         </div>

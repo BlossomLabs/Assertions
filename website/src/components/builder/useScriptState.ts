@@ -124,6 +124,41 @@ export function useScriptState(initial = "") {
     [setScript],
   );
 
+  /**
+   * Remove the line at the given index, then drop scaffolding it orphaned:
+   * `set $var …` lines whose variable no other line references, and
+   * `load assertions` once no assertion command remains.
+   */
+  const removeLine = useCallback(
+    (index: number) => {
+      const lines = scriptRef.current.split("\n");
+      if (index < 0 || index >= lines.length) return;
+      lines.splice(index, 1);
+
+      let cleaned = lines;
+      for (;;) {
+        const next = cleaned.filter((line, i) => {
+          const t = line.trim();
+          const setMatch = t.match(/^set\s+(\$[a-zA-Z0-9_]+)/);
+          if (setMatch) {
+            const ref = new RegExp(
+              `\\${setMatch[1]}(?![a-zA-Z0-9_])`,
+            );
+            return cleaned.some((l, j) => j !== i && ref.test(l));
+          }
+          if (t === "load assertions")
+            return cleaned.some((l) => l.trim().startsWith("assertions:"));
+          return true;
+        });
+        if (next.length === cleaned.length) break;
+        cleaned = next;
+      }
+
+      setScript(cleaned.join("\n").trim() === "" ? "" : cleaned.join("\n"));
+    },
+    [setScript],
+  );
+
   /** Insert an assertion line as a pre- or post-condition (see
    *  `insertAssertionLines`). */
   const insertAssertion = useCallback(
@@ -192,6 +227,7 @@ export function useScriptState(initial = "") {
     getScript,
     appendLines,
     appendWithSets,
+    removeLine,
     insertAssertion,
     applyStrReplace,
     applyWrite,

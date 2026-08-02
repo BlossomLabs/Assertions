@@ -1,3 +1,4 @@
+import type { Address } from "viem";
 import { isAddress } from "viem";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 
@@ -6,6 +7,7 @@ import {
   type ContextKind,
   type ExecutionContext,
 } from "./context";
+import type { AddressCheck } from "./useContextAddressCheck";
 
 const inputCls =
   "w-full px-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/30 " +
@@ -21,9 +23,15 @@ const CONTEXT_HELP: Record<ContextKind, string> = {
 export function ContextSelector({
   context,
   onChange,
+  resolved,
+  check,
 }: {
   context: ExecutionContext;
   onChange: (next: ExecutionContext) => void;
+  /** Context address after ENS resolution (null while unresolved). */
+  resolved: Address | null;
+  /** On-chain verification of the resolved address. */
+  check: AddressCheck;
 }) {
   const { address, isConnected, chain } = useAccount();
   const { connect, connectors, isPending } = useConnect();
@@ -100,16 +108,52 @@ export function ContextSelector({
             </label>
             <input
               className={inputCls}
-              placeholder="0x…"
+              placeholder="0x… or name.eth"
               value={context.address ?? ""}
               onChange={(e) =>
                 onChange({ ...context, address: e.target.value.trim() })
               }
               spellCheck={false}
             />
-            {context.address && !isAddress(context.address) && (
+            {context.address &&
+              !isAddress(context.address) &&
+              !context.address.includes(".") && (
+                <p className="mt-1 text-xs text-[var(--color-err)]">
+                  Not a valid address or ENS name.
+                </p>
+              )}
+            {check.state !== "ok" &&
+              resolved &&
+              context.address &&
+              !isAddress(context.address) && (
+                <p className="mt-1 text-xs font-mono text-[var(--color-ink-3)]">
+                  {resolved}
+                </p>
+              )}
+            {check.state === "resolving" && (
+              <p className="mt-1 text-xs text-[var(--color-ink-3)]">
+                Resolving ENS name…
+              </p>
+            )}
+            {check.state === "checking" && (
+              <p className="mt-1 text-xs text-[var(--color-ink-3)]">
+                Checking the contract…
+              </p>
+            )}
+            {check.state === "ok" && (
+              <p className="mt-1 text-xs">
+                <span className="text-[var(--color-ok)]">{check.message}</span>
+                {resolved && context.address && !isAddress(context.address) && (
+                  <span className="font-mono text-[var(--color-ink-3)]">
+                    {" · "}
+                    {resolved}
+                  </span>
+                )}
+              </p>
+            )}
+            {check.state === "error" && (
               <p className="mt-1 text-xs text-[var(--color-err)]">
-                Not a valid address.
+                {check.message}
               </p>
             )}
           </div>

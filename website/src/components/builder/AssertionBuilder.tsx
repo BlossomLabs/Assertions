@@ -14,6 +14,7 @@ import { evml } from "./evml";
 import { ExecuteStep } from "./ExecuteStep";
 import { SimulationResults, useSimulation } from "./SimulateBar";
 import { useBuilderChatAgent } from "./useBuilderChatAgent";
+import { useContextAddress } from "./useContextAddressCheck";
 import {
   hasAssertions,
   stripAssertions,
@@ -68,8 +69,13 @@ function Builder() {
     nonce: number;
   } | null>(null);
 
-  const executor = executorAddress(context, address);
-  const ready = contextReady(context, address);
+  const { resolved: contextAddress, check: contextCheck } = useContextAddress(
+    chainId,
+    context.kind,
+    context.address,
+  );
+  const executor = executorAddress(context, address, contextAddress);
+  const ready = contextReady(context, address, contextAddress);
   const hasScript = scriptState.script.trim().length > 0;
   const protectedScript = hasAssertions(scriptState.script);
   const batchScript = protectedScript
@@ -83,7 +89,12 @@ function Builder() {
     <div className="grid lg:grid-cols-[1fr_minmax(20rem,24rem)] gap-6 items-start">
       <div className="space-y-6 min-w-0">
         <Section step={1} title="Who executes it?">
-          <ContextSelector context={context} onChange={setContext} />
+          <ContextSelector
+            context={context}
+            onChange={setContext}
+            resolved={contextAddress}
+            check={contextCheck}
+          />
         </Section>
 
         <Section step={2} title="Compose the batch" dimmed={!ready}>
@@ -205,6 +216,7 @@ function Builder() {
           <ExecuteStep
             block={scriptState.script}
             context={context}
+            contextAddress={contextAddress}
             chainId={chainId}
           />
         </Section>

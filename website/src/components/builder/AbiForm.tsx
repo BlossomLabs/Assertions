@@ -131,7 +131,7 @@ export function AbiForm({
           onChange={(e) => setAddressInput(e.target.value)}
           spellCheck={false}
         />
-        {resolved && !isAddress(addressInput.trim()) && (
+        {!contractName && resolved && !isAddress(addressInput.trim()) && (
           <p className="mt-1 text-xs font-mono text-[var(--color-ink-3)]">
             {resolved}
           </p>
@@ -140,8 +140,16 @@ export function AbiForm({
           <p className="mt-1 text-xs text-[var(--color-ink-3)]">{status}</p>
         )}
         {contractName && (
-          <p className="mt-1 text-xs text-[var(--color-ok)]">
-            Verified: {contractName}
+          <p className="mt-1 text-xs">
+            <span className="text-[var(--color-ok)]">
+              Verified: {contractName}
+            </span>
+            {resolved && !isAddress(addressInput.trim()) && (
+              <span className="font-mono text-[var(--color-ink-3)]">
+                {" · "}
+                {resolved}
+              </span>
+            )}
           </p>
         )}
       </div>

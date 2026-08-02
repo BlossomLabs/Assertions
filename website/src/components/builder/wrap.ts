@@ -1,4 +1,7 @@
+import { isAddress } from "viem";
+
 import type { ExecutionContext } from "./context";
+import { ensVarName } from "./useContractFunctions";
 
 /** `load` must sit at the top level, so pull the block's load lines (e.g.
  *  the AI-inserted `load assertions`) out and above the wrapper. */
@@ -11,6 +14,19 @@ function hoistLoads(block: string): { loads: string[]; body: string } {
     else body.push(line);
   }
   return { loads: [...loads], body: body.join("\n").trim() };
+}
+
+/** Context address as a script reference: plain addresses pass through, an
+ *  ENS name becomes a `$variable` backed by a `set $var @ens(name)` line
+ *  (the same convention the composer uses for ENS call arguments). */
+function addressRef(input: string | undefined): {
+  ref: string;
+  sets: string[];
+} {
+  const value = (input ?? "").trim();
+  if (!value || isAddress(value)) return { ref: value, sets: [] };
+  const varName = ensVarName(value);
+  return { ref: varName, sets: [`set ${varName} @ens(${value})`] };
 }
 
 function indent(text: string, depth = 1): string {
@@ -38,8 +54,9 @@ export function buildFinalScript(
   context: ExecutionContext,
 ): string {
   const { loads, body } = hoistLoads(block);
+  const target = addressRef(context.address);
   const prelude = (extra: string[]) =>
-    [...new Set([...extra, ...loads])].join("\n");
+    [...new Set([...extra, ...loads]), ...target.sets].join("\n");
 
   switch (context.kind) {
     case "eoa":
@@ -49,7 +66,7 @@ export function buildFinalScript(
     case "safe":
       return [
         prelude(["load safe"]),
-        `safe:propose ${context.address} (\n${indent(body)}\n)`,
+        `safe:propose ${target.ref} (\n${indent(body)}\n)`,
       ].join("\n\n");
     case "governor": {
       const description = (
@@ -57,7 +74,7 @@ export function buildFinalScript(
       ).replace(/"/g, "'");
       return [
         prelude(["load governor"]),
-        `governor:propose ${context.address} "${description}" (\n${indent(body)}\n)`,
+        `governor:propose ${target.ref} "${description}" (\n${indent(body)}\n)`,
       ].join("\n\n");
     }
     case "aragonosx": {
@@ -65,7 +82,7 @@ export function buildFinalScript(
       const opts = metadata ? ` --metadata "${metadata}"` : "";
       return [
         prelude(["load aragonosx"]),
-        `aragonosx:connect ${context.address} (\n` +
+        `aragonosx:connect ${target.ref} (\n` +
           `  aragonosx:propose ${context.plugin}${opts} (\n${indent(body, 2)}\n  )\n)`,
       ].join("\n\n");
     }

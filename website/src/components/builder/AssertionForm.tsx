@@ -626,19 +626,29 @@ export function AssertionForm({
             onChange={(e) => setAddressInput(e.target.value)}
             spellCheck={false}
           />
-          {contract.resolved && !isAddress(targetInput) && (
-            <p className="mt-1 text-xs font-mono text-[var(--color-ink-3)]">
-              {contract.resolved}
-            </p>
-          )}
+          {!(kind === "state" && contract.contractName) &&
+            contract.resolved &&
+            !isAddress(targetInput) && (
+              <p className="mt-1 text-xs font-mono text-[var(--color-ink-3)]">
+                {contract.resolved}
+              </p>
+            )}
           {contractStatus && (
             <p className="mt-1 text-xs text-[var(--color-ink-3)]">
               {contractStatus}
             </p>
           )}
           {kind === "state" && contract.contractName && (
-            <p className="mt-1 text-xs text-[var(--color-ok)]">
-              Verified: {contract.contractName}
+            <p className="mt-1 text-xs">
+              <span className="text-[var(--color-ok)]">
+                Verified: {contract.contractName}
+              </span>
+              {contract.resolved && !isAddress(targetInput) && (
+                <span className="font-mono text-[var(--color-ink-3)]">
+                  {" · "}
+                  {contract.resolved}
+                </span>
+              )}
             </p>
           )}
         </div>

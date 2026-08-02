@@ -64,7 +64,7 @@ export function Composer({
     ["form", "Contract form"],
     ["editor", "EVML editor"],
     ...(safeContext
-      ? ([["txbuilder", "Transaction Builder batch"]] as [Mode, string][])
+      ? ([["txbuilder", "Transaction Builder JSON"]] as [Mode, string][])
       : []),
   ];
 

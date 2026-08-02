@@ -1,4 +1,11 @@
-/** Safe Transaction Builder batch JSON -> EVML lines. */
+/** Safe Transaction Builder batch JSON <-> EVML. */
+
+import {
+  type Action,
+  isBatchedAction,
+  isTransactionAction,
+  type TransactionAction,
+} from "@evmcrispr/core";
 
 interface TxBuilderTx {
   to: string;
@@ -15,7 +22,13 @@ interface TxBuilderTx {
 export interface TxBuilderBatch {
   version?: string;
   chainId?: string;
-  meta?: { name?: string; description?: string };
+  createdAt?: number;
+  meta?: {
+    name?: string;
+    description?: string;
+    txBuilderVersion?: string;
+    createdFromSafeAddress?: string;
+  };
   transactions: TxBuilderTx[];
 }
 
@@ -51,6 +64,60 @@ function txToLine(tx: TxBuilderTx): string {
   // Raw calldata (or plain value transfer).
   const data = tx.data && tx.data !== "0x" ? ` --data ${tx.data}` : "";
   return `send ${tx.to}${data}${value}`;
+}
+
+/** Convert interpreted EVML actions into a Safe Transaction Builder batch
+ *  (the JSON the Safe{Wallet} Transaction Builder app imports). Throws when
+ *  an action cannot be represented in that format. */
+export function actionsToTxBuilderBatch(
+  actions: Action[],
+  opts: { chainId: number; safeAddress?: string; name?: string },
+): TxBuilderBatch {
+  const flat: TransactionAction[] = [];
+  for (const action of actions) {
+    if (isBatchedAction(action)) flat.push(...action.actions);
+    else if (isTransactionAction(action)) flat.push(action);
+    else
+      throw new Error(
+        `The script produced a "${action.type}" action, which cannot be ` +
+          "represented in a Transaction Builder batch.",
+      );
+  }
+  if (flat.length === 0)
+    throw new Error("The script produced no transactions to export.");
+
+  const transactions = flat.map((tx): TxBuilderTx => {
+    if (!tx.to)
+      throw new Error(
+        "Contract deployments (CREATE) cannot be represented in a " +
+          "Transaction Builder batch.",
+      );
+    if (tx.operation === 1)
+      throw new Error(
+        "Delegatecall actions cannot be represented in a Transaction " +
+          "Builder batch.",
+      );
+    return {
+      to: tx.to,
+      value: (tx.value ?? 0n).toString(),
+      data: tx.data ?? "0x",
+      contractMethod: null,
+      contractInputsValues: null,
+    };
+  });
+
+  return {
+    version: "1.0",
+    chainId: String(opts.chainId),
+    createdAt: Date.now(),
+    meta: {
+      name: opts.name ?? "Assertions batch",
+      description: "Built with assertions.eth",
+      txBuilderVersion: "1.17.1",
+      createdFromSafeAddress: opts.safeAddress,
+    },
+    transactions,
+  };
 }
 
 /** Convert a Transaction Builder batch into an EVML action block (one line

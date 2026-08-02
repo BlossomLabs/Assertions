@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { useAccount, WagmiProvider } from "wagmi";
 
+import { AssertionForm } from "./AssertionForm";
 import { Composer } from "./Composer";
 import { ChatPanel } from "./ChatPanel";
 import { contextReady, executorAddress, type ExecutionContext } from "./context";
@@ -13,7 +14,11 @@ import { evml } from "./evml";
 import { ExecuteStep } from "./ExecuteStep";
 import { SimulationResults, useSimulation } from "./SimulateBar";
 import { useBuilderChatAgent } from "./useBuilderChatAgent";
-import { useScriptState } from "./useScriptState";
+import {
+  hasAssertions,
+  stripAssertions,
+  useScriptState,
+} from "./useScriptState";
 import { transports, wagmiConfig } from "./wagmi";
 
 const queryClient = new QueryClient();
@@ -53,7 +58,11 @@ function Builder() {
 
   const [context, setContext] = useState<ExecutionContext>({ kind: "eoa" });
   const scriptState = useScriptState();
-  const simulation = useSimulation(chainId);
+  // Two simulations: the raw batch actions (assertions stripped) in step 3,
+  // the protected script in step 5 — so a failure is attributable to either
+  // the actions or the assertions guarding them.
+  const batchSimulation = useSimulation(chainId);
+  const fullSimulation = useSimulation(chainId);
   const [suggestPrompt, setSuggestPrompt] = useState<{
     text: string;
     nonce: number;
@@ -62,7 +71,11 @@ function Builder() {
   const executor = executorAddress(context, address);
   const ready = contextReady(context, address);
   const hasScript = scriptState.script.trim().length > 0;
-  const simulated = simulation.status === "success";
+  const protectedScript = hasAssertions(scriptState.script);
+  const batchScript = protectedScript
+    ? stripAssertions(scriptState.script)
+    : scriptState.script;
+  const batchSimulated = batchSimulation.status === "success";
 
   const agent = useBuilderChatAgent({ scriptState, executor, chainId });
 
@@ -74,38 +87,99 @@ function Builder() {
         </Section>
 
         <Section step={2} title="Compose the batch" dimmed={!ready}>
-          <Composer scriptState={scriptState} chainId={chainId} />
+          <Composer
+            scriptState={scriptState}
+            chainId={chainId}
+            safeContext={context.kind === "safe"}
+          />
         </Section>
 
-        <Section step={3} title="Simulate" dimmed={!ready || !hasScript}>
+        <Section step={3} title="Simulate the batch" dimmed={!ready || !hasScript}>
           <div className="space-y-3">
             <div className="flex items-center gap-3 flex-wrap">
               <button
                 type="button"
-                disabled={simulation.status === "running" || !hasScript}
+                disabled={batchSimulation.status === "running" || !hasScript}
                 onClick={() =>
-                  void simulation.simulate(scriptState.script, executor)
+                  void batchSimulation.simulate(batchScript, executor)
                 }
                 className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-bp-500)] text-white hover:bg-[var(--color-bp-400)] disabled:opacity-40 transition-colors"
               >
-                {simulation.status === "running"
+                {batchSimulation.status === "running"
                   ? "Simulating…"
                   : "Simulate batch"}
               </button>
+              {executor && (
+                <span className="text-xs font-mono text-[var(--color-ink-3)]">
+                  as {executor.slice(0, 6)}…{executor.slice(-4)}
+                </span>
+              )}
+              {protectedScript && (
+                <span className="text-xs text-[var(--color-ink-3)]">
+                  assertions are ignored here — step 5 covers them
+                </span>
+              )}
+            </div>
+            <SimulationResults
+              state={batchSimulation}
+              stale={
+                batchSimulation.simulatedScript !== null &&
+                batchSimulation.simulatedScript !== batchScript
+              }
+            />
+          </div>
+        </Section>
+
+        <Section step={4} title="Add assertions" dimmed={!ready || !hasScript}>
+          <div className="space-y-5">
+            <div className="flex items-center gap-3 flex-wrap">
               <button
                 type="button"
-                disabled={!simulated || agent.isRunning}
+                disabled={!batchSimulated || agent.isRunning}
                 onClick={() =>
                   setSuggestPrompt({ text: SUGGEST_PROMPT, nonce: Date.now() })
                 }
                 title={
-                  simulated
+                  batchSimulated
                     ? "Ask the AI to insert protective assertions"
-                    : "Simulate successfully first"
+                    : "Simulate the batch successfully first"
                 }
                 className="px-4 py-2 rounded-lg text-sm font-medium border border-[var(--color-bp-400)] text-[var(--color-bp-300)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 ✦ Suggest assertions
+              </button>
+              <span className="text-xs text-[var(--color-ink-3)]">
+                or build one manually below
+              </span>
+            </div>
+            <AssertionForm
+              scriptState={scriptState}
+              chainId={chainId}
+              executor={executor}
+            />
+          </div>
+        </Section>
+
+        <Section
+          step={5}
+          title="Simulate with assertions"
+          dimmed={!ready || !hasScript || !protectedScript}
+        >
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 flex-wrap">
+              <button
+                type="button"
+                disabled={
+                  fullSimulation.status === "running" || !protectedScript
+                }
+                onClick={() =>
+                  void fullSimulation.simulate(scriptState.script, executor)
+                }
+                className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-bp-500)] text-white hover:bg-[var(--color-bp-400)] disabled:opacity-40 transition-colors"
+              >
+                {fullSimulation.status === "running"
+                  ? "Simulating…"
+                  : "Simulate with assertions"}
               </button>
               {executor && (
                 <span className="text-xs font-mono text-[var(--color-ink-3)]">
@@ -113,12 +187,18 @@ function Builder() {
                 </span>
               )}
             </div>
-            <SimulationResults state={simulation} />
+            <SimulationResults
+              state={fullSimulation}
+              stale={
+                fullSimulation.simulatedScript !== null &&
+                fullSimulation.simulatedScript !== scriptState.script
+              }
+            />
           </div>
         </Section>
 
         <Section
-          step={4}
+          step={6}
           title="Review & execute"
           dimmed={!ready || !hasScript}
         >

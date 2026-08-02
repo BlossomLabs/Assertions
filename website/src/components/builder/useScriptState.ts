@@ -1,6 +1,77 @@
 import type { ScriptEditResult } from "@evmcrispr/ai";
 import { useCallback, useRef, useState } from "react";
 
+export type AssertionPlacement = "pre" | "post";
+
+/** Whether the script contains any assertion commands. */
+export function hasAssertions(script: string): boolean {
+  return /^\s*assertions:/m.test(script);
+}
+
+/**
+ * The script without its assertions: assertion command lines are dropped,
+ * and the then-unused `load assertions` with them. Used to simulate the raw
+ * batch actions separately from the protected script.
+ */
+export function stripAssertions(script: string): string {
+  return script
+    .split("\n")
+    .filter((l) => {
+      const t = l.trim();
+      return !t.startsWith("assertions:") && t !== "load assertions";
+    })
+    .join("\n");
+}
+
+/**
+ * Pure merge of an assertion line into an action block: ensures
+ * `load assertions` heads the script, hoists missing `set` lines into the
+ * leading header, then places the assertion before the first action line
+ * (pre-condition) or at the end (post-condition). Exported so the assertion
+ * form can preview/validate the candidate script before committing it.
+ */
+export function insertAssertionLines(
+  script: string,
+  line: string,
+  placement: AssertionPlacement,
+  sets: string[] = [],
+): string {
+  const trimmed = script.trimEnd();
+  const lines = trimmed ? trimmed.split("\n") : [];
+  const t = (l: string) => l.trim();
+
+  if (!lines.some((l) => t(l) === "load assertions")) {
+    let loadEnd = 0;
+    while (loadEnd < lines.length && t(lines[loadEnd]).startsWith("load "))
+      loadEnd++;
+    lines.splice(loadEnd, 0, "load assertions");
+  }
+
+  // Header = leading load/set/comment/blank lines; everything below is
+  // actions (and any assertions already placed among them).
+  const isHeader = (l: string) =>
+    l === "" ||
+    l.startsWith("#") ||
+    l.startsWith("load ") ||
+    l.startsWith("set ");
+  let headerEnd = 0;
+  while (headerEnd < lines.length && isHeader(t(lines[headerEnd]))) headerEnd++;
+
+  const missing = sets.filter((s) => !lines.some((l) => t(l) === s.trim()));
+  lines.splice(headerEnd, 0, ...missing);
+  headerEnd += missing.length;
+
+  if (placement === "pre") {
+    // Group with any existing pre-assertions right below the header.
+    let at = headerEnd;
+    while (at < lines.length && t(lines[at]).startsWith("assertions:")) at++;
+    lines.splice(at, 0, line);
+  } else {
+    lines.push(line);
+  }
+  return lines.join("\n");
+}
+
 /**
  * The composed action block, shared by every authoring surface (ABI form,
  * drag-and-drop, Monaco editor, AI chat). Edits from the chat's script tools
@@ -49,6 +120,15 @@ export function useScriptState(initial = "") {
       lines.splice(insertAt, 0, ...missing);
       lines.push(line);
       setScript(lines.join("\n"));
+    },
+    [setScript],
+  );
+
+  /** Insert an assertion line as a pre- or post-condition (see
+   *  `insertAssertionLines`). */
+  const insertAssertion = useCallback(
+    (line: string, placement: AssertionPlacement, sets: string[] = []) => {
+      setScript(insertAssertionLines(scriptRef.current, line, placement, sets));
     },
     [setScript],
   );
@@ -112,6 +192,7 @@ export function useScriptState(initial = "") {
     getScript,
     appendLines,
     appendWithSets,
+    insertAssertion,
     applyStrReplace,
     applyWrite,
     undoRevision,

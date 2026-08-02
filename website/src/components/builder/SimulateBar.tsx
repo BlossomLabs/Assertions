@@ -7,42 +7,50 @@ import { evml } from "./evml";
 export interface SimulationState {
   status: "idle" | "running" | "success" | "failure";
   result: SimulationResult | null;
+  /** The script the current result was produced from, to flag stale results
+   *  when the script changes afterwards. */
+  simulatedScript: string | null;
 }
 
 export function useSimulation(chainId: number | undefined) {
   const [state, setState] = useState<SimulationState>({
     status: "idle",
     result: null,
+    simulatedScript: null,
   });
   const abortRef = useRef<AbortController | null>(null);
 
   const simulate = useCallback(
-    async (script: string, from: Address | undefined) => {
+    async (
+      script: string,
+      from: Address | undefined,
+    ): Promise<SimulationResult | undefined> => {
       abortRef.current?.abort();
       const abort = new AbortController();
       abortRef.current = abort;
-      setState({ status: "running", result: null });
+      setState({ status: "running", result: null, simulatedScript: script });
       try {
         const tag = chainId ? evml.with({ chainId }) : evml;
         const result = await tag
           .script(script)
           .simulate({ from, signal: abort.signal });
-        if (abort.signal.aborted) return;
+        if (abort.signal.aborted) return undefined;
         setState({
           status: result.success ? "success" : "failure",
           result,
+          simulatedScript: script,
         });
+        return result;
       } catch (e) {
-        if (abort.signal.aborted) return;
-        setState({
-          status: "failure",
-          result: {
-            success: false,
-            logs: [],
-            actions: [],
-            error: e instanceof Error ? e.message : String(e),
-          },
-        });
+        if (abort.signal.aborted) return undefined;
+        const result: SimulationResult = {
+          success: false,
+          logs: [],
+          actions: [],
+          error: e instanceof Error ? e.message : String(e),
+        };
+        setState({ status: "failure", result, simulatedScript: script });
+        return result;
       }
     },
     [chainId],
@@ -50,13 +58,20 @@ export function useSimulation(chainId: number | undefined) {
 
   const reset = useCallback(() => {
     abortRef.current?.abort();
-    setState({ status: "idle", result: null });
+    setState({ status: "idle", result: null, simulatedScript: null });
   }, []);
 
   return { ...state, simulate, reset };
 }
 
-export function SimulationResults({ state }: { state: SimulationState }) {
+export function SimulationResults({
+  state,
+  stale = false,
+}: {
+  state: SimulationState;
+  /** The script changed since this result was produced. */
+  stale?: boolean;
+}) {
   if (state.status === "idle") return null;
   if (state.status === "running")
     return (
@@ -74,8 +89,13 @@ export function SimulationResults({ state }: { state: SimulationState }) {
         ok
           ? "border-[var(--color-ok)]/40 bg-[var(--color-ok)]/5"
           : "border-[var(--color-err)]/40 bg-[var(--color-err)]/5"
-      }`}
+      } ${stale ? "opacity-60" : ""}`}
     >
+      {stale && (
+        <p className="text-xs text-amber-400">
+          The script changed since this simulation — run it again.
+        </p>
+      )}
       <p
         className={`text-sm font-medium ${ok ? "text-[var(--color-ok)]" : "text-[var(--color-err)]"}`}
       >

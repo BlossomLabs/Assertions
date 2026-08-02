@@ -1,109 +1,82 @@
 import { Editor } from "@evmcrispr/editor";
 import type { editor } from "monaco-editor";
-import { Suspense, useCallback, useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 
 import { AbiForm } from "./AbiForm";
 import { isTxBuilderBatch, txBuilderToEvml } from "./safe-tx-builder";
 import type { useScriptState } from "./useScriptState";
 
-type Mode = "form" | "editor";
+type Mode = "form" | "editor" | "txbuilder";
 
 export function Composer({
   scriptState,
   chainId,
+  safeContext = false,
   onDroppedChainId,
 }: {
   scriptState: ReturnType<typeof useScriptState>;
   chainId: number;
+  /** The batch executes through a Safe — offers the Transaction Builder
+   *  JSON import tab. */
+  safeContext?: boolean;
   onDroppedChainId?: (chainId: number) => void;
 }) {
-  const { script, setScript, appendWithSets } = scriptState;
-  const [mode, setMode] = useState<Mode>("form");
-  const [dragging, setDragging] = useState(false);
-  const [dropError, setDropError] = useState<string | null>(null);
+  const { script, setScript } = scriptState;
+  const [rawMode, setRawMode] = useState<Mode>("form");
+  const [importError, setImportError] = useState<string | null>(null);
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   // Content last pushed to/received from Monaco, to break update loops.
   const editorContent = useRef<string>(script);
 
-  // External updates (form adds, drops, AI edits) flow into Monaco.
+  // The import tab is Safe-only; fall back if the context changed under it.
+  const mode = rawMode === "txbuilder" && !safeContext ? "form" : rawMode;
+
+  // External updates (form adds, imports, AI edits) flow into Monaco.
   if (editorRef.current && editorContent.current !== script) {
     editorContent.current = script;
     if (editorRef.current.getValue() !== script)
       editorRef.current.setValue(script);
   }
 
-  const handleFiles = useCallback(
-    async (files: FileList) => {
-      setDropError(null);
-      const file = files[0];
-      if (!file) return;
-      const text = await file.text();
-
-      if (file.name.endsWith(".evml") || file.name.endsWith(".txt")) {
-        setScript(text.trim());
-        setMode("editor");
+  const importTxBuilderFile = async (file: File) => {
+    setImportError(null);
+    try {
+      const parsed = JSON.parse(await file.text());
+      if (!isTxBuilderBatch(parsed)) {
+        setImportError(
+          "That JSON doesn't look like a Safe Transaction Builder batch.",
+        );
         return;
       }
+      const { script: converted, chainId: batchChain } =
+        txBuilderToEvml(parsed);
+      setScript(converted);
+      if (batchChain && onDroppedChainId) onDroppedChainId(batchChain);
+      setRawMode("editor");
+    } catch {
+      setImportError(
+        "Unrecognized file — expected a Safe Transaction Builder JSON export.",
+      );
+    }
+  };
 
-      try {
-        const parsed = JSON.parse(text);
-        if (!isTxBuilderBatch(parsed)) {
-          setDropError(
-            "That JSON doesn't look like a Safe Transaction Builder batch.",
-          );
-          return;
-        }
-        const { script: converted, chainId: batchChain } =
-          txBuilderToEvml(parsed);
-        setScript(converted);
-        if (batchChain && onDroppedChainId) onDroppedChainId(batchChain);
-        setMode("editor");
-      } catch {
-        setDropError(
-          "Unrecognized file — drop a Safe Transaction Builder JSON or an .evml script.",
-        );
-      }
-    },
-    [setScript, onDroppedChainId],
-  );
+  const tabs: [Mode, string][] = [
+    ["form", "Contract form"],
+    ["editor", "EVML editor"],
+    ...(safeContext
+      ? ([["txbuilder", "Transaction Builder batch"]] as [Mode, string][])
+      : []),
+  ];
 
   return (
-    <div
-      className="relative"
-      onDragOver={(e) => {
-        e.preventDefault();
-        setDragging(true);
-      }}
-      onDragLeave={(e) => {
-        if (e.currentTarget.contains(e.relatedTarget as Node)) return;
-        setDragging(false);
-      }}
-      onDrop={(e) => {
-        e.preventDefault();
-        setDragging(false);
-        if (e.dataTransfer.files.length) void handleFiles(e.dataTransfer.files);
-      }}
-    >
-      {dragging && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl border-2 border-dashed border-[var(--color-bp-400)] bg-[var(--color-bp-500)]/10 backdrop-blur-sm pointer-events-none">
-          <p className="text-sm font-medium text-[var(--color-bp-300)]">
-            Drop a Safe Transaction Builder JSON or .evml file
-          </p>
-        </div>
-      )}
-
+    <div>
       {/* Mode tabs */}
-      <div className="flex items-center gap-1 mb-4">
-        {(
-          [
-            ["form", "Contract form"],
-            ["editor", "EVML editor"],
-          ] as [Mode, string][]
-        ).map(([m, label]) => (
+      <div className="flex items-center gap-1 mb-4 flex-wrap">
+        {tabs.map(([m, label]) => (
           <button
             key={m}
             type="button"
-            onClick={() => setMode(m)}
+            onClick={() => setRawMode(m)}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
               mode === m
                 ? "bg-[var(--color-bp-500)]/15 text-[var(--color-bp-300)]"
@@ -113,18 +86,11 @@ export function Composer({
             {label}
           </button>
         ))}
-        <span className="ml-auto text-xs text-[var(--color-ink-3)]">
-          or drag &amp; drop a batch file
-        </span>
       </div>
 
-      {dropError && (
-        <p className="mb-3 text-xs text-[var(--color-err)]">{dropError}</p>
-      )}
-
-      {mode === "form" ? (
+      {mode === "form" && (
         <div className="space-y-5">
-          <AbiForm chainId={chainId} onAdd={appendWithSets} />
+          <AbiForm chainId={chainId} onAdd={scriptState.appendWithSets} />
           {script && (
             <div>
               <p className="text-xs text-[var(--color-ink-3)] mb-1.5">
@@ -136,7 +102,9 @@ export function Composer({
             </div>
           )}
         </div>
-      ) : (
+      )}
+
+      {mode === "editor" && (
         <div className="rounded-xl overflow-hidden border border-[var(--color-ink-3)]/25">
           <Suspense
             fallback={
@@ -159,6 +127,36 @@ export function Composer({
               }}
             />
           </Suspense>
+        </div>
+      )}
+
+      {mode === "txbuilder" && (
+        <div className="space-y-3">
+          <p className="text-sm text-[var(--color-ink-2)]">
+            Load a JSON batch exported from Safe's{" "}
+            <a
+              href="https://help.safe.global/en/articles/40841-transaction-builder"
+              target="_blank"
+              rel="noreferrer"
+              className="text-[var(--color-bp-300)] hover:underline"
+            >
+              Transaction Builder
+            </a>{" "}
+            app. Its transactions replace the current batch.
+          </p>
+          <input
+            type="file"
+            accept=".json,application/json"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) void importTxBuilderFile(file);
+              e.target.value = "";
+            }}
+            className="block w-full text-sm text-[var(--color-ink-2)] file:mr-3 file:px-4 file:py-2 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[var(--color-bp-500)] file:text-white hover:file:bg-[var(--color-bp-400)] file:cursor-pointer file:transition-colors"
+          />
+          {importError && (
+            <p className="text-xs text-[var(--color-err)]">{importError}</p>
+          )}
         </div>
       )}
     </div>

@@ -4,14 +4,29 @@ import { configVariable, defineConfig } from "hardhat/config";
 export default defineConfig({
   plugins: [hardhatToolboxViemPlugin],
   ignition: {
+    // NOTE: Ignition's create2 strategy deploys through the CreateX factory,
+    // which guards (re-hashes) the salt, so it does NOT reproduce the canonical
+    // vanity address below. The canonical deployment goes through the Arachnid
+    // deterministic-deployment proxy (0x4e59b44847b379578588920cA78FbF26c0B4956C);
+    // see website/scripts/export-deploy-artifact.mjs and the README.
     strategyConfig: {
       create2: {
-        // Salt for vanity address: 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
-        salt: "0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb",
+        // Assertions core v1.1 salt, mined for the Arachnid-proxy vanity address
+        // 0xA55E47d30A22BBABACcb313fbA116E475eA4260A.
+        // Combinators v1.0 uses salt
+        // 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60310f6f0
+        // for 0xA55eC03487C832ea7811204Fd46a337dD2DafAFF (Ignition only supports
+        // one global salt; the canonical deploy path is the website / Arachnid
+        // proxy anyway — see website/scripts/export-deploy-artifact.mjs).
+        // (v1.0 core salt 0xea760d18... produced 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F)
+        salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6031fa0a1",
       },
     },
   },
   solidity: {
+    // The two profiles are intentionally identical: the CREATE2 vanity address
+    // is derived from the exact bytecode, so test builds and production builds
+    // must produce the same output. Do not let them drift.
     profiles: {
       default: {
         version: "0.8.28",
@@ -20,6 +35,10 @@ export default defineConfig({
             enabled: true,
             runs: 200,
           },
+          // Pinned explicitly so a future solc default bump can't change the
+          // bytecode (and therefore the CREATE2 address). Cancun bytecode uses
+          // PUSH0: the contract cannot deploy on chains without Shanghai support.
+          evmVersion: "cancun",
         },
       },
       production: {
@@ -29,6 +48,7 @@ export default defineConfig({
             enabled: true,
             runs: 200,
           },
+          evmVersion: "cancun",
         },
       },
     },

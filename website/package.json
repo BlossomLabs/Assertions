@@ -16,6 +16,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "deploy:ipfs": "astro build && node scripts/deploy-ipfs.js",
+    "sync:artifact": "node scripts/export-deploy-artifact.mjs",
     "astro": "astro"
   },
   "dependencies": {

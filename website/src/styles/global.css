@@ -1,3 +1,11 @@
+/* Fix the "evmcrispr" layer's position in the cascade before Tailwind
+   declares its own layers: the editor stylesheet (a second Tailwind build,
+   see evmcrispr-editor.css) must lose to our utilities, or its plain
+   `.hidden` / `.flex-col` rules override our responsive variants
+   (e.g. `sm:inline-flex` in the nav) site-wide. It still beats `base`
+   so preflight doesn't strip the editor's own styling. */
+@layer theme, base, evmcrispr, components, utilities;
+
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));

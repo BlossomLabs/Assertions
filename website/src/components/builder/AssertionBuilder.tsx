@@ -1,4 +1,4 @@
-import "@evmcrispr/editor/style.css";
+import "../../styles/evmcrispr-editor.css";
 
 import { EvmcrisprProvider } from "@evmcrispr/editor";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

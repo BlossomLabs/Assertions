@@ -1,0 +1,7 @@
+/* The editor ships its own full Tailwind build. Loaded bare, its utility
+   rules (`.hidden`, `.flex-col`, …) merge into the same @layer names as
+   ours but arrive later, so they win over our responsive variants and
+   break the nav and footer on the builder page. Importing it into the
+   `evmcrispr` layer (ordered before `utilities` in global.css) keeps it
+   below our utilities while leaving the editor's own styling intact. */
+@import "@evmcrispr/editor/style.css" layer(evmcrispr);

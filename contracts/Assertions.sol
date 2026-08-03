@@ -8,6 +8,11 @@ pragma solidity ^0.8.28;
  * @dev Uses staticcall to execute view functions and compares results against expected values.
  *      Each assertion function has an overloaded version that accepts a custom error message.
  *      All functions are view-only and revert with descriptive errors on assertion failure.
+ *      This is the frozen CORE: composed expressions (chained reads, arithmetic, logic,
+ *      string splitting, hashing) are computed by the separate Combinators contract
+ *      and judged here by pointing any call assertion at the Combinators address.
+ *      Assertions judge, Combinators compute.
+ * @custom:version 1.1
  */
 contract Assertions {
     // ============ Custom Errors ============
@@ -66,6 +71,11 @@ contract Assertions {
     /// @param actual The actual string returned
     /// @param expected The expected string
     error AssertionFailedString(string assertion, string actual, string expected);
+
+    /// @notice Thrown when a tuple index points outside the returned data
+    /// @param index The requested element index
+    /// @param length The length of the returned data in bytes
+    error ReturnDataOutOfBounds(uint256 index, uint256 length);
 
     // ============ Uint256 Call Assertions ============
 
@@ -169,6 +179,110 @@ contract Assertions {
     /// @param message Custom error message on failure
     function assertLeCallUint(address target, bytes calldata data, uint256 expected, string calldata message) external view {
         _assertLeCallUint(target, data, expected, message);
+    }
+
+    // ============ Int256 Call Assertions ============
+
+    /// @notice Assert that a view call returns an int256 equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The expected int256 value
+    function assertEqCallInt(address target, bytes calldata data, int256 expected) external view {
+        _assertEqCallInt(target, data, expected, "EQ");
+    }
+
+    /// @notice Assert that a view call returns an int256 equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The expected int256 value
+    /// @param message Custom error message on failure
+    function assertEqCallInt(address target, bytes calldata data, int256 expected, string calldata message) external view {
+        _assertEqCallInt(target, data, expected, message);
+    }
+
+    /// @notice Assert that a view call returns an int256 not equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The value that actual should not equal
+    function assertNeCallInt(address target, bytes calldata data, int256 expected) external view {
+        _assertNeCallInt(target, data, expected, "NE");
+    }
+
+    /// @notice Assert that a view call returns an int256 not equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The value that actual should not equal
+    /// @param message Custom error message on failure
+    function assertNeCallInt(address target, bytes calldata data, int256 expected, string calldata message) external view {
+        _assertNeCallInt(target, data, expected, message);
+    }
+
+    /// @notice Assert that a view call returns an int256 greater than expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The value that actual should be greater than
+    function assertGtCallInt(address target, bytes calldata data, int256 expected) external view {
+        _assertGtCallInt(target, data, expected, "GT");
+    }
+
+    /// @notice Assert that a view call returns an int256 greater than expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The value that actual should be greater than
+    /// @param message Custom error message on failure
+    function assertGtCallInt(address target, bytes calldata data, int256 expected, string calldata message) external view {
+        _assertGtCallInt(target, data, expected, message);
+    }
+
+    /// @notice Assert that a view call returns an int256 less than expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The value that actual should be less than
+    function assertLtCallInt(address target, bytes calldata data, int256 expected) external view {
+        _assertLtCallInt(target, data, expected, "LT");
+    }
+
+    /// @notice Assert that a view call returns an int256 less than expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The value that actual should be less than
+    /// @param message Custom error message on failure
+    function assertLtCallInt(address target, bytes calldata data, int256 expected, string calldata message) external view {
+        _assertLtCallInt(target, data, expected, message);
+    }
+
+    /// @notice Assert that a view call returns an int256 greater than or equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The minimum expected value (inclusive)
+    function assertGeCallInt(address target, bytes calldata data, int256 expected) external view {
+        _assertGeCallInt(target, data, expected, "GE");
+    }
+
+    /// @notice Assert that a view call returns an int256 greater than or equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The minimum expected value (inclusive)
+    /// @param message Custom error message on failure
+    function assertGeCallInt(address target, bytes calldata data, int256 expected, string calldata message) external view {
+        _assertGeCallInt(target, data, expected, message);
+    }
+
+    /// @notice Assert that a view call returns an int256 less than or equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The maximum expected value (inclusive)
+    function assertLeCallInt(address target, bytes calldata data, int256 expected) external view {
+        _assertLeCallInt(target, data, expected, "LE");
+    }
+
+    /// @notice Assert that a view call returns an int256 less than or equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The maximum expected value (inclusive)
+    /// @param message Custom error message on failure
+    function assertLeCallInt(address target, bytes calldata data, int256 expected, string calldata message) external view {
+        _assertLeCallInt(target, data, expected, message);
     }
 
     // ============ Address Call Assertions ============
@@ -313,6 +427,25 @@ contract Assertions {
         _assertEqCallUintN(target, data, index, expected, message);
     }
 
+    /// @notice Assert that a specific uint256 element in a tuple is not equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The value that actual should not equal
+    function assertNeCallUintN(address target, bytes calldata data, uint256 index, uint256 expected) external view {
+        _assertNeCallUintN(target, data, index, expected, "NE_N");
+    }
+
+    /// @notice Assert that a specific uint256 element in a tuple is not equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The value that actual should not equal
+    /// @param message Custom error message on failure
+    function assertNeCallUintN(address target, bytes calldata data, uint256 index, uint256 expected, string calldata message) external view {
+        _assertNeCallUintN(target, data, index, expected, message);
+    }
+
     /// @notice Assert that a specific uint256 element in a tuple is greater than expected
     /// @param target The contract address to call
     /// @param data The encoded function call data (use abi.encodeCall)
@@ -387,6 +520,122 @@ contract Assertions {
     /// @param message Custom error message on failure
     function assertLeCallUintN(address target, bytes calldata data, uint256 index, uint256 expected, string calldata message) external view {
         _assertLeCallUintN(target, data, index, expected, message);
+    }
+
+    // ============ Tuple-Indexed Int256 Assertions ============
+
+    /// @notice Assert that a specific int256 element in a tuple return value equals expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The expected int256 value
+    function assertEqCallIntN(address target, bytes calldata data, uint256 index, int256 expected) external view {
+        _assertEqCallIntN(target, data, index, expected, "EQ_N");
+    }
+
+    /// @notice Assert that a specific int256 element in a tuple return value equals expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The expected int256 value
+    /// @param message Custom error message on failure
+    function assertEqCallIntN(address target, bytes calldata data, uint256 index, int256 expected, string calldata message) external view {
+        _assertEqCallIntN(target, data, index, expected, message);
+    }
+
+    /// @notice Assert that a specific int256 element in a tuple is not equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The value that actual should not equal
+    function assertNeCallIntN(address target, bytes calldata data, uint256 index, int256 expected) external view {
+        _assertNeCallIntN(target, data, index, expected, "NE_N");
+    }
+
+    /// @notice Assert that a specific int256 element in a tuple is not equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The value that actual should not equal
+    /// @param message Custom error message on failure
+    function assertNeCallIntN(address target, bytes calldata data, uint256 index, int256 expected, string calldata message) external view {
+        _assertNeCallIntN(target, data, index, expected, message);
+    }
+
+    /// @notice Assert that a specific int256 element in a tuple is greater than expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The value that actual should be greater than
+    function assertGtCallIntN(address target, bytes calldata data, uint256 index, int256 expected) external view {
+        _assertGtCallIntN(target, data, index, expected, "GT_N");
+    }
+
+    /// @notice Assert that a specific int256 element in a tuple is greater than expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The value that actual should be greater than
+    /// @param message Custom error message on failure
+    function assertGtCallIntN(address target, bytes calldata data, uint256 index, int256 expected, string calldata message) external view {
+        _assertGtCallIntN(target, data, index, expected, message);
+    }
+
+    /// @notice Assert that a specific int256 element in a tuple is less than expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The value that actual should be less than
+    function assertLtCallIntN(address target, bytes calldata data, uint256 index, int256 expected) external view {
+        _assertLtCallIntN(target, data, index, expected, "LT_N");
+    }
+
+    /// @notice Assert that a specific int256 element in a tuple is less than expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The value that actual should be less than
+    /// @param message Custom error message on failure
+    function assertLtCallIntN(address target, bytes calldata data, uint256 index, int256 expected, string calldata message) external view {
+        _assertLtCallIntN(target, data, index, expected, message);
+    }
+
+    /// @notice Assert that a specific int256 element in a tuple is greater than or equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The minimum expected value (inclusive)
+    function assertGeCallIntN(address target, bytes calldata data, uint256 index, int256 expected) external view {
+        _assertGeCallIntN(target, data, index, expected, "GE_N");
+    }
+
+    /// @notice Assert that a specific int256 element in a tuple is greater than or equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The minimum expected value (inclusive)
+    /// @param message Custom error message on failure
+    function assertGeCallIntN(address target, bytes calldata data, uint256 index, int256 expected, string calldata message) external view {
+        _assertGeCallIntN(target, data, index, expected, message);
+    }
+
+    /// @notice Assert that a specific int256 element in a tuple is less than or equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The maximum expected value (inclusive)
+    function assertLeCallIntN(address target, bytes calldata data, uint256 index, int256 expected) external view {
+        _assertLeCallIntN(target, data, index, expected, "LE_N");
+    }
+
+    /// @notice Assert that a specific int256 element in a tuple is less than or equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param index The 0-based index of the element in the return tuple
+    /// @param expected The maximum expected value (inclusive)
+    /// @param message Custom error message on failure
+    function assertLeCallIntN(address target, bytes calldata data, uint256 index, int256 expected, string calldata message) external view {
+        _assertLeCallIntN(target, data, index, expected, message);
     }
 
     // ============ Tuple-Indexed Address Assertions ============
@@ -563,6 +812,40 @@ contract Assertions {
     /// @param message Custom error message on failure
     function assertGeCallArrayLength(address target, bytes calldata data, uint256 expected, string calldata message) external view {
         _assertGeCallArrayLength(target, data, expected, message);
+    }
+
+    /// @notice Assert that a call returning a dynamic array has length less than expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The value that array length should be less than
+    function assertLtCallArrayLength(address target, bytes calldata data, uint256 expected) external view {
+        _assertLtCallArrayLength(target, data, expected, "LT_LEN");
+    }
+
+    /// @notice Assert that a call returning a dynamic array has length less than expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The value that array length should be less than
+    /// @param message Custom error message on failure
+    function assertLtCallArrayLength(address target, bytes calldata data, uint256 expected, string calldata message) external view {
+        _assertLtCallArrayLength(target, data, expected, message);
+    }
+
+    /// @notice Assert that a call returning a dynamic array has length less than or equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The maximum array length (inclusive)
+    function assertLeCallArrayLength(address target, bytes calldata data, uint256 expected) external view {
+        _assertLeCallArrayLength(target, data, expected, "LE_LEN");
+    }
+
+    /// @notice Assert that a call returning a dynamic array has length less than or equal to expected
+    /// @param target The contract address to call
+    /// @param data The encoded function call data (use abi.encodeCall)
+    /// @param expected The maximum array length (inclusive)
+    /// @param message Custom error message on failure
+    function assertLeCallArrayLength(address target, bytes calldata data, uint256 expected, string calldata message) external view {
+        _assertLeCallArrayLength(target, data, expected, message);
     }
 
     // ============ Approximate Equality Assertions ============
@@ -895,8 +1178,12 @@ contract Assertions {
 
     // ============ Internal Helpers ============
 
-    /// @dev Executes a staticcall and returns the raw result bytes
+    /// @dev Executes a staticcall and returns the raw result bytes.
+    ///      Reverts with CallFailed when the target has no code, since a staticcall
+    ///      to a code-less address succeeds with empty returndata and would otherwise
+    ///      surface as an opaque ABI decoding error.
     function _call(address target, bytes calldata data) internal view returns (bytes memory) {
+        if (target.code.length == 0) revert CallFailed(target, data);
         (bool success, bytes memory result) = target.staticcall(data);
         if (!success) revert CallFailed(target, data);
         return result;
@@ -940,6 +1227,44 @@ contract Assertions {
         if (actual > expected) revert AssertionFailedUint(message, actual, expected);
     }
 
+    // ============ Internal Int256 Call Assertions ============
+
+    function _assertEqCallInt(address target, bytes calldata data, int256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        int256 actual = abi.decode(result, (int256));
+        if (actual != expected) revert AssertionFailedInt(message, actual, expected);
+    }
+
+    function _assertNeCallInt(address target, bytes calldata data, int256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        int256 actual = abi.decode(result, (int256));
+        if (actual == expected) revert AssertionFailedInt(message, actual, expected);
+    }
+
+    function _assertGtCallInt(address target, bytes calldata data, int256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        int256 actual = abi.decode(result, (int256));
+        if (actual <= expected) revert AssertionFailedInt(message, actual, expected);
+    }
+
+    function _assertLtCallInt(address target, bytes calldata data, int256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        int256 actual = abi.decode(result, (int256));
+        if (actual >= expected) revert AssertionFailedInt(message, actual, expected);
+    }
+
+    function _assertGeCallInt(address target, bytes calldata data, int256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        int256 actual = abi.decode(result, (int256));
+        if (actual < expected) revert AssertionFailedInt(message, actual, expected);
+    }
+
+    function _assertLeCallInt(address target, bytes calldata data, int256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        int256 actual = abi.decode(result, (int256));
+        if (actual > expected) revert AssertionFailedInt(message, actual, expected);
+    }
+
     // ============ Internal Address Call Assertions ============
 
     function _assertEqCallAddress(address target, bytes calldata data, address expected, string memory message) internal view {
@@ -978,8 +1303,14 @@ contract Assertions {
 
     // ============ Internal Tuple-Indexed Helpers ============
 
+    /// @dev Reverts when `index` points past the head words of the returned data
+    function _checkBounds(bytes memory result, uint256 index) internal pure {
+        if (index >= result.length / 32) revert ReturnDataOutOfBounds(index, result.length);
+    }
+
     /// @dev Extracts a uint256 at a specific index from ABI-encoded return data
     function _getUintN(bytes memory result, uint256 index) internal pure returns (uint256 value) {
+        _checkBounds(result, index);
         assembly {
             value := mload(add(add(result, 32), mul(index, 32)))
         }
@@ -987,6 +1318,7 @@ contract Assertions {
 
     /// @dev Extracts an address at a specific index from ABI-encoded return data
     function _getAddressN(bytes memory result, uint256 index) internal pure returns (address value) {
+        _checkBounds(result, index);
         assembly {
             value := mload(add(add(result, 32), mul(index, 32)))
         }
@@ -994,6 +1326,7 @@ contract Assertions {
 
     /// @dev Extracts a bool at a specific index from ABI-encoded return data
     function _getBoolN(bytes memory result, uint256 index) internal pure returns (bool value) {
+        _checkBounds(result, index);
         assembly {
             value := mload(add(add(result, 32), mul(index, 32)))
         }
@@ -1001,6 +1334,7 @@ contract Assertions {
 
     /// @dev Extracts a bytes32 at a specific index from ABI-encoded return data
     function _getBytes32N(bytes memory result, uint256 index) internal pure returns (bytes32 value) {
+        _checkBounds(result, index);
         assembly {
             value := mload(add(add(result, 32), mul(index, 32)))
         }
@@ -1008,28 +1342,44 @@ contract Assertions {
 
     /// @dev Extracts an int256 at a specific index from ABI-encoded return data
     function _getIntN(bytes memory result, uint256 index) internal pure returns (int256 value) {
+        _checkBounds(result, index);
         assembly {
             value := mload(add(add(result, 32), mul(index, 32)))
         }
     }
 
-    /// @dev Extracts a string at a specific index from ABI-encoded return data
+    /// @dev Extracts a string at a specific index from ABI-encoded return data.
+    ///      Validates the head offset and string length against the returned data
+    ///      and copies into a properly allocated bytes array (padded free-memory
+    ///      pointer, no writes past the allocation).
     function _getStringN(bytes memory result, uint256 index) internal pure returns (string memory) {
+        _checkBounds(result, index);
         uint256 offset;
         assembly {
             offset := mload(add(add(result, 32), mul(index, 32)))
         }
-        bytes memory strBytes;
+        if (offset > result.length || result.length - offset < 32) {
+            revert ReturnDataOutOfBounds(index, result.length);
+        }
+        uint256 strLen;
         assembly {
-            let strStart := add(add(result, 32), offset)
-            let strLen := mload(strStart)
-            strBytes := mload(0x40)
-            mstore(0x40, add(add(strBytes, 32), strLen))
-            mstore(strBytes, strLen)
-            let src := add(strStart, 32)
+            strLen := mload(add(add(result, 32), offset))
+        }
+        if (result.length - offset - 32 < strLen) {
+            revert ReturnDataOutOfBounds(index, result.length);
+        }
+        bytes memory strBytes = new bytes(strLen);
+        assembly {
+            let src := add(add(result, 64), offset)
             let dst := add(strBytes, 32)
             for { let i := 0 } lt(i, strLen) { i := add(i, 32) } {
                 mstore(add(dst, i), mload(add(src, i)))
+            }
+            // Zero the padding of the final partial word so no dirty bytes remain
+            let rem := mod(strLen, 32)
+            if rem {
+                let last := add(dst, sub(strLen, rem))
+                mstore(last, and(mload(last), not(shr(mul(rem, 8), not(0)))))
             }
         }
         return string(strBytes);
@@ -1037,9 +1387,16 @@ contract Assertions {
 
     /// @dev Gets the length of a dynamic array from ABI-encoded return data
     function _getArrayLength(bytes memory result) internal pure returns (uint256 length) {
+        if (result.length < 32) revert ReturnDataOutOfBounds(0, result.length);
+        uint256 offset;
         assembly {
             // First word is the offset to array data (always 32 for single array return)
-            let offset := mload(add(result, 32))
+            offset := mload(add(result, 32))
+        }
+        if (offset > result.length || result.length - offset < 32) {
+            revert ReturnDataOutOfBounds(0, result.length);
+        }
+        assembly {
             // Length is at the offset position
             length := mload(add(add(result, 32), offset))
         }
@@ -1051,6 +1408,12 @@ contract Assertions {
         bytes memory result = _call(target, data);
         uint256 actual = _getUintN(result, index);
         if (actual != expected) revert AssertionFailedUint(message, actual, expected);
+    }
+
+    function _assertNeCallUintN(address target, bytes calldata data, uint256 index, uint256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        uint256 actual = _getUintN(result, index);
+        if (actual == expected) revert AssertionFailedUint(message, actual, expected);
     }
 
     function _assertGtCallUintN(address target, bytes calldata data, uint256 index, uint256 expected, string memory message) internal view {
@@ -1083,6 +1446,36 @@ contract Assertions {
         bytes memory result = _call(target, data);
         int256 actual = _getIntN(result, index);
         if (actual != expected) revert AssertionFailedInt(message, actual, expected);
+    }
+
+    function _assertNeCallIntN(address target, bytes calldata data, uint256 index, int256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        int256 actual = _getIntN(result, index);
+        if (actual == expected) revert AssertionFailedInt(message, actual, expected);
+    }
+
+    function _assertGtCallIntN(address target, bytes calldata data, uint256 index, int256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        int256 actual = _getIntN(result, index);
+        if (actual <= expected) revert AssertionFailedInt(message, actual, expected);
+    }
+
+    function _assertLtCallIntN(address target, bytes calldata data, uint256 index, int256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        int256 actual = _getIntN(result, index);
+        if (actual >= expected) revert AssertionFailedInt(message, actual, expected);
+    }
+
+    function _assertGeCallIntN(address target, bytes calldata data, uint256 index, int256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        int256 actual = _getIntN(result, index);
+        if (actual < expected) revert AssertionFailedInt(message, actual, expected);
+    }
+
+    function _assertLeCallIntN(address target, bytes calldata data, uint256 index, int256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        int256 actual = _getIntN(result, index);
+        if (actual > expected) revert AssertionFailedInt(message, actual, expected);
     }
 
     // ============ Internal Tuple-Indexed Address Assertions ============
@@ -1150,6 +1543,18 @@ contract Assertions {
         bytes memory result = _call(target, data);
         uint256 actual = _getArrayLength(result);
         if (actual < expected) revert AssertionFailedUint(message, actual, expected);
+    }
+
+    function _assertLtCallArrayLength(address target, bytes calldata data, uint256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        uint256 actual = _getArrayLength(result);
+        if (actual >= expected) revert AssertionFailedUint(message, actual, expected);
+    }
+
+    function _assertLeCallArrayLength(address target, bytes calldata data, uint256 expected, string memory message) internal view {
+        bytes memory result = _call(target, data);
+        uint256 actual = _getArrayLength(result);
+        if (actual > expected) revert AssertionFailedUint(message, actual, expected);
     }
 
     // ============ Internal Approximate Equality Assertions ============

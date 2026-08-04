@@ -235,7 +235,7 @@ export function AbiForm({
         type="button"
         disabled={!canAdd || adding}
         onClick={add}
-        className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-bp-500)] text-white hover:bg-[var(--color-bp-400)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         Add to batch
       </button>

@@ -114,7 +114,7 @@ function Builder() {
                 onClick={() =>
                   void batchSimulation.simulate(batchScript, executor)
                 }
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-bp-500)] text-white hover:bg-[var(--color-bp-400)] disabled:opacity-40 transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 transition-colors"
               >
                 {batchSimulation.status === "running"
                   ? "Simulating…"
@@ -186,7 +186,7 @@ function Builder() {
                 onClick={() =>
                   void fullSimulation.simulate(scriptState.script, executor)
                 }
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-bp-500)] text-white hover:bg-[var(--color-bp-400)] disabled:opacity-40 transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 transition-colors"
               >
                 {fullSimulation.status === "running"
                   ? "Simulating…"

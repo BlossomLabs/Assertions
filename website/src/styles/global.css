@@ -26,6 +26,12 @@
   --color-bp-900: #0c1a2e;
   --color-bp-950: #080d18;
 
+  /* Primary action buttons — blue-800, matching the logo badge
+     (light-theme values; overridden for dark below) */
+  --color-primary: #1e40af;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-fg: #ffffff;
+
   --color-ok: #22c55e;
   --color-err: #ef4444;
 }
@@ -41,6 +47,14 @@
 }
 
 :root.dark {
+  /* Accent text shades lighten in dark mode (Tailwind blue-200/300/400)
+     so they carry on the dark surfaces; tint bases (bp-500+) stay put. */
+  --color-bp-200: #bfdbfe;
+  --color-bp-300: #93c5fd;
+  --color-bp-400: #60a5fa;
+  --color-primary: #93c5fd;
+  --color-primary-hover: #bfdbfe;
+  --color-primary-fg: #0c1a2e;
   --color-surface: #080d18;
   --color-surface-2: #0f1729;
   --color-surface-3: #162035;

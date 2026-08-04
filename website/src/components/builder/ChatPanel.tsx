@@ -187,7 +187,7 @@ export function ChatPanel({
                 setLoggingIn(false);
               }
             }}
-            className="w-full px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-bp-500)] text-white hover:bg-[var(--color-bp-400)] disabled:opacity-50 transition-colors"
+            className="w-full px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 transition-colors"
           >
             {loggingIn ? "Waiting for login…" : "Login with Dappnode Nexus"}
           </button>
@@ -244,7 +244,7 @@ export function ChatPanel({
               key={i}
               className={`text-sm leading-relaxed whitespace-pre-wrap ${
                 item.role === "user"
-                  ? "px-3 py-2 rounded-lg bg-[var(--color-bp-500)]/10 border border-[var(--color-bp-500)]/20"
+                  ? "px-3 py-2 rounded-lg bg-[var(--color-bp-500)]/10 dark:bg-[var(--color-bp-400)]/10 border border-[var(--color-bp-500)]/20 dark:border-[var(--color-bp-400)]/30"
                   : "text-[var(--color-ink)]"
               }`}
             >
@@ -297,7 +297,7 @@ export function ChatPanel({
           <button
             type="submit"
             disabled={!input.trim()}
-            className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-bp-500)] text-white hover:bg-[var(--color-bp-400)] disabled:opacity-40 transition-colors"
+            className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 transition-colors"
           >
             Send
           </button>

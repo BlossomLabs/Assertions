@@ -1,43 +1,15 @@
 ---
-import { ASSERTIONS_ADDRESS } from '../lib/assertions-deployment';
-
-const address = ASSERTIONS_ADDRESS;
 ---
 
 <footer class="border-t border-[var(--color-ink-3)]/15 py-12 px-6">
   <div class="max-w-6xl mx-auto">
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
-      <div class="flex items-center gap-3">
-        <img src="/favicon.svg" alt="" class="size-6 rounded" />
-        <span class="font-mono font-semibold text-sm">Assertions</span>
-      </div>
-
-      <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-[var(--color-ink-3)]">
-        <a
-          href={`https://etherscan.io/address/${address}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="font-mono hover:text-[var(--color-bp-400)] transition-colors"
-        >
-          assertions.eth
-        </a>
-        <a
-          href="/builder"
-          class="hover:text-[var(--color-bp-400)] transition-colors"
-        >
-          Assertion Builder
-        </a>
-        <a
-          href="https://github.com/blossomlabs/Assertions"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="hover:text-[var(--color-bp-400)] transition-colors"
-        >
-          GitHub
-        </a>
-      </div>
-
-      <p class="text-xs text-[var(--color-ink-3)]">MIT License</p>
-    </div>
+    <p class="text-center text-base text-[var(--color-ink-3)] dark:text-[var(--color-ink-2)]">
+      © 2026 Built with ❤️ by <a
+        href="https://blossom.software"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-[var(--color-bp-400)] dark:text-[var(--color-bp-300)] underline underline-offset-2 hover:text-[var(--color-bp-300)] dark:hover:text-[var(--color-bp-200)] transition-colors"
+      >Blossom Labs</a> · MIT License
+    </p>
   </div>
 </footer>

@@ -30,8 +30,8 @@ const inputCls =
   "focus:border-[var(--color-bp-400)] focus:outline-none font-mono text-sm placeholder:text-[var(--color-ink-3)]";
 
 const primaryBtnCls =
-  "px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-bp-500)] text-white " +
-  "hover:bg-[var(--color-bp-400)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors";
+  "px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] " +
+  "hover:bg-[var(--color-primary-hover)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors";
 
 type DeployState =
   | { step: "idle" }

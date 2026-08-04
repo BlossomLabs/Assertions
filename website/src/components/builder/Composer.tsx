@@ -151,7 +151,7 @@ export function Composer({
               if (file) void importTxBuilderFile(file);
               e.target.value = "";
             }}
-            className="block w-full text-sm text-[var(--color-ink-2)] file:mr-3 file:px-4 file:py-2 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[var(--color-bp-500)] file:text-white hover:file:bg-[var(--color-bp-400)] file:cursor-pointer file:transition-colors"
+            className="block w-full text-sm text-[var(--color-ink-2)] file:mr-3 file:px-4 file:py-2 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[var(--color-primary)] file:text-[var(--color-primary-fg)] hover:file:bg-[var(--color-primary-hover)] file:cursor-pointer file:transition-colors"
           />
           {importError && (
             <p className="text-xs text-[var(--color-err)]">{importError}</p>

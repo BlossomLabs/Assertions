@@ -3,10 +3,23 @@ import ThemeToggle from './ThemeToggle';
 ---
 
 <nav class="fixed top-0 inset-x-0 z-50 border-b border-[var(--color-ink-3)]/15 backdrop-blur-lg bg-[var(--color-surface)]/80">
-  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-3 group">
-      <img src="/favicon.svg" alt="" class="size-8 rounded-lg" />
-      <span class="font-mono font-semibold text-lg tracking-tight">Assertions</span>
+  <div class="max-w-6xl mx-auto h-16 flex items-center justify-between">
+    <a href="/" class="flex items-center group" aria-label="assertions.eth — home">
+      <svg viewBox="36.54 19.17 300.27 38.87" class="h-7 sm:h-8 w-auto" aria-hidden="true">
+        <rect fill="#1e40af" x="36.54" y="19.17" width="38.4" height="38.87" rx="19.2" ry="19.2"/>
+        <g fill="#f7f5f1">
+          <polygon points="41.71,32.1 54.82,39.67 54.82,45.11 41.71,37.54"/>
+          <polygon points="41.71,37.54 54.82,29.97 54.82,24.53 41.71,32.1"/>
+          <polygon points="69.77,45.11 56.66,37.54 56.66,32.1 69.77,39.67"/>
+          <polygon points="69.77,39.67 56.66,47.24 56.66,52.68 69.77,45.11"/>
+          <polygon points="41.71,39.67 54.82,47.24 54.82,52.68 41.71,45.11"/>
+        </g>
+        <text
+          class="font-mono fill-[#1e40af] dark:fill-[#f7f5f1]"
+          font-size="29.634"
+          transform="translate(86.6 46.75) scale(1.03 1)"
+        ><tspan x="0" y="0">assertions</tspan><tspan x="173.83" y="0">.</tspan><tspan x="187.64" y="0">eth</tspan></text>
+      </svg>
     </a>
     <div class="flex items-center gap-3">
       <a
@@ -17,7 +30,7 @@ import ThemeToggle from './ThemeToggle';
       </a>
       <a
         href="/builder"
-        class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-bp-500)] text-white hover:bg-[var(--color-bp-400)] transition-colors"
+        class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] transition-colors"
       >
         Assertion Builder
       </a>

@@ -67,7 +67,7 @@ export function ContextSelector({
             type="button"
             disabled={isPending || !injected}
             onClick={() => injected && connect({ connector: injected })}
-            className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-bp-500)] text-white hover:bg-[var(--color-bp-400)] disabled:opacity-50 transition-colors"
+            className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 transition-colors"
           >
             {isPending ? "Connecting…" : "Connect wallet"}
           </button>

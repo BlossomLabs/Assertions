@@ -3,37 +3,30 @@ const cases = [
   {
     title: 'Treasury Protection',
     description: 'Assert treasury balance doesn\'t drop below threshold',
-    color: 'var(--color-bp-400)',
   },
   {
     title: 'Permission Safety',
     description: 'Assert admin roles haven\'t been changed unexpectedly',
-    color: 'var(--color-ok)',
   },
   {
     title: 'Price Manipulation Guards',
     description: 'Assert oracle price is within expected bounds',
-    color: '#f59e0b',
   },
   {
     title: 'Upgrade Verification',
     description: 'Assert proxy implementation matches expected codehash',
-    color: '#a855f7',
   },
   {
     title: 'Timelock Validation',
     description: 'Assert current timestamp is after unlock period',
-    color: '#ec4899',
   },
   {
     title: 'Liquidity Checks',
     description: 'Assert pool reserves meet minimum requirements',
-    color: '#06b6d4',
   },
   {
     title: 'Ownership Verification',
     description: 'Assert critical contracts still owned by DAO',
-    color: '#f97316',
   },
 ];
 ---
@@ -50,7 +43,7 @@ const cases = [
       {cases.map((c) => (
         <div class="group relative p-6 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-ink-3)]/15 hover:border-[var(--color-ink-3)]/30 transition-all">
           <div class="flex items-start gap-4">
-            <div class="mt-0.5 size-2.5 rounded-full shrink-0" style={`background:${c.color}`}></div>
+            <div class="mt-0.5 size-2.5 rounded-full shrink-0 bg-[var(--color-bp-400)]"></div>
             <div>
               <h3 class="font-mono font-semibold text-sm mb-1.5">{c.title}</h3>
               <p class="text-sm text-[var(--color-ink-2)] leading-relaxed">{c.description}</p>

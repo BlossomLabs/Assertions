@@ -54,14 +54,18 @@ contract Combinators {
 
     /// @notice Arithmetic operations for calcUint / calcInt
     /// @dev ABI-encoded as uint8: Add = 0, Sub = 1, Mul = 2, Div = 3, Mod = 4,
-    ///      Exp = 5 (calcUint only; calcInt reverts with UnsupportedOp on Exp)
+    ///      Exp = 5 (calcUint only; calcInt reverts with UnsupportedOp on Exp),
+    ///      Min = 6, Max = 7, AbsDiff = 8
     enum ArithOp {
         Add,
         Sub,
         Mul,
         Div,
         Mod,
-        Exp
+        Exp,
+        Min,
+        Max,
+        AbsDiff
     }
 
     /// @notice Logic operations for logicBool
@@ -216,6 +220,29 @@ contract Combinators {
         return _resolveChain(target, calls).length;
     }
 
+    /// @notice Resolves a call chain and returns the decoded length of the final
+    ///         dynamic return value (array element count, or string/bytes byte length)
+    /// @dev Decoded counterpart of lengthCall for a single dynamic return value:
+    ///      validates the head offset the same way the core's array-length assertions
+    ///      do, then returns the length word. For a T[] return this is the element
+    ///      count regardless of element size; string and bytes returns share the same
+    ///      encoding, so their byte length comes back (UTF-8 characters may span
+    ///      multiple bytes). Canonical use is a length as an expression operand, e.g.
+    ///      "holder list is as long as reward list": cmpUint(Eq, combinators,
+    ///      abi.encodeCall(Combinators.arrayLengthCall, (a, callsA)), combinators,
+    ///      abi.encodeCall(Combinators.arrayLengthCall, (b, callsB))). Reverts with
+    ///      ReturnDataOutOfBounds when the final return is not a single well-formed
+    ///      dynamic value; chain resolution failures behave exactly as in chainCall.
+    ///      A single call is a one-element array.
+    /// @param target The contract address the first call is executed on
+    /// @param calls The encoded call for each hop (use abi.encodeCall); every hop
+    ///        except the last must return an address, and the last must return a
+    ///        single dynamic value (array, string, or bytes)
+    /// @return The decoded length of the final call's dynamic return value
+    function arrayLengthCall(address target, bytes[] calldata calls) external view returns (uint256) {
+        return _dynLength(_resolveChain(target, calls));
+    }
+
     // ============ Arithmetic Composition ============
 
     /// @notice Combines the uint256 results of two staticcalls with an arithmetic operation
@@ -231,7 +258,11 @@ contract Combinators {
     ///      ReturnDataOutOfBounds. For Exp, operand1 is the base and operand2 the exponent
     ///      (0 ** 0 == 1 per EVM semantics) — canonical use is live decimals scaling,
     ///      e.g. 5 * 10 ** token.decimals() as nested calcUint(Mul, ..., calcUint(Exp, ...)).
-    /// @param op The operation to apply (Add = 0, Sub = 1, Mul = 2, Div = 3, Mod = 4, Exp = 5)
+    ///      AbsDiff is |a - b| and never underflows — combined with a Le assertion it
+    ///      expresses live-vs-live approximate equality (|oracleA - oracleB| <= delta),
+    ///      which the core's ApproxEq cannot (its expected side is a constant).
+    /// @param op The operation to apply (Add = 0, Sub = 1, Mul = 2, Div = 3, Mod = 4,
+    ///        Exp = 5, Min = 6, Max = 7, AbsDiff = 8)
     /// @param target1 The contract address of the first operand call
     /// @param data1 The encoded first operand call (use abi.encodeCall)
     /// @param target2 The contract address of the second operand call
@@ -245,7 +276,10 @@ contract Combinators {
         if (op == ArithOp.Mul) return a * b;
         if (op == ArithOp.Div) return a / b;
         if (op == ArithOp.Mod) return a % b;
-        return a ** b;
+        if (op == ArithOp.Exp) return a ** b;
+        if (op == ArithOp.Min) return a < b ? a : b;
+        if (op == ArithOp.Max) return a > b ? a : b;
+        return a > b ? a - b : b - a;
     }
 
     /// @notice Combines the int256 results of two staticcalls with an arithmetic operation
@@ -255,9 +289,11 @@ contract Combinators {
     ///      takes the sign of the dividend (so 45 % -7 == 3 and -45 % 7 == -3), and
     ///      type(int256).min / -1 reverts with Panic(0x11). Exp reverts with UnsupportedOp:
     ///      Solidity defines `**` for unsigned operands only, so signed exponentiation is
-    ///      ill-defined — use calcUint for power expressions.
-    /// @param op The operation to apply (Add = 0, Sub = 1, Mul = 2, Div = 3, Mod = 4;
-    ///        Exp = 5 reverts with UnsupportedOp)
+    ///      ill-defined — use calcUint for power expressions. AbsDiff returns |a - b| as
+    ///      an int256, so a span wider than type(int256).max (opposite-sign extremes)
+    ///      overflows the checked subtraction and reverts with Panic(0x11).
+    /// @param op The operation to apply (Add = 0, Sub = 1, Mul = 2, Div = 3, Mod = 4,
+    ///        Min = 6, Max = 7, AbsDiff = 8; Exp = 5 reverts with UnsupportedOp)
     /// @param target1 The contract address of the first operand call
     /// @param data1 The encoded first operand call (use abi.encodeCall)
     /// @param target2 The contract address of the second operand call
@@ -271,7 +307,10 @@ contract Combinators {
         if (op == ArithOp.Sub) return a - b;
         if (op == ArithOp.Mul) return a * b;
         if (op == ArithOp.Div) return a / b;
-        return a % b;
+        if (op == ArithOp.Mod) return a % b;
+        if (op == ArithOp.Min) return a < b ? a : b;
+        if (op == ArithOp.Max) return a > b ? a : b;
+        return a > b ? a - b : b - a;
     }
 
     // ============ Bitwise Composition ============
@@ -425,6 +464,27 @@ contract Combinators {
         return account.balance;
     }
 
+    /// @notice Resolves a call chain and returns the native balance of the address
+    ///         the final call returns
+    /// @dev Runtime counterpart of ethBalance for addresses not known at encoding
+    ///      time — operands only flow between combinators as return values, so this
+    ///      is the only way to read the balance of a call-resolved address, e.g.
+    ///      "the registry's current treasury holds at least 100 ETH":
+    ///      assertGeCallUint(combinators, abi.encodeCall(Combinators.ethBalanceCall,
+    ///      (registry, [encodeCall(treasury)])), 100 ether). The final return must
+    ///      decode as an address (short returndata reverts with
+    ///      ReturnDataOutOfBounds); chain resolution failures behave exactly as in
+    ///      chainCall. A single call is a one-element array.
+    /// @param target The contract address the first call is executed on
+    /// @param calls The encoded call for each hop (use abi.encodeCall); every hop
+    ///        INCLUDING the last must return an address
+    /// @return The native balance in wei of the address the final call returns
+    function ethBalanceCall(address target, bytes[] calldata calls) external view returns (uint256) {
+        bytes memory result = _resolveChain(target, calls);
+        if (result.length < 32) revert ReturnDataOutOfBounds(0, result.length);
+        return abi.decode(result, (address)).balance;
+    }
+
     /// @notice Returns the current block timestamp
     /// @dev Value getter for time arithmetic, e.g. "seconds until unlock":
     ///      calcUint(Sub, vesting, abi.encodeCall(IVesting.unlockTime, ()),
@@ -469,6 +529,23 @@ contract Combinators {
         bytes memory result = _call(target, data);
         if (result.length < 32) revert ReturnDataOutOfBounds(0, result.length);
         return abi.decode(result, (bool));
+    }
+
+    /// @dev Decodes the length word of a single ABI-encoded dynamic return value
+    ///      (array, string, or bytes), validating the head offset against the actual
+    ///      returndata the same way the core's array-length assertions do
+    function _dynLength(bytes memory result) internal pure returns (uint256 length) {
+        if (result.length < 32) revert ReturnDataOutOfBounds(0, result.length);
+        uint256 offset;
+        assembly {
+            offset := mload(add(result, 32))
+        }
+        if (offset > result.length || result.length - offset < 32) {
+            revert ReturnDataOutOfBounds(0, result.length);
+        }
+        assembly {
+            length := mload(add(add(result, 32), offset))
+        }
     }
 
     /// @dev Whether `delim` occurs in `str` at byte position `pos` (caller bounds-checks)

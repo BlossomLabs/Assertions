@@ -17,7 +17,7 @@ Because combinators are stateless view targets, the periphery can evolve: old `C
 
 ```
 Assertions  v1.1  0xa55E47E2767d85B8C4d9E62dd5009ffC45c4aBc4   (frozen core)
-Combinators v1.0  0xA55eC03487C832ea7811204Fd46a337dD2DafAFF   (versionable periphery)
+Combinators v1.0  0xa55EC07f6FBac3FC461B79bBdf40D279B8565dA5   (versionable periphery)
 ```
 
 Version 1.0 of the core remains deployed at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F) (`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`). Core v1.1 is a strict superset of the 1.0 ABI: it adds int256 assertions (including approximate equality), tuple index bounds checking, `CallFailed` on code-less targets, and the `Ne`/`Lt`/`Le` variants listed below. All composition functions live in the separate `Combinators` contract, which carries its own version line.
@@ -318,7 +318,7 @@ assertions.assertEqCallUint(
 
 ## Combinators — computing values
 
-Assertion functions revert or pass — they judge. Everything that *computes* lives in the separate `Combinators` contract (`0xA55eC03487C832ea7811204Fd46a337dD2DafAFF`): each function is a small composable building block, and nested `(target, data)` operands in calldata compose the blocks into arbitrary expressions. The core consumes the result by pointing any call assertion at the Combinators address.
+Assertion functions revert or pass — they judge. Everything that *computes* lives in the separate `Combinators` contract (`0xa55EC07f6FBac3FC461B79bBdf40D279B8565dA5`): each function is a small composable building block, and nested `(target, data)` operands in calldata compose the blocks into arbitrary expressions. The core consumes the result by pointing any call assertion at the Combinators address.
 
 The core is frozen forever; Combinators is versionable. A future `Combinators` v2 would deploy at a new address without touching the core or breaking anything that references v1.
 
@@ -367,20 +367,21 @@ function notBool  (address target, bytes data) returns (bool)
 function boolToUint(address target, bytes data) returns (uint256)
 function uintCall (address target, bytes[] calls, uint256 wordIndex) returns (uint256)
 function lengthCall(address target, bytes[] calls) returns (uint256)
+function arrayLengthCall(address target, bytes[] calls) returns (uint256)
 ```
 
 The op enums and their numeric encodings (what encoders put in calldata):
 
 | Enum | Values |
 |------|--------|
-| `ArithOp` | `Add = 0`, `Sub = 1`, `Mul = 2`, `Div = 3`, `Mod = 4`, `Exp = 5` (Exp is `calcUint`-only; `calcInt` reverts with `UnsupportedOp` since Solidity defines `**` for unsigned operands only) |
+| `ArithOp` | `Add = 0`, `Sub = 1`, `Mul = 2`, `Div = 3`, `Mod = 4`, `Exp = 5` (Exp is `calcUint`-only; `calcInt` reverts with `UnsupportedOp` since Solidity defines `**` for unsigned operands only), `Min = 6`, `Max = 7`, `AbsDiff = 8` (`AbsDiff` is `\|a - b\|` and never underflows — with a `Le` assertion it expresses live-vs-live approximate equality; the `calcInt` variant reverts with `Panic(0x11)` when the span exceeds `type(int256).max`) |
 | `CmpOp` | `Eq = 0`, `Ne = 1`, `Gt = 2`, `Lt = 3`, `Ge = 4`, `Le = 5` |
 | `LogicOp` | `And = 0`, `Or = 1`, `Xor = 2` |
 | `BitOp` | `And = 0`, `Or = 1`, `Xor = 2`, `Shl = 3`, `Shr = 4` |
 
 Bitwise expressions use `bitUint(BitOp op, …)` and the unary `bitNotUint(target, data)`, both returning `uint256`. For `Shl`/`Shr` the second operand is the shift amount; shifts of 256 or more yield 0 (EVM shift semantics, no revert).
 
-Value getters turn non-call quantities into operands: `ethBalance(account)` (native balance), `blockTimestamp()`, `blockNumber()`, and the literal echoes `constantUint(x)` / `constantInt(x)` for comparing a call result against a constant.
+Value getters turn non-call quantities into operands: `ethBalance(account)` (native balance), `blockTimestamp()`, `blockNumber()`, and the literal echoes `constantUint(x)` / `constantInt(x)` for comparing a call result against a constant. When the account is not known at encoding time, `ethBalanceCall(target, calls)` resolves a call chain and returns the native balance of the address the final call returns — e.g. the balance of `registry.treasury()`.
 
 **Worked example** — "`addr1`'s ETH balance plus its WETH balance is positive":
 
@@ -531,7 +532,7 @@ assertions.assertEqCallBool(
 );
 ```
 
-**Returndata length** — `lengthCall(target, calls)` returns the byte length of the final resolved returndata (EVMcrispr's `@len` / `.length` on live data). It measures the raw ABI encoding, so a `uint256[]` with `n` items measures `64 + n * 32` (offset word + length word + items) — item counts derive arithmetically: `calcUint(Div, calcUint(Sub, lengthCall(...), constantUint(64)), constantUint(32))`.
+**Returndata length** — `arrayLengthCall(target, calls)` returns the decoded length of a single dynamic return value as an expression operand (EVMcrispr's `@len` / `.length` on live data): the element count for a `T[]` return regardless of element size, and the byte length for `string`/`bytes` returns (they share the same encoding). The raw counterpart `lengthCall(target, calls)` returns the byte length of the final resolved returndata — a `uint256[]` with `n` items measures `64 + n * 32` (offset word + length word + items) — for size checks on returns that are not a single dynamic value.
 
 **Bool→uint bridge** — `boolToUint(target, data)` returns 1 for `true` and 0 for `false` (strict 0/1 decoding like `logicBool` operands). It bridges boolean and arithmetic composition, enabling the conditional-select idiom — an expression-level `if` (EVMcrispr's live conditional): `cond * a + (1 - cond) * b` picks `a` when the condition holds and `b` otherwise, composed from three nested `calcUint` calls.
 
@@ -577,7 +578,7 @@ Both contracts use typed custom errors for gas-efficient and informative failure
 |-------|-------------|
 | `CallFailed(address, bytes)` | a chain hop or expression operand reverted or targets a code-less address (identifies the exact failing call) |
 | `ReturnDataOutOfBounds(uint256, uint256)` | an operand or non-final chain hop returned fewer than 32 bytes, a string return failed validation, or a `uintCall` word index points past the returndata |
-| `EmptyCallChain()` | `chainCall` / `hashCall` / `splitCall` / `uintCall` / `lengthCall` received an empty `calls` array |
+| `EmptyCallChain()` | `chainCall` / `hashCall` / `splitCall` / `uintCall` / `lengthCall` / `arrayLengthCall` / `ethBalanceCall` received an empty `calls` array |
 | `EmptyDelimiter()` | `splitCall` received an empty delimiter |
 | `SegmentIndexOutOfBounds(uint256, uint256)` | `splitCall` index is past the last segment (arguments: requested index, segment count) |
 | `UnsupportedOp()` | `calcInt` received `ArithOp.Exp` (signed exponentiation is ill-defined; use `calcUint`) |
@@ -701,7 +702,7 @@ An `index` that points past the returned data reverts with `ReturnDataOutOfBound
 
 ### Combinators (separate `Combinators` contract)
 
-These live at the Combinators address (`0xA55eC03487C832ea7811204Fd46a337dD2DafAFF`), not on the core. See [Combinators — computing values](#combinators--computing-values) for usage.
+These live at the Combinators address (`0xa55EC07f6FBac3FC461B79bBdf40D279B8565dA5`), not on the core. See [Combinators — computing values](#combinators--computing-values) for usage.
 
 | Function | Description |
 |----------|-------------|
@@ -710,13 +711,15 @@ These live at the Combinators address (`0xA55eC03487C832ea7811204Fd46a337dD2DafA
 | `splitCall` | Split a chain's final string return by a delimiter and return the index-th segment |
 | `uintCall` | Extract the wordIndex-th 32-byte word of a chain's final returndata (static-layout tuples) |
 | `lengthCall` | Byte length of a chain's final returndata |
-| `calcUint` / `calcInt` | Arithmetic over two call results (`ArithOp`: Add, Sub, Mul, Div, Mod, Exp — Exp is uint-only) |
+| `arrayLengthCall` | Decoded length of a chain's final dynamic return — array element count, or string/bytes byte length |
+| `calcUint` / `calcInt` | Arithmetic over two call results (`ArithOp`: Add, Sub, Mul, Div, Mod, Exp, Min, Max, AbsDiff — Exp is uint-only) |
 | `bitUint` / `bitNotUint` | Bitwise ops over call results (`BitOp`: And, Or, Xor, Shl, Shr) |
 | `cmpUint` / `cmpInt` | Comparison returning bool instead of reverting (`CmpOp`: Eq, Ne, Gt, Lt, Ge, Le) |
 | `logicBool` / `notBool` | Boolean combination of call results (`LogicOp`: And, Or, Xor) — no short-circuit |
 | `boolToUint` | 1 for true, 0 for false — enables the conditional-select idiom `cond * a + (1 - cond) * b` |
 | `constantUint` / `constantInt` | Echo a literal, for comparing call results against constants |
 | `ethBalance` | Native balance as a composition operand |
+| `ethBalanceCall` | Native balance of the address a call chain resolves to |
 | `blockTimestamp` / `blockNumber` | Current block values as composition operands |
 
 ### Caveats

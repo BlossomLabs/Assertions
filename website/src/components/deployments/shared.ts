@@ -39,7 +39,7 @@ export const DEPLOYED_CONTRACTS: DeployableContract[] = [
     address: COMBINATORS_ADDRESS,
     salt: COMBINATORS_SALT,
     bytecode: COMBINATORS_CREATION_BYTECODE,
-    gasLabel: "~1.1M",
+    gasLabel: "~1.4M",
   },
 ];
 

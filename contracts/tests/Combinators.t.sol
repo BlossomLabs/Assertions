@@ -1162,4 +1162,148 @@ contract CombinatorsTest is Test {
         );
         assertions.assertEqCallUint(address(combinators), _select(cond, 100, 200), 200);
     }
+
+    // ============ Min / Max / AbsDiff (ArithOp extensions) ============
+
+    function test_calcUint_minMaxAbsDiff_success() public view {
+        bytes memory a = abi.encodeCall(MockTarget.getValue, ()); // 42
+        bytes memory b = abi.encodeCall(MockToken.decimals, ());  // 18
+        assertEq(combinators.calcUint(Combinators.ArithOp.Min, address(target), a, address(token), b), 18);
+        assertEq(combinators.calcUint(Combinators.ArithOp.Max, address(target), a, address(token), b), 42);
+        assertEq(combinators.calcUint(Combinators.ArithOp.AbsDiff, address(target), a, address(token), b), 24);
+        // AbsDiff is symmetric: the smaller operand first must not underflow
+        assertEq(combinators.calcUint(Combinators.ArithOp.AbsDiff, address(token), b, address(target), a), 24);
+    }
+
+    function test_calcUint_absDiff_liveApproxEq_composed() public view {
+        // |target.getValue() - token.decimals()| <= 30: live-vs-live approximate
+        // equality, which the core's ApproxEq (constant expected side) cannot express
+        assertions.assertLeCallUint(
+            address(combinators),
+            _calcU(
+                Combinators.ArithOp.AbsDiff,
+                address(target),
+                abi.encodeCall(MockTarget.getValue, ()),
+                address(token),
+                abi.encodeCall(MockToken.decimals, ())
+            ),
+            30
+        );
+    }
+
+    function test_calcInt_minMaxAbsDiff_success() public view {
+        bytes memory a = abi.encodeCall(MockTarget.getInt, ());      // -42
+        bytes memory b = abi.encodeCall(MockToken.temperature, ());  // -7
+        assertEq(combinators.calcInt(Combinators.ArithOp.Min, address(target), a, address(token), b), -42);
+        assertEq(combinators.calcInt(Combinators.ArithOp.Max, address(target), a, address(token), b), -7);
+        assertEq(combinators.calcInt(Combinators.ArithOp.AbsDiff, address(target), a, address(token), b), 35);
+        assertEq(combinators.calcInt(Combinators.ArithOp.AbsDiff, address(token), b, address(target), a), 35);
+    }
+
+    function test_calcInt_absDiff_overflow_reverts() public {
+        // |max - min| exceeds type(int256).max, so the checked subtraction panics
+        vm.expectRevert(abi.encodeWithSignature("Panic(uint256)", 0x11));
+        combinators.calcInt(
+            Combinators.ArithOp.AbsDiff,
+            address(combinators),
+            abi.encodeCall(Combinators.constantInt, (type(int256).max)),
+            address(combinators),
+            abi.encodeCall(Combinators.constantInt, (type(int256).min))
+        );
+    }
+
+    // ============ Decoded Dynamic Length (arrayLengthCall) ============
+
+    function test_arrayLengthCall_array() public view {
+        bytes[] memory calls = _single(abi.encodeCall(MockTarget.getArray, ()));
+        assertEq(combinators.arrayLengthCall(address(target), calls), 5);
+    }
+
+    function test_arrayLengthCall_emptyArray() public view {
+        bytes[] memory calls = _single(abi.encodeCall(MockTarget.getEmptyArray, ()));
+        assertEq(combinators.arrayLengthCall(address(target), calls), 0);
+    }
+
+    function test_arrayLengthCall_stringByteLength() public view {
+        // "Curve LP Token" is 14 bytes; string returns share the dynamic encoding
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.name, ()));
+        assertEq(combinators.arrayLengthCall(address(token), calls), 14);
+    }
+
+    function test_arrayLengthCall_chained() public view {
+        // target.token() -> token.holders(): 3 addresses, decoded element count
+        // (lengthCall sees the same return as 160 raw bytes)
+        bytes[] memory calls = _two(
+            abi.encodeCall(MockTarget.token, ()),
+            abi.encodeCall(MockToken.holders, ())
+        );
+        assertEq(combinators.arrayLengthCall(address(target), calls), 3);
+    }
+
+    function test_arrayLengthCall_asOperand_composed() public view {
+        // holders().length * 100 >= 300, judged through the core
+        bytes[] memory calls = _two(
+            abi.encodeCall(MockTarget.token, ()),
+            abi.encodeCall(MockToken.holders, ())
+        );
+        assertions.assertGeCallUint(
+            address(combinators),
+            _calcU(
+                Combinators.ArithOp.Mul,
+                address(combinators),
+                abi.encodeCall(Combinators.arrayLengthCall, (address(target), calls)),
+                address(combinators),
+                _constU(100)
+            ),
+            300
+        );
+    }
+
+    function test_arrayLengthCall_staticReturn_reverts() public {
+        // getValue() returns the word 42, which is not a valid head offset
+        bytes[] memory calls = _single(abi.encodeCall(MockTarget.getValue, ()));
+        vm.expectRevert(
+            abi.encodeWithSelector(Combinators.ReturnDataOutOfBounds.selector, 0, 32)
+        );
+        combinators.arrayLengthCall(address(target), calls);
+    }
+
+    // ============ Chain-Resolved Balance (ethBalanceCall) ============
+
+    function test_ethBalanceCall_single() public {
+        vm.deal(address(0xBEEF), 3 ether);
+        bytes[] memory calls = _single(abi.encodeCall(MockTarget.getAddress, ()));
+        assertEq(combinators.ethBalanceCall(address(target), calls), 3 ether);
+    }
+
+    function test_ethBalanceCall_chained_composed() public {
+        // Balance of target.token() -> token.underlying(), judged through the core
+        vm.deal(address(underlyingToken), 1 ether);
+        bytes[] memory calls = _two(
+            abi.encodeCall(MockTarget.token, ()),
+            abi.encodeCall(MockToken.underlying, ())
+        );
+        assertions.assertEqCallUint(
+            address(combinators),
+            abi.encodeCall(Combinators.ethBalanceCall, (address(target), calls)),
+            1 ether
+        );
+    }
+
+    function test_ethBalanceCall_emptyReturn_reverts() public {
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.emptyReturn, ()));
+        vm.expectRevert(
+            abi.encodeWithSelector(Combinators.ReturnDataOutOfBounds.selector, 0, 0)
+        );
+        combinators.ethBalanceCall(address(token), calls);
+    }
+
+    function test_ethBalanceCall_revertingHop_reverts() public {
+        bytes memory hop = abi.encodeCall(MockToken.revertingHop, ());
+        bytes[] memory calls = _single(hop);
+        vm.expectRevert(
+            abi.encodeWithSelector(Combinators.CallFailed.selector, address(token), hop)
+        );
+        combinators.ethBalanceCall(address(token), calls);
+    }
 }

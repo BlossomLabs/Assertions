@@ -21,6 +21,7 @@ const sections = [
       { name: 'assertLtCallInt', desc: 'Assert return < expected' },
       { name: 'assertGeCallInt', desc: 'Assert return >= expected' },
       { name: 'assertLeCallInt', desc: 'Assert return <= expected' },
+      { name: 'assertApproxEqCallInt', desc: 'Assert return ≈ expected (within delta)' },
     ],
   },
   {
@@ -44,6 +45,7 @@ const sections = [
       { name: 'assertEqCallBytes32', desc: 'Assert return equals expected bytes32' },
       { name: 'assertNeCallBytes32', desc: 'Assert return not equals expected bytes32' },
       { name: 'assertEqCallBytes', desc: 'Assert raw return bytes equal expected' },
+      { name: 'assertNeCallBytes', desc: 'Assert raw return bytes not equal expected' },
     ],
   },
   {
@@ -65,14 +67,18 @@ const sections = [
       { name: 'assertNeCallAddressN', desc: 'Assert tuple element not equals (address)' },
       { name: 'assertEqCallBoolN', desc: 'Assert tuple element (bool)' },
       { name: 'assertEqCallBytes32N', desc: 'Assert tuple element (bytes32)' },
+      { name: 'assertNeCallBytes32N', desc: 'Assert tuple element not equals (bytes32)' },
       { name: 'assertEqCallStringN', desc: 'Assert tuple element (string)' },
+      { name: 'assertNeCallStringN', desc: 'Assert tuple element not equals (string)' },
       { name: 'assertApproxEqCallUintN', desc: 'Assert tuple element ≈ expected' },
+      { name: 'assertApproxEqCallIntN', desc: 'Assert tuple element ≈ expected (int256)' },
     ],
   },
   {
     title: 'Array Assertions',
     fns: [
       { name: 'assertEqCallArrayLength', desc: 'Assert array length equals expected' },
+      { name: 'assertNeCallArrayLength', desc: 'Assert array length not equals expected' },
       { name: 'assertGtCallArrayLength', desc: 'Assert array length > expected' },
       { name: 'assertGeCallArrayLength', desc: 'Assert array length >= expected' },
       { name: 'assertLtCallArrayLength', desc: 'Assert array length < expected' },

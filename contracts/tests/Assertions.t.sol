@@ -1788,4 +1788,304 @@ contract AssertionsTest is Test {
         );
         assertions.assertEqCallInt(TEST_EOA, callData, -42);
     }
+
+    // ============ Approximate Equality Int256 Assertions ============
+
+    function test_assertApproxEqCallInt_exact_success() public view {
+        assertions.assertApproxEqCallInt(
+            address(target),
+            abi.encodeCall(MockTarget.getInt, ()),
+            -42,
+            0 // exact match
+        );
+    }
+
+    function test_assertApproxEqCallInt_withinDelta_success() public view {
+        assertions.assertApproxEqCallInt(
+            address(target),
+            abi.encodeCall(MockTarget.getInt, ()),
+            -40, // actual is -42
+            5    // delta of 2 is within 5
+        );
+    }
+
+    function test_assertApproxEqCallInt_crossingZero_success() public view {
+        assertions.assertApproxEqCallInt(
+            address(target),
+            abi.encodeCall(MockTarget.getInt, ()),
+            8,  // actual is -42, delta spans zero
+            50
+        );
+    }
+
+    function test_assertApproxEqCallInt_withMessage_success() public view {
+        assertions.assertApproxEqCallInt(
+            address(target),
+            abi.encodeCall(MockTarget.getInt, ()),
+            -42,
+            0,
+            "custom message"
+        );
+    }
+
+    function test_assertApproxEqCallInt_reverts() public {
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Assertions.AssertionFailedApproxInt.selector,
+                "APPROX_EQ",
+                int256(-42), // actual
+                int256(0),   // expected
+                42,          // delta
+                5            // maxDelta
+            )
+        );
+        assertions.assertApproxEqCallInt(
+            address(target),
+            abi.encodeCall(MockTarget.getInt, ()),
+            0, // actual is -42, delta is 42
+            5  // maxDelta is only 5
+        );
+    }
+
+    function test_assertApproxEqCallInt_fullRange_success() public {
+        // The min..max span is 2^256 - 1: the delta only fits in uint256
+        target.setInt(type(int256).min);
+        assertions.assertApproxEqCallInt(
+            address(target),
+            abi.encodeCall(MockTarget.getInt, ()),
+            type(int256).max,
+            type(uint256).max
+        );
+    }
+
+    function test_assertApproxEqCallInt_fullRange_reverts() public {
+        target.setInt(type(int256).min);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Assertions.AssertionFailedApproxInt.selector,
+                "APPROX_EQ",
+                type(int256).min,
+                type(int256).max,
+                type(uint256).max,
+                0
+            )
+        );
+        assertions.assertApproxEqCallInt(
+            address(target),
+            abi.encodeCall(MockTarget.getInt, ()),
+            type(int256).max,
+            0
+        );
+    }
+
+    function test_assertApproxEqCallIntN_success() public view {
+        assertions.assertApproxEqCallIntN(
+            address(target),
+            abi.encodeCall(MockTarget.getIntTuple, ()),
+            0,   // index
+            -40, // expected (actual is -42)
+            5    // maxDelta
+        );
+    }
+
+    function test_assertApproxEqCallIntN_secondElement_success() public view {
+        assertions.assertApproxEqCallIntN(
+            address(target),
+            abi.encodeCall(MockTarget.getIntTuple, ()),
+            1, // index (actual is 7)
+            5,
+            2
+        );
+    }
+
+    function test_assertApproxEqCallIntN_reverts() public {
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Assertions.AssertionFailedApproxInt.selector,
+                "APPROX_EQ_N",
+                int256(7),  // actual at index 1
+                int256(20), // expected
+                13,         // delta
+                5           // maxDelta
+            )
+        );
+        assertions.assertApproxEqCallIntN(
+            address(target),
+            abi.encodeCall(MockTarget.getIntTuple, ()),
+            1,
+            20,
+            5
+        );
+    }
+
+    // ============ Tuple-Indexed Bytes32 Ne Assertions ============
+
+    function test_assertNeCallBytes32N_success() public view {
+        assertions.assertNeCallBytes32N(
+            address(target),
+            abi.encodeCall(MockTarget.getTuple, ()),
+            3,
+            keccak256("other")
+        );
+    }
+
+    function test_assertNeCallBytes32N_withMessage_success() public view {
+        assertions.assertNeCallBytes32N(
+            address(target),
+            abi.encodeCall(MockTarget.getTuple, ()),
+            3,
+            keccak256("other"),
+            "bytes32N ne check"
+        );
+    }
+
+    function test_assertNeCallBytes32N_reverts() public {
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Assertions.AssertionFailedBytes32.selector,
+                "NE_N",
+                keccak256("test"),
+                keccak256("test")
+            )
+        );
+        assertions.assertNeCallBytes32N(
+            address(target),
+            abi.encodeCall(MockTarget.getTuple, ()),
+            3,
+            keccak256("test")
+        );
+    }
+
+    // ============ Tuple-Indexed String Ne Assertions ============
+
+    function test_assertNeCallStringN_success() public view {
+        assertions.assertNeCallStringN(
+            address(target),
+            abi.encodeCall(MockTarget.getTupleWithString, ()),
+            1,
+            "world"
+        );
+    }
+
+    function test_assertNeCallStringN_withMessage_success() public view {
+        assertions.assertNeCallStringN(
+            address(target),
+            abi.encodeCall(MockTarget.getTupleWithString, ()),
+            1,
+            "world",
+            "stringN ne check"
+        );
+    }
+
+    function test_assertNeCallStringN_reverts() public {
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Assertions.AssertionFailedString.selector,
+                "NE_N",
+                "hello",
+                "hello"
+            )
+        );
+        assertions.assertNeCallStringN(
+            address(target),
+            abi.encodeCall(MockTarget.getTupleWithString, ()),
+            1,
+            "hello"
+        );
+    }
+
+    // ============ Raw Bytes Ne Assertions ============
+
+    function test_assertNeCallBytes_success() public view {
+        assertions.assertNeCallBytes(
+            address(target),
+            abi.encodeCall(MockTarget.getRawUint, ()),
+            abi.encode(uint256(99999))
+        );
+    }
+
+    function test_assertNeCallBytes_withMessage_success() public view {
+        assertions.assertNeCallBytes(
+            address(target),
+            abi.encodeCall(MockTarget.getRawUint, ()),
+            abi.encode(uint256(99999)),
+            "bytes ne check"
+        );
+    }
+
+    function test_assertNeCallBytes_reverts() public {
+        bytes memory sameBytes = abi.encode(uint256(12345));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Assertions.AssertionFailedBytes.selector,
+                "NE_BYTES",
+                keccak256(sameBytes),
+                keccak256(sameBytes)
+            )
+        );
+        assertions.assertNeCallBytes(
+            address(target),
+            abi.encodeCall(MockTarget.getRawUint, ()),
+            sameBytes
+        );
+    }
+
+    // ============ Array Length Ne Assertions ============
+
+    function test_assertNeCallArrayLength_success() public view {
+        assertions.assertNeCallArrayLength(
+            address(target),
+            abi.encodeCall(MockTarget.getArray, ()),
+            4
+        );
+    }
+
+    function test_assertNeCallArrayLength_withMessage_success() public view {
+        assertions.assertNeCallArrayLength(
+            address(target),
+            abi.encodeCall(MockTarget.getArray, ()),
+            4,
+            "array ne check"
+        );
+    }
+
+    function test_assertNeCallArrayLength_reverts() public {
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Assertions.AssertionFailedUint.selector,
+                "NE_LEN",
+                5,
+                5
+            )
+        );
+        assertions.assertNeCallArrayLength(
+            address(target),
+            abi.encodeCall(MockTarget.getArray, ()),
+            5
+        );
+    }
+
+    function test_assertNeCallArrayLength_empty_success() public view {
+        assertions.assertNeCallArrayLength(
+            address(target),
+            abi.encodeCall(MockTarget.getEmptyArray, ()),
+            1
+        );
+    }
+
+    function test_assertNeCallArrayLength_empty_reverts() public {
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Assertions.AssertionFailedUint.selector,
+                "NE_LEN",
+                0,
+                0
+            )
+        );
+        assertions.assertNeCallArrayLength(
+            address(target),
+            abi.encodeCall(MockTarget.getEmptyArray, ()),
+            0
+        );
+    }
 }

@@ -16,11 +16,11 @@ Because combinators are stateless view targets, the periphery can evolve: old `C
 ### Canonical addresses (same on every chain)
 
 ```
-Assertions  v1.1  0xA55E47d30A22BBABACcb313fbA116E475eA4260A   (frozen core)
+Assertions  v1.1  0xa55E47E2767d85B8C4d9E62dd5009ffC45c4aBc4   (frozen core)
 Combinators v1.0  0xA55eC03487C832ea7811204Fd46a337dD2DafAFF   (versionable periphery)
 ```
 
-Version 1.0 of the core remains deployed at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F) (`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`). Core v1.1 is a strict superset of the 1.0 ABI: it adds int256 assertions, tuple index bounds checking, `CallFailed` on code-less targets, and the `Ne`/`Lt`/`Le` variants listed below. All composition functions live in the separate `Combinators` contract, which carries its own version line.
+Version 1.0 of the core remains deployed at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F) (`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`). Core v1.1 is a strict superset of the 1.0 ABI: it adds int256 assertions (including approximate equality), tuple index bounds checking, `CallFailed` on code-less targets, and the `Ne`/`Lt`/`Le` variants listed below. All composition functions live in the separate `Combinators` contract, which carries its own version line.
 
 ---
 
@@ -251,6 +251,14 @@ assertions.assertApproxEqCallUint(
     abi.encodeCall(IOracle.getPrice, ()),
     expectedPrice,
     expectedPrice / 100  // 1% max delta
+);
+
+// Signed values work the same way (the tolerance is always a uint256)
+assertions.assertApproxEqCallInt(
+    oracleAddress,
+    abi.encodeCall(IOracle.getFundingRate, ()),
+    expectedRate,
+    maxDeviation
 );
 ```
 
@@ -559,6 +567,7 @@ Both contracts use typed custom errors for gas-efficient and informative failure
 | `AssertionFailedBytes(string, bytes32, bytes32)` | bytes assertion failed (shows hashes) |
 | `AssertionFailedString(string, string, string)` | string assertion failed |
 | `AssertionFailedApprox(string, uint256, uint256, uint256, uint256)` | approximate equality failed |
+| `AssertionFailedApproxInt(string, int256, int256, uint256, uint256)` | approximate int256 equality failed |
 | `CallFailed(address, bytes)` | staticcall to target reverted, or target has no code |
 | `ReturnDataOutOfBounds(uint256, uint256)` | tuple index points outside the returned data |
 
@@ -599,6 +608,7 @@ The two contracts define `CallFailed` and `ReturnDataOutOfBounds` with identical
 | `assertLtCallInt` | Assert return < expected |
 | `assertGeCallInt` | Assert return >= expected |
 | `assertLeCallInt` | Assert return <= expected |
+| `assertApproxEqCallInt` | Assert return ≈ expected (within delta) |
 
 ### Address Assertions
 
@@ -622,6 +632,13 @@ The two contracts define `CallFailed` and `ReturnDataOutOfBounds` with identical
 | `assertEqCallBytes32` | Assert return equals expected bytes32 |
 | `assertNeCallBytes32` | Assert return not equals expected bytes32 |
 
+### Raw Bytes Assertions
+
+| Function | Description |
+|----------|-------------|
+| `assertEqCallBytes` | Assert raw returndata equals expected bytes |
+| `assertNeCallBytes` | Assert raw returndata not equals expected bytes |
+
 ### Tuple-Indexed Assertions (N suffix)
 
 All basic assertion types have tuple-indexed variants with an `N` suffix that accept an additional `index` parameter:
@@ -630,9 +647,9 @@ All basic assertion types have tuple-indexed variants with an `N` suffix that ac
 - `assertEqCallIntN`, `assertNeCallIntN`, `assertGtCallIntN`, `assertLtCallIntN`, `assertGeCallIntN`, `assertLeCallIntN`
 - `assertEqCallAddressN`, `assertNeCallAddressN`
 - `assertEqCallBoolN`
-- `assertEqCallBytes32N`
-- `assertEqCallStringN`
-- `assertApproxEqCallUintN`
+- `assertEqCallBytes32N`, `assertNeCallBytes32N`
+- `assertEqCallStringN`, `assertNeCallStringN`
+- `assertApproxEqCallUintN`, `assertApproxEqCallIntN`
 
 An `index` that points past the returned data reverts with `ReturnDataOutOfBounds` instead of silently comparing against zeroed memory.
 
@@ -641,6 +658,7 @@ An `index` that points past the returned data reverts with `ReturnDataOutOfBound
 | Function | Description |
 |----------|-------------|
 | `assertEqCallArrayLength` | Assert array length equals expected |
+| `assertNeCallArrayLength` | Assert array length not equals expected |
 | `assertGtCallArrayLength` | Assert array length > expected |
 | `assertGeCallArrayLength` | Assert array length >= expected |
 | `assertLtCallArrayLength` | Assert array length < expected |

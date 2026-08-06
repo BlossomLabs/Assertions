@@ -31,7 +31,7 @@ export const DEPLOYED_CONTRACTS: DeployableContract[] = [
     address: ASSERTIONS_ADDRESS,
     salt: ASSERTIONS_SALT,
     bytecode: ASSERTIONS_CREATION_BYTECODE,
-    gasLabel: "~4.2M",
+    gasLabel: "~4.5M",
   },
   {
     key: "combinators",

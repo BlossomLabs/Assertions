@@ -17,7 +17,7 @@ Because combinators are stateless view targets, the periphery can evolve: old `C
 
 ```
 Assertions  v1.1  0xa55E47E2767d85B8C4d9E62dd5009ffC45c4aBc4   (frozen core)
-Combinators v1.0  0xa55EC07f6FBac3FC461B79bBdf40D279B8565dA5   (versionable periphery)
+Combinators v1.0  0xa55Ec017256401b00c9C21FD9AB3D0E0bcf94f20   (versionable periphery)
 ```
 
 Version 1.0 of the core remains deployed at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F) (`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`). Core v1.1 is a strict superset of the 1.0 ABI: it adds int256 assertions (including approximate equality), tuple index bounds checking, `CallFailed` on code-less targets, and the `Ne`/`Lt`/`Le` variants listed below. All composition functions live in the separate `Combinators` contract, which carries its own version line.
@@ -318,7 +318,7 @@ assertions.assertEqCallUint(
 
 ## Combinators — computing values
 
-Assertion functions revert or pass — they judge. Everything that *computes* lives in the separate `Combinators` contract (`0xa55EC07f6FBac3FC461B79bBdf40D279B8565dA5`): each function is a small composable building block, and nested `(target, data)` operands in calldata compose the blocks into arbitrary expressions. The core consumes the result by pointing any call assertion at the Combinators address.
+Assertion functions revert or pass — they judge. Everything that *computes* lives in the separate `Combinators` contract (`0xa55Ec017256401b00c9C21FD9AB3D0E0bcf94f20`): each function is a small composable building block, and nested `(target, data)` operands in calldata compose the blocks into arbitrary expressions. The core consumes the result by pointing any call assertion at the Combinators address.
 
 The core is frozen forever; Combinators is versionable. A future `Combinators` v2 would deploy at a new address without touching the core or breaking anything that references v1.
 
@@ -368,6 +368,8 @@ function boolToUint(address target, bytes data) returns (uint256)
 function uintCall (address target, bytes[] calls, uint256 wordIndex) returns (uint256)
 function lengthCall(address target, bytes[] calls) returns (uint256)
 function arrayLengthCall(address target, bytes[] calls) returns (uint256)
+function includesCall(address target, bytes[] calls, string part) returns (bool)
+function charsetCall (address target, bytes[] calls, uint256 allowed) returns (bool)
 ```
 
 The op enums and their numeric encodings (what encoders put in calldata):
@@ -482,6 +484,20 @@ assertions:assert @split!($pool::name() " " 1) == "LP"
 
 Split semantics: the delimiter is a non-empty exact byte sequence (empty reverts with `EmptyDelimiter`); segments are the maximal runs between occurrences, so adjacent delimiters produce empty segments; a string that doesn't contain the delimiter is one segment (index 0 = the whole string); and an index past the last segment reverts with `SegmentIndexOutOfBounds(index, segments)` — loud failure with the actual segment count. Version-string checks work the same way: split `"2.1.0"` by `"."` and assert segment 0 equals `"2"`.
 
+**Substring & character-set checks** — two string predicates return a `bool`, so they compose with `logicBool` / `notBool` and assert via `assertTrue` / `assertFalse`. `includesCall(target, calls, part)` is `String.includes`: whether the chain's final string return contains `part` as an exact byte sequence (case-sensitive, no wildcards; an empty `part` reverts with `EmptySubstring` since it would match everything). `charsetCall(target, calls, allowed)` is the character-class check that usually gets reached for with a regex: `allowed` is a 256-bit set where bit `i` covers byte value `i`, and the call returns whether every byte of the string is in the set. "The token's symbol is lowercase a-z":
+
+```solidity
+bytes[] memory calls = new bytes[](1);
+calls[0] = abi.encodeCall(IERC20.symbol, ());
+
+assertions.assertTrue(
+    address(combinators),
+    abi.encodeCall(Combinators.charsetCall, (token, calls, 0x07fffffe << 96)) // bits 97..122 = a-z
+);
+```
+
+Masks are built off-chain from ranges and single bytes (`a-z` is `0x07fffffe << 96`, digits OR in bits 48..57, `-` is bit 45). The check is byte-level, so multi-byte UTF-8 characters (every byte ≥ 0x80) fail any ASCII-only mask, and the empty string is vacuously in every set — combine with `arrayLengthCall > 0` to also require non-empty. Anything needing positional structure ("exactly one dash, not at the start") is deliberately out of scope: an on-chain regex engine would make assertion calldata unreviewable.
+
 **Exponentiation & live decimals scaling** — `Exp = 5` in `ArithOp` gives `calcUint` checked `**` (overflow reverts with `Panic(0x11)`, `0 ** 0 == 1` per EVM semantics). `calcInt` rejects `Exp` with `UnsupportedOp`: Solidity defines `**` for unsigned operands only, so signed exponentiation is ill-defined — use `calcUint` for powers. The canonical use is scaling thresholds by a live `decimals()` (EVMcrispr's `@num!` with `^`): "`a` holds at least 5 whole tokens":
 
 ```solidity
@@ -542,7 +558,7 @@ Nesting is unlimited — an operand can be a `chainCall`, another `calcUint`, a 
 
 - **Address equality inside expressions**: address returns occupy a single word, so `cmpUint(Eq, target, ownerCall, assertions, constantUint(uint256(uint160(expectedAddr))))` compares them (the top-level `assertEqCallAddress` remains the direct form).
 - **Bool constants**: a constant `true` operand is `cmpUint(Eq, assertions, constantUint(1), assertions, constantUint(1))` — rarely needed since `logicBool` operands are usually real calls.
-- **String operations**: splitting is covered by `splitCall`; concatenation is deliberately not included — instead of building strings on-chain, compare the final value against a constant (`assertEqCallStringN`) or its hash (`hashCall`).
+- **String operations**: splitting is covered by `splitCall`, substring search by `includesCall`, and only-these-characters checks by `charsetCall`; concatenation and regex matching are deliberately not included — instead of building strings on-chain, compare the final value against a constant (`assertEqCallStringN`) or its hash (`hashCall`).
 
 Semantics to know:
 
@@ -578,8 +594,9 @@ Both contracts use typed custom errors for gas-efficient and informative failure
 |-------|-------------|
 | `CallFailed(address, bytes)` | a chain hop or expression operand reverted or targets a code-less address (identifies the exact failing call) |
 | `ReturnDataOutOfBounds(uint256, uint256)` | an operand or non-final chain hop returned fewer than 32 bytes, a string return failed validation, or a `uintCall` word index points past the returndata |
-| `EmptyCallChain()` | `chainCall` / `hashCall` / `splitCall` / `uintCall` / `lengthCall` / `arrayLengthCall` / `ethBalanceCall` received an empty `calls` array |
+| `EmptyCallChain()` | `chainCall` / `hashCall` / `splitCall` / `includesCall` / `charsetCall` / `uintCall` / `lengthCall` / `arrayLengthCall` / `ethBalanceCall` received an empty `calls` array |
 | `EmptyDelimiter()` | `splitCall` received an empty delimiter |
+| `EmptySubstring()` | `includesCall` received an empty search string (every string vacuously contains `""`) |
 | `SegmentIndexOutOfBounds(uint256, uint256)` | `splitCall` index is past the last segment (arguments: requested index, segment count) |
 | `UnsupportedOp()` | `calcInt` received `ArithOp.Exp` (signed exponentiation is ill-defined; use `calcUint`) |
 
@@ -702,13 +719,15 @@ An `index` that points past the returned data reverts with `ReturnDataOutOfBound
 
 ### Combinators (separate `Combinators` contract)
 
-These live at the Combinators address (`0xa55EC07f6FBac3FC461B79bBdf40D279B8565dA5`), not on the core. See [Combinators — computing values](#combinators--computing-values) for usage.
+These live at the Combinators address (`0xa55Ec017256401b00c9C21FD9AB3D0E0bcf94f20`), not on the core. See [Combinators — computing values](#combinators--computing-values) for usage.
 
 | Function | Description |
 |----------|-------------|
 | `chainCall` | Resolve a chain of staticcalls and return the final call's returndata verbatim — compose with any call assertion |
 | `hashCall` | keccak256 of a resolved chain's final returndata — check complex returns via bytes32 assertions |
 | `splitCall` | Split a chain's final string return by a delimiter and return the index-th segment |
+| `includesCall` | Whether a chain's final string return contains a substring — bool for logic composition |
+| `charsetCall` | Whether every byte of a chain's final string return is in an allowed-byte bitmap — "only lowercase" and other character-class checks |
 | `uintCall` | Extract the wordIndex-th 32-byte word of a chain's final returndata (static-layout tuples) |
 | `lengthCall` | Byte length of a chain's final returndata |
 | `arrayLengthCall` | Decoded length of a chain's final dynamic return — array element count, or string/bytes byte length |

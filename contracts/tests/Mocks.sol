@@ -108,6 +108,12 @@ contract MockTarget {
         return storedToken;
     }
 
+    /// @notice Multi-value return with the token at word 1, for chaining
+    ///         through a selected return word
+    function tokenInfo() external view returns (uint256 supply, address tokenAddr, uint256 decimals_) {
+        return (1000, storedToken, 18);
+    }
+
     function setToken(address _token) external {
         storedToken = _token;
     }

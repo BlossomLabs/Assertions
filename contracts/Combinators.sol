@@ -37,6 +37,18 @@ contract Combinators {
     /// @notice Thrown when chainCall receives an empty calls array
     error EmptyCallChain();
 
+    /// @notice Thrown when a non-final chain entry is shorter than its
+    ///         32-byte word-index prefix
+    /// @param hopIndex The position of the malformed entry in `calls`
+    /// @param length The length of the entry in bytes
+    error MalformedChainHop(uint256 hopIndex, uint256 length);
+
+    /// @notice Thrown when the selected return word of a non-final chain hop
+    ///         is not a clean address (upper 12 bytes non-zero)
+    /// @param hopIndex The position of the hop in `calls`
+    /// @param word The raw 32-byte word that was selected
+    error InvalidChainAddress(uint256 hopIndex, bytes32 word);
+
     /// @notice Thrown when splitCall receives an empty delimiter
     error EmptyDelimiter();
 
@@ -44,6 +56,11 @@ contract Combinators {
     /// @param index The requested segment index
     /// @param segments The number of segments the split produced
     error SegmentIndexOutOfBounds(uint256 index, uint256 segments);
+
+    /// @notice Thrown when includesCall receives an empty search string —
+    ///         every string vacuously contains "", so the assertion would
+    ///         always pass and is certainly a mistake
+    error EmptySubstring();
 
     /// @notice Thrown when an operation is not supported for the value type,
     ///         currently only calcInt with ArithOp.Exp (Solidity defines `**`
@@ -110,13 +127,22 @@ contract Combinators {
     ///      extra offset/length envelope and break that transparency.
     ///      Point any core call assertion at this contract with chainCall calldata:
     ///      `core.assertEqCallStringN(combinators, abi.encodeCall(Combinators.chainCall, (pool, hops)), 0, "WETH")`.
-    ///      Reverts with EmptyCallChain when `calls` is empty, with CallFailed
+    ///      Hop encoding: every entry except the last carries a 32-byte prefix —
+    ///      `abi.encodePacked(uint256 wordIndex, abi.encodeCall(...))` — naming the
+    ///      static return word that holds the next hop's address (0 for a plain
+    ///      single-address return); the final entry is unprefixed abi.encodeCall
+    ///      data. This lets a hop return several values and still chain, e.g.
+    ///      selecting the token of a `(uint112, uint112, address)` pool getter.
+    ///      Reverts with EmptyCallChain when `calls` is empty, MalformedChainHop
+    ///      when a non-final entry is shorter than its prefix, CallFailed
     ///      identifying the exact failing hop when a hop reverts or targets a
-    ///      code-less address, and with ReturnDataOutOfBounds when a non-final hop
-    ///      returns fewer than the 32 bytes needed to decode the next hop's address.
+    ///      code-less address, ReturnDataOutOfBounds when a non-final hop returns
+    ///      fewer than the `wordIndex * 32 + 32` bytes needed to read the selected
+    ///      word, and InvalidChainAddress when that word has dirty upper bytes.
     /// @param target The contract address the first call is executed on
-    /// @param calls The encoded call for each hop (use abi.encodeCall); every hop
-    ///        except the last must return an address
+    /// @param calls One entry per hop, word-index-prefixed except the last (see
+    ///        above); every hop except the last must expose an address at its
+    ///        selected return word
     function chainCall(address target, bytes[] calldata calls) external view {
         bytes memory result = _resolveChain(target, calls);
         assembly {
@@ -131,8 +157,9 @@ contract Combinators {
     ///      (target, calls)), expectedHash)`. A single call is a one-element array.
     ///      Chain resolution and failure behavior are identical to chainCall.
     /// @param target The contract address the first call is executed on
-    /// @param calls The encoded call for each hop (use abi.encodeCall); every hop
-    ///        except the last must return an address
+    /// @param calls One entry per hop, word-index-prefixed except the last (see
+    ///        chainCall); every hop except the last must expose an address at its
+    ///        selected return word
     /// @return The keccak256 hash of the final call's raw returndata
     function hashCall(address target, bytes[] calldata calls) external view returns (bytes32) {
         return keccak256(_resolveChain(target, calls));
@@ -153,8 +180,9 @@ contract Combinators {
     ///      same way tuple-indexed string assertions validate returndata, and chain
     ///      resolution failures behave exactly as in chainCall.
     /// @param target The contract address the first call is executed on
-    /// @param calls The encoded call for each hop (use abi.encodeCall); every hop
-    ///        except the last must return an address, and the last must return a string
+    /// @param calls One entry per hop, word-index-prefixed except the last (see
+    ///        chainCall); every hop except the last must expose an address at its
+    ///        selected return word, and the last must return a string
     /// @param delimiter The non-empty byte sequence to split on
     /// @param index The 0-based segment index to return
     /// @return The index-th segment of the split string
@@ -180,6 +208,69 @@ contract Combinators {
         revert SegmentIndexOutOfBounds(index, segment + 1);
     }
 
+    /// @notice Resolves a call chain, decodes the final return as a string, and
+    ///         returns whether it contains `part` as a substring
+    /// @dev Matching is an exact byte-sequence search — case-sensitive, no
+    ///      wildcards; a multi-byte UTF-8 `part` matches its exact byte encoding.
+    ///      Returns a bool so the outcome composes with logicBool / notBool
+    ///      ("name does NOT mention X" is notBool over includesCall) and asserts
+    ///      via assertTrue / assertFalse / assertEqCallBool, e.g. "the pool name
+    ///      mentions LP": `core.assertTrue(combinators,
+    ///      abi.encodeCall(Combinators.includesCall, (pool, calls, "LP")))`.
+    ///      Reverts with EmptySubstring on an empty `part` (vacuously true —
+    ///      certainly a mistake). The final return value is validated (head
+    ///      offset and length) the same way splitCall validates it, and chain
+    ///      resolution failures behave exactly as in chainCall. A single call is
+    ///      a one-element array.
+    /// @param target The contract address the first call is executed on
+    /// @param calls One entry per hop, word-index-prefixed except the last (see
+    ///        chainCall); every hop except the last must expose an address at its
+    ///        selected return word, and the last must return a string
+    /// @param part The non-empty byte sequence to search for
+    /// @return Whether the decoded string contains `part`
+    function includesCall(address target, bytes[] calldata calls, string calldata part) external view returns (bool) {
+        bytes memory needle = bytes(part);
+        if (needle.length == 0) revert EmptySubstring();
+        bytes memory str = _decodeString(_resolveChain(target, calls));
+        if (needle.length > str.length) return false;
+        for (uint256 i = 0; i + needle.length <= str.length; i++) {
+            if (_matchesAt(str, needle, i)) return true;
+        }
+        return false;
+    }
+
+    /// @notice Resolves a call chain, decodes the final return as a string, and
+    ///         returns whether every byte of it is in the `allowed` character set
+    /// @dev Character-class check without a regex engine: `allowed` is a 256-bit
+    ///      set where bit i covers byte value i, so a single uint256 spans the
+    ///      whole byte alphabet. Build the mask off-chain from ranges and
+    ///      individual bytes — lowercase a-z is bits 97..122 (0x07fffffe << 96),
+    ///      digits 0-9 bits 48..57, and OR in single bytes like "-" (bit 45).
+    ///      The check is byte-level: every byte of a multi-byte UTF-8 character
+    ///      is >= 0x80, so such characters fail any ASCII-only mask — the strict
+    ///      reading of "only lowercase ASCII". An empty string is vacuously true
+    ///      (combine with arrayLengthCall > 0 to also require non-empty). Returns
+    ///      a bool for logicBool / notBool composition, asserted via assertTrue /
+    ///      assertFalse / assertEqCallBool, e.g. "the symbol is lowercase":
+    ///      `core.assertTrue(combinators, abi.encodeCall(Combinators.charsetCall,
+    ///      (token, calls, 0x07fffffe << 96)))`. The final return value is
+    ///      validated (head offset and length) the same way splitCall validates
+    ///      it, and chain resolution failures behave exactly as in chainCall.
+    ///      A single call is a one-element array.
+    /// @param target The contract address the first call is executed on
+    /// @param calls One entry per hop, word-index-prefixed except the last (see
+    ///        chainCall); every hop except the last must expose an address at its
+    ///        selected return word, and the last must return a string
+    /// @param allowed Bitmap of permitted byte values (bit i set ⇔ byte i allowed)
+    /// @return Whether every byte of the decoded string is in the allowed set
+    function charsetCall(address target, bytes[] calldata calls, uint256 allowed) external view returns (bool) {
+        bytes memory str = _decodeString(_resolveChain(target, calls));
+        for (uint256 i = 0; i < str.length; i++) {
+            if (allowed & (1 << uint8(str[i])) == 0) return false;
+        }
+        return true;
+    }
+
     /// @notice Resolves a call chain and returns the wordIndex-th 32-byte word of the
     ///         final returndata as a uint256
     /// @dev Raw word extraction for static-layout returns (multi-value tuples like
@@ -191,8 +282,9 @@ contract Combinators {
     ///      returndata is shorter than (wordIndex + 1) * 32 bytes; chain resolution
     ///      failures behave exactly as in chainCall. A single call is a one-element array.
     /// @param target The contract address the first call is executed on
-    /// @param calls The encoded call for each hop (use abi.encodeCall); every hop
-    ///        except the last must return an address
+    /// @param calls One entry per hop, word-index-prefixed except the last (see
+    ///        chainCall); every hop except the last must expose an address at its
+    ///        selected return word
     /// @param wordIndex The 0-based index of the 32-byte word to extract
     /// @return The extracted word as a uint256
     function uintCall(address target, bytes[] calldata calls, uint256 wordIndex) external view returns (uint256) {
@@ -213,8 +305,9 @@ contract Combinators {
     ///      items), so item counts derive arithmetically via calcUint. Chain resolution
     ///      failures behave exactly as in chainCall; a single call is a one-element array.
     /// @param target The contract address the first call is executed on
-    /// @param calls The encoded call for each hop (use abi.encodeCall); every hop
-    ///        except the last must return an address
+    /// @param calls One entry per hop, word-index-prefixed except the last (see
+    ///        chainCall); every hop except the last must expose an address at its
+    ///        selected return word
     /// @return The byte length of the final call's returndata
     function lengthCall(address target, bytes[] calldata calls) external view returns (uint256) {
         return _resolveChain(target, calls).length;
@@ -235,8 +328,9 @@ contract Combinators {
     ///      dynamic value; chain resolution failures behave exactly as in chainCall.
     ///      A single call is a one-element array.
     /// @param target The contract address the first call is executed on
-    /// @param calls The encoded call for each hop (use abi.encodeCall); every hop
-    ///        except the last must return an address, and the last must return a
+    /// @param calls One entry per hop, word-index-prefixed except the last (see
+    ///        chainCall); every hop except the last must expose an address at its
+    ///        selected return word, and the last must return a
     ///        single dynamic value (array, string, or bytes)
     /// @return The decoded length of the final call's dynamic return value
     function arrayLengthCall(address target, bytes[] calldata calls) external view returns (uint256) {
@@ -476,8 +570,9 @@ contract Combinators {
     ///      ReturnDataOutOfBounds); chain resolution failures behave exactly as in
     ///      chainCall. A single call is a one-element array.
     /// @param target The contract address the first call is executed on
-    /// @param calls The encoded call for each hop (use abi.encodeCall); every hop
-    ///        INCLUDING the last must return an address
+    /// @param calls One entry per hop, word-index-prefixed except the last (see
+    ///        chainCall); every hop except the last must expose an address at its
+    ///        selected return word, and the last must return an address
     /// @return The native balance in wei of the address the final call returns
     function ethBalanceCall(address target, bytes[] calldata calls) external view returns (uint256) {
         bytes memory result = _resolveChain(target, calls);
@@ -565,21 +660,36 @@ contract Combinators {
         }
     }
 
-    /// @dev Executes a call chain: calls[0] is staticcalled on `target`; each
-    ///      non-final hop's return value is decoded as an address that becomes
-    ///      the target of the next hop. Returns the final hop's raw returndata.
-    ///      Reverts with EmptyCallChain when `calls` is empty, with CallFailed
-    ///      (identifying the failing hop's target and calldata) when any hop
-    ///      reverts or targets a code-less address, and with ReturnDataOutOfBounds
-    ///      when a non-final hop returns fewer than 32 bytes.
+    /// @dev Executes a call chain. Every non-final entry of `calls` is
+    ///      `abi.encodePacked(uint256 wordIndex, callData)`: the calldata suffix
+    ///      is staticcalled on the current target and the static return word at
+    ///      `wordIndex` becomes the address of the next hop (0 selects the first
+    ///      word — a plain single-address return). The final entry is unprefixed
+    ///      calldata whose raw returndata is returned. Reverts with EmptyCallChain
+    ///      when `calls` is empty, MalformedChainHop when a non-final entry lacks
+    ///      its 32-byte prefix, CallFailed (identifying the failing hop's target
+    ///      and calldata) when any hop reverts or targets a code-less address,
+    ///      ReturnDataOutOfBounds when the selected word lies past the hop's
+    ///      returndata, and InvalidChainAddress when the selected word has dirty
+    ///      upper bytes.
     function _resolveChain(address target, bytes[] calldata calls) internal view returns (bytes memory) {
         if (calls.length == 0) revert EmptyCallChain();
         address current = target;
         uint256 last = calls.length - 1;
         for (uint256 i = 0; i < last; i++) {
-            bytes memory result = _call(current, calls[i]);
-            if (result.length < 32) revert ReturnDataOutOfBounds(0, result.length);
-            current = abi.decode(result, (address));
+            bytes calldata hop = calls[i];
+            if (hop.length < 32) revert MalformedChainHop(i, hop.length);
+            uint256 wordIndex = uint256(bytes32(hop[:32]));
+            bytes memory result = _call(current, hop[32:]);
+            if (result.length < 32 || wordIndex > (result.length - 32) / 32) {
+                revert ReturnDataOutOfBounds(wordIndex, result.length);
+            }
+            uint256 word;
+            assembly {
+                word := mload(add(add(result, 32), mul(wordIndex, 32)))
+            }
+            if (word >> 160 != 0) revert InvalidChainAddress(i, bytes32(word));
+            current = address(uint160(word));
         }
         return _call(current, calls[last]);
     }

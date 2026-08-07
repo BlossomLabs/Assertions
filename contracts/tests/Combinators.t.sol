@@ -37,18 +37,29 @@ contract CombinatorsTest is Test {
         return abi.encodeCall(Combinators.chainCall, (start, calls));
     }
 
-    /// @dev Builds a two-hop call chain
+    /// @dev Prefixes a non-final hop with the return word index holding the
+    ///      next hop's address (the _resolveChain hop encoding)
+    function _hop(uint256 wordIndex, bytes memory data) internal pure returns (bytes memory) {
+        return abi.encodePacked(wordIndex, data);
+    }
+
+    /// @dev Builds a two-hop call chain (non-final hop selects word 0)
     function _two(bytes memory a, bytes memory b) internal pure returns (bytes[] memory calls) {
+        return _twoAt(0, a, b);
+    }
+
+    /// @dev Builds a two-hop call chain selecting `wordIndex` of the first hop
+    function _twoAt(uint256 wordIndex, bytes memory a, bytes memory b) internal pure returns (bytes[] memory calls) {
         calls = new bytes[](2);
-        calls[0] = a;
+        calls[0] = _hop(wordIndex, a);
         calls[1] = b;
     }
 
-    /// @dev Builds a three-hop call chain
+    /// @dev Builds a three-hop call chain (non-final hops select word 0)
     function _three(bytes memory a, bytes memory b, bytes memory c) internal pure returns (bytes[] memory calls) {
         calls = new bytes[](3);
-        calls[0] = a;
-        calls[1] = b;
+        calls[0] = _hop(0, a);
+        calls[1] = _hop(0, b);
         calls[2] = c;
     }
 
@@ -305,6 +316,54 @@ contract CombinatorsTest is Test {
                 abi.encodeCall(MockToken.decimals, ())
             )
         );
+    }
+
+    function test_chainCall_midChainWordSelection_success() public view {
+        // tokenInfo() returns (uint256, address, uint256) — the token at word 1
+        assertions.assertEqCallStringN(
+            address(combinators),
+            _chainData(
+                address(target),
+                _twoAt(1, abi.encodeCall(MockTarget.tokenInfo, ()), abi.encodeCall(MockToken.symbol, ()))
+            ),
+            0,
+            "WETH"
+        );
+    }
+
+    function test_chainCall_midChainWord_dirtyUpperBytes_reverts() public {
+        // getTuple()'s word 3 is a bytes32 hash — not a clean address
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Combinators.InvalidChainAddress.selector, 0, keccak256("test")
+            )
+        );
+        combinators.chainCall(
+            address(target),
+            _twoAt(3, abi.encodeCall(MockTarget.getTuple, ()), abi.encodeCall(MockToken.symbol, ()))
+        );
+    }
+
+    function test_chainCall_midChainWord_pastReturndata_reverts() public {
+        // tokenInfo() returns 96 bytes — word 5 lies past them
+        vm.expectRevert(
+            abi.encodeWithSelector(Combinators.ReturnDataOutOfBounds.selector, 5, 96)
+        );
+        combinators.chainCall(
+            address(target),
+            _twoAt(5, abi.encodeCall(MockTarget.tokenInfo, ()), abi.encodeCall(MockToken.symbol, ()))
+        );
+    }
+
+    function test_chainCall_unprefixedIntermediateHop_reverts() public {
+        // A non-final entry without its 32-byte word-index prefix is malformed
+        bytes[] memory calls = new bytes[](2);
+        calls[0] = abi.encodeCall(MockTarget.token, ());
+        calls[1] = abi.encodeCall(MockToken.decimals, ());
+        vm.expectRevert(
+            abi.encodeWithSelector(Combinators.MalformedChainHop.selector, 0, 4)
+        );
+        combinators.chainCall(address(target), calls);
     }
 
     function test_chainCall_composedFailure_surfacesAsOuterCallFailed() public {
@@ -963,6 +1022,187 @@ contract CombinatorsTest is Test {
             ),
             0,
             "WETH"
+        );
+    }
+
+    // ============ String Inclusion (includesCall) ============
+
+    function test_includesCall_found() public view {
+        // token.name() -> "Curve LP Token": middle, start, end, whole string
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.name, ()));
+        assertTrue(combinators.includesCall(address(token), calls, "LP"));
+        assertTrue(combinators.includesCall(address(token), calls, "Curve"));
+        assertTrue(combinators.includesCall(address(token), calls, "Token"));
+        assertTrue(combinators.includesCall(address(token), calls, "Curve LP Token"));
+    }
+
+    function test_includesCall_notFound_caseSensitive() public view {
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.name, ()));
+        assertFalse(combinators.includesCall(address(token), calls, "Sushi"));
+        assertFalse(combinators.includesCall(address(token), calls, "lp"));
+    }
+
+    function test_includesCall_needleLongerThanString() public {
+        target.setString("ab");
+        assertFalse(
+            combinators.includesCall(address(target), _single(abi.encodeCall(MockTarget.getString, ())), "abc")
+        );
+    }
+
+    function test_includesCall_emptyString() public {
+        target.setString("");
+        assertFalse(
+            combinators.includesCall(address(target), _single(abi.encodeCall(MockTarget.getString, ())), "a")
+        );
+    }
+
+    function test_includesCall_emptyPart_reverts() public {
+        vm.expectRevert(Combinators.EmptySubstring.selector);
+        combinators.includesCall(address(target), _single(abi.encodeCall(MockTarget.getString, ())), "");
+    }
+
+    function test_includesCall_chained() public view {
+        // target.token().name() -> "Curve LP Token"
+        assertTrue(
+            combinators.includesCall(
+                address(target), _two(abi.encodeCall(MockTarget.token, ()), abi.encodeCall(MockToken.name, ())), "LP"
+            )
+        );
+    }
+
+    function test_includesCall_composed_endToEnd() public view {
+        assertions.assertTrue(
+            address(combinators),
+            abi.encodeCall(
+                Combinators.includesCall, (address(token), _single(abi.encodeCall(MockToken.name, ())), "LP")
+            )
+        );
+    }
+
+    function test_includesCall_negated_composed() public view {
+        // "the name does NOT mention Sushi" via notBool
+        assertions.assertTrue(
+            address(combinators),
+            abi.encodeCall(
+                Combinators.notBool,
+                (
+                    address(combinators),
+                    abi.encodeCall(
+                        Combinators.includesCall,
+                        (address(token), _single(abi.encodeCall(MockToken.name, ())), "Sushi")
+                    )
+                )
+            )
+        );
+    }
+
+    function test_includesCall_composed_fails() public {
+        vm.expectRevert(
+            abi.encodeWithSelector(Assertions.AssertionFailedBool.selector, "TRUE", false, true)
+        );
+        assertions.assertTrue(
+            address(combinators),
+            abi.encodeCall(
+                Combinators.includesCall, (address(token), _single(abi.encodeCall(MockToken.name, ())), "Sushi")
+            )
+        );
+    }
+
+    // ============ Character Set (charsetCall) ============
+
+    /// @dev Builds a charsetCall bitmap covering byte values lo..hi inclusive
+    function _maskRange(bytes1 lo, bytes1 hi) internal pure returns (uint256 m) {
+        for (uint256 b = uint8(lo); b <= uint8(hi); b++) {
+            m |= 1 << b;
+        }
+    }
+
+    function test_charsetCall_lowercaseOnly() public {
+        target.setString("weth");
+        assertTrue(
+            combinators.charsetCall(
+                address(target), _single(abi.encodeCall(MockTarget.getString, ())), _maskRange("a", "z")
+            )
+        );
+    }
+
+    function test_charsetCall_uppercase_fails() public view {
+        // token.symbol() -> "WETH"
+        assertFalse(
+            combinators.charsetCall(
+                address(token), _single(abi.encodeCall(MockToken.symbol, ())), _maskRange("a", "z")
+            )
+        );
+    }
+
+    function test_charsetCall_documentedLowercaseMask() public {
+        // the mask the natspec documents for a-z equals the range-built one
+        assertEq(_maskRange("a", "z"), 0x07fffffe << 96);
+    }
+
+    function test_charsetCall_composedMask() public {
+        bytes[] memory calls = _single(abi.encodeCall(MockTarget.getString, ()));
+        uint256 mask = _maskRange("a", "z") | _maskRange("0", "9") | (uint256(1) << uint8(bytes1("-")));
+        target.setString("curve-lp-01");
+        assertTrue(combinators.charsetCall(address(target), calls, mask));
+        // space is not in the set
+        target.setString("curve lp");
+        assertFalse(combinators.charsetCall(address(target), calls, mask));
+    }
+
+    function test_charsetCall_emptyString_vacuouslyTrue() public {
+        target.setString("");
+        assertTrue(
+            combinators.charsetCall(address(target), _single(abi.encodeCall(MockTarget.getString, ())), 0)
+        );
+    }
+
+    function test_charsetCall_utf8_failsAsciiMask() public {
+        // every byte of a multi-byte UTF-8 character is >= 0x80
+        target.setString(unicode"café");
+        assertFalse(
+            combinators.charsetCall(
+                address(target), _single(abi.encodeCall(MockTarget.getString, ())), _maskRange("a", "z")
+            )
+        );
+    }
+
+    function test_charsetCall_chained() public view {
+        // target.token().underlying().symbol() -> "DAI" is NOT lowercase
+        assertFalse(
+            combinators.charsetCall(
+                address(target),
+                _three(
+                    abi.encodeCall(MockTarget.token, ()),
+                    abi.encodeCall(MockToken.underlying, ()),
+                    abi.encodeCall(MockToken.symbol, ())
+                ),
+                _maskRange("a", "z")
+            )
+        );
+    }
+
+    function test_charsetCall_composed_endToEnd() public {
+        target.setString("weth");
+        assertions.assertTrue(
+            address(combinators),
+            abi.encodeCall(
+                Combinators.charsetCall,
+                (address(target), _single(abi.encodeCall(MockTarget.getString, ())), _maskRange("a", "z"))
+            )
+        );
+    }
+
+    function test_charsetCall_composed_fails() public {
+        vm.expectRevert(
+            abi.encodeWithSelector(Assertions.AssertionFailedBool.selector, "TRUE", false, true)
+        );
+        assertions.assertTrue(
+            address(combinators),
+            abi.encodeCall(
+                Combinators.charsetCall,
+                (address(token), _single(abi.encodeCall(MockToken.symbol, ())), _maskRange("a", "z"))
+            )
         );
     }
 

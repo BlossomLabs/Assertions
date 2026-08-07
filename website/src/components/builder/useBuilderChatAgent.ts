@@ -23,15 +23,19 @@ Syntax (check get_docs before using anything you are not sure of):
   load assertions
   assertions:assert <target>::<viewFn(args)> <op> <expected> "revert msg"            # named method, ABI fetched automatically
   assertions:assert <target>::{viewFn(argTypes)(returnType) <args>} <op> <expected>  # inline ABI when needed
+  assertions:assert <t>::{a()(address)}::{b()(uint256)} <op> <expected>              # :: chains: every hop but the last returns the next address
   assertions:assert-balance <account> <op> <weiAmount> "msg"                         # native ETH balance
   assertions:assert-codehash <target> <bytes32> "msg"                                # pin code, with @codehash(<addr>)
   also: assert-code, assert-no-code, assert-chainid, assert-block-number, assert-timestamp
-<op> is == != > >= < <= or ~= with --delta for approximate values. To assert a CHANGE rather than an absolute value, capture the pre-state at composition time (set $before @get(<address> "<viewFn(argTypes)(returnType)>" <args>)) and assert against @num($before + amount). Composition-time captures go stale, so for Safe/Governor/OSx proposals executed later prefer absolute thresholds.
+<op> is == != > >= < <= or ~= with --delta for approximate values. Both sides may be live: assert $a::x() > $b::y() compares on-chain at execution time. int256 returns compare signed (negative expected values work); string/bytes/bytes32 support == and !=.
 
-Arithmetic, boolean and byte operations — EVML has NO bare infix math: ($before + 1) is never evaluated, it must be wrapped in the right helper. Spaces around every operator are mandatory.
-  @num(<expr>)   arithmetic: + - * / (exact division) // (integer division) % ^ and parentheses, e.g. @num($before + 1e6), @num(($a - $b) * 2)
-  @bool(<expr>)  comparisons and logic: == != < <= > >= and or not, e.g. @bool($a > 0 and $b < 100). Arithmetic operators are rejected inside @bool — nest @num instead: @bool(@num($before + 1) <= $after)
-  @bytes(<a> <op> <b>)  bitwise & | << >> on hex/number operands; @bytes(<v>) converts a value to hex bytes; @bytes(<v> utf8) UTF-8 encodes a string
+On-chain composition — helpers with a trailing ! evaluate ON-CHAIN at assertion time (inside assertions:assert only), composed via the combinators contract. Spaces around every operator are mandatory; top-level infix is invalid — wrap it:
+  @num!(<expr>)   on-chain arithmetic: + - * / % ^ and parentheses over live ::-calls, ! helpers and constants, e.g. @num!(@balance!(ETH @me) + @token(WETH)::balanceOf(@me))
+  @bool!(<expr>)  on-chain comparisons and logic: == != < <= > >= and or xor not, e.g. @bool!(($gov::quorum() > 0) or (not $gov::paused()))
+  @balance!(ETH|<token> <addr>)  live balance: native for ETH, else ERC-20 balanceOf; token symbols resolve like @token
+  @min!(a b ...) @max!(a b ...) @absdiff!(a b)  on-chain min/max/|a-b|; @absdiff!(a b) <= d is approx-eq between two live values
+  @len!(<call>)  decoded array/string length; @at!(<call> i) raw return word i; @split!(<call> "<delim>" i) string segment; @hash!(<call>) keccak256 of the return; @timestamp! @blocknumber!
+Ordinary helpers (@token:balance, @get, @num, @bool, ...) resolve at COMPOSITION time and freeze into calldata — fine for expected values, stale for live state. To assert a CHANGE, capture the pre-state at composition time (set $before @get(<address> "<viewFn(argTypes)(returnType)>" <args>)) and assert against @num($before + amount). Composition-time captures go stale, so for Safe/Governor/OSx proposals executed later prefer absolute thresholds or live @bool!/@num! forms.
 
 The one rule: every assertion must name a concrete loss the executor suffers if it is false — funds that did not arrive, funds that left beyond what was intended, a right not obtained or silently lost, code that changed under them. If you cannot state that loss in one sentence, do not write the assertion. NEVER assert protocol trivia the user does not own: totalSupply, decimals/symbol, paused flags, "pool exists", code-exists on well-known contracts, or preconditions the call itself already reverts on (e.g. insufficient balance for a transfer). Such assertions cost gas and bury the ones that matter.
 

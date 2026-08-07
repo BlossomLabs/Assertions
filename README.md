@@ -400,7 +400,7 @@ assertions.assertGtCallUint(
 In EVMcrispr the same expression is written directly and compiles to nested `calcUint` calldata:
 
 ```
-assertions:assert @balance($addr1) + $weth::balanceOf($addr1) > 0
+assertions:assert @num!(@balance!(ETH $addr1) + $weth::balanceOf($addr1)) > 0
 ```
 
 **Logic example** — assertions revert on failure, so they cannot be OR-ed; `cmpUint` *returns* the comparison outcome instead, and `logicBool` combines outcomes. "`addr1` has ETH OR holds more than 10 tokens":
@@ -428,7 +428,7 @@ assertions.assertEqCallBool(
 ```
 
 ```
-assertions:assert (@balance($addr1) > 0) || ($token::balanceOf($addr1) > 10)
+assertions:assert @bool!((@balance!(ETH $addr1) > 0) or ($token::balanceOf($addr1) > 10))
 ```
 
 **Bitmask example** — flag checks on a packed config word, with `constantUint` supplying the mask or shift. "`config & MASK != 0`":
@@ -477,12 +477,12 @@ assertions.assertEqCallStringN(
 ```
 
 ```
-assertions:assert @split($pool::name(), " ", 1) == "LP"
+assertions:assert @split!($pool::name() " " 1) == "LP"
 ```
 
 Split semantics: the delimiter is a non-empty exact byte sequence (empty reverts with `EmptyDelimiter`); segments are the maximal runs between occurrences, so adjacent delimiters produce empty segments; a string that doesn't contain the delimiter is one segment (index 0 = the whole string); and an index past the last segment reverts with `SegmentIndexOutOfBounds(index, segments)` — loud failure with the actual segment count. Version-string checks work the same way: split `"2.1.0"` by `"."` and assert segment 0 equals `"2"`.
 
-**Exponentiation & live decimals scaling** — `Exp = 5` in `ArithOp` gives `calcUint` checked `**` (overflow reverts with `Panic(0x11)`, `0 ** 0 == 1` per EVM semantics). `calcInt` rejects `Exp` with `UnsupportedOp`: Solidity defines `**` for unsigned operands only, so signed exponentiation is ill-defined — use `calcUint` for powers. The canonical use is scaling thresholds by a live `decimals()` (EVMcrispr's `@num` with `^`): "`a` holds at least 5 whole tokens":
+**Exponentiation & live decimals scaling** — `Exp = 5` in `ArithOp` gives `calcUint` checked `**` (overflow reverts with `Panic(0x11)`, `0 ** 0 == 1` per EVM semantics). `calcInt` rejects `Exp` with `UnsupportedOp`: Solidity defines `**` for unsigned operands only, so signed exponentiation is ill-defined — use `calcUint` for powers. The canonical use is scaling thresholds by a live `decimals()` (EVMcrispr's `@num!` with `^`): "`a` holds at least 5 whole tokens":
 
 ```solidity
 bytes memory scale = abi.encodeCall(Combinators.calcUint, (        // 10 ** decimals()
@@ -507,10 +507,10 @@ assertions.assertEqCallBool(
 ```
 
 ```
-assertions:assert $token::balanceOf($a) >= @num(5, $token::decimals())
+assertions:assert $token::balanceOf($a) >= @num!(5 * 10 ^ $token::decimals())
 ```
 
-**Raw word extraction** — `uintCall(target, calls, wordIndex)` resolves a call chain and returns the `wordIndex`-th 32-byte word of the final returndata as a `uint256` (EVMcrispr's `@at` applied to a live tuple). It is raw-word extraction for static-layout returns like `getReserves()`, **not** an ABI decoder: dynamic types contribute head offsets at their word positions, not content. A `wordIndex` past the returndata reverts with `ReturnDataOutOfBounds(wordIndex, length)`. Because the word comes back as `uint256`, it also covers `bytes32`/`address` words at the word level via `cmpUint`. "The pool's reserve ratio is at least 5":
+**Raw word extraction** — `uintCall(target, calls, wordIndex)` resolves a call chain and returns the `wordIndex`-th 32-byte word of the final returndata as a `uint256` (EVMcrispr's `@at!` applied to a live tuple). It is raw-word extraction for static-layout returns like `getReserves()`, **not** an ABI decoder: dynamic types contribute head offsets at their word positions, not content. A `wordIndex` past the returndata reverts with `ReturnDataOutOfBounds(wordIndex, length)`. Because the word comes back as `uint256`, it also covers `bytes32`/`address` words at the word level via `cmpUint`. "The pool's reserve ratio is at least 5":
 
 ```solidity
 bytes[] memory reserves = new bytes[](1);
@@ -532,7 +532,7 @@ assertions.assertEqCallBool(
 );
 ```
 
-**Returndata length** — `arrayLengthCall(target, calls)` returns the decoded length of a single dynamic return value as an expression operand (EVMcrispr's `@len` / `.length` on live data): the element count for a `T[]` return regardless of element size, and the byte length for `string`/`bytes` returns (they share the same encoding). The raw counterpart `lengthCall(target, calls)` returns the byte length of the final resolved returndata — a `uint256[]` with `n` items measures `64 + n * 32` (offset word + length word + items) — for size checks on returns that are not a single dynamic value.
+**Returndata length** — `arrayLengthCall(target, calls)` returns the decoded length of a single dynamic return value as an expression operand (EVMcrispr's `@len!` on live data): the element count for a `T[]` return regardless of element size, and the byte length for `string`/`bytes` returns (they share the same encoding). The raw counterpart `lengthCall(target, calls)` (EVMcrispr's `@bytelen!`) returns the byte length of the final resolved returndata — a `uint256[]` with `n` items measures `64 + n * 32` (offset word + length word + items) — for size checks on returns that are not a single dynamic value.
 
 **Bool→uint bridge** — `boolToUint(target, data)` returns 1 for `true` and 0 for `false` (strict 0/1 decoding like `logicBool` operands). It bridges boolean and arithmetic composition, enabling the conditional-select idiom — an expression-level `if` (EVMcrispr's live conditional): `cond * a + (1 - cond) * b` picks `a` when the condition holds and `b` otherwise, composed from three nested `calcUint` calls.
 

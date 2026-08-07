@@ -79,6 +79,28 @@ if (!existsSync(evmcrisprSrc)) {
 
 const local = evmcrisprSourceAliases(evmcrisprSrc);
 
+// The assertions module's generated helper registry (name/returnType/argDefs
+// per helper) drives the builder's combinator catalog; it has no package
+// export of its own, so alias it explicitly.
+local.alias.push({
+  find: /^@evmcrispr\/module-assertions\/registry$/,
+  replacement: path.resolve(
+    evmcrisprSrc,
+    'modules/assertions/src/_generated.ts',
+  ),
+});
+
+// The module's type-composition table (which operators accept which operand
+// categories) drives the builder's operator menus — same single source of
+// truth the assert compiler consults.
+local.alias.push({
+  find: /^@evmcrispr\/module-assertions\/composition$/,
+  replacement: path.resolve(
+    evmcrisprSrc,
+    'modules/assertions/src/lib/composition.ts',
+  ),
+});
+
 if (!local.ids.length) {
   throw new Error(
     `"${evmcrisprSrc}" contains no @evmcrispr/* packages -- point EVMCRISPR_SRC at the EVMcrispr repo root.`,

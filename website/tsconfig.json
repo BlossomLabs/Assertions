@@ -13,7 +13,13 @@
     // @evmcrispr/ai is not published to npm; it resolves to the vendored
     // EVMcrispr checkout (see scripts/vendor-evmcrispr.mjs).
     "paths": {
-      "@evmcrispr/ai": ["./.evmcrispr/packages/ai/src/index.ts"]
+      "@evmcrispr/ai": ["./.evmcrispr/packages/ai/src/index.ts"],
+      "@evmcrispr/module-assertions/registry": [
+        "./.evmcrispr/modules/assertions/src/_generated.ts"
+      ],
+      "@evmcrispr/module-assertions/composition": [
+        "./.evmcrispr/modules/assertions/src/lib/composition.ts"
+      ]
     }
   }
 }

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import type { Address, PublicClient } from "viem";
 import { isAddress, parseAbi } from "viem";
-import { normalize } from "viem/ens";
 import { usePublicClient } from "wagmi";
 
 import type { ContextKind } from "./context";
+import { useChainClient } from "./useChainSupport";
+import { resolveEnsAddress } from "./useContractFunctions";
 
 export type AddressCheck =
   | { state: "idle" }
@@ -60,7 +61,7 @@ async function probe(
           .catch(() => null);
         return {
           state: "ok",
-          message: `Safe${version ? ` v${version}` : ""} — ${threshold}/${owners.length} owners`,
+          message: `Safe${version ? ` v${version}` : ""} · ${threshold}/${owners.length} owners`,
         };
       } catch {
         return { state: "error", message: "This address is not a Safe." };
@@ -94,7 +95,7 @@ async function probe(
         return {
           state: "error",
           message: isTimelock
-            ? "This looks like a Timelock, not a Governor — proposals are created on the Governor contract."
+            ? "This looks like a Timelock, not a Governor. Proposals are created on the Governor contract."
             : "This address is not an OpenZeppelin Governor.",
         };
       }
@@ -140,7 +141,7 @@ export function useContextAddress(
   addressInput: string | undefined,
 ): { resolved: Address | null; check: AddressCheck } {
   const mainnetClient = usePublicClient({ chainId: 1 });
-  const chainClient = usePublicClient({ chainId });
+  const chainClient = useChainClient(chainId);
   const [resolved, setResolved] = useState<Address | null>(null);
   const [check, setCheck] = useState<AddressCheck>({ state: "idle" });
 
@@ -159,13 +160,7 @@ export function useContextAddress(
     const timer = setTimeout(async () => {
       let address: Address | null = isPlain ? input : null;
       if (isEns) {
-        try {
-          address = ((await mainnetClient?.getEnsAddress({
-            name: normalize(input),
-          })) ?? null) as Address | null;
-        } catch {
-          address = null;
-        }
+        address = await resolveEnsAddress(mainnetClient, input, chainId);
         if (cancelled) return;
         if (!address) {
           setCheck({ state: "error", message: "ENS name did not resolve." });

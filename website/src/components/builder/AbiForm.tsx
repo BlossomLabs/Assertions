@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { isAddress, parseAbiItem } from "viem";
-import { normalize } from "viem/ens";
 import { usePublicClient } from "wagmi";
 
 import {
@@ -8,6 +7,7 @@ import {
   ensVarName,
   evmlArg,
   inputCls,
+  resolveEnsAddress,
   toInputs,
   useContractFunctions,
 } from "./useContractFunctions";
@@ -75,21 +75,21 @@ export function AbiForm({
     setAdding(true);
     try {
       const sets: string[] = [];
-      const registerEns = (name: string): string => {
+      // On mainnet the name stays live in the script via @ens; on other
+      // chains the per-chain address (multichain names record one per
+      // chain) is frozen in, since @ens reads the mainnet record.
+      const registerEns = (name: string, address: string): string => {
         const varName = ensVarName(name);
-        const line = `set ${varName} @ens(${name})`;
+        const line =
+          chainId === 1
+            ? `set ${varName} @ens(${name})`
+            : `set ${varName} ${address}`;
         if (!sets.includes(line)) sets.push(line);
         return varName;
       };
       const ensToVar = async (name: string): Promise<string | null> => {
-        try {
-          const addr = await publicClient?.getEnsAddress({
-            name: normalize(name),
-          });
-          return addr ? registerEns(name) : null;
-        } catch {
-          return null;
-        }
+        const addr = await resolveEnsAddress(publicClient, name, chainId);
+        return addr ? registerEns(name, addr) : null;
       };
 
       // If the contract was given as an ENS name, keep the name in the
@@ -97,7 +97,7 @@ export function AbiForm({
       const contractInput = addressInput.trim();
       const target = isAddress(contractInput)
         ? resolved
-        : registerEns(contractInput);
+        : registerEns(contractInput, resolved);
 
       const argStr = (
         await Promise.all(
@@ -220,7 +220,7 @@ export function AbiForm({
       {(selected?.payable || useManual) && resolved && activeSig && (
         <div>
           <label className="block text-xs font-mono text-[var(--color-ink-3)] mb-1">
-            value <span className="opacity-60">(wei, e.g. 1e18 — optional)</span>
+            value <span className="opacity-60">(wei, e.g. 1e18, optional)</span>
           </label>
           <input
             className={inputCls}

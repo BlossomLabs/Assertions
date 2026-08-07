@@ -98,6 +98,51 @@ export function splitTopLevel(s: string): string[] {
   return parts.map((p) => p.trim()).filter(Boolean);
 }
 
+/** ENSIP-11 coin type for an EVM chain (mainnet uses ETH's coin type 60). */
+export function ensCoinType(chainId: number): bigint | undefined {
+  if (chainId === 1) return undefined; // default (ETH, 60)
+  return BigInt(0x80000000 + chainId);
+}
+
+/**
+ * Resolve an ENS name to the address recorded for `chainId`. Multichain
+ * names (e.g. dai.tkn.eth) store one address per chain via ENSIP-11 coin
+ * types; without this, a non-mainnet chain would get the mainnet address.
+ * Falls back to the default ETH record when the name has no per-chain one.
+ * Resolution always runs against the mainnet ENS registry.
+ */
+export async function resolveEnsAddress(
+  client: { getEnsAddress: (args: any) => Promise<string | null> } | undefined,
+  name: string,
+  chainId: number,
+): Promise<Address | null> {
+  if (!client) return null;
+  let normalized: string;
+  try {
+    normalized = normalize(name);
+  } catch {
+    return null;
+  }
+  const coinType = ensCoinType(chainId);
+  if (coinType !== undefined) {
+    try {
+      const perChain = await client.getEnsAddress({
+        name: normalized,
+        coinType,
+      });
+      if (perChain) return perChain as Address;
+    } catch {
+      /* fall through to the default record */
+    }
+  }
+  try {
+    return ((await client.getEnsAddress({ name: normalized })) ??
+      null) as Address | null;
+  } catch {
+    return null;
+  }
+}
+
 /** "$daiTokensEthers" for "dai.tokens.ethers.eth" — an EVML variable name. */
 export function ensVarName(name: string): string {
   const parts = name
@@ -190,13 +235,7 @@ export function useContractFunctions(
         address = input;
       } else if (input.includes(".")) {
         setStatus("Resolving ENS name…");
-        try {
-          address = (await publicClient?.getEnsAddress({
-            name: normalize(input),
-          })) as Address | null;
-        } catch {
-          address = null;
-        }
+        address = await resolveEnsAddress(publicClient, input, chainId);
         if (!address) {
           if (!cancelled) setStatus("ENS name did not resolve.");
           return;
@@ -213,7 +252,7 @@ export function useContractFunctions(
       if (cancelled) return;
       if (!source) {
         setStatus(
-          "No verified ABI found (or no Etherscan API key configured) — enter the function signature manually.",
+          "No verified ABI found (or no Etherscan API key configured). Enter the function signature manually.",
         );
         setFunctions([]);
         return;

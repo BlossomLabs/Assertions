@@ -14,6 +14,7 @@ import { evml } from "./evml";
 import { ExecuteStep } from "./ExecuteStep";
 import { SimulationResults, useSimulation } from "./SimulateBar";
 import { useBuilderChatAgent } from "./useBuilderChatAgent";
+import { useChainSupport } from "./useChainSupport";
 import { useContextAddress } from "./useContextAddressCheck";
 import {
   hasAssertions,
@@ -25,7 +26,7 @@ import { transports, wagmiConfig } from "./wagmi";
 const queryClient = new QueryClient();
 
 const SUGGEST_PROMPT =
-  "Read my current script and suggest assertions for it: fetch the verified source of every contract it touches, work out what the batch does, and insert the assert commands (with `load assertions`) that best protect it — pre-assertions for the state it relies on, post-assertions for the outcome. Then simulate to confirm the protected batch still passes, and summarize what each assertion guards against.";
+  "Read my current script and suggest assertions for it: fetch the verified source of every contract it touches, work out what the batch does, and insert the assert commands (with `load assertions`) that best protect it: pre-assertions for the state it relies on, post-assertions for the outcome. Then simulate to confirm the protected batch still passes, and summarize what each assertion guards against.";
 
 function Section({
   step,
@@ -55,7 +56,13 @@ function Section({
 
 function Builder() {
   const { address, chain } = useAccount();
-  const chainId = chain?.id ?? 1;
+
+  // The network the batch targets. Follows the connected wallet until the
+  // user picks one explicitly — the script's addresses, ABIs, simulations
+  // and ENS records are all per-chain, so the choice is made visible in
+  // step 1 instead of silently tracking the wallet.
+  const [selectedChainId, setSelectedChainId] = useState<number | null>(null);
+  const chainId = selectedChainId ?? chain?.id ?? 1;
 
   const [context, setContext] = useState<ExecutionContext>({ kind: "eoa" });
   const scriptState = useScriptState();
@@ -74,8 +81,13 @@ function Builder() {
     context.kind,
     context.address,
   );
+  // Custom chains only work once the canonical contracts have code there.
+  const chainSupport = useChainSupport(chainId);
+  const chainReady =
+    chainSupport.state === "official" || chainSupport.state === "ok";
   const executor = executorAddress(context, address, contextAddress);
-  const ready = contextReady(context, address, contextAddress);
+  const ready =
+    contextReady(context, address, contextAddress) && chainReady;
   const hasScript = scriptState.script.trim().length > 0;
   const protectedScript = hasAssertions(scriptState.script);
   const batchScript = protectedScript
@@ -88,12 +100,15 @@ function Builder() {
   return (
     <div className="grid lg:grid-cols-[1fr_minmax(20rem,24rem)] gap-6 items-start">
       <div className="space-y-6 min-w-0">
-        <Section step={1} title="Who executes it?">
+        <Section step={1} title="Who executes it, and where?">
           <ContextSelector
             context={context}
             onChange={setContext}
             resolved={contextAddress}
             check={contextCheck}
+            chainId={chainId}
+            onChainChange={setSelectedChainId}
+            chainSupport={chainSupport}
           />
         </Section>
 
@@ -127,7 +142,7 @@ function Builder() {
               )}
               {protectedScript && (
                 <span className="text-xs text-[var(--color-ink-3)]">
-                  assertions are ignored here — step 5 covers them
+                  assertions are ignored here; step 5 covers them
                 </span>
               )}
             </div>

@@ -56,7 +56,7 @@ export function Composer({
       setRawMode("editor");
     } catch {
       setImportError(
-        "Unrecognized file — expected a Safe Transaction Builder JSON export.",
+        "Unrecognized file: expected a Safe Transaction Builder JSON export.",
       );
     }
   };

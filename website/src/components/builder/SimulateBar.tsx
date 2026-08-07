@@ -179,7 +179,7 @@ export function SimulationResults({
     >
       {stale && (
         <p className="text-xs text-amber-400">
-          The script changed since this simulation — run it again.
+          The script changed since this simulation. Run it again.
         </p>
       )}
       <p

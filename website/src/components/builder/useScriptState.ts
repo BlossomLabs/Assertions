@@ -184,7 +184,7 @@ export function useScriptState(initial = "") {
         return {
           ok: false,
           error:
-            "old_string matches more than once — include more surrounding context to make it unique.",
+            "old_string matches more than once. Include more surrounding context to make it unique.",
         };
       const next =
         current.slice(0, first) + newString + current.slice(first + oldString.length);
@@ -212,7 +212,7 @@ export function useScriptState(initial = "") {
       if (scriptRef.current !== revision.after)
         return {
           ok: false,
-          error: "The script changed since this edit — undo manually instead.",
+          error: "The script changed since this edit. Undo manually instead.",
         };
       revisions.current.delete(revisionId);
       setScript(revision.before);

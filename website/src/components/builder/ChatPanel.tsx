@@ -228,7 +228,7 @@ export function ChatPanel({
           <p className="px-3 py-2 rounded-lg text-xs leading-relaxed bg-[var(--color-err)]/10 border border-[var(--color-err)]/30 text-[var(--color-err)]">
             Your Dappnode Nexus session has expired or its key was revoked. Log
             in again to continue
-            {agent.items.length > 0 && " — your conversation is preserved"}.
+            {agent.items.length > 0 && ", and your conversation is preserved"}.
           </p>
         )}
         <p className="text-[var(--color-ink-2)] leading-relaxed">
@@ -305,7 +305,7 @@ export function ChatPanel({
             <span className="text-[var(--color-ink-2)]">
               Suggest assertions
             </span>{" "}
-            — or ask anything about protecting it.
+            or ask anything about protecting it.
           </p>
         )}
         {agent.items.map((item, i) =>

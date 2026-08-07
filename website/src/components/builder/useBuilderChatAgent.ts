@@ -29,7 +29,7 @@ Syntax (check get_docs before using anything you are not sure of):
   assertions:assert <target>::<viewFn(args)> <op> <expected> "revert msg"            # named method, ABI fetched automatically
   assertions:assert <target>::{viewFn(argTypes)(returnType) <args>} <op> <expected>  # inline ABI when needed
   assertions:assert <t>::{a()(address)}::{b()(uint256)} <op> <expected>              # :: chains: every hop but the last returns the next address; a multi-value hop selects it with a lens, e.g. <t>::{f()(uint112,uint112,address)}[_ _ $]::{b()(uint256)}
-  assertions:assert <t>::{owners()(address[],address)}[[_ $]] == <addr>              # a NESTED lens selects a dynamic-array element of the final return ([[_ $]] = element 1 of return value 0), bounds-checked against the live length on-chain; works nested in @bool!/@num! too
+  assertions:assert <t>::{owners()(address[],address)}[[_ $]] == <addr>              # a NESTED lens navigates the final return: each nesting level is one step into an array (element by position, live-bounds-checked on-chain) or a struct/tuple (field by position). Any depth: {matrix()(address[][])}[[_ [$]]] = [1][0]; {proposals()((address,uint256,bool)[])}[[_ [_ _ $]]] = proposals[1].executed. Works nested in @bool!/@num!, and @len!/@split!/@includes!/@charset!/@hash!/@bytelen! accept a lensed call selecting a nested string/array, e.g. @len!($t::{matrix()(address[][])}[[$]])
   assertions:assert-balance <account> <op> <weiAmount> "msg"                         # native ETH balance
   assertions:assert-codehash <target> <bytes32> "msg"                                # pin code, with @codehash(<addr>)
   also: assert-code, assert-no-code, assert-chainid, assert-block-number, assert-timestamp

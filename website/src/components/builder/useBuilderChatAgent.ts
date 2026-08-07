@@ -28,7 +28,7 @@ Syntax (check get_docs before using anything you are not sure of):
   load assertions
   assertions:assert <target>::<viewFn(args)> <op> <expected> "revert msg"            # named method, ABI fetched automatically
   assertions:assert <target>::{viewFn(argTypes)(returnType) <args>} <op> <expected>  # inline ABI when needed
-  assertions:assert <t>::{a()(address)}::{b()(uint256)} <op> <expected>              # :: chains: every hop but the last returns the next address
+  assertions:assert <t>::{a()(address)}::{b()(uint256)} <op> <expected>              # :: chains: every hop but the last returns the next address; a multi-value hop selects it with a lens, e.g. <t>::{f()(uint112,uint112,address)}[_ _ $]::{b()(uint256)}
   assertions:assert-balance <account> <op> <weiAmount> "msg"                         # native ETH balance
   assertions:assert-codehash <target> <bytes32> "msg"                                # pin code, with @codehash(<addr>)
   also: assert-code, assert-no-code, assert-chainid, assert-block-number, assert-timestamp
@@ -39,7 +39,8 @@ On-chain composition — helpers with a trailing ! evaluate ON-CHAIN at assertio
   @bool!(<expr>)  on-chain comparisons and logic: == != < <= > >= and or xor not, e.g. @bool!(($gov::quorum() > 0) or (not $gov::paused()))
   @balance!(ETH|<token> <addr>)  live balance: native for ETH, else ERC-20 balanceOf; token symbols resolve like @token
   @min!(a b ...) @max!(a b ...) @absdiff!(a b)  on-chain min/max/|a-b|; @absdiff!(a b) <= d is approx-eq between two live values
-  @len!(<call>)  decoded array/string length; @at!(<call> i) raw return word i; @split!(<call> "<delim>" i) string segment; @hash!(<call>) keccak256 of the return; @timestamp! @blocknumber!
+  @len!(<call>)  decoded array/string length; @bytelen!(<call>) raw returndata byte length; @at!(<call> i) raw return word i; @split!(<call> "<delim>" i) string segment; @hash!(<call>) keccak256 of the return; @timestamp! @blocknumber!. @split! and @hash! results compare only at the top level of an assertion (no nesting).
+  @includes!(<call> "part") string-contains and @charset!(<call> "a-z0-9-") only-these-characters (ranges + literals; byte-level ASCII) — both bool-valued, usable bare, with == true/false, or nested in @bool!.
 Ordinary helpers (@token:balance, @get, @num, @bool, ...) resolve at COMPOSITION time and freeze into calldata — fine for expected values, stale for live state. To assert a CHANGE, capture the pre-state at composition time (set $before @get(<address> "<viewFn(argTypes)(returnType)>" <args>)) and assert against @num($before + amount). Composition-time captures go stale, so for Safe/Governor/OSx proposals executed later prefer absolute thresholds or live @bool!/@num! forms.
 
 The one rule: every assertion must name a concrete loss the executor suffers if it is false — funds that did not arrive, funds that left beyond what was intended, a right not obtained or silently lost, code that changed under them. If you cannot state that loss in one sentence, do not write the assertion. NEVER assert protocol trivia the user does not own: totalSupply, decimals/symbol, paused flags, "pool exists", code-exists on well-known contracts, or preconditions the call itself already reverts on (e.g. insufficient balance for a transfer). Such assertions cost gas and bury the ones that matter.

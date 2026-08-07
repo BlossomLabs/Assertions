@@ -1,17 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Address } from "viem";
-import { isAddress, parseAbiItem } from "viem";
-import { normalize } from "viem/ens";
+import { isAddress } from "viem";
 import { usePublicClient } from "wagmi";
 
 import { BatchList } from "./BatchList";
-import { evml } from "./evml";
+import { Callout } from "./Callout";
+import { ExpressionAssertionEditor } from "./ExpressionAssertionEditor";
 import {
-  canonicalType,
-  ensVarName,
-  evmlArg,
+  type BlockField,
+  type CodeVariant,
+  buildAssertionLine,
+  buildFlatLine,
+} from "./assertion-codegen";
+import { unixToDatetimeLocal } from "./assertion-eval";
+import { type Assertion, emptyAssertion } from "./assertion-model";
+import { evml } from "./evml";
+import { useChainClient } from "./useChainSupport";
+import {
   inputCls,
-  toInputs,
+  resolveEnsAddress,
   useContractFunctions,
 } from "./useContractFunctions";
 import {
@@ -19,21 +26,20 @@ import {
   insertAssertionLines,
   type useScriptState,
 } from "./useScriptState";
+import { btnPrimaryCls, btnSmallCls, labelCls, smallLabelCls } from "./ui";
 
 type Kind = "state" | "balance" | "code" | "block" | "chainid";
-type CodeVariant = "has-code" | "no-code" | "codehash";
-type BlockField = "number" | "timestamp";
 
 const KINDS: { value: Kind; label: string; hint: string }[] = [
   {
     value: "state",
     label: "Contract state",
-    hint: "A view call compared to a value — e.g. balanceOf(@me) >= 10e18, owner() == 0x…",
+    hint: "A view call or a composed expression (min/max, |a − b|, lengths, arithmetic…) compared to a value or another live expression",
   },
   {
     value: "balance",
     label: "ETH balance",
-    hint: "Native balance of an account — e.g. the recipient's balance grew to the expected amount",
+    hint: "Native balance of an account, e.g. the recipient's balance grew to the expected amount",
   },
   {
     value: "code",
@@ -43,7 +49,7 @@ const KINDS: { value: Kind; label: string; hint: string }[] = [
   {
     value: "block",
     label: "Block",
-    hint: "Block number or timestamp — e.g. a proposal executes before a deadline",
+    hint: "Block number or timestamp, e.g. a proposal executes before a deadline",
   },
   {
     value: "chainid",
@@ -60,91 +66,17 @@ const PLACEMENTS: {
   {
     value: "pre",
     label: "Pre-condition",
-    hint: "Checked before the batch's actions run — guards the state the batch relies on (prices, code you reviewed, rights you hold).",
+    hint: "Checked before the batch's actions run. Guards the state the batch relies on (prices, code you reviewed, rights you hold).",
   },
   {
     value: "post",
     label: "Post-condition",
-    hint: "Checked after the actions run — guards the outcome (funds arrived, rights granted, parameters set).",
+    hint: "Checked after the actions run. Guards the outcome (funds arrived, rights granted, parameters set).",
   },
 ];
 
-/** Sentinel for the dropdown option that reveals the manual signature inputs. */
-const CUSTOM_SIG = "__custom__";
-/** Operator value for the bare boolean form (`assert target::fn()`). */
-const BARE_OP = "is true";
-
-const UINT_OPS = ["==", "!=", ">", "<", ">=", "<=", "~="];
-const BOOL_OPS = [BARE_OP, "==", "!="];
-const EQ_OPS = ["==", "!="];
 const BALANCE_OPS = ["==", ">", "<", ">=", "<=", "~="];
 const BLOCK_OPS = ["==", ">", "<", ">=", "<="];
-
-function opsForReturnType(returnType: string | null): string[] {
-  if (!returnType) return EQ_OPS;
-  if (/^u?int\d*$/.test(returnType)) return UINT_OPS;
-  if (returnType === "bool") return BOOL_OPS;
-  return EQ_OPS;
-}
-
-/** Integer parse accepting EVML-ish e-notation ("1e18", "2.5e6"). */
-function parseNumeric(v: string): bigint {
-  if (/^-?\d+$/.test(v)) return BigInt(v);
-  const m = v.match(/^(-?\d+)(?:\.(\d+))?e\+?(\d+)$/i);
-  if (m) {
-    const [, int, frac = "", exp] = m;
-    const zeros = Number(exp) - frac.length;
-    if (zeros >= 0) return BigInt(int + frac + "0".repeat(zeros));
-  }
-  throw new Error(`cannot parse "${v}" as an integer`);
-}
-
-/** Form string → JS value for an eth_call argument. */
-function parseCallArg(type: string, raw: string, executor?: Address): unknown {
-  const v = raw.trim();
-  if (v === "@me") {
-    if (!executor) throw new Error("connect a wallet to resolve @me");
-    return executor;
-  }
-  if (/^u?int\d*$/.test(type)) return parseNumeric(v);
-  if (type === "bool") return v === "true";
-  if (type === "address" || type.startsWith("bytes") || type === "string")
-    return v;
-  throw new Error(`unsupported argument type ${type}`);
-}
-
-/** eth_call result → form string. */
-function formatResult(value: unknown): string {
-  if (typeof value === "bigint") return value.toString();
-  if (typeof value === "boolean") return value ? "true" : "false";
-  return String(value);
-}
-
-/** Unix-seconds string → local "YYYY-MM-DDTHH:mm" for a datetime-local
- *  input ("" when the value isn't a plain timestamp). */
-function unixToDatetimeLocal(value: string): string {
-  const v = value.trim();
-  if (!/^\d+$/.test(v)) return "";
-  const d = new Date(Number(v) * 1000);
-  if (Number.isNaN(d.getTime()) || d.getFullYear() > 9999) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-/** Expected form value → EVML literal for the assert line. */
-function formatExpected(value: string, returnType: string | null): string {
-  const v = value.trim();
-  if (returnType === "string") return JSON.stringify(v);
-  return v;
-}
-
-const btnPrimaryCls =
-  "px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors";
-const btnSmallCls =
-  "px-2.5 py-1.5 rounded-lg text-xs font-medium border border-[var(--color-bp-400)] text-[var(--color-bp-300)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap";
-const labelCls = "block text-sm text-[var(--color-ink-2)] mb-1.5";
-const smallLabelCls =
-  "block text-xs font-mono text-[var(--color-ink-3)] mb-1";
 
 export function AssertionForm({
   scriptState,
@@ -157,24 +89,23 @@ export function AssertionForm({
 }) {
   const { script, insertAssertion, removeLine } = scriptState;
   const mainnetClient = usePublicClient({ chainId: 1 });
-  const chainClient = usePublicClient({ chainId });
+  const chainClient = useChainClient(chainId);
 
   const [placement, setPlacement] = useState<AssertionPlacement>("post");
   const [kind, setKind] = useState<Kind>("state");
 
-  // Contract state / code fields.
+  // The expression-kind assertion (subject/operator/expected tree).
+  const [assertion, setAssertion] = useState<Assertion>(emptyAssertion);
+
+  // Code fields.
   const [addressInput, setAddressInput] = useState("");
-  const [selectedSig, setSelectedSig] = useState("");
-  const [manualSig, setManualSig] = useState("");
-  const [manualRet, setManualRet] = useState("");
-  const [args, setArgs] = useState<Record<string, string>>({});
   const [codeVariant, setCodeVariant] = useState<CodeVariant>("codehash");
   const [blockField, setBlockField] = useState<BlockField>("number");
 
   // Balance fields.
   const [account, setAccount] = useState("@me");
 
-  // Comparison fields shared by most kinds.
+  // Comparison fields shared by the flat kinds.
   const [operator, setOperator] = useState("==");
   const [expected, setExpected] = useState("");
   const [delta, setDelta] = useState("");
@@ -184,24 +115,17 @@ export function AssertionForm({
   const [adding, setAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
 
-  const needsContract = kind === "state" || kind === "code";
+  // The code kind resolves its target here; the state kind's call nodes
+  // each fetch their own ABI inside the tree editor.
   const contract = useContractFunctions(
     chainId,
-    needsContract ? addressInput : "",
+    kind === "code" ? addressInput : "",
     "view",
   );
 
-  // A new address means a new ABI — drop the previous function selection.
-  useEffect(() => {
-    setSelectedSig("");
-  }, [addressInput]);
-
   const resetFields = (nextKind: Kind) => {
+    setAssertion(emptyAssertion());
     setAddressInput("");
-    setSelectedSig("");
-    setManualSig("");
-    setManualRet("");
-    setArgs({});
     setCodeVariant("codehash");
     setBlockField("number");
     setAccount("@me");
@@ -217,177 +141,51 @@ export function AssertionForm({
     resetFields(next);
   };
 
-  // View functions the `assert` command can compare directly (single return
-  // value — tuple returns need a destructure lens, which the editor covers).
-  const viewFns = useMemo(
-    () => contract.functions?.filter((f) => f.outputs.length === 1) ?? null,
-    [contract.functions],
-  );
-
-  const selectedFn = useMemo(
-    () => viewFns?.find((f) => f.signature === selectedSig) ?? null,
-    [viewFns, selectedSig],
-  );
-
-  // Manual view signature: "fn(argTypes)" plus an explicit return type, so
-  // the line can use the inline-ABI form (no on-chain ABI lookup needed).
-  const manualFn = useMemo(() => {
-    const sig = manualSig.trim();
-    const ret = manualRet.trim();
-    if (!sig || !ret) return null;
-    try {
-      const item = parseAbiItem(`function ${sig} view returns (${ret})`);
-      if (item.type !== "function" || item.outputs.length !== 1) return null;
-      return {
-        name: item.name,
-        inputs: toInputs(item.inputs),
-        argTypes: item.inputs.map(canonicalType),
-        returnType: canonicalType(item.outputs[0]),
-      };
-    } catch {
-      return null;
-    }
-  }, [manualSig, manualRet]);
-
-  const useManual =
-    kind === "state" &&
-    (selectedSig === CUSTOM_SIG || (viewFns !== null && viewFns.length === 0));
-
-  const activeFn = useMemo(() => {
-    if (kind !== "state") return null;
-    if (useManual)
-      return manualFn ? { ...manualFn, inline: true as const } : null;
-    if (!selectedFn) return null;
-    return {
-      name: selectedFn.name,
-      inputs: selectedFn.inputs,
-      argTypes: selectedFn.inputs.map((i) => i.type),
-      returnType: selectedFn.outputs[0],
-      inline: false as const,
-    };
-  }, [kind, useManual, manualFn, selectedFn]);
-
-  const returnType = activeFn?.returnType ?? null;
-
   const operators = useMemo(() => {
     switch (kind) {
-      case "state":
-        return opsForReturnType(returnType);
       case "balance":
         return BALANCE_OPS;
       case "block":
         return BLOCK_OPS;
       default:
-        return null; // code & chainid have no operator
+        return null; // state has its own editor; code & chainid no operator
     }
-  }, [kind, returnType]);
+  }, [kind]);
 
-  // Keep the operator within the allowed set when the return type changes.
+  // Keep the operator within the allowed set when the kind changes.
   useEffect(() => {
     if (operators && !operators.includes(operator)) setOperator(operators[0]);
   }, [operators, operator]);
 
-  // Booleans are compared against a fixed true/false select.
-  const boolExpected = kind === "state" && returnType === "bool";
-  useEffect(() => {
-    if (boolExpected && operator !== BARE_OP && !["true", "false"].includes(expected))
-      setExpected("true");
-  }, [boolExpected, operator, expected]);
-
   const targetInput = addressInput.trim();
-  const targetAddress: Address | null = isAddress(targetInput)
-    ? targetInput
-    : contract.resolved;
 
   /**
    * Build the assertion line (+ hoisted `set` lines) from the form, or null
-   * while the form is incomplete. `ensToVar` resolves ENS names appearing in
-   * call arguments; the live preview passes a no-op.
+   * while the form is incomplete. `resolveEns` resolves ENS names appearing
+   * in the expression to their address on this chain; the live preview
+   * passes a no-op.
    */
   const buildAssertion = async (
-    ensToVar: (name: string) => Promise<string | null>,
+    resolveEns: (name: string) => Promise<string | null>,
   ): Promise<{ line: string; sets: string[] } | null> => {
-    const sets: string[] = [];
-    const registerEns = (name: string): string => {
-      const varName = ensVarName(name);
-      const setLine = `set ${varName} @ens(${name})`;
-      if (!sets.includes(setLine)) sets.push(setLine);
-      return varName;
-    };
-    // Contract given as an ENS name keeps the name in the script via a set
-    // line (same convention as the batch composer).
-    const target = () => {
-      if (!targetInput) return null;
-      if (isAddress(targetInput)) return targetInput;
-      return contract.resolved ? registerEns(targetInput) : null;
-    };
-    const msg = message.trim() ? ` ${JSON.stringify(message.trim())}` : "";
-    const comparison = (allowDelta: boolean): string | null => {
-      if (!expected.trim()) return null;
-      let out = ` ${operator} ${formatExpected(expected, returnType)}`;
-      if (operator === "~=") {
-        if (!allowDelta || !delta.trim()) return null;
-        out += ` --delta ${delta.trim()}`;
-      }
-      return out;
-    };
-
-    switch (kind) {
-      case "state": {
-        const t = target();
-        if (!t || !activeFn) return null;
-        if (activeFn.inputs.some((i) => !(args[i.name] ?? "").trim()))
-          return null;
-        const argVals = await Promise.all(
-          activeFn.inputs.map((i) =>
-            evmlArg(i.type, args[i.name] ?? "", ensToVar),
-          ),
-        );
-        const call = activeFn.inline
-          ? `${t}::{${activeFn.name}(${activeFn.argTypes.join(",")})(${activeFn.returnType})${argVals.length ? ` ${argVals.join(" ")}` : ""}}`
-          : `${t}::${activeFn.name}(${argVals.join(" ")})`;
-        if (operator === BARE_OP)
-          return { line: `assertions:assert ${call}${msg}`, sets };
-        const cmp = comparison(true);
-        if (!cmp) return null;
-        return { line: `assertions:assert ${call}${cmp}${msg}`, sets };
-      }
-      case "balance": {
-        if (!account.trim()) return null;
-        const acct =
-          account.trim() === "@me"
-            ? "@me"
-            : await evmlArg("address", account, ensToVar);
-        const cmp = comparison(true);
-        if (!cmp) return null;
-        return { line: `assertions:assert-balance ${acct}${cmp}${msg}`, sets };
-      }
-      case "code": {
-        const t = target();
-        if (!t) return null;
-        if (codeVariant === "codehash") {
-          const exp = expected.trim();
-          if (!exp) return null;
-          return { line: `assertions:assert-codehash ${t} ${exp}${msg}`, sets };
-        }
-        const cmd = codeVariant === "has-code" ? "assert-code" : "assert-no-code";
-        return { line: `assertions:${cmd} ${t}${msg}`, sets };
-      }
-      case "block": {
-        const cmp = comparison(false);
-        if (!cmp) return null;
-        const cmd =
-          blockField === "number" ? "assert-block-number" : "assert-timestamp";
-        return { line: `assertions:${cmd}${cmp}${msg}`, sets };
-      }
-      case "chainid": {
-        if (!expected.trim()) return null;
-        return {
-          line: `assertions:assert-chainid ${expected.trim()}${msg}`,
-          sets,
-        };
-      }
-    }
+    const options = { resolveEns, chainId };
+    if (kind === "state")
+      return buildAssertionLine({ ...assertion, message }, options);
+    return buildFlatLine(
+      {
+        kind,
+        account,
+        targetInput,
+        targetResolved: contract.resolved,
+        codeVariant,
+        blockField,
+        operator,
+        expected,
+        delta,
+        message,
+      },
+      options,
+    );
   };
 
   // Live preview: rebuilt on every form change (ENS args stay as typed —
@@ -460,33 +258,13 @@ export function AssertionForm({
   const fetchCurrentValue = async () => {
     setFetchStatus(null);
     try {
-      if (kind === "block") {
-        if (!chainClient) throw new Error("no RPC for this chain");
-        const block = await chainClient.getBlock();
-        setExpected(
-          String(blockField === "number" ? block.number : block.timestamp),
-        );
-        return;
-      }
-      if (kind !== "state" || !activeFn || !targetAddress) return;
       if (!chainClient) throw new Error("no RPC for this chain");
-      setFetchStatus("Fetching current value…");
-      const abiItem = parseAbiItem(
-        `function ${activeFn.name}(${activeFn.argTypes.join(",")}) view returns (${activeFn.returnType})`,
+      const block = await chainClient.getBlock();
+      setExpected(
+        String(blockField === "number" ? block.number : block.timestamp),
       );
-      const callArgs = activeFn.inputs.map((i) =>
-        parseCallArg(i.type, args[i.name] ?? "", executor),
-      );
-      const result = await chainClient.readContract({
-        address: targetAddress,
-        abi: [abiItem],
-        functionName: activeFn.name,
-        args: callArgs,
-      });
-      setExpected(formatResult(result));
-      setFetchStatus(null);
     } catch {
-      setFetchStatus("Could not fetch the current value — enter it manually.");
+      setFetchStatus("Could not fetch the current value. Enter it manually.");
     }
   };
 
@@ -494,29 +272,13 @@ export function AssertionForm({
     if (adding) return;
     setAdding(true);
     try {
-      const ensToVar = async (name: string): Promise<string | null> => {
-        try {
-          const addr = await mainnetClient?.getEnsAddress({
-            name: normalize(name),
-          });
-          if (!addr) return null;
-          const varName = ensVarName(name);
-          return varName;
-        } catch {
-          return null;
-        }
-      };
-      // Collect the set lines the resolved names need.
-      const sets: string[] = [];
-      const built = await buildAssertion(async (name) => {
-        const varName = await ensToVar(name);
-        if (!varName) return null;
-        const setLine = `set ${varName} @ens(${name})`;
-        if (!sets.includes(setLine)) sets.push(setLine);
-        return varName;
-      });
+      // Resolve ENS names to this chain's address (multichain names record
+      // one per chain); the codegen hoists the matching `set` lines.
+      const built = await buildAssertion((name) =>
+        resolveEnsAddress(mainnetClient, name, chainId),
+      );
       if (!built) return;
-      insertAssertion(built.line, placement, [...built.sets, ...sets]);
+      insertAssertion(built.line, placement, built.sets);
       resetFields(kind);
       setJustAdded(true);
     } finally {
@@ -524,20 +286,14 @@ export function AssertionForm({
     }
   };
 
-  const showOperator =
-    operators !== null && (kind !== "state" || !!activeFn);
-  const showExpected =
-    kind === "state" ? !!activeFn : kind !== "code" || codeVariant === "codehash";
+  const showExpected = kind !== "code" || codeVariant === "codehash";
   const canAdd =
     !!preview && validation?.state === "done" && validation.valid && !adding;
 
   const kindMeta = KINDS.find((k) => k.value === kind)!;
-  const contractStatus =
-    kind === "state"
-      ? contract.status
-      : contract.status?.includes("ENS")
-        ? contract.status
-        : null;
+  const contractStatus = contract.status?.includes("ENS")
+    ? contract.status
+    : null;
 
   return (
     <div className="space-y-4">
@@ -588,6 +344,16 @@ export function AssertionForm({
         </p>
       </div>
 
+      {/* Configure: the expression editor (state kind) */}
+      {kind === "state" && (
+        <ExpressionAssertionEditor
+          assertion={assertion}
+          setAssertion={setAssertion}
+          chainId={chainId}
+          executor={executor}
+        />
+      )}
+
       {/* Configure: block field */}
       {kind === "block" && (
         <div className="flex items-center gap-1">
@@ -616,8 +382,8 @@ export function AssertionForm({
         </div>
       )}
 
-      {/* Configure: contract target (state & code) */}
-      {needsContract && (
+      {/* Configure: contract target (code) */}
+      {kind === "code" && (
         <div>
           <label className={labelCls}>Contract address or ENS name</label>
           <input
@@ -627,110 +393,16 @@ export function AssertionForm({
             onChange={(e) => setAddressInput(e.target.value)}
             spellCheck={false}
           />
-          {!(kind === "state" && contract.contractName) &&
-            contract.resolved &&
-            !isAddress(targetInput) && (
-              <p className="mt-1 text-xs font-mono text-[var(--color-ink-3)]">
-                {contract.resolved}
-              </p>
-            )}
+          {contract.resolved && !isAddress(targetInput) && (
+            <p className="mt-1 text-xs font-mono text-[var(--color-ink-3)]">
+              {contract.resolved}
+            </p>
+          )}
           {contractStatus && (
             <p className="mt-1 text-xs text-[var(--color-ink-3)]">
               {contractStatus}
             </p>
           )}
-          {kind === "state" && contract.contractName && (
-            <p className="mt-1 text-xs">
-              <span className="text-[var(--color-ok)]">
-                Verified: {contract.contractName}
-              </span>
-              {contract.resolved && !isAddress(targetInput) && (
-                <span className="font-mono text-[var(--color-ink-3)]">
-                  {" · "}
-                  {contract.resolved}
-                </span>
-              )}
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* Configure: view function (state) */}
-      {kind === "state" && viewFns && viewFns.length > 0 && (
-        <div>
-          <label className={labelCls}>View function</label>
-          <select
-            className={inputCls}
-            value={selectedSig}
-            onChange={(e) => {
-              setSelectedSig(e.target.value);
-              setManualSig("");
-              setManualRet("");
-              setArgs({});
-            }}
-          >
-            <option value="">Select a view function…</option>
-            {viewFns.map((fn) => (
-              <option key={fn.signature} value={fn.signature}>
-                {fn.signature} → {fn.outputs[0]}
-              </option>
-            ))}
-            <option value={CUSTOM_SIG}>
-              Custom signature (not in the ABI)…
-            </option>
-          </select>
-        </div>
-      )}
-
-      {kind === "state" && contract.resolved && useManual && (
-        <div className="grid grid-cols-[1fr_8rem] gap-2">
-          <div>
-            <label className={labelCls}>Function signature</label>
-            <input
-              className={inputCls}
-              placeholder="balanceOf(address)"
-              value={manualSig}
-              onChange={(e) => setManualSig(e.target.value)}
-              spellCheck={false}
-            />
-          </div>
-          <div>
-            <label className={labelCls}>Returns</label>
-            <input
-              className={inputCls}
-              placeholder="uint256"
-              value={manualRet}
-              onChange={(e) => setManualRet(e.target.value)}
-              spellCheck={false}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Configure: call arguments (state) */}
-      {kind === "state" && activeFn && activeFn.inputs.length > 0 && (
-        <div className="space-y-2">
-          {activeFn.inputs.map((input) => (
-            <div key={input.name}>
-              <label className={smallLabelCls}>
-                {input.name} <span className="opacity-60">({input.type})</span>
-                {input.type === "address" && (
-                  <span className="opacity-60"> — @me = the executor</span>
-                )}
-              </label>
-              <input
-                className={inputCls}
-                value={args[input.name] ?? ""}
-                onChange={(e) =>
-                  setArgs((prev) => ({
-                    ...prev,
-                    [input.name]: e.target.value,
-                  }))
-                }
-                spellCheck={false}
-              />
-            </div>
-          ))}
         </div>
       )}
 
@@ -769,17 +441,17 @@ export function AssertionForm({
           </select>
           {codeVariant === "codehash" && (
             <p className="mt-1 text-xs text-[var(--color-ink-3)]">
-              Note: proxy upgrades don't change code — to guard against them,
+              Note: proxy upgrades don't change code. To guard against them,
               assert implementation() under Contract state instead.
             </p>
           )}
         </div>
       )}
 
-      {/* Configure: comparison */}
-      {(showOperator || showExpected) && (
+      {/* Configure: comparison (flat kinds) */}
+      {kind !== "state" && (operators !== null || showExpected) && (
         <div className="flex gap-2 items-end flex-wrap">
-          {showOperator && (
+          {operators !== null && (
             <div className="w-28">
               <label className={labelCls}>Operator</label>
               <select
@@ -787,7 +459,7 @@ export function AssertionForm({
                 value={operator}
                 onChange={(e) => setOperator(e.target.value)}
               >
-                {operators!.map((op) => (
+                {operators.map((op) => (
                   <option key={op} value={op}>
                     {op}
                   </option>
@@ -795,49 +467,38 @@ export function AssertionForm({
               </select>
             </div>
           )}
-          {showExpected && operator !== BARE_OP && (
+          {showExpected && (
             <div className="flex-1 min-w-40">
               <label className={labelCls}>
-                {kind === "code" ? "Expected code hash (bytes32)" : "Expected value"}
+                {kind === "code"
+                  ? "Expected code hash (bytes32)"
+                  : "Expected value"}
               </label>
-              {boolExpected ? (
-                <select
-                  className={inputCls}
-                  value={expected}
-                  onChange={(e) => setExpected(e.target.value)}
-                >
-                  <option value="true">true</option>
-                  <option value="false">false</option>
-                </select>
-              ) : (
-                <input
-                  className={inputCls}
-                  placeholder={
-                    kind === "balance"
-                      ? "wei, e.g. 1e18"
-                      : kind === "code"
-                        ? "0x…"
-                        : ""
-                  }
-                  value={expected}
-                  onChange={(e) => setExpected(e.target.value)}
-                  spellCheck={false}
-                />
-              )}
+              <input
+                className={inputCls}
+                placeholder={
+                  kind === "balance"
+                    ? "wei, e.g. 1e18"
+                    : kind === "code"
+                      ? "0x…"
+                      : ""
+                }
+                value={expected}
+                onChange={(e) => setExpected(e.target.value)}
+                spellCheck={false}
+              />
             </div>
           )}
-          {(kind === "block" ||
-            (kind === "state" && activeFn && targetAddress)) &&
-            operator !== BARE_OP && (
-              <button
-                type="button"
-                onClick={() => void fetchCurrentValue()}
-                className={btnSmallCls}
-                title="Read the value from the chain and prefill it"
-              >
-                Use current value
-              </button>
-            )}
+          {kind === "block" && (
+            <button
+              type="button"
+              onClick={() => void fetchCurrentValue()}
+              className={btnSmallCls}
+              title="Read the value from the chain and prefill it"
+            >
+              Use current value
+            </button>
+          )}
         </div>
       )}
       {fetchStatus && (
@@ -868,11 +529,14 @@ export function AssertionForm({
         </div>
       )}
 
-      {/* Approximate comparisons need a tolerance */}
-      {operator === "~=" && showExpected && (
+      {/* Approximate comparisons need a tolerance (flat kinds) */}
+      {kind !== "state" && operator === "~=" && showExpected && (
         <div>
           <label className={labelCls}>
-            Allowed delta <span className="text-xs text-[var(--color-ink-3)]">(tolerance for ~=)</span>
+            Allowed delta{" "}
+            <span className="text-xs text-[var(--color-ink-3)]">
+              (tolerance for ~=)
+            </span>
           </label>
           <input
             className={inputCls}
@@ -914,7 +578,7 @@ export function AssertionForm({
             </p>
           )}
           {validation?.state === "done" && !validation.valid && (
-            <div className="mt-1.5 text-xs text-[var(--color-err)] space-y-0.5">
+            <Callout tone="error">
               {(validation.messages.length
                 ? validation.messages
                 : ["The assertion does not validate."]
@@ -923,7 +587,7 @@ export function AssertionForm({
                   {m}
                 </p>
               ))}
-            </div>
+            </Callout>
           )}
         </div>
       )}
@@ -944,7 +608,7 @@ export function AssertionForm({
             {justAdded && (
               <span className="text-[var(--color-bp-300)]">
                 {" "}
-                — assertion added, simulate with assertions in step 5 to
+                · assertion added, simulate with assertions in step 5 to
                 verify it holds
               </span>
             )}

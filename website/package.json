@@ -36,6 +36,8 @@
     "astro": "^7.0.5",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "tailwindcss": "^4.3.2",
     "viem": "^2.54.1",
     "wagmi": "^3.6.21"

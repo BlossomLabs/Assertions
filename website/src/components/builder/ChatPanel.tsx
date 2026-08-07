@@ -7,6 +7,7 @@ import {
 } from "@evmcrispr/ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { Markdown } from "./Markdown";
 import {
   builderChatStorage,
   type useBuilderChatAgent,
@@ -312,18 +313,21 @@ export function ChatPanel({
           item.role === "tool" ? (
             // biome-ignore lint/suspicious/noArrayIndexKey: append-only list
             <ToolChip key={i} item={item} />
-          ) : (
+          ) : item.role === "user" ? (
             <div
               // biome-ignore lint/suspicious/noArrayIndexKey: append-only list
               key={i}
-              className={`text-sm leading-relaxed whitespace-pre-wrap ${
-                item.role === "user"
-                  ? "px-3 py-2 rounded-lg bg-[var(--color-bp-500)]/10 dark:bg-[var(--color-bp-400)]/10 border border-[var(--color-bp-500)]/20 dark:border-[var(--color-bp-400)]/30"
-                  : "text-[var(--color-ink)]"
-              }`}
+              className="text-sm leading-relaxed whitespace-pre-wrap px-3 py-2 rounded-lg bg-[var(--color-bp-500)]/10 dark:bg-[var(--color-bp-400)]/10 border border-[var(--color-bp-500)]/20 dark:border-[var(--color-bp-400)]/30"
             >
               {item.text}
             </div>
+          ) : (
+            <Markdown
+              // biome-ignore lint/suspicious/noArrayIndexKey: append-only list
+              key={i}
+              text={item.text}
+              className="text-[var(--color-ink)]"
+            />
           ),
         )}
         {agent.error && !agent.isAuthError && (

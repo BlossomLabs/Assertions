@@ -143,8 +143,11 @@ export function ExpressionAssertionEditor({
 
       <div className="flex gap-2 items-end flex-wrap">
         <div className="w-28">
-          <label className={labelCls}>Operator</label>
+          <label className={labelCls} htmlFor="expr-operator">
+            Operator
+          </label>
           <select
+            id="expr-operator"
             className={inputCls}
             value={currentOp}
             onChange={(e) => changeOperator(e.target.value)}
@@ -203,13 +206,14 @@ export function ExpressionAssertionEditor({
 
       {assertion.operator === "~=" && (
         <div>
-          <label className={labelCls}>
+          <label className={labelCls} htmlFor="expr-delta">
             Allowed delta{" "}
             <span className="text-xs text-[var(--color-ink-3)]">
               (tolerance for ~=)
             </span>
           </label>
           <input
+            id="expr-delta"
             className={inputCls}
             placeholder="e.g. 50e8"
             value={assertion.delta}

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { isAddress, parseAbiItem } from "viem";
 
-import type { CallHop, ValueExpr } from "../assertion-model";
+import type { CallHop, LensLevel, ValueExpr } from "../assertion-model";
+import { lensLevelOf, resolveLens } from "../assertion-model";
 import {
   canonicalType,
   inputCls,
@@ -177,12 +178,16 @@ export function CallEditor({
   onChange,
   chainId,
   compact = false,
+  allowChain = true,
 }: {
   node: CallNode;
   onChange: (updater: (node: CallNode) => CallNode) => void;
   chainId: number;
   /** Nested nodes drop the field labels to keep the tree readable. */
   compact?: boolean;
+  /** Chained hops compile through the combinators contract, so the simple
+   *  form (single call, no combinators) turns them off. */
+  allowChain?: boolean;
 }) {
   const contract = useContractFunctions(chainId, node.target, "view");
   const hop = node.hops[0] ?? emptyHop();
@@ -200,7 +205,7 @@ export function CallEditor({
   }, [contract.resolved]);
 
   // All view functions are listed — dynamic and multi-output returns are
-  // reachable through @len!/@at! and chain hops.
+  // reachable through @len!, the return-value picker and chain hops.
   const viewFns = contract.functions;
 
   const selectedSig =
@@ -261,22 +266,71 @@ export function CallEditor({
     });
 
   const lastHop = node.hops[node.hops.length - 1] ?? hop;
-  // Chaining continues on an address return — the only one, or a chosen
-  // one from a multi-value return (rendered as a destructure lens).
   const addressOutputs = lastHop.returnTypes
     .map((type, i) => ({ type, i }))
     .filter((o) => o.type === "address");
-  const canChain = !!lastHop.fnName && addressOutputs.length > 0;
+
+  // The final hop's selection: walk the picked output through `lensPath`,
+  // yielding one picker per composite level (array element or struct
+  // value) plus the next level to pick, rendered as nested lens levels.
+  const selType =
+    lastHop.returnTypes.length === 1
+      ? lastHop.returnTypes[0]
+      : lastHop.lensIndex !== undefined
+        ? lastHop.returnTypes[lastHop.lensIndex]
+        : undefined;
+  const lensLevels: { level: LensLevel; value: string }[] = [];
+  {
+    let t = selType;
+    const pathVals = lastHop.lensPath ?? [];
+    for (let k = 0; t !== undefined; k++) {
+      const level = lensLevelOf(t);
+      if (!level) break;
+      const value = pathVals[k] ?? "";
+      lensLevels.push({ level, value });
+      const v = value.trim();
+      if (!/^-?\d+$/.test(v)) break; // deeper levels need this one picked
+      t =
+        level.kind === "array" ? level.base : level.components[Number(v)];
+    }
+  }
+
+  const setLensEntry = (k: number, value: string) => {
+    const base = (lastHop.lensPath ?? []).slice(0, k);
+    const nextPath = value === "" ? base : [...base, value];
+    setHop(node.hops.length - 1, {
+      ...lastHop,
+      lensPath: nextPath.length > 0 ? nextPath : undefined,
+    });
+  };
+
+  // The chain continues wherever the current selection lands on an
+  // address: the single output, a lens-picked address output, an address
+  // element reached through arrays/structs, or — before any selection —
+  // some address output `addHop` can anchor to.
+  const lensSelection = resolveLens(lastHop);
+  const canChain =
+    allowChain &&
+    !!lastHop.fnName &&
+    (lensSelection
+      ? lensSelection.valid && lensSelection.terminal === "address"
+      : addressOutputs.length > 0);
 
   const addHop = () =>
     onChange((n) => {
       const hops = [...n.hops];
       const prev = hops[hops.length - 1];
-      if (prev.returnTypes.length > 1)
+      const lens = resolveLens(prev);
+      const keep = !!lens?.valid && lens.terminal === "address";
+      if (!keep && prev.returnTypes.length > 1) {
+        // No usable selection yet — anchor the chain to the first plain
+        // address output.
         hops[hops.length - 1] = {
           ...prev,
-          lensIndex: prev.lensIndex ?? addressOutputs[0]?.i,
+          lensIndex: addressOutputs[0]?.i,
+          lensPath: undefined,
         };
+      }
       return { ...n, hops: [...hops, emptyHop()] };
     });
 
@@ -375,12 +429,23 @@ export function CallEditor({
               <span className="text-xs font-mono text-[var(--color-ink-3)]">
                 :: then call on
               </span>
-              {prev.returnTypes.length > 1 ? (
+              {(prev.lensPath ?? []).length > 0 ? (
+                // The selection reaches through arrays/structs; it was
+                // made with the full picker before this hop was added —
+                // remove the hop to change it.
+                <span className="text-xs font-mono text-[var(--color-ink-3)]">
+                  the selected address element
+                </span>
+              ) : prev.returnTypes.length > 1 ? (
                 <select
                   className="px-1.5 py-0.5 rounded-md bg-transparent border border-[var(--color-ink-3)]/25 text-xs font-mono text-[var(--color-ink-3)]"
                   value={prev.lensIndex ?? prevAddressOutputs[0]?.j ?? 0}
                   onChange={(e) =>
-                    setHop(i, { ...prev, lensIndex: Number(e.target.value) })
+                    setHop(i, {
+                      ...prev,
+                      lensIndex: Number(e.target.value),
+                      lensPath: undefined,
+                    })
                   }
                   title="Which return value the chain continues on"
                 >
@@ -415,6 +480,95 @@ export function CallEditor({
           </div>
         );
       })}
+
+      {!!lastHop.fnName &&
+        (lastHop.returnTypes.length > 1 || lensLevels.length > 0) && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {lastHop.returnTypes.length > 1 && (
+              <>
+                <span className="text-xs font-mono text-[var(--color-ink-3)]">
+                  use return value
+                </span>
+                <select
+                  className="px-1.5 py-0.5 rounded-md bg-transparent border border-[var(--color-ink-3)]/25 text-xs font-mono text-[var(--color-ink-3)]"
+                  value={lastHop.lensIndex ?? ""}
+                  onChange={(e) =>
+                    setHop(node.hops.length - 1, {
+                      ...lastHop,
+                      lensIndex:
+                        e.target.value === ""
+                          ? undefined
+                          : Number(e.target.value),
+                      lensPath: undefined,
+                    })
+                  }
+                  title="Which of the returned values the assertion uses (rendered as a destructure lens)"
+                >
+                  <option value="">pick a return value…</option>
+                  {lastHop.returnTypes.map((type, i) => (
+                    <option key={i} value={i}>
+                      return value #{i + 1} ({type})
+                    </option>
+                  ))}
+                </select>
+                {lastHop.lensIndex === undefined && (
+                  <span className="text-xs text-[var(--color-err)]">
+                    This call returns several values — pick the one to
+                    assert on.
+                  </span>
+                )}
+              </>
+            )}
+            {lensLevels.map(({ level, value }, k) => (
+              <Fragment key={k}>
+                <span className="text-xs font-mono text-[var(--color-ink-3)]">
+                  {level.kind === "array" ? "element" : "value"}
+                </span>
+                {level.kind === "array" && level.length === undefined ? (
+                  <input
+                    className="w-28 px-1.5 py-0.5 rounded-md bg-transparent border border-[var(--color-ink-3)]/25 text-xs font-mono text-[var(--color-ink-3)]"
+                    placeholder="0 first, -1 last"
+                    value={value}
+                    onChange={(e) => setLensEntry(k, e.target.value)}
+                    title="Index of the array element the assertion uses — 0-based, negative counts from the end (resolved live on-chain)"
+                    spellCheck={false}
+                  />
+                ) : (
+                  <select
+                    className="px-1.5 py-0.5 rounded-md bg-transparent border border-[var(--color-ink-3)]/25 text-xs font-mono text-[var(--color-ink-3)]"
+                    value={value}
+                    onChange={(e) => setLensEntry(k, e.target.value)}
+                    title={
+                      level.kind === "array"
+                        ? "Which array element the assertion uses (rendered as a nested lens)"
+                        : "Which value of the struct the assertion uses (rendered as a nested lens)"
+                    }
+                  >
+                    <option value="">
+                      {level.kind === "array"
+                        ? "pick an element…"
+                        : "pick a value…"}
+                    </option>
+                    {(level.kind === "array"
+                      ? Array.from({ length: level.length ?? 0 }, (_, i) => ({
+                          i,
+                          label: `element #${i + 1} (${level.base})`,
+                        }))
+                      : level.components.map((c, i) => ({
+                          i,
+                          label: `value #${i + 1} (${c})`,
+                        }))
+                    ).map((o) => (
+                      <option key={o.i} value={o.i}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </Fragment>
+            ))}
+          </div>
+        )}
 
       {canChain && (
         <button

@@ -12,8 +12,23 @@ import {
   buildAssertionLine,
   buildFlatLine,
 } from "./assertion-codegen";
-import { unixToDatetimeLocal } from "./assertion-eval";
-import { type Assertion, emptyAssertion } from "./assertion-model";
+import {
+  isEvaluable,
+  readSubjectValue,
+  unixToDatetimeLocal,
+} from "./assertion-eval";
+import {
+  type Assertion,
+  type ValueExpr,
+  BARE_OP,
+  emptyAssertion,
+  emptyCall,
+  inferCategory,
+  opsFor,
+  validateAssertion,
+} from "./assertion-model";
+import { CallEditor } from "./expr/CallEditor";
+import { LineIcon } from "./expr/icons";
 import { evml } from "./evml";
 import { useChainClient } from "./useChainSupport";
 import {
@@ -26,15 +41,31 @@ import {
   insertAssertionLines,
   type useScriptState,
 } from "./useScriptState";
-import { btnPrimaryCls, btnSmallCls, labelCls, smallLabelCls } from "./ui";
+import {
+  btnPrimaryCls,
+  btnSmallCls,
+  focusRingCls,
+  labelCls,
+  segBtnCls,
+  smallLabelCls,
+  tileBtnCls,
+} from "./ui";
 
-type Kind = "state" | "balance" | "code" | "block" | "chainid";
+/** Direct mode ("simple") emits the dedicated assert-* commands of the
+ *  Assertions core. Composed mode ("advanced") is the expression editor
+ *  (subject ⟨op⟩ expected over the Combinators tree). Suggest hands the
+ *  batch to the AI assistant instead of building one manually. */
+type Mode = "simple" | "advanced" | "suggest";
+type SimpleKind = "call" | "balance" | "code" | "block" | "chainid";
 
-const KINDS: { value: Kind; label: string; hint: string }[] = [
+/** The subject shape the "Contract call" simple kind edits. */
+type CallNode = Extract<ValueExpr, { kind: "call" }>;
+
+const SIMPLE_KINDS: { value: SimpleKind; label: string; hint: string }[] = [
   {
-    value: "state",
+    value: "call",
     label: "Contract state",
-    hint: "A view call or a composed expression (min/max, |a − b|, lengths, arithmetic…) compared to a value or another live expression",
+    hint: "A view function's return value compared to what you expect, e.g. the new owner is set",
   },
   {
     value: "balance",
@@ -58,6 +89,41 @@ const KINDS: { value: Kind; label: string; hint: string }[] = [
   },
 ];
 
+/** Check-tile icons, shared with the expression editor's source pickers
+ *  (SimpleKind values map 1:1 onto shared icon names). */
+function KindIcon({ kind }: { kind: SimpleKind }) {
+  return <LineIcon name={kind} />;
+}
+
+const MODES: {
+  value: Mode;
+  label: string;
+  dependency: string;
+  hint: string;
+}[] = [
+  {
+    value: "simple",
+    label: "Direct assertion",
+    dependency: "Assertions core only",
+    hint: "Check one contract value or environment property.",
+  },
+  {
+    value: "advanced",
+    label: "Composed expression",
+    dependency: "Uses Combinators v1.0",
+    hint: "Chain, combine, or transform runtime values.",
+  },
+  {
+    value: "suggest",
+    label: "Suggest assertions",
+    dependency: "AI assistant",
+    hint: "Let the assistant propose and insert protective assertions.",
+  },
+];
+
+const COMPOSED_HINT =
+  "A view call, balance, clock or code-hash value — wrapped in combinators (min/max, |a − b|, lengths, arithmetic…) and compared to a value or another live expression";
+
 const PLACEMENTS: {
   value: AssertionPlacement;
   label: string;
@@ -65,13 +131,13 @@ const PLACEMENTS: {
 }[] = [
   {
     value: "pre",
-    label: "Pre-condition",
-    hint: "Checked before the batch's actions run. Guards the state the batch relies on (prices, code you reviewed, rights you hold).",
+    label: "Before actions",
+    hint: "A pre-condition: checked before the batch's actions run. Guards the state the batch relies on (prices, code you reviewed, rights you hold).",
   },
   {
     value: "post",
-    label: "Post-condition",
-    hint: "Checked after the actions run. Guards the outcome (funds arrived, rights granted, parameters set).",
+    label: "After actions",
+    hint: "A post-condition: checked after the actions run. Guards the outcome (funds arrived, rights granted, parameters set).",
   },
 ];
 
@@ -82,20 +148,37 @@ export function AssertionForm({
   scriptState,
   chainId,
   executor,
+  suggest,
 }: {
   scriptState: ReturnType<typeof useScriptState>;
   chainId: number;
   executor: Address | undefined;
+  /** Wiring for the "Suggest assertions" mode: whether the batch simulated
+   *  successfully (step 3), whether the assistant is busy, whether the user
+   *  is logged in to the chat, and the action that hands the prompt to the
+   *  chat panel. */
+  suggest: {
+    ready: boolean;
+    running: boolean;
+    loggedIn: boolean;
+    onSuggest: () => void;
+  };
 }) {
   const { script, insertAssertion, removeLine } = scriptState;
   const mainnetClient = usePublicClient({ chainId: 1 });
   const chainClient = useChainClient(chainId);
 
   const [placement, setPlacement] = useState<AssertionPlacement>("post");
-  const [kind, setKind] = useState<Kind>("state");
+  const [mode, setMode] = useState<Mode>("simple");
+  const [simpleKind, setSimpleKind] = useState<SimpleKind>("call");
 
   // The expression-kind assertion (subject/operator/expected tree).
   const [assertion, setAssertion] = useState<Assertion>(emptyAssertion);
+
+  // Contract-call fields: a single call subject, no combinators.
+  const [callNode, setCallNode] = useState<CallNode>(
+    () => emptyCall() as CallNode,
+  );
 
   // Code fields.
   const [addressInput, setAddressInput] = useState("");
@@ -115,16 +198,17 @@ export function AssertionForm({
   const [adding, setAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
 
-  // The code kind resolves its target here; the state kind's call nodes
+  // The code kind resolves its target here; the advanced mode's call nodes
   // each fetch their own ABI inside the tree editor.
   const contract = useContractFunctions(
     chainId,
-    kind === "code" ? addressInput : "",
+    mode === "simple" && simpleKind === "code" ? addressInput : "",
     "view",
   );
 
-  const resetFields = (nextKind: Kind) => {
+  const resetFields = (nextKind: SimpleKind) => {
     setAssertion(emptyAssertion());
+    setCallNode(emptyCall() as CallNode);
     setAddressInput("");
     setCodeVariant("codehash");
     setBlockField("number");
@@ -136,21 +220,30 @@ export function AssertionForm({
     setFetchStatus(null);
   };
 
-  const changeKind = (next: Kind) => {
-    setKind(next);
+  const changeKind = (next: SimpleKind) => {
+    setSimpleKind(next);
     resetFields(next);
   };
 
   const operators = useMemo(() => {
-    switch (kind) {
+    switch (simpleKind) {
+      case "call":
+        // Category-driven, like the advanced editor: the subject is live,
+        // the expected side is a build-time literal.
+        return opsFor(
+          inferCategory(callNode),
+          inferCategory({ kind: "literal", value: expected }),
+          false,
+          true,
+        );
       case "balance":
         return BALANCE_OPS;
       case "block":
         return BLOCK_OPS;
       default:
-        return null; // state has its own editor; code & chainid no operator
+        return null; // code & chainid have no operator select
     }
-  }, [kind]);
+  }, [simpleKind, callNode, expected]);
 
   // Keep the operator within the allowed set when the kind changes.
   useEffect(() => {
@@ -158,6 +251,17 @@ export function AssertionForm({
   }, [operators, operator]);
 
   const targetInput = addressInput.trim();
+
+  /** The Assertion the Contract-call simple kind describes: the call as
+   *  subject, a literal expected side, no combinators. */
+  const callAssertion = (): Assertion => ({
+    subject: callNode,
+    operator: operator === BARE_OP ? null : operator,
+    expected:
+      operator === BARE_OP ? null : { kind: "literal", value: expected },
+    delta,
+    message,
+  });
 
   /**
    * Build the assertion line (+ hoisted `set` lines) from the form, or null
@@ -168,12 +272,15 @@ export function AssertionForm({
   const buildAssertion = async (
     resolveEns: (name: string) => Promise<string | null>,
   ): Promise<{ line: string; sets: string[] } | null> => {
+    if (mode === "suggest") return null;
     const options = { resolveEns, chainId };
-    if (kind === "state")
+    if (mode === "advanced")
       return buildAssertionLine({ ...assertion, message }, options);
+    if (simpleKind === "call")
+      return buildAssertionLine(callAssertion(), options);
     return buildFlatLine(
       {
-        kind,
+        kind: simpleKind,
         account,
         targetInput,
         targetResolved: contract.resolved,
@@ -188,8 +295,9 @@ export function AssertionForm({
     );
   };
 
-  // Live preview: rebuilt on every form change (ENS args stay as typed —
-  // they only resolve on Add).
+  // Live preview: rebuilt on every form change. ENS args render as their
+  // $variable + `set $var @ens(name)` line without resolving; Add swaps in
+  // the chain-aware set line (frozen per-chain address off mainnet).
   const [preview, setPreview] = useState<{
     line: string;
     sets: string[];
@@ -259,6 +367,10 @@ export function AssertionForm({
     setFetchStatus(null);
     try {
       if (!chainClient) throw new Error("no RPC for this chain");
+      if (simpleKind === "call") {
+        setExpected(await readSubjectValue(chainClient, callNode, executor));
+        return;
+      }
       const block = await chainClient.getBlock();
       setExpected(
         String(blockField === "number" ? block.number : block.timestamp),
@@ -279,84 +391,221 @@ export function AssertionForm({
       );
       if (!built) return;
       insertAssertion(built.line, placement, built.sets);
-      resetFields(kind);
+      resetFields(simpleKind);
       setJustAdded(true);
     } finally {
       setAdding(false);
     }
   };
 
-  const showExpected = kind !== "code" || codeVariant === "codehash";
+  const showExpected =
+    simpleKind === "call"
+      ? operator !== BARE_OP
+      : simpleKind !== "code" || codeVariant === "codehash";
   const canAdd =
     !!preview && validation?.state === "done" && validation.valid && !adding;
 
-  const kindMeta = KINDS.find((k) => k.value === kind)!;
+  const kindMeta = SIMPLE_KINDS.find((k) => k.value === simpleKind)!;
   const contractStatus = contract.status?.includes("ENS")
     ? contract.status
     : null;
 
+  /** Convert the current simple form into the equivalent expression tree
+   *  and switch to advanced mode (one-way; the codegen collapses an
+   *  uncustomized expression back to the same flat command). */
+  const promoteToExpression = () => {
+    let subject: ValueExpr;
+    let op = operator;
+    switch (simpleKind) {
+      case "call":
+        setAssertion({ ...callAssertion(), message: "" });
+        setMode("advanced");
+        return;
+      case "balance":
+        subject = {
+          kind: "balance",
+          token: "ETH",
+          account: { kind: "literal", value: account },
+        };
+        break;
+      case "block":
+        subject = {
+          kind: "clock",
+          which: blockField === "number" ? "blocknumber" : "timestamp",
+        };
+        break;
+      case "chainid":
+        subject = { kind: "chainid" };
+        op = "==";
+        break;
+      case "code":
+        subject = {
+          kind: "codehash",
+          address: { kind: "literal", value: targetInput },
+        };
+        op = "==";
+        break;
+    }
+    setAssertion({
+      subject,
+      operator: op,
+      expected: { kind: "literal", value: expected },
+      delta,
+      message: "",
+    });
+    setMode("advanced");
+  };
+
+  const canPromote = simpleKind !== "code" || codeVariant === "codehash";
+
+  // Eager guidance for the contract-call kind (the expression editor shows
+  // these inline per node; here the call is the only node).
+  const callIssues = useMemo(
+    () =>
+      mode === "simple" && simpleKind === "call"
+        ? validateAssertion(callAssertion())
+        : [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [mode, simpleKind, callNode, operator, expected, delta],
+  );
+
   return (
     <div className="space-y-4">
-      {/* When: pre vs post */}
-      <div>
-        <div className="flex items-center gap-1">
-          {PLACEMENTS.map((p) => (
+      {/* First decision: build directly on the Assertions core, compose an
+          expression through the Combinators contract, or hand the batch to
+          the AI assistant */}
+      <div role="group" aria-label="How do you want to add assertions?">
+        <span className={labelCls}>How do you want to add assertions?</span>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          {MODES.map((m) => (
             <button
-              key={p.value}
+              key={m.value}
               type="button"
-              onClick={() => setPlacement(p.value)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                placement === p.value
-                  ? "bg-[var(--color-bp-500)]/15 text-[var(--color-bp-300)]"
-                  : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)]"
-              }`}
+              aria-pressed={mode === m.value}
+              onClick={() => setMode(m.value)}
+              className={`px-3.5 py-3 ${tileBtnCls(mode === m.value)}`}
             >
-              {p.label}
+              <span className="flex items-center gap-2 text-sm font-medium">
+                {m.label}
+                {mode === m.value && (
+                  <span className="text-xs" aria-hidden>
+                    ✓
+                  </span>
+                )}
+              </span>
+              <span className="block mt-0.5 text-xs font-mono text-[var(--color-ink-3)]">
+                {m.dependency}
+              </span>
+              <span className="block mt-1 text-xs text-[var(--color-ink-3)]">
+                {m.hint}
+              </span>
             </button>
           ))}
         </div>
-        <p className="mt-1.5 text-xs text-[var(--color-ink-3)]">
-          {PLACEMENTS.find((p) => p.value === placement)!.hint}
-        </p>
       </div>
 
-      {/* What: assertion type */}
-      <div>
-        <label className={labelCls}>What to assert</label>
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
-          {KINDS.map((k) => (
-            <button
-              key={k.value}
-              type="button"
-              onClick={() => changeKind(k.value)}
-              className={`px-3 py-2.5 rounded-lg text-sm font-medium border transition-all ${
-                kind === k.value
-                  ? "border-[var(--color-bp-400)] bg-[var(--color-bp-500)]/10 text-[var(--color-bp-300)]"
-                  : "border-[var(--color-ink-3)]/25 text-[var(--color-ink-2)] hover:border-[var(--color-bp-400)]/50"
-              }`}
-            >
-              {k.label}
-            </button>
-          ))}
+      {/* Suggest: hand the batch to the assistant */}
+      {mode === "suggest" && (
+        <div className="flex items-center gap-3 flex-wrap rounded-xl border border-[var(--color-bp-400)]/30 bg-[var(--color-bp-500)]/5 px-4 py-3">
+          <button
+            type="button"
+            disabled={!suggest.ready || !suggest.loggedIn || suggest.running}
+            onClick={suggest.onSuggest}
+            className={`px-4 py-2 rounded-lg text-sm font-medium border border-[var(--color-bp-400)] text-[var(--color-bp-300)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${focusRingCls}`}
+          >
+            <span aria-hidden>✦</span>{" "}
+            {suggest.running ? "Assistant is working…" : "Suggest assertions"}
+          </button>
+          <span className="text-xs text-[var(--color-ink-3)]">
+            {!suggest.loggedIn
+              ? "Requires the assertion assistant — log in from the chat panel first."
+              : !suggest.ready
+                ? "Available after the batch simulates successfully in step 3."
+                : "The assistant reads your batch, inserts pre- and post-conditions, and simulates to confirm they hold."}
+          </span>
         </div>
-        <p className="mt-1.5 text-xs text-[var(--color-ink-3)]">
-          {kindMeta.hint}
-        </p>
-      </div>
+      )}
 
-      {/* Configure: the expression editor (state kind) */}
-      {kind === "state" && (
-        <ExpressionAssertionEditor
-          assertion={assertion}
-          setAssertion={setAssertion}
-          chainId={chainId}
-          executor={executor}
-        />
+      {mode === "simple" && (
+        <div role="group" aria-label="Choose a check">
+          <span className={labelCls}>Choose a check</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {SIMPLE_KINDS.map((k) => (
+              <button
+                key={k.value}
+                type="button"
+                aria-pressed={simpleKind === k.value}
+                onClick={() => changeKind(k.value)}
+                className={`px-3 py-2.5 text-sm font-medium ${tileBtnCls(simpleKind === k.value)}`}
+              >
+                <span className="flex items-center gap-2">
+                  <KindIcon kind={k.value} />
+                  {k.label}
+                </span>
+              </button>
+            ))}
+          </div>
+          <p className="mt-1.5 text-xs text-[var(--color-ink-3)]">
+            {kindMeta.hint}
+            {canPromote && (
+              <>
+                {" · "}
+                <button
+                  type="button"
+                  className="text-[var(--color-bp-300)] hover:underline"
+                  title="One-way: opens this check in the expression editor so it can be combined with other values"
+                  onClick={promoteToExpression}
+                >
+                  Convert this check to a composed expression →
+                </button>
+              </>
+            )}
+          </p>
+        </div>
+      )}
+
+      {/* Configure: the expression editor (composed mode) */}
+      {mode === "advanced" && (
+        <div>
+          <span className={labelCls}>Build the expression</span>
+          <p className="mb-2 text-xs text-[var(--color-ink-3)]">
+            {COMPOSED_HINT}
+          </p>
+          <ExpressionAssertionEditor
+            assertion={assertion}
+            setAssertion={setAssertion}
+            chainId={chainId}
+            executor={executor}
+          />
+        </div>
+      )}
+
+      {/* Configure: the view call (contract-call kind) */}
+      {mode === "simple" && simpleKind === "call" && (
+        <div className="space-y-2">
+          <CallEditor
+            node={callNode}
+            onChange={(updater) => setCallNode(updater)}
+            chainId={chainId}
+            allowChain={false}
+          />
+          {callIssues.length > 0 && (
+            <Callout tone="error">
+              {callIssues.map((issue, i) => (
+                <p key={i}>{issue.message}</p>
+              ))}
+            </Callout>
+          )}
+        </div>
       )}
 
       {/* Configure: block field */}
-      {kind === "block" && (
-        <div className="flex items-center gap-1">
+      {mode === "simple" && simpleKind === "block" && (
+        <div
+          role="group"
+          aria-label="Block field"
+          className="flex items-center gap-1"
+        >
           {(
             [
               ["number", "Block number"],
@@ -366,15 +615,12 @@ export function AssertionForm({
             <button
               key={field}
               type="button"
+              aria-pressed={blockField === field}
               onClick={() => {
                 setBlockField(field);
                 setExpected("");
               }}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                blockField === field
-                  ? "bg-[var(--color-bp-500)]/15 text-[var(--color-bp-300)]"
-                  : "text-[var(--color-ink-3)] hover:text-[var(--color-ink-2)]"
-              }`}
+              className={segBtnCls(blockField === field)}
             >
               {label}
             </button>
@@ -383,10 +629,13 @@ export function AssertionForm({
       )}
 
       {/* Configure: contract target (code) */}
-      {kind === "code" && (
+      {mode === "simple" && simpleKind === "code" && (
         <div>
-          <label className={labelCls}>Contract address or ENS name</label>
+          <label className={labelCls} htmlFor="assert-code-address">
+            Contract address or ENS name
+          </label>
           <input
+            id="assert-code-address"
             className={inputCls}
             placeholder="0x… or mydao.eth"
             value={addressInput}
@@ -407,10 +656,13 @@ export function AssertionForm({
       )}
 
       {/* Configure: account (balance) */}
-      {kind === "balance" && (
+      {mode === "simple" && simpleKind === "balance" && (
         <div>
-          <label className={labelCls}>Account</label>
+          <label className={labelCls} htmlFor="assert-balance-account">
+            Account
+          </label>
           <input
+            id="assert-balance-account"
             className={inputCls}
             placeholder="@me, 0x… or name.eth"
             value={account}
@@ -425,10 +677,13 @@ export function AssertionForm({
       )}
 
       {/* Configure: code variant */}
-      {kind === "code" && (
+      {mode === "simple" && simpleKind === "code" && (
         <div>
-          <label className={labelCls}>Condition</label>
+          <label className={labelCls} htmlFor="assert-code-variant">
+            Condition
+          </label>
           <select
+            id="assert-code-variant"
             className={inputCls}
             value={codeVariant}
             onChange={(e) => setCodeVariant(e.target.value as CodeVariant)}
@@ -449,12 +704,15 @@ export function AssertionForm({
       )}
 
       {/* Configure: comparison (flat kinds) */}
-      {kind !== "state" && (operators !== null || showExpected) && (
+      {mode === "simple" && (operators !== null || showExpected) && (
         <div className="flex gap-2 items-end flex-wrap">
           {operators !== null && (
             <div className="w-28">
-              <label className={labelCls}>Operator</label>
+              <label className={labelCls} htmlFor="assert-operator">
+                Operator
+              </label>
               <select
+                id="assert-operator"
                 className={inputCls}
                 value={operator}
                 onChange={(e) => setOperator(e.target.value)}
@@ -469,17 +727,18 @@ export function AssertionForm({
           )}
           {showExpected && (
             <div className="flex-1 min-w-40">
-              <label className={labelCls}>
-                {kind === "code"
+              <label className={labelCls} htmlFor="assert-expected">
+                {simpleKind === "code"
                   ? "Expected code hash (bytes32)"
                   : "Expected value"}
               </label>
               <input
+                id="assert-expected"
                 className={inputCls}
                 placeholder={
-                  kind === "balance"
+                  simpleKind === "balance"
                     ? "wei, e.g. 1e18"
-                    : kind === "code"
+                    : simpleKind === "code"
                       ? "0x…"
                       : ""
                 }
@@ -489,7 +748,10 @@ export function AssertionForm({
               />
             </div>
           )}
-          {kind === "block" && (
+          {(simpleKind === "block" ||
+            (simpleKind === "call" &&
+              showExpected &&
+              isEvaluable(callNode))) && (
             <button
               type="button"
               onClick={() => void fetchCurrentValue()}
@@ -507,15 +769,16 @@ export function AssertionForm({
 
       {/* Timestamp convenience: a date picker kept in sync with the unix
           timestamp above (both ways). */}
-      {kind === "block" && blockField === "timestamp" && (
+      {mode === "simple" && simpleKind === "block" && blockField === "timestamp" && (
         <div>
-          <label className={smallLabelCls}>
+          <label className={smallLabelCls} htmlFor="assert-datetime">
             …or pick a date{" "}
             <span className="opacity-60">
               (synced with the unix timestamp above)
             </span>
           </label>
           <input
+            id="assert-datetime"
             type="datetime-local"
             className={inputCls}
             value={unixToDatetimeLocal(expected)}
@@ -530,15 +793,16 @@ export function AssertionForm({
       )}
 
       {/* Approximate comparisons need a tolerance (flat kinds) */}
-      {kind !== "state" && operator === "~=" && showExpected && (
+      {mode === "simple" && operator === "~=" && showExpected && (
         <div>
-          <label className={labelCls}>
+          <label className={labelCls} htmlFor="assert-delta">
             Allowed delta{" "}
             <span className="text-xs text-[var(--color-ink-3)]">
               (tolerance for ~=)
             </span>
           </label>
           <input
+            id="assert-delta"
             className={inputCls}
             placeholder="e.g. 50e8"
             value={delta}
@@ -549,35 +813,87 @@ export function AssertionForm({
       )}
 
       {/* Revert message */}
-      <div>
-        <label className={labelCls}>
-          Revert message{" "}
-          <span className="text-xs text-[var(--color-ink-3)]">(optional)</span>
-        </label>
-        <input
-          className={inputCls}
-          placeholder="e.g. tokens did not arrive"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-      </div>
-
-      {/* Live preview + validation */}
-      {preview && (
+      {mode !== "suggest" && (
         <div>
-          <p className="text-xs text-[var(--color-ink-3)] mb-1.5">
-            Will be inserted as a {placement === "pre" ? "pre" : "post"}
-            -condition
+          <label className={labelCls} htmlFor="assert-message">
+            Revert message{" "}
+            <span className="text-xs text-[var(--color-ink-3)]">
+              (optional)
+            </span>
+          </label>
+          <input
+            id="assert-message"
+            className={inputCls}
+            placeholder="e.g. tokens did not arrive"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+        </div>
+      )}
+
+      {/* When: pre vs post — decided last, right before the assertion is
+          inserted into the script */}
+      {mode !== "suggest" && (
+        <div role="group" aria-label="When should it run?">
+          <span className={labelCls}>When should it run?</span>
+          <div className="flex items-center gap-1">
+            {PLACEMENTS.map((p) => (
+              <button
+                key={p.value}
+                type="button"
+                aria-pressed={placement === p.value}
+                onClick={() => setPlacement(p.value)}
+                className={segBtnCls(placement === p.value)}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1.5 text-xs text-[var(--color-ink-3)]">
+            {PLACEMENTS.find((p) => p.value === placement)!.hint}
           </p>
-          <pre className="p-3 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/20 font-mono text-xs overflow-x-auto whitespace-pre-wrap">
-            {[...preview.sets, preview.line].join("\n")}
-          </pre>
-          {validation?.state === "checking" && (
-            <p className="mt-1.5 text-xs text-[var(--color-ink-3)]">
-              Validating…
+        </div>
+      )}
+
+      {/* Footer: generated EVML, validation state and the Add action */}
+      {mode !== "suggest" && (
+        <div className="rounded-xl border border-[var(--color-ink-3)]/20 p-4 space-y-3">
+          {preview ? (
+            <details open>
+              <summary className="cursor-pointer list-none flex items-center gap-2 flex-wrap text-xs text-[var(--color-ink-3)] [&::-webkit-details-marker]:hidden">
+                <span className="font-medium text-[var(--color-ink-2)]">
+                  Generated assertion
+                </span>
+                <span>
+                  · inserted {placement === "pre" ? "before" : "after"} the
+                  actions
+                </span>
+                {validation?.state === "checking" && (
+                  <span>· validating…</span>
+                )}
+                {validation?.state === "done" && validation.valid && (
+                  <span className="text-[var(--color-ok)]">✓ valid</span>
+                )}
+                {validation?.state === "done" && !validation.valid && (
+                  <span className="text-[var(--color-err)]">
+                    needs attention
+                  </span>
+                )}
+              </summary>
+              <pre className="mt-2 p-3 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/20 font-mono text-xs overflow-x-auto whitespace-pre-wrap">
+                {[...preview.sets, preview.line].join("\n")}
+              </pre>
+            </details>
+          ) : (
+            <p className="text-xs text-[var(--color-ink-3)]">
+              <span className="font-medium text-[var(--color-ink-2)]">
+                Generated assertion
+              </span>{" "}
+              · complete the fields above to see the EVML this check compiles
+              to.
             </p>
           )}
-          {validation?.state === "done" && !validation.valid && (
+          {preview && validation?.state === "done" && !validation.valid && (
             <Callout tone="error">
               {(validation.messages.length
                 ? validation.messages
@@ -589,20 +905,19 @@ export function AssertionForm({
               ))}
             </Callout>
           )}
+          <button
+            type="button"
+            disabled={!canAdd}
+            onClick={() => void add()}
+            className={btnPrimaryCls}
+          >
+            {adding ? "Adding…" : "Add assertion"}
+          </button>
         </div>
       )}
 
-      <button
-        type="button"
-        disabled={!canAdd}
-        onClick={() => void add()}
-        className={btnPrimaryCls}
-      >
-        {adding ? "Adding…" : "Add assertion"}
-      </button>
-
       {script && (
-        <div>
+        <div className="border-t border-[var(--color-ink-3)]/15 pt-4">
           <p className="text-xs text-[var(--color-ink-3)] mb-1.5">
             Batch so far
             {justAdded && (

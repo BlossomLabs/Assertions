@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import {
   type ValueExpr,
   emptyCall,
@@ -5,25 +7,32 @@ import {
   unwrapNode,
 } from "../assertion-model";
 import { chipSelectCls } from "../ui";
+import { type CatalogEntry, sourceEntries, wrapEntriesFor } from "./catalog";
+import { type IconName, LineIcon } from "./icons";
 
-/** Flattened node-kind key the picker operates on. */
+/** Flattened node-kind key the pickers operate on. */
 export type NodeKey =
   | "literal"
   | "call"
   | "balance"
   | "timestamp"
   | "blocknumber"
+  | "chainid"
+  | "codehash"
   | "min"
   | "max"
   | "absdiff"
   | "arith"
+  | "cmp"
   | "logic"
+  | "bytes"
   | "not"
-  | "at"
   | "len"
   | "bytelen"
   | "hash"
-  | "split";
+  | "split"
+  | "includes"
+  | "charset";
 
 export function nodeKey(node: ValueExpr): NodeKey {
   switch (node.kind) {
@@ -33,49 +42,25 @@ export function nodeKey(node: ValueExpr): NodeKey {
       return node.which;
     case "callwrap":
       return node.helper;
-    case "neg":
-      return "arith";
+    case "strtest":
+      return node.helper;
     default:
       return node.kind as NodeKey;
   }
 }
 
-const GROUPS: { label: string; keys: [NodeKey, string][] }[] = [
-  {
-    label: "Value",
-    keys: [
-      ["literal", "value"],
-      ["call", "contract call"],
-      ["balance", "balance (live)"],
-      ["timestamp", "timestamp (live)"],
-      ["blocknumber", "block number (live)"],
-    ],
-  },
-  {
-    label: "Combine",
-    keys: [
-      ["min", "min of…"],
-      ["max", "max of…"],
-      ["absdiff", "|a − b|"],
-      ["arith", "arithmetic"],
-      ["logic", "comparison / logic"],
-      ["not", "not…"],
-    ],
-  },
-  {
-    label: "Transform a call",
-    keys: [
-      ["len", "length of…"],
-      ["bytelen", "byte length of…"],
-      ["hash", "hash of…"],
-      ["at", "return word at…"],
-      ["split", "split string of…"],
-    ],
-  },
-];
+/** Kinds the SourcePicker offers directly (everything else is a wrap). */
+const SOURCE_KINDS = new Set<ValueExpr["kind"]>([
+  "literal",
+  "call",
+  "balance",
+  "clock",
+  "chainid",
+  "codehash",
+]);
 
-/** Keys only offered at the top level of an assertion side. */
-const TOP_LEVEL_KEYS = new Set<NodeKey>(["split", "hash"]);
+export const isSourceNode = (node: ValueExpr): boolean =>
+  SOURCE_KINDS.has(node.kind);
 
 /** The call-shaped seed a transform keeps when converting. */
 function seedCall(node: ValueExpr): ValueExpr {
@@ -88,6 +73,12 @@ function seedCall(node: ValueExpr): ValueExpr {
 function seedValue(node: ValueExpr): ValueExpr {
   if (node.kind === "literal" && !node.value.trim()) return node;
   return node;
+}
+
+/** An address-shaped seed (@balance! account, @codehash! target). */
+function seedAddress(node: ValueExpr): ValueExpr {
+  if (node.kind === "call" || node.kind === "literal") return node;
+  return emptyLiteral();
 }
 
 /** Convert a node to the picked kind in place, preserving a compatible
@@ -103,11 +94,16 @@ export function convertNode(node: ValueExpr, key: NodeKey): ValueExpr {
       return {
         kind: "balance",
         token: "ETH",
-        account: { kind: "literal", value: "@me" },
+        account:
+          node.kind === "call" ? node : { kind: "literal", value: "@me" },
       };
     case "timestamp":
     case "blocknumber":
       return { kind: "clock", which: key };
+    case "chainid":
+      return { kind: "chainid" };
+    case "codehash":
+      return { kind: "codehash", address: seedAddress(node) };
     case "min":
     case "max":
       return node.kind === "minmax"
@@ -122,10 +118,24 @@ export function convertNode(node: ValueExpr, key: NodeKey): ValueExpr {
         left: seedValue(node),
         right: emptyLiteral(),
       };
+    case "cmp":
+      return {
+        kind: "cmp",
+        op: "==",
+        left: seedValue(node),
+        right: emptyLiteral(),
+      };
     case "logic":
       return {
         kind: "logic",
-        op: ">",
+        op: "and",
+        left: seedValue(node),
+        right: emptyLiteral(),
+      };
+    case "bytes":
+      return {
+        kind: "bytes",
+        op: "&",
         left: seedValue(node),
         right: emptyLiteral(),
       };
@@ -137,19 +147,69 @@ export function convertNode(node: ValueExpr, key: NodeKey): ValueExpr {
       return node.kind === "callwrap"
         ? { ...node, helper: key }
         : { kind: "callwrap", helper: key, call: seedCall(node) };
-    case "at":
-      return { kind: "at", call: seedCall(node), index: "0" };
     case "split":
       return { kind: "split", call: seedCall(node), delimiter: " ", index: "0" };
+    case "includes":
+    case "charset":
+      return node.kind === "strtest"
+        ? { ...node, helper: key }
+        : { kind: "strtest", helper: key, call: seedCall(node), arg: "" };
   }
 }
 
+/** The source kinds' icons (shared with the simple form's check tiles;
+ *  a native <select> can't render icons per option, so the current
+ *  selection's icon sits beside the picker). */
+const SOURCE_ICONS: Partial<Record<NodeKey, IconName>> = {
+  literal: "value",
+  call: "call",
+  balance: "balance",
+  timestamp: "timestamp",
+  blocknumber: "block",
+  chainid: "chainid",
+  codehash: "code",
+};
+
 /**
- * The per-node kind select. Picking a combinator wraps the current node as
- * its first operand — the progressive-disclosure path from a simple call
- * to a composed expression.
+ * The value-source select, shown on source nodes (literal, call, balance,
+ * clock, chain id, code hash): what this value *is*. Combinators are not
+ * listed here — they wrap a value via the WrapMenu instead.
  */
-export function NodePicker({
+export function SourcePicker({
+  node,
+  onConvert,
+}: {
+  node: ValueExpr;
+  onConvert: (next: ValueExpr) => void;
+}) {
+  const current = nodeKey(node);
+  const icon = SOURCE_ICONS[current];
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[var(--color-ink-2)]">
+      {icon && <LineIcon name={icon} className="size-3.5 shrink-0 opacity-70" />}
+      <select
+        className={chipSelectCls}
+        value={current}
+        onChange={(e) => onConvert(convertNode(node, e.target.value as NodeKey))}
+        title="Change what this value is"
+      >
+        {sourceEntries().map((entry) => (
+          <option key={entry.key} value={entry.key} title={entry.description}>
+            {entry.label}
+          </option>
+        ))}
+      </select>
+    </span>
+  );
+}
+
+/**
+ * The contextual (+) menu: combinators that can wrap the current node,
+ * filtered to what makes sense for its category. Picking one converts the
+ * node in place, seeding it as the combinator's first operand — the
+ * progressive-disclosure path from a simple value to a composed expression.
+ */
+export function WrapMenu({
   node,
   depth,
   onConvert,
@@ -158,30 +218,41 @@ export function NodePicker({
   depth: number;
   onConvert: (next: ValueExpr) => void;
 }) {
-  const current = nodeKey(node);
+  const entries: CatalogEntry[] = wrapEntriesFor(node, depth);
+  if (entries.length === 0) return null;
+  // Group by operator family, preserving first-seen group order.
+  const groups: { name: string | undefined; items: CatalogEntry[] }[] = [];
+  for (const entry of entries) {
+    const existing = groups.find((g) => g.name === entry.group);
+    if (existing) existing.items.push(entry);
+    else groups.push({ name: entry.group, items: [entry] });
+  }
+  const options = (items: CatalogEntry[]) =>
+    items.map((entry) => (
+      <option key={entry.key} value={entry.key} title={entry.description}>
+        {entry.label}
+      </option>
+    ));
   return (
     <select
       className={chipSelectCls}
-      value={current}
-      onChange={(e) => onConvert(convertNode(node, e.target.value as NodeKey))}
-      title="Change what this value is"
+      value=""
+      onChange={(e) => {
+        if (e.target.value)
+          onConvert(convertNode(node, e.target.value as NodeKey));
+      }}
+      title="Combine or transform this value"
     >
-      {GROUPS.map((group) => {
-        const keys = group.keys.filter(
-          ([key]) =>
-            depth === 0 || !TOP_LEVEL_KEYS.has(key) || key === current,
-        );
-        if (keys.length === 0) return null;
-        return (
-          <optgroup key={group.label} label={group.label}>
-            {keys.map(([key, label]) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
-            ))}
+      <option value="">+ combine…</option>
+      {groups.map((group, i) =>
+        group.name ? (
+          <optgroup key={group.name} label={group.name}>
+            {options(group.items)}
           </optgroup>
-        );
-      })}
+        ) : (
+          <Fragment key={i}>{options(group.items)}</Fragment>
+        ),
+      )}
     </select>
   );
 }

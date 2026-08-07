@@ -4,6 +4,7 @@ import {
   type Assertion,
   type ValueExpr,
   inferCategory,
+  resolveLens,
 } from "./assertion-model";
 import { ensVarName, evmlArg } from "./useContractFunctions";
 
@@ -69,7 +70,7 @@ async function renderCall(
   const target = renderTarget(expr.target, expr.resolved, ctx);
   if (!target || expr.hops.length === 0) return null;
   let out = target;
-  for (const [hopIndex, hop] of expr.hops.entries()) {
+  for (const hop of expr.hops) {
     if (!hop.fnName) return null;
     if (hop.args.some((a) => !a.trim())) return null;
     if (hop.args.length !== hop.argTypes.length) return null;
@@ -79,23 +80,37 @@ async function renderCall(
     out += hop.inline
       ? `::{${hop.fnName}(${hop.argTypes.join(",")})(${hop.returnTypes.join(",")})${argVals.length ? ` ${argVals.join(" ")}` : ""}}`
       : `::${hop.fnName}(${argVals.join(" ")})`;
-    // Mid-chain multi-value hops continue on a lens-selected address.
-    if (hop.lensIndex !== undefined && hopIndex < expr.hops.length - 1) {
-      const slots = hop.returnTypes.map((_, i) =>
-        i === hop.lensIndex ? "$" : "_",
-      );
-      out += `[${slots.join(" ")}]`;
+    // A lens narrows the hop's return: `[_ $ _]` selects one output of a
+    // multi-value return (mid-chain: the address the chain continues on),
+    // and nested levels (`[_ [_ [$ _]]]`) select through array elements
+    // and struct values — negative array indices anchor from the end via
+    // the `...` rest marker (`[[... $]]` = last element, resolved live
+    // for dynamic arrays).
+    const lens = resolveLens(hop);
+    if (lens?.valid) {
+      const slots = (k: number, payload: string): string =>
+        k >= 0
+          ? [...Array<string>(k).fill("_"), payload].join(" ")
+          : ["...", payload, ...Array<string>(-k - 1).fill("_")].join(" ");
+      let payload = "$";
+      for (const idx of [...lens.entries].reverse())
+        payload = `[${slots(idx, payload)}]`;
+      if (hop.returnTypes.length > 1 && hop.lensIndex !== undefined) {
+        out += `[${hop.returnTypes
+          .map((_, i) => (i === hop.lensIndex ? payload : "_"))
+          .join(" ")}]`;
+      } else if (hop.returnTypes.length === 1 && lens.entries.length > 0) {
+        out += `[${payload}]`;
+      }
     }
   }
   return out;
 }
 
-const LOGIC_WORDS = new Set(["or", "and", "xor"]);
-
-/** Wrap a rendered logic operand in parens when it is itself a logic/not
- *  node — corpus style: `($a::q() > 0) or (not $a::paused())`. */
-function logicOperand(rendered: string, node: ValueExpr): string {
-  return node.kind === "logic" || node.kind === "not"
+/** Wrap a rendered boolean operand in parens when it is itself a
+ *  cmp/logic/not node — corpus style: `($a::q() > 0) or (not $a::paused())`. */
+function boolOperand(rendered: string, node: ValueExpr): string {
+  return node.kind === "cmp" || node.kind === "logic" || node.kind === "not"
     ? `(${rendered})`
     : rendered;
 }
@@ -161,56 +176,68 @@ export async function renderExpr(
       const body = `${l} ${expr.op} ${r}`;
       return ctx.num ? body : `@num!(${body})`;
     }
-    case "neg": {
-      const operand = await renderExpr(expr.operand, { ...ctx, num: true });
-      if (!operand) return null;
-      const body =
-        expr.operand.kind === "literal" ? `-${operand}` : `-(${operand})`;
-      return ctx.num ? body : `@num!(${body})`;
+    case "cmp": {
+      const inner = { ...ctx, bool: true };
+      const left = await renderExpr(expr.left, inner);
+      const right = await renderExpr(expr.right, inner);
+      if (!left || !right) return null;
+      // Boolean operands of a comparison get parens (`(a > b) == (c > d)`).
+      const body = `${boolOperand(left, expr.left)} ${expr.op} ${boolOperand(right, expr.right)}`;
+      return ctx.bool ? body : `@bool!(${body})`;
     }
     case "logic": {
       const inner = { ...ctx, bool: true };
       const left = await renderExpr(expr.left, inner);
       const right = await renderExpr(expr.right, inner);
       if (!left || !right) return null;
-      const needsParens = LOGIC_WORDS.has(expr.op);
-      const l = needsParens ? logicOperand(left, expr.left) : left;
-      const r = needsParens ? logicOperand(right, expr.right) : right;
-      const cmpParens =
-        !LOGIC_WORDS.has(expr.op) &&
-        (expr.left.kind === "logic" || expr.right.kind === "logic");
-      const body = cmpParens
-        ? `(${left}) ${expr.op} (${right})`
-        : `${l} ${expr.op} ${r}`;
+      const body = `${boolOperand(left, expr.left)} ${expr.op} ${boolOperand(right, expr.right)}`;
       return ctx.bool ? body : `@bool!(${body})`;
     }
     case "not": {
       const operand = await renderExpr(expr.operand, { ...ctx, bool: true });
       if (!operand) return null;
       const body =
-        expr.operand.kind === "logic" || expr.operand.kind === "not"
+        expr.operand.kind === "cmp" ||
+        expr.operand.kind === "logic" ||
+        expr.operand.kind === "not"
           ? `not (${operand})`
           : `not ${operand}`;
       return ctx.bool ? body : `@bool!(${body})`;
+    }
+    case "bytes": {
+      // Helper arguments are self-delimiting: children render with a fresh
+      // context so arithmetic/logic re-wrap themselves in @num!/@bool!.
+      const clean = { ...ctx, num: false, bool: false };
+      const left = await renderExpr(expr.left, clean);
+      const right = await renderExpr(expr.right, clean);
+      if (!left || !right) return null;
+      return `@bytes!(${left} "${expr.op}" ${right})`;
     }
     case "callwrap": {
       const call = await renderExpr(expr.call, ctx);
       if (!call) return null;
       return `@${expr.helper}!(${call})`;
     }
-    case "at": {
-      const call = await renderExpr(expr.call, ctx);
-      if (!call || !/^\d+$/.test(expr.index.trim())) return null;
-      return `@at!(${call} ${expr.index.trim()})`;
-    }
     case "split": {
       const call = await renderExpr(expr.call, ctx);
-      if (!call || !expr.delimiter || !/^\d+$/.test(expr.index.trim()))
+      if (!call || !expr.delimiter || !/^-?\d+$/.test(expr.index.trim()))
         return null;
       return `@split!(${call} ${JSON.stringify(expr.delimiter)} ${expr.index.trim()})`;
     }
+    case "strtest": {
+      const call = await renderExpr(expr.call, ctx);
+      if (!call || !expr.arg) return null;
+      return `@${expr.helper}!(${call} ${JSON.stringify(expr.arg)})`;
+    }
     case "clock":
       return expr.which === "timestamp" ? "@timestamp!" : "@blocknumber!";
+    case "chainid":
+      return "@chainid!";
+    case "codehash": {
+      const addr = await renderExpr(expr.address, ctx);
+      if (!addr) return null;
+      return `@codehash!(${addr})`;
+    }
   }
 }
 
@@ -227,15 +254,71 @@ function makeCtx(options: CodegenOptions) {
   const ctx: RenderCtx = {
     registerSet,
     chainId: options.chainId,
-    // Arg-level ENS resolution also hoists a set line for the resolved name.
+    // Arg-level ENS names always become a $variable backed by a hoisted set
+    // line. When resolution succeeds it is chain-aware (live @ens on
+    // mainnet, the per-chain address frozen elsewhere); when it is
+    // unavailable (the preview's no-op resolver, or a failed lookup) the
+    // name stays live via `set $var @ens(name)` — same mainnet-registry
+    // semantics the resolver falls back to anyway.
     ensToVar: async (name) => {
+      const varName = ensVarName(name);
       const address = await options.resolveEns(name);
-      if (!address) return null;
-      registerSet(ensSetLine(name, address, options.chainId));
-      return ensVarName(name);
+      registerSet(
+        address
+          ? ensSetLine(name, address, options.chainId)
+          : `set ${varName} @ens(${name})`,
+      );
+      return varName;
     },
   };
   return { ctx, sets };
+}
+
+/**
+ * Collapse an expression assertion to its dedicated flat command when one
+ * exists (chain id, block, ETH balance, codehash against a constant) — so a
+ * promoted-but-uncustomized assertion emits the exact line the simple form
+ * would. Anything composed returns null and renders as `assertions:assert`.
+ */
+function toFlat(a: Assertion): FlatAssertion | null {
+  if (a.operator === null || a.expected?.kind !== "literal") return null;
+  const expected = a.expected.value.trim();
+  if (!expected) return null;
+  const s = a.subject;
+  const op = a.operator;
+  const base = {
+    account: "",
+    targetInput: "",
+    targetResolved: null,
+    codeVariant: "codehash" as CodeVariant,
+    blockField: "number" as BlockField,
+    operator: op,
+    expected,
+    delta: a.delta,
+    message: a.message,
+  };
+  if (s.kind === "chainid" && op === "==") return { ...base, kind: "chainid" };
+  if (s.kind === "clock" && ["==", ">", "<", ">=", "<="].includes(op))
+    return {
+      ...base,
+      kind: "block",
+      blockField: s.which === "timestamp" ? "timestamp" : "number",
+    };
+  if (
+    s.kind === "balance" &&
+    s.token.trim().toUpperCase() === "ETH" &&
+    s.account.kind === "literal" &&
+    ["==", ">", "<", ">=", "<=", "~="].includes(op)
+  )
+    return { ...base, kind: "balance", account: s.account.value };
+  if (
+    s.kind === "codehash" &&
+    s.address.kind === "literal" &&
+    isAddress(s.address.value.trim()) &&
+    op === "=="
+  )
+    return { ...base, kind: "code", targetInput: s.address.value.trim() };
+  return null;
 }
 
 /**
@@ -247,6 +330,8 @@ export async function buildAssertionLine(
   assertion: Assertion,
   options: CodegenOptions,
 ): Promise<BuiltLine | null> {
+  const flat = toFlat(assertion);
+  if (flat) return buildFlatLine(flat, options);
   const { ctx, sets } = makeCtx(options);
   const stringCmp =
     inferCategory(assertion.subject) === "string" ||

@@ -1,3 +1,4 @@
+import type { OpFamily } from "@evmcrispr/module-assertions/composition";
 import { type ReactNode, useState } from "react";
 
 import {
@@ -5,16 +6,73 @@ import {
   type Issue,
   type Path,
   type ValueExpr,
+  familyOpsFor,
+  inferCategory,
   unwrapNode,
 } from "../assertion-model";
 import { inputCls } from "../useContractFunctions";
 import { chipSelectCls, smallLabelCls } from "../ui";
 import { CallEditor } from "./CallEditor";
 import { LiteralEditor } from "./LiteralEditor";
-import { NodePicker } from "./NodePicker";
+import { SourcePicker, WrapMenu, isSourceNode } from "./NodePicker";
 
-const ARITH_OPS = ["+", "-", "*", "/", "//", "%", "^", "xor"] as const;
-const LOGIC_OPS = [">", "<", ">=", "<=", "==", "!=", "and", "or", "xor"] as const;
+/** The operators the composition table allows for this node's operand
+ *  categories. An op invalidated by an edit stays listed (the eager
+ *  validation issue explains why) instead of blanking the select. */
+function infixOptions(
+  family: OpFamily,
+  node: Extract<ValueExpr, { left: ValueExpr; right: ValueExpr; op: string }>,
+): string[] {
+  const allowed = familyOpsFor(
+    family,
+    inferCategory(node.left),
+    inferCategory(node.right),
+  );
+  return allowed.includes(node.op) ? allowed : [node.op, ...allowed];
+}
+
+/** Short static label for combinator nodes (their kind is changed by
+ *  unwrapping, not by a select). */
+function kindLabel(node: ValueExpr): string {
+  switch (node.kind) {
+    case "minmax":
+      return `@${node.op}!`;
+    case "absdiff":
+      return "@absdiff!";
+    case "arith":
+      return "arithmetic";
+    case "cmp":
+      return "comparison";
+    case "logic":
+      return "logic";
+    case "bytes":
+      return "bitwise";
+    case "not":
+      return "not";
+    case "callwrap":
+      return `@${node.helper}!`;
+    case "split":
+      return "@split!";
+    case "strtest":
+      return `@${node.helper}!`;
+    default:
+      return "";
+  }
+}
+
+/** Friendly inferred-category badge text (null hides the badge). */
+function categoryBadge(cat: Category): string | null {
+  switch (cat) {
+    case "uint":
+      return "number";
+    case "int":
+      return "number (signed)";
+    case "unknown":
+      return null;
+    default:
+      return cat;
+  }
+}
 
 export interface TreeUpdate {
   (path: Path, updater: (node: any) => any): void;
@@ -63,24 +121,30 @@ function summarize(node: ValueExpr): string {
       return "|a − b|";
     case "arith":
       return `arithmetic (${node.op})`;
-    case "neg":
-      return "negation";
+    case "cmp":
+      return `comparison (${node.op})`;
     case "logic":
       return `logic (${node.op})`;
+    case "bytes":
+      return `bitwise (${node.op})`;
     case "not":
       return "not …";
     case "callwrap":
       return `@${node.helper}!(…)`;
-    case "at":
-      return `@at!(… ${node.index})`;
     case "split":
       return `@split!(… ${node.index})`;
+    case "strtest":
+      return `@${node.helper}!(… ${node.arg ? JSON.stringify(node.arg) : "…"})`;
     case "clock":
       return `@${node.which}!`;
+    case "chainid":
+      return "@chainid!";
+    case "codehash":
+      return "@codehash!(…)";
   }
 }
 
-/** A call slot inside a transform (@len!, @at!, @split!) — rendered as a
+/** A call slot inside a transform (@len!, @split!, …) — rendered as a
  *  bare CallEditor since only :: calls are legal there. */
 function CallSlot({
   node,
@@ -147,6 +211,7 @@ export function ValueEditor({
 }) {
   const replace = (next: ValueExpr) => update(path, () => next);
   const unwrapped = unwrapNode(node);
+  const badge = categoryBadge(inferCategory(node));
   const [collapsed, setCollapsed] = useState(depth >= 3);
   const pathKey = JSON.stringify(path);
   const ownIssues = (issues ?? []).filter(
@@ -262,39 +327,23 @@ export function ValueEditor({
       );
       break;
     case "arith":
-      body = (
-        <div className="space-y-2">
-          {child("left", node.left)}
-          <OpSelect
-            value={node.op}
-            options={ARITH_OPS}
-            onChange={(op) => update([...path, "op"], () => op)}
-          />
-          {child("right", node.right)}
-        </div>
-      );
-      break;
-    case "neg":
-      body = (
-        <div className="space-y-2">
-          <span className="text-xs font-mono text-[var(--color-ink-3)]">−</span>
-          {child("operand", node.operand)}
-        </div>
-      );
-      break;
+    case "cmp":
     case "logic":
+    case "bytes": {
+      const family: OpFamily = node.kind === "arith" ? "arith" : node.kind;
       body = (
         <div className="space-y-2">
           {child("left", node.left)}
           <OpSelect
             value={node.op}
-            options={LOGIC_OPS}
+            options={infixOptions(family, node)}
             onChange={(op) => update([...path, "op"], () => op)}
           />
           {child("right", node.right)}
         </div>
       );
       break;
+    }
     case "not":
       body = (
         <div className="space-y-2">
@@ -314,28 +363,6 @@ export function ValueEditor({
           chainId={chainId}
           issues={issues}
         />
-      );
-      break;
-    case "at":
-      body = (
-        <div className="space-y-2">
-          <CallSlot
-            node={node.call}
-            path={[...path, "call"]}
-            update={update}
-            chainId={chainId}
-            issues={issues}
-          />
-          <div className="w-28">
-            <label className={smallLabelCls}>word index</label>
-            <input
-              className={inputCls}
-              value={node.index}
-              onChange={(e) => update([...path, "index"], () => e.target.value)}
-              spellCheck={false}
-            />
-          </div>
-        </div>
       );
       break;
     case "split":
@@ -375,12 +402,64 @@ export function ValueEditor({
         </div>
       );
       break;
+    case "strtest":
+      body = (
+        <div className="space-y-2">
+          <CallSlot
+            node={node.call}
+            path={[...path, "call"]}
+            update={update}
+            chainId={chainId}
+            issues={issues}
+          />
+          <div className="w-40">
+            <label className={smallLabelCls}>
+              {node.helper === "includes" ? "substring" : "character class"}
+            </label>
+            <input
+              className={inputCls}
+              placeholder={node.helper === "includes" ? "text" : "a-z0-9-"}
+              value={node.arg}
+              onChange={(e) => update([...path, "arg"], () => e.target.value)}
+              spellCheck={false}
+            />
+          </div>
+          <p className="text-xs text-[var(--color-ink-3)]">
+            {node.helper === "includes"
+              ? "True when the call's string return contains the substring."
+              : "True when every character of the string return is in the class."}
+          </p>
+        </div>
+      );
+      break;
     case "clock":
       body = (
         <p className="text-xs text-[var(--color-ink-3)]">
           The {node.which === "timestamp" ? "block timestamp" : "block number"}{" "}
           at assertion time (not at composition time).
         </p>
+      );
+      break;
+    case "chainid":
+      body = (
+        <p className="text-xs text-[var(--color-ink-3)]">
+          The chain id at assertion time — composable, unlike the flat
+          assert-chainid form.
+        </p>
+      );
+      break;
+    case "codehash":
+      body = (
+        <div className="space-y-2">
+          <div>
+            <label className={smallLabelCls}>account</label>
+            {child("address", node.address)}
+          </div>
+          <p className="text-xs text-[var(--color-ink-3)]">
+            EXTCODEHASH at assertion time: bytes32(0) for a nonexistent
+            account, keccak256 of the code otherwise.
+          </p>
+        </div>
       );
       break;
   }
@@ -394,11 +473,22 @@ export function ValueEditor({
       }
     >
       <div className="flex items-center gap-1.5">
-        <NodePicker
-          node={node}
-          depth={depth}
-          onConvert={replace}
-        />
+        {isSourceNode(node) ? (
+          <SourcePicker node={node} onConvert={replace} />
+        ) : (
+          <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-[var(--color-ink-3)]/10 text-[var(--color-ink-2)]">
+            {kindLabel(node)}
+          </span>
+        )}
+        {badge && (
+          <span
+            className="text-[10px] font-mono px-1 py-0.5 rounded border border-[var(--color-ink-3)]/25 text-[var(--color-ink-3)]"
+            title="Inferred value category — decides which operators and combinators the menus offer"
+          >
+            {badge}
+          </span>
+        )}
+        <WrapMenu node={node} depth={depth} onConvert={replace} />
         {unwrapped && (
           <button
             type="button"

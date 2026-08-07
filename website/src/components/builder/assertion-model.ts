@@ -1,3 +1,12 @@
+import type {
+  Category as ModCategory,
+  OpFamily,
+} from "@evmcrispr/module-assertions/composition";
+import {
+  allowedInfixOps,
+  checkInfix,
+  INFIX_OPS,
+} from "@evmcrispr/module-assertions/composition";
 import { isAddress } from "viem";
 
 /**
@@ -8,6 +17,10 @@ import { isAddress } from "viem";
  *
  * Nodes hold only serializable strings — ABI fetching and ENS resolution
  * stay in the editor components (one `useContractFunctions` per call node).
+ *
+ * Which operators compose with which value categories comes from the
+ * assertions module's own composition table (the same one its compiler
+ * consults), so the UI can never offer a combination that won't compile.
  */
 
 /** Comparison category, derived from ABI return types and literal shapes. */
@@ -19,10 +32,10 @@ export type Category =
   | "bytes32"
   | "string"
   | "bytes"
-  /** Dynamic/array return — only legal inside len/bytelen/hash/at (or as
+  /** Dynamic/array return — only legal inside len/bytelen/hash (or as
    *  the single operand of min/max). */
   | "array"
-  /** Multi-output call — only legal inside @at!. */
+  /** Multi-output call without a return-value selection yet. */
   | "tuple"
   | "unknown";
 
@@ -34,15 +47,24 @@ export interface CallHop {
   inline: boolean;
   /** Canonical argument types. */
   argTypes: string[];
-  /** Canonical output types (multiple allowed — gated to @at! at the end
-   *  of a chain, or continued via `lensIndex` mid-chain). */
+  /** Canonical output types (multiple allowed — one is selected via
+   *  `lensIndex`, mid-chain or on the final hop). */
   returnTypes: string[];
   /** Raw form strings, positional. */
   args: string[];
-  /** On a non-final hop with several return values: the index of the
-   *  address output the chain continues on, rendered as a destructure
-   *  lens (`[_ $ _]`). Undefined for single-address hops. */
+  /** On a hop with several return values: the index of the output the
+   *  expression uses, rendered as a destructure lens (`[_ $ _]`). On a
+   *  non-final hop it must select an address (the chain continues on it);
+   *  on the final hop it may select any output. Undefined for
+   *  single-output hops. */
   lensIndex?: number;
+  /** Selection path below the selected output, one entry per composite
+   *  level (array element or tuple value index), rendered as nested lens
+   *  levels (`[_ [_ [$ _]]]`). Raw form strings; negative array indices
+   *  count from the end (rendered with the `...` rest marker — dynamic
+   *  arrays resolve them live on-chain). Only meaningful on the final
+   *  hop: the module can't chain through an array element. */
+  lensPath?: string[];
 }
 
 export type ValueExpr =
@@ -61,22 +83,43 @@ export type ValueExpr =
   | { kind: "absdiff"; a: ValueExpr; b: ValueExpr }
   | {
       kind: "arith";
-      op: "+" | "-" | "*" | "/" | "//" | "%" | "^" | "xor";
+      op: "+" | "-" | "*" | "/" | "//" | "%" | "^";
       left: ValueExpr;
       right: ValueExpr;
     }
-  | { kind: "neg"; operand: ValueExpr }
+  | {
+      kind: "cmp";
+      op: "==" | "!=" | "<" | "<=" | ">" | ">=";
+      left: ValueExpr;
+      right: ValueExpr;
+    }
   | {
       kind: "logic";
-      op: "or" | "and" | "xor" | "==" | "!=" | "<" | "<=" | ">" | ">=";
+      op: "or" | "and" | "xor";
+      left: ValueExpr;
+      right: ValueExpr;
+    }
+  /** Bitwise word ops, rendered through `@bytes!(a "&" b)`. */
+  | {
+      kind: "bytes";
+      op: "&" | "|" | "^" | "<<" | ">>";
       left: ValueExpr;
       right: ValueExpr;
     }
   | { kind: "not"; operand: ValueExpr }
   | { kind: "callwrap"; helper: "len" | "bytelen" | "hash"; call: ValueExpr }
-  | { kind: "at"; call: ValueExpr; index: string }
   | { kind: "split"; call: ValueExpr; delimiter: string; index: string }
-  | { kind: "clock"; which: "timestamp" | "blocknumber" };
+  | { kind: "clock"; which: "timestamp" | "blocknumber" }
+  | { kind: "chainid" }
+  /** EXTCODEHASH of an address (literal or address-returning call). */
+  | { kind: "codehash"; address: ValueExpr }
+  /** String predicates over a call's string return (@includes!/@charset!). */
+  | {
+      kind: "strtest";
+      helper: "includes" | "charset";
+      call: ValueExpr;
+      arg: string;
+    };
 
 export interface Assertion {
   subject: ValueExpr;
@@ -87,10 +130,6 @@ export interface Assertion {
   delta: string;
   message: string;
 }
-
-/** Node kinds that only compare at the top level of an assertion side
- *  (`@split!`, `@hash!` — the callwrap check special-cases hash). */
-export const TOP_LEVEL_ONLY = new Set(["split"]);
 
 export const emptyLiteral = (): ValueExpr => ({ kind: "literal", value: "" });
 export const emptyCall = (): ValueExpr => ({
@@ -122,6 +161,9 @@ function categoryFromAbiType(t: string): Category {
     if (t === "bytes") return "bytes";
     return "array";
   }
+  // Canonical struct type "(address,uint256)" — same "pick a value"
+  // guidance as a multi-output return.
+  if (t.startsWith("(")) return "tuple";
   if (/^uint\d*$/.test(t)) return "uint";
   if (/^int\d*$/.test(t)) return "int";
   if (t === "address") return "address";
@@ -129,6 +171,111 @@ function categoryFromAbiType(t: string): Category {
   if (t === "bytes32") return "bytes32";
   if (/^bytes\d+$/.test(t)) return "bytes32";
   return "unknown";
+}
+
+const ARRAY_RETURN_RE = /\[(\d*)\]$/;
+
+/** The output type a hop's lens selection narrows to: the single output,
+ *  or the `lensIndex` one of a multi-value return. Undefined while a
+ *  multi-value return has no selection yet. */
+export function selectedOutput(hop: CallHop): string | undefined {
+  if (hop.returnTypes.length === 1) return hop.returnTypes[0];
+  return hop.lensIndex !== undefined
+    ? hop.returnTypes[hop.lensIndex]
+    : undefined;
+}
+
+/** One composite level of a canonical type: an array (fixed or dynamic)
+ *  or a struct/tuple. Null for scalar and string/bytes types. */
+export type LensLevel =
+  | { kind: "array"; base: string; length?: number }
+  | { kind: "tuple"; components: string[] };
+
+/** Split a canonical tuple type "(a,(b,c),d[2])" into component types. */
+function tupleComponents(t: string): string[] | null {
+  if (!t.startsWith("(") || !t.endsWith(")")) return null;
+  const components: string[] = [];
+  let depth = 0;
+  let start = 1;
+  for (let i = 1; i < t.length - 1; i++) {
+    const c = t[i];
+    if (c === "(") depth++;
+    else if (c === ")") depth--;
+    else if (c === "," && depth === 0) {
+      components.push(t.slice(start, i));
+      start = i + 1;
+    }
+  }
+  components.push(t.slice(start, t.length - 1));
+  return components.filter((c) => c !== "");
+}
+
+export function lensLevelOf(type: string): LensLevel | null {
+  const m = type.match(ARRAY_RETURN_RE);
+  if (m)
+    return {
+      kind: "array",
+      base: type.slice(0, -m[0].length),
+      length: m[1] === "" ? undefined : Number(m[1]),
+    };
+  const components = tupleComponents(type);
+  if (components && components.length > 0)
+    return { kind: "tuple", components };
+  return null;
+}
+
+export interface LensSelection {
+  /** Type reached after applying every parsed entry. */
+  terminal: string;
+  /** Parsed entries — shorter than `lensPath` when one is malformed. */
+  entries: number[];
+  /** Every entry parsed and in range where the arity is known. The
+   *  terminal may still be composite — whether that fits depends on the
+   *  context (a comparison needs a single word; @len! wants an array). */
+  valid: boolean;
+  /** First problem found, phrased for the validator. */
+  issue?: string;
+}
+
+/** Resolve a hop's selection: walk `lensPath` from the selected output
+ *  through array/tuple levels. Null while a multi-value return has no
+ *  `lensIndex` yet. */
+export function resolveLens(hop: CallHop): LensSelection | null {
+  const sel = selectedOutput(hop);
+  if (sel === undefined) return null;
+  let terminal = sel;
+  const entries: number[] = [];
+  let issue: string | undefined;
+  for (const raw of hop.lensPath ?? []) {
+    const level = lensLevelOf(terminal);
+    if (!level) break; // stale path beyond a scalar — ignore the rest
+    const t = raw.trim();
+    if (!/^-?\d+$/.test(t)) {
+      issue =
+        "The element index must be an integer (negative counts from the end, -1 = last).";
+      break;
+    }
+    const idx = Number(t);
+    if (level.kind === "array") {
+      if (
+        level.length !== undefined &&
+        (idx >= level.length || idx < -level.length)
+      ) {
+        issue = `Element ${t} is out of range for ${terminal}.`;
+        break;
+      }
+      terminal = level.base;
+    } else {
+      if (idx < 0 || idx >= level.components.length) {
+        issue = `Value ${t} is out of range for ${terminal}.`;
+        break;
+      }
+      terminal = level.components[idx];
+    }
+    entries.push(idx);
+  }
+  const valid = !issue && entries.length === (hop.lensPath ?? []).length;
+  return { terminal, entries, valid, issue };
 }
 
 function literalCategory(value: string): Category {
@@ -154,12 +301,20 @@ export function inferCategory(expr: ValueExpr): Category {
     case "call": {
       const last = expr.hops[expr.hops.length - 1];
       if (!last || last.returnTypes.length === 0) return "unknown";
-      if (last.returnTypes.length > 1) return "tuple";
-      return categoryFromAbiType(last.returnTypes[0]);
+      const lens = resolveLens(last);
+      if (lens === null) return "tuple";
+      // The selection path narrows the output level by level; the category
+      // is whatever type the path has reached so far.
+      return categoryFromAbiType(lens.terminal);
     }
     case "balance":
     case "clock":
+    case "chainid":
       return "uint";
+    case "codehash":
+      return "bytes32";
+    case "strtest":
+      return "bool";
     case "minmax":
       return expr.items.some((i) => inferCategory(i) === "int") ? "int" : "uint";
     case "absdiff":
@@ -169,30 +324,95 @@ export function inferCategory(expr: ValueExpr): Category {
         inferCategory(expr.right) === "int"
         ? "int"
         : "uint";
-    case "neg":
-      return "int";
+    case "cmp":
     case "logic":
     case "not":
       return "bool";
+    case "bytes":
+      // Raw 32-byte word result, exposed as a number.
+      return "uint";
     case "callwrap":
       return expr.helper === "hash" ? "bytes32" : "uint";
-    case "at":
-      // Raw 32-byte return word, exposed as a number.
-      return "uint";
     case "split":
       return "string";
   }
 }
 
-const NUMERIC: ReadonlySet<Category> = new Set(["uint", "int", "unknown"]);
+// ---------------------------------------------------------------------------
+// Bridge to the module's composition table (UI categories are lowercase).
+// ---------------------------------------------------------------------------
+
+const MOD_CAT: Partial<Record<Category, ModCategory>> = {
+  uint: "Uint",
+  int: "Int",
+  address: "Address",
+  bool: "Bool",
+  bytes32: "Bytes32",
+  string: "String",
+  bytes: "Bytes",
+};
+
+/** UI category → module category; null for array/tuple/unknown, which have
+ *  no word representation the table reasons about. */
+export function toModCat(cat: Category): ModCategory | null {
+  return MOD_CAT[cat] ?? null;
+}
+
+/** Operand categories for a table lookup: an unknown/incomplete side
+ *  mirrors the other one (stay permissive while the tree is half-built). */
+function tablePair(
+  l: Category,
+  r: Category,
+): [ModCategory, ModCategory] | null {
+  const lm = toModCat(l);
+  const rm = toModCat(r);
+  if (l === "unknown" || r === "unknown") {
+    const known = lm ?? rm ?? "Uint";
+    return [lm ?? known, rm ?? known];
+  }
+  if (!lm || !rm) return null; // array/tuple — not word-composable
+  return [lm, rm];
+}
+
+/** The infix operator symbols of one family valid for an operand pair,
+ *  straight from the composition table. */
+export function familyOpsFor(
+  family: OpFamily,
+  left: Category,
+  right: Category,
+): string[] {
+  const pair = tablePair(left, right);
+  if (!pair) return [];
+  return allowedInfixOps(pair[0], pair[1])
+    .filter((op) => op.family === family)
+    .map((op) => op.symbol);
+}
+
+/** The table's rejection reason for one operator over an operand pair, or
+ *  null when it composes (or when a side is still unknown). */
+export function infixIssue(
+  family: OpFamily,
+  symbol: string,
+  left: Category,
+  right: Category,
+): string | null {
+  if (left === "unknown" || right === "unknown") return null;
+  const pair = tablePair(left, right);
+  if (!pair) return null; // array/tuple issues are reported elsewhere
+  const check = checkInfix({ symbol, family }, pair[0], pair[1]);
+  return check.ok ? null : check.reason;
+}
 
 /** Operator value for the bare boolean form (`assert target::fn()`). */
 export const BARE_OP = "is true";
 
 /**
- * Operators available for a subject/expected pair. `~=` needs exactly one
- * build-time-constant side; two live numeric sides suggest
- * `@absdiff!(a b) <= d` instead (the editor offers that transform).
+ * Operators available for a subject/expected pair, from the composition
+ * table's cmp family. `~=` needs exactly one build-time-constant side; two
+ * live numeric sides suggest `@absdiff!(a b) <= d` instead (the editor
+ * offers that transform). Dynamic values (string/bytes/array/tuple) keep
+ * == / != — the top-level judge compares them where nested expressions
+ * can't.
  */
 export function opsFor(
   subjectCat: Category,
@@ -201,12 +421,15 @@ export function opsFor(
   expectedConst: boolean,
 ): string[] {
   if (subjectCat === "bool") return [BARE_OP, "==", "!="];
-  if (NUMERIC.has(subjectCat) && NUMERIC.has(expectedCat)) {
-    const ops = ["==", "!=", ">", "<", ">=", "<="];
-    if (subjectConst !== expectedConst) ops.push("~=");
-    return ops;
-  }
-  return ["==", "!="];
+  const pair = tablePair(subjectCat, expectedCat);
+  if (!pair || pair[0] === "Bytes" || pair[1] === "Bytes")
+    return ["==", "!="];
+  const ops = familyOpsFor("cmp", subjectCat, expectedCat);
+  if (ops.length === 0) return ["==", "!="];
+  const numeric = (c: ModCategory) => c === "Uint" || c === "Int";
+  if (numeric(pair[0]) && numeric(pair[1]) && subjectConst !== expectedConst)
+    ops.push("~=");
+  return ops;
 }
 
 // ---------------------------------------------------------------------------
@@ -215,12 +438,6 @@ export function opsFor(
 // ---------------------------------------------------------------------------
 
 export type Path = (string | number)[];
-
-export function getAt(root: unknown, path: Path): unknown {
-  let node: unknown = root;
-  for (const key of path) node = (node as Record<string | number, unknown>)?.[key];
-  return node;
-}
 
 /** Immutable update along a path with structural sharing. */
 export function updateAt<T>(root: T, path: Path, updater: (node: any) => any): T {
@@ -234,51 +451,6 @@ export function updateAt<T>(root: T, path: Path, updater: (node: any) => any): T
   return copy;
 }
 
-/** Kinds a node can be wrapped into (the progressive-disclosure entry). */
-export type WrapKind =
-  | "minmax-min"
-  | "minmax-max"
-  | "absdiff"
-  | "arith"
-  | "logic"
-  | "not"
-  | "len"
-  | "bytelen"
-  | "hash"
-  | "at"
-  | "split"
-  | "neg";
-
-/** Put `node` into the first slot of a new combinator. */
-export function wrapNode(node: ValueExpr, kind: WrapKind): ValueExpr {
-  switch (kind) {
-    case "minmax-min":
-      return { kind: "minmax", op: "min", items: [node, emptyLiteral()] };
-    case "minmax-max":
-      return { kind: "minmax", op: "max", items: [node, emptyLiteral()] };
-    case "absdiff":
-      return { kind: "absdiff", a: node, b: emptyLiteral() };
-    case "arith":
-      return { kind: "arith", op: "+", left: node, right: emptyLiteral() };
-    case "logic":
-      return { kind: "logic", op: "and", left: node, right: emptyLiteral() };
-    case "not":
-      return { kind: "not", operand: node };
-    case "neg":
-      return { kind: "neg", operand: node };
-    case "len":
-      return { kind: "callwrap", helper: "len", call: node };
-    case "bytelen":
-      return { kind: "callwrap", helper: "bytelen", call: node };
-    case "hash":
-      return { kind: "callwrap", helper: "hash", call: node };
-    case "at":
-      return { kind: "at", call: node, index: "0" };
-    case "split":
-      return { kind: "split", call: node, delimiter: " ", index: "0" };
-  }
-}
-
 /** The designated primary child a combinator unwraps back to. */
 export function unwrapNode(node: ValueExpr): ValueExpr | null {
   switch (node.kind) {
@@ -287,15 +459,15 @@ export function unwrapNode(node: ValueExpr): ValueExpr | null {
     case "absdiff":
       return node.a;
     case "arith":
-      return node.left;
+    case "cmp":
     case "logic":
+    case "bytes":
       return node.left;
     case "not":
-    case "neg":
       return node.operand;
     case "callwrap":
-    case "at":
     case "split":
+    case "strtest":
       return node.call;
     default:
       return null;
@@ -317,6 +489,9 @@ function walk(
   path: Path,
   depth: number,
   issues: Issue[],
+  /** Direct child of a call-consuming helper (@len!, @split!, …), which
+   *  accepts string/bytes/array selections a comparison can't judge. */
+  inCallHelper = false,
 ): void {
   switch (expr.kind) {
     case "literal": {
@@ -329,23 +504,58 @@ function walk(
         });
       break;
     }
-    case "call":
+    case "call": {
       for (const hop of expr.hops.slice(0, -1)) {
         if (!hop.fnName) continue;
-        const continuesOn =
-          hop.lensIndex !== undefined
-            ? hop.returnTypes[hop.lensIndex]
-            : hop.returnTypes.length === 1
-              ? hop.returnTypes[0]
-              : undefined;
-        if (continuesOn !== "address")
+        // A mid-chain selection may reach through array elements and
+        // struct values, as long as it lands on an address.
+        const hopLens = resolveLens(hop);
+        if (!hopLens?.valid || hopLens.terminal !== "address")
           issues.push({
             path,
             message:
-              "Every :: hop except the last must continue on an address. Pick the address return value to chain on.",
+              "Every :: hop except the last must continue on an address. Pick an address (or address element) to chain on.",
+          });
+      }
+      const last = expr.hops[expr.hops.length - 1];
+      const lens = last ? resolveLens(last) : null;
+      if (lens?.issue) issues.push({ path, message: lens.issue });
+      // A nested (path) selection compiles to a typed read whose terminal
+      // must be a single word — except inside the call-consuming helpers
+      // (@len!, @split!, …), which accept string/bytes/array selections.
+      if (
+        lens?.valid &&
+        lens.entries.length > 0 &&
+        !inCallHelper &&
+        ["string", "bytes"].includes(categoryFromAbiType(lens.terminal))
+      )
+        issues.push({
+          path,
+          message:
+            "A nested selection must land on a single-word value (number, address, bool or bytes32). Compare the string through @len!, @hash! or @split! instead.",
+        });
+      // The module compiles a nested flat selection to a raw-word read,
+      // which it only accepts for numbers. Path selections compile to a
+      // typed read instead and may be any single-word value.
+      if (
+        depth > 0 &&
+        last &&
+        last.returnTypes.length > 1 &&
+        last.lensIndex !== undefined &&
+        (last.lensPath ?? []).length === 0
+      ) {
+        const cat = categoryFromAbiType(
+          last.returnTypes[last.lensIndex] ?? "",
+        );
+        if (cat !== "uint" && cat !== "int")
+          issues.push({
+            path,
+            message:
+              "Inside a composed expression, a return-value selection must be a number (uint/int). Compare this call at the top level instead.",
           });
       }
       break;
+    }
     case "balance":
       walk(expr.account, [...path, "account"], depth + 1, issues);
       break;
@@ -367,32 +577,26 @@ function walk(
       walk(expr.b, [...path, "b"], depth + 1, issues);
       break;
     case "arith":
-      if (
-        expr.op === "^" &&
-        (inferCategory(expr.left) === "int" ||
-          inferCategory(expr.right) === "int")
-      )
-        issues.push({
-          path,
-          message: "^ (exponentiation) is not supported for signed values.",
-        });
-      walk(expr.left, [...path, "left"], depth + 1, issues);
-      walk(expr.right, [...path, "right"], depth + 1, issues);
-      break;
-    case "neg":
-      walk(expr.operand, [...path, "operand"], depth + 1, issues);
-      break;
-    case "logic": {
-      const cmp = ["==", "!=", "<", "<=", ">", ">="].includes(expr.op);
-      if (cmp) {
-        const l = inferCategory(expr.left);
-        if (l === "string")
-          issues.push({
-            path,
-            message:
-              "Strings can only be compared at the top level of an assertion.",
-          });
-      }
+    case "cmp":
+    case "logic":
+    case "bytes": {
+      // The composition table judges the operator over the operand pair —
+      // the same check the compiler runs, surfaced eagerly.
+      const family =
+        expr.kind === "arith"
+          ? "arith"
+          : expr.kind === "cmp"
+            ? "cmp"
+            : expr.kind === "logic"
+              ? "logic"
+              : "bytes";
+      const reason = infixIssue(
+        family,
+        expr.op,
+        inferCategory(expr.left),
+        inferCategory(expr.right),
+      );
+      if (reason) issues.push({ path, message: reason });
       walk(expr.left, [...path, "left"], depth + 1, issues);
       walk(expr.right, [...path, "right"], depth + 1, issues);
       break;
@@ -411,17 +615,7 @@ function walk(
           path,
           message: `@${expr.helper}! expects a :: call expression.`,
         });
-      walk(expr.call, [...path, "call"], depth + 1, issues);
-      break;
-    case "at":
-      if (!/^\d+$/.test(expr.index.trim()))
-        issues.push({
-          path,
-          message: "@at! needs a non-negative integer word index.",
-        });
-      if (expr.call.kind !== "call")
-        issues.push({ path, message: "@at! expects a :: call expression." });
-      walk(expr.call, [...path, "call"], depth + 1, issues);
+      walk(expr.call, [...path, "call"], depth + 1, issues, true);
       break;
     case "split":
       if (depth > 0)
@@ -431,33 +625,79 @@ function walk(
         });
       if (!expr.delimiter)
         issues.push({ path, message: "@split! needs a non-empty delimiter." });
-      if (!/^\d+$/.test(expr.index.trim()))
+      if (!/^-?\d+$/.test(expr.index.trim()))
         issues.push({
           path,
-          message: "@split! needs a non-negative integer segment index.",
+          message:
+            "@split! needs an integer segment index (negative counts from the end, -1 = last).",
         });
       if (expr.call.kind !== "call")
         issues.push({ path, message: "@split! expects a :: call expression." });
-      walk(expr.call, [...path, "call"], depth + 1, issues);
+      walk(expr.call, [...path, "call"], depth + 1, issues, true);
       break;
+    case "strtest": {
+      if (!expr.arg)
+        issues.push({
+          path,
+          message:
+            expr.helper === "includes"
+              ? "@includes! needs a non-empty substring."
+              : "@charset! needs a character class (e.g. a-z0-9-).",
+        });
+      if (expr.call.kind !== "call")
+        issues.push({
+          path,
+          message: `@${expr.helper}! expects a :: call expression.`,
+        });
+      else {
+        const cat = inferCategory(expr.call);
+        if (cat !== "string" && cat !== "unknown")
+          issues.push({
+            path,
+            message: `@${expr.helper}! expects a call returning a string.`,
+          });
+      }
+      walk(expr.call, [...path, "call"], depth + 1, issues, true);
+      break;
+    }
+    case "codehash": {
+      const addr = expr.address;
+      if (addr.kind === "literal") {
+        if (addr.value.trim() && literalCategory(addr.value) !== "address")
+          issues.push({
+            path,
+            message: "@codehash! needs an address (or a call returning one).",
+          });
+      } else if (addr.kind === "call") {
+        const cat = inferCategory(addr);
+        if (cat !== "address" && cat !== "unknown")
+          issues.push({
+            path,
+            message: "@codehash! account call must return a single address.",
+          });
+      } else {
+        issues.push({
+          path,
+          message: "@codehash! needs an address (or a call returning one).",
+        });
+      }
+      walk(addr, [...path, "address"], depth + 1, issues);
+      break;
+    }
     case "clock":
+    case "chainid":
       break;
   }
 
-  // A bare tuple/array side needs a transform to become comparable.
-  if (depth === 0) {
+  // A bare tuple/array side needs a transform to become comparable. Calls
+  // guide the user inline, next to their return-value/element pickers.
+  if (depth === 0 && expr.kind !== "call") {
     const cat = inferCategory(expr);
-    if (cat === "tuple")
+    if (cat === "tuple" || cat === "array")
       issues.push({
         path,
         message:
-          "This call returns several values. Wrap it in @at! to pick one.",
-      });
-    if (cat === "array")
-      issues.push({
-        path,
-        message:
-          "This call returns a dynamic value. Compare its @len!, @bytelen! or @hash! instead.",
+          "This value is dynamic. Compare its @len!, @bytelen! or @hash! instead.",
       });
   }
 }

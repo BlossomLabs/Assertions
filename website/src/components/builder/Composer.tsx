@@ -97,7 +97,14 @@ export function Composer({
               <p className="text-xs text-[var(--color-ink-3)] mb-1.5">
                 Batch so far
               </p>
-              <BatchList script={script} onRemoveLine={scriptState.removeLine} />
+              <BatchList
+                script={script}
+                onRemoveLine={scriptState.removeLine}
+                // Assertions are added and removed in step 4; here they
+                // render dimmed, without a delete button.
+                canRemove={(line) => !line.startsWith("assertions:")}
+                hideLine={(line) => line === "load assertions"}
+              />
             </div>
           )}
         </div>

@@ -1,7 +1,8 @@
 import type { Address, PublicClient } from "viem";
-import { isAddress, parseAbiItem } from "viem";
+import { isAddress, keccak256, parseAbiItem } from "viem";
 
-import type { ValueExpr } from "./assertion-model";
+import type { CallHop, ValueExpr } from "./assertion-model";
+import { resolveLens } from "./assertion-model";
 
 /** Integer parse accepting EVML-ish e-notation ("1e18", "2.5e6"). */
 export function parseNumeric(v: string): bigint {
@@ -61,7 +62,7 @@ function callAddress(
 /**
  * True when `evalExpr` can read the expression's current value client-side:
  * complete calls (any chain length), balances of ETH or a token given by
- * address, timestamp/block number, len/bytelen/at transforms and the
+ * address, timestamp/block number, len/bytelen transforms and the
  * numeric combinators over those. Logic, split, hash and token symbols
  * (other than ETH) are not modeled.
  */
@@ -94,22 +95,51 @@ export function isEvaluable(expr: ValueExpr): boolean {
           : expr.account.kind === "literal")
       );
     case "clock":
+    case "chainid":
       return true;
+    case "codehash":
+      return (
+        (expr.address.kind === "literal" &&
+          isAddress(expr.address.value.trim())) ||
+        (expr.address.kind === "call" && isEvaluable(expr.address))
+      );
     case "minmax":
       return expr.items.length >= 2 && expr.items.every(isEvaluable);
     case "absdiff":
       return isEvaluable(expr.a) && isEvaluable(expr.b);
     case "arith":
+    case "bytes":
       return isEvaluable(expr.left) && isEvaluable(expr.right);
-    case "neg":
-      return isEvaluable(expr.operand);
     case "callwrap":
       return expr.helper !== "hash" && isEvaluable(expr.call);
-    case "at":
-      return /^\d+$/.test(expr.index.trim()) && isEvaluable(expr.call);
     default:
       return false;
   }
+}
+
+/** Apply a hop's selection to its decoded result: first the picked output
+ *  of a multi-value return, then each lens-path level (array elements and
+ *  struct values both decode as arrays here). */
+function narrowHop(hop: CallHop, result: unknown): unknown {
+  let value = result;
+  if (
+    hop.returnTypes.length > 1 &&
+    hop.lensIndex !== undefined &&
+    Array.isArray(value)
+  )
+    value = value[hop.lensIndex];
+  const lens = resolveLens(hop);
+  if (lens?.valid) {
+    for (const idx of lens.entries) {
+      if (!Array.isArray(value))
+        throw new Error("the selection does not match the decoded shape");
+      const picked = idx < 0 ? value[value.length + idx] : value[idx];
+      if (picked === undefined)
+        throw new Error("selected element is out of the decoded range");
+      value = picked;
+    }
+  }
+  return value;
 }
 
 /** Follow a call chain with eth_call and return the decoded final result. */
@@ -121,7 +151,8 @@ async function evalCall(
   let address = callAddress(expr);
   if (!address) throw new Error("unresolved target");
   let result: unknown = null;
-  for (const hop of expr.hops) {
+  for (let i = 0; i < expr.hops.length; i++) {
+    const hop = expr.hops[i];
     const abiItem = parseAbiItem(
       `function ${hop.fnName}(${hop.argTypes.join(",")}) view returns (${hop.returnTypes.join(",")})`,
     );
@@ -133,13 +164,15 @@ async function evalCall(
         parseCallArg(type, hop.args[i] ?? "", executor),
       ),
     });
-    // Only consumed when another hop follows; a lens picks the address
-    // out of a multi-value return.
-    address = (
-      Array.isArray(result) ? result[hop.lensIndex ?? 0] : result
-    ) as Address;
+    if (i < expr.hops.length - 1) {
+      // The chain continues on the hop's selected address (a lens may
+      // reach through array elements and struct values to pick it).
+      const narrowed = narrowHop(hop, result);
+      address = (Array.isArray(narrowed) ? narrowed[0] : narrowed) as Address;
+    }
   }
-  return result;
+  const last = expr.hops[expr.hops.length - 1];
+  return last ? narrowHop(last, result) : result;
 }
 
 const ERC20_BALANCE_OF = parseAbiItem(
@@ -189,6 +222,12 @@ export async function evalExpr(
       const block = await client.getBlock();
       return expr.which === "timestamp" ? block.timestamp : block.number;
     }
+    case "chainid":
+      return BigInt(await client.getChainId());
+    case "codehash":
+      // bytes32 has no place in the numeric combinators; readSubjectValue
+      // special-cases it to a hex string instead.
+      throw new Error("codehash is not a numeric value");
     case "minmax": {
       const values = await Promise.all(
         expr.items.map((i) => evalExpr(client, i, executor)),
@@ -223,13 +262,31 @@ export async function evalExpr(
           return l % r;
         case "^":
           return l ** r;
-        case "xor":
-          return l ^ r;
       }
       break;
     }
-    case "neg":
-      return -(await evalExpr(client, expr.operand, executor));
+    case "bytes": {
+      const [l, r] = await Promise.all([
+        evalExpr(client, expr.left, executor),
+        evalExpr(client, expr.right, executor),
+      ]);
+      const mask = (1n << 256n) - 1n;
+      const lw = l & mask;
+      const rw = r & mask;
+      switch (expr.op) {
+        case "&":
+          return lw & rw;
+        case "|":
+          return lw | rw;
+        case "^":
+          return lw ^ rw;
+        case "<<":
+          return rw > 255n ? 0n : (lw << rw) & mask;
+        case ">>":
+          return rw > 255n ? 0n : lw >> rw;
+      }
+      break;
+    }
     case "callwrap": {
       if (expr.call.kind !== "call") throw new Error("expects a call");
       const result = await evalCall(client, expr.call, executor);
@@ -252,15 +309,6 @@ export async function evalExpr(
       }
       throw new Error("hash is not evaluable client-side");
     }
-    case "at": {
-      if (expr.call.kind !== "call") throw new Error("expects a call");
-      const result = await evalCall(client, expr.call, executor);
-      const index = Number(expr.index.trim());
-      const values = Array.isArray(result) ? result : [result];
-      if (index >= values.length)
-        throw new Error("word index out of decoded range");
-      return toBigInt(values[index]);
-    }
     default:
       throw new Error(`cannot evaluate ${expr.kind} client-side`);
   }
@@ -277,5 +325,24 @@ export async function readSubjectValue(
 ): Promise<string> {
   if (expr.kind === "call")
     return formatResult(await evalCall(client, expr, executor));
+  if (expr.kind === "codehash") {
+    if (expr.address.kind !== "call" && expr.address.kind !== "literal")
+      throw new Error("unsupported codehash address");
+    const address =
+      expr.address.kind === "call"
+        ? ((await evalCall(client, expr.address, executor)) as Address)
+        : (parseCallArg("address", expr.address.value, executor) as Address);
+    // EXTCODEHASH semantics, mirroring the @codehash helper: nonexistent
+    // account -> bytes32(0), existing code-less account -> keccak256("").
+    const code = await client.getCode({ address });
+    if (code && code !== "0x") return keccak256(code);
+    const [nonce, balance] = await Promise.all([
+      client.getTransactionCount({ address }),
+      client.getBalance({ address }),
+    ]);
+    if (nonce === 0 && balance === 0n)
+      return "0x0000000000000000000000000000000000000000000000000000000000000000";
+    return keccak256("0x");
+  }
   return formatResult(await evalExpr(client, expr, executor));
 }

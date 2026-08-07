@@ -157,33 +157,18 @@ function Builder() {
         </Section>
 
         <Section step={4} title="Add assertions" dimmed={!ready || !hasScript}>
-          <div className="space-y-5">
-            <div className="flex items-center gap-3 flex-wrap">
-              <button
-                type="button"
-                disabled={!batchSimulated || agent.isRunning}
-                onClick={() =>
-                  setSuggestPrompt({ text: SUGGEST_PROMPT, nonce: Date.now() })
-                }
-                title={
-                  batchSimulated
-                    ? "Ask the AI to insert protective assertions"
-                    : "Simulate the batch successfully first"
-                }
-                className="px-4 py-2 rounded-lg text-sm font-medium border border-[var(--color-bp-400)] text-[var(--color-bp-300)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              >
-                ✦ Suggest assertions
-              </button>
-              <span className="text-xs text-[var(--color-ink-3)]">
-                or build one manually below
-              </span>
-            </div>
-            <AssertionForm
-              scriptState={scriptState}
-              chainId={chainId}
-              executor={executor}
-            />
-          </div>
+          <AssertionForm
+            scriptState={scriptState}
+            chainId={chainId}
+            executor={executor}
+            suggest={{
+              ready: batchSimulated,
+              running: agent.isRunning,
+              loggedIn: agent.hasKey,
+              onSuggest: () =>
+                setSuggestPrompt({ text: SUGGEST_PROMPT, nonce: Date.now() }),
+            }}
+          />
         </Section>
 
         <Section

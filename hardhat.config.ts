@@ -15,8 +15,8 @@ export default defineConfig({
         // 0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0
         // (see website/scripts/mine-salt.mjs).
         // Combinators v1.0 uses salt
-        // 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f600d4c46e
-        // for 0xa55eC09De097E206acF0B3c677724419AeFd04df (Ignition only supports
+        // 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f600b0b9e4
+        // for 0xa55EC0f629D8D2b3450962C6A25Fd6f7D99463EB (Ignition only supports
         // one global salt; the canonical deploy path is the website / Arachnid
         // proxy anyway — see website/scripts/export-deploy-artifact.mjs).
         // (v1.0 core salt 0xea760d18... produced 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F)

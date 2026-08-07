@@ -17,7 +17,7 @@ Because combinators are stateless view targets, the periphery can evolve: old `C
 
 ```
 Assertions  v1.1  0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0   (frozen core)
-Combinators v1.0  0xa55eC09De097E206acF0B3c677724419AeFd04df   (versionable periphery)
+Combinators v1.0  0xa55EC0f629D8D2b3450962C6A25Fd6f7D99463EB   (versionable periphery)
 ```
 
 Version 1.0 of the core remains deployed at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F) (`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`). Core v1.1 is a strict superset of the 1.0 ABI: it adds int256 assertions (including approximate equality), tuple index bounds checking, `CallFailed` on code-less targets, and the `Ne`/`Lt`/`Le` variants listed below. All composition functions live in the separate `Combinators` contract, which carries its own version line.
@@ -318,7 +318,7 @@ assertions.assertEqCallUint(
 
 ## Combinators — computing values
 
-Assertion functions revert or pass — they judge. Everything that *computes* lives in the separate `Combinators` contract (`0xa55eC09De097E206acF0B3c677724419AeFd04df`): each function is a small composable building block, and nested `(target, data)` operands in calldata compose the blocks into arbitrary expressions. The core consumes the result by pointing any call assertion at the Combinators address.
+Assertion functions revert or pass — they judge. Everything that *computes* lives in the separate `Combinators` contract (`0xa55EC0f629D8D2b3450962C6A25Fd6f7D99463EB`): each function is a small composable building block, and nested `(target, data)` operands in calldata compose the blocks into arbitrary expressions. The core consumes the result by pointing any call assertion at the Combinators address.
 
 The core is frozen forever; Combinators is versionable. A future `Combinators` v2 would deploy at a new address without touching the core or breaking anything that references v1.
 
@@ -727,7 +727,7 @@ An `index` that points past the returned data reverts with `ReturnDataOutOfBound
 
 ### Combinators (separate `Combinators` contract)
 
-These live at the Combinators address (`0xa55eC09De097E206acF0B3c677724419AeFd04df`), not on the core. See [Combinators — computing values](#combinators--computing-values) for usage.
+These live at the Combinators address (`0xa55EC0f629D8D2b3450962C6A25Fd6f7D99463EB`), not on the core. See [Combinators — computing values](#combinators--computing-values) for usage.
 
 | Function | Description |
 |----------|-------------|

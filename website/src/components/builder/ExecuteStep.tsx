@@ -48,7 +48,7 @@ export function ExecuteStep({
     | { phase: "error"; message: string }
   >({ phase: "idle" });
 
-  const finalScript = buildFinalScript(block, context);
+  const finalScript = buildFinalScript(block, context, chainId);
   const busy = status.phase === "running" || status.phase === "downloading";
 
   const execute = async () => {
@@ -91,7 +91,7 @@ export function ExecuteStep({
     <div className="space-y-4">
       <div>
         <p className="text-xs text-[var(--color-ink-3)] mb-1.5">
-          Final script — {CONTEXT_LABELS[context.kind]}
+          Final script ({CONTEXT_LABELS[context.kind]})
         </p>
         <pre className="p-3 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/20 font-mono text-xs overflow-x-auto whitespace-pre-wrap max-h-64 overflow-y-auto">
           {finalScript}
@@ -128,12 +128,12 @@ export function ExecuteStep({
         <p className="text-sm text-[var(--color-ok)]">
           {context.kind === "eoa"
             ? "Batch executed."
-            : "Proposal submitted — it now goes through its normal review/vote flow."}
+            : "Proposal submitted. It now goes through its normal review/vote flow."}
         </p>
       )}
       {status.phase === "downloaded" && (
         <p className="text-sm text-[var(--color-ok)]">
-          JSON downloaded — import it in Safe's Transaction Builder app.
+          JSON downloaded. Import it in Safe's Transaction Builder app.
         </p>
       )}
       {status.phase === "error" && (

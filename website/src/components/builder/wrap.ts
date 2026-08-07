@@ -1,7 +1,31 @@
 import { isAddress } from "viem";
+import * as viemChains from "viem/chains";
 
 import type { ExecutionContext } from "./context";
 import { ensVarName } from "./useContractFunctions";
+
+/** viem's camelCase export name per chain id — the names `switch` accepts
+ *  (e.g. `mainnet`, `gnosis`, `baseSepolia`). */
+const CHAIN_EXPORT_NAMES: Record<number, string> = (() => {
+  const byId: Record<number, string> = {};
+  for (const [key, value] of Object.entries(viemChains)) {
+    const chain = value as { id?: unknown; name?: unknown };
+    if (
+      typeof chain?.id === "number" &&
+      typeof chain?.name === "string" &&
+      !(chain.id in byId)
+    )
+      byId[chain.id] = key;
+  }
+  return byId;
+})();
+
+/** `switch <chain>` opener for non-mainnet scripts, so the script itself
+ *  declares the chain it targets instead of relying on runner config. */
+function switchLine(chainId: number): string | null {
+  if (chainId === 1) return null;
+  return `switch ${CHAIN_EXPORT_NAMES[chainId] ?? chainId}`;
+}
 
 /** `load` must sit at the top level, so pull the block's load lines (e.g.
  *  the AI-inserted `load assertions`) out and above the wrapper. */
@@ -52,11 +76,17 @@ function indent(text: string, depth = 1): string {
 export function buildFinalScript(
   block: string,
   context: ExecutionContext,
+  chainId = 1,
 ): string {
   const { loads, body } = hoistLoads(block);
   const target = addressRef(context.address);
+  const chainSwitch = switchLine(chainId);
   const prelude = (extra: string[]) =>
-    [...new Set([...extra, ...loads]), ...target.sets].join("\n");
+    [
+      ...(chainSwitch ? [chainSwitch] : []),
+      ...new Set([...extra, ...loads]),
+      ...target.sets,
+    ].join("\n");
 
   switch (context.kind) {
     case "eoa":

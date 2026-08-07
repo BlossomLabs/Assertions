@@ -1,12 +1,16 @@
 import {
   type ChatItem,
+  DEFAULT_NEXUS_CONFIG,
   loginWithNexus,
   logoutNexus,
   NexusBrokerClient,
 } from "@evmcrispr/ai";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import type { useBuilderChatAgent } from "./useBuilderChatAgent";
+import {
+  builderChatStorage,
+  type useBuilderChatAgent,
+} from "./useBuilderChatAgent";
 
 type Agent = ReturnType<typeof useBuilderChatAgent>;
 
@@ -17,6 +21,33 @@ type Agent = ReturnType<typeof useBuilderChatAgent>;
 const BROKER_URL = import.meta.env.PUBLIC_NEXUS_BROKER_URL as
   | string
   | undefined;
+
+/** True when Nexus says the key is dead (a definitive 401). The probe names
+ *  a nonexistent model: key auth runs before model resolution, so a live key
+ *  answers 400 without ever reaching a paid completion. Anything but a 401 —
+ *  including network failure — counts as alive, so a Nexus outage can't log
+ *  the user out. */
+async function nexusKeyExpired(key: string): Promise<boolean> {
+  try {
+    const res = await fetch(
+      `${DEFAULT_NEXUS_CONFIG.baseURL}/chat/completions`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${key}`,
+        },
+        body: JSON.stringify({
+          model: "__assertions_key_probe__",
+          messages: [{ role: "user", content: "probe" }],
+        }),
+      },
+    );
+    return res.status === 401;
+  } catch {
+    return false;
+  }
+}
 
 function BrokerLogin({
   onKey,
@@ -120,8 +151,44 @@ export function ChatPanel({
   const [loggingIn, setLoggingIn] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const sentSuggestRef = useRef<number | null>(null);
+  const probedRef = useRef(false);
+
+  // A key restored from a previous visit may belong to a Nexus session that
+  // has since expired or been revoked; probe it once on mount so the user is
+  // asked to log in again before composing a message, not after.
+  useEffect(() => {
+    if (probedRef.current) return;
+    probedRef.current = true;
+    const key = builderChatStorage.getApiKey();
+    if (!key) return;
+    void nexusKeyExpired(key).then((expired) => {
+      if (expired) {
+        setSessionExpired(true);
+        agent.clearApiKey();
+      }
+    });
+  }, [agent.clearApiKey]);
+
+  // A 401 mid-run means the key was revoked or the session expired while
+  // chatting; drop to the login screen. The conversation stays in the hook's
+  // state and resumes after re-login.
+  useEffect(() => {
+    if (!agent.isAuthError) return;
+    setSessionExpired(true);
+    agent.clearApiKey();
+  }, [agent.isAuthError, agent.clearApiKey]);
+
+  const acceptKey = useCallback(
+    (key: string) => {
+      setSessionExpired(false);
+      setLoginError(null);
+      agent.setApiKey(key);
+    },
+    [agent.setApiKey],
+  );
 
   // Auto-send the suggest-assertions prompt when the gate button fires.
   useEffect(() => {
@@ -157,6 +224,13 @@ export function ChatPanel({
   if (!agent.hasKey) {
     return (
       <div className="space-y-4 text-sm">
+        {sessionExpired && (
+          <p className="px-3 py-2 rounded-lg text-xs leading-relaxed bg-[var(--color-err)]/10 border border-[var(--color-err)]/30 text-[var(--color-err)]">
+            Your Dappnode Nexus session has expired or its key was revoked. Log
+            in again to continue
+            {agent.items.length > 0 && " — your conversation is preserved"}.
+          </p>
+        )}
         <p className="text-[var(--color-ink-2)] leading-relaxed">
           Assertion suggestions run on{" "}
           <a
@@ -171,7 +245,7 @@ export function ChatPanel({
           key, or paste one.
         </p>
         {BROKER_URL ? (
-          <BrokerLogin onKey={agent.setApiKey} onError={setLoginError} />
+          <BrokerLogin onKey={acceptKey} onError={setLoginError} />
         ) : (
           <button
             type="button"
@@ -180,7 +254,7 @@ export function ChatPanel({
               setLoggingIn(true);
               setLoginError(null);
               try {
-                agent.setApiKey(await loginWithNexus());
+                acceptKey(await loginWithNexus());
               } catch (e) {
                 setLoginError(e instanceof Error ? e.message : String(e));
               } finally {
@@ -207,7 +281,7 @@ export function ChatPanel({
             type="button"
             disabled={!keyInput.trim()}
             onClick={() => {
-              agent.setApiKey(keyInput.trim());
+              acceptKey(keyInput.trim());
               setKeyInput("");
             }}
             className="px-3 py-2 rounded-lg text-sm border border-[var(--color-ink-3)]/30 hover:border-[var(--color-bp-400)] disabled:opacity-40 transition-colors"
@@ -252,19 +326,8 @@ export function ChatPanel({
             </div>
           ),
         )}
-        {agent.error && (
-          <p className="text-xs text-[var(--color-err)]">
-            {agent.error}
-            {agent.isAuthError && (
-              <button
-                type="button"
-                onClick={agent.clearApiKey}
-                className="ml-2 underline"
-              >
-                Change key
-              </button>
-            )}
-          </p>
+        {agent.error && !agent.isAuthError && (
+          <p className="text-xs text-[var(--color-err)]">{agent.error}</p>
         )}
       </div>
 

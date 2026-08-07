@@ -15,6 +15,11 @@ import type { Address } from "viem";
 import { evml } from "./evml";
 import type { useScriptState } from "./useScriptState";
 
+/** Key/session persistence, exported so the chat panel can probe the stored
+ *  key's liveness. Own localStorage namespace so nothing collides with other
+ *  EVMcrispr hosts that might share this origin. */
+export const builderChatStorage = createLocalStorageChatStorage("assertions");
+
 const SYSTEM_PROMPT = `You are the assertion assistant on assertions.eth's Assertion Builder. The user has composed an EVML action block — the transactions of a wallet batch, Safe transaction, Governor proposal or Aragon OSx proposal. Your job is to protect the USER'S OUTCOME with on-chain assertions from the "assertions" EVML module: read the script (get_script), fetch the verified source of every contract it touches (get_contract), work out what the executor is supposed to gain or give up, and insert assert commands so the whole transaction reverts if the user would not get what they intended.
 
 The script you edit is the inner action block only — the site wraps it into the final batch/proposal, so never add batch, safe:propose, governor:propose or aragonosx wrappers yourself. Put "load assertions" on its own line at the top of the block (the site hoists load lines when wrapping). Assertions execute atomically with the surrounding calls: a failed assertion reverts the entire batch.
@@ -103,9 +108,7 @@ export function useBuilderChatAgent({
     systemPrompt: () => withClock(SYSTEM_PROMPT),
     tools,
     undoScriptRevision: scriptState.undoRevision,
-    // Own localStorage namespace so nothing collides with other EVMcrispr
-    // hosts that might share this origin.
-    storage: createLocalStorageChatStorage("assertions"),
+    storage: builderChatStorage,
     chatStore: createChatStore("assertions"),
   });
 }

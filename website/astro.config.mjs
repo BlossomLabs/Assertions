@@ -104,7 +104,24 @@ export default defineConfig({
     // must be allowed to serve them, and esbuild must not try to pre-bundle
     // them from node_modules.
     server: { fs: { allow: [path.resolve('.'), evmcrisprSrc] } },
-    optimizeDeps: { exclude: local.ids },
+    optimizeDeps: {
+      exclude: local.ids,
+      // Deps imported only from the excluded @evmcrispr sources are not
+      // discoverable by the startup scan; without listing them, Vite
+      // re-optimizes when they first load in the browser and force-reloads
+      // the page (most visibly: opening the Monaco editor tab wiped the
+      // whole builder). Pre-bundle them eagerly instead.
+      include: [
+        '@monaco-editor/react',
+        'monaco-editor',
+        'shiki/core',
+        'shiki/engine/oniguruma',
+        'shiki/langs/json.mjs',
+        'shiki/langs/solidity.mjs',
+        'ai',
+        '@ai-sdk/openai-compatible',
+      ],
+    },
   },
 
   integrations: [react()],

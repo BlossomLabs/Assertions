@@ -168,6 +168,15 @@ contract MockToken {
         list = new address[](3);
     }
 
+    /// @notice Multi-value return with a leading dynamic array, for elementCall tests
+    function signers() external pure returns (address[] memory list, address owner) {
+        list = new address[](3);
+        list[0] = address(0xaaa1);
+        list[1] = address(0xaaa2);
+        list[2] = address(0xaaa3);
+        owner = address(0xb055);
+    }
+
     /// @notice Returns the maximum uint256, for arithmetic overflow tests
     function maxUint() external pure returns (uint256) {
         return type(uint256).max;

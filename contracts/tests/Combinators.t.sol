@@ -1347,6 +1347,78 @@ contract CombinatorsTest is Test {
         combinators.uintCall(address(token), new bytes[](0), 0);
     }
 
+    // ============ Array Element Extraction (elementCall) ============
+
+    function test_elementCall_tupleWithArray() public view {
+        // signers() -> (address[3] list, address owner): [0][i] via head word 0
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.signers, ()));
+        assertEq(combinators.elementCall(address(token), calls, 0, 0), uint256(0xaaa1));
+        assertEq(combinators.elementCall(address(token), calls, 0, 1), uint256(0xaaa2));
+        assertEq(combinators.elementCall(address(token), calls, 0, 2), uint256(0xaaa3));
+    }
+
+    function test_elementCall_negativeIndex_fromEnd() public view {
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.signers, ()));
+        assertEq(combinators.elementCall(address(token), calls, 0, -1), uint256(0xaaa3));
+        assertEq(combinators.elementCall(address(token), calls, 0, -3), uint256(0xaaa1));
+    }
+
+    function test_elementCall_singleArrayReturn() public view {
+        // getArray() -> [10, 20, 30, 40, 50]
+        bytes[] memory calls = _single(abi.encodeCall(MockTarget.getArray, ()));
+        assertEq(combinators.elementCall(address(target), calls, 0, 2), 30);
+        assertEq(combinators.elementCall(address(target), calls, 0, -1), 50);
+    }
+
+    function test_elementCall_indexOutOfBounds_reverts() public {
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.signers, ()));
+        vm.expectRevert(
+            abi.encodeWithSelector(Combinators.ElementIndexOutOfBounds.selector, int256(3), uint256(3))
+        );
+        combinators.elementCall(address(token), calls, 0, 3);
+        vm.expectRevert(
+            abi.encodeWithSelector(Combinators.ElementIndexOutOfBounds.selector, int256(-4), uint256(3))
+        );
+        combinators.elementCall(address(token), calls, 0, -4);
+    }
+
+    function test_elementCall_emptyArray_reverts() public {
+        bytes[] memory calls = _single(abi.encodeCall(MockTarget.getEmptyArray, ()));
+        vm.expectRevert(
+            abi.encodeWithSelector(Combinators.ElementIndexOutOfBounds.selector, int256(0), uint256(0))
+        );
+        combinators.elementCall(address(target), calls, 0, 0);
+    }
+
+    function test_elementCall_headWordNotAnArray_reverts() public {
+        // head word 1 of signers() is the owner address, not an array offset
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.signers, ()));
+        vm.expectRevert(
+            abi.encodeWithSelector(Combinators.ReturnDataOutOfBounds.selector, int256(1), uint256(192))
+        );
+        combinators.elementCall(address(token), calls, 1, 0);
+    }
+
+    function test_elementCall_headWordPastReturndata_reverts() public {
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.decimals, ()));
+        vm.expectRevert(
+            abi.encodeWithSelector(Combinators.ReturnDataOutOfBounds.selector, int256(1), uint256(32))
+        );
+        combinators.elementCall(address(token), calls, 1, 0);
+    }
+
+    function test_elementCall_composed_endToEnd() public view {
+        // "the second signer is 0xaaa2", judged as an address by the core
+        assertions.assertEqCallAddress(
+            address(combinators),
+            abi.encodeCall(
+                Combinators.elementCall,
+                (address(token), _single(abi.encodeCall(MockToken.signers, ())), 0, 1)
+            ),
+            address(0xaaa2)
+        );
+    }
+
     function test_uintCall_negativeIndex_fromEnd() public view {
         bytes[] memory calls = _single(abi.encodeCall(MockToken.getReserves, ()));
         assertEq(combinators.uintCall(address(token), calls, -1), 123456);

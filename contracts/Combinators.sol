@@ -64,6 +64,12 @@ contract Combinators {
     ///         always pass and is certainly a mistake
     error EmptySubstring();
 
+    /// @notice Thrown when elementCall's element index is outside the array
+    ///         (in either direction for negative indices)
+    /// @param index The requested element index, as given (may be negative)
+    /// @param elements The number of elements the array holds
+    error ElementIndexOutOfBounds(int256 index, uint256 elements);
+
     /// @notice Thrown when an operation is not supported for the value type,
     ///         currently only calcInt with ArithOp.Exp (Solidity defines `**`
     ///         for unsigned operands only, so signed exponentiation is ill-defined)
@@ -366,6 +372,71 @@ contract Combinators {
     /// @return The decoded length of the final call's dynamic return value
     function arrayLengthCall(address target, bytes[] calldata calls) external view returns (uint256) {
         return _dynLength(_resolveChain(target, calls));
+    }
+
+    /// @notice Resolves a call chain, follows the dynamic array whose offset sits at
+    ///         head word `wordIndex` of the final returndata, and returns its index-th
+    ///         element as a uint256 (0-based; negative indices count from the end,
+    ///         -1 = last element)
+    /// @dev The decoded counterpart of uintCall for array elements: instead of raw
+    ///      word positions it follows the array's head offset and bounds-checks the
+    ///      element index against the decoded length, so it works wherever the array
+    ///      sits in a multi-value return and however long the live array is. For a
+    ///      function returning (address[], address), the signer at [0][1] is
+    ///      elementCall(target, calls, 0, 1). Elements must be single-word static
+    ///      types (address / uintN / intN / bool / bytes32) — the word is returned
+    ///      as uint256, and address/bool words are clean per ABI encoding so the
+    ///      core's typed assertions decode them directly. Reverts with
+    ///      ReturnDataOutOfBounds(wordIndex, length) when the head word lies past the
+    ///      returndata or its offset does not point at a well-formed array (offset or
+    ///      element data out of range), and with ElementIndexOutOfBounds(index,
+    ///      elements) when the index lies outside the array in either direction
+    ///      (valid range is -elements .. elements-1). Chain resolution failures
+    ///      behave exactly as in chainCall. A single call is a one-element array.
+    /// @param target The contract address the first call is executed on
+    /// @param calls One entry per hop, word-index-prefixed except the last (see
+    ///        chainCall); every hop except the last must expose an address at its
+    ///        selected return word
+    /// @param wordIndex The 0-based head word of the final returndata holding the
+    ///        array's offset (its position among the return values)
+    /// @param index The element index: 0-based from the start, or negative from
+    ///        the end (-1 = last element)
+    /// @return The selected element's 32-byte word as a uint256
+    function elementCall(address target, bytes[] calldata calls, uint256 wordIndex, int256 index) external view returns (uint256) {
+        bytes memory result = _resolveChain(target, calls);
+        if (result.length < (wordIndex + 1) * 32) {
+            revert ReturnDataOutOfBounds(int256(wordIndex), result.length);
+        }
+        uint256 offset;
+        assembly {
+            offset := mload(add(add(result, 32), mul(wordIndex, 32)))
+        }
+        if (offset > result.length || result.length - offset < 32) {
+            revert ReturnDataOutOfBounds(int256(wordIndex), result.length);
+        }
+        uint256 elements;
+        assembly {
+            elements := mload(add(add(result, 32), offset))
+        }
+        // A length the remaining returndata cannot hold means the head word
+        // did not point at a well-formed single-word-element array.
+        if (elements > (result.length - offset - 32) / 32) {
+            revert ReturnDataOutOfBounds(int256(wordIndex), result.length);
+        }
+        uint256 wanted;
+        if (index < 0) {
+            // index == type(int256).min is caught here before -index could overflow.
+            if (index < -int256(elements)) revert ElementIndexOutOfBounds(index, elements);
+            wanted = elements - uint256(-index);
+        } else {
+            if (uint256(index) >= elements) revert ElementIndexOutOfBounds(index, elements);
+            wanted = uint256(index);
+        }
+        uint256 word;
+        assembly {
+            word := mload(add(add(result, 64), add(offset, mul(wanted, 32))))
+        }
+        return word;
     }
 
     // ============ Arithmetic Composition ============

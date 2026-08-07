@@ -368,6 +368,7 @@ function boolToUint(address target, bytes data) returns (uint256)
 function uintCall (address target, bytes[] calls, int256 wordIndex) returns (uint256)
 function lengthCall(address target, bytes[] calls) returns (uint256)
 function arrayLengthCall(address target, bytes[] calls) returns (uint256)
+function elementCall(address target, bytes[] calls, uint256 wordIndex, int256 index) returns (uint256)
 function includesCall(address target, bytes[] calls, string part) returns (bool)
 function charsetCall (address target, bytes[] calls, uint256 allowed) returns (bool)
 ```
@@ -548,6 +549,8 @@ assertions.assertEqCallBool(
 );
 ```
 
+**Array element extraction** — `elementCall(target, calls, wordIndex, index)` is the decoded counterpart of `uintCall` for dynamic-array elements: it follows the array whose offset sits at head word `wordIndex` of the final return and bounds-checks the element `index` (an `int256` — negative counts from the end) against the decoded length. So it works wherever the array sits in a multi-value return and however long the live array is: for a function returning `(address[], address)`, the signer at `[0][1]` is `elementCall(target, calls, 0, 1)` — EVMcrispr's nested lens `[[_ $]]`. Elements must be single-word static types (`address`/`uintN`/`intN`/`bool`/`bytes32`); the word comes back as `uint256` with clean upper bits per ABI encoding, so the core's typed assertions decode it directly. A malformed head reverts with `ReturnDataOutOfBounds`, an index outside the array with `ElementIndexOutOfBounds(index, elements)`.
+
 **Returndata length** — `arrayLengthCall(target, calls)` returns the decoded length of a single dynamic return value as an expression operand (EVMcrispr's `@len!` on live data): the element count for a `T[]` return regardless of element size, and the byte length for `string`/`bytes` returns (they share the same encoding). The raw counterpart `lengthCall(target, calls)` (EVMcrispr's `@bytelen!`) returns the byte length of the final resolved returndata — a `uint256[]` with `n` items measures `64 + n * 32` (offset word + length word + items) — for size checks on returns that are not a single dynamic value.
 
 **Bool→uint bridge** — `boolToUint(target, data)` returns 1 for `true` and 0 for `false` (strict 0/1 decoding like `logicBool` operands). It bridges boolean and arithmetic composition, enabling the conditional-select idiom — an expression-level `if` (EVMcrispr's live conditional): `cond * a + (1 - cond) * b` picks `a` when the condition holds and `b` otherwise, composed from three nested `calcUint` calls.
@@ -594,9 +597,10 @@ Both contracts use typed custom errors for gas-efficient and informative failure
 |-------|-------------|
 | `CallFailed(address, bytes)` | a chain hop or expression operand reverted or targets a code-less address (identifies the exact failing call) |
 | `ReturnDataOutOfBounds(int256, uint256)` | an operand or non-final chain hop returned fewer than 32 bytes, a string return failed validation, or a `uintCall` word index (possibly negative) lies outside the returndata |
-| `EmptyCallChain()` | `chainCall` / `hashCall` / `splitCall` / `includesCall` / `charsetCall` / `uintCall` / `lengthCall` / `arrayLengthCall` / `ethBalanceCall` received an empty `calls` array |
+| `EmptyCallChain()` | `chainCall` / `hashCall` / `splitCall` / `includesCall` / `charsetCall` / `uintCall` / `elementCall` / `lengthCall` / `arrayLengthCall` / `ethBalanceCall` received an empty `calls` array |
 | `EmptyDelimiter()` | `splitCall` received an empty delimiter |
 | `EmptySubstring()` | `includesCall` received an empty search string (every string vacuously contains `""`) |
+| `ElementIndexOutOfBounds(int256, uint256)` | `elementCall` index is outside the array in either direction (arguments: requested index as given — possibly negative — and element count) |
 | `SegmentIndexOutOfBounds(int256, uint256)` | `splitCall` index is outside the split's segments in either direction (arguments: requested index as given — possibly negative — and segment count) |
 | `UnsupportedOp()` | `calcInt` received `ArithOp.Exp` (signed exponentiation is ill-defined; use `calcUint`) |
 
@@ -731,6 +735,7 @@ These live at the Combinators address (`0xA55EC0b792D962624807961E40eb217649d4d0
 | `uintCall` | Extract the wordIndex-th 32-byte word of a chain's final returndata (static-layout tuples; negative index counts from the end, -1 = last word) |
 | `lengthCall` | Byte length of a chain's final returndata |
 | `arrayLengthCall` | Decoded length of a chain's final dynamic return — array element count, or string/bytes byte length |
+| `elementCall` | Element of a dynamic array in a chain's final return, by head word + element index (negative counts from the end) — offset-following with bounds checks |
 | `calcUint` / `calcInt` | Arithmetic over two call results (`ArithOp`: Add, Sub, Mul, Div, Mod, Exp, Min, Max, AbsDiff — Exp is uint-only) |
 | `bitUint` / `bitNotUint` | Bitwise ops over call results (`BitOp`: And, Or, Xor, Shl, Shr) |
 | `cmpUint` / `cmpInt` | Comparison returning bool instead of reverting (`CmpOp`: Eq, Ne, Gt, Lt, Ge, Le) |

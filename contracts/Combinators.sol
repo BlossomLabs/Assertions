@@ -30,9 +30,10 @@ contract Combinators {
     error CallFailed(address target, bytes data);
 
     /// @notice Thrown when returndata is too short to decode the expected value
-    /// @param index The requested element index (0 for single-value decodes)
+    /// @param index The requested element index as given (0 for single-value
+    ///        decodes; may be negative for uintCall's from-the-end indexing)
     /// @param length The length of the returned data in bytes
-    error ReturnDataOutOfBounds(uint256 index, uint256 length);
+    error ReturnDataOutOfBounds(int256 index, uint256 length);
 
     /// @notice Thrown when chainCall receives an empty calls array
     error EmptyCallChain();
@@ -52,10 +53,11 @@ contract Combinators {
     /// @notice Thrown when splitCall receives an empty delimiter
     error EmptyDelimiter();
 
-    /// @notice Thrown when splitCall's segment index is past the last segment
-    /// @param index The requested segment index
+    /// @notice Thrown when splitCall's segment index is outside the segments
+    ///         the split produced (in either direction for negative indices)
+    /// @param index The requested segment index, as given (may be negative)
     /// @param segments The number of segments the split produced
-    error SegmentIndexOutOfBounds(uint256 index, uint256 segments);
+    error SegmentIndexOutOfBounds(int256 index, uint256 segments);
 
     /// @notice Thrown when includesCall receives an empty search string —
     ///         every string vacuously contains "", so the assertion would
@@ -166,37 +168,53 @@ contract Combinators {
     }
 
     /// @notice Resolves a call chain, decodes the final return as a string, splits it by
-    ///         a delimiter, and returns the index-th segment (0-based)
+    ///         a delimiter, and returns the index-th segment (0-based; negative
+    ///         indices count from the end, -1 = last)
     /// @dev Returns a normal ABI-encoded string, so every string assertion and any
     ///      composition site consumes it directly, e.g. "the second word of name() is LP":
     ///      `core.assertEqCallStringN(combinators, abi.encodeCall(Combinators.splitCall,
-    ///      (pool, calls, " ", 1)), 0, "LP")`.
+    ///      (pool, calls, " ", 1)), 0, "LP")`. Negative indices resolve against the
+    ///      segment count at execution time, so "the name ends with LP" is index -1
+    ///      with delimiter " " — no composition-time segment counting required.
     ///      Split semantics: the delimiter is a non-empty exact byte sequence; segments
     ///      are the maximal runs between occurrences, so adjacent delimiters produce
     ///      empty segments and a string without the delimiter is one segment (index 0 =
-    ///      the whole string). Reverts with EmptyDelimiter on an empty delimiter and
-    ///      with SegmentIndexOutOfBounds(index, segments) when index is past the last
-    ///      segment. The final return value is validated (head offset and length) the
-    ///      same way tuple-indexed string assertions validate returndata, and chain
-    ///      resolution failures behave exactly as in chainCall.
+    ///      -1 = the whole string). Reverts with EmptyDelimiter on an empty delimiter
+    ///      and with SegmentIndexOutOfBounds(index, segments) when the index lies
+    ///      outside the segments in either direction (valid range is
+    ///      -segments .. segments-1). The final return value is validated (head offset
+    ///      and length) the same way tuple-indexed string assertions validate
+    ///      returndata, and chain resolution failures behave exactly as in chainCall.
     /// @param target The contract address the first call is executed on
     /// @param calls One entry per hop, word-index-prefixed except the last (see
     ///        chainCall); every hop except the last must expose an address at its
     ///        selected return word, and the last must return a string
     /// @param delimiter The non-empty byte sequence to split on
-    /// @param index The 0-based segment index to return
-    /// @return The index-th segment of the split string
-    function splitCall(address target, bytes[] calldata calls, string calldata delimiter, uint256 index) external view returns (string memory) {
+    /// @param index The segment index to return: 0-based from the start, or
+    ///        negative from the end (-1 = last segment)
+    /// @return The selected segment of the split string
+    function splitCall(address target, bytes[] calldata calls, string calldata delimiter, int256 index) external view returns (string memory) {
         bytes memory delim = bytes(delimiter);
         if (delim.length == 0) revert EmptyDelimiter();
         bytes memory str = _decodeString(_resolveChain(target, calls));
+
+        uint256 segments = _countSegments(str, delim);
+        uint256 wanted;
+        if (index < 0) {
+            // index == type(int256).min is caught here before -index could overflow.
+            if (index < -int256(segments)) revert SegmentIndexOutOfBounds(index, segments);
+            wanted = segments - uint256(-index);
+        } else {
+            if (uint256(index) >= segments) revert SegmentIndexOutOfBounds(index, segments);
+            wanted = uint256(index);
+        }
 
         uint256 start = 0;
         uint256 segment = 0;
         uint256 i = 0;
         while (i + delim.length <= str.length) {
             if (_matchesAt(str, delim, i)) {
-                if (segment == index) return string(_slice(str, start, i));
+                if (segment == wanted) return string(_slice(str, start, i));
                 segment++;
                 i += delim.length;
                 start = i;
@@ -204,8 +222,8 @@ contract Combinators {
                 i++;
             }
         }
-        if (segment == index) return string(_slice(str, start, str.length));
-        revert SegmentIndexOutOfBounds(index, segment + 1);
+        // _countSegments guarantees `wanted` names the trailing segment here.
+        return string(_slice(str, start, str.length));
     }
 
     /// @notice Resolves a call chain, decodes the final return as a string, and
@@ -272,29 +290,42 @@ contract Combinators {
     }
 
     /// @notice Resolves a call chain and returns the wordIndex-th 32-byte word of the
-    ///         final returndata as a uint256
+    ///         final returndata as a uint256 (0-based; negative indices count from
+    ///         the end, -1 = last word)
     /// @dev Raw word extraction for static-layout returns (multi-value tuples like
     ///      getReserves()), NOT an ABI decoder: word positions follow the raw encoding,
     ///      so dynamic types (strings, arrays) contribute head offsets, not their
     ///      content. The word is returned as uint256, which also covers bytes32 and
     ///      address words at the word level — compare or combine via cmpUint / calcUint.
-    ///      Reverts with ReturnDataOutOfBounds(wordIndex, length) when the final
-    ///      returndata is shorter than (wordIndex + 1) * 32 bytes; chain resolution
-    ///      failures behave exactly as in chainCall. A single call is a one-element array.
+    ///      Negative indices resolve against the word count at execution time, so
+    ///      -1 selects the last word — for a single dynamic array return that is its
+    ///      last element, whatever the live length. Reverts with
+    ///      ReturnDataOutOfBounds(wordIndex, length) when the index lies outside the
+    ///      full 32-byte words of the returndata in either direction (valid range is
+    ///      -words .. words-1 with words = length / 32); chain resolution failures
+    ///      behave exactly as in chainCall. A single call is a one-element array.
     /// @param target The contract address the first call is executed on
     /// @param calls One entry per hop, word-index-prefixed except the last (see
     ///        chainCall); every hop except the last must expose an address at its
     ///        selected return word
-    /// @param wordIndex The 0-based index of the 32-byte word to extract
+    /// @param wordIndex The index of the 32-byte word to extract: 0-based from the
+    ///        start, or negative from the end (-1 = last word)
     /// @return The extracted word as a uint256
-    function uintCall(address target, bytes[] calldata calls, uint256 wordIndex) external view returns (uint256) {
+    function uintCall(address target, bytes[] calldata calls, int256 wordIndex) external view returns (uint256) {
         bytes memory result = _resolveChain(target, calls);
-        if (result.length < (wordIndex + 1) * 32) {
-            revert ReturnDataOutOfBounds(wordIndex, result.length);
+        uint256 words = result.length / 32;
+        uint256 wanted;
+        if (wordIndex < 0) {
+            // wordIndex == type(int256).min is caught here before -wordIndex could overflow.
+            if (wordIndex < -int256(words)) revert ReturnDataOutOfBounds(wordIndex, result.length);
+            wanted = words - uint256(-wordIndex);
+        } else {
+            if (uint256(wordIndex) >= words) revert ReturnDataOutOfBounds(wordIndex, result.length);
+            wanted = uint256(wordIndex);
         }
         uint256 word;
         assembly {
-            word := mload(add(add(result, 32), mul(wordIndex, 32)))
+            word := mload(add(add(result, 32), mul(wanted, 32)))
         }
         return word;
     }
@@ -643,6 +674,21 @@ contract Combinators {
         }
     }
 
+    /// @dev Number of segments splitting `str` by `delim` produces (>= 1; the
+    ///      same left-to-right non-overlapping scan the selection loop uses)
+    function _countSegments(bytes memory str, bytes memory delim) internal pure returns (uint256 segments) {
+        segments = 1;
+        uint256 i = 0;
+        while (i + delim.length <= str.length) {
+            if (_matchesAt(str, delim, i)) {
+                segments++;
+                i += delim.length;
+            } else {
+                i++;
+            }
+        }
+    }
+
     /// @dev Whether `delim` occurs in `str` at byte position `pos` (caller bounds-checks)
     function _matchesAt(bytes memory str, bytes memory delim, uint256 pos) internal pure returns (bool) {
         for (uint256 j = 0; j < delim.length; j++) {
@@ -682,7 +728,7 @@ contract Combinators {
             uint256 wordIndex = uint256(bytes32(hop[:32]));
             bytes memory result = _call(current, hop[32:]);
             if (result.length < 32 || wordIndex > (result.length - 32) / 32) {
-                revert ReturnDataOutOfBounds(wordIndex, result.length);
+                revert ReturnDataOutOfBounds(int256(wordIndex), result.length);
             }
             uint256 word;
             assembly {

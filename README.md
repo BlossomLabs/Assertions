@@ -365,7 +365,7 @@ function cmpInt  (CmpOp op,   address target1, bytes data1, address target2, byt
 function logicBool(LogicOp op, address target1, bytes data1, address target2, bytes data2) returns (bool)
 function notBool  (address target, bytes data) returns (bool)
 function boolToUint(address target, bytes data) returns (uint256)
-function uintCall (address target, bytes[] calls, uint256 wordIndex) returns (uint256)
+function uintCall (address target, bytes[] calls, int256 wordIndex) returns (uint256)
 function lengthCall(address target, bytes[] calls) returns (uint256)
 function arrayLengthCall(address target, bytes[] calls) returns (uint256)
 function includesCall(address target, bytes[] calls, string part) returns (bool)
@@ -464,7 +464,7 @@ assertions.assertEqCallBytes32(
 
 Like `chainCall`, it takes a call chain — a single call is a one-element array.
 
-**String splitting** — `splitCall(target, calls, delimiter, index)` resolves a chain whose final call returns a string, splits it by the delimiter, and returns the `index`-th segment (0-based) as a normal ABI-encoded string, so string assertions consume it directly. "The second word of the pool's name is LP":
+**String splitting** — `splitCall(target, calls, delimiter, index)` resolves a chain whose final call returns a string, splits it by the delimiter, and returns the `index`-th segment as a normal ABI-encoded string, so string assertions consume it directly. The index is an `int256`: 0-based from the start, or negative from the end (`-1` = last segment), resolved against the segment count at execution time — so "the name ends with LP" is delimiter `" "` with index `-1`, with no composition-time segment counting. "The second word of the pool's name is LP":
 
 ```solidity
 bytes[] memory calls = new bytes[](1);
@@ -482,7 +482,7 @@ assertions.assertEqCallStringN(
 assertions:assert @split!($pool::name() " " 1) == "LP"
 ```
 
-Split semantics: the delimiter is a non-empty exact byte sequence (empty reverts with `EmptyDelimiter`); segments are the maximal runs between occurrences, so adjacent delimiters produce empty segments; a string that doesn't contain the delimiter is one segment (index 0 = the whole string); and an index past the last segment reverts with `SegmentIndexOutOfBounds(index, segments)` — loud failure with the actual segment count. Version-string checks work the same way: split `"2.1.0"` by `"."` and assert segment 0 equals `"2"`.
+Split semantics: the delimiter is a non-empty exact byte sequence (empty reverts with `EmptyDelimiter`); segments are the maximal runs between occurrences, so adjacent delimiters produce empty segments; a string that doesn't contain the delimiter is one segment (index 0 = index -1 = the whole string); and an index outside the segments in either direction (valid range `-segments .. segments-1`) reverts with `SegmentIndexOutOfBounds(index, segments)` — loud failure with the actual segment count. Version-string checks work the same way: split `"2.1.0"` by `"."` and assert segment 0 equals `"2"`.
 
 **Substring & character-set checks** — two string predicates return a `bool`, so they compose with `logicBool` / `notBool` and assert via `assertTrue` / `assertFalse`. `includesCall(target, calls, part)` is `String.includes`: whether the chain's final string return contains `part` as an exact byte sequence (case-sensitive, no wildcards; an empty `part` reverts with `EmptySubstring` since it would match everything). `charsetCall(target, calls, allowed)` is the character-class check that usually gets reached for with a regex: `allowed` is a 256-bit set where bit `i` covers byte value `i`, and the call returns whether every byte of the string is in the set. "The token's symbol is lowercase a-z":
 
@@ -526,7 +526,7 @@ assertions.assertEqCallBool(
 assertions:assert $token::balanceOf($a) >= @num!(5 * 10 ^ $token::decimals())
 ```
 
-**Raw word extraction** — `uintCall(target, calls, wordIndex)` resolves a call chain and returns the `wordIndex`-th 32-byte word of the final returndata as a `uint256` (EVMcrispr's `@at!` applied to a live tuple). It is raw-word extraction for static-layout returns like `getReserves()`, **not** an ABI decoder: dynamic types contribute head offsets at their word positions, not content. A `wordIndex` past the returndata reverts with `ReturnDataOutOfBounds(wordIndex, length)`. Because the word comes back as `uint256`, it also covers `bytes32`/`address` words at the word level via `cmpUint`. "The pool's reserve ratio is at least 5":
+**Raw word extraction** — `uintCall(target, calls, wordIndex)` resolves a call chain and returns the `wordIndex`-th 32-byte word of the final returndata as a `uint256` (EVMcrispr's `@at!` applied to a live tuple). The index is an `int256`: 0-based from the start, or negative from the end (`-1` = last word, resolved against the live word count — for a single dynamic array return that is its last element). It is raw-word extraction for static-layout returns like `getReserves()`, **not** an ABI decoder: dynamic types contribute head offsets at their word positions, not content. A `wordIndex` outside the returndata's full words in either direction reverts with `ReturnDataOutOfBounds(wordIndex, length)`. Because the word comes back as `uint256`, it also covers `bytes32`/`address` words at the word level via `cmpUint`. "The pool's reserve ratio is at least 5":
 
 ```solidity
 bytes[] memory reserves = new bytes[](1);
@@ -586,18 +586,18 @@ Both contracts use typed custom errors for gas-efficient and informative failure
 | `AssertionFailedApprox(string, uint256, uint256, uint256, uint256)` | approximate equality failed |
 | `AssertionFailedApproxInt(string, int256, int256, uint256, uint256)` | approximate int256 equality failed |
 | `CallFailed(address, bytes)` | staticcall to target reverted, or target has no code |
-| `ReturnDataOutOfBounds(uint256, uint256)` | tuple index points outside the returned data |
+| `ReturnDataOutOfBounds(int256, uint256)` | tuple index points outside the returned data (int256 only to keep the signature identical to Combinators'; core indices are never negative) |
 
 `Combinators`:
 
 | Error | Description |
 |-------|-------------|
 | `CallFailed(address, bytes)` | a chain hop or expression operand reverted or targets a code-less address (identifies the exact failing call) |
-| `ReturnDataOutOfBounds(uint256, uint256)` | an operand or non-final chain hop returned fewer than 32 bytes, a string return failed validation, or a `uintCall` word index points past the returndata |
+| `ReturnDataOutOfBounds(int256, uint256)` | an operand or non-final chain hop returned fewer than 32 bytes, a string return failed validation, or a `uintCall` word index (possibly negative) lies outside the returndata |
 | `EmptyCallChain()` | `chainCall` / `hashCall` / `splitCall` / `includesCall` / `charsetCall` / `uintCall` / `lengthCall` / `arrayLengthCall` / `ethBalanceCall` received an empty `calls` array |
 | `EmptyDelimiter()` | `splitCall` received an empty delimiter |
 | `EmptySubstring()` | `includesCall` received an empty search string (every string vacuously contains `""`) |
-| `SegmentIndexOutOfBounds(uint256, uint256)` | `splitCall` index is past the last segment (arguments: requested index, segment count) |
+| `SegmentIndexOutOfBounds(int256, uint256)` | `splitCall` index is outside the split's segments in either direction (arguments: requested index as given — possibly negative — and segment count) |
 | `UnsupportedOp()` | `calcInt` received `ArithOp.Exp` (signed exponentiation is ill-defined; use `calcUint`) |
 
 The two contracts define `CallFailed` and `ReturnDataOutOfBounds` with identical signatures, so decoders treat them uniformly.
@@ -725,10 +725,10 @@ These live at the Combinators address (`0xa55Ec017256401b00c9C21FD9AB3D0E0bcf94f
 |----------|-------------|
 | `chainCall` | Resolve a chain of staticcalls and return the final call's returndata verbatim — compose with any call assertion |
 | `hashCall` | keccak256 of a resolved chain's final returndata — check complex returns via bytes32 assertions |
-| `splitCall` | Split a chain's final string return by a delimiter and return the index-th segment |
+| `splitCall` | Split a chain's final string return by a delimiter and return the index-th segment (negative index counts from the end, -1 = last) |
 | `includesCall` | Whether a chain's final string return contains a substring — bool for logic composition |
 | `charsetCall` | Whether every byte of a chain's final string return is in an allowed-byte bitmap — "only lowercase" and other character-class checks |
-| `uintCall` | Extract the wordIndex-th 32-byte word of a chain's final returndata (static-layout tuples) |
+| `uintCall` | Extract the wordIndex-th 32-byte word of a chain's final returndata (static-layout tuples; negative index counts from the end, -1 = last word) |
 | `lengthCall` | Byte length of a chain's final returndata |
 | `arrayLengthCall` | Decoded length of a chain's final dynamic return — array element count, or string/bytes byte length |
 | `calcUint` / `calcInt` | Arithmetic over two call results (`ArithOp`: Add, Sub, Mul, Div, Mod, Exp, Min, Max, AbsDiff — Exp is uint-only) |

@@ -81,9 +81,11 @@ contract Assertions {
     error AssertionFailedString(string assertion, string actual, string expected);
 
     /// @notice Thrown when a tuple index points outside the returned data
-    /// @param index The requested element index
+    /// @param index The requested element index (int256 so the signature stays
+    ///        identical to Combinators' error, whose uintCall accepts negative
+    ///        from-the-end indices; core indices are never negative)
     /// @param length The length of the returned data in bytes
-    error ReturnDataOutOfBounds(uint256 index, uint256 length);
+    error ReturnDataOutOfBounds(int256 index, uint256 length);
 
     // ============ Uint256 Call Assertions ============
 
@@ -1426,7 +1428,7 @@ contract Assertions {
 
     /// @dev Reverts when `index` points past the head words of the returned data
     function _checkBounds(bytes memory result, uint256 index) internal pure {
-        if (index >= result.length / 32) revert ReturnDataOutOfBounds(index, result.length);
+        if (index >= result.length / 32) revert ReturnDataOutOfBounds(int256(index), result.length);
     }
 
     /// @dev Extracts a uint256 at a specific index from ABI-encoded return data
@@ -1480,14 +1482,14 @@ contract Assertions {
             offset := mload(add(add(result, 32), mul(index, 32)))
         }
         if (offset > result.length || result.length - offset < 32) {
-            revert ReturnDataOutOfBounds(index, result.length);
+            revert ReturnDataOutOfBounds(int256(index), result.length);
         }
         uint256 strLen;
         assembly {
             strLen := mload(add(add(result, 32), offset))
         }
         if (result.length - offset - 32 < strLen) {
-            revert ReturnDataOutOfBounds(index, result.length);
+            revert ReturnDataOutOfBounds(int256(index), result.length);
         }
         bytes memory strBytes = new bytes(strLen);
         assembly {

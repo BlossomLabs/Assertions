@@ -983,6 +983,44 @@ contract CombinatorsTest is Test {
         combinators.splitCall(address(target), _single(abi.encodeCall(MockTarget.getString, ())), "", 0);
     }
 
+    function test_splitCall_negativeIndex_fromEnd() public {
+        target.setString("2.1.0");
+        bytes[] memory calls = _single(abi.encodeCall(MockTarget.getString, ()));
+        assertEq(combinators.splitCall(address(target), calls, ".", -1), "0");
+        assertEq(combinators.splitCall(address(target), calls, ".", -2), "1");
+        assertEq(combinators.splitCall(address(target), calls, ".", -3), "2");
+    }
+
+    function test_splitCall_negativeIndex_endsWith_composed() public view {
+        // "the name ends with Token": last space-segment of "Curve LP Token"
+        assertions.assertEqCallStringN(
+            address(combinators),
+            abi.encodeCall(
+                Combinators.splitCall,
+                (address(token), _single(abi.encodeCall(MockToken.name, ())), " ", -1)
+            ),
+            0,
+            "Token"
+        );
+    }
+
+    function test_splitCall_negativeIndex_outOfRange_reverts() public {
+        target.setString("2.1.0");
+        bytes[] memory calls = _single(abi.encodeCall(MockTarget.getString, ()));
+        vm.expectRevert(
+            abi.encodeWithSelector(Combinators.SegmentIndexOutOfBounds.selector, int256(-4), uint256(3))
+        );
+        combinators.splitCall(address(target), calls, ".", -4);
+    }
+
+    function test_splitCall_negativeIndex_delimiterAbsent_wholeString() public {
+        target.setString("hello");
+        assertEq(
+            combinators.splitCall(address(target), _single(abi.encodeCall(MockTarget.getString, ())), ",", -1),
+            "hello"
+        );
+    }
+
     function test_splitCall_chained() public view {
         // target.token().name() -> "Curve LP Token", segment 1 is "LP"
         assertEq(
@@ -1307,6 +1345,28 @@ contract CombinatorsTest is Test {
     function test_uintCall_emptyChain_reverts() public {
         vm.expectRevert(Combinators.EmptyCallChain.selector);
         combinators.uintCall(address(token), new bytes[](0), 0);
+    }
+
+    function test_uintCall_negativeIndex_fromEnd() public view {
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.getReserves, ()));
+        assertEq(combinators.uintCall(address(token), calls, -1), 123456);
+        assertEq(combinators.uintCall(address(token), calls, -2), 1000e18);
+        assertEq(combinators.uintCall(address(token), calls, -3), 5000e18);
+    }
+
+    function test_uintCall_negativeIndex_lastArrayElement() public view {
+        // getArray() -> [10, 20, 30, 40, 50]: raw words are offset, length,
+        // items — -1 is the last item however long the live array is
+        bytes[] memory calls = _single(abi.encodeCall(MockTarget.getArray, ()));
+        assertEq(combinators.uintCall(address(target), calls, -1), 50);
+    }
+
+    function test_uintCall_negativeIndex_outOfRange_reverts() public {
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.getReserves, ()));
+        vm.expectRevert(
+            abi.encodeWithSelector(Combinators.ReturnDataOutOfBounds.selector, int256(-4), uint256(96))
+        );
+        combinators.uintCall(address(token), calls, -4);
     }
 
     function test_uintCall_canonicalExample_reservesRatio() public view {

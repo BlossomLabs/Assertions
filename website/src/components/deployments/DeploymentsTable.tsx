@@ -2,16 +2,11 @@ import { useQueries } from "@tanstack/react-query";
 import type { Chain } from "viem";
 import {
   arbitrum,
-  avalanche,
   base,
-  bsc,
-  celo,
   gnosis,
-  linea,
   mainnet,
   optimism,
   polygon,
-  scroll,
   sepolia,
 } from "viem/chains";
 
@@ -29,11 +24,6 @@ export const MAJOR_CHAINS: Chain[] = [
   arbitrum,
   polygon,
   gnosis,
-  bsc,
-  avalanche,
-  scroll,
-  linea,
-  celo,
   sepolia,
 ];
 

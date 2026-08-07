@@ -54,8 +54,8 @@ const CONTRACTS = [
     // Salt mined for the core v1.1 vanity address (see hardhat.config.ts).
     // v1.0 remains at 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
     // (salt 0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb).
-    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6018356a5",
-    expectedAddress: "0xa55E47E2767d85B8C4d9E62dd5009ffC45c4aBc4",
+    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6012c7cd0",
+    expectedAddress: "0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -64,8 +64,8 @@ const CONTRACTS = [
     name: "Combinators",
     artifact: "artifacts/contracts/Combinators.sol/Combinators.json",
     output: "src/lib/combinators-deployment.ts",
-    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60099afa2",
-    expectedAddress: "0xa55Ec017256401b00c9C21FD9AB3D0E0bcf94f20",
+    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6009a15f3",
+    expectedAddress: "0xA55EC0b792D962624807961E40eb217649d4d07c",
     prefix: "COMBINATORS",
     description: "Combinators building-block contract",
     includeProxyConstants: false,

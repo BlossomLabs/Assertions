@@ -368,7 +368,8 @@ function boolToUint(address target, bytes data) returns (uint256)
 function uintCall (address target, bytes[] calls, int256 wordIndex) returns (uint256)
 function lengthCall(address target, bytes[] calls) returns (uint256)
 function arrayLengthCall(address target, bytes[] calls) returns (uint256)
-function elementCall(address target, bytes[] calls, uint256 wordIndex, int256 index) returns (uint256)
+function navCall(address target, bytes[] calls, string abiType, int256[] path) returns (uint256)
+function navDynCall(address target, bytes[] calls, string abiType, int256[] path)  // raw return, like chainCall
 function includesCall(address target, bytes[] calls, string part) returns (bool)
 function charsetCall (address target, bytes[] calls, uint256 allowed) returns (bool)
 ```
@@ -527,7 +528,7 @@ assertions.assertEqCallBool(
 assertions:assert $token::balanceOf($a) >= @num!(5 * 10 ^ $token::decimals())
 ```
 
-**Raw word extraction** — `uintCall(target, calls, wordIndex)` resolves a call chain and returns the `wordIndex`-th 32-byte word of the final returndata as a `uint256` (EVMcrispr's `@at!` applied to a live tuple). The index is an `int256`: 0-based from the start, or negative from the end (`-1` = last word, resolved against the live word count). It is raw-word extraction for static-layout returns like `getReserves()`, **not** an ABI decoder: dynamic types contribute head offsets at their word positions, not content — to select a dynamic-array *element*, use `elementCall` below, which follows the offset and bounds-checks the index. A `wordIndex` outside the returndata's full words in either direction reverts with `ReturnDataOutOfBounds(wordIndex, length)`. Because the word comes back as `uint256`, it also covers `bytes32`/`address` words at the word level via `cmpUint`. "The pool's reserve ratio is at least 5":
+**Raw word extraction** — `uintCall(target, calls, wordIndex)` resolves a call chain and returns the `wordIndex`-th 32-byte word of the final returndata as a `uint256` (EVMcrispr's `@at!` applied to a live tuple). The index is an `int256`: 0-based from the start, or negative from the end (`-1` = last word, resolved against the live word count). It is raw-word extraction for static-layout returns like `getReserves()`, **not** an ABI decoder: dynamic types contribute head offsets at their word positions, not content — to select *into* tuples and arrays, use `navCall` below, which decodes as it goes. A `wordIndex` outside the returndata's full words in either direction reverts with `ReturnDataOutOfBounds(wordIndex, length)`. Because the word comes back as `uint256`, it also covers `bytes32`/`address` words at the word level via `cmpUint`. "The pool's reserve ratio is at least 5":
 
 ```solidity
 bytes[] memory reserves = new bytes[](1);
@@ -549,7 +550,9 @@ assertions.assertEqCallBool(
 );
 ```
 
-**Array element extraction** — `elementCall(target, calls, wordIndex, index)` is the decoded counterpart of `uintCall` for dynamic-array elements: it follows the array whose offset sits at head word `wordIndex` of the final return and bounds-checks the element `index` (an `int256` — negative counts from the end) against the decoded length. So it works wherever the array sits in a multi-value return and however long the live array is: for a function returning `(address[], address)`, the signer at `[0][1]` is `elementCall(target, calls, 0, 1)` — EVMcrispr's nested lens `[[_ $]]`. Elements must be single-word static types (`address`/`uintN`/`intN`/`bool`/`bytes32`); the word comes back as `uint256` with clean upper bits per ABI encoding, so the core's typed assertions decode it directly. A malformed head reverts with `ReturnDataOutOfBounds`, an index outside the array with `ElementIndexOutOfBounds(index, elements)`.
+**Typed navigation** — `navCall(target, calls, abiType, path)` is the decoded read primitive, and its calldata is self-describing: `navCall(reg, calls, "(address[][],address)", [0, 3, 1])` reads as "return value 0, element 3, element 1". The `abiType` is the function's return tuple (structs written as parenthesized tuples), and the contract derives every offset-follow and bounds check from it — parsing only the *shape* (dynamic vs static, head footprints, strides). Each path index steps into the current value: tuple components by position, array elements with a signed index (negative counts from the end, `-1` = last, resolved against the live length). Struct arrays navigate the same way: `proposals()[1].executed` against `"((address,uint256,bool)[])"` is path `[0, 1, 2]` — EVMcrispr's nested lens `[[_ [_ _ $]]]`. The terminal must be a single-word static value; its word comes back clean per ABI encoding, so the core's typed assertions decode it directly. A path index outside its tuple or array reverts with `ElementIndexOutOfBounds(index, elements)`, data that doesn't match the declared shape with `ReturnDataOutOfBounds`, and a malformed descriptor or unrepresentable terminal with `InvalidNavigation(charPos)`.
+
+**Dynamic-value navigation** — `navDynCall(target, calls, abiType, path)` navigates identically but lands on a *dynamic* value (string, bytes, or an array of static elements) and returns it re-encoded as a canonical single-value return — indistinguishable from a contract returning it directly. That makes nested dynamic values composable with every existing consumer by self-chaining: `splitCall(combinators, [navDynCall(...)], " ", -1)` splits a string inside a struct, `arrayLengthCall(combinators, [navDynCall(...)])` measures a nested array, and `hashCall(combinators, [navDynCall(...)])` pins one. Dynamic tuples and arrays of dynamic elements are rejected with `InvalidNavigation` (their extent would need a recursive re-encoder). The declared type is the author's claim about the encoder, like an inline ABI: a wrong claim reverts loudly in almost all cases, but a shape-compatible wrong type can read the wrong value.
 
 **Returndata length** — `arrayLengthCall(target, calls)` returns the decoded length of a single dynamic return value as an expression operand (EVMcrispr's `@len!` on live data): the element count for a `T[]` return regardless of element size, and the byte length for `string`/`bytes` returns (they share the same encoding). The raw counterpart `lengthCall(target, calls)` (EVMcrispr's `@bytelen!`) returns the byte length of the final resolved returndata — a `uint256[]` with `n` items measures `64 + n * 32` (offset word + length word + items) — for size checks on returns that are not a single dynamic value.
 
@@ -597,10 +600,11 @@ Both contracts use typed custom errors for gas-efficient and informative failure
 |-------|-------------|
 | `CallFailed(address, bytes)` | a chain hop or expression operand reverted or targets a code-less address (identifies the exact failing call) |
 | `ReturnDataOutOfBounds(int256, uint256)` | an operand or non-final chain hop returned fewer than 32 bytes, a string return failed validation, or a `uintCall` word index (possibly negative) lies outside the returndata |
-| `EmptyCallChain()` | `chainCall` / `hashCall` / `splitCall` / `includesCall` / `charsetCall` / `uintCall` / `elementCall` / `lengthCall` / `arrayLengthCall` / `ethBalanceCall` received an empty `calls` array |
+| `EmptyCallChain()` | `chainCall` / `hashCall` / `splitCall` / `includesCall` / `charsetCall` / `uintCall` / `navCall` / `navDynCall` / `lengthCall` / `arrayLengthCall` / `ethBalanceCall` received an empty `calls` array |
 | `EmptyDelimiter()` | `splitCall` received an empty delimiter |
 | `EmptySubstring()` | `includesCall` received an empty search string (every string vacuously contains `""`) |
-| `ElementIndexOutOfBounds(int256, uint256)` | `elementCall` index is outside the array in either direction (arguments: requested index as given — possibly negative — and element count) |
+| `ElementIndexOutOfBounds(int256, uint256)` | a `navCall`/`navDynCall` path index is outside the tuple or array it steps into (arguments: requested index as given — possibly negative — and the component/element count) |
+| `InvalidNavigation(uint256)` | `navCall`/`navDynCall` type descriptor is malformed at the given character, a path step indexes a non-composite value, or the terminal is not representable |
 | `SegmentIndexOutOfBounds(int256, uint256)` | `splitCall` index is outside the split's segments in either direction (arguments: requested index as given — possibly negative — and segment count) |
 | `UnsupportedOp()` | `calcInt` received `ArithOp.Exp` (signed exponentiation is ill-defined; use `calcUint`) |
 
@@ -735,7 +739,8 @@ These live at the Combinators address (`0xa55eC09De097E206acF0B3c677724419AeFd04
 | `uintCall` | Extract the wordIndex-th 32-byte word of a chain's final returndata (static-layout tuples; negative index counts from the end, -1 = last word) |
 | `lengthCall` | Byte length of a chain's final returndata |
 | `arrayLengthCall` | Decoded length of a chain's final dynamic return — array element count, or string/bytes byte length |
-| `elementCall` | Element of a dynamic array in a chain's final return, by head word + element index (negative counts from the end) — offset-following with bounds checks |
+| `navCall` | Navigate a chain's final return by declared type + index path ("(address[][],address)", [0,3,1]) to a single word — decoded, live-bounds-checked |
+| `navDynCall` | Same navigation landing on a string/bytes/array, re-encoded as a canonical single return — self-chain it into splitCall / arrayLengthCall / hashCall |
 | `calcUint` / `calcInt` | Arithmetic over two call results (`ArithOp`: Add, Sub, Mul, Div, Mod, Exp, Min, Max, AbsDiff — Exp is uint-only) |
 | `bitUint` / `bitNotUint` | Bitwise ops over call results (`BitOp`: And, Or, Xor, Shl, Shr) |
 | `cmpUint` / `cmpInt` | Comparison returning bool instead of reverting (`CmpOp`: Eq, Ne, Gt, Lt, Ge, Le) |

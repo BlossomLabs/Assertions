@@ -64,11 +64,20 @@ contract Combinators {
     ///         always pass and is certainly a mistake
     error EmptySubstring();
 
-    /// @notice Thrown when elementCall's element index is outside the array
-    ///         (in either direction for negative indices)
-    /// @param index The requested element index, as given (may be negative)
-    /// @param elements The number of elements the array holds
+    /// @notice Thrown when a navigation path index is outside the tuple or
+    ///         array it steps into (in either direction for negative array
+    ///         indices; tuple components only accept non-negative indices)
+    /// @param index The requested index, as given (may be negative)
+    /// @param elements The number of elements or components available
     error ElementIndexOutOfBounds(int256 index, uint256 elements);
+
+    /// @notice Thrown when navigation cannot proceed: the type descriptor is
+    ///         malformed at the given character position, a path step indexes
+    ///         into a non-composite value, or the terminal is not
+    ///         representable (multi-word static value for navCall, dynamic
+    ///         tuple or array of dynamic elements for navDynCall)
+    /// @param charPos The character position in the type descriptor
+    error InvalidNavigation(uint256 charPos);
 
     /// @notice Thrown when an operation is not supported for the value type,
     ///         currently only calcInt with ArithOp.Exp (Solidity defines `**`
@@ -374,69 +383,105 @@ contract Combinators {
         return _dynLength(_resolveChain(target, calls));
     }
 
-    /// @notice Resolves a call chain, follows the dynamic array whose offset sits at
-    ///         head word `wordIndex` of the final returndata, and returns its index-th
-    ///         element as a uint256 (0-based; negative indices count from the end,
-    ///         -1 = last element)
-    /// @dev The decoded counterpart of uintCall for array elements: instead of raw
-    ///      word positions it follows the array's head offset and bounds-checks the
-    ///      element index against the decoded length, so it works wherever the array
-    ///      sits in a multi-value return and however long the live array is. For a
-    ///      function returning (address[], address), the signer at [0][1] is
-    ///      elementCall(target, calls, 0, 1). Elements must be single-word static
-    ///      types (address / uintN / intN / bool / bytes32) — the word is returned
-    ///      as uint256, and address/bool words are clean per ABI encoding so the
-    ///      core's typed assertions decode them directly. Reverts with
-    ///      ReturnDataOutOfBounds(wordIndex, length) when the head word lies past the
-    ///      returndata or its offset does not point at a well-formed array (offset or
-    ///      element data out of range), and with ElementIndexOutOfBounds(index,
-    ///      elements) when the index lies outside the array in either direction
-    ///      (valid range is -elements .. elements-1). Chain resolution failures
-    ///      behave exactly as in chainCall. A single call is a one-element array.
+    // ============ Typed Navigation ============
+
+    /// @notice Resolves a call chain and navigates the final returndata by a type
+    ///         descriptor and an index path, returning the selected single word
+    /// @dev THE decoded read primitive: the calldata is self-describing —
+    ///      `navCall(reg, calls, "(address[][],address)", [0, 3, 1])` reads as
+    ///      "return value 0, element 3, element 1". `abiType` is the function's
+    ///      return tuple (structs written as parenthesized tuples, e.g.
+    ///      "((address,uint256,bool)[])"); the contract derives every offset-follow
+    ///      and bounds check from it, parsing only the SHAPE (dynamic vs static and
+    ///      head footprints — base type names beyond bytes/string are not
+    ///      interpreted). Each path entry indexes the current value: a tuple step
+    ///      selects a component by position (non-negative), an array step selects
+    ///      an element with a signed index (negative counts from the end, -1 =
+    ///      last, resolved against the live length). Nested offsets are followed
+    ///      relative to their enclosing frame per ABI encoding rules. The terminal
+    ///      must be a single-word static value (address / uintN / intN / bool /
+    ///      bytes32); its word is returned as uint256, clean per ABI encoding, so
+    ///      the core's typed assertions and the word-level combinators consume it
+    ///      directly. For dynamic terminals (string/bytes/array) use navDynCall.
+    ///      Reverts with InvalidNavigation on a malformed descriptor, a step into
+    ///      a non-composite, or a non-word terminal; ElementIndexOutOfBounds when
+    ///      a path index is outside its tuple or array; ReturnDataOutOfBounds when
+    ///      the data does not match the declared shape (truncated returndata or
+    ///      out-of-range offsets). The declared type is the author's claim about
+    ///      the encoder, like an inline ABI: a wrong claim reverts loudly in
+    ///      almost all cases, but a shape-compatible wrong type can read the
+    ///      wrong value. Chain resolution failures behave exactly as in chainCall.
     /// @param target The contract address the first call is executed on
     /// @param calls One entry per hop, word-index-prefixed except the last (see
     ///        chainCall); every hop except the last must expose an address at its
     ///        selected return word
-    /// @param wordIndex The 0-based head word of the final returndata holding the
-    ///        array's offset (its position among the return values)
-    /// @param index The element index: 0-based from the start, or negative from
-    ///        the end (-1 = last element)
-    /// @return The selected element's 32-byte word as a uint256
-    function elementCall(address target, bytes[] calldata calls, uint256 wordIndex, int256 index) external view returns (uint256) {
+    /// @param abiType The final call's return tuple type, e.g. "(address[],address)"
+    /// @param path One index per navigation step (tuple component or array element)
+    /// @return The selected value's 32-byte word as a uint256
+    function navCall(address target, bytes[] calldata calls, string calldata abiType, int256[] calldata path) external view returns (uint256) {
         bytes memory result = _resolveChain(target, calls);
-        if (result.length < (wordIndex + 1) * 32) {
-            revert ReturnDataOutOfBounds(int256(wordIndex), result.length);
-        }
-        uint256 offset;
-        assembly {
-            offset := mload(add(add(result, 32), mul(wordIndex, 32)))
-        }
-        if (offset > result.length || result.length - offset < 32) {
-            revert ReturnDataOutOfBounds(int256(wordIndex), result.length);
-        }
-        uint256 elements;
-        assembly {
-            elements := mload(add(add(result, 32), offset))
-        }
-        // A length the remaining returndata cannot hold means the head word
-        // did not point at a well-formed single-word-element array.
-        if (elements > (result.length - offset - 32) / 32) {
-            revert ReturnDataOutOfBounds(int256(wordIndex), result.length);
-        }
-        uint256 wanted;
-        if (index < 0) {
-            // index == type(int256).min is caught here before -index could overflow.
-            if (index < -int256(elements)) revert ElementIndexOutOfBounds(index, elements);
-            wanted = elements - uint256(-index);
+        (uint256 pos, bool isWord, uint256 ts, ) = _navigate(result, bytes(abiType), path);
+        if (!isWord) revert InvalidNavigation(ts);
+        return _navWord(result, pos);
+    }
+
+    /// @notice Resolves a call chain, navigates the final returndata like navCall,
+    ///         and returns the selected DYNAMIC value re-encoded as a canonical
+    ///         single-value return
+    /// @dev The composition bridge for dynamic values: the selected string, bytes
+    ///      or array comes back as `[0x20][length][payload]` — indistinguishable
+    ///      from a contract returning that value directly — so every existing
+    ///      consumer reaches nested values by self-chaining without signature
+    ///      changes: `splitCall(combinators, [navDynCall(...)], " ", -1)` splits a
+    ///      string inside a struct, `arrayLengthCall(combinators, [navDynCall(...)])`
+    ///      measures a nested array, `hashCall(combinators, [navDynCall(...)])`
+    ///      pins one. Terminals may be string, bytes, or a dynamic array of
+    ///      single-word static elements; dynamic tuples and arrays of dynamic
+    ///      elements revert with InvalidNavigation (their extent would require a
+    ///      recursive re-encoder). Uses a raw assembly return like chainCall so
+    ///      the envelope passes through byte-for-byte. Navigation and failure
+    ///      behavior are exactly navCall's.
+    /// @param target The contract address the first call is executed on
+    /// @param calls One entry per hop, word-index-prefixed except the last (see
+    ///        chainCall); every hop except the last must expose an address at its
+    ///        selected return word
+    /// @param abiType The final call's return tuple type, e.g. "((string,uint256)[])"
+    /// @param path One index per navigation step, landing on a dynamic value
+    function navDynCall(address target, bytes[] calldata calls, string calldata abiType, int256[] calldata path) external view {
+        bytes memory result = _resolveChain(target, calls);
+        bytes calldata t = bytes(abiType);
+        (uint256 pos, bool isWord, uint256 ts, uint256 te) = _navigate(result, t, path);
+        if (isWord) revert InvalidNavigation(ts);
+        uint256 len = _navWord(result, pos);
+        uint256 payloadBytes;
+        if (t[te - 1] == "]") {
+            uint256 suffix = _suffixStart(t, ts, te);
+            (, bool elemDyn, uint256 elemWords) = _typeShape(t, ts, suffix);
+            if (elemDyn) revert InvalidNavigation(ts);
+            if (len > (result.length - pos - 32) / (elemWords * 32)) {
+                revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+            }
+            payloadBytes = len * elemWords * 32;
+        } else if (t[ts] == "(") {
+            // dynamic tuple terminal: not extractable as a single envelope
+            revert InvalidNavigation(ts);
         } else {
-            if (uint256(index) >= elements) revert ElementIndexOutOfBounds(index, elements);
-            wanted = uint256(index);
+            // bytes / string: byte length, stored padded to full words
+            payloadBytes = ((len + 31) / 32) * 32;
+            if (len > result.length - pos - 32 || payloadBytes > result.length - pos - 32) {
+                revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+            }
         }
-        uint256 word;
         assembly {
-            word := mload(add(add(result, 64), add(offset, mul(wanted, 32))))
+            let out := mload(0x40)
+            mstore(out, 0x20)
+            let src := add(add(result, 32), pos)
+            let size := add(32, payloadBytes)
+            for { let i := 0 } lt(i, size) { i := add(i, 32) } {
+                mstore(add(add(out, 32), i), mload(add(src, i)))
+            }
+            return(out, add(32, size))
         }
-        return word;
     }
 
     // ============ Arithmetic Composition ============
@@ -742,6 +787,229 @@ contract Combinators {
         }
         assembly {
             length := mload(add(add(result, 32), offset))
+        }
+    }
+
+    // ---- Typed navigation internals ----
+
+    /// @dev Reads the 32-byte word at byte offset `pos` of `result`, reverting
+    ///      with ReturnDataOutOfBounds when it lies outside the returndata
+    function _navWord(bytes memory result, uint256 pos) internal pure returns (uint256 word) {
+        if (pos > result.length || result.length - pos < 32) {
+            revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+        }
+        assembly {
+            word := mload(add(add(result, 32), pos))
+        }
+    }
+
+    /// @dev Parses the SHAPE of the type starting at `p` (bounded by `limit`):
+    ///      where it ends, whether it is dynamic, and its head footprint in
+    ///      words (1 for dynamic values — their head word is an offset).
+    ///      Grammar: tuple `( type {"," type} )`, base identifier (bytes/string
+    ///      are dynamic, anything else is one static word), then any number of
+    ///      `[]` / `[k]` suffixes, the outermost binding last.
+    function _typeShape(bytes calldata t, uint256 p, uint256 limit) internal pure returns (uint256 end, bool dyn, uint256 words) {
+        if (p >= limit) revert InvalidNavigation(p);
+        if (t[p] == "(") {
+            uint256 q = p + 1;
+            uint256 sum;
+            while (true) {
+                (uint256 e, bool d, uint256 w) = _typeShape(t, q, limit);
+                if (d) dyn = true;
+                sum += w;
+                if (e >= limit) revert InvalidNavigation(e);
+                if (t[e] == ",") {
+                    q = e + 1;
+                    continue;
+                }
+                if (t[e] == ")") {
+                    end = e + 1;
+                    break;
+                }
+                revert InvalidNavigation(e);
+            }
+            words = dyn ? 1 : sum;
+        } else {
+            uint256 q = p;
+            while (q < limit && ((t[q] >= "a" && t[q] <= "z") || (t[q] >= "0" && t[q] <= "9"))) {
+                q++;
+            }
+            if (q == p) revert InvalidNavigation(p);
+            dyn = (q - p == 5 && t[p] == "b" && t[p + 1] == "y" && t[p + 2] == "t" && t[p + 3] == "e" && t[p + 4] == "s")
+                || (q - p == 6 && t[p] == "s" && t[p + 1] == "t" && t[p + 2] == "r" && t[p + 3] == "i" && t[p + 4] == "n" && t[p + 5] == "g");
+            words = 1;
+            end = q;
+        }
+        while (end < limit && t[end] == "[") {
+            uint256 q2 = end + 1;
+            uint256 k;
+            bool fixedSize;
+            while (q2 < limit && t[q2] >= "0" && t[q2] <= "9") {
+                k = k * 10 + (uint8(t[q2]) - 48);
+                fixedSize = true;
+                q2++;
+            }
+            if (q2 >= limit || t[q2] != "]") revert InvalidNavigation(q2);
+            if (fixedSize) {
+                if (!dyn) words = words * k;
+            } else {
+                dyn = true;
+                words = 1;
+            }
+            end = q2 + 1;
+        }
+    }
+
+    /// @dev Position of the `[` opening the LAST suffix of the array type at
+    ///      [ts, te) — the outermost constructor (te - 1 must be `]`)
+    function _suffixStart(bytes calldata t, uint256 ts, uint256 te) internal pure returns (uint256 j) {
+        j = te - 2;
+        while (j > ts && t[j] >= "0" && t[j] <= "9") {
+            j--;
+        }
+        if (t[j] != "[") revert InvalidNavigation(j);
+    }
+
+    /// @dev Normalizes a signed index against `count`, reverting with
+    ///      ElementIndexOutOfBounds outside -count .. count-1
+    function _navIndex(int256 index, uint256 count) internal pure returns (uint256) {
+        if (index < 0) {
+            // index == type(int256).min is caught here before -index could overflow.
+            if (index < -int256(count)) revert ElementIndexOutOfBounds(index, count);
+            return count - uint256(-index);
+        }
+        if (uint256(index) >= count) revert ElementIndexOutOfBounds(index, count);
+        return uint256(index);
+    }
+
+    /// @dev Navigation cursor: the current value's type bounds [ts, te) in
+    ///      the descriptor, its byte position in the returndata, and — after
+    ///      a step — whether the value just selected is dynamic and its head
+    ///      footprint. Position semantics: a tuple's position is its first
+    ///      head word; a dynamic array's is its length word; a fixed array's
+    ///      is its first element or offset word.
+    struct NavCursor {
+        uint256 ts;
+        uint256 te;
+        uint256 base;
+        bool dyn;
+        uint256 words;
+    }
+
+    /// @dev Walks `path` through `result` as described by the type descriptor
+    ///      `t` (which must be a parenthesized return tuple). Returns the byte
+    ///      position of the terminal — the value word itself when `isWord`,
+    ///      otherwise the length word / head of the selected dynamic value —
+    ///      plus the terminal's type bounds [ts, te) for the callers' checks.
+    ///      Offsets are followed relative to their enclosing frame per ABI
+    ///      encoding rules.
+    function _navigate(bytes memory result, bytes calldata t, int256[] calldata path)
+        internal
+        pure
+        returns (uint256 pos, bool isWord, uint256 ts, uint256 te)
+    {
+        if (t.length == 0 || t[0] != "(") revert InvalidNavigation(0);
+        if (path.length == 0) revert InvalidNavigation(0);
+        {
+            (uint256 topEnd,,) = _typeShape(t, 0, t.length);
+            if (topEnd != t.length) revert InvalidNavigation(topEnd);
+        }
+
+        NavCursor memory c = NavCursor(0, t.length, 0, true, 1);
+        for (uint256 i = 0; i < path.length; i++) {
+            if (t[c.te - 1] == "]") {
+                _navArrayStep(result, t, c, path[i]);
+            } else if (t[c.ts] == "(") {
+                _navTupleStep(result, t, c, path[i]);
+            } else {
+                // base type (word, bytes or string): nothing to index into
+                revert InvalidNavigation(c.ts);
+            }
+        }
+        if (!c.dyn) {
+            // multi-word static terminals (static tuples / fixed arrays)
+            // have no single word to return
+            if (c.words != 1) revert InvalidNavigation(c.ts);
+            return (c.base, true, c.ts, c.te);
+        }
+        return (c.base, false, c.ts, c.te);
+    }
+
+    /// @dev One array step: bounds-checks the signed index against the live
+    ///      (or fixed) length and advances the cursor to the element
+    function _navArrayStep(bytes memory result, bytes calldata t, NavCursor memory c, int256 idx) private pure {
+        uint256 suffix = _suffixStart(t, c.ts, c.te);
+        (, bool elemDyn, uint256 elemWords) = _typeShape(t, c.ts, suffix);
+        uint256 count;
+        uint256 dataStart;
+        if (suffix + 1 == c.te - 1) {
+            // dynamic T[]: base is the length word, elements follow it
+            count = _navWord(result, c.base);
+            if (count > result.length / 32) {
+                revert ReturnDataOutOfBounds(int256(c.base / 32), result.length);
+            }
+            dataStart = c.base + 32;
+        } else {
+            // fixed T[k]: no length word, k comes from the descriptor
+            for (uint256 q = suffix + 1; t[q] != "]"; q++) {
+                count = count * 10 + (uint8(t[q]) - 48);
+            }
+            dataStart = c.base;
+        }
+        uint256 wanted = _navIndex(idx, count);
+        if (elemDyn) {
+            uint256 off = _navWord(result, dataStart + wanted * 32);
+            if (off > result.length) {
+                revert ReturnDataOutOfBounds(int256((dataStart + wanted * 32) / 32), result.length);
+            }
+            c.base = dataStart + off;
+        } else {
+            c.base = dataStart + wanted * elemWords * 32;
+        }
+        c.te = suffix;
+        c.dyn = elemDyn;
+        c.words = elemWords;
+    }
+
+    /// @dev One tuple step: accumulates head footprints of the preceding
+    ///      components (derived from the descriptor) and advances the cursor
+    ///      to component `idx`
+    function _navTupleStep(bytes memory result, bytes calldata t, NavCursor memory c, int256 idx) private pure {
+        uint256 q = c.ts + 1;
+        uint256 acc;
+        uint256 j;
+        if (idx < 0) {
+            while (true) {
+                (uint256 e,,) = _typeShape(t, q, c.te);
+                j++;
+                if (t[e] == ")") break;
+                q = e + 1;
+            }
+            revert ElementIndexOutOfBounds(idx, j);
+        }
+        while (true) {
+            (uint256 e, bool d, uint256 w) = _typeShape(t, q, c.te);
+            if (j == uint256(idx)) {
+                if (d) {
+                    uint256 off = _navWord(result, c.base + acc * 32);
+                    if (off > result.length) {
+                        revert ReturnDataOutOfBounds(int256((c.base + acc * 32) / 32), result.length);
+                    }
+                    c.base = c.base + off;
+                } else {
+                    c.base = c.base + acc * 32;
+                }
+                c.ts = q;
+                c.te = e;
+                c.dyn = d;
+                c.words = w;
+                return;
+            }
+            acc += w;
+            j++;
+            if (t[e] == ")") revert ElementIndexOutOfBounds(idx, j);
+            q = e + 1;
         }
     }
 

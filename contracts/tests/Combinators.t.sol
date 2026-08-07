@@ -1347,76 +1347,200 @@ contract CombinatorsTest is Test {
         combinators.uintCall(address(token), new bytes[](0), 0);
     }
 
-    // ============ Array Element Extraction (elementCall) ============
+    // ============ Typed Navigation (navCall / navDynCall) ============
 
-    function test_elementCall_tupleWithArray() public view {
-        // signers() -> (address[3] list, address owner): [0][i] via head word 0
-        bytes[] memory calls = _single(abi.encodeCall(MockToken.signers, ()));
-        assertEq(combinators.elementCall(address(token), calls, 0, 0), uint256(0xaaa1));
-        assertEq(combinators.elementCall(address(token), calls, 0, 1), uint256(0xaaa2));
-        assertEq(combinators.elementCall(address(token), calls, 0, 2), uint256(0xaaa3));
+    /// @dev Builds a navigation path from int literals
+    function _path1(int256 a) internal pure returns (int256[] memory p) {
+        p = new int256[](1);
+        p[0] = a;
     }
 
-    function test_elementCall_negativeIndex_fromEnd() public view {
-        bytes[] memory calls = _single(abi.encodeCall(MockToken.signers, ()));
-        assertEq(combinators.elementCall(address(token), calls, 0, -1), uint256(0xaaa3));
-        assertEq(combinators.elementCall(address(token), calls, 0, -3), uint256(0xaaa1));
+    function _path2(int256 a, int256 b) internal pure returns (int256[] memory p) {
+        p = new int256[](2);
+        p[0] = a;
+        p[1] = b;
     }
 
-    function test_elementCall_singleArrayReturn() public view {
-        // getArray() -> [10, 20, 30, 40, 50]
-        bytes[] memory calls = _single(abi.encodeCall(MockTarget.getArray, ()));
-        assertEq(combinators.elementCall(address(target), calls, 0, 2), 30);
-        assertEq(combinators.elementCall(address(target), calls, 0, -1), 50);
+    function _path3(int256 a, int256 b, int256 c) internal pure returns (int256[] memory p) {
+        p = new int256[](3);
+        p[0] = a;
+        p[1] = b;
+        p[2] = c;
     }
 
-    function test_elementCall_indexOutOfBounds_reverts() public {
+    function test_navCall_tupleWithArray() public view {
         bytes[] memory calls = _single(abi.encodeCall(MockToken.signers, ()));
+        string memory t = "(address[],address)";
+        assertEq(combinators.navCall(address(token), calls, t, _path2(0, 0)), uint256(0xaaa1));
+        assertEq(combinators.navCall(address(token), calls, t, _path2(0, 1)), uint256(0xaaa2));
+        assertEq(combinators.navCall(address(token), calls, t, _path2(0, -1)), uint256(0xaaa3));
+        // a single-step path selects the static return value itself
+        assertEq(combinators.navCall(address(token), calls, t, _path1(1)), uint256(0xb055));
+    }
+
+    function test_navCall_nestedArrays() public view {
+        // matrix() -> [[0xaaa1, 0xaaa2], [0xbbb1, 0xbbb2, 0xbbb3], []]
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.matrix, ()));
+        string memory t = "(address[][])";
+        assertEq(combinators.navCall(address(token), calls, t, _path3(0, 0, 1)), uint256(0xaaa2));
+        assertEq(combinators.navCall(address(token), calls, t, _path3(0, 1, 2)), uint256(0xbbb3));
+        assertEq(combinators.navCall(address(token), calls, t, _path3(0, -2, -1)), uint256(0xbbb3));
+    }
+
+    function test_navCall_structArray() public view {
+        // proposals() -> [(0xcafe1, 41, false), (0xcafe2, 99, true)]
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.proposals, ()));
+        string memory t = "((address,uint256,bool)[])";
+        assertEq(combinators.navCall(address(token), calls, t, _path3(0, 0, 1)), 41);
+        assertEq(combinators.navCall(address(token), calls, t, _path3(0, 1, 0)), uint256(0xcafe2));
+        assertEq(combinators.navCall(address(token), calls, t, _path3(0, -1, 2)), 1);
+    }
+
+    function test_navCall_multiWordStaticHead() public view {
+        // mixed() -> (uint256[2] [11, 22], address[] [0xddd1, 0xddd2]): the
+        // fixed array occupies TWO head words, so the dynamic array's offset
+        // sits at head word 2 — derived from the declared type
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.mixed, ()));
+        string memory t = "(uint256[2],address[])";
+        assertEq(combinators.navCall(address(token), calls, t, _path2(0, 1)), 22);
+        assertEq(combinators.navCall(address(token), calls, t, _path2(1, 0)), uint256(0xddd1));
+        assertEq(combinators.navCall(address(token), calls, t, _path2(1, -1)), uint256(0xddd2));
+    }
+
+    function test_navCall_indexOutOfBounds_reverts() public {
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.signers, ()));
+        string memory t = "(address[],address)";
         vm.expectRevert(
             abi.encodeWithSelector(Combinators.ElementIndexOutOfBounds.selector, int256(3), uint256(3))
         );
-        combinators.elementCall(address(token), calls, 0, 3);
+        combinators.navCall(address(token), calls, t, _path2(0, 3));
         vm.expectRevert(
             abi.encodeWithSelector(Combinators.ElementIndexOutOfBounds.selector, int256(-4), uint256(3))
         );
-        combinators.elementCall(address(token), calls, 0, -4);
+        combinators.navCall(address(token), calls, t, _path2(0, -4));
+        // tuple component out of range reports the component count
+        vm.expectRevert(
+            abi.encodeWithSelector(Combinators.ElementIndexOutOfBounds.selector, int256(2), uint256(2))
+        );
+        combinators.navCall(address(token), calls, t, _path1(2));
     }
 
-    function test_elementCall_emptyArray_reverts() public {
-        bytes[] memory calls = _single(abi.encodeCall(MockTarget.getEmptyArray, ()));
+    function test_navCall_emptyInnerArray_reverts() public {
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.matrix, ()));
         vm.expectRevert(
             abi.encodeWithSelector(Combinators.ElementIndexOutOfBounds.selector, int256(0), uint256(0))
         );
-        combinators.elementCall(address(target), calls, 0, 0);
+        combinators.navCall(address(token), calls, "(address[][])", _path3(0, 2, 0));
     }
 
-    function test_elementCall_headWordNotAnArray_reverts() public {
-        // head word 1 of signers() is the owner address, not an array offset
+    function test_navCall_nonComposite_step_reverts() public {
+        // path [1, 0] steps into the plain address return value
         bytes[] memory calls = _single(abi.encodeCall(MockToken.signers, ()));
-        vm.expectRevert(
-            abi.encodeWithSelector(Combinators.ReturnDataOutOfBounds.selector, int256(1), uint256(192))
-        );
-        combinators.elementCall(address(token), calls, 1, 0);
+        vm.expectRevert(abi.encodeWithSelector(Combinators.InvalidNavigation.selector, uint256(11)));
+        combinators.navCall(address(token), calls, "(address[],address)", _path2(1, 0));
     }
 
-    function test_elementCall_headWordPastReturndata_reverts() public {
+    function test_navCall_dynamicTerminal_reverts() public {
+        // path [0, 1] lands on an address[] — a word cannot be returned
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.matrix, ()));
+        vm.expectRevert(abi.encodeWithSelector(Combinators.InvalidNavigation.selector, uint256(1)));
+        combinators.navCall(address(token), calls, "(address[][])", _path2(0, 1));
+    }
+
+    function test_navCall_malformedDescriptor_reverts() public {
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.signers, ()));
+        // unbalanced tuple
+        vm.expectRevert(abi.encodeWithSelector(Combinators.InvalidNavigation.selector, uint256(9)));
+        combinators.navCall(address(token), calls, "(address[", _path1(0));
+        // top-level type must be a parenthesized return tuple
+        vm.expectRevert(abi.encodeWithSelector(Combinators.InvalidNavigation.selector, uint256(0)));
+        combinators.navCall(address(token), calls, "address[]", _path1(0));
+        // empty path selects nothing
+        vm.expectRevert(abi.encodeWithSelector(Combinators.InvalidNavigation.selector, uint256(0)));
+        combinators.navCall(address(token), calls, "(address[],address)", new int256[](0));
+    }
+
+    function test_navCall_truncatedData_reverts() public {
+        // descriptor claims three words, decimals() returns one
         bytes[] memory calls = _single(abi.encodeCall(MockToken.decimals, ()));
         vm.expectRevert(
-            abi.encodeWithSelector(Combinators.ReturnDataOutOfBounds.selector, int256(1), uint256(32))
+            abi.encodeWithSelector(Combinators.ReturnDataOutOfBounds.selector, int256(2), uint256(32))
         );
-        combinators.elementCall(address(token), calls, 1, 0);
+        combinators.navCall(address(token), calls, "(uint256,uint256,uint256)", _path1(2));
     }
 
-    function test_elementCall_composed_endToEnd() public view {
+    function test_navCall_composed_endToEnd() public view {
         // "the second signer is 0xaaa2", judged as an address by the core
         assertions.assertEqCallAddress(
             address(combinators),
             abi.encodeCall(
-                Combinators.elementCall,
-                (address(token), _single(abi.encodeCall(MockToken.signers, ())), 0, 1)
+                Combinators.navCall,
+                (address(token), _single(abi.encodeCall(MockToken.signers, ())), "(address[],address)", _path2(0, 1))
             ),
             address(0xaaa2)
         );
+    }
+
+    function test_navDynCall_stringField_judgedByCore() public view {
+        // items()[0].label == "Curve LP": the envelope decodes as a plain string
+        assertions.assertEqCallStringN(
+            address(combinators),
+            abi.encodeCall(
+                Combinators.navDynCall,
+                (address(token), _single(abi.encodeCall(MockToken.items, ())), "((string,uint256)[])", _path3(0, 0, 0))
+            ),
+            0,
+            "Curve LP"
+        );
+    }
+
+    function test_navDynCall_composesWithSplitCall() public view {
+        // second word of items()[1].label ("Gauge Deposit") is "Deposit"
+        bytes[] memory inner = _single(
+            abi.encodeCall(
+                Combinators.navDynCall,
+                (address(token), _single(abi.encodeCall(MockToken.items, ())), "((string,uint256)[])", _path3(0, 1, 0))
+            )
+        );
+        assertEq(combinators.splitCall(address(combinators), inner, " ", -1), "Deposit");
+    }
+
+    function test_navDynCall_composesWithArrayLengthCall() public view {
+        // matrix()[1] has three elements
+        bytes[] memory inner = _single(
+            abi.encodeCall(
+                Combinators.navDynCall,
+                (address(token), _single(abi.encodeCall(MockToken.matrix, ())), "(address[][])", _path2(0, 1))
+            )
+        );
+        assertEq(combinators.arrayLengthCall(address(combinators), inner), 3);
+    }
+
+    function test_navDynCall_composesWithHashCall() public view {
+        // the envelope of matrix()[0] hashes like abi.encode of that array
+        address[] memory row = new address[](2);
+        row[0] = address(0xaaa1);
+        row[1] = address(0xaaa2);
+        bytes[] memory inner = _single(
+            abi.encodeCall(
+                Combinators.navDynCall,
+                (address(token), _single(abi.encodeCall(MockToken.matrix, ())), "(address[][])", _path2(0, 0))
+            )
+        );
+        assertEq(combinators.hashCall(address(combinators), inner), keccak256(abi.encode(row)));
+    }
+
+    function test_navDynCall_wordTerminal_reverts() public {
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.signers, ()));
+        vm.expectRevert(abi.encodeWithSelector(Combinators.InvalidNavigation.selector, uint256(11)));
+        combinators.navDynCall(address(token), calls, "(address[],address)", _path1(1));
+    }
+
+    function test_navDynCall_nestedDynamicTerminal_reverts() public {
+        // address[][] itself: elements are dynamic, extent not extractable
+        bytes[] memory calls = _single(abi.encodeCall(MockToken.matrix, ()));
+        vm.expectRevert(abi.encodeWithSelector(Combinators.InvalidNavigation.selector, uint256(1)));
+        combinators.navDynCall(address(token), calls, "(address[][])", _path1(0));
     }
 
     function test_uintCall_negativeIndex_fromEnd() public view {

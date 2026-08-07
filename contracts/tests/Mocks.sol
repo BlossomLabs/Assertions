@@ -168,13 +168,60 @@ contract MockToken {
         list = new address[](3);
     }
 
-    /// @notice Multi-value return with a leading dynamic array, for elementCall tests
+    /// @notice Multi-value return with a leading dynamic array, for navigation tests
     function signers() external pure returns (address[] memory list, address owner) {
         list = new address[](3);
         list[0] = address(0xaaa1);
         list[1] = address(0xaaa2);
         list[2] = address(0xaaa3);
         owner = address(0xb055);
+    }
+
+    /// @notice Nested dynamic arrays (ragged, with an empty row), for navigation tests
+    function matrix() external pure returns (address[][] memory rows) {
+        rows = new address[][](3);
+        rows[0] = new address[](2);
+        rows[0][0] = address(0xaaa1);
+        rows[0][1] = address(0xaaa2);
+        rows[1] = new address[](3);
+        rows[1][0] = address(0xbbb1);
+        rows[1][1] = address(0xbbb2);
+        rows[1][2] = address(0xbbb3);
+        rows[2] = new address[](0);
+    }
+
+    struct Proposal {
+        address proposer;
+        uint256 votes;
+        bool executed;
+    }
+
+    /// @notice Struct array, for tuple-step navigation tests
+    function proposals() external pure returns (Proposal[] memory list) {
+        list = new Proposal[](2);
+        list[0] = Proposal(address(0xcafe1), 41, false);
+        list[1] = Proposal(address(0xcafe2), 99, true);
+    }
+
+    /// @notice Multi-word static head value before a dynamic one, for
+    ///         head-accounting navigation tests
+    function mixed() external pure returns (uint256[2] memory pair, address[] memory list) {
+        pair = [uint256(11), uint256(22)];
+        list = new address[](2);
+        list[0] = address(0xddd1);
+        list[1] = address(0xddd2);
+    }
+
+    struct Item {
+        string label;
+        uint256 qty;
+    }
+
+    /// @notice Struct array with a string field, for navDynCall composition tests
+    function items() external pure returns (Item[] memory list) {
+        list = new Item[](2);
+        list[0] = Item("Curve LP", 7);
+        list[1] = Item("Gauge Deposit", 3);
     }
 
     /// @notice Returns the maximum uint256, for arithmetic overflow tests

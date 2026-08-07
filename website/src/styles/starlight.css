@@ -1,0 +1,75 @@
+/* Align the Starlight docs with the main site's design system: same fonts
+   (Outfit / JetBrains Mono, loaded via `head` in the Starlight config), same
+   surface/ink palette from global.css, and the same bp-blue accents, grid
+   background, selection and scrollbar treatments. */
+
+:root {
+  --sl-font: 'Outfit', system-ui, sans-serif;
+  --sl-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Dark palette (site tokens: surface #080d18, surface-2 #0f1729,
+     surface-3 #162035, ink #e2eaf2, ink-2 #8da4b8, ink-3 #4a6478). */
+  --sl-color-accent-low: #0c2438;
+  --sl-color-accent: #1a7fd4;
+  --sl-color-accent-high: #93c5fd;
+  --sl-color-white: #e2eaf2;
+  --sl-color-gray-1: #cfdcea;
+  --sl-color-gray-2: #b4c4d3;
+  --sl-color-gray-3: #8da4b8;
+  --sl-color-gray-4: #4a6478;
+  --sl-color-gray-5: #2b3b55;
+  --sl-color-gray-6: #162035;
+  --sl-color-black: #080d18;
+  --sl-color-bg-nav: #0f1729;
+  --sl-color-bg-sidebar: #0f1729;
+  --grid-opacity: 0.08;
+}
+
+:root[data-theme='light'] {
+  /* Light palette (surface #f0f4f8, surface-2 #ffffff, surface-3 #e2eaf2,
+     ink #0c1a2e, ink-2 #3a5068, ink-3 #6b8299). */
+  --sl-color-accent-low: #d9e9f7;
+  --sl-color-accent: #005ba6;
+  --sl-color-accent-high: #003d73;
+  --sl-color-white: #0c1a2e;
+  --sl-color-gray-1: #2b405a;
+  --sl-color-gray-2: #3a5068;
+  --sl-color-gray-3: #6b8299;
+  --sl-color-gray-4: #93a7ba;
+  --sl-color-gray-5: #c9d6e2;
+  --sl-color-gray-6: #e2eaf2;
+  --sl-color-gray-7: #eef3f8;
+  --sl-color-black: #f0f4f8;
+  --sl-color-bg-nav: #ffffff;
+  --sl-color-bg-sidebar: #ffffff;
+  --grid-opacity: 0.06;
+}
+
+/* The main site's signature blueprint grid behind the content. */
+body {
+  background-image:
+    linear-gradient(rgba(0, 91, 166, var(--grid-opacity)) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 91, 166, var(--grid-opacity)) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+::selection {
+  background-color: #005ba6;
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #005ba6;
+  border-radius: 3px;
+}
+
+.site-title img {
+  height: 1.75rem;
+}

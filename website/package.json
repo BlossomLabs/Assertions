@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^6.0.0",
+    "@astrojs/starlight": "^0.41.7",
     "@evmcrispr/core": "^0.11.0",
     "@evmcrispr/editor": "^0.11.0",
     "@evmcrispr/module-aragonosx": "^0.11.0",

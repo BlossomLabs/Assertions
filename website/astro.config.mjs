@@ -1,5 +1,6 @@
 // @ts-check
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 
 import { defineConfig } from 'astro/config';
@@ -7,6 +8,7 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 import react from '@astrojs/react';
+import starlight from '@astrojs/starlight';
 
 // ---------------------------------------------------------------------------
 // Every @evmcrispr/* import resolves straight to the TypeScript sources of an
@@ -22,6 +24,9 @@ import react from '@astrojs/react';
 //
 //   EVMCRISPR_SRC=~/Projects/EVMcrispr pnpm dev
 // ---------------------------------------------------------------------------
+
+const exact = (specifier) =>
+  new RegExp(`^${specifier.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}$`);
 
 /** @returns {{alias: import('vite').Alias[], ids: string[]}} */
 function evmcrisprSourceAliases(root) {
@@ -39,9 +44,6 @@ function evmcrisprSourceAliases(root) {
 
       const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
       if (!pkg.name?.startsWith('@evmcrispr/')) continue;
-
-      const exact = (specifier) =>
-        new RegExp(`^${specifier.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}$`);
 
       // Exact-match regexes: a bare-string alias for the package name would
       // also prefix-match sub-path imports (e.g. @evmcrispr/editor/style.css)
@@ -109,6 +111,56 @@ if (!local.ids.length) {
 
 console.log(`[evmcrispr] using sources from ${evmcrisprSrc} (${local.ids.length} packages)`);
 
+// Deps imported only from the excluded @evmcrispr sources live in the
+// checkout's own node_modules, so their bare names don't resolve from the
+// website root: optimizeDeps.include would skip them ("Failed to resolve
+// dependency"), and they'd be re-optimized when they first load in the
+// browser, force-reloading the page (most visibly: opening the Monaco editor
+// tab wiped the whole builder). Alias each one to its vendored location --
+// the package directory for bare ids, so Vite's normal module/exports field
+// resolution still picks the right build, and the exact file for subpaths --
+// which also makes the optimizeDeps.include entries below resolvable.
+const vendoredDepIds = [];
+{
+  const importers = /** @type {const} */ ([
+    [
+      'packages/editor',
+      [
+        '@monaco-editor/react',
+        'shiki/core',
+        'shiki/engine/oniguruma',
+        'shiki/langs/json.mjs',
+        'shiki/langs/solidity.mjs',
+      ],
+    ],
+    ['packages/ai', ['ai', '@ai-sdk/openai-compatible']],
+  ]);
+
+  for (const [pkg, ids] of importers) {
+    const req = createRequire(path.resolve(evmcrisprSrc, pkg, 'package.json'));
+    for (const id of ids) {
+      const isBarePackage = id.split('/').length === (id.startsWith('@') ? 2 : 1);
+      let replacement;
+      if (isBarePackage) {
+        // Walk up from the resolved entry to the package root (identified by
+        // a package.json whose name matches; dist/package.json shims don't).
+        let dir = path.dirname(req.resolve(id));
+        while (true) {
+          const pkgJson = path.join(dir, 'package.json');
+          if (existsSync(pkgJson) && JSON.parse(readFileSync(pkgJson, 'utf-8')).name === id)
+            break;
+          dir = path.dirname(dir);
+        }
+        replacement = dir;
+      } else {
+        replacement = req.resolve(id);
+      }
+      local.alias.push({ find: exact(id), replacement });
+      vendoredDepIds.push(id);
+    }
+  }
+}
+
 // https://astro.build/config
 export default defineConfig({
   // localhost:3000 is the redirect origin allowlisted on the Dappnode Nexus
@@ -133,18 +185,106 @@ export default defineConfig({
       // re-optimizes when they first load in the browser and force-reloads
       // the page (most visibly: opening the Monaco editor tab wiped the
       // whole builder). Pre-bundle them eagerly instead.
-      include: [
-        '@monaco-editor/react',
-        'monaco-editor',
-        'shiki/core',
-        'shiki/engine/oniguruma',
-        'shiki/langs/json.mjs',
-        'shiki/langs/solidity.mjs',
-        'ai',
-        '@ai-sdk/openai-compatible',
-      ],
+      include: ['monaco-editor', ...vendoredDepIds],
     },
   },
 
-  integrations: [react()],
+  integrations: [
+    // Documentation lives under /docs (files in src/content/docs/docs/ so
+    // every slug carries the prefix); the landing, builder and deployments
+    // pages in src/pages are untouched by Starlight.
+    starlight({
+      title: 'Assertions',
+      description:
+        'On-chain assertions for verifying view function return values and blockchain state.',
+      logo: {
+        light: './src/assets/logo-light.svg',
+        dark: './src/assets/logo-dark.svg',
+        replacesTitle: true,
+      },
+      favicon: '/favicon.svg',
+      // The main site's fonts, loaded the same way Layout.astro does.
+      head: [
+        {
+          tag: 'link',
+          attrs: { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'preconnect',
+            href: 'https://fonts.gstatic.com',
+            crossorigin: true,
+          },
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'stylesheet',
+            href: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap',
+          },
+        },
+      ],
+      social: [
+        {
+          icon: 'github',
+          label: 'GitHub',
+          href: 'https://github.com/blossomlabs/Assertions',
+        },
+      ],
+      sidebar: [
+        {
+          label: 'Introduction',
+          items: [{ slug: 'docs' }, { slug: 'docs/solidity' }],
+        },
+        {
+          label: 'Combinators',
+          items: [
+            { slug: 'docs/combinators' },
+            { slug: 'docs/combinators/read' },
+            { slug: 'docs/combinators/calc' },
+            { slug: 'docs/combinators/data' },
+          ],
+        },
+        {
+          label: 'EVMcrispr',
+          items: [{ slug: 'docs/evml' }],
+        },
+        {
+          label: 'Reference',
+          items: [
+            { slug: 'docs/reference/core' },
+            { slug: 'docs/reference/errors' },
+            { slug: 'docs/reference/deployments' },
+          ],
+        },
+      ],
+      customCss: ['./src/styles/starlight.css'],
+      // Share the main site's theme state: read/write the same localStorage
+      // key and swap the 3-way picker for the site's sun/moon toggle.
+      components: {
+        ThemeProvider: './src/components/docs/ThemeProvider.astro',
+        ThemeSelect: './src/components/docs/ThemeSelect.astro',
+      },
+      expressiveCode: {
+        shiki: {
+          // EVML snippets highlight with the same TextMate grammar the
+          // builder's Monaco/Shiki editor uses, loaded from the vendored
+          // EVMcrispr checkout.
+          langs: [
+            JSON.parse(
+              readFileSync(
+                path.resolve(
+                  evmcrisprSrc,
+                  'packages/editor/src/grammars/evml.tmLanguage.json',
+                ),
+                'utf-8',
+              ),
+            ),
+          ],
+        },
+      },
+    }),
+    react(),
+  ],
 });

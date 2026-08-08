@@ -8,6 +8,7 @@
 // Usage: pnpm hardhat compile (from the repo root), then from website/:
 //   node scripts/export-deploy-artifact.mjs
 
+import { execSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -51,11 +52,13 @@ const CONTRACTS = [
     name: "Assertions",
     artifact: "artifacts/contracts/Assertions.sol/Assertions.json",
     output: "src/lib/assertions-deployment.ts",
-    // Salt mined for the core v1.1 vanity address (see hardhat.config.ts).
+    // Salt mined for the core v2.0 vanity address (see hardhat.config.ts).
+    // v1.1 remains at 0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0
+    // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6012c7cd0);
     // v1.0 remains at 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
     // (salt 0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb).
-    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6012c7cd0",
-    expectedAddress: "0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0",
+    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f600eeeda2",
+    expectedAddress: "0xA55E4797c1b755183B7Aad07BFd39D3e824621f9",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -64,13 +67,44 @@ const CONTRACTS = [
     name: "Combinators",
     artifact: "artifacts/contracts/Combinators.sol/Combinators.json",
     output: "src/lib/combinators-deployment.ts",
-    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60027fbe3",
-    expectedAddress: "0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC",
+    // Combinators v2.0; v1.0 remains at 0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC
+    // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60027fbe3).
+    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6005c2ac8",
+    expectedAddress: "0xA55EC06e0A82a5ed05bf08c0ff07A45d4BC2eBf8",
     prefix: "COMBINATORS",
     description: "Combinators building-block contract",
     includeProxyConstants: false,
   },
 ];
+
+// Measure the real deploy gas of each contract by replaying the canonical
+// Arachnid-proxy deployment on an in-process Hardhat network (see
+// scripts/measure-deploy-gas.ts at the repo root). Never hardcode gas: it
+// changes with every bytecode change.
+const measureOutput = execSync("npx hardhat run scripts/measure-deploy-gas.ts", {
+  cwd: repoRoot,
+  encoding: "utf8",
+  env: {
+    ...process.env,
+    MEASURE_DEPLOY_GAS_CONFIG: JSON.stringify(
+      CONTRACTS.map((c) => ({
+        name: c.name,
+        artifact: c.artifact,
+        salt: c.salt,
+        expectedAddress: c.expectedAddress,
+      })),
+    ),
+  },
+});
+const gasLine = measureOutput
+  .split("\n")
+  .find((line) => line.startsWith("DEPLOY_GAS_JSON "));
+if (!gasLine) {
+  throw new Error(
+    `measure-deploy-gas.ts produced no DEPLOY_GAS_JSON line:\n${measureOutput}`,
+  );
+}
+const deployGas = JSON.parse(gasLine.slice("DEPLOY_GAS_JSON ".length));
 
 for (const c of CONTRACTS) {
   const artifactPath = join(repoRoot, c.artifact);
@@ -114,6 +148,12 @@ export const ${c.prefix}_SALT =
 export const ${c.prefix}_INIT_CODE_HASH =
   "${initCodeHash}" as const;
 
+/**
+ * Gas used by the canonical Arachnid-proxy CREATE2 deployment, measured by
+ * replaying it on an in-process Hardhat network at export time.
+ */
+export const ${c.prefix}_DEPLOY_GAS = ${deployGas[c.name]};
+
 ${c.includeProxyConstants ? `${PROXY_CONSTANTS}\n` : ""}/** Creation bytecode of the ${c.name} contract (no constructor args). */
 export const ${c.prefix}_CREATION_BYTECODE =
   "${creationBytecode}" as const;
@@ -125,6 +165,6 @@ export const ${c.prefix}_CREATION_BYTECODE =
   console.log(
     `Exported ${((creationBytecode.length - 2) / 2 / 1024).toFixed(1)} KiB of ` +
       `${c.name} creation bytecode to ${c.output} ` +
-      `(predicted address ${predicted}).`,
+      `(predicted address ${predicted}, deploy gas ${deployGas[c.name]}).`,
   );
 }

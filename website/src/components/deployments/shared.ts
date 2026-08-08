@@ -5,13 +5,20 @@ import { polygon } from "viem/chains";
 import {
   ASSERTIONS_ADDRESS,
   ASSERTIONS_CREATION_BYTECODE,
+  ASSERTIONS_DEPLOY_GAS,
   ASSERTIONS_SALT,
 } from "../../lib/assertions-deployment";
 import {
   COMBINATORS_ADDRESS,
   COMBINATORS_CREATION_BYTECODE,
+  COMBINATORS_DEPLOY_GAS,
   COMBINATORS_SALT,
 } from "../../lib/combinators-deployment";
+
+/** "1245095" -> "~1.2M", for UI copy. */
+export function formatDeployGas(gas: number): string {
+  return `~${(gas / 1e6).toFixed(1)}M`;
+}
 
 /** The two contracts that make up a canonical deployment on a chain. */
 export interface DeployableContract {
@@ -31,7 +38,7 @@ export const DEPLOYED_CONTRACTS: DeployableContract[] = [
     address: ASSERTIONS_ADDRESS,
     salt: ASSERTIONS_SALT,
     bytecode: ASSERTIONS_CREATION_BYTECODE,
-    gasLabel: "~4.5M",
+    gasLabel: formatDeployGas(ASSERTIONS_DEPLOY_GAS),
   },
   {
     key: "combinators",
@@ -39,7 +46,7 @@ export const DEPLOYED_CONTRACTS: DeployableContract[] = [
     address: COMBINATORS_ADDRESS,
     salt: COMBINATORS_SALT,
     bytecode: COMBINATORS_CREATION_BYTECODE,
-    gasLabel: "~1.4M",
+    gasLabel: formatDeployGas(COMBINATORS_DEPLOY_GAS),
   },
 ];
 

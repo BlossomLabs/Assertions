@@ -20,7 +20,7 @@ import {
 import {
   getEtherscanChains,
   isContractVerified,
-  verifyFromMainnet,
+  verifyContracts,
   type VerifyProgress,
 } from "./verification";
 import { ALL_CHAINS, chainById } from "./wagmi";
@@ -54,8 +54,7 @@ type VerifyState =
   | { step: "error"; message: string };
 
 const VERIFY_PROGRESS_LABELS: Record<VerifyProgress, string> = {
-  "fetching-source": "Fetching the verified source from mainnet…",
-  submitting: "Submitting to the explorer…",
+  submitting: "Submitting the source to the explorer…",
   polling: "Waiting for the explorer to verify…",
   verified: "Verified",
   "already-verified": "Already verified",
@@ -377,7 +376,7 @@ export function DeploySection({
   async function runVerification(key = apiKey) {
     if (!key) return;
     try {
-      const result = await verifyFromMainnet(chain.id, key, (progress) =>
+      const result = await verifyContracts(chain.id, key, (progress) =>
         setVerifyState({ step: "running", progress }),
       );
       setVerifyState({
@@ -780,8 +779,8 @@ export function DeploySection({
             ) : (
               <div className="space-y-2">
                 <p className="text-xs text-[var(--color-ink-3)] leading-relaxed">
-                  Replays the mainnet Etherscan verification on this chain's
-                  explorer.
+                  Submits the compiler input bundled with this site to the
+                  chain's explorer.
                 </p>
                 <button
                   type="button"

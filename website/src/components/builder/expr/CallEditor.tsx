@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { isAddress, parseAbiItem } from "viem";
 
-import type { CallHop, LensLevel, ValueExpr } from "../assertion-model";
-import { lensLevelOf, resolveLens } from "../assertion-model";
+import type { CallArg, CallHop, LensLevel, ValueExpr } from "../assertion-model";
+import { emptyCall, isCallArgNode, lensLevelOf, resolveLens } from "../assertion-model";
 import {
   canonicalType,
   inputCls,
@@ -43,39 +43,78 @@ function parseInlineHop(sig: string, ret: string): Omit<CallHop, "args"> | null 
   }
 }
 
-/** Argument input rows for one hop. */
+/** Argument input rows for one hop: raw text by default, or a nested live
+ *  call (resolved and spliced in at assertion time) behind a toggle. */
 function ArgInputs({
   inputs,
   hop,
   onArgs,
+  chainId,
+  allowChain,
+  allowCallArgs,
 }: {
   inputs: { name: string; type: string }[];
   hop: CallHop;
-  onArgs: (args: string[]) => void;
+  onArgs: (args: CallArg[]) => void;
+  chainId: number;
+  allowChain: boolean;
+  allowCallArgs: boolean;
 }) {
   if (inputs.length === 0) return null;
+  const setArg = (i: number, value: CallArg) => {
+    const args = [...hop.args];
+    args[i] = value;
+    onArgs(args);
+  };
   return (
     <div className="space-y-2">
-      {inputs.map((input, i) => (
-        <div key={`${input.name}-${i}`}>
-          <label className={smallLabelCls}>
-            {input.name} <span className="opacity-60">({input.type})</span>
-            {input.type === "address" && (
-              <span className="opacity-60"> (@me = the executor)</span>
+      {inputs.map((input, i) => {
+        const arg = hop.args[i];
+        const nested = isCallArgNode(arg) ? arg : null;
+        return (
+          <div key={`${input.name}-${i}`}>
+            <label className={smallLabelCls}>
+              {input.name} <span className="opacity-60">({input.type})</span>
+              {!nested && input.type === "address" && (
+                <span className="opacity-60"> (@me = the executor)</span>
+              )}
+              {allowCallArgs && (
+                <button
+                  type="button"
+                  className="ml-2 text-xs font-sans normal-case tracking-normal text-[var(--color-bp-300)] hover:underline"
+                  title={
+                    nested
+                      ? "Back to a plain text value"
+                      : "Fill this argument with a view call, read and spliced in at assertion time"
+                  }
+                  onClick={() => setArg(i, nested ? "" : emptyCall())}
+                >
+                  {nested ? "text value" : "live call…"}
+                </button>
+              )}
+            </label>
+            {nested ? (
+              <div className="pl-3 border-l-2 border-[var(--color-ink-3)]/15">
+                <CallEditor
+                  node={nested}
+                  onChange={(updater) => setArg(i, updater(nested))}
+                  chainId={chainId}
+                  compact
+                  allowChain={allowChain}
+                  allowCallArgs
+                />
+              </div>
+            ) : (
+              <input
+                className={inputCls}
+                value={typeof arg === "string" ? arg : ""}
+                onChange={(e) => setArg(i, e.target.value)}
+                spellCheck={false}
+              />
             )}
-          </label>
-          <input
-            className={inputCls}
-            value={hop.args[i] ?? ""}
-            onChange={(e) => {
-              const args = [...hop.args];
-              args[i] = e.target.value;
-              onArgs(args);
-            }}
-            spellCheck={false}
-          />
-        </div>
-      ))}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -86,10 +125,16 @@ function InlineHopEditor({
   hop,
   onHop,
   compact,
+  chainId,
+  allowChain,
+  allowCallArgs,
 }: {
   hop: CallHop;
   onHop: (hop: CallHop) => void;
   compact: boolean;
+  chainId: number;
+  allowChain: boolean;
+  allowCallArgs: boolean;
 }) {
   const [sig, setSig] = useState(() =>
     hop.inline && hop.fnName ? `${hop.fnName}(${hop.argTypes.join(",")})` : "",
@@ -161,6 +206,9 @@ function InlineHopEditor({
         inputs={argInputs}
         hop={hop}
         onArgs={(args) => onHop({ ...hop, args })}
+        chainId={chainId}
+        allowChain={allowChain}
+        allowCallArgs={allowCallArgs}
       />
     </div>
   );
@@ -179,6 +227,7 @@ export function CallEditor({
   chainId,
   compact = false,
   allowChain = true,
+  allowCallArgs = true,
 }: {
   node: CallNode;
   onChange: (updater: (node: CallNode) => CallNode) => void;
@@ -188,6 +237,9 @@ export function CallEditor({
   /** Chained hops compile through the combinators contract, so the simple
    *  form (single call, no combinators) turns them off. */
   allowChain?: boolean;
+  /** Nested live calls as arguments compile to assertComposable
+   *  construction batches, so the simple form turns them off too. */
+  allowCallArgs?: boolean;
 }) {
   const contract = useContractFunctions(chainId, node.target, "view");
   const hop = node.hops[0] ?? emptyHop();
@@ -404,6 +456,9 @@ export function CallEditor({
           hop={hop}
           onHop={(next) => setHop(0, next)}
           compact={compact}
+          chainId={chainId}
+          allowChain={allowChain}
+          allowCallArgs={allowCallArgs}
         />
       ) : (
         selectedFn && (
@@ -411,6 +466,9 @@ export function CallEditor({
             inputs={selectedFn.inputs}
             hop={hop}
             onArgs={(args) => setHop(0, { ...hop, args })}
+            chainId={chainId}
+            allowChain={allowChain}
+            allowCallArgs={allowCallArgs}
           />
         )
       )}
@@ -476,6 +534,9 @@ export function CallEditor({
               hop={chained}
               onHop={(next) => setHop(i + 1, next)}
               compact
+              chainId={chainId}
+              allowChain={allowChain}
+              allowCallArgs={allowCallArgs}
             />
           </div>
         );

@@ -72,11 +72,21 @@ async function renderCall(
   let out = target;
   for (const hop of expr.hops) {
     if (!hop.fnName) return null;
-    if (hop.args.some((a) => !a.trim())) return null;
     if (hop.args.length !== hop.argTypes.length) return null;
-    const argVals = await Promise.all(
-      hop.argTypes.map((type, i) => evmlArg(type, hop.args[i], ctx.ensToVar)),
-    );
+    const argVals: string[] = [];
+    for (let i = 0; i < hop.args.length; i++) {
+      const arg = hop.args[i];
+      if (typeof arg !== "string") {
+        // A nested live call: renders as its own (possibly inline-ABI)
+        // call expression, resolved and spliced in at assertion time.
+        const rendered = await renderCall(arg, ctx);
+        if (!rendered) return null;
+        argVals.push(rendered);
+      } else {
+        if (!arg.trim()) return null;
+        argVals.push(await evmlArg(hop.argTypes[i], arg, ctx.ensToVar));
+      }
+    }
     out += hop.inline
       ? `::{${hop.fnName}(${hop.argTypes.join(",")})(${hop.returnTypes.join(",")})${argVals.length ? ` ${argVals.join(" ")}` : ""}}`
       : `::${hop.fnName}(${argVals.join(" ")})`;

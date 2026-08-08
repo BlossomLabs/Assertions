@@ -83,7 +83,11 @@ export function isEvaluable(expr: ValueExpr): boolean {
         callAddress(expr) !== null &&
         expr.hops.length > 0 &&
         expr.hops.every(
-          (h) => h.fnName && h.args.every((a) => a.trim()),
+          (h) =>
+            h.fnName &&
+            h.args.every((a) =>
+              typeof a === "string" ? a.trim() : isEvaluable(a),
+            ),
         )
       );
     case "balance":
@@ -160,8 +164,15 @@ async function evalCall(
       address,
       abi: [abiItem],
       functionName: hop.fnName,
-      args: hop.argTypes.map((type, i) =>
-        parseCallArg(type, hop.args[i] ?? "", executor),
+      args: await Promise.all(
+        hop.argTypes.map((type, i) => {
+          const arg = hop.args[i];
+          // A nested live call argument: read its (lens-narrowed) value
+          // now — a build-time snapshot of what the judge splices live.
+          if (typeof arg === "object")
+            return evalCall(client, arg, executor);
+          return parseCallArg(type, arg ?? "", executor);
+        }),
       ),
     });
     if (i < expr.hops.length - 1) {

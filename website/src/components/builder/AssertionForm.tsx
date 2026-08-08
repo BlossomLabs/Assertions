@@ -110,7 +110,7 @@ const MODES: {
   {
     value: "advanced",
     label: "Composed expression",
-    dependency: "Uses Combinators v1.0",
+    dependency: "Uses Combinators v2.0",
     hint: "Chain, combine, or transform runtime values.",
   },
   {
@@ -588,6 +588,7 @@ export function AssertionForm({
             onChange={(updater) => setCallNode(updater)}
             chainId={chainId}
             allowChain={false}
+            allowCallArgs={false}
           />
           {callIssues.length > 0 && (
             <Callout tone="error">

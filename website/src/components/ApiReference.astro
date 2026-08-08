@@ -1,132 +1,31 @@
 ---
 const sections = [
   {
-    title: 'Uint256 Assertions',
+    title: 'The judge (Assertions core)',
     fns: [
-      { name: 'assertEqCallUint', desc: 'Assert return equals expected' },
-      { name: 'assertNeCallUint', desc: 'Assert return not equals expected' },
-      { name: 'assertGtCallUint', desc: 'Assert return > expected' },
-      { name: 'assertLtCallUint', desc: 'Assert return < expected' },
-      { name: 'assertGeCallUint', desc: 'Assert return >= expected' },
-      { name: 'assertLeCallUint', desc: 'Assert return <= expected' },
-      { name: 'assertApproxEqCallUint', desc: 'Assert return ≈ expected (within delta)' },
+      { name: 'assertParam', desc: 'Assert one ERC-8211 input parameter: resolve its value (raw bytes, staticcall, or balance read) and validate its inline constraints — the 90% case, no batch scaffolding' },
+      { name: 'assertComposable', desc: 'Assert an ERC-8211 composable batch under view semantics: entries construct calls by splicing resolved parameters, constraints validate along the way (nested live call arguments compile to this)' },
+      { name: 'assertComposable (wrapped)', desc: 'Assert that a deployed ERC-8211 implementation would accept a batch right now — the relayer eth_call gate, made composable on-chain' },
     ],
   },
   {
-    title: 'Int256 Assertions',
+    title: 'ERC-8211 wire format (what the judge consumes)',
     fns: [
-      { name: 'assertEqCallInt', desc: 'Assert return equals expected' },
-      { name: 'assertNeCallInt', desc: 'Assert return not equals expected' },
-      { name: 'assertGtCallInt', desc: 'Assert return > expected' },
-      { name: 'assertLtCallInt', desc: 'Assert return < expected' },
-      { name: 'assertGeCallInt', desc: 'Assert return >= expected' },
-      { name: 'assertLeCallInt', desc: 'Assert return <= expected' },
-      { name: 'assertApproxEqCallInt', desc: 'Assert return ≈ expected (within delta)' },
-    ],
-  },
-  {
-    title: 'Address Assertions',
-    fns: [
-      { name: 'assertEqCallAddress', desc: 'Assert return equals expected address' },
-      { name: 'assertNeCallAddress', desc: 'Assert return not equals expected address' },
-    ],
-  },
-  {
-    title: 'Bool Assertions',
-    fns: [
-      { name: 'assertEqCallBool', desc: 'Assert return equals expected bool' },
-      { name: 'assertTrue', desc: 'Assert return is true' },
-      { name: 'assertFalse', desc: 'Assert return is false' },
-    ],
-  },
-  {
-    title: 'Bytes32 & Raw Bytes Assertions',
-    fns: [
-      { name: 'assertEqCallBytes32', desc: 'Assert return equals expected bytes32' },
-      { name: 'assertNeCallBytes32', desc: 'Assert return not equals expected bytes32' },
-      { name: 'assertEqCallBytes', desc: 'Assert raw return bytes equal expected' },
-      { name: 'assertNeCallBytes', desc: 'Assert raw return bytes not equal expected' },
-    ],
-  },
-  {
-    title: 'Tuple-Indexed (N suffix)',
-    fns: [
-      { name: 'assertEqCallUintN', desc: 'Assert specific tuple element (uint256)' },
-      { name: 'assertNeCallUintN', desc: 'Assert tuple element not equals expected' },
-      { name: 'assertGtCallUintN', desc: 'Assert tuple element > expected' },
-      { name: 'assertLtCallUintN', desc: 'Assert tuple element < expected' },
-      { name: 'assertGeCallUintN', desc: 'Assert tuple element >= expected' },
-      { name: 'assertLeCallUintN', desc: 'Assert tuple element <= expected' },
-      { name: 'assertEqCallIntN', desc: 'Assert tuple element (int256)' },
-      { name: 'assertNeCallIntN', desc: 'Assert tuple element not equals (int256)' },
-      { name: 'assertGtCallIntN', desc: 'Assert tuple element > expected (int256)' },
-      { name: 'assertLtCallIntN', desc: 'Assert tuple element < expected (int256)' },
-      { name: 'assertGeCallIntN', desc: 'Assert tuple element >= expected (int256)' },
-      { name: 'assertLeCallIntN', desc: 'Assert tuple element <= expected (int256)' },
-      { name: 'assertEqCallAddressN', desc: 'Assert tuple element (address)' },
-      { name: 'assertNeCallAddressN', desc: 'Assert tuple element not equals (address)' },
-      { name: 'assertEqCallBoolN', desc: 'Assert tuple element (bool)' },
-      { name: 'assertEqCallBytes32N', desc: 'Assert tuple element (bytes32)' },
-      { name: 'assertNeCallBytes32N', desc: 'Assert tuple element not equals (bytes32)' },
-      { name: 'assertEqCallStringN', desc: 'Assert tuple element (string)' },
-      { name: 'assertNeCallStringN', desc: 'Assert tuple element not equals (string)' },
-      { name: 'assertApproxEqCallUintN', desc: 'Assert tuple element ≈ expected' },
-      { name: 'assertApproxEqCallIntN', desc: 'Assert tuple element ≈ expected (int256)' },
-    ],
-  },
-  {
-    title: 'Array Assertions',
-    fns: [
-      { name: 'assertEqCallArrayLength', desc: 'Assert array length equals expected' },
-      { name: 'assertNeCallArrayLength', desc: 'Assert array length not equals expected' },
-      { name: 'assertGtCallArrayLength', desc: 'Assert array length > expected' },
-      { name: 'assertGeCallArrayLength', desc: 'Assert array length >= expected' },
-      { name: 'assertLtCallArrayLength', desc: 'Assert array length < expected' },
-      { name: 'assertLeCallArrayLength', desc: 'Assert array length <= expected' },
-    ],
-  },
-  {
-    title: 'Balance Assertions',
-    fns: [
-      { name: 'assertEqBalance', desc: 'Assert native balance equals expected' },
-      { name: 'assertGtBalance', desc: 'Assert native balance > expected' },
-      { name: 'assertLtBalance', desc: 'Assert native balance < expected' },
-      { name: 'assertGeBalance', desc: 'Assert native balance >= expected' },
-      { name: 'assertLeBalance', desc: 'Assert native balance <= expected' },
-      { name: 'assertApproxEqBalance', desc: 'Assert native balance ≈ expected' },
-    ],
-  },
-  {
-    title: 'Block Assertions',
-    fns: [
-      { name: 'assertEqBlockNumber', desc: 'Assert block.number equals expected' },
-      { name: 'assertGtBlockNumber', desc: 'Assert block.number > expected' },
-      { name: 'assertLtBlockNumber', desc: 'Assert block.number < expected' },
-      { name: 'assertGeBlockNumber', desc: 'Assert block.number >= expected' },
-      { name: 'assertLeBlockNumber', desc: 'Assert block.number <= expected' },
-      { name: 'assertEqBlockTimestamp', desc: 'Assert block.timestamp equals expected' },
-      { name: 'assertGtBlockTimestamp', desc: 'Assert block.timestamp > expected' },
-      { name: 'assertLtBlockTimestamp', desc: 'Assert block.timestamp < expected' },
-      { name: 'assertGeBlockTimestamp', desc: 'Assert block.timestamp >= expected' },
-      { name: 'assertLeBlockTimestamp', desc: 'Assert block.timestamp <= expected' },
-    ],
-  },
-  {
-    title: 'Chain & Contract',
-    fns: [
-      { name: 'assertEqChainId', desc: 'Assert chain ID equals expected' },
-      { name: 'assertHasCode', desc: 'Assert address has deployed code' },
-      { name: 'assertNoCode', desc: 'Assert address has no code' },
-      { name: 'assertEqCodeHash', desc: 'Assert address has specific code hash' },
+      { name: 'InputParam', desc: 'One runtime-resolved value: a fetcher (RAW_BYTES literal, STATIC_CALL, or BALANCE — native or ERC-20), inline constraints, and a routing type' },
+      { name: 'Constraint', desc: 'An inline predicate on a resolved value: EQ, GTE, LTE, or IN (inclusive bounds) over its first 32-byte word' },
+      { name: 'ComposableExecution', desc: 'One batch entry: a function selector plus input parameters whose resolved values are spliced into the constructed call' },
     ],
   },
   {
     title: 'Combinators (composition)',
     fns: [
-      { name: 'read', desc: 'Navigated staticcall chains: per-hop calldata plus a return type and index path — raw passthrough, word extraction, typed navigation into tuples/arrays, and decoded lengths (LEN sentinel), all in one primitive' },
+      { name: 'resolve', desc: 'Resolve one operand and return its bytes — with constraint validation, any expression node becomes an inline assert' },
+      { name: 'pick', desc: 'Select a raw 32-byte word from a resolved operand (signed index, negative from the end)' },
+      { name: 'nav', desc: 'Typed navigation: interpret a resolved operand as a declared return tuple and walk a path through tuples and dynamic arrays — single words, canonical dynamic envelopes, and decoded lengths (LEN sentinel)' },
+      { name: 'chain', desc: 'Follow runtime-resolved addresses: each hop staticcalls the address the previous hop returned' },
       { name: 'calc', desc: 'Binary word op over two operands, one opcode enum: arithmetic (Add…Exp, Min/Max, AbsDiff) with signed variants, bitwise (And/Or/Xor/Shl/Shr) and 0/1-returning comparisons (Eq…SGe)' },
       { name: 'unary', desc: 'Unary word op over one operand: Not (bitwise complement), IsZero (logical not), Balance and CodeHash of a call-resolved address' },
-      { name: 'data', desc: 'Raw-returndata ops over a call chain: Split (delimiter segment), Includes (substring), Charset (byte-class bitmap), Hash (keccak256), ByteLen' },
+      { name: 'data', desc: 'Raw-bytes ops over a resolved operand: Split (delimiter segment), Includes (substring), Charset (byte-class bitmap), Hash (keccak256), ByteLen' },
       { name: 'env', desc: 'Constants and environment values as operands: Constant echo, Timestamp, BlockNumber, ChainId, Balance(addr), CodeHash(addr)' },
     ],
   },
@@ -139,11 +38,13 @@ const sections = [
       API Reference
     </h2>
     <p class="text-center text-[var(--color-ink-2)] text-lg mb-16 max-w-2xl mx-auto">
-      Assertion functions live on the frozen Assertions core and have overloaded
-      versions accepting a custom error message. Combinators live on the
-      versionable Combinators contract — small composable building blocks
-      consumed by pointing core call assertions at the Combinators address.
-      Assertions judge, Combinators compute.
+      Since v2.0, assertions speak <a href="https://www.erc8211.com/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-bp-400)] hover:underline underline-offset-4">ERC-8211</a>: describe the on-chain values to
+      fetch (raw bytes, staticcall results, or balances) and the constraints
+      they must satisfy. The Assertions core resolves everything live and
+      reverts the transaction if any constraint fails, with a custom error
+      message if you provide one. When a value needs computing first, like
+      math, decoding, or chained lookups, the Combinators contract builds it
+      and the core judges the result. Assertions judge, Combinators compute.
     </p>
     <div class="flex flex-col gap-3">
       {sections.map((section) => (

@@ -12,7 +12,7 @@ import { isAddress } from "viem";
 /**
  * The assertion expression model. An assertion compares two value
  * expressions; each side is a tree of contract calls, literals and
- * assertions-1.1 combinators (`@min!`, `@absdiff!`, `@num!`, …) that the
+ * Combinators v2 helpers (`@min!`, `@absdiff!`, `@num!`, …) that the
  * codegen renders into an `assertions:assert` line.
  *
  * Nodes hold only serializable strings — ABI fetching and ENS resolution
@@ -39,6 +39,18 @@ export type Category =
   | "tuple"
   | "unknown";
 
+/** A call node — the `kind: "call"` member of ValueExpr, also usable as a
+ *  nested live argument of another call. */
+export type CallNode = Extract<ValueExpr, { kind: "call" }>;
+
+/** One positional argument of a hop: raw form text, or a nested live call
+ *  whose result splices into the calldata at assertion time. */
+export type CallArg = string | CallNode;
+
+export function isCallArgNode(arg: CallArg | undefined): arg is CallNode {
+  return arg !== undefined && typeof arg !== "string";
+}
+
 /** One segment of a `::` call chain. */
 export interface CallHop {
   /** "" until a function is chosen. */
@@ -50,8 +62,8 @@ export interface CallHop {
   /** Canonical output types (multiple allowed — one is selected via
    *  `lensIndex`, mid-chain or on the final hop). */
   returnTypes: string[];
-  /** Raw form strings, positional. */
-  args: string[];
+  /** Positional arguments: raw form strings, or nested live calls. */
+  args: CallArg[];
   /** On a hop with several return values: the index of the output the
    *  expression uses, rendered as a destructure lens (`[_ $ _]`). On a
    *  non-final hop it must select an address (the chain continues on it);
@@ -132,7 +144,7 @@ export interface Assertion {
 }
 
 export const emptyLiteral = (): ValueExpr => ({ kind: "literal", value: "" });
-export const emptyCall = (): ValueExpr => ({
+export const emptyCall = (): CallNode => ({
   kind: "call",
   target: "",
   resolved: null,
@@ -484,6 +496,81 @@ export interface Issue {
   message: string;
 }
 
+const WORD_CATS: Category[] = ["uint", "int", "address", "bool", "bytes32"];
+
+/** The type a nested-arg call supplies: its selected output narrowed by the
+ *  lens path. Null while the call is incomplete (no function, no return
+ *  selection yet, or a malformed lens — reported elsewhere). */
+function nestedArgTerminal(arg: CallNode): string | null {
+  const last = arg.hops[arg.hops.length - 1];
+  if (!last?.fnName || last.returnTypes.length === 0) return null;
+  const lens = resolveLens(last);
+  if (!lens || !lens.valid) return null;
+  return lens.terminal;
+}
+
+/** Mirror of the module compiler's nested live-argument rules
+ *  (`compileLiveCallArg` + the construct-time dynamic-hole restrictions):
+ *  single-word selections must category-match the declared type; dynamic
+ *  selections must match it exactly, sit in the last argument slot and only
+ *  in the outermost (top-level) judged call. */
+function nestedArgIssue(
+  arg: CallNode,
+  declared: string,
+  isLastArg: boolean,
+  topLevel: boolean,
+): string | null {
+  const terminal = nestedArgTerminal(arg);
+  if (terminal === null) return null;
+  const cat = categoryFromAbiType(terminal);
+  const declaredCat = categoryFromAbiType(declared);
+  if (WORD_CATS.includes(cat)) {
+    return cat === declaredCat
+      ? null
+      : `The nested call resolves a ${terminal} value, but this argument is ${declared}.`;
+  }
+  if (terminal !== declared)
+    return `The nested call resolves a ${terminal} value, but this argument is ${declared} — adjust the selection to a matching value.`;
+  if (!topLevel)
+    return "A dynamic-typed (array/string/bytes) live argument only works in the outermost judged call — not inside a composed expression.";
+  if (!isLastArg)
+    return "A dynamic-typed (array/string/bytes) live argument must be the last argument — the judge appends its runtime-sized value.";
+  return null;
+}
+
+/** Count dynamic-typed nested live arguments across the whole tree — the
+ *  judge supports at most one per assertion. */
+function countDynCallArgs(expr: ValueExpr): number {
+  let count = 0;
+  const visitCall = (call: CallNode): void => {
+    for (const hop of call.hops) {
+      for (const a of hop.args) {
+        if (!isCallArgNode(a)) continue;
+        const terminal = nestedArgTerminal(a);
+        if (
+          terminal !== null &&
+          !WORD_CATS.includes(categoryFromAbiType(terminal))
+        )
+          count++;
+        visitCall(a);
+      }
+    }
+  };
+  const visit = (node: ValueExpr): void => {
+    if (node.kind === "call") {
+      visitCall(node);
+      return;
+    }
+    for (const value of Object.values(node)) {
+      if (Array.isArray(value)) value.forEach((v) => v?.kind && visit(v));
+      else if (value && typeof value === "object" && "kind" in value)
+        visit(value as ValueExpr);
+    }
+  };
+  visit(expr);
+  return count;
+}
+
 function walk(
   expr: ValueExpr,
   path: Path,
@@ -492,6 +579,10 @@ function walk(
   /** Direct child of a call-consuming helper (@len!, @split!, …), which
    *  accepts string/bytes/array selections a comparison can't judge. */
   inCallHelper = false,
+  /** Nested live argument of another call: its selection splices into
+   *  calldata (word or dynamic hole), so the word-machine operand
+   *  restrictions don't apply — arg typing is checked by the caller. */
+  asCallArg = false,
 ): void {
   switch (expr.kind) {
     case "literal": {
@@ -522,11 +613,14 @@ function walk(
       if (lens?.issue) issues.push({ path, message: lens.issue });
       // A nested (path) selection compiles to a typed read whose terminal
       // must be a single word — except inside the call-consuming helpers
-      // (@len!, @split!, …), which accept string/bytes/array selections.
+      // (@len!, @split!, …), which accept string/bytes/array selections,
+      // and nested live arguments, whose dynamic selections splice as
+      // envelope holes (checked against the declared type by the caller).
       if (
         lens?.valid &&
         lens.entries.length > 0 &&
         !inCallHelper &&
+        !asCallArg &&
         ["string", "bytes"].includes(categoryFromAbiType(lens.terminal))
       )
         issues.push({
@@ -539,6 +633,7 @@ function walk(
       // typed read instead and may be any single-word value.
       if (
         depth > 0 &&
+        !asCallArg &&
         last &&
         last.returnTypes.length > 1 &&
         last.lensIndex !== undefined &&
@@ -553,6 +648,22 @@ function walk(
             message:
               "Inside a composed expression, a return-value selection must be a number (uint/int). Compare this call at the top level instead.",
           });
+      }
+      // Nested live call arguments: mirror the compiler's typing and
+      // placement rules and recurse (issues attach to this node's path —
+      // the closest one the editor renders).
+      for (const hop of expr.hops) {
+        hop.args.forEach((a, i) => {
+          if (!isCallArgNode(a)) return;
+          const msg = nestedArgIssue(
+            a,
+            hop.argTypes[i] ?? "",
+            i === hop.argTypes.length - 1,
+            depth === 0,
+          );
+          if (msg) issues.push({ path, message: msg });
+          walk(a, path, depth + 1, issues, false, true);
+        });
       }
       break;
     }
@@ -707,6 +818,16 @@ export function validateAssertion(assertion: Assertion): Issue[] {
   walk(assertion.subject, ["subject"], 0, issues);
   if (assertion.expected)
     walk(assertion.expected, ["expected"], 0, issues);
+
+  const dynArgs =
+    countDynCallArgs(assertion.subject) +
+    (assertion.expected ? countDynCallArgs(assertion.expected) : 0);
+  if (dynArgs > 1)
+    issues.push({
+      path: [],
+      message:
+        "At most one dynamic-typed (array/string/bytes) live argument per assertion — the judge splices a single runtime-sized value.",
+    });
 
   const subjConst = isBuildTimeConst(assertion.subject);
   const expConst = assertion.expected

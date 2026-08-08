@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
+import {
+    ComposableExecution,
+    ComposableLib,
+    IComposableExecution,
+    InputParam,
+    InputParamType
+} from "../ERC8211.sol";
+
 /// @title MockTarget
 /// @notice Helper contract returning known values for testing call-based assertions
 contract MockTarget {
@@ -93,6 +101,17 @@ contract MockTarget {
     /// @notice Always reverts for CallFailed tests
     function revertingFunction() external pure {
         revert("MockTarget: intentional revert");
+    }
+
+    /// @notice Reverts unless called with exactly 42 — verifies calldata
+    ///         constructed by the ERC-8211 judge arrives intact
+    function checkValue(uint256 v) external pure {
+        require(v == 42, "wrong value");
+    }
+
+    /// @notice Two-argument variant for multi-CALL_DATA construction tests
+    function checkPair(uint256 a, address b) external pure {
+        require(a == 42 && b == address(0xBEEF), "wrong pair");
     }
 
     /// @notice Returns raw bytes for raw bytes comparison tests
@@ -190,6 +209,18 @@ contract MockToken {
         rows[2] = new address[](0);
     }
 
+    /// @notice An owner word before nested dynamic rows — the
+    ///         "(address,address[][])" shape used by nav lens tests
+    function ownersMatrix() external pure returns (address owner, address[][] memory rows) {
+        owner = address(0xb055);
+        rows = new address[][](2);
+        rows[0] = new address[](1);
+        rows[0][0] = address(0xaaa1);
+        rows[1] = new address[](2);
+        rows[1][0] = address(0xbbb1);
+        rows[1][1] = address(0xbbb2);
+    }
+
     struct Proposal {
         address proposer;
         uint256 votes;
@@ -263,5 +294,41 @@ contract MockToken {
     }
 }
 
-/// @title AssertionsTest
-/// @notice Comprehensive test suite for the Assertions contract
+/// @title MockComposable
+/// @notice A minimal IComposableExecution implementation for testing the
+///         wrapped judge path (assertComposable(address, executions)). It
+///         follows the normative ERC-8211 algorithm using the shared
+///         resolution library and executes constructed calls with CALL, so
+///         predicate-only batches pass a staticcall into executeComposable
+///         while state-changing batches make it fail.
+/// @dev Output parameters are ignored (no Storage contract in the test
+///      rig); duplicate-TARGET/VALUE validation is omitted for brevity.
+contract MockComposable is IComposableExecution {
+    function executeComposable(ComposableExecution[] calldata executions) external payable {
+        for (uint256 i = 0; i < executions.length; i++) {
+            ComposableExecution calldata entry = executions[i];
+            address target;
+            uint256 value;
+            bytes memory callData = abi.encodePacked(entry.functionSig);
+            for (uint256 j = 0; j < entry.inputParams.length; j++) {
+                InputParam calldata param = entry.inputParams[j];
+                bytes memory resolved = ComposableLib.resolve(param, "", i, j);
+                if (param.paramType == InputParamType.TARGET) {
+                    target = ComposableLib.asAddress(ComposableLib.firstWord(resolved), j);
+                } else if (param.paramType == InputParamType.VALUE) {
+                    value = uint256(ComposableLib.firstWord(resolved));
+                } else {
+                    callData = bytes.concat(callData, resolved);
+                }
+            }
+            if (target != address(0)) {
+                (bool success, bytes memory ret) = target.call{value: value}(callData);
+                if (!success) {
+                    assembly {
+                        revert(add(ret, 32), mload(ret))
+                    }
+                }
+            }
+        }
+    }
+}

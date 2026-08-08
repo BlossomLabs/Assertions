@@ -1,47 +1,44 @@
 # Assertions
 
-On-chain assertion contracts for verifying view function return values and blockchain state in Solidity. Batch assertion calls alongside the transactions they guard (DAO proposals, Safe batches, upgrades): if any assertion fails, the entire transaction reverts, atomically.
+On-chain assertion contracts for verifying blockchain state in Solidity, built around a static call to [ERC-8211 (Smart Batching)](https://www.erc8211.com/). An assertion is an ERC-8211 predicate: an `InputParam` that declares how to fetch a live value (`RAW_BYTES` literal, arbitrary `STATIC_CALL`, or `BALANCE` query) and the inline `Constraint`s (`EQ` / `GTE` / `LTE` / `IN`) it must satisfy. Batch assertion calls alongside the transactions they guard (DAO proposals, Safe batches, upgrades): if any constraint fails, the entire transaction reverts, atomically.
 
 **Assertions judge, Combinators compute.**
 
-- **`Assertions` (the core)** executes view functions via `staticcall` and compares the results against expected values, reverting with descriptive custom errors on failure. The core is frozen forever: no future version changes its behavior at its canonical address.
-- **`Combinators` (the periphery)** provides five composable building blocks — `read`, `calc`, `unary`, `data`, `env` — that compute arbitrary expressions over live on-chain values. The core judges the final value by pointing any call assertion at the Combinators address.
+- **`Assertions` (the core)** judges ERC-8211 batches in view mode: `assertParam` resolves one input parameter and validates its constraints; `assertComposable(executions)` evaluates a full `ComposableExecution[]` batch with every fetcher and every constructed call executed via `staticcall`; `assertComposable(composable, executions)` performs the literal static call to a deployed `IComposableExecution` implementation — the on-chain equivalent of a relayer's `eth_call` gate.
+- **`Combinators` (the periphery)** fills the expressiveness gaps of the ERC-8211 constraint set with composable building blocks — `resolve`, `pick`, `nav`, `chain`, `calc`, `unary`, `data`, `env` — whose operands are themselves ERC-8211 `InputParam`s. The core judges the final value through a constrained `STATIC_CALL` fetcher pointed at the Combinators address.
+- **`ERC8211.sol`** carries the standard's wire format (`ComposableExecution`, `InputParam`, `Constraint`), the `IComposableExecution` interface, and the shared resolution library both contracts use — batches produced by any ERC-8211 SDK decode here unchanged.
 
 ## Canonical addresses (same on every chain)
 
 ```
-Assertions  v1.1  0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0   (frozen core)
-Combinators v1.0  0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC   (versionable periphery)
+Assertions  v2.0  0xA55E4797c1b755183B7Aad07BFd39D3e824621f9   (ERC-8211 judge)
+Combinators v2.0  0xA55EC06e0A82a5ed05bf08c0ff07A45d4BC2eBf8   (versionable periphery)
 ```
 
-Core v1.0 remains deployed at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F); v1.1 is a strict superset of its ABI.
+Deployed versions are immutable and keep working forever at their own canonical addresses: the v1.1 typed-assert core lives at `0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0` with Combinators v1.0 at `0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC`, and the original v1.0 core at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
 
 ## Quick example
 
 ```solidity
-// In a DAO proposal's action list:
-assertions.assertGeCallUint(
-    treasury,
-    abi.encodeCall(IERC20.balanceOf, (treasury)),
-    requiredBalance,
-    "Treasury balance too low"
-);
+// In a DAO proposal's action list: assert the treasury keeps
+// at least `requiredBalance` after the transfer.
+Constraint[] memory constraints = new Constraint[](1);
+constraints[0] = Constraint(ConstraintType.GTE, abi.encode(requiredBalance));
 
 treasury.transfer(recipient, amount);
 
-assertions.assertEqCallAddress(
-    treasury,
-    abi.encodeCall(Ownable.owner, ()),
-    address(dao),
-    "Treasury ownership compromised"
+assertions.assertParam(
+    InputParam({
+        paramType: InputParamType.CALL_DATA,
+        fetcherType: InputParamFetcherType.BALANCE,
+        paramData: abi.encodePacked(address(token), treasury),
+        constraints: constraints
+    }),
+    "Treasury balance too low"
 );
 ```
 
-Or as a one-line [EVMcrispr](https://evmcrispr.blossom.software) script:
-
-```
-assertions:assert $treasury::balanceOf($treasury) >= 1000e18 "Treasury balance too low"
-```
+The same check encoded as an ERC-8211 predicate entry (a `ComposableExecution` with no `TARGET`) passes through `assertComposable` unchanged — and any predicate batch an ERC-8211 SDK produces can be judged on-chain the same way.
 
 ## Documentation
 

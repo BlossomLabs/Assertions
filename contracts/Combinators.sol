@@ -1,59 +1,57 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
+import {
+    ComposableLib,
+    InputParam,
+    ReturnDataOutOfBounds
+} from "./ERC8211.sol";
+
 /**
  * @title Combinators
  * @author Sembrestels
- * @notice Five composable building blocks for the Assertions core: `read`
- *         resolves navigated staticcall chains, `calc` combines two words
- *         with an EVM-flavored opcode, `unary` transforms one, `data`
- *         operates on raw returndata (string tests, hashing, lengths), and
- *         `env` supplies constants and environment values. Assertions
- *         judge, Combinators compute.
+ * @notice Composable building blocks for the Assertions core, redesigned
+ *         around ERC-8211 (Smart Batching): every operand is an ERC-8211
+ *         `InputParam` — a literal (RAW_BYTES), a live state read
+ *         (STATIC_CALL), or a balance query (BALANCE) — resolved with the
+ *         standard's exact fetcher semantics and validated against its own
+ *         inline constraints. `resolve` passes a resolved value through,
+ *         `pick` selects a raw 32-byte word from it, `nav` navigates typed
+ *         returndata to an element (following runtime offsets through
+ *         tuples and dynamic arrays), `chain` follows runtime-resolved
+ *         addresses across staticcalls, `calc` combines two operands with
+ *         an EVM-flavored opcode, `unary` transforms one, `data` operates
+ *         on resolved returndata (string tests, hashing, lengths), and
+ *         `env` supplies constants and environment values.
+ *         Assertions judge, Combinators compute.
  * @dev Every function is a combinator — a building block that computes and
- *      returns a value, never an assertion. Operands are (target, data)
- *      pairs, and because an operand may itself be a call to this contract,
- *      nested operands in calldata compose the combinators into arbitrary
- *      expressions. The frozen Assertions core judges the final value:
- *      point any call assertion at this contract's address with the encoded
- *      expression as data, e.g.
- *      assertGtCallUint(combinators, abi.encodeCall(calc, (...)), 0).
+ *      returns a value, never an assertion (though operand constraints
+ *      revert mid-expression when violated, like inline asserts). Because
+ *      a STATIC_CALL operand may itself target this contract, nested
+ *      InputParams compose the combinators into arbitrary expressions, and
+ *      because every combinator returns plain returndata, each one is a
+ *      valid STATIC_CALL fetcher target for any ERC-8211 batch — this
+ *      contract fills the expressiveness gaps of the standard's constraint
+ *      set (arithmetic, cross-value comparison, environment values, string
+ *      operations) without extending it. The frozen Assertions core judges
+ *      the final value: point a constrained STATIC_CALL fetcher at this
+ *      contract's address with the encoded expression as calldata, e.g.
+ *      assertParam(InputParam(CALL_DATA, STATIC_CALL,
+ *      abi.encode(combinators, abi.encodeCall(calc, (...))), constraints)).
  *      Combinators is the versionable periphery to the frozen core — its
  *      functions are stateless view targets, so old versions never break
  *      and new versions deploy at new addresses without touching the core.
- * @custom:version 1.0
+ * @custom:version 2.0
  */
 contract Combinators {
     // ============ Custom Errors ============
+    //
+    // CallFailed, ConstraintFailed, InvalidBalanceData, InvalidConstraintData,
+    // ReturnDataOutOfBounds and InvalidAddressWord are shared with the
+    // resolution library and declared in ERC8211.sol.
 
-    /// @notice Thrown when a staticcall to a target contract fails
-    ///         (within a chain or an operand, identifies the exact failing call)
-    /// @param target The contract address that was called
-    /// @param data The calldata that was sent
-    error CallFailed(address target, bytes data);
-
-    /// @notice Thrown when returndata is too short to decode the expected value
-    /// @param index The requested element index as given (0 for single-value
-    ///        decodes; may be negative for raw-mode from-the-end indexing)
-    /// @param length The length of the returned data in bytes
-    error ReturnDataOutOfBounds(int256 index, uint256 length);
-
-    /// @notice Thrown when read or data receives an empty calls array
+    /// @notice Thrown when chain receives an empty calls array
     error EmptyCallChain();
-
-    /// @notice Thrown when read's per-hop arrays disagree in length —
-    ///         calls, retTypes and paths must carry one entry per hop
-    /// @param callsLength The length of the calls array
-    /// @param typesLength The length of the retTypes array
-    /// @param pathsLength The length of the paths array
-    error ArgumentCountMismatch(uint256 callsLength, uint256 typesLength, uint256 pathsLength);
-
-    /// @notice Thrown when a word that must hold an address has dirty upper
-    ///         bytes (a chain hop's selected word, or the address operand of
-    ///         a Balance / CodeHash operation)
-    /// @param hopIndex The position of the hop in `calls` (0 for non-chain uses)
-    /// @param word The raw 32-byte word that was selected
-    error InvalidAddressWord(uint256 hopIndex, bytes32 word);
 
     /// @notice Thrown when data(Split) receives an empty delimiter
     error EmptyDelimiter();
@@ -65,8 +63,8 @@ contract Combinators {
     error SegmentIndexOutOfBounds(int256 index, uint256 segments);
 
     /// @notice Thrown when data(Includes) receives an empty search string —
-    ///         every string vacuously contains "", so the assertion would
-    ///         always pass and is certainly a mistake
+    ///         every string vacuously contains "", so the test would always
+    ///         pass and is certainly a mistake
     error EmptySubstring();
 
     /// @notice Thrown when data(Charset) receives a mask that is not exactly
@@ -74,22 +72,18 @@ contract Combinators {
     /// @param length The length of the mask that was passed
     error InvalidMaskLength(uint256 length);
 
-    /// @notice Thrown when a navigation path index is outside the tuple or
-    ///         array it steps into (in either direction for negative array
-    ///         indices; tuple components only accept non-negative indices)
-    /// @param index The requested index, as given (may be negative)
-    /// @param elements The number of elements or components available
-    error ElementIndexOutOfBounds(int256 index, uint256 elements);
+    /// @notice Thrown when a nav path index is outside the tuple or array it
+    ///         indexes into (in either direction for negative array indices)
+    /// @param index The requested element index, as given (may be negative)
+    /// @param count The number of components / elements available
+    error ElementIndexOutOfBounds(int256 index, uint256 count);
 
-    /// @notice Thrown when navigation cannot proceed: the type descriptor is
-    ///         malformed at the given character position, a path step indexes
-    ///         into a non-composite value, a raw-mode path has more than one
-    ///         entry, or the terminal is not representable (multi-word static
-    ///         value where a word is required, dynamic tuple or array of
-    ///         dynamic elements where an envelope is required, LEN step on a
-    ///         value without a length word)
-    /// @param charPos The character position in the type descriptor
-    error InvalidNavigation(uint256 charPos);
+    /// @notice Thrown when nav cannot proceed: the type descriptor is
+    ///         malformed, a path step indexes into a non-composite value, or
+    ///         the terminal cannot be represented as a single return
+    /// @param position The byte position in the descriptor where navigation
+    ///        failed (0 when the descriptor itself is unusable)
+    error InvalidNavigation(uint256 position);
 
     // ============ Types ============
 
@@ -145,7 +139,7 @@ contract Combinators {
     /// @dev ABI-encoded as uint8: Not = 0 (bitwise complement), IsZero = 1
     ///      (logical not: 1 for a zero word, 0 otherwise), Balance = 2 and
     ///      CodeHash = 3 (native balance / EXTCODEHASH of the address the
-    ///      operand call returns)
+    ///      operand resolves to)
     enum UnaryOp {
         Not,
         IsZero,
@@ -155,8 +149,9 @@ contract Combinators {
 
     /// @notice Returndata operations for data
     /// @dev ABI-encoded as uint8: Split = 0, Includes = 1, Charset = 2
-    ///      (string ops — the final return is decoded as a string first),
-    ///      Hash = 3, ByteLen = 4 (raw ops over the returndata bytes)
+    ///      (string ops — the resolved value is decoded as a single
+    ///      ABI-encoded string first), Hash = 3, ByteLen = 4 (raw ops over
+    ///      the resolved bytes)
     enum DataOp {
         Split,
         Includes,
@@ -169,7 +164,8 @@ contract Combinators {
     /// @dev ABI-encoded as uint8: Constant = 0 (echoes `arg`, covering both
     ///      uint and two's-complement int literals), Timestamp = 1,
     ///      BlockNumber = 2, ChainId = 3, Balance = 4 and CodeHash = 5
-    ///      (`arg` is the address as a uint256)
+    ///      (`arg` is the address as a uint256). Timestamp is the
+    ///      "timestamp helper" ERC-8211 predicate entries reference.
     enum EnvOp {
         Constant,
         Timestamp,
@@ -179,29 +175,65 @@ contract Combinators {
         CodeHash
     }
 
-    /// @notice Sentinel path entry for read: as the LAST entry of a typed
-    ///         path it selects the decoded LENGTH of the dynamic value the
-    ///         preceding steps navigate to (array element count, or
-    ///         string/bytes byte length) instead of the value itself
+    // ============ Resolve ============
+
+    /// @notice Resolves an ERC-8211 input parameter and returns the
+    ///         resolved bytes unchanged
+    /// @dev THE primitive — the ERC-8211 static call, exposed as a
+    ///      combinator. The value is returned via a raw assembly return,
+    ///      indistinguishable from a contract returning it directly, so
+    ///      nesting a resolve inside any operand behaves exactly like
+    ///      calling the underlying target. Constraints on `param` are
+    ///      validated before returning (a violation reverts with
+    ///      ConstraintFailed identifying the constraint), which turns any
+    ///      expression node into an inline assert.
+    /// @param param The input parameter to resolve (paramType is ignored;
+    ///        nothing is routed)
+    function resolve(InputParam calldata param) external view {
+        bytes memory value = ComposableLib.resolve(param, "", 0, 0);
+        assembly {
+            return(add(value, 32), mload(value))
+        }
+    }
+
+    // ============ Pick ============
+
+    /// @notice Resolves an input parameter and returns one raw 32-byte word
+    ///         of the resolved bytes
+    /// @dev The word extractor for multi-value returns: word positions
+    ///      follow the raw ABI encoding of the resolved data (so dynamic
+    ///      types contribute head offsets, a single dynamic array's length
+    ///      sits at word 1 and its elements at words 2+i). `wordIndex` is
+    ///      0-based; negative counts from the end (-1 = last word),
+    ///      resolved against the live data. Reverts with
+    ///      ReturnDataOutOfBounds outside the full words in either
+    ///      direction.
+    /// @param param The input parameter to resolve
+    /// @param wordIndex The word to select (signed; negative from the end)
+    /// @return The selected 32-byte word
+    function pick(InputParam calldata param, int256 wordIndex) external view returns (bytes32) {
+        bytes memory value = ComposableLib.resolve(param, "", 0, 0);
+        return _rawWord(value, wordIndex);
+    }
+
+    // ============ Nav ============
+
+    /// @notice Sentinel path entry for nav: as the LAST entry of a path it
+    ///         selects the decoded LENGTH of the dynamic value the preceding
+    ///         steps navigate to (array element count, or string/bytes byte
+    ///         length) instead of the value itself
     /// @dev type(int256).min is unusable as an index (any real index bound
     ///      catches it first), so the sentinel is unambiguous
     int256 public constant LEN = type(int256).min;
 
-    // ============ Read ============
-
-    /// @notice Resolves a chain of staticcalls with per-hop typed navigation
-    ///         and returns the selected part of the final returndata.
-    ///         calls[0] executes on `target`; for every earlier hop the value
-    ///         its path selects (which must be a clean address word) becomes
-    ///         the next hop's target; the final hop's path selects the result.
-    /// @dev THE read primitive — every way of getting a value out of contract
-    ///      state goes through it. `retTypes` and `paths` are parallel to
-    ///      `calls`, one entry per hop, and each hop is in one of two modes:
-    ///
-    ///      TYPED — `retTypes[i]` is the hop's return tuple written as a
-    ///      parenthesized type, e.g. "(uint112,uint112,address)" or
-    ///      "((address,uint256)[])" (structs as parenthesized tuples), and
-    ///      `paths[i]` walks it: the first step selects a return component
+    /// @notice Resolves an input parameter, interprets the resolved bytes as
+    ///         ABI-encoded `retTypes`, and navigates `path` to an element —
+    ///         following runtime offsets and lengths through tuples and
+    ///         dynamic arrays, which raw word positions cannot express
+    /// @dev The typed selector: `retTypes` is the value's type written as a
+    ///      parenthesized tuple, e.g. "(uint112,uint112,address)" or
+    ///      "(address,address[][])" (structs as parenthesized tuples), and
+    ///      `path` walks it — the first step selects a tuple component
     ///      (non-negative), each further step indexes the current tuple or
     ///      array (array steps accept negative indices, resolved against the
     ///      live length, -1 = last). Only the SHAPE of the descriptor is
@@ -211,80 +243,43 @@ contract Combinators {
     ///      wrong claim reverts loudly in almost all cases, but a
     ///      shape-compatible wrong type can read the wrong value.
     ///
-    ///      RAW — `retTypes[i]` is "" and `paths[i]` holds at most one raw
-    ///      word index into the returndata (signed; negative from the end,
-    ///      -1 = last word; empty defaults to word 0 mid-chain). No decoding:
-    ///      word positions follow the raw ABI encoding, so dynamic types
-    ///      contribute head offsets, not their content.
-    ///
-    ///      The FINAL hop's selection is returned via a raw assembly return,
+    ///      The selection is returned via a raw assembly return,
     ///      indistinguishable from a contract returning that value directly,
-    ///      so every core call assertion (and every combinator consuming a
-    ///      nested read) decodes it exactly as if it had called the final
-    ///      target itself:
-    ///      - empty path: the raw returndata passes through byte-for-byte;
-    ///      - word terminal (typed or raw mode): the 32-byte word;
-    ///      - dynamic terminal (typed string/bytes/array): the canonical
+    ///      so a nav nests inside any operand and any constrained fetcher
+    ///      consumes it exactly as if it had called a contract returning
+    ///      the element itself:
+    ///      - empty path: the resolved bytes pass through byte-for-byte
+    ///        (nav degenerates to resolve);
+    ///      - word terminal (static single-word value): the 32-byte word;
+    ///      - dynamic terminal (string/bytes/array): the canonical
     ///        single-value envelope [0x20][length][payload]. Arrays must
     ///        have single-word static elements; dynamic tuples and arrays
     ///        of dynamic elements revert with InvalidNavigation (their
     ///        extent would require a recursive re-encoder);
-    ///      - a typed path ending in the LEN sentinel: the decoded length
-    ///        of the dynamic value the preceding steps navigate to, as a
-    ///        uint256 word (element count for arrays, byte length for
-    ///        string/bytes — UTF-8 characters may span multiple bytes).
+    ///      - a path ending in the LEN sentinel: the decoded length of the
+    ///        dynamic value the preceding steps navigate to, as a uint256
+    ///        word (element count for arrays, byte length for string/bytes
+    ///        — UTF-8 characters may span multiple bytes).
     ///
-    ///      Reverts with EmptyCallChain when `calls` is empty,
-    ///      ArgumentCountMismatch when the arrays disagree in length,
-    ///      CallFailed identifying the exact failing hop when a hop reverts
-    ///      or targets a code-less address, InvalidNavigation on a malformed
-    ///      descriptor / step into a non-composite / unrepresentable
-    ///      terminal, ElementIndexOutOfBounds when a path index is outside
-    ///      its tuple or array, ReturnDataOutOfBounds when the data does not
-    ///      match the declared shape (truncated returndata, out-of-range
-    ///      offsets or raw word indices), and InvalidAddressWord when a
-    ///      mid-chain selection has dirty upper bytes.
-    /// @param target The contract address the first call is executed on
-    /// @param calls One plain abi.encodeCall entry per hop
-    /// @param retTypes One return-type descriptor per hop ("" for raw mode)
-    /// @param paths One navigation path per hop (see modes above)
-    function read(
-        address target,
-        bytes[] calldata calls,
-        string[] calldata retTypes,
-        int256[][] calldata paths
-    ) external view {
-        if (calls.length == 0) revert EmptyCallChain();
-        if (retTypes.length != calls.length || paths.length != calls.length) {
-            revert ArgumentCountMismatch(calls.length, retTypes.length, paths.length);
-        }
-
-        address current = target;
-        uint256 last = calls.length - 1;
-        for (uint256 i = 0; i < last; i++) {
-            bytes memory hopResult = _call(current, calls[i]);
-            uint256 word = _hopWord(hopResult, bytes(retTypes[i]), paths[i]);
-            if (word >> 160 != 0) revert InvalidAddressWord(i, bytes32(word));
-            current = address(uint160(word));
-        }
-
-        bytes memory result = _call(current, calls[last]);
-        bytes calldata t = bytes(retTypes[last]);
-        int256[] calldata path = paths[last];
+    ///      Operand failures revert with CallFailed / ConstraintFailed
+    ///      identifying them; a malformed descriptor, a step into a
+    ///      non-composite or an unrepresentable terminal reverts with
+    ///      InvalidNavigation, a path index outside its tuple or array with
+    ///      ElementIndexOutOfBounds, and data that does not match the
+    ///      declared shape (truncated returndata, out-of-range offsets)
+    ///      with ReturnDataOutOfBounds.
+    /// @param a The input parameter whose resolved bytes are navigated
+    /// @param retTypes The resolved value's type as a parenthesized tuple
+    /// @param path The navigation path (see modes above)
+    function nav(InputParam calldata a, string calldata retTypes, int256[] calldata path) external view {
+        bytes memory result = ComposableLib.resolve(a, "", 0, 0);
+        bytes calldata t = bytes(retTypes);
 
         if (path.length == 0) {
-            // Raw passthrough: any assertion decodes the final hop's return
-            // as if it had called the final target directly.
+            // Passthrough: any consumer decodes the resolved bytes as if it
+            // had resolved the operand directly.
             assembly {
                 return(add(result, 32), mload(result))
-            }
-        }
-        if (t.length == 0) {
-            if (path.length != 1) revert InvalidNavigation(0);
-            uint256 word = _rawWord(result, path[0]);
-            assembly {
-                mstore(0, word)
-                return(0, 32)
             }
         }
         if (path[path.length - 1] == LEN) {
@@ -305,16 +300,57 @@ contract Combinators {
         _returnDynamic(result, t, pos, ts, te);
     }
 
+    // ============ Chain ============
+
+    /// @notice Follows a chain of staticcalls whose targets are resolved at
+    ///         execution time, and returns the final call's raw returndata
+    /// @dev The runtime-target primitive ERC-8211 fetchers cannot express
+    ///      (a STATIC_CALL fetcher's target is fixed at encoding time).
+    ///      `start` must resolve to a clean address word — the first hop's
+    ///      target. Each hop is a plain abi.encodeCall entry; every hop
+    ///      except the last must return an address as its first word, which
+    ///      becomes the next hop's target. The final hop's returndata is
+    ///      returned via a raw assembly return, so a chain nests inside any
+    ///      operand (wrap it in pick / data / calc to extract or transform),
+    ///      e.g. balanceOf on the token address a vault reports:
+    ///      chain(vaultAddressParam, [token(), balanceOf(vault)]).
+    ///      Reverts with EmptyCallChain when `calls` is empty, CallFailed
+    ///      identifying the exact failing hop, ReturnDataOutOfBounds when a
+    ///      mid-chain hop returns fewer than 32 bytes, and
+    ///      InvalidAddressWord (index 0 for `start`, hop index + 1 for
+    ///      mid-chain hops) when an address word has dirty upper bytes.
+    /// @param start The input parameter resolving to the first hop's target
+    ///        address
+    /// @param calls One plain abi.encodeCall entry per hop
+    function chain(InputParam calldata start, bytes[] calldata calls) external view {
+        if (calls.length == 0) revert EmptyCallChain();
+        address current = ComposableLib.asAddress(
+            ComposableLib.firstWord(ComposableLib.resolve(start, "", 0, 0)),
+            0
+        );
+        uint256 last = calls.length - 1;
+        for (uint256 i = 0; i < last; i++) {
+            bytes memory hopResult = ComposableLib.staticCall(current, calls[i]);
+            current = ComposableLib.asAddress(ComposableLib.firstWord(hopResult), i + 1);
+        }
+        bytes memory result = ComposableLib.staticCall(current, calls[last]);
+        assembly {
+            return(add(result, 32), mload(result))
+        }
+    }
+
     // ============ Calc ============
 
-    /// @notice Combines the results of two staticcalls with a binary word
-    ///         operation and returns the resulting word
-    /// @dev Composition primitive: operands are (target, data) pairs and may
-    ///      themselves be calls to this contract (read, calc, unary, env, ...),
-    ///      enabling recursive expressions such as (a.x() + b.y()) * c.z().
-    ///      Operands are read as raw 32-byte words — bools arrive as 0/1
-    ///      words, signed values as two's complement — and the result is a
-    ///      word, so any core call assertion consumes calc calldata directly.
+    /// @notice Combines two resolved operands with a binary word operation
+    ///         and returns the resulting word
+    /// @dev Composition primitive: operands are ERC-8211 InputParams and a
+    ///      STATIC_CALL operand may itself target this contract (resolve,
+    ///      pick, chain, calc, unary, env, ...), enabling recursive
+    ///      expressions such as (a.x() + b.y()) * c.z(). Operands are read
+    ///      as their resolved value's first 32-byte word — bools arrive as
+    ///      0/1 words, signed values as two's complement — and the result
+    ///      is a word, so any constrained fetcher consumes calc calldata
+    ///      directly.
     ///
     ///      Signedness is chosen per opcode, EVM-style, not per function:
     ///      Add/Sub/Mul/Div/Mod/Min/Max/AbsDiff and the comparisons treat
@@ -336,107 +372,96 @@ contract Combinators {
     ///      For Exp, operand1 is the base and operand2 the exponent
     ///      (0 ** 0 == 1 per EVM semantics) — canonical use is live decimals
     ///      scaling, e.g. 5 * 10 ** token.decimals(). There is no SExp.
-    ///      An operand that reverts or targets a code-less address reverts
-    ///      with CallFailed identifying it; an operand returning fewer than
-    ///      32 bytes reverts with ReturnDataOutOfBounds.
+    ///      An operand whose staticcall reverts or targets a code-less
+    ///      address reverts with CallFailed identifying it; an operand
+    ///      resolving to fewer than 32 bytes reverts with
+    ///      ReturnDataOutOfBounds; operand constraint violations revert
+    ///      with ConstraintFailed (paramIndex 0 or 1 names the operand).
     /// @param op The operation to apply (see CalcOp)
-    /// @param target1 The contract address of the first operand call
-    /// @param data1 The encoded first operand call (use abi.encodeCall)
-    /// @param target2 The contract address of the second operand call
-    /// @param data2 The encoded second operand call (use abi.encodeCall)
+    /// @param a The first operand
+    /// @param b The second operand
     /// @return The resulting 32-byte word as a uint256
-    function calc(
-        CalcOp op,
-        address target1,
-        bytes calldata data1,
-        address target2,
-        bytes calldata data2
-    ) external view returns (uint256) {
-        uint256 a = uint256(_callWord(target1, data1));
-        uint256 b = uint256(_callWord(target2, data2));
-        if (op == CalcOp.Add) return a + b;
-        if (op == CalcOp.SAdd) return uint256(int256(a) + int256(b));
-        if (op == CalcOp.Sub) return a - b;
-        if (op == CalcOp.SSub) return uint256(int256(a) - int256(b));
-        if (op == CalcOp.Mul) return a * b;
-        if (op == CalcOp.SMul) return uint256(int256(a) * int256(b));
-        if (op == CalcOp.Div) return a / b;
-        if (op == CalcOp.SDiv) return uint256(int256(a) / int256(b));
-        if (op == CalcOp.Mod) return a % b;
-        if (op == CalcOp.SMod) return uint256(int256(a) % int256(b));
-        if (op == CalcOp.Exp) return a ** b;
-        if (op == CalcOp.Min) return a < b ? a : b;
-        if (op == CalcOp.SMin) return int256(a) < int256(b) ? a : b;
-        if (op == CalcOp.Max) return a > b ? a : b;
-        if (op == CalcOp.SMax) return int256(a) > int256(b) ? a : b;
-        if (op == CalcOp.AbsDiff) return a > b ? a - b : b - a;
+    function calc(CalcOp op, InputParam calldata a, InputParam calldata b) external view returns (uint256) {
+        uint256 x = _word(a, 0);
+        uint256 y = _word(b, 1);
+        if (op == CalcOp.Add) return x + y;
+        if (op == CalcOp.SAdd) return uint256(int256(x) + int256(y));
+        if (op == CalcOp.Sub) return x - y;
+        if (op == CalcOp.SSub) return uint256(int256(x) - int256(y));
+        if (op == CalcOp.Mul) return x * y;
+        if (op == CalcOp.SMul) return uint256(int256(x) * int256(y));
+        if (op == CalcOp.Div) return x / y;
+        if (op == CalcOp.SDiv) return uint256(int256(x) / int256(y));
+        if (op == CalcOp.Mod) return x % y;
+        if (op == CalcOp.SMod) return uint256(int256(x) % int256(y));
+        if (op == CalcOp.Exp) return x ** y;
+        if (op == CalcOp.Min) return x < y ? x : y;
+        if (op == CalcOp.SMin) return int256(x) < int256(y) ? x : y;
+        if (op == CalcOp.Max) return x > y ? x : y;
+        if (op == CalcOp.SMax) return int256(x) > int256(y) ? x : y;
+        if (op == CalcOp.AbsDiff) return x > y ? x - y : y - x;
         if (op == CalcOp.SAbsDiff) {
             // Signed compare, wrapping subtract: the two's-complement
             // difference of the raw words IS the distance, for any span.
             unchecked {
-                return int256(a) > int256(b) ? a - b : b - a;
+                return int256(x) > int256(y) ? x - y : y - x;
             }
         }
-        if (op == CalcOp.And) return a & b;
-        if (op == CalcOp.Or) return a | b;
-        if (op == CalcOp.Xor) return a ^ b;
-        if (op == CalcOp.Shl) return a << b;
-        if (op == CalcOp.Shr) return a >> b;
-        if (op == CalcOp.Eq) return a == b ? 1 : 0;
-        if (op == CalcOp.Ne) return a != b ? 1 : 0;
-        if (op == CalcOp.Lt) return a < b ? 1 : 0;
-        if (op == CalcOp.SLt) return int256(a) < int256(b) ? 1 : 0;
-        if (op == CalcOp.Gt) return a > b ? 1 : 0;
-        if (op == CalcOp.SGt) return int256(a) > int256(b) ? 1 : 0;
-        if (op == CalcOp.Le) return a <= b ? 1 : 0;
-        if (op == CalcOp.SLe) return int256(a) <= int256(b) ? 1 : 0;
-        if (op == CalcOp.Ge) return a >= b ? 1 : 0;
-        return int256(a) >= int256(b) ? 1 : 0; // SGe
+        if (op == CalcOp.And) return x & y;
+        if (op == CalcOp.Or) return x | y;
+        if (op == CalcOp.Xor) return x ^ y;
+        if (op == CalcOp.Shl) return x << y;
+        if (op == CalcOp.Shr) return x >> y;
+        if (op == CalcOp.Eq) return x == y ? 1 : 0;
+        if (op == CalcOp.Ne) return x != y ? 1 : 0;
+        if (op == CalcOp.Lt) return x < y ? 1 : 0;
+        if (op == CalcOp.SLt) return int256(x) < int256(y) ? 1 : 0;
+        if (op == CalcOp.Gt) return x > y ? 1 : 0;
+        if (op == CalcOp.SGt) return int256(x) > int256(y) ? 1 : 0;
+        if (op == CalcOp.Le) return x <= y ? 1 : 0;
+        if (op == CalcOp.SLe) return int256(x) <= int256(y) ? 1 : 0;
+        if (op == CalcOp.Ge) return x >= y ? 1 : 0;
+        return int256(x) >= int256(y) ? 1 : 0; // SGe
     }
 
     // ============ Unary ============
 
-    /// @notice Transforms the result of one staticcall with a unary word
-    ///         operation and returns the resulting word
-    /// @dev Operand semantics are calc's (raw word read, nesting, CallFailed /
-    ///      ReturnDataOutOfBounds on operand failure). Ops:
+    /// @notice Transforms one resolved operand with a unary word operation
+    ///         and returns the resulting word
+    /// @dev Operand semantics are calc's (first-word read, nesting,
+    ///      CallFailed / ReturnDataOutOfBounds / ConstraintFailed on
+    ///      operand failure). Ops:
     ///      - Not: bitwise complement ~x;
     ///      - IsZero: 1 when the word is zero, 0 otherwise — logical
     ///        negation for bool operands (EVM ISZERO);
-    ///      - Balance / CodeHash: the operand must return an address (a
+    ///      - Balance / CodeHash: the operand must resolve to an address (a
     ///        word with dirty upper bytes reverts with InvalidAddressWord);
     ///        returns its native balance in wei, or its code hash with
     ///        EXTCODEHASH semantics (nonexistent account: 0; existing
     ///        code-less account: keccak256("")). This is how the balance or
-    ///        code hash of a call-resolved address is read — for a literal
-    ///        address use env(Balance/CodeHash), and for a chained call
-    ///        nest read calldata as the operand.
+    ///        code hash of a runtime-resolved address is read — for a
+    ///        literal address use env(Balance/CodeHash), and for an
+    ///        ERC-20 balance use the BALANCE fetcher directly.
     /// @param op The operation to apply (see UnaryOp)
-    /// @param target The contract address of the operand call
-    /// @param callData The encoded operand call (use abi.encodeCall)
+    /// @param a The operand
     /// @return The resulting 32-byte word as a uint256
-    function unary(UnaryOp op, address target, bytes calldata callData) external view returns (uint256) {
-        uint256 word = uint256(_callWord(target, callData));
+    function unary(UnaryOp op, InputParam calldata a) external view returns (uint256) {
+        uint256 word = _word(a, 0);
         if (op == UnaryOp.Not) return ~word;
         if (op == UnaryOp.IsZero) return word == 0 ? 1 : 0;
-        if (word >> 160 != 0) revert InvalidAddressWord(0, bytes32(word));
-        if (op == UnaryOp.Balance) return address(uint160(word)).balance;
-        return uint256(address(uint160(word)).codehash);
+        address account = ComposableLib.asAddress(bytes32(word), 0);
+        if (op == UnaryOp.Balance) return account.balance;
+        return uint256(account.codehash);
     }
 
     // ============ Data ============
 
-    /// @notice Resolves a chain of staticcalls and applies a returndata
-    ///         operation to the final call's return
-    /// @dev Chain hops here are plain abi.encodeCall entries; every hop
-    ///      except the last must return an address as its first word (for
-    ///      multi-value or navigated hops, route through read by nesting its
-    ///      calldata as a single-hop chain on this contract). A single call
-    ///      is a one-element array.
-    ///
-    ///      String ops decode the final return as a single ABI-encoded
-    ///      string first (validating the head offset and length the same way
-    ///      the core's tuple-indexed string assertions do):
+    /// @notice Resolves an operand and applies a returndata operation to
+    ///         the resolved bytes
+    /// @dev String ops decode the resolved value as a single ABI-encoded
+    ///      string first (validating the head offset and length), so a
+    ///      STATIC_CALL operand can point at any string getter and a
+    ///      RAW_BYTES literal must carry abi.encode(string):
     ///      - Split: splits by `arg` (a non-empty exact byte sequence) and
     ///        returns the index-th segment as a canonical string return.
     ///        Segments are the maximal runs between occurrences, so adjacent
@@ -454,31 +479,23 @@ contract Combinators {
     ///        vacuously 1). Reverts with InvalidMaskLength unless `arg` is
     ///        exactly 32 bytes. Multi-byte UTF-8 characters have bytes
     ///        >= 0x80 and fail any ASCII-only mask.
-    ///      Raw ops consume the returndata bytes as-is (`arg` and `index`
+    ///      Raw ops consume the resolved bytes as-is (`arg` and `index`
     ///      are ignored — pass "" and 0):
-    ///      - Hash: keccak256 of the raw returndata, letting the bytes32
-    ///        assertions pin complex or hard-to-decode returns;
+    ///      - Hash: keccak256 of the resolved bytes, letting an EQ
+    ///        constraint pin complex or hard-to-decode returns;
     ///      - ByteLen: the raw byte length (a uint256[] with n items is
     ///        64 + n * 32: offset word + length word + items).
     ///      Results return via raw assembly return: Split as a string
     ///      envelope, the others as a single word (Includes/Charset as 0/1).
-    ///      Chain resolution failures revert with CallFailed / 
-    ///      ReturnDataOutOfBounds / InvalidAddressWord identifying the hop.
+    ///      Operand failures revert with CallFailed / ReturnDataOutOfBounds
+    ///      / ConstraintFailed identifying them.
     /// @param op The operation to apply (see DataOp)
-    /// @param target The contract address the first call is executed on
-    /// @param calls One plain abi.encodeCall entry per hop; every hop except
-    ///        the last must return an address as its first word
+    /// @param a The operand whose resolved bytes are operated on
     /// @param arg The operation's byte argument (delimiter / needle / mask;
     ///        "" for Hash and ByteLen)
     /// @param index The segment index for Split (0 for the other ops)
-    function data(
-        DataOp op,
-        address target,
-        bytes[] calldata calls,
-        bytes calldata arg,
-        int256 index
-    ) external view {
-        bytes memory result = _resolveChain(target, calls);
+    function data(DataOp op, InputParam calldata a, bytes calldata arg, int256 index) external view {
+        bytes memory result = ComposableLib.resolve(a, "", 0, 0);
         if (op == DataOp.Hash) {
             bytes32 digest = keccak256(result);
             assembly {
@@ -534,11 +551,13 @@ contract Combinators {
     ///      and two's-complement int literals travel as the raw word),
     ///      turning any literal into a composition operand; Timestamp /
     ///      BlockNumber / ChainId read the block environment at assertion
-    ///      time; Balance / CodeHash read the native balance in wei or the
-    ///      code hash (EXTCODEHASH semantics, as in unary) of the address
-    ///      `arg`, which must fit 160 bits (reverts with InvalidAddressWord
+    ///      time — pointing a constrained STATIC_CALL fetcher here is how
+    ///      an ERC-8211 predicate gates on time, block height or chain;
+    ///      Balance / CodeHash read the native balance in wei or the code
+    ///      hash (EXTCODEHASH semantics, as in unary) of the address `arg`,
+    ///      which must fit 160 bits (reverts with InvalidAddressWord
     ///      otherwise). For addresses only known at assertion time, use
-    ///      unary(Balance/CodeHash) over the resolving call instead.
+    ///      unary(Balance/CodeHash) over the resolving operand instead.
     /// @param op The value to return (see EnvOp)
     /// @param arg The literal for Constant, the address as uint256 for
     ///        Balance / CodeHash, 0 otherwise
@@ -548,72 +567,24 @@ contract Combinators {
         if (op == EnvOp.Timestamp) return block.timestamp;
         if (op == EnvOp.BlockNumber) return block.number;
         if (op == EnvOp.ChainId) return block.chainid;
-        if (arg >> 160 != 0) revert InvalidAddressWord(0, bytes32(arg));
-        if (op == EnvOp.Balance) return address(uint160(arg)).balance;
-        return uint256(address(uint160(arg)).codehash);
+        address account = ComposableLib.asAddress(bytes32(arg), 0);
+        if (op == EnvOp.Balance) return account.balance;
+        return uint256(account.codehash);
     }
 
     // ============ Internal Helpers ============
 
-    /// @dev Executes a staticcall and returns the raw result bytes.
-    ///      Reverts with CallFailed when the target has no code, since a staticcall
-    ///      to a code-less address succeeds with empty returndata and would otherwise
-    ///      surface as an opaque ABI decoding error.
-    function _call(address target, bytes calldata callData) internal view returns (bytes memory) {
-        if (target.code.length == 0) revert CallFailed(target, callData);
-        (bool success, bytes memory result) = target.staticcall(callData);
-        if (!success) revert CallFailed(target, callData);
-        return result;
+    /// @dev Resolves an operand (validating its constraints) and returns
+    ///      its first 32-byte word; `operandIndex` names the operand in
+    ///      resolution errors
+    function _word(InputParam calldata param, uint256 operandIndex) internal view returns (uint256) {
+        return uint256(ComposableLib.firstWord(ComposableLib.resolve(param, "", 0, operandIndex)));
     }
 
-    /// @dev Executes a staticcall and returns the first 32-byte word of the result,
-    ///      reverting with ReturnDataOutOfBounds when fewer than 32 bytes come back.
-    function _callWord(address target, bytes calldata callData) internal view returns (bytes32) {
-        bytes memory result = _call(target, callData);
-        if (result.length < 32) revert ReturnDataOutOfBounds(0, result.length);
-        return abi.decode(result, (bytes32));
-    }
-
-    /// @dev Executes data's call chain: every hop except the last must
-    ///      return an address as its first word, which becomes the next
-    ///      hop's target; the final hop's raw returndata is returned.
-    function _resolveChain(address target, bytes[] calldata calls) internal view returns (bytes memory) {
-        if (calls.length == 0) revert EmptyCallChain();
-        address current = target;
-        uint256 last = calls.length - 1;
-        for (uint256 i = 0; i < last; i++) {
-            bytes memory result = _call(current, calls[i]);
-            if (result.length < 32) revert ReturnDataOutOfBounds(0, result.length);
-            uint256 word;
-            assembly {
-                word := mload(add(result, 32))
-            }
-            if (word >> 160 != 0) revert InvalidAddressWord(i, bytes32(word));
-            current = address(uint160(word));
-        }
-        return _call(current, calls[last]);
-    }
-
-    // ---- Read internals ----
-
-    /// @dev Selects a mid-chain hop's address word: raw mode ("" descriptor)
-    ///      reads the word at the path's single index (empty path = word 0),
-    ///      typed mode navigates to a single-word terminal.
-    function _hopWord(bytes memory result, bytes calldata t, int256[] calldata path) internal pure returns (uint256) {
-        if (t.length == 0) {
-            if (path.length == 0) return _rawWord(result, 0);
-            if (path.length != 1) revert InvalidNavigation(0);
-            return _rawWord(result, path[0]);
-        }
-        (uint256 pos, bool isWord, uint256 ts, ) = _navigate(result, t, path);
-        if (!isWord) revert InvalidNavigation(ts);
-        return _navWord(result, pos);
-    }
-
-    /// @dev Reads the wordIndex-th 32-byte word of the raw returndata
+    /// @dev Reads the wordIndex-th 32-byte word of the raw bytes
     ///      (0-based; negative from the end, -1 = last word), reverting with
     ///      ReturnDataOutOfBounds outside the full words in either direction
-    function _rawWord(bytes memory result, int256 wordIndex) internal pure returns (uint256 word) {
+    function _rawWord(bytes memory result, int256 wordIndex) internal pure returns (bytes32 word) {
         uint256 words = result.length / 32;
         uint256 wanted;
         if (wordIndex < 0) {
@@ -628,6 +599,8 @@ contract Combinators {
             word := mload(add(add(result, 32), mul(wanted, 32)))
         }
     }
+
+    // ---- Typed navigation internals ----
 
     /// @dev Resolves a LEN-terminated path: navigates the non-sentinel steps
     ///      to a dynamic value and returns its length word. Static values,
@@ -683,10 +656,8 @@ contract Combinators {
         }
     }
 
-    // ---- Typed navigation internals ----
-
     /// @dev Reads the 32-byte word at byte offset `pos` of `result`, reverting
-    ///      with ReturnDataOutOfBounds when it lies outside the returndata
+    ///      with ReturnDataOutOfBounds when it lies outside the data
     function _navWord(bytes memory result, uint256 pos) internal pure returns (uint256 word) {
         if (pos > result.length || result.length - pos < 32) {
             revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
@@ -777,7 +748,7 @@ contract Combinators {
     }
 
     /// @dev Navigation cursor: the current value's type bounds [ts, te) in
-    ///      the descriptor, its byte position in the returndata, and — after
+    ///      the descriptor, its byte position in the data, and — after
     ///      a step — whether the value just selected is dynamic and its head
     ///      footprint. Position semantics: a tuple's position is its first
     ///      head word; a dynamic array's is its length word; a fixed array's
@@ -791,7 +762,7 @@ contract Combinators {
     }
 
     /// @dev Walks `path` through `result` as described by the type descriptor
-    ///      `t` (which must be a parenthesized return tuple). Returns the byte
+    ///      `t` (which must be a parenthesized tuple). Returns the byte
     ///      position of the terminal — the value word itself when `isWord`,
     ///      otherwise the length word / head of the selected dynamic value —
     ///      plus the terminal's type bounds [ts, te) for the callers' checks.
@@ -984,9 +955,8 @@ contract Combinators {
     }
 
     /// @dev Decodes a single ABI-encoded string return value, validating the head
-    ///      offset and length against the actual returndata (the same validation
-    ///      the core's tuple-indexed string assertions perform). The copy zeroes
-    ///      the final word's padding so no dirty bytes remain.
+    ///      offset and length against the actual data. The copy zeroes the
+    ///      final word's padding so no dirty bytes remain.
     function _decodeString(bytes memory result) internal pure returns (bytes memory strBytes) {
         if (result.length < 32) revert ReturnDataOutOfBounds(0, result.length);
         uint256 offset;

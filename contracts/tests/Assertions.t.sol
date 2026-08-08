@@ -3,2089 +3,1179 @@ pragma solidity ^0.8.28;
 
 import "forge-std/Test.sol";
 import "../Assertions.sol";
+import "../Combinators.sol";
+import "../ERC8211.sol";
 import "./Mocks.sol";
 
+/// @notice Test suite for the ERC-8211-based Assertions core: single-param
+///         assertions, the native view-mode batch judge, the wrapped static
+///         call to a deployed IComposableExecution implementation, and a
+///         parity section proving every v1 core use case (Ne / strict
+///         Gt/Lt, signed ints, tuple indexing, strings, array lengths,
+///         approx equality, balances, block env, chain id, code checks) is
+///         still expressible and judged through the core.
 contract AssertionsTest is Test {
     Assertions public assertions;
+    Combinators public comb;
     MockTarget public target;
+    MockToken public token;
+    MockComposable public composable;
 
-    // Test addresses
     address constant TEST_EOA = address(0x1234);
-    address constant ANOTHER_ADDRESS = address(0x5678);
 
     function setUp() public {
         assertions = new Assertions();
+        comb = new Combinators();
         target = new MockTarget();
+        token = new MockToken(address(0), "WETH");
+        composable = new MockComposable();
+        target.setToken(address(token));
     }
 
-    // ============ Uint256 Call Assertions ============
+    // ============ Test Helpers ============
 
-    function test_assertEqCallUint_success() public view {
-        assertions.assertEqCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            42
-        );
+    function _none() internal pure returns (Constraint[] memory cs) {
+        cs = new Constraint[](0);
     }
 
-    function test_assertEqCallUint_withMessage_success() public view {
-        assertions.assertEqCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            42,
-            "custom message"
-        );
+    function _c1(ConstraintType t, bytes memory ref) internal pure returns (Constraint[] memory cs) {
+        cs = new Constraint[](1);
+        cs[0] = Constraint(t, ref);
     }
 
-    function test_assertEqCallUint_reverts() public {
+    function _c2(
+        ConstraintType t1,
+        bytes memory ref1,
+        ConstraintType t2,
+        bytes memory ref2
+    ) internal pure returns (Constraint[] memory cs) {
+        cs = new Constraint[](2);
+        cs[0] = Constraint(t1, ref1);
+        cs[1] = Constraint(t2, ref2);
+    }
+
+    /// @dev A RAW_BYTES CALL_DATA parameter
+    function _raw(bytes memory v, Constraint[] memory cs) internal pure returns (InputParam memory) {
+        return InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, v, cs);
+    }
+
+    /// @dev A STATIC_CALL CALL_DATA parameter
+    function _call(address t, bytes memory d, Constraint[] memory cs) internal pure returns (InputParam memory) {
+        return InputParam(InputParamType.CALL_DATA, InputParamFetcherType.STATIC_CALL, abi.encode(t, d), cs);
+    }
+
+    /// @dev A BALANCE CALL_DATA parameter
+    function _bal(address tok, address account, Constraint[] memory cs) internal pure returns (InputParam memory) {
+        return InputParam(InputParamType.CALL_DATA, InputParamFetcherType.BALANCE, abi.encodePacked(tok, account), cs);
+    }
+
+    /// @dev A RAW_BYTES TARGET parameter
+    function _target(address t) internal pure returns (InputParam memory) {
+        return InputParam(InputParamType.TARGET, InputParamFetcherType.RAW_BYTES, abi.encode(t), _none());
+    }
+
+    function _params1(InputParam memory a) internal pure returns (InputParam[] memory ps) {
+        ps = new InputParam[](1);
+        ps[0] = a;
+    }
+
+    function _params2(InputParam memory a, InputParam memory b) internal pure returns (InputParam[] memory ps) {
+        ps = new InputParam[](2);
+        ps[0] = a;
+        ps[1] = b;
+    }
+
+    function _params3(
+        InputParam memory a,
+        InputParam memory b,
+        InputParam memory c
+    ) internal pure returns (InputParam[] memory ps) {
+        ps = new InputParam[](3);
+        ps[0] = a;
+        ps[1] = b;
+        ps[2] = c;
+    }
+
+    function _entry(bytes4 sig, InputParam[] memory ps) internal pure returns (ComposableExecution memory) {
+        return ComposableExecution(sig, ps, new OutputParam[](0));
+    }
+
+    function _batch1(ComposableExecution memory e) internal pure returns (ComposableExecution[] memory ex) {
+        ex = new ComposableExecution[](1);
+        ex[0] = e;
+    }
+
+    function _batch2(
+        ComposableExecution memory e1,
+        ComposableExecution memory e2
+    ) internal pure returns (ComposableExecution[] memory ex) {
+        ex = new ComposableExecution[](2);
+        ex[0] = e1;
+        ex[1] = e2;
+    }
+
+    /// @dev A single predicate entry (no TARGET) wrapping one parameter
+    function _predicate(InputParam memory p) internal pure returns (ComposableExecution[] memory) {
+        return _batch1(_entry(bytes4(0), _params1(p)));
+    }
+
+    function _getValue() internal view returns (bytes memory) {
+        return abi.encode(address(target), abi.encodeCall(MockTarget.getValue, ()));
+    }
+
+    // ============ assertParam: constraint types ============
+
+    function test_assertParam_eq_success() public view {
+        assertions.assertParam(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.EQ, abi.encode(uint256(42)))));
+    }
+
+    function test_assertParam_eq_reverts() public {
         vm.expectRevert(
             abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "EQ",
-                42,
-                100
-            )
-        );
-        assertions.assertEqCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            100
-        );
-    }
-
-    function test_assertNeCallUint_success() public view {
-        assertions.assertNeCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            100
-        );
-    }
-
-    function test_assertNeCallUint_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "NE",
-                42,
-                42
-            )
-        );
-        assertions.assertNeCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            42
-        );
-    }
-
-    function test_assertGtCallUint_success() public view {
-        assertions.assertGtCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            41
-        );
-    }
-
-    function test_assertGtCallUint_boundary_reverts() public {
-        // Equal should fail GT
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "GT",
-                42,
-                42
-            )
-        );
-        assertions.assertGtCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            42
-        );
-    }
-
-    function test_assertGtCallUint_greater_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "GT",
-                42,
-                100
-            )
-        );
-        assertions.assertGtCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            100
-        );
-    }
-
-    function test_assertLtCallUint_success() public view {
-        assertions.assertLtCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            43
-        );
-    }
-
-    function test_assertLtCallUint_boundary_reverts() public {
-        // Equal should fail LT
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "LT",
-                42,
-                42
-            )
-        );
-        assertions.assertLtCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            42
-        );
-    }
-
-    function test_assertGeCallUint_equal_success() public view {
-        assertions.assertGeCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            42
-        );
-    }
-
-    function test_assertGeCallUint_greater_success() public view {
-        assertions.assertGeCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            41
-        );
-    }
-
-    function test_assertGeCallUint_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "GE",
-                42,
-                100
-            )
-        );
-        assertions.assertGeCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            100
-        );
-    }
-
-    function test_assertLeCallUint_equal_success() public view {
-        assertions.assertLeCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            42
-        );
-    }
-
-    function test_assertLeCallUint_less_success() public view {
-        assertions.assertLeCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            43
-        );
-    }
-
-    function test_assertLeCallUint_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "LE",
-                42,
-                10
-            )
-        );
-        assertions.assertLeCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            10
-        );
-    }
-
-    // ============ Address Call Assertions ============
-
-    function test_assertEqCallAddress_success() public view {
-        assertions.assertEqCallAddress(
-            address(target),
-            abi.encodeCall(MockTarget.getAddress, ()),
-            address(0xBEEF)
-        );
-    }
-
-    function test_assertEqCallAddress_withMessage_success() public view {
-        assertions.assertEqCallAddress(
-            address(target),
-            abi.encodeCall(MockTarget.getAddress, ()),
-            address(0xBEEF),
-            "address check"
-        );
-    }
-
-    function test_assertEqCallAddress_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedAddress.selector,
-                "EQ",
-                address(0xBEEF),
-                address(0xDEAD)
-            )
-        );
-        assertions.assertEqCallAddress(
-            address(target),
-            abi.encodeCall(MockTarget.getAddress, ()),
-            address(0xDEAD)
-        );
-    }
-
-    function test_assertNeCallAddress_success() public view {
-        assertions.assertNeCallAddress(
-            address(target),
-            abi.encodeCall(MockTarget.getAddress, ()),
-            address(0xDEAD)
-        );
-    }
-
-    function test_assertNeCallAddress_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedAddress.selector,
-                "NE",
-                address(0xBEEF),
-                address(0xBEEF)
-            )
-        );
-        assertions.assertNeCallAddress(
-            address(target),
-            abi.encodeCall(MockTarget.getAddress, ()),
-            address(0xBEEF)
-        );
-    }
-
-    // ============ Bool Call Assertions ============
-
-    function test_assertEqCallBool_true_success() public view {
-        assertions.assertEqCallBool(
-            address(target),
-            abi.encodeCall(MockTarget.getBool, ()),
-            true
-        );
-    }
-
-    function test_assertEqCallBool_withMessage_success() public view {
-        assertions.assertEqCallBool(
-            address(target),
-            abi.encodeCall(MockTarget.getBool, ()),
-            true,
-            "bool check"
-        );
-    }
-
-    function test_assertEqCallBool_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedBool.selector,
-                "EQ",
-                true,
-                false
-            )
-        );
-        assertions.assertEqCallBool(
-            address(target),
-            abi.encodeCall(MockTarget.getBool, ()),
-            false
-        );
-    }
-
-    function test_assertEqCallBool_false_success() public {
-        target.setBool(false);
-        assertions.assertEqCallBool(
-            address(target),
-            abi.encodeCall(MockTarget.getBool, ()),
-            false
-        );
-    }
-
-    // ============ Bytes32 Call Assertions ============
-
-    function test_assertEqCallBytes32_success() public view {
-        assertions.assertEqCallBytes32(
-            address(target),
-            abi.encodeCall(MockTarget.getBytes32, ()),
-            keccak256("test")
-        );
-    }
-
-    function test_assertEqCallBytes32_withMessage_success() public view {
-        assertions.assertEqCallBytes32(
-            address(target),
-            abi.encodeCall(MockTarget.getBytes32, ()),
-            keccak256("test"),
-            "bytes32 check"
-        );
-    }
-
-    function test_assertEqCallBytes32_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedBytes32.selector,
-                "EQ",
-                keccak256("test"),
-                keccak256("wrong")
-            )
-        );
-        assertions.assertEqCallBytes32(
-            address(target),
-            abi.encodeCall(MockTarget.getBytes32, ()),
-            keccak256("wrong")
-        );
-    }
-
-    function test_assertNeCallBytes32_success() public view {
-        assertions.assertNeCallBytes32(
-            address(target),
-            abi.encodeCall(MockTarget.getBytes32, ()),
-            keccak256("other")
-        );
-    }
-
-    function test_assertNeCallBytes32_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedBytes32.selector,
-                "NE",
-                keccak256("test"),
-                keccak256("test")
-            )
-        );
-        assertions.assertNeCallBytes32(
-            address(target),
-            abi.encodeCall(MockTarget.getBytes32, ()),
-            keccak256("test")
-        );
-    }
-
-    // ============ Tuple-Indexed Assertions ============
-
-    function test_assertEqCallUintN_success() public view {
-        assertions.assertEqCallUintN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            0, // index 0 is the uint256
-            42
-        );
-    }
-
-    function test_assertEqCallUintN_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "EQ_N",
-                42,
-                100
-            )
-        );
-        assertions.assertEqCallUintN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            0,
-            100
-        );
-    }
-
-    function test_assertGtCallUintN_success() public view {
-        assertions.assertGtCallUintN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            0,
-            41
-        );
-    }
-
-    function test_assertLtCallUintN_success() public view {
-        assertions.assertLtCallUintN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            0,
-            43
-        );
-    }
-
-    function test_assertGeCallUintN_success() public view {
-        assertions.assertGeCallUintN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            0,
-            42
-        );
-    }
-
-    function test_assertLeCallUintN_success() public view {
-        assertions.assertLeCallUintN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            0,
-            42
-        );
-    }
-
-    function test_assertEqCallAddressN_success() public view {
-        assertions.assertEqCallAddressN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            1, // index 1 is the address
-            address(0xBEEF)
-        );
-    }
-
-    function test_assertNeCallAddressN_success() public view {
-        assertions.assertNeCallAddressN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            1,
-            address(0xDEAD)
-        );
-    }
-
-    function test_assertEqCallBoolN_success() public view {
-        assertions.assertEqCallBoolN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            2, // index 2 is the bool
-            true
-        );
-    }
-
-    function test_assertEqCallBytes32N_success() public view {
-        assertions.assertEqCallBytes32N(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            3, // index 3 is the bytes32
-            keccak256("test")
-        );
-    }
-
-    // ============ Array Length Assertions ============
-
-    function test_assertEqCallArrayLength_success() public view {
-        assertions.assertEqCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getArray, ()),
-            5
-        );
-    }
-
-    function test_assertEqCallArrayLength_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "EQ_LEN",
-                5,
-                10
-            )
-        );
-        assertions.assertEqCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getArray, ()),
-            10
-        );
-    }
-
-    function test_assertGtCallArrayLength_success() public view {
-        assertions.assertGtCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getArray, ()),
-            4
-        );
-    }
-
-    function test_assertGeCallArrayLength_success() public view {
-        assertions.assertGeCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getArray, ()),
-            5
-        );
-    }
-
-    function test_assertEqCallArrayLength_empty_success() public view {
-        assertions.assertEqCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getEmptyArray, ()),
-            0
-        );
-    }
-
-    // ============ Raw Bytes Assertions ============
-
-    function test_assertEqCallBytes_success() public view {
-        // The raw return from getRawUint() is abi.encode(uint256(12345))
-        bytes memory expected = abi.encode(uint256(12345));
-        assertions.assertEqCallBytes(
-            address(target),
-            abi.encodeCall(MockTarget.getRawUint, ()),
-            expected
-        );
-    }
-
-    function test_assertEqCallBytes_reverts() public {
-        bytes memory wrongExpected = abi.encode(uint256(99999));
-        bytes memory actualBytes = abi.encode(uint256(12345));
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedBytes.selector,
-                "EQ_BYTES",
-                keccak256(actualBytes),
-                keccak256(wrongExpected)
-            )
-        );
-        assertions.assertEqCallBytes(
-            address(target),
-            abi.encodeCall(MockTarget.getRawUint, ()),
-            wrongExpected
-        );
-    }
-
-    // ============ Approximate Equality Assertions ============
-
-    function test_assertApproxEqCallUint_exact_success() public view {
-        assertions.assertApproxEqCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            42,
-            0 // exact match
-        );
-    }
-
-    function test_assertApproxEqCallUint_withinDelta_success() public view {
-        assertions.assertApproxEqCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            40, // actual is 42
-            5   // delta of 2 is within 5
-        );
-    }
-
-    function test_assertApproxEqCallUint_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedApprox.selector,
-                "APPROX_EQ",
-                42,    // actual
-                30,    // expected
-                12,    // delta
-                5      // maxDelta
-            )
-        );
-        assertions.assertApproxEqCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            30, // actual is 42, delta is 12
-            5   // maxDelta is only 5
-        );
-    }
-
-    function test_assertApproxEqCallUintN_success() public view {
-        assertions.assertApproxEqCallUintN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            0,  // index
-            40, // expected (actual is 42)
-            5   // maxDelta
-        );
-    }
-
-    // ============ ETH Balance Assertions ============
-
-    function test_assertEqBalance_success() public {
-        vm.deal(TEST_EOA, 1 ether);
-        assertions.assertEqBalance(TEST_EOA, 1 ether);
-    }
-
-    function test_assertEqBalance_withMessage_success() public {
-        vm.deal(TEST_EOA, 1 ether);
-        assertions.assertEqBalance(TEST_EOA, 1 ether, "balance check");
-    }
-
-    function test_assertEqBalance_reverts() public {
-        vm.deal(TEST_EOA, 1 ether);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "EQ_BAL",
-                1 ether,
-                2 ether
-            )
-        );
-        assertions.assertEqBalance(TEST_EOA, 2 ether);
-    }
-
-    function test_assertGtBalance_success() public {
-        vm.deal(TEST_EOA, 2 ether);
-        assertions.assertGtBalance(TEST_EOA, 1 ether);
-    }
-
-    function test_assertGtBalance_reverts() public {
-        vm.deal(TEST_EOA, 1 ether);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "GT_BAL",
-                1 ether,
-                2 ether
-            )
-        );
-        assertions.assertGtBalance(TEST_EOA, 2 ether);
-    }
-
-    function test_assertLtBalance_success() public {
-        vm.deal(TEST_EOA, 1 ether);
-        assertions.assertLtBalance(TEST_EOA, 2 ether);
-    }
-
-    function test_assertLtBalance_reverts() public {
-        vm.deal(TEST_EOA, 2 ether);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "LT_BAL",
-                2 ether,
-                1 ether
-            )
-        );
-        assertions.assertLtBalance(TEST_EOA, 1 ether);
-    }
-
-    function test_assertGeBalance_equal_success() public {
-        vm.deal(TEST_EOA, 1 ether);
-        assertions.assertGeBalance(TEST_EOA, 1 ether);
-    }
-
-    function test_assertGeBalance_greater_success() public {
-        vm.deal(TEST_EOA, 2 ether);
-        assertions.assertGeBalance(TEST_EOA, 1 ether);
-    }
-
-    function test_assertGeBalance_reverts() public {
-        vm.deal(TEST_EOA, 1 ether);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "GE_BAL",
-                1 ether,
-                2 ether
-            )
-        );
-        assertions.assertGeBalance(TEST_EOA, 2 ether);
-    }
-
-    function test_assertLeBalance_equal_success() public {
-        vm.deal(TEST_EOA, 1 ether);
-        assertions.assertLeBalance(TEST_EOA, 1 ether);
-    }
-
-    function test_assertLeBalance_less_success() public {
-        vm.deal(TEST_EOA, 1 ether);
-        assertions.assertLeBalance(TEST_EOA, 2 ether);
-    }
-
-    function test_assertLeBalance_reverts() public {
-        vm.deal(TEST_EOA, 2 ether);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "LE_BAL",
-                2 ether,
-                1 ether
-            )
-        );
-        assertions.assertLeBalance(TEST_EOA, 1 ether);
-    }
-
-    function test_assertApproxEqBalance_success() public {
-        vm.deal(TEST_EOA, 1 ether);
-        assertions.assertApproxEqBalance(
-            TEST_EOA,
-            1.05 ether, // expected
-            0.1 ether   // maxDelta
-        );
-    }
-
-    function test_assertApproxEqBalance_reverts() public {
-        vm.deal(TEST_EOA, 1 ether);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedApprox.selector,
-                "APPROX_EQ_BAL",
-                1 ether,      // actual
-                2 ether,      // expected
-                1 ether,      // delta
-                0.1 ether     // maxDelta
-            )
-        );
-        assertions.assertApproxEqBalance(
-            TEST_EOA,
-            2 ether,
-            0.1 ether
-        );
-    }
-
-    // ============ Block Number Assertions ============
-
-    function test_assertEqBlockNumber_success() public {
-        vm.roll(12345);
-        assertions.assertEqBlockNumber(12345);
-    }
-
-    function test_assertEqBlockNumber_withMessage_success() public {
-        vm.roll(12345);
-        assertions.assertEqBlockNumber(12345, "block check");
-    }
-
-    function test_assertEqBlockNumber_reverts() public {
-        vm.roll(12345);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "EQ_BLOCK",
-                12345,
-                99999
-            )
-        );
-        assertions.assertEqBlockNumber(99999);
-    }
-
-    function test_assertGtBlockNumber_success() public {
-        vm.roll(12345);
-        assertions.assertGtBlockNumber(12344);
-    }
-
-    function test_assertGtBlockNumber_reverts() public {
-        vm.roll(12345);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "GT_BLOCK",
-                12345,
-                12345
-            )
-        );
-        assertions.assertGtBlockNumber(12345);
-    }
-
-    function test_assertLtBlockNumber_success() public {
-        vm.roll(12345);
-        assertions.assertLtBlockNumber(12346);
-    }
-
-    function test_assertLtBlockNumber_reverts() public {
-        vm.roll(12345);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "LT_BLOCK",
-                12345,
-                12345
-            )
-        );
-        assertions.assertLtBlockNumber(12345);
-    }
-
-    function test_assertGeBlockNumber_equal_success() public {
-        vm.roll(12345);
-        assertions.assertGeBlockNumber(12345);
-    }
-
-    function test_assertGeBlockNumber_greater_success() public {
-        vm.roll(12345);
-        assertions.assertGeBlockNumber(12344);
-    }
-
-    function test_assertGeBlockNumber_reverts() public {
-        vm.roll(12345);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "GE_BLOCK",
-                12345,
-                12346
-            )
-        );
-        assertions.assertGeBlockNumber(12346);
-    }
-
-    function test_assertLeBlockNumber_equal_success() public {
-        vm.roll(12345);
-        assertions.assertLeBlockNumber(12345);
-    }
-
-    function test_assertLeBlockNumber_less_success() public {
-        vm.roll(12345);
-        assertions.assertLeBlockNumber(12346);
-    }
-
-    function test_assertLeBlockNumber_reverts() public {
-        vm.roll(12345);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "LE_BLOCK",
-                12345,
-                12344
-            )
-        );
-        assertions.assertLeBlockNumber(12344);
-    }
-
-    // ============ Block Timestamp Assertions ============
-
-    function test_assertEqBlockTimestamp_success() public {
-        vm.warp(1700000000);
-        assertions.assertEqBlockTimestamp(1700000000);
-    }
-
-    function test_assertEqBlockTimestamp_withMessage_success() public {
-        vm.warp(1700000000);
-        assertions.assertEqBlockTimestamp(1700000000, "timestamp check");
-    }
-
-    function test_assertEqBlockTimestamp_reverts() public {
-        vm.warp(1700000000);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "EQ_TIME",
-                1700000000,
-                1800000000
-            )
-        );
-        assertions.assertEqBlockTimestamp(1800000000);
-    }
-
-    function test_assertGtBlockTimestamp_success() public {
-        vm.warp(1700000000);
-        assertions.assertGtBlockTimestamp(1699999999);
-    }
-
-    function test_assertGtBlockTimestamp_reverts() public {
-        vm.warp(1700000000);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "GT_TIME",
-                1700000000,
-                1700000000
-            )
-        );
-        assertions.assertGtBlockTimestamp(1700000000);
-    }
-
-    function test_assertLtBlockTimestamp_success() public {
-        vm.warp(1700000000);
-        assertions.assertLtBlockTimestamp(1700000001);
-    }
-
-    function test_assertLtBlockTimestamp_reverts() public {
-        vm.warp(1700000000);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "LT_TIME",
-                1700000000,
-                1700000000
-            )
-        );
-        assertions.assertLtBlockTimestamp(1700000000);
-    }
-
-    function test_assertGeBlockTimestamp_equal_success() public {
-        vm.warp(1700000000);
-        assertions.assertGeBlockTimestamp(1700000000);
-    }
-
-    function test_assertGeBlockTimestamp_greater_success() public {
-        vm.warp(1700000000);
-        assertions.assertGeBlockTimestamp(1699999999);
-    }
-
-    function test_assertGeBlockTimestamp_reverts() public {
-        vm.warp(1700000000);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "GE_TIME",
-                1700000000,
-                1700000001
-            )
-        );
-        assertions.assertGeBlockTimestamp(1700000001);
-    }
-
-    function test_assertLeBlockTimestamp_equal_success() public {
-        vm.warp(1700000000);
-        assertions.assertLeBlockTimestamp(1700000000);
-    }
-
-    function test_assertLeBlockTimestamp_less_success() public {
-        vm.warp(1700000000);
-        assertions.assertLeBlockTimestamp(1700000001);
-    }
-
-    function test_assertLeBlockTimestamp_reverts() public {
-        vm.warp(1700000000);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "LE_TIME",
-                1700000000,
-                1699999999
-            )
-        );
-        assertions.assertLeBlockTimestamp(1699999999);
-    }
-
-    // ============ Chain ID Assertions ============
-
-    function test_assertEqChainId_success() public view {
-        // Default chain ID in foundry is 31337
-        assertions.assertEqChainId(31337);
-    }
-
-    function test_assertEqChainId_withMessage_success() public view {
-        assertions.assertEqChainId(31337, "chain check");
-    }
-
-    function test_assertEqChainId_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "EQ_CHAIN",
-                31337,
-                1
-            )
-        );
-        assertions.assertEqChainId(1);
-    }
-
-    // ============ Contract Existence Assertions ============
-
-    function test_assertHasCode_contract_success() public view {
-        assertions.assertHasCode(address(target));
-    }
-
-    function test_assertHasCode_withMessage_success() public view {
-        assertions.assertHasCode(address(target), "has code check");
-    }
-
-    function test_assertHasCode_eoa_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "HAS_CODE",
+                ConstraintFailed.selector,
+                "PARAM",
                 0,
-                1
+                0,
+                0,
+                ConstraintType.EQ,
+                bytes32(uint256(42)),
+                abi.encode(uint256(100))
             )
         );
-        assertions.assertHasCode(TEST_EOA);
+        assertions.assertParam(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.EQ, abi.encode(uint256(100)))));
     }
 
-    function test_assertNoCode_eoa_success() public view {
-        assertions.assertNoCode(TEST_EOA);
+    function test_assertParam_gte_success() public view {
+        assertions.assertParam(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.GTE, abi.encode(uint256(42)))));
     }
 
-    function test_assertNoCode_withMessage_success() public view {
-        assertions.assertNoCode(TEST_EOA, "no code check");
-    }
-
-    function test_assertNoCode_contract_reverts() public {
-        vm.expectRevert(); // Contract has code, so size > 0
-        assertions.assertNoCode(address(target));
-    }
-
-    function test_assertEqCodeHash_success() public view {
-        bytes32 expectedHash = address(target).codehash;
-        assertions.assertEqCodeHash(address(target), expectedHash);
-    }
-
-    function test_assertEqCodeHash_withMessage_success() public view {
-        bytes32 expectedHash = address(target).codehash;
-        assertions.assertEqCodeHash(address(target), expectedHash, "codehash check");
-    }
-
-    function test_assertEqCodeHash_reverts() public {
-        bytes32 wrongHash = keccak256("wrong bytecode");
-        bytes32 actualHash = address(target).codehash;
+    function test_assertParam_gte_reverts() public {
         vm.expectRevert(
             abi.encodeWithSelector(
-                Assertions.AssertionFailedBytes32.selector,
-                "EQ_CODEHASH",
-                actualHash,
-                wrongHash
+                ConstraintFailed.selector,
+                "PARAM",
+                0,
+                0,
+                0,
+                ConstraintType.GTE,
+                bytes32(uint256(42)),
+                abi.encode(uint256(43))
             )
         );
-        assertions.assertEqCodeHash(address(target), wrongHash);
+        assertions.assertParam(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.GTE, abi.encode(uint256(43)))));
     }
 
-    // ============ Call Failed Tests ============
+    function test_assertParam_lte_success() public view {
+        assertions.assertParam(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.LTE, abi.encode(uint256(42)))));
+    }
 
-    function test_callFailed_reverts() public {
-        bytes memory callData = abi.encodeCall(MockTarget.revertingFunction, ());
+    function test_assertParam_lte_reverts() public {
         vm.expectRevert(
             abi.encodeWithSelector(
-                Assertions.CallFailed.selector,
-                address(target),
-                callData
+                ConstraintFailed.selector,
+                "PARAM",
+                0,
+                0,
+                0,
+                ConstraintType.LTE,
+                bytes32(uint256(42)),
+                abi.encode(uint256(41))
             )
         );
-        assertions.assertEqCallUint(
-            address(target),
-            callData,
-            0
-        );
+        assertions.assertParam(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.LTE, abi.encode(uint256(41)))));
     }
 
-    function test_callFailed_nonExistentFunction_reverts() public {
-        // Call a function that doesn't exist
-        bytes memory callData = abi.encodeWithSignature("nonExistentFunction()");
+    function test_assertParam_in_success_interior_and_bounds() public view {
+        InputParam memory p = _call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.IN, abi.encode(uint256(1), uint256(100))));
+        assertions.assertParam(p);
+        // inclusive bounds
+        p.constraints[0].referenceData = abi.encode(uint256(42), uint256(42));
+        assertions.assertParam(p);
+    }
+
+    function test_assertParam_in_reverts_below_and_above() public {
+        InputParam memory p = _call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.IN, abi.encode(uint256(43), uint256(100))));
         vm.expectRevert(
             abi.encodeWithSelector(
-                Assertions.CallFailed.selector,
-                address(target),
-                callData
+                ConstraintFailed.selector,
+                "PARAM",
+                0,
+                0,
+                0,
+                ConstraintType.IN,
+                bytes32(uint256(42)),
+                abi.encode(uint256(43), uint256(100))
             )
         );
-        assertions.assertEqCallUint(
-            address(target),
-            callData,
-            0
-        );
-    }
+        assertions.assertParam(p);
 
-    // ============ Custom Message Tests ============
-
-    function test_customMessage_appearsInError() public {
+        p.constraints[0].referenceData = abi.encode(uint256(1), uint256(41));
         vm.expectRevert(
             abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "my custom error message",
-                42,
-                100
+                ConstraintFailed.selector,
+                "PARAM",
+                0,
+                0,
+                0,
+                ConstraintType.IN,
+                bytes32(uint256(42)),
+                abi.encode(uint256(1), uint256(41))
             )
         );
-        assertions.assertEqCallUint(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            100,
-            "my custom error message"
-        );
+        assertions.assertParam(p);
     }
 
-    function test_customMessage_address() public {
+    function test_assertParam_secondConstraint_reverts_withIndex() public {
         vm.expectRevert(
             abi.encodeWithSelector(
-                Assertions.AssertionFailedAddress.selector,
-                "address mismatch",
-                address(0xBEEF),
-                address(0xDEAD)
-            )
-        );
-        assertions.assertEqCallAddress(
-            address(target),
-            abi.encodeCall(MockTarget.getAddress, ()),
-            address(0xDEAD),
-            "address mismatch"
-        );
-    }
-
-    function test_customMessage_bool() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedBool.selector,
-                "bool mismatch",
-                true,
-                false
-            )
-        );
-        assertions.assertEqCallBool(
-            address(target),
-            abi.encodeCall(MockTarget.getBool, ()),
-            false,
-            "bool mismatch"
-        );
-    }
-
-    function test_customMessage_bytes32() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedBytes32.selector,
-                "bytes32 mismatch",
-                keccak256("test"),
-                keccak256("wrong")
-            )
-        );
-        assertions.assertEqCallBytes32(
-            address(target),
-            abi.encodeCall(MockTarget.getBytes32, ()),
-            keccak256("wrong"),
-            "bytes32 mismatch"
-        );
-    }
-
-    // ============ Tuple-Indexed String Assertions ============
-
-    function test_assertEqCallStringN_success() public view {
-        assertions.assertEqCallStringN(
-            address(target),
-            abi.encodeCall(MockTarget.getTupleWithString, ()),
-            1,
-            "hello"
-        );
-    }
-
-    function test_assertEqCallStringN_failure() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedString.selector,
-                "EQ_N",
-                "hello",
-                "world"
-            )
-        );
-        assertions.assertEqCallStringN(
-            address(target),
-            abi.encodeCall(MockTarget.getTupleWithString, ()),
-            1,
-            "world"
-        );
-    }
-
-    // ============ assertTrue / assertFalse ============
-
-    function test_assertTrue_success() public view {
-        assertions.assertTrue(
-            address(target),
-            abi.encodeCall(MockTarget.getBool, ())
-        );
-    }
-
-    function test_assertTrue_failure() public {
-        target.setBool(false);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedBool.selector,
-                "TRUE",
-                false,
-                true
-            )
-        );
-        assertions.assertTrue(
-            address(target),
-            abi.encodeCall(MockTarget.getBool, ())
-        );
-    }
-
-    function test_assertTrue_withMessage() public view {
-        assertions.assertTrue(
-            address(target),
-            abi.encodeCall(MockTarget.getBool, ()),
-            "should be true"
-        );
-    }
-
-    function test_assertFalse_success() public {
-        target.setBool(false);
-        assertions.assertFalse(
-            address(target),
-            abi.encodeCall(MockTarget.getBool, ())
-        );
-    }
-
-    function test_assertFalse_failure() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedBool.selector,
-                "FALSE",
-                true,
-                false
-            )
-        );
-        assertions.assertFalse(
-            address(target),
-            abi.encodeCall(MockTarget.getBool, ())
-        );
-    }
-
-    function test_assertFalse_withMessage() public {
-        target.setBool(false);
-        assertions.assertFalse(
-            address(target),
-            abi.encodeCall(MockTarget.getBool, ()),
-            "should be false"
-        );
-    }
-
-    // ============ Int256 Call Assertions ============
-
-    function test_assertEqCallInt_success() public view {
-        assertions.assertEqCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            -42
-        );
-    }
-
-    function test_assertEqCallInt_withMessage_success() public view {
-        assertions.assertEqCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            -42,
-            "int check"
-        );
-    }
-
-    function test_assertEqCallInt_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedInt.selector,
-                "EQ",
-                -42,
-                100
-            )
-        );
-        assertions.assertEqCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            100
-        );
-    }
-
-    function test_assertEqCallInt_customMessage_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedInt.selector,
-                "int mismatch",
-                -42,
-                0
-            )
-        );
-        assertions.assertEqCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            0,
-            "int mismatch"
-        );
-    }
-
-    function test_assertNeCallInt_success() public view {
-        assertions.assertNeCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            42
-        );
-    }
-
-    function test_assertNeCallInt_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedInt.selector,
-                "NE",
-                -42,
-                -42
-            )
-        );
-        assertions.assertNeCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            -42
-        );
-    }
-
-    function test_assertGtCallInt_negative_success() public view {
-        // -42 > -100
-        assertions.assertGtCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            -100
-        );
-    }
-
-    function test_assertGtCallInt_boundary_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedInt.selector,
-                "GT",
-                -42,
-                -42
-            )
-        );
-        assertions.assertGtCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            -42
-        );
-    }
-
-    function test_assertLtCallInt_success() public view {
-        // -42 < 0
-        assertions.assertLtCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            0
-        );
-    }
-
-    function test_assertLtCallInt_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedInt.selector,
-                "LT",
-                -42,
-                -100
-            )
-        );
-        assertions.assertLtCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            -100
-        );
-    }
-
-    function test_assertGeCallInt_equal_success() public view {
-        assertions.assertGeCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            -42
-        );
-    }
-
-    function test_assertGeCallInt_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedInt.selector,
-                "GE",
-                -42,
-                0
-            )
-        );
-        assertions.assertGeCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            0
-        );
-    }
-
-    function test_assertLeCallInt_equal_success() public view {
-        assertions.assertLeCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            -42
-        );
-    }
-
-    function test_assertLeCallInt_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedInt.selector,
-                "LE",
-                -42,
-                -100
-            )
-        );
-        assertions.assertLeCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            -100
-        );
-    }
-
-    function test_assertEqCallInt_min_success() public {
-        target.setInt(type(int256).min);
-        assertions.assertEqCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            type(int256).min
-        );
-    }
-
-    function test_assertGeCallInt_min_success() public {
-        target.setInt(type(int256).min);
-        assertions.assertGeCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            type(int256).min
-        );
-    }
-
-    function test_assertLtCallInt_min_reverts() public {
-        target.setInt(type(int256).min);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedInt.selector,
-                "LT",
-                type(int256).min,
-                type(int256).min
-            )
-        );
-        assertions.assertLtCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            type(int256).min
-        );
-    }
-
-    function test_assertEqCallInt_max_success() public {
-        target.setInt(type(int256).max);
-        assertions.assertEqCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            type(int256).max
-        );
-    }
-
-    function test_assertGtCallInt_max_reverts() public {
-        target.setInt(type(int256).max);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedInt.selector,
-                "GT",
-                type(int256).max,
-                type(int256).max
-            )
-        );
-        assertions.assertGtCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            type(int256).max
-        );
-    }
-
-    function test_assertGtCallInt_minToMax_success() public {
-        target.setInt(type(int256).max);
-        assertions.assertGtCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            type(int256).min
-        );
-    }
-
-    // ============ Tuple-Indexed Int256 Assertions ============
-
-    function test_assertEqCallIntN_success() public view {
-        assertions.assertEqCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            0, // index 0 is storedInt
-            -42
-        );
-    }
-
-    function test_assertEqCallIntN_withMessage_success() public view {
-        assertions.assertEqCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            1, // index 1 is the constant 7
-            7,
-            "intN check"
-        );
-    }
-
-    function test_assertEqCallIntN_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedInt.selector,
-                "EQ_N",
-                -42,
-                100
-            )
-        );
-        assertions.assertEqCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            0,
-            100
-        );
-    }
-
-    function test_assertNeCallIntN_success() public view {
-        assertions.assertNeCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            0,
-            42
-        );
-    }
-
-    function test_assertNeCallIntN_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedInt.selector,
-                "NE_N",
-                -42,
-                -42
-            )
-        );
-        assertions.assertNeCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            0,
-            -42
-        );
-    }
-
-    function test_assertGtCallIntN_success() public view {
-        assertions.assertGtCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            0,
-            -100
-        );
-    }
-
-    function test_assertLtCallIntN_success() public view {
-        assertions.assertLtCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            0,
-            0
-        );
-    }
-
-    function test_assertGeCallIntN_equal_success() public view {
-        assertions.assertGeCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            0,
-            -42
-        );
-    }
-
-    function test_assertLeCallIntN_equal_success() public view {
-        assertions.assertLeCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            0,
-            -42
-        );
-    }
-
-    function test_assertLeCallIntN_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedInt.selector,
-                "LE_N",
-                7,
-                -100
-            )
-        );
-        assertions.assertLeCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            1,
-            -100
-        );
-    }
-
-    // ============ Tuple-Indexed Uint256 Ne Assertions ============
-
-    function test_assertNeCallUintN_success() public view {
-        assertions.assertNeCallUintN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            0,
-            100
-        );
-    }
-
-    function test_assertNeCallUintN_withMessage_success() public view {
-        assertions.assertNeCallUintN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            0,
-            100,
-            "uintN ne check"
-        );
-    }
-
-    function test_assertNeCallUintN_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "NE_N",
-                42,
-                42
-            )
-        );
-        assertions.assertNeCallUintN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            0,
-            42
-        );
-    }
-
-    // ============ Array Length Lt/Le Assertions ============
-
-    function test_assertLtCallArrayLength_success() public view {
-        assertions.assertLtCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getArray, ()),
-            6
-        );
-    }
-
-    function test_assertLtCallArrayLength_boundary_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "LT_LEN",
-                5,
-                5
-            )
-        );
-        assertions.assertLtCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getArray, ()),
-            5
-        );
-    }
-
-    function test_assertLeCallArrayLength_equal_success() public view {
-        assertions.assertLeCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getArray, ()),
-            5
-        );
-    }
-
-    function test_assertLeCallArrayLength_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "LE_LEN",
-                5,
-                4
-            )
-        );
-        assertions.assertLeCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getArray, ()),
-            4
-        );
-    }
-
-    // ============ Out-of-Range Index Assertions ============
-
-    function test_assertEqCallUintN_indexOutOfRange_reverts() public {
-        // getValue() returns a single 32-byte word, so index 1 is out of range
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.ReturnDataOutOfBounds.selector,
+                ConstraintFailed.selector,
+                "PARAM",
+                0,
+                0,
                 1,
-                32
+                ConstraintType.LTE,
+                bytes32(uint256(42)),
+                abi.encode(uint256(41))
             )
         );
-        assertions.assertEqCallUintN(
-            address(target),
-            abi.encodeCall(MockTarget.getValue, ()),
-            1,
-            42
+        assertions.assertParam(
+            _call(
+                address(target),
+                abi.encodeCall(MockTarget.getValue, ()),
+                _c2(ConstraintType.GTE, abi.encode(uint256(1)), ConstraintType.LTE, abi.encode(uint256(41)))
+            )
         );
     }
 
-    function test_assertEqCallAddressN_indexOutOfRange_reverts() public {
-        // getTuple() returns 4 words, so index 4 is out of range
+    function test_assertParam_withMessage() public {
         vm.expectRevert(
             abi.encodeWithSelector(
-                Assertions.ReturnDataOutOfBounds.selector,
-                4,
-                128
-            )
-        );
-        assertions.assertEqCallAddressN(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            4,
-            address(0xBEEF)
-        );
-    }
-
-    function test_assertEqCallIntN_indexOutOfRange_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.ReturnDataOutOfBounds.selector,
-                2,
-                64
-            )
-        );
-        assertions.assertEqCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            2,
-            0
-        );
-    }
-
-    function test_assertEqCallStringN_indexOutOfRange_reverts() public {
-        // getTupleWithString() returns 160 bytes (3 head words + string length + data)
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.ReturnDataOutOfBounds.selector,
-                50,
-                160
-            )
-        );
-        assertions.assertEqCallStringN(
-            address(target),
-            abi.encodeCall(MockTarget.getTupleWithString, ()),
-            50,
-            "hello"
-        );
-    }
-
-    function test_assertEqCallStringN_indexNotAnOffset_reverts() public {
-        // Index 0 of getTupleWithString() is a uint256 (42), not a valid string
-        // offset, so the offset validation must reject it
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.ReturnDataOutOfBounds.selector,
+                ConstraintFailed.selector,
+                "Treasury balance too low",
                 0,
-                160
+                0,
+                0,
+                ConstraintType.GTE,
+                bytes32(uint256(42)),
+                abi.encode(uint256(1000))
             )
         );
-        assertions.assertEqCallStringN(
-            address(target),
-            abi.encodeCall(MockTarget.getTupleWithString, ()),
-            0,
-            "hello"
+        assertions.assertParam(
+            _call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.GTE, abi.encode(uint256(1000)))),
+            "Treasury balance too low"
         );
     }
 
-    // ============ Code-less Target Assertions ============
+    // ============ assertParam: fetcher types ============
 
-    function test_call_toEOA_reverts_withCallFailed() public {
+    function test_assertParam_rawBytes_literal() public view {
+        assertions.assertParam(_raw(abi.encode(uint256(7)), _c1(ConstraintType.EQ, abi.encode(uint256(7)))));
+    }
+
+    function test_assertParam_balance_erc20() public view {
+        // MockToken.balanceOf returns 1000 for any non-zero account
+        assertions.assertParam(_bal(address(token), TEST_EOA, _c1(ConstraintType.EQ, abi.encode(uint256(1000)))));
+    }
+
+    function test_assertParam_balance_native() public {
+        vm.deal(TEST_EOA, 5 ether);
+        assertions.assertParam(_bal(address(0), TEST_EOA, _c1(ConstraintType.GTE, abi.encode(uint256(5 ether)))));
+    }
+
+    function test_assertParam_balance_reverts() public {
+        vm.deal(TEST_EOA, 1 ether);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ConstraintFailed.selector,
+                "PARAM",
+                0,
+                0,
+                0,
+                ConstraintType.GTE,
+                bytes32(uint256(1 ether)),
+                abi.encode(uint256(2 ether))
+            )
+        );
+        assertions.assertParam(_bal(address(0), TEST_EOA, _c1(ConstraintType.GTE, abi.encode(uint256(2 ether)))));
+    }
+
+    function test_assertParam_addressWord_constraint() public view {
+        // addresses compare as left-padded words
+        assertions.assertParam(
+            _call(address(target), abi.encodeCall(MockTarget.getAddress, ()), _c1(ConstraintType.EQ, abi.encode(address(0xBEEF))))
+        );
+    }
+
+    function test_assertParam_noConstraints_isCallSuccessAssert() public view {
+        // no constraints: the assertion is just "this staticcall succeeds"
+        assertions.assertParam(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _none()));
+    }
+
+    // ============ assertParam: malformed inputs and call failures ============
+
+    function test_assertParam_invalidBalanceData() public {
+        InputParam memory p = InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.BALANCE,
+            abi.encodePacked(address(token)), // 20 bytes, not 40
+            _none()
+        );
+        vm.expectRevert(abi.encodeWithSelector(InvalidBalanceData.selector, 0, 0, 20));
+        assertions.assertParam(p);
+    }
+
+    function test_assertParam_invalidConstraintData_word() public {
+        vm.expectRevert(abi.encodeWithSelector(InvalidConstraintData.selector, 0, 0, 0, 31));
+        assertions.assertParam(_raw(abi.encode(uint256(7)), _c1(ConstraintType.EQ, new bytes(31))));
+    }
+
+    function test_assertParam_invalidConstraintData_range() public {
+        vm.expectRevert(abi.encodeWithSelector(InvalidConstraintData.selector, 0, 0, 0, 32));
+        assertions.assertParam(_raw(abi.encode(uint256(7)), _c1(ConstraintType.IN, abi.encode(uint256(1)))));
+    }
+
+    function test_assertParam_callReverts() public {
+        bytes memory callData = abi.encodeCall(MockTarget.revertingFunction, ());
+        vm.expectRevert(abi.encodeWithSelector(CallFailed.selector, address(target), callData));
+        assertions.assertParam(_call(address(target), callData, _none()));
+    }
+
+    function test_assertParam_codelessTarget() public {
         bytes memory callData = abi.encodeCall(MockTarget.getValue, ());
+        vm.expectRevert(abi.encodeWithSelector(CallFailed.selector, TEST_EOA, callData));
+        assertions.assertParam(_call(TEST_EOA, callData, _none()));
+    }
+
+    function test_assertParam_shortReturn_withConstraint() public {
+        vm.expectRevert(abi.encodeWithSelector(ReturnDataOutOfBounds.selector, 0, 0));
+        assertions.assertParam(
+            _call(address(token), abi.encodeCall(MockToken.emptyReturn, ()), _c1(ConstraintType.EQ, abi.encode(uint256(0))))
+        );
+    }
+
+    // ============ assertComposable (native judge): predicate entries ============
+
+    function test_assertComposable_predicate_success() public view {
+        assertions.assertComposable(
+            _predicate(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.GTE, abi.encode(uint256(1)))))
+        );
+    }
+
+    function test_assertComposable_predicate_reverts() public {
         vm.expectRevert(
             abi.encodeWithSelector(
-                Assertions.CallFailed.selector,
-                TEST_EOA,
-                callData
-            )
-        );
-        assertions.assertEqCallUint(TEST_EOA, callData, 42);
-    }
-
-    function test_assertEqCallInt_toEOA_reverts_withCallFailed() public {
-        bytes memory callData = abi.encodeCall(MockTarget.getInt, ());
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.CallFailed.selector,
-                TEST_EOA,
-                callData
-            )
-        );
-        assertions.assertEqCallInt(TEST_EOA, callData, -42);
-    }
-
-    // ============ Approximate Equality Int256 Assertions ============
-
-    function test_assertApproxEqCallInt_exact_success() public view {
-        assertions.assertApproxEqCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            -42,
-            0 // exact match
-        );
-    }
-
-    function test_assertApproxEqCallInt_withinDelta_success() public view {
-        assertions.assertApproxEqCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            -40, // actual is -42
-            5    // delta of 2 is within 5
-        );
-    }
-
-    function test_assertApproxEqCallInt_crossingZero_success() public view {
-        assertions.assertApproxEqCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            8,  // actual is -42, delta spans zero
-            50
-        );
-    }
-
-    function test_assertApproxEqCallInt_withMessage_success() public view {
-        assertions.assertApproxEqCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            -42,
-            0,
-            "custom message"
-        );
-    }
-
-    function test_assertApproxEqCallInt_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedApproxInt.selector,
-                "APPROX_EQ",
-                int256(-42), // actual
-                int256(0),   // expected
-                42,          // delta
-                5            // maxDelta
-            )
-        );
-        assertions.assertApproxEqCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            0, // actual is -42, delta is 42
-            5  // maxDelta is only 5
-        );
-    }
-
-    function test_assertApproxEqCallInt_fullRange_success() public {
-        // The min..max span is 2^256 - 1: the delta only fits in uint256
-        target.setInt(type(int256).min);
-        assertions.assertApproxEqCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            type(int256).max,
-            type(uint256).max
-        );
-    }
-
-    function test_assertApproxEqCallInt_fullRange_reverts() public {
-        target.setInt(type(int256).min);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedApproxInt.selector,
-                "APPROX_EQ",
-                type(int256).min,
-                type(int256).max,
-                type(uint256).max,
-                0
-            )
-        );
-        assertions.assertApproxEqCallInt(
-            address(target),
-            abi.encodeCall(MockTarget.getInt, ()),
-            type(int256).max,
-            0
-        );
-    }
-
-    function test_assertApproxEqCallIntN_success() public view {
-        assertions.assertApproxEqCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            0,   // index
-            -40, // expected (actual is -42)
-            5    // maxDelta
-        );
-    }
-
-    function test_assertApproxEqCallIntN_secondElement_success() public view {
-        assertions.assertApproxEqCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            1, // index (actual is 7)
-            5,
-            2
-        );
-    }
-
-    function test_assertApproxEqCallIntN_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedApproxInt.selector,
-                "APPROX_EQ_N",
-                int256(7),  // actual at index 1
-                int256(20), // expected
-                13,         // delta
-                5           // maxDelta
-            )
-        );
-        assertions.assertApproxEqCallIntN(
-            address(target),
-            abi.encodeCall(MockTarget.getIntTuple, ()),
-            1,
-            20,
-            5
-        );
-    }
-
-    // ============ Tuple-Indexed Bytes32 Ne Assertions ============
-
-    function test_assertNeCallBytes32N_success() public view {
-        assertions.assertNeCallBytes32N(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            3,
-            keccak256("other")
-        );
-    }
-
-    function test_assertNeCallBytes32N_withMessage_success() public view {
-        assertions.assertNeCallBytes32N(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            3,
-            keccak256("other"),
-            "bytes32N ne check"
-        );
-    }
-
-    function test_assertNeCallBytes32N_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedBytes32.selector,
-                "NE_N",
-                keccak256("test"),
-                keccak256("test")
-            )
-        );
-        assertions.assertNeCallBytes32N(
-            address(target),
-            abi.encodeCall(MockTarget.getTuple, ()),
-            3,
-            keccak256("test")
-        );
-    }
-
-    // ============ Tuple-Indexed String Ne Assertions ============
-
-    function test_assertNeCallStringN_success() public view {
-        assertions.assertNeCallStringN(
-            address(target),
-            abi.encodeCall(MockTarget.getTupleWithString, ()),
-            1,
-            "world"
-        );
-    }
-
-    function test_assertNeCallStringN_withMessage_success() public view {
-        assertions.assertNeCallStringN(
-            address(target),
-            abi.encodeCall(MockTarget.getTupleWithString, ()),
-            1,
-            "world",
-            "stringN ne check"
-        );
-    }
-
-    function test_assertNeCallStringN_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedString.selector,
-                "NE_N",
-                "hello",
-                "hello"
-            )
-        );
-        assertions.assertNeCallStringN(
-            address(target),
-            abi.encodeCall(MockTarget.getTupleWithString, ()),
-            1,
-            "hello"
-        );
-    }
-
-    // ============ Raw Bytes Ne Assertions ============
-
-    function test_assertNeCallBytes_success() public view {
-        assertions.assertNeCallBytes(
-            address(target),
-            abi.encodeCall(MockTarget.getRawUint, ()),
-            abi.encode(uint256(99999))
-        );
-    }
-
-    function test_assertNeCallBytes_withMessage_success() public view {
-        assertions.assertNeCallBytes(
-            address(target),
-            abi.encodeCall(MockTarget.getRawUint, ()),
-            abi.encode(uint256(99999)),
-            "bytes ne check"
-        );
-    }
-
-    function test_assertNeCallBytes_reverts() public {
-        bytes memory sameBytes = abi.encode(uint256(12345));
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedBytes.selector,
-                "NE_BYTES",
-                keccak256(sameBytes),
-                keccak256(sameBytes)
-            )
-        );
-        assertions.assertNeCallBytes(
-            address(target),
-            abi.encodeCall(MockTarget.getRawUint, ()),
-            sameBytes
-        );
-    }
-
-    // ============ Array Length Ne Assertions ============
-
-    function test_assertNeCallArrayLength_success() public view {
-        assertions.assertNeCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getArray, ()),
-            4
-        );
-    }
-
-    function test_assertNeCallArrayLength_withMessage_success() public view {
-        assertions.assertNeCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getArray, ()),
-            4,
-            "array ne check"
-        );
-    }
-
-    function test_assertNeCallArrayLength_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "NE_LEN",
-                5,
-                5
-            )
-        );
-        assertions.assertNeCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getArray, ()),
-            5
-        );
-    }
-
-    function test_assertNeCallArrayLength_empty_success() public view {
-        assertions.assertNeCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getEmptyArray, ()),
-            1
-        );
-    }
-
-    function test_assertNeCallArrayLength_empty_reverts() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.AssertionFailedUint.selector,
-                "NE_LEN",
+                ConstraintFailed.selector,
+                "COMPOSABLE",
                 0,
-                0
+                0,
+                0,
+                ConstraintType.GTE,
+                bytes32(uint256(42)),
+                abi.encode(uint256(1000))
             )
         );
-        assertions.assertNeCallArrayLength(
-            address(target),
-            abi.encodeCall(MockTarget.getEmptyArray, ()),
-            0
+        assertions.assertComposable(
+            _predicate(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.GTE, abi.encode(uint256(1000)))))
         );
+    }
+
+    function test_assertComposable_secondEntry_reverts_withEntryIndex() public {
+        ComposableExecution[] memory ex = _batch2(
+            _entry(bytes4(0), _params1(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.EQ, abi.encode(uint256(42)))))),
+            _entry(bytes4(0), _params1(_call(address(target), abi.encodeCall(MockTarget.getBool, ()), _c1(ConstraintType.EQ, abi.encode(false)))))
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ConstraintFailed.selector,
+                "COMPOSABLE",
+                1,
+                0,
+                0,
+                ConstraintType.EQ,
+                bytes32(uint256(1)),
+                abi.encode(false)
+            )
+        );
+        assertions.assertComposable(ex);
+    }
+
+    function test_assertComposable_multiParam_and_composition() public {
+        // both parameters on one predicate entry must pass; second fails
+        ComposableExecution[] memory ex = _batch1(
+            _entry(
+                bytes4(0),
+                _params2(
+                    _call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.EQ, abi.encode(uint256(42)))),
+                    _bal(address(token), TEST_EOA, _c1(ConstraintType.GTE, abi.encode(uint256(1001))))
+                )
+            )
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ConstraintFailed.selector,
+                "COMPOSABLE",
+                0,
+                1,
+                0,
+                ConstraintType.GTE,
+                bytes32(uint256(1000)),
+                abi.encode(uint256(1001))
+            )
+        );
+        assertions.assertComposable(ex);
+    }
+
+    function test_assertComposable_withMessage() public {
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ConstraintFailed.selector,
+                "swap output too low",
+                0,
+                0,
+                0,
+                ConstraintType.GTE,
+                bytes32(uint256(1000)),
+                abi.encode(uint256(2500))
+            )
+        );
+        assertions.assertComposable(
+            _predicate(_bal(address(token), TEST_EOA, _c1(ConstraintType.GTE, abi.encode(uint256(2500))))),
+            "swap output too low"
+        );
+    }
+
+    function test_assertComposable_emptyBatch_passes() public view {
+        assertions.assertComposable(new ComposableExecution[](0));
+    }
+
+    // ============ assertComposable (native judge): constructed calls ============
+
+    function test_assertComposable_constructedCall_success() public view {
+        // calldata is built as functionSig ++ resolved CALL_DATA params
+        assertions.assertComposable(
+            _batch1(
+                _entry(
+                    MockTarget.checkValue.selector,
+                    _params2(_target(address(target)), _raw(abi.encode(uint256(42)), _none()))
+                )
+            )
+        );
+    }
+
+    function test_assertComposable_constructedCall_multiParam_success() public view {
+        assertions.assertComposable(
+            _batch1(
+                _entry(
+                    MockTarget.checkPair.selector,
+                    _params3(
+                        _target(address(target)),
+                        _raw(abi.encode(uint256(42)), _none()),
+                        // second arg resolved live: getAddress() returns 0xBEEF
+                        _call(address(target), abi.encodeCall(MockTarget.getAddress, ()), _none())
+                    )
+                )
+            )
+        );
+    }
+
+    function test_assertComposable_constructedCall_reverts_withBuiltCalldata() public {
+        bytes memory builtCalldata = abi.encodePacked(MockTarget.checkValue.selector, abi.encode(uint256(41)));
+        vm.expectRevert(abi.encodeWithSelector(CallFailed.selector, address(target), builtCalldata));
+        assertions.assertComposable(
+            _batch1(
+                _entry(
+                    MockTarget.checkValue.selector,
+                    _params2(_target(address(target)), _raw(abi.encode(uint256(41)), _none()))
+                )
+            )
+        );
+    }
+
+    function test_assertComposable_runtimeResolvedTarget() public view {
+        // TARGET fetched via STATIC_CALL: target.token() resolves the token address
+        InputParam memory runtimeTarget = InputParam(
+            InputParamType.TARGET,
+            InputParamFetcherType.STATIC_CALL,
+            abi.encode(address(target), abi.encodeCall(MockTarget.token, ())),
+            _none()
+        );
+        assertions.assertComposable(_batch1(_entry(MockToken.decimals.selector, _params1(runtimeTarget))));
+    }
+
+    function test_assertComposable_zeroTarget_skipsCall() public view {
+        // per the standard, target == address(0) skips the call (even with a garbage selector)
+        InputParam memory zeroTarget = InputParam(
+            InputParamType.TARGET,
+            InputParamFetcherType.RAW_BYTES,
+            abi.encode(address(0)),
+            _none()
+        );
+        assertions.assertComposable(_batch1(_entry(0xdeadbeef, _params1(zeroTarget))));
+    }
+
+    // ============ assertComposable (native judge): malformed batches ============
+
+    function test_assertComposable_dirtyTargetWord() public {
+        bytes32 dirty = bytes32(uint256(1) << 200 | uint256(uint160(address(target))));
+        InputParam memory p = InputParam(InputParamType.TARGET, InputParamFetcherType.RAW_BYTES, abi.encode(dirty), _none());
+        vm.expectRevert(abi.encodeWithSelector(InvalidAddressWord.selector, 0, dirty));
+        assertions.assertComposable(_batch1(_entry(MockTarget.getValue.selector, _params1(p))));
+    }
+
+    function test_assertComposable_duplicateTarget() public {
+        vm.expectRevert(abi.encodeWithSelector(Assertions.DuplicateTargetParam.selector, 0));
+        assertions.assertComposable(
+            _batch1(_entry(MockTarget.getValue.selector, _params2(_target(address(target)), _target(address(target)))))
+        );
+    }
+
+    function test_assertComposable_valueParam() public {
+        InputParam memory valueParam = InputParam(
+            InputParamType.VALUE,
+            InputParamFetcherType.RAW_BYTES,
+            abi.encode(uint256(1 ether)),
+            _none()
+        );
+        vm.expectRevert(abi.encodeWithSelector(Assertions.ValueParamNotSupported.selector, 0, 1));
+        assertions.assertComposable(
+            _batch1(_entry(MockTarget.getValue.selector, _params2(_target(address(target)), valueParam)))
+        );
+    }
+
+    function test_assertComposable_outputParams() public {
+        OutputParam[] memory outs = new OutputParam[](1);
+        outs[0] = OutputParam(OutputParamFetcherType.EXEC_RESULT, "");
+        ComposableExecution[] memory ex = new ComposableExecution[](1);
+        ex[0] = ComposableExecution(bytes4(0), _params1(_raw(abi.encode(uint256(1)), _none())), outs);
+        vm.expectRevert(abi.encodeWithSelector(Assertions.OutputParamsNotSupported.selector, 0));
+        assertions.assertComposable(ex);
+    }
+
+    function test_assertComposable_balanceAsTarget() public {
+        InputParam memory p = InputParam(
+            InputParamType.TARGET,
+            InputParamFetcherType.BALANCE,
+            abi.encodePacked(address(token), TEST_EOA),
+            _none()
+        );
+        vm.expectRevert(abi.encodeWithSelector(Assertions.BalanceCannotBeTarget.selector, 0, 0));
+        assertions.assertComposable(_batch1(_entry(bytes4(0), _params1(p))));
+    }
+
+    // ============ assertComposable (wrapped implementation) ============
+
+    function test_assertComposable_wrapped_success() public view {
+        assertions.assertComposable(
+            address(composable),
+            _predicate(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.EQ, abi.encode(uint256(42)))))
+        );
+    }
+
+    function test_assertComposable_wrapped_predicateFails() public {
+        ComposableExecution[] memory ex = _predicate(
+            _call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.GTE, abi.encode(uint256(1000))))
+        );
+        bytes memory inner = abi.encodeWithSelector(
+            ConstraintFailed.selector,
+            "",
+            0,
+            0,
+            0,
+            ConstraintType.GTE,
+            bytes32(uint256(42)),
+            abi.encode(uint256(1000))
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(Assertions.ComposableFailed.selector, "COMPOSABLE", address(composable), inner)
+        );
+        assertions.assertComposable(address(composable), ex);
+    }
+
+    function test_assertComposable_wrapped_stateChangingBatchFails() public {
+        // a state-changing entry cannot pass a staticcall into executeComposable
+        ComposableExecution[] memory ex = _batch1(
+            _entry(
+                MockTarget.setValue.selector,
+                _params2(_target(address(target)), _raw(abi.encode(uint256(7)), _none()))
+            )
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(Assertions.ComposableFailed.selector, "COMPOSABLE", address(composable), bytes(""))
+        );
+        assertions.assertComposable(address(composable), ex);
+    }
+
+    function test_assertComposable_wrapped_codelessImplementation() public {
+        ComposableExecution[] memory ex = _predicate(_raw(abi.encode(uint256(1)), _none()));
+        bytes memory callData = abi.encodeCall(IComposableExecution.executeComposable, (ex));
+        vm.expectRevert(abi.encodeWithSelector(CallFailed.selector, TEST_EOA, callData));
+        assertions.assertComposable(TEST_EOA, ex);
+    }
+
+    function test_assertComposable_wrapped_withMessage() public {
+        ComposableExecution[] memory ex = _predicate(
+            _call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.LTE, abi.encode(uint256(1))))
+        );
+        bytes memory inner = abi.encodeWithSelector(
+            ConstraintFailed.selector,
+            "",
+            0,
+            0,
+            0,
+            ConstraintType.LTE,
+            bytes32(uint256(42)),
+            abi.encode(uint256(1))
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(Assertions.ComposableFailed.selector, "bridge not arrived", address(composable), inner)
+        );
+        assertions.assertComposable(address(composable), ex, "bridge not arrived");
+    }
+
+    // ════════════ V1 use-case parity ════════════
+    //
+    // Every assertion family the v1 core exposed as a dedicated function,
+    // recovered in the ERC-8211 design and judged through the core.
+    // Direct EQ / GTE / LTE / IN checks are plain constraints; everything
+    // the constraint set cannot say (Ne, strict Gt/Lt, signed comparisons,
+    // tuple indexing, strings, approx deltas, block env, code checks) is a
+    // Combinators expression judged through a constrained STATIC_CALL
+    // fetcher pointed at the Combinators address.
+
+    // ---- Parity helpers ----
+
+    /// @dev An unconstrained STATIC_CALL operand
+    function _op(address t, bytes memory d) internal pure returns (InputParam memory) {
+        return _call(t, d, _none());
+    }
+
+    /// @dev A literal word operand
+    function _lit(uint256 v) internal pure returns (InputParam memory) {
+        return _raw(abi.encode(v), _none());
+    }
+
+    /// @dev A signed literal word operand
+    function _slit(int256 v) internal pure returns (InputParam memory) {
+        return _raw(abi.encode(v), _none());
+    }
+
+    /// @dev A combinator expression judged by the core under one constraint
+    function _expr(bytes memory exprCalldata, ConstraintType t, bytes memory ref) internal view returns (InputParam memory) {
+        return InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.STATIC_CALL,
+            abi.encode(address(comb), exprCalldata),
+            _c1(t, ref)
+        );
+    }
+
+    /// @dev Asserts a combinator boolean expression evaluates to 1, judged
+    ///      by the core (the v1 pattern for every non-EQ/GTE/LTE check)
+    function _assertHolds(bytes memory exprCalldata) internal view {
+        assertions.assertParam(_expr(exprCalldata, ConstraintType.EQ, abi.encode(uint256(1))));
+    }
+
+    /// @dev Expects the next assertParam to fail its (single) constraint
+    function _expectParamFail(ConstraintType t, bytes32 actual, bytes memory ref) internal {
+        vm.expectRevert(abi.encodeWithSelector(ConstraintFailed.selector, "PARAM", 0, 0, 0, t, actual, ref));
+    }
+
+    /// @dev Expects the next _assertHolds to fail (expression yielded 0)
+    function _expectHoldsFail() internal {
+        _expectParamFail(ConstraintType.EQ, bytes32(uint256(0)), abi.encode(uint256(1)));
+    }
+
+    function _getValueOp() internal view returns (InputParam memory) {
+        return _op(address(target), abi.encodeCall(MockTarget.getValue, ()));
+    }
+
+    function _getIntOp() internal view returns (InputParam memory) {
+        return _op(address(target), abi.encodeCall(MockTarget.getInt, ()));
+    }
+
+    /// @dev pick(operand, wordIndex) as a nested-expression operand
+    function _pickOp(InputParam memory operand, int256 wordIndex) internal view returns (InputParam memory) {
+        return _op(address(comb), abi.encodeCall(Combinators.pick, (operand, wordIndex)));
+    }
+
+    // ---- Parity: uint calls (v1 assertNe/Gt/Lt/Ge/LeCallUint) ----
+
+    function test_parity_neCallUint() public {
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Ne, _getValueOp(), _lit(100))));
+        _expectHoldsFail();
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Ne, _getValueOp(), _lit(42))));
+    }
+
+    function test_parity_gtCallUint_viaGtePlusOne() public {
+        // actual > expected  <=>  actual GTE expected + 1 (uint idiom)
+        assertions.assertParam(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.GTE, abi.encode(uint256(41 + 1)))));
+        _expectParamFail(ConstraintType.GTE, bytes32(uint256(42)), abi.encode(uint256(43)));
+        assertions.assertParam(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.GTE, abi.encode(uint256(42 + 1)))));
+    }
+
+    function test_parity_gtCallUint_viaCalc() public {
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Gt, _getValueOp(), _lit(41))));
+        _expectHoldsFail();
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Gt, _getValueOp(), _lit(42))));
+    }
+
+    function test_parity_ltCallUint() public {
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Lt, _getValueOp(), _lit(43))));
+        _expectHoldsFail();
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Lt, _getValueOp(), _lit(42))));
+    }
+
+    // ---- Parity: int calls (v1 assertEq/Ne/Gt/Lt/Ge/LeCallInt) ----
+
+    function test_parity_eqCallInt() public view {
+        // two's-complement bit equality: a plain EQ constraint
+        assertions.assertParam(_call(address(target), abi.encodeCall(MockTarget.getInt, ()), _c1(ConstraintType.EQ, abi.encode(int256(-42)))));
+    }
+
+    function test_parity_eqCallInt_minMax() public view {
+        assertions.assertParam(_raw(abi.encode(type(int256).min), _c1(ConstraintType.EQ, abi.encode(type(int256).min))));
+        assertions.assertParam(_raw(abi.encode(type(int256).max), _c1(ConstraintType.EQ, abi.encode(type(int256).max))));
+    }
+
+    function test_parity_neCallInt() public {
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Ne, _getIntOp(), _slit(0))));
+        _expectHoldsFail();
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Ne, _getIntOp(), _slit(-42))));
+    }
+
+    function test_parity_gtCallInt_signed() public {
+        // temperature() == -7: SGt orders negatives correctly where an
+        // unsigned constraint could not
+        InputParam memory temperature = _op(address(token), abi.encodeCall(MockToken.temperature, ()));
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.SGt, temperature, _slit(-10))));
+        _expectHoldsFail();
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.SGt, temperature, _slit(-7))));
+    }
+
+    function test_parity_gtCallInt_minToMax() public view {
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.SGt, _slit(type(int256).max), _slit(type(int256).min))));
+    }
+
+    function test_parity_ltCallInt_signed() public {
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.SLt, _getIntOp(), _slit(0))));
+        _expectHoldsFail();
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.SLt, _slit(type(int256).max), _slit(type(int256).min))));
+    }
+
+    function test_parity_geLeCallInt_signed() public view {
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.SGe, _getIntOp(), _slit(-42))));
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.SLe, _getIntOp(), _slit(-42))));
+    }
+
+    // ---- Parity: address / bool / bytes32 ----
+
+    function test_parity_neCallAddress() public {
+        InputParam memory getAddr = _op(address(target), abi.encodeCall(MockTarget.getAddress, ()));
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Ne, getAddr, _lit(uint256(uint160(address(0x5678)))))));
+        _expectHoldsFail();
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Ne, getAddr, _lit(uint256(uint160(address(0xBEEF)))))));
+    }
+
+    function test_parity_assertTrue() public {
+        assertions.assertParam(_call(address(target), abi.encodeCall(MockTarget.getBool, ()), _c1(ConstraintType.EQ, abi.encode(true))));
+        _expectParamFail(ConstraintType.EQ, bytes32(0), abi.encode(true));
+        assertions.assertParam(_call(address(token), abi.encodeCall(MockToken.paused, ()), _c1(ConstraintType.EQ, abi.encode(true))));
+    }
+
+    function test_parity_assertFalse() public {
+        assertions.assertParam(_call(address(token), abi.encodeCall(MockToken.paused, ()), _c1(ConstraintType.EQ, abi.encode(false))));
+        _expectParamFail(ConstraintType.EQ, bytes32(uint256(1)), abi.encode(false));
+        assertions.assertParam(_call(address(target), abi.encodeCall(MockTarget.getBool, ()), _c1(ConstraintType.EQ, abi.encode(false))));
+    }
+
+    function test_parity_eqCallBytes32() public view {
+        assertions.assertParam(_call(address(target), abi.encodeCall(MockTarget.getBytes32, ()), _c1(ConstraintType.EQ, abi.encode(keccak256("test")))));
+    }
+
+    function test_parity_neCallBytes32() public {
+        InputParam memory getB32 = _op(address(target), abi.encodeCall(MockTarget.getBytes32, ()));
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Ne, getB32, _raw(abi.encode(keccak256("other")), _none()))));
+        _expectHoldsFail();
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Ne, getB32, _raw(abi.encode(keccak256("test")), _none()))));
+    }
+
+    // ---- Parity: raw bytes and strings (v1 assertEq/NeCallBytes, StringN) ----
+
+    function test_parity_eqCallBytes_viaHash() public {
+        // pin the full returndata with data(Hash) + EQ, the v1 raw-bytes compare
+        InputParam memory getString = _op(address(target), abi.encodeCall(MockTarget.getString, ()));
+        assertions.assertParam(
+            _expr(
+                abi.encodeCall(Combinators.data, (Combinators.DataOp.Hash, getString, "", 0)),
+                ConstraintType.EQ,
+                abi.encode(keccak256(abi.encode("hello")))
+            )
+        );
+        _expectParamFail(ConstraintType.EQ, keccak256(abi.encode("hello")), abi.encode(keccak256(abi.encode("other"))));
+        assertions.assertParam(
+            _expr(
+                abi.encodeCall(Combinators.data, (Combinators.DataOp.Hash, getString, "", 0)),
+                ConstraintType.EQ,
+                abi.encode(keccak256(abi.encode("other")))
+            )
+        );
+    }
+
+    function test_parity_neCallBytes_viaHash() public view {
+        InputParam memory hashOp = _op(
+            address(comb),
+            abi.encodeCall(Combinators.data, (Combinators.DataOp.Hash, _op(address(target), abi.encodeCall(MockTarget.getString, ())), "", 0))
+        );
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Ne, hashOp, _raw(abi.encode(keccak256(abi.encode("other"))), _none()))));
+    }
+
+    // ---- Parity: tuple-indexed reads (v1 assertXxCallYyyN) ----
+
+    function test_parity_uintN() public view {
+        // getTuple() = (42, 0xBEEF, true, keccak("test")): static words 0..3
+        InputParam memory tuple = _op(address(target), abi.encodeCall(MockTarget.getTuple, ()));
+        assertions.assertParam(_expr(abi.encodeCall(Combinators.pick, (tuple, int256(0))), ConstraintType.EQ, abi.encode(uint256(42))));
+    }
+
+    function test_parity_addressN() public view {
+        InputParam memory tuple = _op(address(target), abi.encodeCall(MockTarget.getTuple, ()));
+        assertions.assertParam(_expr(abi.encodeCall(Combinators.pick, (tuple, int256(1))), ConstraintType.EQ, abi.encode(address(0xBEEF))));
+    }
+
+    function test_parity_boolN() public view {
+        InputParam memory tuple = _op(address(target), abi.encodeCall(MockTarget.getTuple, ()));
+        assertions.assertParam(_expr(abi.encodeCall(Combinators.pick, (tuple, int256(2))), ConstraintType.EQ, abi.encode(true)));
+    }
+
+    function test_parity_bytes32N() public view {
+        InputParam memory tuple = _op(address(target), abi.encodeCall(MockTarget.getTuple, ()));
+        assertions.assertParam(_expr(abi.encodeCall(Combinators.pick, (tuple, int256(3))), ConstraintType.EQ, abi.encode(keccak256("test"))));
+    }
+
+    function test_parity_intN() public view {
+        // getIntTuple() = (-42, 7)
+        InputParam memory tuple = _op(address(target), abi.encodeCall(MockTarget.getIntTuple, ()));
+        assertions.assertParam(_expr(abi.encodeCall(Combinators.pick, (tuple, int256(0))), ConstraintType.EQ, abi.encode(int256(-42))));
+        assertions.assertParam(_expr(abi.encodeCall(Combinators.pick, (tuple, int256(1))), ConstraintType.EQ, abi.encode(int256(7))));
+    }
+
+    function test_parity_tupleIndexOutOfRange() public {
+        InputParam memory tuple = _op(address(target), abi.encodeCall(MockTarget.getTuple, ()));
+        vm.expectRevert(abi.encodeWithSelector(ReturnDataOutOfBounds.selector, 4, 128));
+        comb.pick(tuple, 4);
+    }
+
+    function test_parity_stringN() public view {
+        // getTupleWithString() = (42, "hello", 0xBEEF): head words 0..2,
+        // then the string's length word (3) and payload word (4)
+        InputParam memory tuple = _op(address(target), abi.encodeCall(MockTarget.getTupleWithString, ()));
+        assertions.assertParam(_expr(abi.encodeCall(Combinators.pick, (tuple, int256(3))), ConstraintType.EQ, abi.encode(uint256(5))));
+        assertions.assertParam(_expr(abi.encodeCall(Combinators.pick, (tuple, int256(4))), ConstraintType.EQ, abi.encode(bytes32("hello"))));
+    }
+
+    function test_parity_stringN_failure() public {
+        InputParam memory tuple = _op(address(target), abi.encodeCall(MockTarget.getTupleWithString, ()));
+        _expectParamFail(ConstraintType.EQ, bytes32("hello"), abi.encode(bytes32("world")));
+        assertions.assertParam(_expr(abi.encodeCall(Combinators.pick, (tuple, int256(4))), ConstraintType.EQ, abi.encode(bytes32("world"))));
+    }
+
+    // ---- Parity: array lengths (v1 assertXxCallArrayLength) ----
+
+    function test_parity_arrayLength_eq() public view {
+        // a single dynamic-array return keeps its length at word 1
+        InputParam memory arr = _op(address(target), abi.encodeCall(MockTarget.getArray, ()));
+        assertions.assertParam(_expr(abi.encodeCall(Combinators.pick, (arr, int256(1))), ConstraintType.EQ, abi.encode(uint256(5))));
+        InputParam memory empty = _op(address(target), abi.encodeCall(MockTarget.getEmptyArray, ()));
+        assertions.assertParam(_expr(abi.encodeCall(Combinators.pick, (empty, int256(1))), ConstraintType.EQ, abi.encode(uint256(0))));
+    }
+
+    function test_parity_arrayLength_ne() public {
+        InputParam memory lenOp = _pickOp(_op(address(target), abi.encodeCall(MockTarget.getArray, ())), 1);
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Ne, lenOp, _lit(0))));
+
+        InputParam memory emptyLenOp = _pickOp(_op(address(target), abi.encodeCall(MockTarget.getEmptyArray, ())), 1);
+        _expectHoldsFail();
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Ne, emptyLenOp, _lit(0))));
+    }
+
+    function test_parity_arrayLength_bounds() public {
+        InputParam memory arr = _op(address(target), abi.encodeCall(MockTarget.getArray, ()));
+        assertions.assertParam(_expr(abi.encodeCall(Combinators.pick, (arr, int256(1))), ConstraintType.GTE, abi.encode(uint256(5))));
+        assertions.assertParam(_expr(abi.encodeCall(Combinators.pick, (arr, int256(1))), ConstraintType.LTE, abi.encode(uint256(5))));
+        // strict comparisons via calc
+        InputParam memory lenOp = _pickOp(arr, 1);
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Gt, lenOp, _lit(4))));
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Lt, lenOp, _lit(6))));
+        _expectHoldsFail();
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Lt, lenOp, _lit(5))));
+    }
+
+    // ---- Parity: approximate equality (v1 assertApproxEqCallUint/Int) ----
+
+    function test_parity_approxEqCallUint() public {
+        // |getValue() - 45| = 3, judged against maxDelta via LTE
+        bytes memory delta = abi.encodeCall(Combinators.calc, (Combinators.CalcOp.AbsDiff, _getValueOp(), _lit(45)));
+        assertions.assertParam(_expr(delta, ConstraintType.LTE, abi.encode(uint256(5))));
+        // exact
+        bytes memory exact = abi.encodeCall(Combinators.calc, (Combinators.CalcOp.AbsDiff, _getValueOp(), _lit(42)));
+        assertions.assertParam(_expr(exact, ConstraintType.LTE, abi.encode(uint256(0))));
+        // out of tolerance
+        _expectParamFail(ConstraintType.LTE, bytes32(uint256(3)), abi.encode(uint256(2)));
+        assertions.assertParam(_expr(delta, ConstraintType.LTE, abi.encode(uint256(2))));
+    }
+
+    function test_parity_approxEqCallUint_withMessage() public {
+        bytes memory delta = abi.encodeCall(Combinators.calc, (Combinators.CalcOp.AbsDiff, _getValueOp(), _lit(45)));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ConstraintFailed.selector,
+                "price drifted",
+                0,
+                0,
+                0,
+                ConstraintType.LTE,
+                bytes32(uint256(3)),
+                abi.encode(uint256(2))
+            )
+        );
+        assertions.assertParam(_expr(delta, ConstraintType.LTE, abi.encode(uint256(2))), "price drifted");
+    }
+
+    function test_parity_approxEqCallInt_crossingZero() public {
+        // |temperature() - 3| = |-7 - 3| = 10
+        InputParam memory temperature = _op(address(token), abi.encodeCall(MockToken.temperature, ()));
+        bytes memory delta = abi.encodeCall(Combinators.calc, (Combinators.CalcOp.SAbsDiff, temperature, _slit(3)));
+        assertions.assertParam(_expr(delta, ConstraintType.LTE, abi.encode(uint256(10))));
+        _expectParamFail(ConstraintType.LTE, bytes32(uint256(10)), abi.encode(uint256(9)));
+        assertions.assertParam(_expr(delta, ConstraintType.LTE, abi.encode(uint256(9))));
+    }
+
+    function test_parity_approxEqCallInt_fullRange() public view {
+        // the widest signed span is total (no revert) and judged unsigned
+        bytes memory delta = abi.encodeCall(
+            Combinators.calc,
+            (Combinators.CalcOp.SAbsDiff, _slit(type(int256).min), _slit(type(int256).max))
+        );
+        assertions.assertParam(_expr(delta, ConstraintType.LTE, abi.encode(type(uint256).max)));
+    }
+
+    function test_parity_approxEqCallIntN() public view {
+        // approx over a tuple element: SAbsDiff composed over a nested pick
+        InputParam memory secondInt = _pickOp(_op(address(target), abi.encodeCall(MockTarget.getIntTuple, ())), 1);
+        bytes memory delta = abi.encodeCall(Combinators.calc, (Combinators.CalcOp.SAbsDiff, secondInt, _slit(5)));
+        assertions.assertParam(_expr(delta, ConstraintType.LTE, abi.encode(uint256(2))));
+    }
+
+    function test_parity_approxEqBalance() public {
+        vm.deal(TEST_EOA, 5 ether + 3 wei);
+        bytes memory delta = abi.encodeCall(
+            Combinators.calc,
+            (Combinators.CalcOp.AbsDiff, _bal(address(0), TEST_EOA, _none()), _lit(5 ether))
+        );
+        assertions.assertParam(_expr(delta, ConstraintType.LTE, abi.encode(uint256(1 gwei))));
+        _expectParamFail(ConstraintType.LTE, bytes32(uint256(3)), abi.encode(uint256(2)));
+        assertions.assertParam(_expr(delta, ConstraintType.LTE, abi.encode(uint256(2))));
+    }
+
+    // ---- Parity: native balance comparisons (v1 assertXxBalance) ----
+
+    function test_parity_balance_family() public {
+        vm.deal(TEST_EOA, 5 ether);
+        // Eq / Ge / Le as plain constraints
+        assertions.assertParam(_bal(address(0), TEST_EOA, _c1(ConstraintType.EQ, abi.encode(uint256(5 ether)))));
+        assertions.assertParam(_bal(address(0), TEST_EOA, _c1(ConstraintType.GTE, abi.encode(uint256(5 ether)))));
+        assertions.assertParam(_bal(address(0), TEST_EOA, _c1(ConstraintType.LTE, abi.encode(uint256(5 ether)))));
+        // strict Gt / Lt via calc over a BALANCE operand
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Gt, _bal(address(0), TEST_EOA, _none()), _lit(4 ether))));
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Lt, _bal(address(0), TEST_EOA, _none()), _lit(6 ether))));
+        _expectHoldsFail();
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Gt, _bal(address(0), TEST_EOA, _none()), _lit(5 ether))));
+    }
+
+    // ---- Parity: block environment (v1 assertXxBlockNumber/Timestamp, ChainId) ----
+
+    function test_parity_blockTimestamp_family() public {
+        vm.warp(1_900_000_000);
+        bytes memory ts = abi.encodeCall(Combinators.env, (Combinators.EnvOp.Timestamp, 0));
+        assertions.assertParam(_expr(ts, ConstraintType.EQ, abi.encode(uint256(1_900_000_000))));
+        assertions.assertParam(_expr(ts, ConstraintType.GTE, abi.encode(uint256(1_899_999_999))));
+        assertions.assertParam(_expr(ts, ConstraintType.LTE, abi.encode(uint256(1_900_000_001))));
+        // strict
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Gt, _op(address(comb), ts), _lit(1_899_999_999))));
+        _expectParamFail(ConstraintType.EQ, bytes32(uint256(1_900_000_000)), abi.encode(uint256(1_900_000_001)));
+        assertions.assertParam(_expr(ts, ConstraintType.EQ, abi.encode(uint256(1_900_000_001))));
+    }
+
+    function test_parity_blockNumber_family() public {
+        vm.roll(21_000_000);
+        bytes memory bn = abi.encodeCall(Combinators.env, (Combinators.EnvOp.BlockNumber, 0));
+        assertions.assertParam(_expr(bn, ConstraintType.EQ, abi.encode(uint256(21_000_000))));
+        assertions.assertParam(_expr(bn, ConstraintType.IN, abi.encode(uint256(20_000_000), uint256(22_000_000))));
+        _expectParamFail(ConstraintType.GTE, bytes32(uint256(21_000_000)), abi.encode(uint256(21_000_001)));
+        assertions.assertParam(_expr(bn, ConstraintType.GTE, abi.encode(uint256(21_000_001))));
+    }
+
+    function test_parity_chainId() public {
+        bytes memory cid = abi.encodeCall(Combinators.env, (Combinators.EnvOp.ChainId, 0));
+        assertions.assertParam(_expr(cid, ConstraintType.EQ, abi.encode(block.chainid)));
+        _expectParamFail(ConstraintType.EQ, bytes32(block.chainid), abi.encode(block.chainid + 1));
+        assertions.assertParam(_expr(cid, ConstraintType.EQ, abi.encode(block.chainid + 1)));
+    }
+
+    // ---- Parity: code checks (v1 assertEqCodeHash, assertHasCode, assertNoCode) ----
+
+    function _codeHashExpr(address account) internal pure returns (bytes memory) {
+        return abi.encodeCall(Combinators.env, (Combinators.EnvOp.CodeHash, uint256(uint160(account))));
+    }
+
+    /// @dev hasCode(a) := codehash != 0 && codehash != keccak256("")
+    function _hasCodeExpr(address account) internal view returns (bytes memory) {
+        InputParam memory hashOp = _op(address(comb), _codeHashExpr(account));
+        bytes memory neZero = abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Ne, hashOp, _raw(abi.encode(bytes32(0)), _none())));
+        bytes memory neEmpty = abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Ne, hashOp, _raw(abi.encode(keccak256("")), _none())));
+        return abi.encodeCall(Combinators.calc, (Combinators.CalcOp.And, _op(address(comb), neZero), _op(address(comb), neEmpty)));
+    }
+
+    function test_parity_eqCodeHash() public {
+        assertions.assertParam(_expr(_codeHashExpr(address(target)), ConstraintType.EQ, abi.encode(address(target).codehash)));
+        _expectParamFail(ConstraintType.EQ, address(target).codehash, abi.encode(keccak256("")));
+        assertions.assertParam(_expr(_codeHashExpr(address(target)), ConstraintType.EQ, abi.encode(keccak256(""))));
+    }
+
+    function test_parity_hasCode() public {
+        _assertHolds(_hasCodeExpr(address(target)));
+        _expectHoldsFail();
+        _assertHolds(_hasCodeExpr(TEST_EOA));
+    }
+
+    function test_parity_noCode() public {
+        // noCode(a) := codehash == 0 || codehash == keccak256("")
+        vm.deal(TEST_EOA, 1 wei); // funded EOA: codehash == keccak256("")
+        InputParam memory eoaHash = _op(address(comb), _codeHashExpr(TEST_EOA));
+        bytes memory eqZero = abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Eq, eoaHash, _raw(abi.encode(bytes32(0)), _none())));
+        bytes memory eqEmpty = abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Eq, eoaHash, _raw(abi.encode(keccak256("")), _none())));
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Or, _op(address(comb), eqZero), _op(address(comb), eqEmpty))));
+
+        // a contract fails the same expression
+        InputParam memory contractHash = _op(address(comb), _codeHashExpr(address(target)));
+        bytes memory cEqZero = abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Eq, contractHash, _raw(abi.encode(bytes32(0)), _none())));
+        bytes memory cEqEmpty = abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Eq, contractHash, _raw(abi.encode(keccak256("")), _none())));
+        _expectHoldsFail();
+        _assertHolds(abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Or, _op(address(comb), cEqZero), _op(address(comb), cEqEmpty))));
+    }
+
+    // ---- Parity: call failures ----
+
+    function test_parity_callFailed_nonExistentFunction() public {
+        bytes memory callData = abi.encodeWithSignature("doesNotExist()");
+        vm.expectRevert(abi.encodeWithSelector(CallFailed.selector, address(target), callData));
+        assertions.assertParam(_call(address(target), callData, _none()));
+    }
+
+    // ════════════ Runtime-resolved call arguments ════════════
+    //
+    // The EVMcrispr-style composition  $c::balanceOf($d::token())  — a call
+    // whose ARGUMENT (not target) is resolved on-chain at execution time.
+
+    /// @dev The byte offset of the first occurrence of `word` in `haystack`
+    function _find(bytes memory haystack, bytes32 word) internal pure returns (uint256) {
+        for (uint256 i = 0; i + 32 <= haystack.length; i++) {
+            bytes32 candidate;
+            assembly {
+                candidate := mload(add(add(haystack, 32), i))
+            }
+            if (candidate == word) return i;
+        }
+        revert("placeholder not found");
+    }
+
+    function _sliceBytes(bytes memory b, uint256 start, uint256 end) internal pure returns (bytes memory out) {
+        out = new bytes(end - start);
+        for (uint256 i = 0; i < out.length; i++) {
+            out[i] = b[start + i];
+        }
+    }
+
+    function _params4(
+        InputParam memory a,
+        InputParam memory b,
+        InputParam memory c,
+        InputParam memory d
+    ) internal pure returns (InputParam[] memory ps) {
+        ps = new InputParam[](4);
+        ps[0] = a;
+        ps[1] = b;
+        ps[2] = c;
+        ps[3] = d;
+    }
+
+    function test_runtimeArg_constructedCall() public view {
+        // token.balanceOf(target.token()): the argument is fetched live and
+        // spliced into the calldata after the selector. The entry asserts
+        // the constructed call succeeds; the argument itself can carry
+        // constraints (here: the resolved token address must be non-zero).
+        InputParam memory runtimeArg = InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.STATIC_CALL,
+            abi.encode(address(target), abi.encodeCall(MockTarget.token, ())),
+            _c1(ConstraintType.GTE, abi.encode(uint256(1)))
+        );
+        assertions.assertComposable(
+            _batch1(_entry(MockToken.balanceOf.selector, _params2(_target(address(token)), runtimeArg)))
+        );
+    }
+
+    function test_runtimeArg_judgedResult_viaSplicedInnerAssert() public {
+        // Judge the RESULT of token.balanceOf(target.token()) against a
+        // constraint. Calldata construction is byte-level concatenation, so
+        // the entry builds a call to assertions.assertParam(...) itself,
+        // splicing the runtime-resolved token address into the pre-encoded
+        // inner parameter: RAW(prefix) ++ STATIC_CALL(target.token()) ++
+        // RAW(suffix). The entry call then succeeds iff the inner
+        // constraint holds — assertions judging assertions.
+        address placeholder = address(0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa);
+        InputParam memory inner = _call(
+            address(token),
+            abi.encodeCall(MockToken.balanceOf, (placeholder)),
+            _c1(ConstraintType.GTE, abi.encode(uint256(1000)))
+        );
+        bytes memory body = abi.encode(inner); // assertParam's argument encoding
+        uint256 pos = _find(body, bytes32(uint256(uint160(placeholder))));
+        bytes4 assertParamSelector = bytes4(keccak256("assertParam((uint8,uint8,bytes,(uint8,bytes)[]))"));
+
+        InputParam memory runtimeWord = InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.STATIC_CALL,
+            abi.encode(address(target), abi.encodeCall(MockTarget.token, ())),
+            _none()
+        );
+        ComposableExecution[] memory ex = _batch1(
+            _entry(
+                assertParamSelector,
+                _params4(
+                    _target(address(assertions)),
+                    _raw(_sliceBytes(body, 0, pos), _none()),
+                    runtimeWord,
+                    _raw(_sliceBytes(body, pos + 32, body.length), _none())
+                )
+            )
+        );
+        // balanceOf(token()) = 1000, inner GTE(1000) holds
+        assertions.assertComposable(ex);
+
+        // raise the inner bound: the spliced assertion fails, so the
+        // constructed entry call fails with the fully reassembled calldata
+        inner.constraints[0].referenceData = abi.encode(uint256(1001));
+        bytes memory failBody = abi.encode(inner);
+        ex[0].inputParams[1].paramData = _sliceBytes(failBody, 0, pos);
+        ex[0].inputParams[3].paramData = _sliceBytes(failBody, pos + 32, failBody.length);
+        bytes memory rebuilt = bytes.concat(
+            assertParamSelector,
+            _sliceBytes(failBody, 0, pos),
+            abi.encode(address(token)),
+            _sliceBytes(failBody, pos + 32, failBody.length)
+        );
+        vm.expectRevert(abi.encodeWithSelector(CallFailed.selector, address(assertions), rebuilt));
+        assertions.assertComposable(ex);
     }
 }

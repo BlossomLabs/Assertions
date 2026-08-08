@@ -21,3 +21,6 @@
 
 # Playwright MCP artifacts
 .playwright-mcp/
+
+# Astro generated types (when astro runs from the repo root)
+/.astro

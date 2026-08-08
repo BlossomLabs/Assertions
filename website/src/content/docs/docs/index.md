@@ -7,21 +7,21 @@ Assertions is an on-chain assertion system for verifying view function return va
 
 It ships as **two contracts** with one tagline: **Assertions judge, Combinators compute.**
 
-- **`Assertions` (the core)** provides a comprehensive suite of assertion functions that validate on-chain state. It uses `staticcall` to execute view functions on target contracts and compares results against expected values, reverting with descriptive custom errors on failure. The core is the trust anchor: it is **frozen forever**. No future version will change its behavior at its canonical address.
-- **`Combinators` (the periphery)** provides five composable building blocks: navigated call chains ([`read`](/docs/combinators/read)), binary word operations ([`calc`](/docs/combinators/calc)), unary word operations (`unary`), returndata operations ([`data`](/docs/combinators/data)) and constants/environment values (`env`). Each combinator computes and returns a value, and nested `(target, data)` operands in calldata compose them into arbitrary expressions. The core judges the final value: point any call assertion at the Combinators address with the encoded expression as data.
+- **`Assertions` (the core)** is the judge, redesigned around [ERC-8211 (Smart Batching)](https://eips.ethereum.org/EIPS/eip-8211). An assertion IS an ERC-8211 predicate: an `InputParam` describes how to fetch a live value (a raw literal, a `staticcall`, or a balance read) and carries inline constraints (`EQ`, `GTE`, `LTE`, `IN`) the value must satisfy. `assertParam` judges one parameter — the 90% case — and `assertComposable` judges whole batches, including entries that *construct* calls by splicing runtime-resolved values into calldata (which is how nested live call arguments work). A failing constraint reverts with a descriptive `ConstraintFailed` error.
+- **`Combinators` (the periphery)** provides eight composable building blocks: operand resolution with inline constraints (`resolve`), raw word selection (`pick`), typed navigation into tuples and dynamic arrays ([`nav`](/docs/combinators/reads)), runtime-address chains (`chain`), binary word operations ([`calc`](/docs/combinators/calc)), unary word operations (`unary`), raw-bytes operations ([`data`](/docs/combinators/data)) and constants/environment values (`env`). Every operand is itself an `InputParam`, so expressions nest recursively. The core judges the final value: an assertion's fetcher points a `STATIC_CALL` at the Combinators address with the encoded expression as calldata.
 
-Because combinators are stateless view targets, the periphery can evolve: old `Combinators` deployments never break (anything referencing them keeps working), and new versions ship at new addresses as pure opt-ins, all without ever touching the frozen core.
+Because combinators are stateless view targets, the periphery can evolve: old `Combinators` deployments never break (anything referencing them keeps working), and new versions ship at new addresses as pure opt-ins, without touching the core.
 
 ## Canonical addresses
 
 Both contracts live at the same address on every chain (see [Deployments](/docs/reference/deployments)):
 
 ```
-Assertions  v1.1  0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0   (frozen core)
-Combinators v1.0  0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC   (versionable periphery)
+Assertions  v2.0  0xA55E4797c1b755183B7Aad07BFd39D3e824621f9   (ERC-8211 judge)
+Combinators v2.0  0xA55EC06e0A82a5ed05bf08c0ff07A45d4BC2eBf8   (versionable periphery)
 ```
 
-Version 1.0 of the core remains deployed at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F) (`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`). Core v1.1 is a strict superset of the 1.0 ABI: it adds int256 assertions (including approximate equality), tuple index bounds checking, `CallFailed` on code-less targets, and the `Ne`/`Lt`/`Le` variants listed in the [core reference](/docs/reference/core).
+Earlier versions remain deployed and working forever at their own canonical addresses: the v1.1 typed-assert core at [`0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0`](https://etherscan.io/address/0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0) with Combinators v1.0 at `0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC`, and the original v1.0 core at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F). V2 replaces v1.1's 140 typed assertion functions (`assertEqCallUint`, …) with the ERC-8211 model: `assertEqCallUint(target, data, expected)` is now `assertParam` over a `STATIC_CALL` fetcher with an `EQ` constraint.
 
 ## Why assertions?
 
@@ -42,26 +42,23 @@ Version 1.0 of the core remains deployed at [`assertions.eth`](https://etherscan
 | **Ownership verification** | Assert critical contracts still owned by DAO |
 | **Deep reads** | Assert a struct field inside a returned array, at any nesting depth |
 | **String guards** | Assert a name ends with "LP", contains a substring, or stays within a charset |
+| **Live arguments** | Call a view function with arguments read on-chain at assertion time |
 
 ## Features
 
-- **Call-based assertions**: execute view functions on any contract and assert return values
-- **Combinators**: navigated chained reads, arithmetic, logic, bitwise, hashing and string splitting composed via the separate `Combinators` contract's five functions
-- **Multiple type support**: `uint256`, `int256`, `address`, `bool`, `bytes32`, `bytes`, `string`
-- **Tuple indexing**: assert specific elements from functions returning multiple values
-- **Comparison operators**: equal, not equal, greater than, less than, greater/less than or equal
-- **Approximate equality**: assert values within a tolerance (absolute delta)
-- **Array length assertions**: validate dynamic array lengths
-- **Balance assertions**: check native token balances
-- **Block assertions**: verify block number and timestamp
-- **Chain ID assertions**: ensure correct network
-- **Contract existence**: check if an address has code, verify code hashes
-- **Custom error messages**: all assertions have overloaded versions accepting custom messages
+- **ERC-8211 native**: assertions are standard Smart Batching predicate entries — batches built by any ERC-8211 SDK judge here unchanged
+- **Inline constraints**: `EQ`, `GTE`, `LTE` and `IN` (inclusive range) validate any fetched value; everything richer routes through a combinator comparison judged `EQ 1`
+- **Three fetchers**: raw literals, arbitrary `staticcall`s, and balance reads (native or ERC-20) — one `assertParam` call covers balances, view returns and constants alike
+- **Combinators**: chained reads, typed navigation, arithmetic, logic, bitwise, hashing and string operations composed from recursive `InputParam` operands
+- **Nested live call arguments**: use the result of one view call as an argument of another, resolved at assertion time via `assertComposable` construction batches
+- **Approximate equality**: the `IN` constraint asserts a value within inclusive bounds; `calc(AbsDiff) <= d` covers live-vs-live tolerance
+- **Environment values**: block number, timestamp, chain id, balances and code hashes as composable operands
+- **Custom error messages**: every judge function has an overload accepting a custom message
 
 ## Where to go next
 
 - [Using assertions from Solidity](/docs/solidity): complete examples for DAO proposals, Safe batches and upgrades
-- [Combinators](/docs/combinators): computing values on-chain with five functions
+- [Combinators](/docs/combinators): computing values on-chain with eight functions
 - [EVMcrispr integration](/docs/evml): writing assertions as one-line EVML scripts, and the [visual builder](/builder)
 - [Core reference](/docs/reference/core) and [error reference](/docs/reference/errors)
 - [Deployments](/docs/reference/deployments): canonical CREATE2 addresses and deploying to new chains

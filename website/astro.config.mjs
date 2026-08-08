@@ -241,7 +241,7 @@ export default defineConfig({
           label: 'Combinators',
           items: [
             { slug: 'docs/combinators' },
-            { slug: 'docs/combinators/read' },
+            { slug: 'docs/combinators/reads' },
             { slug: 'docs/combinators/calc' },
             { slug: 'docs/combinators/data' },
           ],

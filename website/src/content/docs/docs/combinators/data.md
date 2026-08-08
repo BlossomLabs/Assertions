@@ -1,48 +1,57 @@
 ---
-title: "data: returndata operations"
-description: Hashing, string splitting, substring and charset checks, and byte lengths over resolved call chains.
+title: "data: raw-bytes operations"
+description: Hashing, string splitting, substring and charset checks, and byte lengths over resolved operands.
 ---
 
-`data(op, target, calls, arg, index)` operates on the raw returndata of a resolved call chain (hops here are plain calldata chaining through single-address returns; for a navigated chain, self-chain a `read` call). `arg` and `index` are per-op arguments; unused ones pass as `""` / `0`.
+`data(op, a, arg, index)` operates on the raw bytes a resolved operand produces (for a navigated or chained read, nest a `nav` or `chain` call as the operand). `arg` and `index` are per-op arguments; unused ones pass as `""` / `0`.
 
 ```solidity
-function data(DataOp op, address target, bytes[] calls, bytes arg, int256 index) external view;
+function data(DataOp op, InputParam a, bytes calldata arg, int256 index) external view;
 ```
+
+The examples reuse the `callParam`/`eq`/`noConstraints` helpers from [the Solidity guide](/docs/solidity) and `comboParam` from [the expressions page](/docs/combinators/calc).
 
 ## Hashing complex returns
 
-When a function returns something the typed assertions can't decode (structs, arrays, long strings), `data(Hash, ...)` returns `keccak256` of the final returndata so the existing bytes32 assertions can check it against a precomputed hash:
+When a function returns something a word constraint can't compare (structs, arrays, long strings), `data(Hash, ...)` returns `keccak256` of the resolved bytes so an `EQ` constraint can check it against a precomputed hash:
 
 ```solidity
-bytes[] memory calls = new bytes[](1);
-calls[0] = abi.encodeCall(IVault.getPosition, (positionId)); // returns a struct
-
-assertions.assertEqCallBytes32(
-    address(combinators),
-    abi.encodeCall(Combinators.data, (
-        Combinators.DataOp.Hash, vault, calls, "", 0
-    )),
-    keccak256(abi.encode(expectedAmount, expectedDebt, expectedOwner))
+assertions.assertParam(
+    callParam(
+        address(combinators),
+        abi.encodeCall(Combinators.data, (
+            Combinators.DataOp.Hash,
+            callParam(vault, abi.encodeCall(IVault.getPosition, (positionId)), noConstraints()),
+            "", 0
+        )),
+        eq(keccak256(abi.encode(expectedAmount, expectedDebt, expectedOwner)))
+    )
 );
 ```
 
 ## String splitting
 
-`data(Split, target, calls, delimiter, index)` decodes the chain's final string return, splits it by the delimiter, and returns the `index`-th segment as a normal ABI-encoded string, so string assertions consume it directly. The index is an `int256`: 0-based from the start, or negative from the end (`-1` = last segment), resolved against the segment count at execution time. So "the name ends with LP" is delimiter `" "` with index `-1`, with no composition-time segment counting.
+`data(Split, a, delimiter, index)` decodes the operand's string return, splits it by the delimiter, and returns the `index`-th segment as a normal ABI-encoded string, so any string consumer takes it directly (compare via `data(Hash)` over the split, or EVMcrispr's string `==`). The index is an `int256`: 0-based from the start, or negative from the end (`-1` = last segment), resolved against the segment count at execution time. So "the name ends with LP" is delimiter `" "` with index `-1`, with no composition-time segment counting.
 
 "The second word of the pool's name is LP":
 
 ```solidity
-bytes[] memory calls = new bytes[](1);
-calls[0] = abi.encodeCall(IPool.name, ()); // "Curve LP Token"
-
-assertions.assertEqCallStringN(
-    address(combinators),
-    abi.encodeCall(Combinators.data, (
-        Combinators.DataOp.Split, pool, calls, " ", 1
-    )),
-    0,
-    "LP"
+bytes memory secondWord = abi.encodeCall(Combinators.data, (
+    Combinators.DataOp.Split,
+    callParam(pool, abi.encodeCall(IPool.name, ()), noConstraints()), // "Curve LP Token"
+    " ", 1
+));
+// judge: keccak256 of the segment envelope EQ the expected hash
+assertions.assertParam(
+    callParam(
+        address(combinators),
+        abi.encodeCall(Combinators.data, (
+            Combinators.DataOp.Hash,
+            comboParam(address(combinators), secondWord),
+            "", 0
+        )),
+        eq(keccak256(abi.encode("LP")))
+    )
 );
 ```
 
@@ -54,28 +63,29 @@ Split semantics: the delimiter is a non-empty exact byte sequence (empty reverts
 
 ## Substring & character-set checks
 
-Two string predicates return a 0/1 word, so they compose with `calc`'s logic opcodes and `unary(IsZero, ...)` and assert via `assertTrue` / `assertFalse`.
+Two string predicates return a 0/1 word, so they compose with `calc`'s logic opcodes and `unary(IsZero, ...)` and judge with an `EQ 1` / `EQ 0` constraint.
 
-`data(Includes, target, calls, part, 0)` is `String.includes`: whether the chain's final string return contains `part` as an exact byte sequence (case-sensitive, no wildcards; an empty `part` reverts with `EmptySubstring` since it would match everything).
+`data(Includes, a, part, 0)` is `String.includes`: whether the operand's string return contains `part` as an exact byte sequence (case-sensitive, no wildcards; an empty `part` reverts with `EmptySubstring` since it would match everything).
 
-`data(Charset, target, calls, mask, 0)` is the character-class check that usually gets reached for with a regex: `mask` is a 32-byte set where bit `i` covers byte value `i` (any other `arg` length reverts with `InvalidMaskLength`), and the call returns whether every byte of the string is in the set. "The token's symbol is lowercase a-z":
+`data(Charset, a, mask, 0)` is the character-class check that usually gets reached for with a regex: `mask` is a 32-byte set where bit `i` covers byte value `i` (any other `arg` length reverts with `InvalidMaskLength`), and the call returns whether every byte of the string is in the set. "The token's symbol is lowercase a-z":
 
 ```solidity
-bytes[] memory calls = new bytes[](1);
-calls[0] = abi.encodeCall(IERC20.symbol, ());
-
-assertions.assertTrue(
-    address(combinators),
-    abi.encodeCall(Combinators.data, (
-        Combinators.DataOp.Charset, token, calls,
-        abi.encodePacked(bytes32(uint256(0x07fffffe) << 96)), // bits 97..122 = a-z
-        0
-    ))
+assertions.assertParam(
+    callParam(
+        address(combinators),
+        abi.encodeCall(Combinators.data, (
+            Combinators.DataOp.Charset,
+            callParam(token, abi.encodeCall(IERC20.symbol, ()), noConstraints()),
+            abi.encodePacked(bytes32(uint256(0x07fffffe) << 96)), // bits 97..122 = a-z
+            0
+        )),
+        eq(bytes32(uint256(1)))
+    )
 );
 ```
 
-Masks are built off-chain from ranges and single bytes (`a-z` is `0x07fffffe << 96`, digits OR in bits 48..57, `-` is bit 45). The check is byte-level, so multi-byte UTF-8 characters (every byte >= 0x80) fail any ASCII-only mask, and the empty string is vacuously in every set; combine with a `LEN` read `> 0` to also require non-empty. Anything needing positional structure ("exactly one dash, not at the start") is deliberately out of scope: an on-chain regex engine would make assertion calldata unreviewable.
+Masks are built off-chain from ranges and single bytes (`a-z` is `0x07fffffe << 96`, digits OR in bits 48..57, `-` is bit 45). The check is byte-level, so multi-byte UTF-8 characters (every byte >= 0x80) fail any ASCII-only mask, and the empty string is vacuously in every set; combine with a `LEN` nav `>= 1` to also require non-empty. Anything needing positional structure ("exactly one dash, not at the start") is deliberately out of scope: an on-chain regex engine would make assertion calldata unreviewable.
 
-## Returndata byte length
+## Byte length
 
-`data(ByteLen, target, calls, "", 0)` (EVMcrispr's `@bytelen!`) returns the byte length of the final resolved returndata: a `uint256[]` with `n` items measures `64 + n * 32` (offset word + length word + items). Use it for size checks on returns that are not a single dynamic value. The decoded counterpart is `read`'s `LEN` sentinel (element count for arrays, byte length for string/bytes).
+`data(ByteLen, a, "", 0)` (EVMcrispr's `@bytelen!`) returns the byte length of the operand's resolved bytes: a `uint256[]` with `n` items measures `64 + n * 32` (offset word + length word + items). Use it for size checks on returns that are not a single dynamic value. The decoded counterpart is [`nav`'s `LEN` sentinel](/docs/combinators/reads) (element count for arrays, byte length for string/bytes).

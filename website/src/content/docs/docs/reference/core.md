@@ -1,133 +1,74 @@
 ---
 title: Core reference
-description: Every assertion function on the frozen Assertions core, by family.
+description: The ERC-8211 judge's functions and wire format, and the Combinators surface.
 ---
 
-All assertion functions live on the frozen core at `0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0` and have overloaded versions accepting a custom `string` message as the last parameter. The composition functions live on the separate [Combinators contract](/docs/combinators).
+The judge lives at `0xA55E4797c1b755183B7Aad07BFd39D3e824621f9`. Every judge function has an overloaded version accepting a custom `string` message as the last parameter, echoed inside `ConstraintFailed` on failure. The composition functions live on the separate [Combinators contract](/docs/combinators).
 
-## Uint256 assertions
-
-| Function | Description |
-|----------|-------------|
-| `assertEqCallUint` | Assert return equals expected |
-| `assertNeCallUint` | Assert return not equals expected |
-| `assertGtCallUint` | Assert return > expected |
-| `assertLtCallUint` | Assert return < expected |
-| `assertGeCallUint` | Assert return >= expected |
-| `assertLeCallUint` | Assert return <= expected |
-| `assertApproxEqCallUint` | Assert return ≈ expected (within delta) |
-
-## Int256 assertions
+## Judge functions
 
 | Function | Description |
 |----------|-------------|
-| `assertEqCallInt` | Assert return equals expected |
-| `assertNeCallInt` | Assert return not equals expected |
-| `assertGtCallInt` | Assert return > expected |
-| `assertLtCallInt` | Assert return < expected |
-| `assertGeCallInt` | Assert return >= expected |
-| `assertLeCallInt` | Assert return <= expected |
-| `assertApproxEqCallInt` | Assert return ≈ expected (within delta) |
+| `assertParam(InputParam)` | Resolve one input parameter (raw bytes, staticcall, or balance read) and validate its inline constraints — the 90% case, no batch scaffolding |
+| `assertComposable(ComposableExecution[])` | Evaluate an ERC-8211 composable batch natively under view semantics: predicate entries resolve and validate their parameters; entries with a `TARGET` parameter construct a call by splicing resolved values into calldata and execute it via `staticcall` (the call must not revert) |
+| `assertComposable(address, ComposableExecution[])` | Wrapped mode: `composable.staticcall(executeComposable(executions))` — assert that a deployed ERC-8211 implementation would accept the batch right now (the relayer `eth_call` gate, composable on-chain). Failures surface as `ComposableFailed` with the implementation's revert data |
 
-## Address assertions
+The native mode consumes the **unmodified ERC-8211 wire format**, so batches built by any ERC-8211 SDK judge here unchanged. Being view-only, it rejects what a view context cannot express: output parameters (Storage writes) revert with `OutputParamsNotSupported`, `VALUE` parameters with `ValueParamNotSupported`, a second `TARGET` parameter with `DuplicateTargetParam`, and a `BALANCE`-fetched target with `BalanceCannotBeTarget`.
 
-| Function | Description |
-|----------|-------------|
-| `assertEqCallAddress` | Assert return equals expected address |
-| `assertNeCallAddress` | Assert return not equals expected address |
+## Wire format
 
-## Bool assertions
+```solidity
+struct InputParam {
+    InputParamType paramType;         // where the value routes in a constructed call
+    InputParamFetcherType fetcherType;// how the value is obtained
+    bytes paramData;                  // fetcher-specific payload
+    Constraint[] constraints;         // inline predicates on the resolved value
+}
 
-| Function | Description |
-|----------|-------------|
-| `assertEqCallBool` | Assert return equals expected bool |
-| `assertTrue` | Assert return is true |
-| `assertFalse` | Assert return is false |
+struct Constraint {
+    ConstraintType constraintType;    // EQ | GTE | LTE | IN
+    bytes referenceData;              // 32 bytes (EQ/GTE/LTE) or 64 bytes lo,hi (IN)
+}
 
-There is no `assertNeCallBool`: on a two-valued type, "not equal to true" is `assertFalse`.
+struct ComposableExecution {
+    bytes4 functionSig;               // selector of the constructed call
+    InputParam[] inputParams;
+    OutputParam[] outputParams;       // must be empty in view-mode batches
+}
+```
 
-## Bytes32 assertions
+### Fetcher types
 
-| Function | Description |
-|----------|-------------|
-| `assertEqCallBytes32` | Assert return equals expected bytes32 |
-| `assertNeCallBytes32` | Assert return not equals expected bytes32 |
+| Fetcher | `paramData` | Resolves to |
+|---------|-------------|-------------|
+| `RAW_BYTES` | the value itself | the literal bytes, unchanged |
+| `STATIC_CALL` | `abi.encode(target, callData)` | the raw returndata of the staticcall (reverting or code-less targets fail with `CallFailed`) |
+| `BALANCE` | `abi.encodePacked(token, account)` (40 bytes) | native balance when `token == address(0)`, else `IERC20(token).balanceOf(account)` |
 
-## Raw bytes assertions
+### Constraint types
 
-| Function | Description |
-|----------|-------------|
-| `assertEqCallBytes` | Assert raw returndata equals expected bytes |
-| `assertNeCallBytes` | Assert raw returndata not equals expected bytes |
+Constraints compare the resolved value's first 32-byte word, unsigned:
 
-## Tuple-indexed assertions (N suffix)
+| Constraint | Meaning |
+|------------|---------|
+| `EQ` | word equals the 32-byte reference |
+| `GTE` | word >= reference |
+| `LTE` | word <= reference |
+| `IN` | lo <= word <= hi (inclusive; `abi.encode(lo, hi)` as reference) |
 
-All basic assertion types have tuple-indexed variants with an `N` suffix that accept an additional `index` parameter:
-
-- `assertEqCallUintN`, `assertNeCallUintN`, `assertGtCallUintN`, `assertLtCallUintN`, `assertGeCallUintN`, `assertLeCallUintN`
-- `assertEqCallIntN`, `assertNeCallIntN`, `assertGtCallIntN`, `assertLtCallIntN`, `assertGeCallIntN`, `assertLeCallIntN`
-- `assertEqCallAddressN`, `assertNeCallAddressN`
-- `assertEqCallBoolN`
-- `assertEqCallBytes32N`, `assertNeCallBytes32N`
-- `assertEqCallStringN`, `assertNeCallStringN`
-- `assertApproxEqCallUintN`, `assertApproxEqCallIntN`
-
-An `index` that points past the returned data reverts with `ReturnDataOutOfBounds` instead of silently comparing against zeroed memory. String assertions only exist in the N form; a plain string return is index 0 of its own tuple.
-
-## Array length assertions
-
-| Function | Description |
-|----------|-------------|
-| `assertEqCallArrayLength` | Assert array length equals expected |
-| `assertNeCallArrayLength` | Assert array length not equals expected |
-| `assertGtCallArrayLength` | Assert array length > expected |
-| `assertGeCallArrayLength` | Assert array length >= expected |
-| `assertLtCallArrayLength` | Assert array length < expected |
-| `assertLeCallArrayLength` | Assert array length <= expected |
-
-## Balance assertions
-
-| Function | Description |
-|----------|-------------|
-| `assertEqBalance` | Assert native balance equals expected |
-| `assertGtBalance` | Assert native balance > expected |
-| `assertLtBalance` | Assert native balance < expected |
-| `assertGeBalance` | Assert native balance >= expected |
-| `assertLeBalance` | Assert native balance <= expected |
-| `assertApproxEqBalance` | Assert native balance ≈ expected |
-
-## Block assertions
-
-| Function | Description |
-|----------|-------------|
-| `assertEqBlockNumber` | Assert block.number equals expected |
-| `assertGtBlockNumber` | Assert block.number > expected |
-| `assertLtBlockNumber` | Assert block.number < expected |
-| `assertGeBlockNumber` | Assert block.number >= expected |
-| `assertLeBlockNumber` | Assert block.number <= expected |
-| `assertEqBlockTimestamp` | Assert block.timestamp equals expected |
-| `assertGtBlockTimestamp` | Assert block.timestamp > expected |
-| `assertLtBlockTimestamp` | Assert block.timestamp < expected |
-| `assertGeBlockTimestamp` | Assert block.timestamp >= expected |
-| `assertLeBlockTimestamp` | Assert block.timestamp <= expected |
-
-## Chain & contract assertions
-
-| Function | Description |
-|----------|-------------|
-| `assertEqChainId` | Assert chain ID equals expected |
-| `assertHasCode` | Assert address has deployed code |
-| `assertNoCode` | Assert address has no code |
-| `assertEqCodeHash` | Assert address has specific code hash |
+Everything richer — `!=`, signed comparisons, string equality, live-vs-live tolerance — is computed by a combinator that returns a 0/1 word or a hash, judged with `EQ`.
 
 ## Combinators (separate contract)
 
-These live at the Combinators address (`0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC`), not on the core. See [Combinators](/docs/combinators) for usage.
+These live at the Combinators address (`0xA55EC06e0A82a5ed05bf08c0ff07A45d4BC2eBf8`), not on the judge. Every operand is an `InputParam` (with its own inline constraints), so expressions nest recursively. See [Combinators](/docs/combinators) for usage.
 
 | Function | Description |
 |----------|-------------|
-| `read` | THE read primitive: resolve a chain of staticcalls with per-hop typed navigation (`retTypes`/`paths`) and return the final selection raw. Passthrough (empty path), raw word extraction (`""` type + word index), typed navigation into tuples/arrays (declared return tuple + index path, negative array indices from the end), dynamic terminals as canonical single-value returns, and decoded lengths via the `LEN` sentinel |
-| `calc` | Binary word operation over two `(target, data)` operands, one `CalcOp` enum: checked arithmetic (Add…Exp, Min/Max) with `S`-prefixed signed variants, total `AbsDiff`/`SAbsDiff` magnitudes, bitwise And/Or/Xor/Shl/Shr, and 0/1-returning comparisons (Eq…SGe) |
-| `unary` | Unary word operation over one operand (`UnaryOp`): Not (bitwise complement), IsZero (logical not), Balance / CodeHash of the address the operand call returns |
-| `data` | Raw-returndata operation over a resolved chain (`DataOp`): Split (delimiter + signed segment index), Includes (substring), Charset (32-byte byte-class mask), Hash (keccak256), ByteLen |
-| `env` | Constants and environment values as operands (`EnvOp`): Constant echo (ints as two's-complement words), Timestamp, BlockNumber, ChainId, Balance(addr), CodeHash(addr, EXTCODEHASH semantics: `bytes32(0)` if the account doesn't exist) |
+| `resolve` | Resolve one operand and return its bytes raw; constraint violations revert with `ConstraintFailed`, turning any expression node into an inline assert |
+| `pick` | Select one raw 32-byte word from a resolved operand (signed index, negative from the end) |
+| `nav` | Typed navigation: interpret the resolved bytes as a declared return tuple (`retTypes`) and walk an index path through tuples and dynamic arrays — single-word terminals, canonical dynamic envelopes, and decoded lengths via the `LEN` sentinel |
+| `chain` | Follow runtime-resolved addresses: each hop staticcalls the address word the previous hop returned |
+| `calc` | Binary word operation over two operands, one `CalcOp` enum: checked arithmetic (Add…Exp, Min/Max) with `S`-prefixed signed variants, total `AbsDiff`/`SAbsDiff` magnitudes, bitwise And/Or/Xor/Shl/Shr, and 0/1-returning comparisons (Eq…SGe) |
+| `unary` | Unary word operation over one operand (`UnaryOp`): Not (bitwise complement), IsZero (logical not), Balance / CodeHash of the address the operand resolves to |
+| `data` | Raw-bytes operation over a resolved operand (`DataOp`): Split (delimiter + signed segment index), Includes (substring), Charset (32-byte byte-class mask), Hash (keccak256), ByteLen |
+| `env` | Constants and environment values (`EnvOp`): Constant echo (ints as two's-complement words), Timestamp, BlockNumber, ChainId, Balance(addr), CodeHash(addr, EXTCODEHASH semantics: `bytes32(0)` if the account doesn't exist) |

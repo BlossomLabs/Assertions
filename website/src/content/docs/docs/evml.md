@@ -18,7 +18,9 @@ assertions:assert <target>::<viewFn(args)> <op> <expected> "revert msg"         
 assertions:assert <target>::{viewFn(argTypes)(returnType) <args>} <op> <expected>  # inline ABI when needed
 ```
 
-Operators: `==` `!=` `>` `<` `>=` `<=` and `~=` (approximate equality, with `--delta`). Strings support `==` / `!=` anywhere (nested comparisons compile to on-chain keccak). A bare `assertions:assert <call>` with no operator requires a boolean call and compiles to `assertTrue`.
+Operators: `==` `!=` `>` `<` `>=` `<=` and `~=` (approximate equality, with `--delta`). Strings support `==` / `!=` anywhere (nested comparisons compile to on-chain keccak). A bare `assertions:assert <call>` with no operator requires a boolean call and compiles to an `EQ true` constraint.
+
+Every line compiles to the ERC-8211 judge: the live expression becomes an `InputParam` (a staticcall, balance read, or nested combinator expression) validated by inline constraints (`EQ`/`GTE`/`LTE`/`IN`) via `assertParam`. Comparisons the constraints can't express directly (`!=`, signed and two-live-side comparisons) route through the combinators' `calc` judged `EQ 1`.
 
 ### Chained calls
 
@@ -33,9 +35,26 @@ assertions:assert $t::{f()(uint112,uint112,address)}[_ _ $]::{b()(uint256)} > 0
 
 A destructure lens after a call selects which return value the assertion uses:
 
-- `[_ $ _]` picks one output of a multi-value return (compiles to the core's tuple-indexed `N` assertions at the top level, or a raw word extraction inside expressions).
-- Nested levels navigate into arrays and structs, one step per nesting level: `{owners()(address[],address)}[[_ $]]` is element 1 of the first return value; `{proposals()((address,uint256,bool)[])}[[_ [_ _ $]]]` is `proposals[1].executed`. These compile to typed [`read`](/docs/combinators/read) navigation.
+- `[_ $ _]` picks one output of a multi-value return (compiles to the `pick` combinator's raw word selection).
+- Nested levels navigate into arrays and structs, one step per nesting level: `{owners()(address[],address)}[[_ $]]` is element 1 of the first return value; `{proposals()((address,uint256,bool)[])}[[_ [_ _ $]]]` is `proposals[1].executed`. These compile to typed [`nav`](/docs/combinators/reads) navigation.
 - A `...` rest marker anchors the slots after it from the end: `[... $]` = last return value, `[[... $]]` = last array element, resolved against the live length on-chain.
+
+### Nested live calls as arguments
+
+A call's argument can itself be a call, resolved **at assertion time** and spliced into the enclosing calldata (any nesting depth):
+
+```evml
+assertions:assert $vault::{sharesOf(address)(uint256) $registry::{owner()(address)}} > 0
+assertions:assert $a::{a(address)(uint256,uint256[]) $b::{b(uint256,uint256)(address) $c::{c(address)(uint256) @me} $d::{d()(uint256)}}}[_ [$]] == 7
+```
+
+A lens on a nested call argument selects the value to splice — including dynamic values (arrays) navigated at runtime:
+
+```evml
+assertions:assert $a::{a(address[])(uint256) $b::{b()(address,address[][])}[_ [_ $]]} == 5
+```
+
+These compile to `assertComposable` construction batches: each nesting level becomes an entry that fetches the inner values and splices them into the enclosing calldata at judge time. Word-typed arguments (uint, int, address, bool, bytes32) splice anywhere; a dynamic-typed argument (array/string/bytes selected by a lens) must be the last argument of the outermost judged call, and there can be at most one.
 
 ### Other commands
 

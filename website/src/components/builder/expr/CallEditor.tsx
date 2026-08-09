@@ -237,8 +237,8 @@ export function CallEditor({
   /** Chained hops compile through the combinators contract, so the simple
    *  form (single call, no combinators) turns them off. */
   allowChain?: boolean;
-  /** Nested live calls as arguments compile to assertComposable
-   *  construction batches, so the simple form turns them off too. */
+  /** Nested live calls as arguments compile to the combinators invoke
+   *  primitive, so the simple form turns them off too. */
   allowCallArgs?: boolean;
 }) {
   const contract = useContractFunctions(chainId, node.target, "view");

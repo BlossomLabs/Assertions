@@ -8,7 +8,7 @@ Assertions is an on-chain assertion system for verifying view function return va
 It ships as **two contracts** with one tagline: **Assertions judge, Combinators compute.**
 
 - **`Assertions` (the core)** is the judge, redesigned around [ERC-8211 (Smart Batching)](https://eips.ethereum.org/EIPS/eip-8211). An assertion IS an ERC-8211 predicate: an `InputParam` describes how to fetch a live value (a raw literal, a `staticcall`, or a balance read) and carries inline constraints (`EQ`, `GTE`, `LTE`, `IN`) the value must satisfy. `assertParam` judges one parameter — the 90% case — and `assertComposable` judges whole batches, including entries that *construct* calls by splicing runtime-resolved values into calldata (which is how nested live call arguments work). A failing constraint reverts with a descriptive `ConstraintFailed` error.
-- **`Combinators` (the periphery)** provides eight composable building blocks: operand resolution with inline constraints (`resolve`), raw word selection (`pick`), typed navigation into tuples and dynamic arrays ([`nav`](/docs/combinators/reads)), runtime-address chains (`chain`), binary word operations ([`calc`](/docs/combinators/calc)), unary word operations (`unary`), raw-bytes operations ([`data`](/docs/combinators/data)) and constants/environment values (`env`). Every operand is itself an `InputParam`, so expressions nest recursively. The core judges the final value: an assertion's fetcher points a `STATIC_CALL` at the Combinators address with the encoded expression as calldata.
+- **`Combinators` (the periphery)** provides nine composable building blocks: operand resolution with inline constraints (`resolve`), raw word selection (`pick`), typed navigation into tuples and dynamic arrays ([`nav`](/docs/combinators/reads)), runtime-address chains (`chain`), runtime-argument calls ([`invoke`](/docs/combinators/reads)), binary word operations ([`calc`](/docs/combinators/calc)), unary word operations (`unary`), raw-bytes operations ([`data`](/docs/combinators/data)) and constants/environment values (`env`). Every operand is itself an `InputParam`, so expressions nest recursively. The core judges the final value: an assertion's fetcher points a `STATIC_CALL` at the Combinators address with the encoded expression as calldata.
 
 Because combinators are stateless view targets, the periphery can evolve: old `Combinators` deployments never break (anything referencing them keeps working), and new versions ship at new addresses as pure opt-ins, without touching the core.
 
@@ -17,8 +17,8 @@ Because combinators are stateless view targets, the periphery can evolve: old `C
 Both contracts live at the same address on every chain (see [Deployments](/docs/reference/deployments)):
 
 ```
-Assertions  v2.0  0xA55E4797c1b755183B7Aad07BFd39D3e824621f9   (ERC-8211 judge)
-Combinators v2.0  0xA55EC06e0A82a5ed05bf08c0ff07A45d4BC2eBf8   (versionable periphery)
+Assertions  v2.0  0xa55E47F37088b6D0212BdfD56b175ec08744DB19   (ERC-8211 judge)
+Combinators v2.0  0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9   (versionable periphery)
 ```
 
 Earlier versions remain deployed and working forever at their own canonical addresses: the v1.1 typed-assert core at [`0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0`](https://etherscan.io/address/0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0) with Combinators v1.0 at `0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC`, and the original v1.0 core at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F). V2 replaces v1.1's 140 typed assertion functions (`assertEqCallUint`, …) with the ERC-8211 model: `assertEqCallUint(target, data, expected)` is now `assertParam` over a `STATIC_CALL` fetcher with an `EQ` constraint.
@@ -58,7 +58,7 @@ Earlier versions remain deployed and working forever at their own canonical addr
 ## Where to go next
 
 - [Using assertions from Solidity](/docs/solidity): complete examples for DAO proposals, Safe batches and upgrades
-- [Combinators](/docs/combinators): computing values on-chain with eight functions
+- [Combinators](/docs/combinators): computing values on-chain with nine functions
 - [EVMcrispr integration](/docs/evml): writing assertions as one-line EVML scripts, and the [visual builder](/builder)
 - [Core reference](/docs/reference/core) and [error reference](/docs/reference/errors)
 - [Deployments](/docs/reference/deployments): canonical CREATE2 addresses and deploying to new chains

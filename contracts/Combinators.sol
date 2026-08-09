@@ -19,10 +19,11 @@ import {
  *         `pick` selects a raw 32-byte word from it, `nav` navigates typed
  *         returndata to an element (following runtime offsets through
  *         tuples and dynamic arrays), `chain` follows runtime-resolved
- *         addresses across staticcalls, `calc` combines two operands with
- *         an EVM-flavored opcode, `unary` transforms one, `data` operates
- *         on resolved returndata (string tests, hashing, lengths), and
- *         `env` supplies constants and environment values.
+ *         addresses across staticcalls, `invoke` constructs a staticcall
+ *         from runtime-resolved calldata segments, `calc` combines two
+ *         operands with an EVM-flavored opcode, `unary` transforms one,
+ *         `data` operates on resolved returndata (string tests, hashing,
+ *         lengths), and `env` supplies constants and environment values.
  *         Assertions judge, Combinators compute.
  * @dev Every function is a combinator — a building block that computes and
  *      returns a value, never an assertion (though operand constraints
@@ -334,6 +335,54 @@ contract Combinators {
             current = ComposableLib.asAddress(ComposableLib.firstWord(hopResult), i + 1);
         }
         bytes memory result = ComposableLib.staticCall(current, calls[last]);
+        assembly {
+            return(add(result, 32), mload(result))
+        }
+    }
+
+    // ============ Invoke ============
+
+    /// @notice Constructs a staticcall from runtime-resolved calldata
+    ///         segments — selector ++ each resolved arg in order — executes
+    ///         it against a runtime-resolved target, and returns the call's
+    ///         raw returndata
+    /// @dev The runtime-argument primitive ERC-8211 fetchers cannot express
+    ///      (a STATIC_CALL fetcher's calldata is fixed at encoding time):
+    ///      any external function becomes callable with computed arguments,
+    ///      so any deployed view or pure contract extends the combinator
+    ///      vocabulary without touching this contract. `target` must
+    ///      resolve to a clean address word. `args` are calldata SEGMENTS,
+    ///      not necessarily one per Solidity argument: each resolved
+    ///      value's FULL bytes are appended in order, exactly the
+    ///      standard's CALL_DATA routing — a RAW_BYTES segment carries any
+    ///      literal span (head words, pre-encoded tails), a STATIC_CALL
+    ///      segment computes a span at judge time (word-returning
+    ///      combinator expressions contribute exactly 32 bytes; a segment
+    ///      resolving to any other length shifts everything after it, so
+    ///      the encoder owns the layout). Segment constraints are
+    ///      validated on the resolved values, turning any argument into an
+    ///      inline assert. The returndata is returned via a raw assembly
+    ///      return, so an invoke nests inside any operand exactly like the
+    ///      call it constructed. Reverts with InvalidAddressWord (index 0)
+    ///      when the target word has dirty upper bytes, CallFailed when
+    ///      the target has no code or the constructed call reverts, and
+    ///      ConstraintFailed identifying the operand (target is operand 0,
+    ///      args follow at their index + 1) on a violated constraint.
+    /// @param target The input parameter resolving to the call's target
+    ///        address
+    /// @param selector The 4-byte function selector the segments follow
+    /// @param args The calldata segments, appended in order after the
+    ///        selector (may be empty for a selector-only call)
+    function invoke(InputParam calldata target, bytes4 selector, InputParam[] calldata args) external view {
+        address callTarget = ComposableLib.asAddress(
+            ComposableLib.firstWord(ComposableLib.resolve(target, "", 0, 0)),
+            0
+        );
+        bytes memory callData = abi.encodePacked(selector);
+        for (uint256 i = 0; i < args.length; i++) {
+            callData = bytes.concat(callData, ComposableLib.resolve(args[i], "", 0, i + 1));
+        }
+        bytes memory result = ComposableLib.staticCall(callTarget, callData);
         assembly {
             return(add(result, 32), mload(result))
         }

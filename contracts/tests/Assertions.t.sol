@@ -8,8 +8,7 @@ import "../ERC8211.sol";
 import "./Mocks.sol";
 
 /// @notice Test suite for the ERC-8211-based Assertions core: single-param
-///         assertions, the native view-mode batch judge, the wrapped static
-///         call to a deployed IComposableExecution implementation, and a
+///         assertions, the view-mode batch judge, and a
 ///         parity section proving every v1 core use case (Ne / strict
 ///         Gt/Lt, signed ints, tuple indexing, strings, array lengths,
 ///         approx equality, balances, block env, chain id, code checks) is
@@ -19,7 +18,6 @@ contract AssertionsTest is Test {
     Combinators public comb;
     MockTarget public target;
     MockToken public token;
-    MockComposable public composable;
 
     address constant TEST_EOA = address(0x1234);
 
@@ -28,7 +26,6 @@ contract AssertionsTest is Test {
         comb = new Combinators();
         target = new MockTarget();
         token = new MockToken(address(0), "WETH");
-        composable = new MockComposable();
         target.setToken(address(token));
     }
 
@@ -560,76 +557,6 @@ contract AssertionsTest is Test {
         );
         vm.expectRevert(abi.encodeWithSelector(Assertions.BalanceCannotBeTarget.selector, 0, 0));
         assertions.assertComposable(_batch1(_entry(bytes4(0), _params1(p))));
-    }
-
-    // ============ assertComposable (wrapped implementation) ============
-
-    function test_assertComposable_wrapped_success() public view {
-        assertions.assertComposable(
-            address(composable),
-            _predicate(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.EQ, abi.encode(uint256(42)))))
-        );
-    }
-
-    function test_assertComposable_wrapped_predicateFails() public {
-        ComposableExecution[] memory ex = _predicate(
-            _call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.GTE, abi.encode(uint256(1000))))
-        );
-        bytes memory inner = abi.encodeWithSelector(
-            ConstraintFailed.selector,
-            "",
-            0,
-            0,
-            0,
-            ConstraintType.GTE,
-            bytes32(uint256(42)),
-            abi.encode(uint256(1000))
-        );
-        vm.expectRevert(
-            abi.encodeWithSelector(Assertions.ComposableFailed.selector, "COMPOSABLE", address(composable), inner)
-        );
-        assertions.assertComposable(address(composable), ex);
-    }
-
-    function test_assertComposable_wrapped_stateChangingBatchFails() public {
-        // a state-changing entry cannot pass a staticcall into executeComposable
-        ComposableExecution[] memory ex = _batch1(
-            _entry(
-                MockTarget.setValue.selector,
-                _params2(_target(address(target)), _raw(abi.encode(uint256(7)), _none()))
-            )
-        );
-        vm.expectRevert(
-            abi.encodeWithSelector(Assertions.ComposableFailed.selector, "COMPOSABLE", address(composable), bytes(""))
-        );
-        assertions.assertComposable(address(composable), ex);
-    }
-
-    function test_assertComposable_wrapped_codelessImplementation() public {
-        ComposableExecution[] memory ex = _predicate(_raw(abi.encode(uint256(1)), _none()));
-        bytes memory callData = abi.encodeCall(IComposableExecution.executeComposable, (ex));
-        vm.expectRevert(abi.encodeWithSelector(CallFailed.selector, TEST_EOA, callData));
-        assertions.assertComposable(TEST_EOA, ex);
-    }
-
-    function test_assertComposable_wrapped_withMessage() public {
-        ComposableExecution[] memory ex = _predicate(
-            _call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.LTE, abi.encode(uint256(1))))
-        );
-        bytes memory inner = abi.encodeWithSelector(
-            ConstraintFailed.selector,
-            "",
-            0,
-            0,
-            0,
-            ConstraintType.LTE,
-            bytes32(uint256(42)),
-            abi.encode(uint256(1))
-        );
-        vm.expectRevert(
-            abi.encodeWithSelector(Assertions.ComposableFailed.selector, "bridge not arrived", address(composable), inner)
-        );
-        assertions.assertComposable(address(composable), ex, "bridge not arrived");
     }
 
     // ════════════ V1 use-case parity ════════════

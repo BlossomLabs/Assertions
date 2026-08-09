@@ -4,8 +4,7 @@ const sections = [
     title: 'The judge (Assertions core)',
     fns: [
       { name: 'assertParam', desc: 'Assert one ERC-8211 input parameter: resolve its value (raw bytes, staticcall, or balance read) and validate its inline constraints — the 90% case, no batch scaffolding' },
-      { name: 'assertComposable', desc: 'Assert an ERC-8211 composable batch under view semantics: entries construct calls by splicing resolved parameters, constraints validate along the way (nested live call arguments compile to this)' },
-      { name: 'assertComposable (wrapped)', desc: 'Assert that a deployed ERC-8211 implementation would accept a batch right now — the relayer eth_call gate, made composable on-chain' },
+      { name: 'assertComposable', desc: 'Assert an ERC-8211 composable batch under view semantics: entries construct calls by splicing resolved parameters, constraints validate along the way' },
     ],
   },
   {
@@ -23,6 +22,7 @@ const sections = [
       { name: 'pick', desc: 'Select a raw 32-byte word from a resolved operand (signed index, negative from the end)' },
       { name: 'nav', desc: 'Typed navigation: interpret a resolved operand as a declared return tuple and walk a path through tuples and dynamic arrays — single words, canonical dynamic envelopes, and decoded lengths (LEN sentinel)' },
       { name: 'chain', desc: 'Follow runtime-resolved addresses: each hop staticcalls the address the previous hop returned' },
+      { name: 'invoke', desc: 'Construct a staticcall at judge time: selector plus runtime-resolved calldata segments against a runtime-resolved target (nested live call arguments compile to this)' },
       { name: 'calc', desc: 'Binary word op over two operands, one opcode enum: arithmetic (Add…Exp, Min/Max, AbsDiff) with signed variants, bitwise (And/Or/Xor/Shl/Shr) and 0/1-returning comparisons (Eq…SGe)' },
       { name: 'unary', desc: 'Unary word op over one operand: Not (bitwise complement), IsZero (logical not), Balance and CodeHash of a call-resolved address' },
       { name: 'data', desc: 'Raw-bytes ops over a resolved operand: Split (delimiter segment), Includes (substring), Charset (byte-class bitmap), Hash (keccak256), ByteLen' },

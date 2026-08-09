@@ -76,6 +76,17 @@ contract CombinatorsTest is Test {
         calls[1] = b;
     }
 
+    function _args1(InputParam memory a) internal pure returns (InputParam[] memory ps) {
+        ps = new InputParam[](1);
+        ps[0] = a;
+    }
+
+    function _args2(InputParam memory a, InputParam memory b) internal pure returns (InputParam[] memory ps) {
+        ps = new InputParam[](2);
+        ps[0] = a;
+        ps[1] = b;
+    }
+
     // ============ Resolve ============
 
     function test_resolve_rawBytes_passthrough() public view {
@@ -447,6 +458,104 @@ contract CombinatorsTest is Test {
         combinators.chain(start, _calls2(abi.encodeCall(MockToken.emptyReturn, ()), abi.encodeCall(MockToken.decimals, ())));
     }
 
+    // ============ Invoke ============
+
+    function test_invoke_literalTargetAndArg() public view {
+        // checkValue(42) constructed at judge time from a literal word segment
+        (bool ok, bytes memory ret) = address(combinators).staticcall(
+            abi.encodeCall(
+                Combinators.invoke,
+                (_lit(uint256(uint160(address(target)))), MockTarget.checkValue.selector, _args1(_lit(42)))
+            )
+        );
+        assertTrue(ok);
+        assertEq(ret.length, 0);
+    }
+
+    function test_invoke_constructedCallReverts() public {
+        bytes memory callData = bytes.concat(abi.encodePacked(MockTarget.checkValue.selector), abi.encode(uint256(41)));
+        vm.expectRevert(abi.encodeWithSelector(CallFailed.selector, address(target), callData));
+        combinators.invoke(_lit(uint256(uint160(address(target)))), MockTarget.checkValue.selector, _args1(_lit(41)));
+    }
+
+    function test_invoke_computedArgs() public view {
+        // checkPair(40 + 2, getAddress()): one calc segment, one live read segment
+        InputParam memory computed = _nested(
+            abi.encodeCall(Combinators.calc, (Combinators.CalcOp.Add, _lit(40), _lit(2)))
+        );
+        InputParam memory liveAddress = _call(address(target), abi.encodeCall(MockTarget.getAddress, ()));
+        (bool ok, ) = address(combinators).staticcall(
+            abi.encodeCall(
+                Combinators.invoke,
+                (_lit(uint256(uint160(address(target)))), MockTarget.checkPair.selector, _args2(computed, liveAddress))
+            )
+        );
+        assertTrue(ok);
+    }
+
+    function test_invoke_runtimeTarget() public view {
+        // balanceOf on whatever token target.token() reports — computed args
+        // against a computed target, which chain alone cannot express
+        InputParam memory tokenAddr = _call(address(target), abi.encodeCall(MockTarget.token, ()));
+        (bool ok, bytes memory ret) = address(combinators).staticcall(
+            abi.encodeCall(
+                Combinators.invoke,
+                (tokenAddr, MockToken.balanceOf.selector, _args1(_lit(uint256(uint160(TEST_EOA)))))
+            )
+        );
+        assertTrue(ok);
+        assertEq(abi.decode(ret, (uint256)), 1000);
+    }
+
+    function test_invoke_emptyArgs_rawReturnPassthrough() public view {
+        // selector-only call; the raw return is byte-identical to calling directly
+        (bool ok, bytes memory ret) = address(combinators).staticcall(
+            abi.encodeCall(
+                Combinators.invoke,
+                (_lit(uint256(uint160(address(token)))), MockToken.symbol.selector, new InputParam[](0))
+            )
+        );
+        assertTrue(ok);
+        assertEq(ret, abi.encode("WETH"));
+    }
+
+    function test_invoke_codelessTarget() public {
+        bytes memory callData = abi.encodePacked(MockTarget.getValue.selector);
+        vm.expectRevert(abi.encodeWithSelector(CallFailed.selector, TEST_EOA, callData));
+        combinators.invoke(_lit(uint256(uint160(TEST_EOA))), MockTarget.getValue.selector, new InputParam[](0));
+    }
+
+    function test_invoke_dirtyTargetWord() public {
+        bytes32 dirty = bytes32(uint256(1) << 200);
+        InputParam memory targetParam = InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.RAW_BYTES,
+            abi.encode(dirty),
+            _none()
+        );
+        vm.expectRevert(abi.encodeWithSelector(InvalidAddressWord.selector, 0, dirty));
+        combinators.invoke(targetParam, MockTarget.getValue.selector, new InputParam[](0));
+    }
+
+    function test_invoke_argConstraint_identifiesOperand() public {
+        // a violated segment constraint names the arg as operand index + 1
+        InputParam memory arg = _lit(42);
+        arg.constraints = _c1(ConstraintType.GTE, abi.encode(uint256(1000)));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ConstraintFailed.selector,
+                "",
+                0,
+                1,
+                0,
+                ConstraintType.GTE,
+                bytes32(uint256(42)),
+                abi.encode(uint256(1000))
+            )
+        );
+        combinators.invoke(_lit(uint256(uint160(address(target)))), MockTarget.checkValue.selector, _args1(arg));
+    }
+
     // ============ Calc: arithmetic ============
 
     function test_calc_add() public view {
@@ -812,5 +921,25 @@ contract CombinatorsTest is Test {
             )
         );
         assertions.assertParam(judged, "not the answer");
+    }
+
+    function test_core_judges_invokeExpression() public view {
+        // assert token.balanceOf(TEST_EOA) >= 1000 where the token address is
+        // runtime-resolved and the holder is a computed segment
+        bytes memory expression = abi.encodeCall(
+            Combinators.invoke,
+            (
+                _call(address(target), abi.encodeCall(MockTarget.token, ())),
+                MockToken.balanceOf.selector,
+                _args1(_lit(uint256(uint160(TEST_EOA))))
+            )
+        );
+        InputParam memory judged = InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.STATIC_CALL,
+            abi.encode(address(combinators), expression),
+            _c1(ConstraintType.GTE, abi.encode(uint256(1000)))
+        );
+        assertions.assertParam(judged);
     }
 }

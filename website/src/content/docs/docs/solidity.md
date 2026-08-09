@@ -198,9 +198,7 @@ assertions.assertParam(
 
 ## Judging whole batches
 
-`assertComposable(executions[, message])` judges an ERC-8211 batch: entries without a `TARGET` parameter are plain predicate entries (each input parameter is resolved and constraint-checked), and entries **with** one construct a call by splicing the resolved parameter values into calldata — the call is executed via `staticcall` and must not revert. This is the machinery behind nested live call arguments ("use the result of `b()` as an argument of `a()`"), and it accepts unmodified batches built by any ERC-8211 SDK.
-
-The wrapped form, `assertComposable(composable, executions[, message])`, asserts that a deployed ERC-8211 implementation would accept the batch right now — the same `eth_call` gate ERC-8211 relayers use off-chain, made composable on-chain.
+`assertComposable(executions[, message])` judges an ERC-8211 batch: entries without a `TARGET` parameter are plain predicate entries (each input parameter is resolved and constraint-checked), and entries **with** one construct a call by splicing the resolved parameter values into calldata — the call is executed via `staticcall` and must not revert. It accepts unmodified batches built by any ERC-8211 SDK. For nested live call arguments ("use the result of `b()` as an argument of `a()`") judged through `assertParam`, the [Combinators `invoke` function](/docs/combinators/reads) constructs the same call as a composable expression.
 
 ## Custom error messages
 

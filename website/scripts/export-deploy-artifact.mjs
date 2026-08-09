@@ -58,8 +58,8 @@ const CONTRACTS = [
     // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6012c7cd0);
     // v1.0 remains at 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
     // (salt 0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb).
-    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f600eeeda2",
-    expectedAddress: "0xA55E4797c1b755183B7Aad07BFd39D3e824621f9",
+    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f601469a3b",
+    expectedAddress: "0xa55E47F37088b6D0212BdfD56b175ec08744DB19",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -71,8 +71,8 @@ const CONTRACTS = [
     output: "src/lib/combinators-deployment.ts",
     // Combinators v2.0; v1.0 remains at 0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC
     // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60027fbe3).
-    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6005c2ac8",
-    expectedAddress: "0xA55EC06e0A82a5ed05bf08c0ff07A45d4BC2eBf8",
+    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6031de88b",
+    expectedAddress: "0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9",
     prefix: "COMBINATORS",
     description: "Combinators building-block contract",
     includeProxyConstants: false,

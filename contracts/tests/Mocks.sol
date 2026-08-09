@@ -1,14 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {
-    ComposableExecution,
-    ComposableLib,
-    IComposableExecution,
-    InputParam,
-    InputParamType
-} from "../ERC8211.sol";
-
 /// @title MockTarget
 /// @notice Helper contract returning known values for testing call-based assertions
 contract MockTarget {
@@ -291,44 +283,5 @@ contract MockToken {
     /// @notice Always reverts, for intermediate hop failure tests
     function revertingHop() external pure {
         revert("MockToken: hop revert");
-    }
-}
-
-/// @title MockComposable
-/// @notice A minimal IComposableExecution implementation for testing the
-///         wrapped judge path (assertComposable(address, executions)). It
-///         follows the normative ERC-8211 algorithm using the shared
-///         resolution library and executes constructed calls with CALL, so
-///         predicate-only batches pass a staticcall into executeComposable
-///         while state-changing batches make it fail.
-/// @dev Output parameters are ignored (no Storage contract in the test
-///      rig); duplicate-TARGET/VALUE validation is omitted for brevity.
-contract MockComposable is IComposableExecution {
-    function executeComposable(ComposableExecution[] calldata executions) external payable {
-        for (uint256 i = 0; i < executions.length; i++) {
-            ComposableExecution calldata entry = executions[i];
-            address target;
-            uint256 value;
-            bytes memory callData = abi.encodePacked(entry.functionSig);
-            for (uint256 j = 0; j < entry.inputParams.length; j++) {
-                InputParam calldata param = entry.inputParams[j];
-                bytes memory resolved = ComposableLib.resolve(param, "", i, j);
-                if (param.paramType == InputParamType.TARGET) {
-                    target = ComposableLib.asAddress(ComposableLib.firstWord(resolved), j);
-                } else if (param.paramType == InputParamType.VALUE) {
-                    value = uint256(ComposableLib.firstWord(resolved));
-                } else {
-                    callData = bytes.concat(callData, resolved);
-                }
-            }
-            if (target != address(0)) {
-                (bool success, bytes memory ret) = target.call{value: value}(callData);
-                if (!success) {
-                    assembly {
-                        revert(add(ret, 32), mload(ret))
-                    }
-                }
-            }
-        }
     }
 }

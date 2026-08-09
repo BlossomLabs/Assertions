@@ -12,16 +12,16 @@ export default defineConfig({
     strategyConfig: {
       create2: {
         // Assertions core v2.0 salt, mined for the Arachnid-proxy vanity address
-        // 0xA55E4797c1b755183B7Aad07BFd39D3e824621f9
+        // 0xa55E47F37088b6D0212BdfD56b175ec08744DB19
         // (see website/scripts/mine-salt.mjs).
         // Combinators v2.0 uses salt
-        // 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6005c2ac8
-        // for 0xA55EC06e0A82a5ed05bf08c0ff07A45d4BC2eBf8 (Ignition only supports
+        // 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6031de88b
+        // for 0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9 (Ignition only supports
         // one global salt; the canonical deploy path is the website / Arachnid
         // proxy anyway — see website/scripts/export-deploy-artifact.mjs).
         // (v1.1 core salt 0x0b11b1be...012c7cd0 produced 0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0;
         //  v1.0 core salt 0xea760d18... produced 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F)
-        salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f600eeeda2",
+        salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f601469a3b",
       },
     },
   },

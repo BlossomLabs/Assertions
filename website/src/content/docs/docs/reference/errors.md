@@ -20,11 +20,10 @@ Defined once in the shared library, thrown by both the judge and the Combinators
 
 ## Assertions (judge)
 
-View-mode batch restrictions, plus the wrapped-mode failure:
+View-mode batch restrictions:
 
 | Error | Description |
 |-------|-------------|
-| `ComposableFailed(string, address, bytes)` | wrapped `assertComposable`: the ERC-8211 implementation rejected the batch (its revert data is echoed) |
 | `OutputParamsNotSupported(uint256)` | a batch entry carries output parameters — Storage writes don't exist in view mode |
 | `ValueParamNotSupported(uint256, uint256)` | a batch entry carries a `VALUE` input parameter — no ETH forwarding in view mode |
 | `DuplicateTargetParam(uint256)` | a batch entry carries more than one `TARGET` input parameter |

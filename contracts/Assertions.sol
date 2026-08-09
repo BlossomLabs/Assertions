@@ -4,11 +4,9 @@ pragma solidity ^0.8.28;
 import {
     ComposableExecution,
     ComposableLib,
-    IComposableExecution,
     InputParam,
     InputParamFetcherType,
-    InputParamType,
-    CallFailed
+    InputParamType
 } from "./ERC8211.sol";
 
 /**
@@ -22,27 +20,16 @@ import {
  *         assertion calls alongside the transactions they guard (DAO
  *         proposals, Safe batches, upgrades): if any constraint fails, the
  *         entire transaction reverts, atomically.
- * @dev Two judging modes, both view-only:
- *
- *      NATIVE — assertComposable(executions) evaluates the ERC-8211
- *      execution algorithm directly, restricted to what a view context can
- *      express: every fetcher resolution is a staticcall, entries with a
- *      TARGET parameter execute the constructed call via STATICCALL (the
- *      call itself becomes an assertion — it must not revert), VALUE
- *      parameters and outputParams are rejected (no ETH forwarding, no
- *      Storage writes in view). Entries without a TARGET parameter are
- *      standard ERC-8211 predicate entries. The encoding is the unmodified
- *      ERC-8211 wire format, so batches built by any ERC-8211 SDK judge
- *      here unchanged.
- *
- *      WRAPPED — assertComposable(composable, executions) performs the
- *      literal static call to an ERC-8211 implementation:
- *      composable.staticcall(executeComposable(executions)). This asserts
- *      "this account would accept this batch right now" — the same
- *      eth_call gate ERC-8211 relayers use off-chain, made composable
- *      on-chain. Because it is a staticcall, it only passes for
- *      state-neutral batches (predicate entries); any state-changing entry
- *      makes the assertion fail.
+ * @dev The judge is view-only: assertComposable(executions) evaluates the
+ *      ERC-8211 execution algorithm directly, restricted to what a view
+ *      context can express: every fetcher resolution is a staticcall,
+ *      entries with a TARGET parameter execute the constructed call via
+ *      STATICCALL (the call itself becomes an assertion — it must not
+ *      revert), VALUE parameters and outputParams are rejected (no ETH
+ *      forwarding, no Storage writes in view). Entries without a TARGET
+ *      parameter are standard ERC-8211 predicate entries. The encoding is
+ *      the unmodified ERC-8211 wire format, so batches built by any
+ *      ERC-8211 SDK judge here unchanged.
  *
  *      assertParam(param) is sugar for the 90% case: resolve one input
  *      parameter and validate its constraints, no batch scaffolding.
@@ -61,15 +48,6 @@ contract Assertions {
     // ConstraintFailed, CallFailed, InvalidBalanceData, InvalidConstraintData,
     // ReturnDataOutOfBounds and InvalidAddressWord are shared with the
     // resolution library and declared in ERC8211.sol.
-
-    /// @notice Thrown when the wrapped static call to an ERC-8211
-    ///         implementation's executeComposable reverts
-    /// @param assertion The assertion type or custom message
-    /// @param composable The IComposableExecution implementation that was called
-    /// @param revertData The raw revert data the implementation returned
-    ///        (empty when the staticcall failed without a reason, e.g. a
-    ///        state-changing batch judged through a staticcall)
-    error ComposableFailed(string assertion, address composable, bytes revertData);
 
     /// @notice Thrown when an entry carries output parameters — Storage
     ///         writes are impossible in a view-mode judge
@@ -93,7 +71,7 @@ contract Assertions {
     /// @param paramIndex The TARGET parameter's position within the entry
     error BalanceCannotBeTarget(uint256 entryIndex, uint256 paramIndex);
 
-    // ============ Composable Batch Assertions (native judge) ============
+    // ============ Composable Batch Assertions ============
 
     /// @notice Assert that an ERC-8211 composable batch passes under
     ///         view-mode evaluation: every input parameter resolves, every
@@ -110,33 +88,6 @@ contract Assertions {
     /// @param message Custom error message on constraint failure
     function assertComposable(ComposableExecution[] calldata executions, string calldata message) external view {
         _judge(executions, message);
-    }
-
-    // ============ Composable Batch Assertions (wrapped implementation) ============
-
-    /// @notice Assert that a deployed ERC-8211 implementation accepts the
-    ///         batch right now, via a static call to executeComposable —
-    ///         the on-chain equivalent of a relayer's eth_call gate. Only
-    ///         state-neutral batches (predicate entries) can pass a
-    ///         staticcall; a state-changing entry fails the assertion.
-    /// @param composable The IComposableExecution implementation (account,
-    ///        module, or adapter) to statically call
-    /// @param executions The ERC-8211 batch entries (standard wire format)
-    function assertComposable(address composable, ComposableExecution[] calldata executions) external view {
-        _judgeWrapped(composable, executions, "COMPOSABLE");
-    }
-
-    /// @notice Assert that a deployed ERC-8211 implementation accepts the
-    ///         batch right now, via a static call to executeComposable
-    /// @param composable The IComposableExecution implementation to statically call
-    /// @param executions The ERC-8211 batch entries (standard wire format)
-    /// @param message Custom error message on failure
-    function assertComposable(
-        address composable,
-        ComposableExecution[] calldata executions,
-        string calldata message
-    ) external view {
-        _judgeWrapped(composable, executions, message);
     }
 
     // ============ Single-Parameter Assertions ============
@@ -156,7 +107,7 @@ contract Assertions {
         param.resolve(message, 0, 0);
     }
 
-    // ============ Internal Judges ============
+    // ============ Internal Judge ============
 
     /// @dev The ERC-8211 execution algorithm, view-restricted. Per entry:
     ///      resolve each input parameter (fetcher), validate its
@@ -194,22 +145,5 @@ contract Assertions {
                 ComposableLib.staticCall(target, callData);
             }
         }
-    }
-
-    /// @dev The literal static call to an ERC-8211 implementation. Reverts
-    ///      with CallFailed when `composable` has no code (a staticcall to
-    ///      a code-less address would succeed vacuously and turn every
-    ///      assertion into a false pass), and with ComposableFailed —
-    ///      carrying the implementation's raw revert data — when the
-    ///      wrapped executeComposable rejects the batch.
-    function _judgeWrapped(
-        address composable,
-        ComposableExecution[] calldata executions,
-        string memory message
-    ) internal view {
-        bytes memory callData = abi.encodeCall(IComposableExecution.executeComposable, (executions));
-        if (composable.code.length == 0) revert CallFailed(composable, callData);
-        (bool success, bytes memory revertData) = composable.staticcall(callData);
-        if (!success) revert ComposableFailed(message, composable, revertData);
     }
 }

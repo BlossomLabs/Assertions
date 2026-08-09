@@ -4,15 +4,15 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 
 **Assertions judge, Combinators compute.**
 
-- **`Assertions` (the core)** judges ERC-8211 batches in view mode: `assertParam` resolves one input parameter and validates its constraints; `assertComposable(executions)` evaluates a full `ComposableExecution[]` batch with every fetcher and every constructed call executed via `staticcall`; `assertComposable(composable, executions)` performs the literal static call to a deployed `IComposableExecution` implementation — the on-chain equivalent of a relayer's `eth_call` gate.
-- **`Combinators` (the periphery)** fills the expressiveness gaps of the ERC-8211 constraint set with composable building blocks — `resolve`, `pick`, `nav`, `chain`, `calc`, `unary`, `data`, `env` — whose operands are themselves ERC-8211 `InputParam`s. The core judges the final value through a constrained `STATIC_CALL` fetcher pointed at the Combinators address.
+- **`Assertions` (the core)** judges ERC-8211 batches in view mode: `assertParam` resolves one input parameter and validates its constraints; `assertComposable(executions)` evaluates a full `ComposableExecution[]` batch with every fetcher and every constructed call executed via `staticcall`.
+- **`Combinators` (the periphery)** fills the expressiveness gaps of the ERC-8211 constraint set with composable building blocks — `resolve`, `pick`, `nav`, `chain`, `invoke`, `calc`, `unary`, `data`, `env` — whose operands are themselves ERC-8211 `InputParam`s. The core judges the final value through a constrained `STATIC_CALL` fetcher pointed at the Combinators address.
 - **`ERC8211.sol`** carries the standard's wire format (`ComposableExecution`, `InputParam`, `Constraint`), the `IComposableExecution` interface, and the shared resolution library both contracts use — batches produced by any ERC-8211 SDK decode here unchanged.
 
 ## Canonical addresses (same on every chain)
 
 ```
-Assertions  v2.0  0xA55E4797c1b755183B7Aad07BFd39D3e824621f9   (ERC-8211 judge)
-Combinators v2.0  0xA55EC06e0A82a5ed05bf08c0ff07A45d4BC2eBf8   (versionable periphery)
+Assertions  v2.0  0xa55E47F37088b6D0212BdfD56b175ec08744DB19   (ERC-8211 judge)
+Combinators v2.0  0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9   (versionable periphery)
 ```
 
 Deployed versions are immutable and keep working forever at their own canonical addresses: the v1.1 typed-assert core lives at `0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0` with Combinators v1.0 at `0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC`, and the original v1.0 core at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
@@ -46,7 +46,7 @@ The full documentation lives on the website under `/docs`:
 
 - **Overview & architecture** — the two-contract design and why it stays frozen
 - **Using assertions from Solidity** — complete patterns for proposals, Safe batches and upgrades
-- **Combinators** — the five functions (`read`, `calc`, `unary`, `data`, `env`), navigation, expressions and string operations
+- **Combinators** — the nine functions (`resolve`, `pick`, `nav`, `chain`, `invoke`, `calc`, `unary`, `data`, `env`), navigation, expressions and string operations
 - **EVMcrispr integration** — the `assertions` module, lenses and on-chain `@helper!`s
 - **Reference** — every assertion function, every custom error, and deployment to new chains
 

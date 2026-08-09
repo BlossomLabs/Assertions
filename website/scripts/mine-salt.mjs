@@ -22,7 +22,7 @@ const repoRoot = join(__dirname, "..", "..");
 const CREATE2_PROXY = "0x4e59b44847b379578588920cA78FbF26c0B4956C";
 
 // All project salts share this random 28-byte base; only the low 4 bytes are
-// mined (matches the committed Assertions/Combinators salts).
+// mined (matches the committed Assertions/Operators salts).
 const SALT_BASE = "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6";
 
 const artifactPath = join(

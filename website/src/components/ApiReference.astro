@@ -8,6 +8,19 @@ const sections = [
     ],
   },
   {
+    title: 'Core reads (Assertions core)',
+    fns: [
+      { name: 'resolve', desc: 'Resolve one operand and return its bytes — with constraint validation, any expression node becomes an inline assert' },
+      { name: 'pick', desc: 'Select a raw 32-byte word from a resolved operand (signed index, negative from the end)' },
+      { name: 'nav', desc: 'Typed navigation: interpret a resolved operand as a declared return tuple and walk a path through tuples and dynamic arrays — single words, canonical dynamic envelopes, and decoded lengths (LEN sentinel)' },
+      { name: 'chain', desc: 'Follow runtime-resolved addresses: each hop staticcalls the address the previous hop returned' },
+      { name: 'read', desc: 'Construct a staticcall at judge time: selector plus runtime-resolved calldata segments against a runtime-resolved target — the composition socket every Operators call (and any view contract) is reached through' },
+      { name: 'cond', desc: 'Lazy conditional: resolve the condition, then resolve and return ONLY the winning branch — the losing branch’s calls never happen' },
+      { name: 'orElse', desc: 'Composable try/catch: resolve the attempt; on ANY revert (constraints double as guards) resolve the fallback instead' },
+      { name: 'ok', desc: '1 if an operand resolves without reverting, else 0 — assert that a call succeeds, fails, or branch on resolvability' },
+    ],
+  },
+  {
     title: 'ERC-8211 wire format (what the judge consumes)',
     fns: [
       { name: 'InputParam', desc: 'One runtime-resolved value: a fetcher (RAW_BYTES literal, STATIC_CALL, or BALANCE — native or ERC-20), inline constraints, and a routing type' },
@@ -16,17 +29,17 @@ const sections = [
     ],
   },
   {
-    title: 'Combinators (composition)',
+    title: 'Operators (plain-value vocabulary)',
     fns: [
-      { name: 'resolve', desc: 'Resolve one operand and return its bytes — with constraint validation, any expression node becomes an inline assert' },
-      { name: 'pick', desc: 'Select a raw 32-byte word from a resolved operand (signed index, negative from the end)' },
-      { name: 'nav', desc: 'Typed navigation: interpret a resolved operand as a declared return tuple and walk a path through tuples and dynamic arrays — single words, canonical dynamic envelopes, and decoded lengths (LEN sentinel)' },
-      { name: 'chain', desc: 'Follow runtime-resolved addresses: each hop staticcalls the address the previous hop returned' },
-      { name: 'invoke', desc: 'Construct a staticcall at judge time: selector plus runtime-resolved calldata segments against a runtime-resolved target (nested live call arguments compile to this)' },
-      { name: 'calc', desc: 'Binary word op over two operands, one opcode enum: arithmetic (Add…Exp, Min/Max, AbsDiff) with signed variants, bitwise (And/Or/Xor/Shl/Shr) and 0/1-returning comparisons (Eq…SGe)' },
-      { name: 'unary', desc: 'Unary word op over one operand: Not (bitwise complement), IsZero (logical not), Balance and CodeHash of a call-resolved address' },
-      { name: 'data', desc: 'Raw-bytes ops over a resolved operand: Split (delimiter segment), Includes (substring), Charset (byte-class bitmap), Hash (keccak256), ByteLen' },
-      { name: 'env', desc: 'Constants and environment values as operands: Constant echo, Timestamp, BlockNumber, ChainId, Balance(addr), CodeHash(addr)' },
+      { name: 'add … max, exp', desc: 'Checked word arithmetic as named functions — add, sub, mul, div, mod, min, max with int256 overloads for signed semantics, exp unsigned; decoded calldata reads on any explorer' },
+      { name: 'absDiff', desc: 'The magnitude |a − b|, unsigned or signed, total even across the widest int256 span — the approximate-equality workhorse' },
+      { name: 'eq, ne, lt, gt, le, ge', desc: 'Comparisons returning bool (int256 overloads order negatives correctly); judged EQ 1 through the core' },
+      { name: 'bitAnd, bitOr, bitXor, shl, shr, bitSet', desc: 'Bitwise ops and shifts (EVM semantics), plus a one-call bit test for bitmap character classes' },
+      { name: 'balance, codehash, timestamp, blockNumber, chainId', desc: 'Environment reads at judge time, as plain argument-free or address-taking calls' },
+      { name: 'concat, slice, byteLen, hash', desc: 'Bytes assembly and keccak256 of the decoded payload — an EQ constraint over hash pins any string or bytes value' },
+      { name: 'indexOf, matchAt', desc: 'Substring search with a signed from (negative searches backward: -1 is lastIndexOf); not-found composes as the haystack length sentinel' },
+      { name: 'encode', desc: 'Runtime abi.encode from pre-resolved component values (nav’s inverse) — its raw output is a calldata segment for read splicing' },
+      { name: 'foldRange, foldBytes, foldWords', desc: 'Bounded folds over an index range, a byte string, or 32-byte words: a single-staticcall template lambda per element, with Any/All short-circuit — iteration without Turing completeness' },
     ],
   },
 ];
@@ -42,9 +55,11 @@ const sections = [
       fetch (raw bytes, staticcall results, or balances) and the constraints
       they must satisfy. The Assertions core resolves everything live and
       reverts the transaction if any constraint fails, with a custom error
-      message if you provide one. When a value needs computing first, like
-      math, decoding, or chained lookups, the Combinators contract builds it
-      and the core judges the result. Assertions judge, Combinators compute.
+      message if you provide one. The core also owns every read primitive
+      (selection, chained lookups, constructed calls, lazy conditionals);
+      when a value needs computing, its read splices live operands into the
+      plain-typed Operators contract and judges the result. The core reads
+      and judges. Operators compute.
     </p>
     <div class="flex flex-col gap-3">
       {sections.map((section) => (

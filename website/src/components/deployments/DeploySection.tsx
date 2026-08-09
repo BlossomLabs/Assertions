@@ -694,7 +694,7 @@ export function DeploySection({
         {deployState.step === "success" && (
           <div className="rounded-lg border border-[var(--color-ok)]/40 bg-[var(--color-ok)]/5 px-4 py-3 text-sm">
             <p className="text-[var(--color-ok)] font-medium">
-              Deployed! Assertions and Combinators now live on {chain.name}:
+              Deployed! Assertions and Operators now live on {chain.name}:
             </p>
             {DEPLOYED_CONTRACTS.map((contract) => (
               <p key={contract.key} className="font-mono text-xs mt-1">

@@ -1,25 +1,25 @@
 ---
 title: Deployments
-description: Canonical CREATE2 addresses and how to deploy to a new chain.
+description: Interim CREATE2 addresses, the vanity re-mine plan, and how to deploy to a new chain.
 ---
 
 import { ASSERTIONS_DEPLOY_GAS } from '../../../../lib/assertions-deployment';
-import { COMBINATORS_DEPLOY_GAS } from '../../../../lib/combinators-deployment';
+import { OPERATORS_DEPLOY_GAS } from '../../../../lib/operators-deployment';
 
 export const fmtGas = (gas) => `~${(gas / 1e6).toFixed(2)}M gas`;
 
-Both contracts live at the same canonical address on every chain:
+Both contracts live at the same deterministic address on every chain. The current round uses **interim, non-vanity addresses**: the bytecode is still in flux, and the vanity `0xa55E...` addresses will be re-mined before the canonical roll (a new salt per contract against the final bytecode; the interim deployments stay live wherever they were sent).
 
 ```
-Assertions  v2.0  0xa55E47F37088b6D0212BdfD56b175ec08744DB19   (ERC-8211 judge)
-Combinators v2.0  0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9   (versionable periphery)
+Assertions v2.0  0x637d99Ff8bcB919e5203b0B96Ad0520A9943a32C   (frozen core: judge + primitives)
+Operators  v1.0  0x8913104652CC0C15A94CEB07Dd3187a0fa4C8F4F   (versionable periphery)
 ```
 
-Deployed versions are immutable: earlier releases keep working forever at their own canonical addresses. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) always points to the latest version of the core, and the original v1.0 core stays live at [`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
+Deployed versions are immutable: earlier releases keep working forever at their own canonical addresses. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) always points to the latest canonical version of the core, and the original v1.0 core stays live at [`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
 
 The [interactive deployments page](/deployments) shows per-chain status, lets you deploy with a connected wallet, and verifies contracts on explorers.
 
-## How the addresses stay canonical
+## How the addresses stay deterministic
 
 Deployment goes through [Arachnid's deterministic-deployment proxy](https://github.com/Arachnid/deterministic-deployment-proxy) (`0x4e59b44847b379578588920cA78FbF26c0B4956C`), which performs a CREATE2 with a fixed salt per contract:
 
@@ -27,11 +27,11 @@ Deployment goes through [Arachnid's deterministic-deployment proxy](https://gith
 address = keccak256(0xff ++ 0x4e59b448...956C ++ salt ++ keccak256(initCode))[12:]
 ```
 
-Same proxy, same salt, same init code on every chain: same address.
+Same proxy, same salt, same init code on every chain: same address. The vanity re-mine is exactly this mechanism run in reverse, searching salts until the derived address starts with `0xa55E...`; only the salt changes, never the bytecode.
 
 ## Deploying to a new chain
 
-The easiest way is the [deployments page](/deployments): connect a wallet, pick the network (or add a custom RPC), and send one transaction per contract (Assertions {fmtGas(ASSERTIONS_DEPLOY_GAS)}, Combinators {fmtGas(COMBINATORS_DEPLOY_GAS)} — measured by replaying the canonical deployment at export time). If the Arachnid proxy is missing on the chain, the page walks you through installing it permissionlessly first.
+The easiest way is the [deployments page](/deployments): connect a wallet, pick the network (or add a custom RPC), and send one transaction per contract (Assertions {fmtGas(ASSERTIONS_DEPLOY_GAS)}, Operators {fmtGas(OPERATORS_DEPLOY_GAS)}, measured by replaying the canonical deployment at export time). If the Arachnid proxy is missing on the chain, the page walks you through installing it permissionlessly first.
 
 Manually, each deployment is a single transaction to the proxy with `salt ++ initCode` as calldata:
 
@@ -40,12 +40,12 @@ cast send 0x4e59b44847b379578588920cA78FbF26c0B4956C \
   "$(cat salt_and_initcode.hex)" --rpc-url <rpc> --private-key <key>
 ```
 
-The salts live in `hardhat.config.ts` and `website/scripts/export-deploy-artifact.mjs`; the script regenerates `website/src/lib/assertions-deployment.ts` and `website/src/lib/combinators-deployment.ts` (salt, init code, measured deploy gas, and predicted address for each contract) from a fresh compile. It refuses to export if the compiled bytecode no longer reproduces a canonical address.
+The salts live in `hardhat.config.ts` and `website/scripts/export-deploy-artifact.mjs`; the script regenerates `website/src/lib/assertions-deployment.ts` and `website/src/lib/operators-deployment.ts` (salt, init code, measured deploy gas, and predicted address for each contract) from a fresh compile. It refuses to export if the compiled bytecode no longer reproduces the expected address.
 
 :::caution
 **Do not use `hardhat ignition deploy` for the canonical deployment.** Ignition's `create2` strategy goes through the CreateX factory, which re-hashes the salt and therefore produces a *different* address than the Arachnid proxy. The Ignition module is kept only for local testing.
 :::
 
 :::note[Chain requirements]
-The bytecode targets `cancun` and contains `PUSH0`, so the target chain must support the Shanghai upgrade or later. The exact compiler settings in `hardhat.config.ts` (solc 0.8.28, optimizer 200 runs, `evmVersion: cancun`) must not change, or the CREATE2 addresses change with the bytecode.
+The bytecode targets `cancun` and contains `PUSH0`, so the target chain must support the Shanghai upgrade or later. The exact compiler settings in `hardhat.config.ts` (solc 0.8.36, optimizer 200 runs, `evmVersion: cancun`) must not change, or the CREATE2 addresses change with the bytecode.
 :::

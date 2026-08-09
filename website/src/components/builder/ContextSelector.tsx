@@ -159,7 +159,7 @@ export function ContextSelector({
             )}
             {chainSupport.state === "ok" && (
               <p className="text-xs text-[var(--color-ok)]">
-                Assertions core &amp; Combinators found on{" "}
+                Assertions core &amp; Operators found on{" "}
                 {chainSupport.chainName}. The builder works here.
               </p>
             )}

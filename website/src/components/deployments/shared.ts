@@ -9,11 +9,11 @@ import {
   ASSERTIONS_SALT,
 } from "../../lib/assertions-deployment";
 import {
-  COMBINATORS_ADDRESS,
-  COMBINATORS_CREATION_BYTECODE,
-  COMBINATORS_DEPLOY_GAS,
-  COMBINATORS_SALT,
-} from "../../lib/combinators-deployment";
+  OPERATORS_ADDRESS,
+  OPERATORS_CREATION_BYTECODE,
+  OPERATORS_DEPLOY_GAS,
+  OPERATORS_SALT,
+} from "../../lib/operators-deployment";
 
 /** "1245095" -> "~1.2M", for UI copy. */
 export function formatDeployGas(gas: number): string {
@@ -22,7 +22,7 @@ export function formatDeployGas(gas: number): string {
 
 /** The two contracts that make up a canonical deployment on a chain. */
 export interface DeployableContract {
-  key: "core" | "combinators";
+  key: "core" | "operators";
   name: string;
   address: `0x${string}`;
   salt: `0x${string}`;
@@ -41,12 +41,12 @@ export const DEPLOYED_CONTRACTS: DeployableContract[] = [
     gasLabel: formatDeployGas(ASSERTIONS_DEPLOY_GAS),
   },
   {
-    key: "combinators",
-    name: "Combinators",
-    address: COMBINATORS_ADDRESS,
-    salt: COMBINATORS_SALT,
-    bytecode: COMBINATORS_CREATION_BYTECODE,
-    gasLabel: formatDeployGas(COMBINATORS_DEPLOY_GAS),
+    key: "operators",
+    name: "Operators",
+    address: OPERATORS_ADDRESS,
+    salt: OPERATORS_SALT,
+    bytecode: OPERATORS_CREATION_BYTECODE,
+    gasLabel: formatDeployGas(OPERATORS_DEPLOY_GAS),
   },
 ];
 

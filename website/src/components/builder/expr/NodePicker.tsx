@@ -172,7 +172,7 @@ const SOURCE_ICONS: Partial<Record<NodeKey, IconName>> = {
 
 /**
  * The value-source select, shown on source nodes (literal, call, balance,
- * clock, chain id, code hash): what this value *is*. Combinators are not
+ * clock, chain id, code hash): what this value *is*. Operators are not
  * listed here — they wrap a value via the WrapMenu instead.
  */
 export function SourcePicker({
@@ -204,7 +204,7 @@ export function SourcePicker({
 }
 
 /**
- * The contextual (+) menu: combinators that can wrap the current node,
+ * The contextual (+) menu: operators that can wrap the current node,
  * filtered to what makes sense for its category. Picking one converts the
  * node in place, seeding it as the combinator's first operand — the
  * progressive-disclosure path from a simple value to a composed expression.

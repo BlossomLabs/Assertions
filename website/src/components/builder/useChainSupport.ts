@@ -35,7 +35,7 @@ export type ChainSupport =
 
 /**
  * Whether the builder can work on `chainId`: official chains always can;
- * any other chain can when the canonical Assertions core and Combinators
+ * any other chain can when the canonical Assertions core and Operators
  * deployments have code there (they live at the same CREATE2 address on
  * every chain — the deployments page can put them on a missing one).
  */

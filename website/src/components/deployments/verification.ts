@@ -137,7 +137,7 @@ async function verifyOne(
 }
 
 /**
- * Verifies BOTH contracts (Assertions + Combinators) on the target chain from
+ * Verifies BOTH contracts (Assertions + Operators) on the target chain from
  * the compiler inputs bundled with the site. Resolves with "already-verified"
  * only when every contract was already verified, "verified" otherwise; throws
  * on failure.

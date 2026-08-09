@@ -12,7 +12,7 @@ import { isAddress } from "viem";
 /**
  * The assertion expression model. An assertion compares two value
  * expressions; each side is a tree of contract calls, literals and
- * Combinators v2 helpers (`@min!`, `@absdiff!`, `@num!`, …) that the
+ * Operators v1 helpers (`@min!`, `@absdiff!`, `@num!`, …) that the
  * codegen renders into an `assertions:assert` line.
  *
  * Nodes hold only serializable strings — ABI fetching and ENS resolution

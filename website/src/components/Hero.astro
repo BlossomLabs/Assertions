@@ -1,10 +1,10 @@
 ---
 import { ASSERTIONS_ADDRESS } from '../lib/assertions-deployment';
-import { COMBINATORS_ADDRESS } from '../lib/combinators-deployment';
+import { OPERATORS_ADDRESS } from '../lib/operators-deployment';
 import RotatingText from './RotatingText';
 
 const address = ASSERTIONS_ADDRESS;
-const combinators = COMBINATORS_ADDRESS;
+const operators = OPERATORS_ADDRESS;
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
 const networks = ['Ethereum', 'Optimism', 'Base', 'Arbitrum', 'Polygon', 'Gnosis'];
@@ -34,7 +34,7 @@ const networks = ['Ethereum', 'Optimism', 'Base', 'Arbitrum', 'Polygon', 'Gnosis
     </p>
 
     <p class="animate-fade-up delay-2 font-mono text-sm text-[var(--color-bp-400)] mb-10">
-      Assertions judge. Combinators compute.
+      The core reads and judges. Operators compute.
     </p>
 
     <div class="animate-fade-up delay-3 flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
@@ -65,13 +65,13 @@ const networks = ['Ethereum', 'Optimism', 'Base', 'Arbitrum', 'Polygon', 'Gnosis
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-ink-3)]"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
       </a>
       <a
-        href={`https://etherscan.io/address/${combinators}`}
+        href={`https://etherscan.io/address/${operators}`}
         target="_blank"
         rel="noopener noreferrer"
         class="group inline-flex items-center gap-3 px-5 py-3 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-ink-3)]/15 hover:border-[var(--color-bp-400)]/50 transition-all"
       >
-        <span class="text-sm text-[var(--color-ink-3)]">Combinators v2.0</span>
-        <code class="font-mono text-sm text-[var(--color-ink-2)] group-hover:text-[var(--color-bp-400)] transition-colors"><span class="sm:hidden">{short(combinators)}</span><span class="hidden sm:inline">{combinators}</span></code>
+        <span class="text-sm text-[var(--color-ink-3)]">Operators v1.0</span>
+        <code class="font-mono text-sm text-[var(--color-ink-2)] group-hover:text-[var(--color-bp-400)] transition-colors"><span class="sm:hidden">{short(operators)}</span><span class="hidden sm:inline">{operators}</span></code>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-ink-3)]"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
       </a>
     </div>

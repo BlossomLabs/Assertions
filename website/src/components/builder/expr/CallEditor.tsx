@@ -234,10 +234,10 @@ export function CallEditor({
   chainId: number;
   /** Nested nodes drop the field labels to keep the tree readable. */
   compact?: boolean;
-  /** Chained hops compile through the combinators contract, so the simple
-   *  form (single call, no combinators) turns them off. */
+  /** Chained hops compile through the core's chain primitive, so the simple
+   *  form (single call, no composition) turns them off. */
   allowChain?: boolean;
-  /** Nested live calls as arguments compile to the combinators invoke
+  /** Nested live calls as arguments compile to the core's read
    *  primitive, so the simple form turns them off too. */
   allowCallArgs?: boolean;
 }) {

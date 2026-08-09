@@ -53,7 +53,7 @@ import {
 
 /** Direct mode ("simple") emits the dedicated assert-* commands of the
  *  Assertions core. Composed mode ("advanced") is the expression editor
- *  (subject ⟨op⟩ expected over the Combinators tree). Suggest hands the
+ *  (subject ⟨op⟩ expected over the read-spliced Operators tree). Suggest hands the
  *  batch to the AI assistant instead of building one manually. */
 type Mode = "simple" | "advanced" | "suggest";
 type SimpleKind = "call" | "balance" | "code" | "block" | "chainid";
@@ -110,7 +110,7 @@ const MODES: {
   {
     value: "advanced",
     label: "Composed expression",
-    dependency: "Uses Combinators v2.0",
+    dependency: "Uses Operators v1.0",
     hint: "Chain, combine, or transform runtime values.",
   },
   {
@@ -122,7 +122,7 @@ const MODES: {
 ];
 
 const COMPOSED_HINT =
-  "A view call, balance, clock or code-hash value — wrapped in combinators (min/max, |a − b|, lengths, arithmetic…) and compared to a value or another live expression";
+  "A view call, balance, clock or code-hash value — wrapped in operators (min/max, |a − b|, lengths, arithmetic…) and compared to a value or another live expression";
 
 const PLACEMENTS: {
   value: AssertionPlacement;
@@ -175,7 +175,7 @@ export function AssertionForm({
   // The expression-kind assertion (subject/operator/expected tree).
   const [assertion, setAssertion] = useState<Assertion>(emptyAssertion);
 
-  // Contract-call fields: a single call subject, no combinators.
+  // Contract-call fields: a single call subject, no operators.
   const [callNode, setCallNode] = useState<CallNode>(
     () => emptyCall() as CallNode,
   );
@@ -253,7 +253,7 @@ export function AssertionForm({
   const targetInput = addressInput.trim();
 
   /** The Assertion the Contract-call simple kind describes: the call as
-   *  subject, a literal expected side, no combinators. */
+   *  subject, a literal expected side, no operators. */
   const callAssertion = (): Assertion => ({
     subject: callNode,
     operator: operator === BARE_OP ? null : operator,
@@ -472,7 +472,7 @@ export function AssertionForm({
   return (
     <div className="space-y-4">
       {/* First decision: build directly on the Assertions core, compose an
-          expression through the Combinators contract, or hand the batch to
+          expression through the Operators contract, or hand the batch to
           the AI assistant */}
       <div role="group" aria-label="How do you want to add assertions?">
         <span className={labelCls}>How do you want to add assertions?</span>

@@ -194,6 +194,9 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     ],
   },
   codehash: { role: "composition-time" },
+  // The core's read primitive: nested live call arguments compile to it, but
+  // it has no builder node of its own (CallArg models the nesting directly).
+  "read!": { role: "composition-time" },
 };
 
 /** WrapMenu grouping (option groups), keyed by node kind. */
@@ -221,7 +224,7 @@ if (import.meta.env.DEV) {
   const stale = Object.keys(HELPER_ROLES).filter((h) => !(h in helpers));
   if (unmapped.length || stale.length)
     console.warn(
-      "[assertion-builder] combinator catalog drift vs the module registry —",
+      "[assertion-builder] operator catalog drift vs the module registry —",
       unmapped.length ? `unmapped helpers: ${unmapped.join(", ")};` : "",
       stale.length ? `mapped but missing from registry: ${stale.join(", ")}` : "",
     );

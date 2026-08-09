@@ -11,17 +11,15 @@ export default defineConfig({
     // see website/scripts/export-deploy-artifact.mjs and the README.
     strategyConfig: {
       create2: {
-        // Assertions core v2.0 salt, mined for the Arachnid-proxy vanity address
-        // 0xa55E47F37088b6D0212BdfD56b175ec08744DB19
-        // (see website/scripts/mine-salt.mjs).
-        // Combinators v2.0 uses salt
-        // 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6031de88b
-        // for 0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9 (Ignition only supports
-        // one global salt; the canonical deploy path is the website / Arachnid
-        // proxy anyway — see website/scripts/export-deploy-artifact.mjs).
-        // (v1.1 core salt 0x0b11b1be...012c7cd0 produced 0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0;
-        //  v1.0 core salt 0xea760d18... produced 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F)
-        salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f601469a3b",
+        // INTERIM zero salt: the 2.0 core and Operators 1.0 are still in
+        // flux, so no vanity salts are mined for the current bytecode.
+        // Re-mine with website/scripts/mine-salt.mjs before the canonical
+        // roll. Prior vanity releases (Arachnid-proxy addresses):
+        // core v2.0-rc salt 0x0b11b1be...01469a3b → 0xa55E47F37088b6D0212BdfD56b175ec08744DB19,
+        // Combinators v2.0-rc salt 0x0b11b1be...031de88b → 0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9,
+        // core v1.1 salt 0x0b11b1be...012c7cd0 → 0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0,
+        // core v1.0 salt 0xea760d18... → 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F.
+        salt: "0x0000000000000000000000000000000000000000000000000000000000000000",
       },
     },
   },
@@ -31,7 +29,7 @@ export default defineConfig({
     // must produce the same output. Do not let them drift.
     profiles: {
       default: {
-        version: "0.8.28",
+        version: "0.8.36",
         settings: {
           optimizer: {
             enabled: true,
@@ -44,7 +42,7 @@ export default defineConfig({
         },
       },
       production: {
-        version: "0.8.28",
+        version: "0.8.36",
         settings: {
           optimizer: {
             enabled: true,

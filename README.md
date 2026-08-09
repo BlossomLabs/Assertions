@@ -2,20 +2,22 @@
 
 On-chain assertion contracts for verifying blockchain state in Solidity, built around a static call to [ERC-8211 (Smart Batching)](https://www.erc8211.com/). An assertion is an ERC-8211 predicate: an `InputParam` that declares how to fetch a live value (`RAW_BYTES` literal, arbitrary `STATIC_CALL`, or `BALANCE` query) and the inline `Constraint`s (`EQ` / `GTE` / `LTE` / `IN`) it must satisfy. Batch assertion calls alongside the transactions they guard (DAO proposals, Safe batches, upgrades): if any constraint fails, the entire transaction reverts, atomically.
 
-**Assertions judge, Combinators compute.**
+**The core reads and judges, Operators compute.**
 
-- **`Assertions` (the core)** judges ERC-8211 batches in view mode: `assertParam` resolves one input parameter and validates its constraints; `assertComposable(executions)` evaluates a full `ComposableExecution[]` batch with every fetcher and every constructed call executed via `staticcall`.
-- **`Combinators` (the periphery)** fills the expressiveness gaps of the ERC-8211 constraint set with composable building blocks — `resolve`, `pick`, `nav`, `chain`, `invoke`, `calc`, `unary`, `data`, `env` — whose operands are themselves ERC-8211 `InputParam`s. The core judges the final value through a constrained `STATIC_CALL` fetcher pointed at the Combinators address.
-- **`ERC8211.sol`** carries the standard's wire format (`ComposableExecution`, `InputParam`, `Constraint`), the `IComposableExecution` interface, and the shared resolution library both contracts use — batches produced by any ERC-8211 SDK decode here unchanged.
+- **`Assertions` (the core)** owns everything that speaks ERC-8211. It judges batches in view mode: `assertParam` resolves one input parameter and validates its constraints; `assertComposable(executions)` evaluates a full `ComposableExecution[]` batch with every fetcher and every constructed call executed via `staticcall`. And it carries the read primitives whose operands arrive unresolved: `resolve`, `pick`, `nav`, `chain`, `read` (construct a staticcall from runtime-resolved segments) and the lazy control primitives `cond`, `orElse`, `ok`.
+- **`Operators` (the periphery)** is a plain-Solidity vocabulary with zero ERC-8211 coupling: named word ops with `int256` overloads (`add`, `gt`, `absDiff`, ...), 512-bit `mulDiv` and `sqrt`, bitwise ops (including the arithmetic-shift `shr` overload), environment reads, bytes, search and parse operations (`hash`, occurrence-ordinal `indexOf`, `parseUint`), a runtime `encode`, and bounded folds. The core's `read` resolves operand expressions and splices the values into Operators calldata; any deployed view contract extends the vocabulary through the same socket.
+- **`ERC8211.sol`** carries the standard's wire format (`ComposableExecution`, `InputParam`, `Constraint`) and the `IComposableExecution` interface — batches produced by any ERC-8211 SDK decode here unchanged. **`AbiShape.sol`** is the shared ABI type-descriptor grammar `nav` and `encode` both parse.
 
 ## Canonical addresses (same on every chain)
 
 ```
-Assertions  v2.0  0xa55E47F37088b6D0212BdfD56b175ec08744DB19   (ERC-8211 judge)
-Combinators v2.0  0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9   (versionable periphery)
+Assertions  v2.0  0x637d99Ff8bcB919e5203b0B96Ad0520A9943a32C   (ERC-8211 judge; INTERIM address)
+Operators   v1.0  0x8913104652CC0C15A94CEB07Dd3187a0fa4C8F4F   (versionable periphery; INTERIM address)
 ```
 
-Deployed versions are immutable and keep working forever at their own canonical addresses: the v1.1 typed-assert core lives at `0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0` with Combinators v1.0 at `0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC`, and the original v1.0 core at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
+The current addresses use a zero CREATE2 salt while the 2.0 line is still in flux; vanity `0xa55E…` salts get re-mined before the canonical roll.
+
+Deployed versions are immutable and keep working forever at their own canonical addresses: the v2.0-rc core lives at `0xa55E47F37088b6D0212BdfD56b175ec08744DB19` with Combinators v2.0-rc at `0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9`, the v1.1 typed-assert core at `0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0` with Combinators v1.0 at `0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC`, and the original v1.0 core at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
 
 ## Quick example
 
@@ -46,7 +48,8 @@ The full documentation lives on the website under `/docs`:
 
 - **Overview & architecture** — the two-contract design and why it stays frozen
 - **Using assertions from Solidity** — complete patterns for proposals, Safe batches and upgrades
-- **Combinators** — the nine functions (`resolve`, `pick`, `nav`, `chain`, `invoke`, `calc`, `unary`, `data`, `env`), navigation, expressions and string operations
+- **Core primitives** — the reads (`resolve`, `pick`, `nav`, `chain`, `read`) and resolution control (`cond`, `orElse`, `ok`)
+- **Operators** — the plain-value vocabulary: word ops, comparisons, bytes and search operations, the runtime encoder and the folds
 - **EVMcrispr integration** — the `assertions` module, lenses and on-chain `@helper!`s
 - **Reference** — every assertion function, every custom error, and deployment to new chains
 
@@ -60,7 +63,7 @@ pnpm hardhat compile  # build the contracts
 pnpm test             # run the test suite
 ```
 
-The contracts target solc 0.8.28 with `evmVersion: cancun`; compiler settings in `hardhat.config.ts` must not change or the canonical CREATE2 addresses change with the bytecode.
+The contracts target solc 0.8.36 with `evmVersion: cancun`; compiler settings in `hardhat.config.ts` must not change or the canonical CREATE2 addresses change with the bytecode.
 
 ## License
 

@@ -63,7 +63,7 @@ function callAddress(
  * True when `evalExpr` can read the expression's current value client-side:
  * complete calls (any chain length), balances of ETH or a token given by
  * address, timestamp/block number, len/bytelen transforms and the
- * numeric combinators over those. Logic, split, hash and token symbols
+ * numeric operators over those. Logic, split, hash and token symbols
  * (other than ETH) are not modeled.
  */
 export function isEvaluable(expr: ValueExpr): boolean {
@@ -199,7 +199,7 @@ function toBigInt(value: unknown): bigint {
 }
 
 /**
- * Client-side mirror of the combinators the "use current value" button can
+ * Client-side mirror of the operators the "use current value" button can
  * evaluate. Throws on anything `isEvaluable` rejects.
  */
 export async function evalExpr(
@@ -236,7 +236,7 @@ export async function evalExpr(
     case "chainid":
       return BigInt(await client.getChainId());
     case "codehash":
-      // bytes32 has no place in the numeric combinators; readSubjectValue
+      // bytes32 has no place in the numeric operators; readSubjectValue
       // special-cases it to a hex string instead.
       throw new Error("codehash is not a numeric value");
     case "minmax": {

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Exports the compiled creation bytecode (plus the CREATE2 deployment
 // constants) of BOTH deployed contracts — the Assertions core and the
-// Combinators building blocks — into committed modules so the website can deploy
+// Operators vocabulary — into committed modules so the website can deploy
 // them to their canonical addresses on any chain without needing the
 // gitignored Hardhat artifacts at build time.
 //
@@ -53,28 +53,36 @@ const CONTRACTS = [
     key: "core",
     artifact: "artifacts/contracts/Assertions.sol/Assertions.json",
     output: "src/lib/assertions-deployment.ts",
-    // Salt mined for the core v2.0 vanity address (see hardhat.config.ts).
+    // INTERIM non-vanity address (zero salt): the 2.0 core is still in flux,
+    // so no vanity salt is mined yet — re-mine (mine-salt.mjs) before the
+    // canonical roll. Prior vanity releases:
+    // v2.0-rc remains at 0xa55E47F37088b6D0212BdfD56b175ec08744DB19
+    // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f601469a3b);
     // v1.1 remains at 0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0
     // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6012c7cd0);
     // v1.0 remains at 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
     // (salt 0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb).
-    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f601469a3b",
-    expectedAddress: "0xa55E47F37088b6D0212BdfD56b175ec08744DB19",
+    salt: "0x0000000000000000000000000000000000000000000000000000000000000000",
+    expectedAddress: "0x637d99Ff8bcB919e5203b0B96Ad0520A9943a32C",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
   },
   {
-    name: "Combinators",
-    key: "combinators",
-    artifact: "artifacts/contracts/Combinators.sol/Combinators.json",
-    output: "src/lib/combinators-deployment.ts",
-    // Combinators v2.0; v1.0 remains at 0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC
+    name: "Operators",
+    key: "operators",
+    artifact: "artifacts/contracts/Operators.sol/Operators.json",
+    output: "src/lib/operators-deployment.ts",
+    // INTERIM non-vanity address (zero salt) for Operators v1.0, the plain
+    // periphery that replaced Combinators. Prior Combinators releases:
+    // v2.0-rc remains at 0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9
+    // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6031de88b);
+    // v1.0 remains at 0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC
     // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60027fbe3).
-    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6031de88b",
-    expectedAddress: "0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9",
-    prefix: "COMBINATORS",
-    description: "Combinators building-block contract",
+    salt: "0x0000000000000000000000000000000000000000000000000000000000000000",
+    expectedAddress: "0x8913104652CC0C15A94CEB07Dd3187a0fa4C8F4F",
+    prefix: "OPERATORS",
+    description: "Operators plain-value vocabulary contract",
     includeProxyConstants: false,
   },
 ];
@@ -249,7 +257,7 @@ export interface VerificationInput {
 }
 
 export const VERIFICATION_INPUTS: Record<
-  "core" | "combinators",
+  "core" | "operators",
   VerificationInput
 > = ${JSON.stringify(
   Object.fromEntries(

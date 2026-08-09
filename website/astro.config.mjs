@@ -238,12 +238,19 @@ export default defineConfig({
           items: [{ slug: 'docs' }, { slug: 'docs/solidity' }],
         },
         {
-          label: 'Combinators',
+          label: 'Core primitives',
           items: [
-            { slug: 'docs/combinators' },
-            { slug: 'docs/combinators/reads' },
-            { slug: 'docs/combinators/calc' },
-            { slug: 'docs/combinators/data' },
+            { slug: 'docs/core/reads' },
+            { slug: 'docs/core/control' },
+          ],
+        },
+        {
+          label: 'Operators',
+          items: [
+            { slug: 'docs/operators' },
+            { slug: 'docs/operators/words' },
+            { slug: 'docs/operators/data' },
+            { slug: 'docs/operators/fold' },
           ],
         },
         {

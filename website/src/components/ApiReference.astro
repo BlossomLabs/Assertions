@@ -37,7 +37,7 @@ const sections = [
       { name: 'bitAnd, bitOr, bitXor, shl, shr, bitSet', desc: 'Bitwise ops and shifts (EVM semantics), plus a one-call bit test for bitmap character classes' },
       { name: 'balance, codehash, timestamp, blockNumber, chainId', desc: 'Environment reads at judge time, as plain argument-free or address-taking calls' },
       { name: 'concat, slice, byteLen, hash', desc: 'Bytes assembly and keccak256 of the decoded payload — an EQ constraint over hash pins any string or bytes value' },
-      { name: 'indexOf, matchAt', desc: 'Substring search with a signed from (negative searches backward: -1 is lastIndexOf); not-found composes as the haystack length sentinel' },
+      { name: 'indexOf, wordIndexOf', desc: 'Substring search by signed occurrence ordinal (-1 is the last match) and first-match word search over array payloads; both not-founds compose as length sentinels' },
       { name: 'encode', desc: 'Runtime abi.encode from pre-resolved component values (nav’s inverse) — its raw output is a calldata segment for read splicing' },
       { name: 'foldRange, foldBytes, foldWords', desc: 'Bounded folds over an index range, a byte string, or 32-byte words: a single-staticcall template lambda per element, with Any/All short-circuit — iteration without Turing completeness' },
     ],

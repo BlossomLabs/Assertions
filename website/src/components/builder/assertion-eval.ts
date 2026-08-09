@@ -62,7 +62,7 @@ function callAddress(
 /**
  * True when `evalExpr` can read the expression's current value client-side:
  * complete calls (any chain length), balances of ETH or a token given by
- * address, timestamp/block number, len/bytelen transforms and the
+ * address, timestamp/block number, len/bytes.len transforms and the
  * numeric operators over those. Logic, split, hash and token symbols
  * (other than ETH) are not modeled.
  */
@@ -307,16 +307,15 @@ export async function evalExpr(
         throw new Error("len of a non-dynamic return");
       }
       if (expr.helper === "bytelen") {
-        // Raw returndata size: 64 + n*32 for arrays, 64 + padded bytes for
-        // string/bytes, 32 per word otherwise.
-        if (Array.isArray(result)) return BigInt(64 + result.length * 32);
+        // @bytes.len!: the decoded byte length of a string/bytes return
+        // (UTF-8 characters may span multiple bytes).
         if (typeof result === "string") {
           const bytes = result.startsWith("0x")
             ? (result.length - 2) / 2
             : new TextEncoder().encode(result).length;
-          return BigInt(64 + Math.ceil(bytes / 32) * 32);
+          return BigInt(bytes);
         }
-        return 32n;
+        throw new Error("bytes.len of a non-string/bytes return");
       }
       throw new Error("hash is not evaluable client-side");
     }

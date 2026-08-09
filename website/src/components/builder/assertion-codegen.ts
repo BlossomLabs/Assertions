@@ -3,6 +3,7 @@ import { isAddress } from "viem";
 import {
   type Assertion,
   type ValueExpr,
+  callwrapHelperName,
   inferCategory,
   resolveLens,
 } from "./assertion-model";
@@ -226,21 +227,23 @@ export async function renderExpr(
     case "callwrap": {
       const call = await renderExpr(expr.call, ctx);
       if (!call) return null;
-      return `@${expr.helper}!(${call})`;
+      // The node keys predate the helper unification; `bytelen` renders as
+      // the lang module's @bytes.len! (decoded byte length of the return).
+      return `@${callwrapHelperName(expr.helper)}!(${call})`;
     }
     case "split": {
       const call = await renderExpr(expr.call, ctx);
       if (!call || !expr.delimiter || !/^-?\d+$/.test(expr.index.trim()))
         return null;
-      return `@split!(${call} ${JSON.stringify(expr.delimiter)} ${expr.index.trim()})`;
+      return `@str.split!(${call} ${JSON.stringify(expr.delimiter)} ${expr.index.trim()})`;
     }
     case "strtest": {
       const call = await renderExpr(expr.call, ctx);
       if (!call || !expr.arg) return null;
-      return `@${expr.helper}!(${call} ${JSON.stringify(expr.arg)})`;
+      return `@str.${expr.helper}!(${call} ${JSON.stringify(expr.arg)})`;
     }
     case "clock":
-      return expr.which === "timestamp" ? "@timestamp!" : "@blocknumber!";
+      return expr.which === "timestamp" ? "@block.timestamp!" : "@block.number!";
     case "chainid":
       return "@chainid!";
     case "codehash": {

@@ -18,7 +18,7 @@ The current deployments are **interim, non-vanity addresses**: the bytecode is s
 
 ```
 Assertions v2.0  0x637d99Ff8bcB919e5203b0B96Ad0520A9943a32C   (frozen core: judge + primitives)
-Operators  v1.0  0x8913104652CC0C15A94CEB07Dd3187a0fa4C8F4F   (versionable periphery)
+Operators  v1.0  0xaE0a2f9A3065CE8E1Dd6D1007c32D0bCF6e5D4b9   (versionable periphery)
 ```
 
 Earlier versions remain deployed and working forever at their own canonical addresses: the v2.0-rc core at [`0xa55E47F37088b6D0212BdfD56b175ec08744DB19`](https://etherscan.io/address/0xa55E47F37088b6D0212BdfD56b175ec08744DB19) with Combinators v2.0-rc at [`0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9`](https://etherscan.io/address/0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9), the v1.1 typed-assert core at [`0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0`](https://etherscan.io/address/0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0), and the original v1.0 core at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F). V2 replaces v1.1's 140 typed assertion functions (`assertEqCallUint`, ...) with the ERC-8211 model: `assertEqCallUint(target, data, expected)` is now `assertParam` over a `STATIC_CALL` fetcher with an `EQ` constraint.

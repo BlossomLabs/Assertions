@@ -103,7 +103,9 @@ export function Composer({
                 // Assertions are added and removed in step 4; here they
                 // render dimmed, without a delete button.
                 canRemove={(line) => !line.startsWith("assertions:")}
-                hideLine={(line) => line === "load assertions"}
+                hideLine={(line) =>
+                  line === "load assertions" || line === "load lang"
+                }
               />
             </div>
           )}

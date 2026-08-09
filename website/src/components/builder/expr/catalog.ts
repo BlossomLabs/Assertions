@@ -1,6 +1,10 @@
 import { INFIX_OPS } from "@evmcrispr/module-assertions/composition";
 import type { OpFamily } from "@evmcrispr/module-assertions/composition";
-import { helpers } from "@evmcrispr/module-assertions/registry";
+import { helpers as assertionsHelpers } from "@evmcrispr/module-assertions/registry";
+import { helpers as langHelpers } from "@evmcrispr/module-lang/registry";
+import { helpers as mathHelpers } from "@evmcrispr/module-math/registry";
+import { helpers as receiptsHelpers } from "@evmcrispr/module-receipts/registry";
+import { helpers as stdHelpers } from "@evmcrispr/module-std/registry";
 
 import {
   type Category,
@@ -13,10 +17,21 @@ import {
 import { type NodeKey, nodeKey } from "./NodePicker";
 
 /**
- * The combinator catalog, derived from the assertions module's generated
- * helper registry so the UI cannot drift from the module: an entry is only
- * offered when its helper exists in the registry, descriptions come from
- * the registry, and any mismatch between the two is reported at dev time.
+ * The combinator catalog, derived from the modules' generated helper
+ * registries so the UI cannot drift from them: an entry is only offered
+ * when its helper exists in a registry, descriptions come from the
+ * registry, and any mismatch between the two is reported at dev time.
+ *
+ * The on-chain (`!`) helper surface spans five modules since the unified
+ * helper rework: std owns the composition engines (@num!/@bool!/@bytes!/
+ * @hash!/@balance!), lang owns the array/string faces (@len!, @str.split!,
+ * @bytes.len!, ...), receipts owns the block/tx context reads
+ * (@block.timestamp!, @tx.from!, ...), math owns the arithmetic
+ * conveniences (@min!, @absdiff!, ...), and assertions keeps the judges
+ * (@ok!, @not!, @chainid!, @codehash!). The catalog merges the assertions,
+ * receipts and math registries with the on-chain faces of lang and std
+ * (their plain faces are ordinary build-time helpers the builder never
+ * offers as nodes).
  *
  * What stays local is the UI *role* of each helper — whether it is a value
  * source, a wrap around an existing node, or an infix engine reached
@@ -24,6 +39,23 @@ import { type NodeKey, nodeKey } from "./NodePicker";
  * from the module's composition table (the same rules its compiler
  * enforces), so the menus only offer combinations that compile.
  */
+
+type HelperInfo = { description?: string };
+
+const onchainFaces = (
+  registry: Record<string, HelperInfo>,
+): Record<string, HelperInfo> =>
+  Object.fromEntries(
+    Object.entries(registry).filter(([name]) => name.endsWith("!")),
+  );
+
+const helpers: Record<string, HelperInfo> = {
+  ...onchainFaces(langHelpers),
+  ...onchainFaces(stdHelpers),
+  ...assertionsHelpers,
+  ...receiptsHelpers,
+  ...mathHelpers,
+};
 
 type Accepts = (node: ValueExpr, cat: Category) => boolean;
 
@@ -72,19 +104,106 @@ type HelperRole =
     }
   /** Infix syntax entry points surfaced through dedicated node kinds. */
   | { role: "infix"; entries: InfixEntry[] }
-  /** Build-time helper with no live node in the expression tree. */
+  /** No live node in the expression tree: a build-time helper, or an
+   *  on-chain face reachable through chat/EVML only (no builder node yet). */
   | { role: "composition-time" };
+
+/** Registry helpers with no dedicated builder node. The build-time plain
+ *  faces (@block.timestamp, @codehash, ...) snapshot at composition time; the
+ *  `!` faces here are on-chain but only reachable through chat/EVML. */
+const COMPOSITION_TIME = [
+  // assertions: plain build-time faces of the env bangs
+  "chainid",
+  "codehash",
+  "ok!",
+  // receipts: plain build-time faces of the block reads (addressed by
+  // block number or tag, default latest)
+  "block.timestamp",
+  "block.number",
+  "block.basefee",
+  "block.blobbasefee",
+  "block.hash",
+  "block.coinbase",
+  "block.gaslimit",
+  "block.prevrandao",
+  // receipts: block/tx context faces without a builder node
+  "block.basefee!",
+  "block.blobbasefee!",
+  "block.hash!",
+  "block.coinbase!",
+  "block.gaslimit!",
+  "block.prevrandao!",
+  "tx.from!",
+  "tx.gasprice!",
+  "tx.blobhash!",
+  // receipts: off-chain receipt readers (chat/EVML only)
+  "tx",
+  "tx.block",
+  "tx.calldata",
+  "tx.fee",
+  "tx.from",
+  "tx.gasUsed",
+  "tx.status",
+  "tx.timestamp",
+  "tx.to",
+  "tx.value",
+  "txs",
+  // math: plain build-time faces and the on-chain sqrt
+  "absdiff",
+  "min",
+  "max",
+  "sqrt",
+  "sqrt!",
+  // lang: array/string on-chain faces without a builder node
+  "all!",
+  "any!",
+  "at!",
+  "bytes.at!",
+  "bytes.concat!",
+  "bytes.slice!",
+  "concat!",
+  "enumerate!",
+  "filter!",
+  "find!",
+  "flat!",
+  "includes!", // array-includes; the string form is str.includes! below
+  "keys!",
+  "lookup!",
+  "map!",
+  "reduce!",
+  "reverse!",
+  "slice!",
+  "sort!",
+  "str.at!",
+  "str.concat!",
+  "str.join!",
+  "str.len!",
+  "str.lower!",
+  "str.replace!",
+  "str.slice!",
+  "str.upper!",
+  "unique!",
+  "unzip!",
+  "values!",
+  "zip!",
+];
 
 /** Every registry helper MUST appear here (checked at dev time below). */
 const HELPER_ROLES: Record<string, HelperRole> = {
+  ...Object.fromEntries(
+    COMPOSITION_TIME.map((name) => [
+      name,
+      { role: "composition-time" } satisfies HelperRole,
+    ]),
+  ),
   "balance!": {
     role: "source",
     key: "balance",
     label: "balance",
     wrapAccepts: addressCall,
   },
-  "timestamp!": { role: "source", key: "timestamp", label: "timestamp" },
-  "blocknumber!": {
+  "block.timestamp!": { role: "source", key: "timestamp", label: "timestamp" },
+  "block.number!": {
     role: "source",
     key: "blocknumber",
     label: "block number",
@@ -125,11 +244,13 @@ const HELPER_ROLES: Record<string, HelperRole> = {
         cat === "bytes" ||
         cat === "unknown"),
   },
-  "bytelen!": {
+  "bytes.len!": {
     role: "wrap",
     key: "bytelen",
     label: "byte length of…",
-    accepts: anyCall,
+    accepts: (node, cat) =>
+      node.kind === "call" &&
+      (cat === "string" || cat === "bytes" || cat === "unknown"),
   },
   "hash!": {
     role: "wrap",
@@ -138,20 +259,20 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     accepts: anyCall,
     topLevelOnly: true,
   },
-  "split!": {
+  "str.split!": {
     role: "wrap",
     key: "split",
     label: "split string of…",
     accepts: stringCall,
     topLevelOnly: true,
   },
-  "includes!": {
+  "str.includes!": {
     role: "wrap",
     key: "includes",
     label: "contains substring…",
     accepts: stringCall,
   },
-  "charset!": {
+  "str.charset!": {
     role: "wrap",
     key: "charset",
     label: "characters in class…",
@@ -193,10 +314,10 @@ const HELPER_ROLES: Record<string, HelperRole> = {
       },
     ],
   },
-  codehash: { role: "composition-time" },
-  // The core's read primitive: nested live call arguments compile to it, but
-  // it has no builder node of its own (CallArg models the nesting directly).
-  "read!": { role: "composition-time" },
+  // The core's read primitive has no registry helper anymore: `@read!` was
+  // replaced by the `!::{sig(argTypes)(retTypes) args}` chain operator,
+  // which compiles to the same read. It has no builder node of its own
+  // either (CallArg models the nesting directly).
 };
 
 /** WrapMenu grouping (option groups), keyed by node kind. */

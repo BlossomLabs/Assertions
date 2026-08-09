@@ -12,7 +12,7 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 
 ```
 Assertions  v2.0  0x637d99Ff8bcB919e5203b0B96Ad0520A9943a32C   (ERC-8211 judge; INTERIM address)
-Operators   v1.0  0x40B9b2CCA442682C1A8a6FcF2D233f32a1852692   (versionable periphery; INTERIM address)
+Operators   v1.0  0xaE0a2f9A3065CE8E1Dd6D1007c32D0bCF6e5D4b9   (versionable periphery; INTERIM address)
 ```
 
 The current addresses use a zero CREATE2 salt while the 2.0 line is still in flux; vanity `0xa55E…` salts get re-mined before the canonical roll.

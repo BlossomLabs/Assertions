@@ -48,13 +48,17 @@ View-mode batch restrictions from the judge, plus the primitives' own errors:
 | `ComponentCountMismatch(uint256, uint256)` | `encode` received a `values` array whose length differs from the descriptor's component count |
 | `InvalidComponentLength(uint256, uint256, uint256)` | an `encode` static component's value is not exactly its head footprint (arguments: component index, expected bytes, actual bytes) |
 | `InvalidComponentEnvelope(uint256, uint256, bytes32)` | an `encode` dynamic component's value is not a canonical `[0x20][tail]` envelope (arguments: component index, value length, first word) |
-| `LambdaOffsetOutOfBounds(uint256, uint256)` | a fold window offset does not leave room for a 32-byte word inside the template |
-| `LambdaCallFailed(uint256, address, bytes)` | a fold lambda call reverted, or the lambda target has no code (index 0 with empty calldata for the code check); names the element index, target and constructed calldata |
-| `LambdaReturnTooShort(uint256, uint256)` | a fold lambda returned fewer than 32 bytes |
-| `UnalignedWords(uint256)` | `foldWords` received data that is not a whole number of 32-byte words |
+| `LambdaOffsetOutOfBounds(uint256, uint256)` | a fold or `mapWords` window offset does not leave room for a 32-byte word inside the template |
+| `LambdaCallFailed(uint256, address, bytes)` | a fold or `mapWords` lambda call reverted, or the lambda target has no code (index 0 with empty calldata for the code check); names the element index, target and constructed calldata |
+| `LambdaReturnTooShort(uint256, uint256)` | a fold or `mapWords` lambda returned fewer than 32 bytes |
+| `UnalignedWords(uint256)` | `foldWords` or a word-array function received data that is not a whole number of 32-byte words |
 | `EmptyNumber()` | `parseUint` received empty input (0 would be a silent wrong answer) |
 | `InvalidDecimalDigit(uint256, bytes1)` | `parseUint` met a byte outside `0-9` (arguments: byte position, offending byte) |
+| `RawCallFailed(address, bytes)` | a `rawCall` staticcall reverted (arguments: the called address and the calldata that was sent) |
+| `WordCountMismatch(uint256, uint256)` | `zipWords` received payloads of different word counts (silent truncation would be a wrong-answer machine) |
+| `InvalidLane(uint256)` | `unzipWords` received a lane other than 0 or 1 |
+| `EmptyNeedle()` | `replace` received an empty needle (it would match everywhere, and inserting the replacement between every byte is certainly a mistake) |
 
 Arithmetic failures in Operators surface as Solidity panics: overflow/underflow (including `exp`, `mulDiv` and `type(int256).min / -1`) as `Panic(0x11)`, division or modulo by zero (including `mulDiv`, `addMod` and `mulMod`) as `Panic(0x12)`, and an out-of-range `FoldExit` value as `Panic(0x21)`.
 
-There are no dedicated string-op errors: the `Split`/`Includes`/`Charset` [recipes](/docs/operators/fold) are total compositions of `indexOf`, `slice`, `byteLen` and the folds.
+The `Split`/`Includes`/`Charset` [recipes](/docs/operators/fold) have no dedicated errors: they are total compositions of `indexOf`, `slice`, `byteLen` and the folds. `replace` is the one string operation with an error of its own (`EmptyNeedle`).

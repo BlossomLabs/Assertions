@@ -32,7 +32,7 @@ export type Category =
   | "bytes32"
   | "string"
   | "bytes"
-  /** Dynamic/array return — only legal inside len/bytelen/hash (or as
+  /** Dynamic/array return — only legal inside len/bytes.len/hash (or as
    *  the single operand of min/max). */
   | "array"
   /** Multi-output call without a return-value selection yet. */
@@ -120,18 +120,29 @@ export type ValueExpr =
     }
   | { kind: "not"; operand: ValueExpr }
   | { kind: "callwrap"; helper: "len" | "bytelen" | "hash"; call: ValueExpr }
+  // (the `bytelen` node key predates the helper unification; it renders as
+  // the lang module's @bytes.len! — see callwrapHelperName)
   | { kind: "split"; call: ValueExpr; delimiter: string; index: string }
   | { kind: "clock"; which: "timestamp" | "blocknumber" }
   | { kind: "chainid" }
   /** EXTCODEHASH of an address (literal or address-returning call). */
   | { kind: "codehash"; address: ValueExpr }
-  /** String predicates over a call's string return (@includes!/@charset!). */
+  /** String predicates over a call's string return (@str.includes!/@str.charset!). */
   | {
       kind: "strtest";
       helper: "includes" | "charset";
       call: ValueExpr;
       arg: string;
     };
+
+/** EVML/display name of a callwrap helper node: the internal `bytelen`
+ *  key predates the helper unification and renders as lang's @bytes.len!
+ *  (decoded byte length of a string/bytes return). */
+export function callwrapHelperName(
+  helper: "len" | "bytelen" | "hash",
+): string {
+  return helper === "bytelen" ? "bytes.len" : helper;
+}
 
 export interface Assertion {
   subject: ValueExpr;
@@ -576,7 +587,7 @@ function walk(
   path: Path,
   depth: number,
   issues: Issue[],
-  /** Direct child of a call-consuming helper (@len!, @split!, …), which
+  /** Direct child of a call-consuming helper (@len!, @str.split!, …), which
    *  accepts string/bytes/array selections a comparison can't judge. */
   inCallHelper = false,
   /** Nested live argument of another call: its selection splices into
@@ -613,7 +624,7 @@ function walk(
       if (lens?.issue) issues.push({ path, message: lens.issue });
       // A nested (path) selection compiles to a typed read whose terminal
       // must be a single word — except inside the call-consuming helpers
-      // (@len!, @split!, …), which accept string/bytes/array selections,
+      // (@len!, @str.split!, …), which accept string/bytes/array selections,
       // and nested live arguments, whose dynamic selections splice as
       // envelope holes (checked against the declared type by the caller).
       if (
@@ -626,7 +637,7 @@ function walk(
         issues.push({
           path,
           message:
-            "A nested selection must land on a single-word value (number, address, bool or bytes32). Compare the string through @len!, @hash! or @split! instead.",
+            "A nested selection must land on a single-word value (number, address, bool or bytes32). Compare the string through @len!, @hash! or @str.split! instead.",
         });
       // The module compiles a nested flat selection to a raw-word read,
       // which it only accepts for numbers. Path selections compile to a
@@ -724,7 +735,7 @@ function walk(
       if (expr.call.kind !== "call")
         issues.push({
           path,
-          message: `@${expr.helper}! expects a :: call expression.`,
+          message: `@${callwrapHelperName(expr.helper)}! expects a :: call expression.`,
         });
       walk(expr.call, [...path, "call"], depth + 1, issues, true);
       break;
@@ -732,18 +743,18 @@ function walk(
       if (depth > 0)
         issues.push({
           path,
-          message: "@split! results can only be compared at the top level.",
+          message: "@str.split! results can only be compared at the top level.",
         });
       if (!expr.delimiter)
-        issues.push({ path, message: "@split! needs a non-empty delimiter." });
+        issues.push({ path, message: "@str.split! needs a non-empty delimiter." });
       if (!/^-?\d+$/.test(expr.index.trim()))
         issues.push({
           path,
           message:
-            "@split! needs an integer segment index (negative counts from the end, -1 = last).",
+            "@str.split! needs an integer segment index (negative counts from the end, -1 = last).",
         });
       if (expr.call.kind !== "call")
-        issues.push({ path, message: "@split! expects a :: call expression." });
+        issues.push({ path, message: "@str.split! expects a :: call expression." });
       walk(expr.call, [...path, "call"], depth + 1, issues, true);
       break;
     case "strtest": {
@@ -752,20 +763,20 @@ function walk(
           path,
           message:
             expr.helper === "includes"
-              ? "@includes! needs a non-empty substring."
-              : "@charset! needs a character class (e.g. a-z0-9-).",
+              ? "@str.includes! needs a non-empty substring."
+              : "@str.charset! needs a character class (e.g. a-z0-9-).",
         });
       if (expr.call.kind !== "call")
         issues.push({
           path,
-          message: `@${expr.helper}! expects a :: call expression.`,
+          message: `@str.${expr.helper}! expects a :: call expression.`,
         });
       else {
         const cat = inferCategory(expr.call);
         if (cat !== "string" && cat !== "unknown")
           issues.push({
             path,
-            message: `@${expr.helper}! expects a call returning a string.`,
+            message: `@str.${expr.helper}! expects a call returning a string.`,
           });
       }
       walk(expr.call, [...path, "call"], depth + 1, issues, true);
@@ -808,7 +819,7 @@ function walk(
       issues.push({
         path,
         message:
-          "This value is dynamic. Compare its @len!, @bytelen! or @hash! instead.",
+          "This value is dynamic. Compare its @len!, @bytes.len! or @hash! instead.",
       });
   }
 }

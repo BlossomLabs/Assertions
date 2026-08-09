@@ -81,16 +81,16 @@ if (!existsSync(evmcrisprSrc)) {
 
 const local = evmcrisprSourceAliases(evmcrisprSrc);
 
-// The assertions module's generated helper registry (name/returnType/argDefs
-// per helper) drives the builder's combinator catalog; it has no package
-// export of its own, so alias it explicitly.
-local.alias.push({
-  find: /^@evmcrispr\/module-assertions\/registry$/,
-  replacement: path.resolve(
-    evmcrisprSrc,
-    'modules/assertions/src/_generated.ts',
-  ),
-});
+// The modules' generated helper registries (name/returnType/argDefs per
+// helper) drive the builder's combinator catalog; they have no package
+// export of their own, so alias them explicitly. The catalog merges the
+// assertions registry with the on-chain faces lang and std contribute.
+for (const mod of ['assertions', 'lang', 'math', 'receipts', 'std']) {
+  local.alias.push({
+    find: exact(`@evmcrispr/module-${mod}/registry`),
+    replacement: path.resolve(evmcrisprSrc, `modules/${mod}/src/_generated.ts`),
+  });
+}
 
 // The module's type-composition table (which operators accept which operand
 // categories) drives the builder's operator menus — same single source of

@@ -6,6 +6,7 @@ import {
   type Issue,
   type Path,
   type ValueExpr,
+  callwrapHelperName,
   familyOpsFor,
   inferCategory,
   unwrapNode,
@@ -50,11 +51,11 @@ function kindLabel(node: ValueExpr): string {
     case "not":
       return "not";
     case "callwrap":
-      return `@${node.helper}!`;
+      return `@${callwrapHelperName(node.helper)}!`;
     case "split":
-      return "@split!";
+      return "@str.split!";
     case "strtest":
-      return `@${node.helper}!`;
+      return `@str.${node.helper}!`;
     default:
       return "";
   }
@@ -130,11 +131,11 @@ function summarize(node: ValueExpr): string {
     case "not":
       return "not …";
     case "callwrap":
-      return `@${node.helper}!(…)`;
+      return `@${callwrapHelperName(node.helper)}!(…)`;
     case "split":
-      return `@split!(… ${node.index})`;
+      return `@str.split!(… ${node.index})`;
     case "strtest":
-      return `@${node.helper}!(… ${node.arg ? JSON.stringify(node.arg) : "…"})`;
+      return `@str.${node.helper}!(… ${node.arg ? JSON.stringify(node.arg) : "…"})`;
     case "clock":
       return `@${node.which}!`;
     case "chainid":
@@ -144,7 +145,7 @@ function summarize(node: ValueExpr): string {
   }
 }
 
-/** A call slot inside a transform (@len!, @split!, …) — rendered as a
+/** A call slot inside a transform (@len!, @str.split!, …) — rendered as a
  *  bare CallEditor since only :: calls are legal there. */
 function CallSlot({
   node,

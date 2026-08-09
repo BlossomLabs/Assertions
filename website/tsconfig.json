@@ -17,6 +17,28 @@
       "@evmcrispr/module-assertions/registry": [
         "./.evmcrispr/modules/assertions/src/_generated.ts"
       ],
+      "@evmcrispr/module-lang/registry": [
+        "./.evmcrispr/modules/lang/src/_generated.ts"
+      ],
+      "@evmcrispr/module-math/registry": [
+        "./.evmcrispr/modules/math/src/_generated.ts"
+      ],
+      "@evmcrispr/module-receipts/registry": [
+        "./.evmcrispr/modules/receipts/src/_generated.ts"
+      ],
+      "@evmcrispr/module-std/registry": [
+        "./.evmcrispr/modules/std/src/_generated.ts"
+      ],
+      // Modules the builder registers but does not depend on via npm; they
+      // resolve to the vendored checkout (matching the Vite aliases).
+      "@evmcrispr/module-lang": ["./.evmcrispr/modules/lang/src/index.ts"],
+      "@evmcrispr/module-math": ["./.evmcrispr/modules/math/src/index.ts"],
+      "@evmcrispr/module-receipts": [
+        "./.evmcrispr/modules/receipts/src/index.ts"
+      ],
+      "@evmcrispr/module-token": ["./.evmcrispr/modules/token/src/index.ts"],
+      "@evmcrispr/module-vault": ["./.evmcrispr/modules/vault/src/index.ts"],
+      "@evmcrispr/module-acl": ["./.evmcrispr/modules/acl/src/index.ts"],
       "@evmcrispr/module-assertions/composition": [
         "./.evmcrispr/modules/assertions/src/lib/composition.ts"
       ]

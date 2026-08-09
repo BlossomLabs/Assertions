@@ -933,7 +933,9 @@ export function AssertionForm({
             script={script}
             onRemoveLine={removeLine}
             canRemove={(line) => line.startsWith("assertions:")}
-            hideLine={(line) => line === "load assertions"}
+            hideLine={(line) =>
+              line === "load assertions" || line === "load lang"
+            }
           />
         </div>
       )}

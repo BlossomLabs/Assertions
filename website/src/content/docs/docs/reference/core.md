@@ -74,7 +74,7 @@ The primitives live on the core alongside the judge, because they hold operands 
 
 ## Operators (separate contract)
 
-These live at the Operators address (interim `0x8913104652CC0C15A94CEB07Dd3187a0fa4C8F4F`), not on the core, and take plain ABI types: live operands reach them through the core's `read` splicing. Functions marked "uint + int" are overloaded on `uint256` and `int256` (explicit selectors required in Solidity encoders). See [Operators](/docs/operators) for usage.
+These live at the Operators address (interim `0xaE0a2f9A3065CE8E1Dd6D1007c32D0bCF6e5D4b9`), not on the core, and take plain ABI types: live operands reach them through the core's `read` splicing. Functions marked "uint + int" are overloaded on `uint256` and `int256` (explicit selectors required in Solidity encoders). See [Operators](/docs/operators) for usage.
 
 | Function | Description |
 |----------|-------------|
@@ -92,12 +92,12 @@ These live at the Operators address (interim `0x8913104652CC0C15A94CEB07Dd3187a0
 | `bitSet` | Whether bit `index` of `mask` is set (indices past 255 are never set); the character-class fold lambda |
 | `balance` / `codehash` | Native balance / EXTCODEHASH of an address at judge time |
 | `timestamp` / `blockNumber` / `chainId` | Environment values at judge time |
-| `baseFee` / `prevRandao` / `coinbase` / `gasLimit` / `blobBaseFee` / `origin` | Block-header and transaction environment values at judge time |
+| `baseFee` / `prevRandao` / `coinbase` / `gasLimit` / `blobBaseFee` / `origin` / `gasPrice` / `blobHash` | Block-header and transaction environment values at judge time |
 | `blockHash` | The hash of block `n`, BLOCKHASH semantics (0 for the current block, the future, and blocks older than 256) |
 | `concat` / `slice` / `byteLen` | Bytes concatenation, bounds-checked slicing, and raw byte length |
 | `hash` | keccak256 of the `bytes` argument; through `read` splicing the digest covers the decoded payload |
 | `indexOf` | Position of the occurrence-th non-overlapping occurrence of `needle` in `s` (0, 1, ... from the start; -1, -2, ... from the end); sentinel `s.length` when it does not exist; total |
-| `matchAt` | 1 when `needle` occurs at exactly `pos`, else 0; the substring fold lambda |
 | `parseUint` / `toString` | Decimal ASCII string to `uint256` (strict: reverts on empty input or non-digit bytes) and its no-leading-zeros inverse |
 | `encode` | Runtime `abi.encode` of a tuple from canonical single-value encodings (`nav`'s inverse); raw return, a calldata segment for `read` splicing |
 | `foldRange` / `foldBytes` / `foldWords` | Bounded folds over an index range / a string's bytes / 32-byte words, with a template-lambda staticcall per element and `FoldExit` `Full`/`Any`/`All` |
+| `mapWords` / `filterWords` / `iotaWords` / `wordIndexOf` / `reverseWords` / `zipWords` / `unzipWords` / `sortWords` / `uniqueWords` | Word-array shape operations over aligned word payloads: lambda map/filter, the index generator, first-match index (word-count sentinel), reversal, pair interleaving and lane selection, unsigned sort, adjacent deduplication (see [Folds and word arrays](/docs/operators/fold)) |

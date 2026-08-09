@@ -9,17 +9,61 @@ export function hasAssertions(script: string): boolean {
 }
 
 /**
+ * On-chain helpers owned by the lang module (`@str.*!`, `@bytes.*!`,
+ * `@len!` and the array faces), whose presence in a line requires
+ * `load lang` alongside `load assertions`. The builder's codegen emits a
+ * subset of these; the pattern covers the whole lang bang surface so
+ * chat-authored lines keep the load line alive too.
+ */
+const LANG_HELPER =
+  /@(?:str|bytes)\.[a-z]+!|@(?:len|at|includes|all|any|reduce|map|sort|unique|reverse|zip|unzip|flat|concat)!/i;
+
+export function usesLangHelpers(text: string): boolean {
+  return LANG_HELPER.test(text);
+}
+
+/**
+ * Helpers owned by the receipts module: the block/tx context reads
+ * (`@block.timestamp!`, `@tx.from!`, `@tx.gasprice!`, ...) plus the
+ * off-chain receipt readers (`@receipts:tx`, `@receipts:txs`, ...).
+ * Their presence requires `load receipts`.
+ */
+const RECEIPTS_HELPER =
+  /@(?:receipts:)?(?:(?:block|tx)\.[a-zA-Z]+!?|txs?(?![\w.]))/i;
+
+export function usesReceiptsHelpers(text: string): boolean {
+  return RECEIPTS_HELPER.test(text);
+}
+
+/**
+ * Helpers owned by the math module (`@min!`, `@max!`, `@absdiff!`,
+ * `@sqrt!` and their plain off-chain faces), whose presence requires
+ * `load math`.
+ */
+const MATH_HELPER = /@(?:math:)?(?:min|max|absdiff|sqrt)!?(?![\w.])/i;
+
+export function usesMathHelpers(text: string): boolean {
+  return MATH_HELPER.test(text);
+}
+
+/**
  * The script without its assertions: assertion command lines are dropped,
  * and the then-unused `load assertions` with them. Used to simulate the raw
  * batch actions separately from the protected script.
  */
 export function stripAssertions(script: string): string {
-  return script
-    .split("\n")
-    .filter((l) => {
-      const t = l.trim();
-      return !t.startsWith("assertions:") && t !== "load assertions";
-    })
+  const kept = script.split("\n").filter((l) => {
+    const t = l.trim();
+    return !t.startsWith("assertions:") && t !== "load assertions";
+  });
+  // The helper-module load lines usually ride along with the assertions;
+  // drop each once no remaining line uses one of its helpers.
+  return kept
+    .filter((l) => l.trim() !== "load lang" || kept.some(usesLangHelpers))
+    .filter(
+      (l) => l.trim() !== "load receipts" || kept.some(usesReceiptsHelpers),
+    )
+    .filter((l) => l.trim() !== "load math" || kept.some(usesMathHelpers))
     .join("\n");
 }
 
@@ -40,12 +84,20 @@ export function insertAssertionLines(
   const lines = trimmed ? trimmed.split("\n") : [];
   const t = (l: string) => l.trim();
 
-  if (!lines.some((l) => t(l) === "load assertions")) {
+  const ensureLoad = (name: string) => {
+    if (lines.some((l) => t(l) === `load ${name}`)) return;
     let loadEnd = 0;
     while (loadEnd < lines.length && t(lines[loadEnd]).startsWith("load "))
       loadEnd++;
-    lines.splice(loadEnd, 0, "load assertions");
-  }
+    lines.splice(loadEnd, 0, `load ${name}`);
+  };
+  ensureLoad("assertions");
+  // Lang-owned helpers (@str.split!, @bytes.len!, @len!, ...) live in
+  // their own module since the helper unification; the block/tx context
+  // reads live in receipts and the arithmetic conveniences in math.
+  if (usesLangHelpers(line)) ensureLoad("lang");
+  if (usesReceiptsHelpers(line)) ensureLoad("receipts");
+  if (usesMathHelpers(line)) ensureLoad("math");
 
   // Header = leading load/set/comment/blank lines; everything below is
   // actions (and any assertions already placed among them).
@@ -148,6 +200,8 @@ export function useScriptState(initial = "") {
           }
           if (t === "load assertions")
             return cleaned.some((l) => l.trim().startsWith("assertions:"));
+          if (t === "load lang")
+            return cleaned.some((l, j) => j !== i && usesLangHelpers(l));
           return true;
         });
         if (next.length === cleaned.length) break;

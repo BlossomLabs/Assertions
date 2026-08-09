@@ -112,6 +112,42 @@ contract Operators {
      */
     error InvalidDecimalDigit(uint256 position, bytes1 char);
 
+    /**
+     * @notice Thrown when a rawCall staticcall reverts
+     * @param target The called address
+     * @param data The calldata that was sent
+     */
+    error RawCallFailed(address target, bytes data);
+
+    /**
+     * @notice Thrown when zipWords receives payloads of different word
+     *         counts — silent truncation would be a wrong-answer machine
+     * @param aWords The first payload's word count
+     * @param bWords The second payload's word count
+     */
+    error WordCountMismatch(uint256 aWords, uint256 bWords);
+
+    /**
+     * @notice Thrown when unzipWords receives a lane other than 0 or 1
+     * @param which The offending lane
+     */
+    error InvalidLane(uint256 which);
+
+    /**
+     * @notice Thrown when replace receives an empty needle — it would
+     *         match everywhere, and inserting the replacement between
+     *         every byte is certainly a mistake
+     */
+    error EmptyNeedle();
+
+    /**
+     * @notice Thrown when encodePacked meets a component that is not an
+     *         elementary type (arrays, tuples and unknown names have no
+     *         defined packed encoding here)
+     * @param position The byte position in the descriptor of the component
+     */
+    error UnsupportedPackedType(uint256 position);
+
     // ============ Types ============
 
     /**
@@ -577,6 +613,59 @@ contract Operators {
         return tx.origin;
     }
 
+    /**
+     * @notice The gas price of the transaction executing the batch, in wei
+     *         (tx.gasprice) — gate a batch on the fee it is actually
+     *         paying, e.g. le(gasPrice(), maxWei)
+     */
+    function gasPrice() external view returns (uint256) {
+        return tx.gasprice;
+    }
+
+    /**
+     * @notice The versioned hash of the executing transaction's index-th
+     *         blob (BLOBHASH), or zero when the transaction carries no
+     *         blob at that index — pin blob-carrying batches to the data
+     *         they were built for (ne(blobHash(0), 0) asserts a blob is
+     *         present at all)
+     */
+    function blobHash(uint256 index) external view returns (bytes32) {
+        return blobhash(index);
+    }
+
+    // ============ Calls ============
+
+    /**
+     * @notice Executes a staticcall with raw calldata and returns the
+     *         returndata as a bytes value
+     * @dev The precompile reach-through: unlike the core's constructed
+     *      calls, no selector is prepended and NO code-length check is
+     *      performed, because precompiles (sha256 at 0x02, ecrecover at
+     *      0x01, modexp at 0x05, ...) have no code and raw calldata is
+     *      their entire input. The caveat is the flip side: a staticcall
+     *      to a code-less non-precompile address "succeeds" with empty
+     *      returndata — pin the result with byteLen or a constraint when
+     *      that matters. A revert is wrapped as RawCallFailed carrying
+     *      the calldata, consistent with the fold lambdas.
+     * @param target The address to staticcall (precompiles included)
+     * @param data The raw calldata
+     * @return The raw returndata as a bytes value
+     */
+    function rawCall(address target, bytes calldata data) external view returns (bytes memory) {
+        (bool success, bytes memory result) = target.staticcall(data);
+        if (!success) revert RawCallFailed(target, data);
+        return result;
+    }
+
+    /**
+     * @notice The full runtime code of `account` as a bytes value —
+     *         codehash's sibling for prefix/suffix/segment assertions
+     *         (a code-less account yields empty bytes)
+     */
+    function code(address account) external view returns (bytes memory) {
+        return account.code;
+    }
+
     // ============ Bytes ============
 
     /**
@@ -616,6 +705,24 @@ contract Operators {
      */
     function hash(bytes calldata data) external pure returns (bytes32) {
         return keccak256(data);
+    }
+
+    /**
+     * @notice keccak256 of the 64-byte concatenation of two words — the
+     *         Merkle tree node combiner, order-preserving
+     */
+    function hashPair(bytes32 a, bytes32 b) external pure returns (bytes32) {
+        return keccak256(abi.encodePacked(a, b));
+    }
+
+    /**
+     * @notice hashPair over the ascending-sorted pair — byte-identical to
+     *         OpenZeppelin MerkleProof's node combiner, so a foldWords
+     *         over a proof payload with this as the lambda and the leaf
+     *         as the initial accumulator reproduces the root
+     */
+    function hashPairSorted(bytes32 a, bytes32 b) external pure returns (bytes32) {
+        return a < b ? keccak256(abi.encodePacked(a, b)) : keccak256(abi.encodePacked(b, a));
     }
 
     // ============ Search ============
@@ -689,6 +796,71 @@ contract Operators {
     function matchAt(bytes calldata s, bytes calldata needle, uint256 pos) external pure returns (uint256) {
         if (pos > s.length || needle.length > s.length - pos) return 0;
         return _matchesAt(s, needle, pos) ? 1 : 0;
+    }
+
+    // ============ Strings ============
+
+    /**
+     * @notice `s` with every occurrence of `needle` replaced by `repl`
+     * @dev Non-overlapping left-to-right scan, the same enumeration
+     *      indexOf and occurrence counting use (in `aaaa` the needle `aa`
+     *      is replaced at positions 0 and 2). An empty `repl` deletes;
+     *      an empty needle reverts with EmptyNeedle (it would vacuously
+     *      match everywhere)
+     */
+    function replace(bytes calldata s, bytes calldata needle, bytes calldata repl)
+        external
+        pure
+        returns (bytes memory out)
+    {
+        if (needle.length == 0) revert EmptyNeedle();
+        uint256 p;
+        uint256 start;
+        while (p + needle.length <= s.length) {
+            if (_matchesAt(s, needle, p)) {
+                out = bytes.concat(out, s[start:p], repl);
+                p += needle.length;
+                start = p;
+            } else {
+                p++;
+            }
+        }
+        return bytes.concat(out, s[start:]);
+    }
+
+    /**
+     * @notice `s` with ASCII A-Z folded to a-z; every other byte passes
+     *         through verbatim (multi-byte UTF-8 units have the high bit
+     *         set, so they are untouched — the fold is ASCII-only)
+     */
+    function toLower(bytes calldata s) external pure returns (bytes memory out) {
+        out = s;
+        for (uint256 i = 0; i < out.length; i++) {
+            bytes1 c = out[i];
+            if (c >= "A" && c <= "Z") out[i] = bytes1(uint8(c) + 32);
+        }
+    }
+
+    /**
+     * @notice `s` with ASCII a-z folded to A-Z; every other byte passes
+     *         through verbatim (ASCII-only, like toLower)
+     */
+    function toUpper(bytes calldata s) external pure returns (bytes memory out) {
+        out = s;
+        for (uint256 i = 0; i < out.length; i++) {
+            bytes1 c = out[i];
+            if (c >= "a" && c <= "z") out[i] = bytes1(uint8(c) - 32);
+        }
+    }
+
+    /**
+     * @notice The parts interleaved with `delim` — an empty delimiter
+     *         degenerates to concat, an empty parts array to empty bytes
+     */
+    function join(bytes[] calldata parts, bytes calldata delim) external pure returns (bytes memory out) {
+        for (uint256 i = 0; i < parts.length; i++) {
+            out = i == 0 ? bytes.concat(out, parts[i]) : bytes.concat(out, delim, parts[i]);
+        }
     }
 
     // ============ Parse ============
@@ -846,6 +1018,119 @@ contract Operators {
         }
     }
 
+    /**
+     * @notice Runtime abi.encodePacked: concatenates the packed renderings
+     *         of the component values
+     * @dev `types` uses the same parenthesized descriptor grammar as
+     *      encode, but the component set is restricted to ELEMENTARY
+     *      types — packed encoding is only defined here for:
+     *      - uintN / intN (N defaulting to 256): the LOW N/8 bytes of the
+     *        32-byte value (over-wide values truncate silently, exactly
+     *        like abi.encodePacked's implicit cast);
+     *      - address: the low 20 bytes; bool: the low 1 byte;
+     *      - bytesN: the HIGH N bytes;
+     *      - bytes / string: the envelope's raw payload, no length prefix.
+     *      Values follow encode's conventions: static components are
+     *      exactly one 32-byte word here (all supported statics are
+     *      single-word), dynamic components are canonical
+     *      [0x20][len][payload] envelopes. Unlike encode, the output is a
+     *      normal bytes VALUE (an envelope), because packed bytes are a
+     *      value to hash or compare, not a calldata segment. Reverts with
+     *      InvalidTypeDescriptor on a malformed descriptor,
+     *      UnsupportedPackedType for arrays, tuples, or unknown names,
+     *      ComponentCountMismatch, InvalidComponentLength for a static
+     *      component that is not 32 bytes, and InvalidComponentEnvelope
+     *      for a malformed dynamic component.
+     * @param types The tuple type descriptor, e.g. "(uint16,address,string)"
+     * @param values One 32-byte word or canonical envelope per component
+     */
+    function encodePacked(string calldata types, bytes[] calldata values) external pure returns (bytes memory out) {
+        bytes calldata t = bytes(types);
+        if (t.length == 0 || t[0] != "(") revert InvalidTypeDescriptor(0);
+        {
+            (uint256 topEnd,,) = AbiShape.typeShape(t, 0, t.length);
+            if (topEnd != t.length) revert InvalidTypeDescriptor(topEnd);
+        }
+
+        uint256 q = 1;
+        uint256 i;
+        while (true) {
+            (uint256 e, uint256 lo, uint256 hi, bool dyn) = _packedShape(t, q);
+            if (i < values.length) {
+                bytes calldata v = values[i];
+                if (dyn) {
+                    if (v.length < 64 || v.length % 32 != 0 || bytes32(v[0:32]) != bytes32(uint256(0x20))) {
+                        revert InvalidComponentEnvelope(i, v.length, v.length >= 32 ? bytes32(v[0:32]) : bytes32(0));
+                    }
+                    uint256 len = uint256(bytes32(v[32:64]));
+                    if (len > v.length - 64) revert InvalidComponentEnvelope(i, v.length, bytes32(v[0:32]));
+                    out = bytes.concat(out, v[64:64 + len]);
+                } else {
+                    if (v.length != 32) revert InvalidComponentLength(i, 32, v.length);
+                    out = bytes.concat(out, v[lo:hi]);
+                }
+            }
+            i++;
+            if (t[e] == ")") break;
+            q = e + 1;
+        }
+        if (i != values.length) revert ComponentCountMismatch(i, values.length);
+    }
+
+    /**
+     * @dev Parses ONE elementary component of a packed descriptor at `q`:
+     *      returns where it ends and the [lo, hi) byte window of the
+     *      32-byte value that packed encoding keeps (dyn components use
+     *      the envelope payload instead). Reverts with
+     *      UnsupportedPackedType for tuples, arrays and unknown names.
+     */
+    function _packedShape(bytes calldata t, uint256 q)
+        private
+        pure
+        returns (uint256 end, uint256 lo, uint256 hi, bool dyn)
+    {
+        if (t[q] == "(") revert UnsupportedPackedType(q);
+        uint256 ql = q;
+        while (ql < t.length && t[ql] >= "a" && t[ql] <= "z") {
+            ql++;
+        }
+        uint256 bits;
+        bool hasDigits;
+        end = ql;
+        while (end < t.length && t[end] >= "0" && t[end] <= "9") {
+            bits = bits * 10 + (uint8(t[end]) - 48);
+            hasDigits = true;
+            end++;
+        }
+        if (end < t.length && t[end] == "[") revert UnsupportedPackedType(end);
+
+        bytes32 name = keccak256(t[q:ql]);
+        if (name == keccak256("uint") || name == keccak256("int")) {
+            if (!hasDigits) bits = 256;
+            if (bits == 0 || bits > 256 || bits % 8 != 0) revert UnsupportedPackedType(q);
+            lo = 32 - bits / 8;
+            hi = 32;
+        } else if (name == keccak256("address") && !hasDigits) {
+            lo = 12;
+            hi = 32;
+        } else if (name == keccak256("bool") && !hasDigits) {
+            lo = 31;
+            hi = 32;
+        } else if (name == keccak256("bytes")) {
+            if (!hasDigits) {
+                dyn = true;
+            } else {
+                if (bits == 0 || bits > 32) revert UnsupportedPackedType(q);
+                lo = 0;
+                hi = bits;
+            }
+        } else if (name == keccak256("string") && !hasDigits) {
+            dyn = true;
+        } else {
+            revert UnsupportedPackedType(q);
+        }
+    }
+
     // ============ Folds ============
 
     /**
@@ -928,7 +1213,182 @@ contract Operators {
         return _fold(FoldDomain.Words, s.length / 32, s, target, template, accOffset, elemOffset, init, exit);
     }
 
+    // ============ Word Arrays ============
+    //
+    // Pure shape operations over payloads of aligned 32-byte words (an
+    // array's elements without the ABI envelope — slice one out of a
+    // returned array, or feed the output of another word op). Every
+    // function validates alignment first (UnalignedWords) and returns a
+    // plain bytes payload, so they nest into each other, into the folds,
+    // and into read splicing.
+
+    /**
+     * @notice Applies a single-staticcall lambda to every word of `s` and
+     *         returns the transformed payload — the bytes-producing map
+     *         the scalar folds cannot express
+     * @dev Lambda conventions match the folds: `template` is complete
+     *      calldata for `target` whose 32-byte window at `elemOffset` is
+     *      rewritten per element; the lambda's FIRST return word is the
+     *      mapped element. An empty payload returns empty without
+     *      inspecting the lambda; a code-less target reverts with
+     *      LambdaCallFailed(0, target, ""), a reverting application with
+     *      LambdaCallFailed naming the element, a short return with
+     *      LambdaReturnTooShort. Gas is the loop bound, one call per word.
+     * @param s The word payload to map
+     * @param target The lambda contract
+     * @param template Complete calldata for `target` with the element window
+     * @param elemOffset Byte offset of the element window
+     * @return out The mapped payload, same word count as `s`
+     */
+    function mapWords(bytes calldata s, address target, bytes calldata template, uint256 elemOffset)
+        external
+        view
+        returns (bytes memory out)
+    {
+        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        if (template.length < 32 || elemOffset > template.length - 32) {
+            revert LambdaOffsetOutOfBounds(elemOffset, template.length);
+        }
+        uint256 count = s.length / 32;
+        out = new bytes(s.length);
+        if (count == 0) return out;
+        if (target.code.length == 0) revert LambdaCallFailed(0, target, "");
+
+        bytes memory callData = template;
+        for (uint256 i = 0; i < count; i++) {
+            bytes32 elem = bytes32(s[i * 32:i * 32 + 32]);
+            assembly {
+                mstore(add(add(callData, 32), elemOffset), elem)
+            }
+            (bool success, bytes memory ret) = target.staticcall(callData);
+            if (!success) revert LambdaCallFailed(i, target, callData);
+            if (ret.length < 32) revert LambdaReturnTooShort(i, ret.length);
+            assembly {
+                mstore(add(add(out, 32), mul(i, 32)), mload(add(ret, 32)))
+            }
+        }
+    }
+
+    /**
+     * @notice The payload with its word order reversed
+     */
+    function reverseWords(bytes calldata s) external pure returns (bytes memory out) {
+        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        uint256 count = s.length / 32;
+        out = new bytes(s.length);
+        for (uint256 i = 0; i < count; i++) {
+            bytes32 w = bytes32(s[i * 32:i * 32 + 32]);
+            assembly {
+                mstore(add(add(out, 32), mul(sub(sub(count, 1), i), 32)), w)
+            }
+        }
+    }
+
+    /**
+     * @notice The two payloads interleaved: a0, b0, a1, b1, ... — pairs
+     *         for a fold or for unzipWords to split back
+     * @dev Different word counts revert with WordCountMismatch (silent
+     *      truncation would be a wrong-answer machine)
+     */
+    function zipWords(bytes calldata a, bytes calldata b) external pure returns (bytes memory out) {
+        if (a.length % 32 != 0) revert UnalignedWords(a.length);
+        if (b.length % 32 != 0) revert UnalignedWords(b.length);
+        if (a.length != b.length) revert WordCountMismatch(a.length / 32, b.length / 32);
+        uint256 count = a.length / 32;
+        out = new bytes(a.length * 2);
+        for (uint256 i = 0; i < count; i++) {
+            bytes32 wa = bytes32(a[i * 32:i * 32 + 32]);
+            bytes32 wb = bytes32(b[i * 32:i * 32 + 32]);
+            assembly {
+                mstore(add(add(out, 32), mul(mul(i, 2), 32)), wa)
+                mstore(add(add(out, 32), mul(add(mul(i, 2), 1), 32)), wb)
+            }
+        }
+    }
+
+    /**
+     * @notice Every second word of the payload: lane 0 (words 0, 2, 4, …)
+     *         or lane 1 (words 1, 3, 5, …) — zipWords' inverse
+     * @dev A lane past 1 reverts with InvalidLane; an odd word count
+     *      leaves the extra word in lane 0
+     */
+    function unzipWords(bytes calldata s, uint256 which) external pure returns (bytes memory out) {
+        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        if (which > 1) revert InvalidLane(which);
+        uint256 count = s.length / 32;
+        uint256 laneCount = which == 0 ? (count + 1) / 2 : count / 2;
+        out = new bytes(laneCount * 32);
+        for (uint256 i = 0; i < laneCount; i++) {
+            bytes32 w = bytes32(s[(i * 2 + which) * 32:(i * 2 + which) * 32 + 32]);
+            assembly {
+                mstore(add(add(out, 32), mul(i, 32)), w)
+            }
+        }
+    }
+
+    /**
+     * @notice The payload sorted ascending as unsigned words
+     * @dev Insertion sort: O(n^2) word moves, so gas caps practical
+     *      inputs at hundreds of words, not thousands. Signed sorting is
+     *      a three-node recipe instead of an overload: flip the sign bit
+     *      (mapWords with bitXor(2^255, elem)), sort, flip back
+     */
+    function sortWords(bytes calldata s) external pure returns (bytes memory out) {
+        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        out = s;
+        uint256 count = s.length / 32;
+        for (uint256 i = 1; i < count; i++) {
+            uint256 key = _wordAt(out, i);
+            uint256 j = i;
+            while (j > 0 && _wordAt(out, j - 1) > key) {
+                _setWord(out, j, _wordAt(out, j - 1));
+                j--;
+            }
+            _setWord(out, j, key);
+        }
+    }
+
+    /**
+     * @notice The payload with ADJACENT duplicate words collapsed — O(n),
+     *         so set-semantics deduplication is uniqueWords(sortWords(s));
+     *         on unsorted input this is run-length deduplication, by design
+     */
+    function uniqueWords(bytes calldata s) external pure returns (bytes memory out) {
+        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        uint256 count = s.length / 32;
+        out = new bytes(s.length);
+        uint256 kept;
+        for (uint256 i = 0; i < count; i++) {
+            uint256 w = uint256(bytes32(s[i * 32:i * 32 + 32]));
+            if (i == 0 || w != _wordAt(out, kept - 1)) {
+                _setWord(out, kept, w);
+                kept++;
+            }
+        }
+        assembly {
+            mstore(out, mul(kept, 32))
+        }
+    }
+
     // ============ Internal Helpers ============
+
+    /**
+     * @dev The i-th 32-byte word of a memory payload (caller bounds-checks)
+     */
+    function _wordAt(bytes memory b, uint256 i) private pure returns (uint256 w) {
+        assembly {
+            w := mload(add(add(b, 32), mul(i, 32)))
+        }
+    }
+
+    /**
+     * @dev Writes the i-th 32-byte word of a memory payload (caller bounds-checks)
+     */
+    function _setWord(bytes memory b, uint256 i, uint256 w) private pure {
+        assembly {
+            mstore(add(add(b, 32), mul(i, 32)), w)
+        }
+    }
 
     /**
      * @dev Fold iteration domains: Range substitutes the index, Bytes the
@@ -1047,10 +1507,10 @@ contract Operators {
      *      overflow, 0x12 division by zero), byte-identical to the
      *      compiler's own checked-arithmetic reverts
      */
-    function _panic(uint256 code) private pure {
+    function _panic(uint256 panicCode) private pure {
         assembly {
             mstore(0, 0x4e487b7100000000000000000000000000000000000000000000000000000000)
-            mstore(4, code)
+            mstore(4, panicCode)
             revert(0, 36)
         }
     }
@@ -1086,10 +1546,10 @@ contract Operators {
     /**
      * @dev Copies `src` into `dst` starting at byte `at` (caller sizes dst)
      */
-    function _copy(bytes memory dst, uint256 at, bytes calldata src) private pure {
+    function _copy(bytes memory dst, uint256 dstOffset, bytes calldata src) private pure {
         uint256 len = src.length;
         assembly {
-            calldatacopy(add(add(dst, 32), at), src.offset, len)
+            calldatacopy(add(add(dst, 32), dstOffset), src.offset, len)
         }
     }
 }

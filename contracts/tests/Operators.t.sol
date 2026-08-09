@@ -278,6 +278,30 @@ contract OperatorsTest is Test {
         assertEq(ops.blobBaseFee(), block.blobbasefee);
     }
 
+    function test_blobHash() public view {
+        // a plain test transaction carries no blobs: every index reads
+        // zero (BLOBHASH out-of-range semantics — no revert). The
+        // populated path needs a real blob-carrying transaction, which
+        // the EDR test runner cannot synthesize (vm.blobhashes does not
+        // reach the opcode here); parity with blobhash() covers wiring.
+        assertEq(ops.blobHash(0), bytes32(0));
+        assertEq(ops.blobHash(5), bytes32(0));
+        assertEq(ops.blobHash(0), blobhash(0));
+    }
+
+    function test_gasPrice() public {
+        vm.txGasPrice(3 gwei);
+        assertEq(ops.gasPrice(), 3 gwei);
+        // judged through the core: gate a batch on the fee it pays
+        InputParam memory judged = InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.STATIC_CALL,
+            abi.encode(address(ops), abi.encodeCall(Operators.gasPrice, ())),
+            _c1(ConstraintType.LTE, abi.encode(uint256(10 gwei)))
+        );
+        assertions.assertParam(judged);
+    }
+
     function test_blockHash() public {
         vm.roll(21_000_000);
         assertEq(ops.blockHash(block.number - 1), blockhash(block.number - 1));
@@ -790,5 +814,364 @@ contract OperatorsTest is Test {
             Operators.balance.selector,
             _args1(InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, abi.encode(bytes32(uint256(1) << 170)), _none()))
         );
+    }
+
+    // ============ Calls ============
+
+    function test_rawCall_sha256Precompile() public view {
+        bytes memory ret = ops.rawCall(address(2), "hello");
+        assertEq(ret, abi.encodePacked(sha256("hello")));
+    }
+
+    function test_rawCall_ecrecoverPrecompile() public view {
+        uint256 pk = 0xA11CE;
+        bytes32 digest = keccak256("signed message");
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(pk, digest);
+        bytes memory ret = ops.rawCall(address(1), abi.encode(digest, uint256(v), r, s));
+        assertEq(address(uint160(uint256(bytes32(ret)))), vm.addr(pk));
+    }
+
+    function test_rawCall_identityPrecompile() public view {
+        assertEq(ops.rawCall(address(4), hex"c0ffee"), hex"c0ffee");
+    }
+
+    function test_rawCall_revertWrapped() public {
+        bytes memory callData = abi.encodeCall(MockTarget.revertingFunction, ());
+        vm.expectRevert(abi.encodeWithSelector(Operators.RawCallFailed.selector, address(target), callData));
+        ops.rawCall(address(target), callData);
+    }
+
+    function test_rawCall_codelessTargetSucceedsEmpty() public view {
+        // documented caveat: no code check, so a dead address "succeeds"
+        assertEq(ops.rawCall(TEST_EOA, hex"1234").length, 0);
+    }
+
+    function test_code() public view {
+        assertEq(ops.code(address(token)), address(token).code);
+        assertEq(ops.code(TEST_EOA).length, 0);
+        // codehash's sibling: hashing the code reproduces the hash
+        assertEq(keccak256(ops.code(address(token))), address(token).codehash);
+    }
+
+    // ============ Hash Pairs ============
+
+    function test_hashPair() public view {
+        bytes32 a = keccak256("a");
+        bytes32 b = keccak256("b");
+        assertEq(ops.hashPair(a, b), keccak256(abi.encodePacked(a, b)));
+        // order-preserving: not commutative
+        assertTrue(ops.hashPair(a, b) != ops.hashPair(b, a));
+    }
+
+    function test_hashPairSorted() public view {
+        bytes32 a = keccak256("a");
+        bytes32 b = keccak256("b");
+        assertEq(ops.hashPairSorted(a, b), ops.hashPairSorted(b, a));
+        bytes32 lower = a < b ? a : b;
+        bytes32 higher = a < b ? b : a;
+        assertEq(ops.hashPairSorted(a, b), keccak256(abi.encodePacked(lower, higher)));
+        assertEq(ops.hashPairSorted(a, a), keccak256(abi.encodePacked(a, a)));
+    }
+
+    function test_merkleVerify_viaFoldWords() public view {
+        // a 4-leaf sorted-pair tree, root reproduced by folding the proof
+        // for leaf0: sibling leaf1, then the leaf2/leaf3 node
+        bytes32 l0 = keccak256("leaf0");
+        bytes32 root;
+        bytes memory proof;
+        {
+            bytes32 l1 = keccak256("leaf1");
+            bytes32 n23 = ops.hashPairSorted(keccak256("leaf2"), keccak256("leaf3"));
+            root = ops.hashPairSorted(ops.hashPairSorted(l0, l1), n23);
+            proof = abi.encodePacked(l1, n23);
+        }
+        bytes memory template = abi.encodeWithSelector(Operators.hashPairSorted.selector, bytes32(0), bytes32(0));
+        assertEq(ops.foldWords(proof, address(ops), template, 4, 36, l0, Operators.FoldExit.Full), root);
+    }
+
+    // ============ EncodePacked ============
+
+    function _vals(bytes memory a) internal pure returns (bytes[] memory v) {
+        v = new bytes[](1);
+        v[0] = a;
+    }
+
+    function test_encodePacked_parity() public view {
+        address someone = address(0xBEEF);
+        bytes[] memory values = new bytes[](5);
+        values[0] = abi.encode(uint256(0xABCD));
+        values[1] = abi.encode(someone);
+        values[2] = abi.encode(true);
+        values[3] = abi.encode(bytes8(0x1122334455667788));
+        values[4] = abi.encode("hey");
+        assertEq(
+            ops.encodePacked("(uint16,address,bool,bytes8,string)", values),
+            abi.encodePacked(uint16(0xABCD), someone, true, bytes8(0x1122334455667788), "hey")
+        );
+    }
+
+    function test_encodePacked_truncatesLikeACast() public view {
+        // uint16 keeps the LOW two bytes, exactly like an explicit cast
+        assertEq(ops.encodePacked("(uint16)", _vals(abi.encode(uint256(0x12345)))), hex"2345");
+    }
+
+    function test_encodePacked_defaultWidths() public view {
+        bytes[] memory values = new bytes[](2);
+        values[0] = abi.encode(uint256(7));
+        values[1] = abi.encode(int256(-7));
+        assertEq(ops.encodePacked("(uint,int)", values), abi.encodePacked(uint256(7), int256(-7)));
+    }
+
+    function test_encodePacked_bytesNHighBytes() public view {
+        assertEq(ops.encodePacked("(bytes4)", _vals(abi.encode(bytes4(0xdeadbeef)))), hex"deadbeef");
+    }
+
+    function test_encodePacked_dynamicPayloads() public view {
+        bytes[] memory values = new bytes[](3);
+        values[0] = abi.encode(uint8(1));
+        values[1] = abi.encode("");
+        values[2] = abi.encode(uint8(2));
+        // the empty string contributes zero bytes
+        assertEq(ops.encodePacked("(uint8,string,uint8)", values), hex"0102");
+        assertEq(ops.encodePacked("(bytes)", _vals(abi.encode(bytes(hex"c0ffee")))), hex"c0ffee");
+    }
+
+    function test_encodePacked_unsupportedTypes() public {
+        vm.expectRevert(abi.encodeWithSelector(Operators.UnsupportedPackedType.selector, 8));
+        ops.encodePacked("(uint256[])", _vals(abi.encode(uint256(1))));
+        vm.expectRevert(abi.encodeWithSelector(Operators.UnsupportedPackedType.selector, 1));
+        ops.encodePacked("((uint256,uint256))", _vals(abi.encode(uint256(1), uint256(2))));
+        vm.expectRevert(abi.encodeWithSelector(Operators.UnsupportedPackedType.selector, 1));
+        ops.encodePacked("(uint7)", _vals(abi.encode(uint256(1))));
+    }
+
+    function test_encodePacked_componentErrors() public {
+        vm.expectRevert(abi.encodeWithSelector(Operators.ComponentCountMismatch.selector, 2, 1));
+        ops.encodePacked("(uint8,uint8)", _vals(abi.encode(uint256(1))));
+        vm.expectRevert(abi.encodeWithSelector(Operators.InvalidComponentLength.selector, 0, 32, 1));
+        ops.encodePacked("(uint8)", _vals(hex"01"));
+        vm.expectRevert(
+            abi.encodeWithSelector(Operators.InvalidComponentEnvelope.selector, 0, 32, bytes32(uint256(0x40)))
+        );
+        ops.encodePacked("(bytes)", _vals(abi.encode(uint256(0x40))));
+        vm.expectRevert(abi.encodeWithSelector(InvalidTypeDescriptor.selector, 0));
+        ops.encodePacked("uint8", _vals(abi.encode(uint256(1))));
+    }
+
+    // ============ Word Arrays ============
+
+    function test_mapWords_addOne() public view {
+        bytes memory payload = abi.encodePacked(uint256(1), uint256(2), uint256(3));
+        bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(1));
+        assertEq(
+            ops.mapWords(payload, address(ops), template, 4),
+            abi.encodePacked(uint256(2), uint256(3), uint256(4))
+        );
+    }
+
+    function test_mapWords_emptyPayload() public view {
+        bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(1));
+        // the lambda target is never inspected on an empty payload
+        assertEq(ops.mapWords("", address(0xdead), template, 4).length, 0);
+    }
+
+    function test_mapWords_errors() public {
+        bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(1));
+        vm.expectRevert(abi.encodeWithSelector(Operators.UnalignedWords.selector, 33));
+        ops.mapWords(new bytes(33), address(ops), template, 4);
+        vm.expectRevert(abi.encodeWithSelector(Operators.LambdaOffsetOutOfBounds.selector, 37, 68));
+        ops.mapWords(abi.encodePacked(uint256(1)), address(ops), template, 37);
+        vm.expectRevert(abi.encodeWithSelector(Operators.LambdaCallFailed.selector, 0, TEST_EOA, bytes("")));
+        ops.mapWords(abi.encodePacked(uint256(1)), TEST_EOA, template, 4);
+    }
+
+    function test_mapWords_lambdaRevertNamesElement() public {
+        // div(6, elem): the zero at index 1 reverts inside the lambda
+        bytes memory payload = abi.encodePacked(uint256(2), uint256(0));
+        bytes memory template = abi.encodeWithSelector(DIV_U, uint256(6), uint256(0));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Operators.LambdaCallFailed.selector,
+                1,
+                address(ops),
+                abi.encodeWithSelector(DIV_U, uint256(6), uint256(0))
+            )
+        );
+        ops.mapWords(payload, address(ops), template, 36);
+    }
+
+    function test_mapWords_shortReturn() public {
+        bytes memory template = abi.encodeCall(MockTarget.checkValue, (0));
+        vm.expectRevert(abi.encodeWithSelector(Operators.LambdaReturnTooShort.selector, 0, 0));
+        ops.mapWords(abi.encodePacked(uint256(42)), address(target), template, 4);
+    }
+
+    function test_reverseWords() public view {
+        bytes memory payload = abi.encodePacked(uint256(1), uint256(2), uint256(3));
+        assertEq(ops.reverseWords(payload), abi.encodePacked(uint256(3), uint256(2), uint256(1)));
+        assertEq(ops.reverseWords("").length, 0);
+        assertEq(ops.reverseWords(abi.encodePacked(uint256(7))), abi.encodePacked(uint256(7)));
+    }
+
+    function test_reverseWords_unaligned() public {
+        vm.expectRevert(abi.encodeWithSelector(Operators.UnalignedWords.selector, 31));
+        ops.reverseWords(new bytes(31));
+    }
+
+    function test_zipWords() public {
+        bytes memory a = abi.encodePacked(uint256(1), uint256(2));
+        bytes memory b = abi.encodePacked(uint256(10), uint256(20));
+        assertEq(ops.zipWords(a, b), abi.encodePacked(uint256(1), uint256(10), uint256(2), uint256(20)));
+        assertEq(ops.zipWords("", "").length, 0);
+        vm.expectRevert(abi.encodeWithSelector(Operators.WordCountMismatch.selector, 2, 1));
+        ops.zipWords(a, abi.encodePacked(uint256(10)));
+    }
+
+    function test_unzipWords() public {
+        bytes memory zipped = abi.encodePacked(uint256(1), uint256(10), uint256(2), uint256(20));
+        assertEq(ops.unzipWords(zipped, 0), abi.encodePacked(uint256(1), uint256(2)));
+        assertEq(ops.unzipWords(zipped, 1), abi.encodePacked(uint256(10), uint256(20)));
+        // odd word count: the extra word lands in lane 0
+        bytes memory odd = abi.encodePacked(uint256(1), uint256(2), uint256(3));
+        assertEq(ops.unzipWords(odd, 0), abi.encodePacked(uint256(1), uint256(3)));
+        assertEq(ops.unzipWords(odd, 1), abi.encodePacked(uint256(2)));
+        vm.expectRevert(abi.encodeWithSelector(Operators.InvalidLane.selector, 2));
+        ops.unzipWords(zipped, 2);
+    }
+
+    function test_zipUnzip_roundTrip() public view {
+        bytes memory a = abi.encodePacked(uint256(5), uint256(6), uint256(7));
+        bytes memory b = abi.encodePacked(uint256(50), uint256(60), uint256(70));
+        bytes memory zipped = ops.zipWords(a, b);
+        assertEq(ops.unzipWords(zipped, 0), a);
+        assertEq(ops.unzipWords(zipped, 1), b);
+    }
+
+    function test_sortWords() public view {
+        bytes memory payload = abi.encodePacked(uint256(5), uint256(1), uint256(4), uint256(1), uint256(3));
+        assertEq(
+            ops.sortWords(payload),
+            abi.encodePacked(uint256(1), uint256(1), uint256(3), uint256(4), uint256(5))
+        );
+        bytes memory sorted = abi.encodePacked(uint256(1), uint256(2));
+        assertEq(ops.sortWords(sorted), sorted);
+        assertEq(ops.sortWords(ops.reverseWords(sorted)), sorted);
+        assertEq(ops.sortWords("").length, 0);
+        assertEq(ops.sortWords(abi.encodePacked(uint256(9))), abi.encodePacked(uint256(9)));
+    }
+
+    function test_sortWords_signedRecipe() public view {
+        // signed sort = flip the sign bit, sort unsigned, flip back
+        bytes4 BITXOR = bytes4(keccak256("bitXor(uint256,uint256)"));
+        bytes memory payload = abi.encodePacked(int256(-2), int256(1), int256(-5));
+        bytes memory flip = abi.encodeWithSelector(BITXOR, uint256(0), uint256(1) << 255);
+        bytes memory flipped = ops.mapWords(payload, address(ops), flip, 4);
+        bytes memory back = ops.mapWords(ops.sortWords(flipped), address(ops), flip, 4);
+        assertEq(back, abi.encodePacked(int256(-5), int256(-2), int256(1)));
+    }
+
+    function test_uniqueWords() public view {
+        assertEq(
+            ops.uniqueWords(abi.encodePacked(uint256(1), uint256(1), uint256(2), uint256(2), uint256(2), uint256(3))),
+            abi.encodePacked(uint256(1), uint256(2), uint256(3))
+        );
+        // adjacent-only by design: unsorted input keeps distant repeats
+        assertEq(
+            ops.uniqueWords(abi.encodePacked(uint256(1), uint256(2), uint256(1))),
+            abi.encodePacked(uint256(1), uint256(2), uint256(1))
+        );
+        assertEq(ops.uniqueWords(abi.encodePacked(uint256(4), uint256(4))), abi.encodePacked(uint256(4)));
+        assertEq(ops.uniqueWords("").length, 0);
+        // set semantics: sort first
+        assertEq(
+            ops.uniqueWords(ops.sortWords(abi.encodePacked(uint256(3), uint256(1), uint256(3), uint256(1)))),
+            abi.encodePacked(uint256(1), uint256(3))
+        );
+    }
+
+    // ============ Strings ============
+
+    function test_replace() public view {
+        assertEq(ops.replace("Curve LP Token", " ", "-"), bytes("Curve-LP-Token"));
+        assertEq(ops.replace("abcabc", "abc", "X"), bytes("XX"));
+        assertEq(ops.replace("hello", "x", "y"), bytes("hello"));
+        // deletion, and the non-overlapping scan indexOf uses
+        assertEq(ops.replace("Curve LP Token", " ", ""), bytes("CurveLPToken"));
+        assertEq(ops.replace("aaaa", "aa", "b"), bytes("bb"));
+        assertEq(ops.replace("", "a", "b").length, 0);
+        // a longer replacement grows the output
+        assertEq(ops.replace("a-b", "-", " and "), bytes("a and b"));
+    }
+
+    function test_replace_emptyNeedle() public {
+        vm.expectRevert(Operators.EmptyNeedle.selector);
+        ops.replace("abc", "", "x");
+    }
+
+    function test_toLower_toUpper() public view {
+        assertEq(ops.toLower("Curve LP-42"), bytes("curve lp-42"));
+        assertEq(ops.toUpper("Curve LP-42"), bytes("CURVE LP-42"));
+        // non-ASCII bytes pass through verbatim (UTF-8 safe)
+        assertEq(ops.toLower(hex"C3A9"), hex"C3A9");
+        assertEq(ops.toLower("").length, 0);
+        assertEq(ops.toUpper(ops.toLower("ABC")), bytes("ABC"));
+    }
+
+    function test_join() public view {
+        bytes[] memory parts = new bytes[](3);
+        parts[0] = "a";
+        parts[1] = "b";
+        parts[2] = "c";
+        assertEq(ops.join(parts, ", "), bytes("a, b, c"));
+        assertEq(ops.join(new bytes[](0), ", ").length, 0);
+        bytes[] memory one = new bytes[](1);
+        one[0] = "solo";
+        assertEq(ops.join(one, ", "), bytes("solo"));
+        // empty delimiter degenerates to concat
+        assertEq(ops.join(parts, ""), ops.concat(parts));
+    }
+
+    function test_core_judges_lowercasedSymbol() public {
+        // hash(toLower(symbol())) == keccak("weth"), composed through the
+        // core: the symbol envelope splices into toLower, toLower's
+        // envelope splices into hash, the digest is judged inline
+        bytes memory lowered = abi.encodeCall(
+            Assertions.read,
+            (
+                _lit(uint256(uint160(address(ops)))),
+                Operators.toLower.selector,
+                _args1(_call(address(token), abi.encodeCall(MockToken.symbol, ())))
+            )
+        );
+        bytes memory digest = abi.encodeCall(
+            Assertions.read,
+            (
+                _lit(uint256(uint160(address(ops)))),
+                Operators.hash.selector,
+                _args1(_call(address(assertions), lowered))
+            )
+        );
+        InputParam memory judged = InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.STATIC_CALL,
+            abi.encode(address(assertions), digest),
+            _c1(ConstraintType.EQ, abi.encode(keccak256("weth")))
+        );
+        assertions.assertParam(judged);
+
+        judged.constraints = _c1(ConstraintType.EQ, abi.encode(keccak256("WETH")));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ConstraintFailed.selector,
+                "PARAM",
+                0,
+                0,
+                0,
+                ConstraintType.EQ,
+                keccak256("weth"),
+                abi.encode(keccak256("WETH"))
+            )
+        );
+        assertions.assertParam(judged);
     }
 }

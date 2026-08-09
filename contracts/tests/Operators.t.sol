@@ -1070,6 +1070,70 @@ contract OperatorsTest is Test {
         assertEq(ops.toUpper(ops.toLower("ABC")), bytes("ABC"));
     }
 
+    function test_charset() public view {
+        uint256 az;
+        for (uint256 i = 65; i <= 90; i++) {
+            az |= 1 << i; // A-Z
+        }
+        assertTrue(ops.charset("WETH", az));
+        assertFalse(ops.charset("WETH-LP", az)); // hyphen not in A-Z
+        // vacuous on the empty string
+        assertTrue(ops.charset("", az));
+        // multi-byte UTF-8 (bytes >= 0x80) fail any ASCII mask
+        assertFalse(ops.charset(hex"C3A9", az));
+        // parity with the foldBytes(bitSet, All) recipe it replaces
+        bytes memory template = abi.encodeWithSelector(Operators.bitSet.selector, az, uint256(0));
+        assertEq(
+            ops.charset("GOVERNOR", az),
+            ops.foldBytes("GOVERNOR", address(ops), template, 36, 36, bytes32(uint256(1)), Operators.FoldExit.All) != 0
+        );
+    }
+
+    function test_sumWords() public {
+        assertEq(ops.sumWords(abi.encodePacked(uint256(10), uint256(20), uint256(30))), 60);
+        assertEq(ops.sumWords(abi.encodePacked(uint256(42))), 42);
+        assertEq(ops.sumWords(""), 0);
+        // parity with foldWords(add)
+        bytes memory payload = abi.encodePacked(uint256(1), uint256(2), uint256(3), uint256(4));
+        bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(0));
+        assertEq(
+            ops.sumWords(payload),
+            uint256(ops.foldWords(payload, address(ops), template, 4, 36, bytes32(0), Operators.FoldExit.Full))
+        );
+        // checked: overflow reverts like add
+        vm.expectRevert(stdError.arithmeticError);
+        ops.sumWords(abi.encodePacked(type(uint256).max, uint256(1)));
+        // unaligned payload rejected
+        vm.expectRevert(abi.encodeWithSelector(Operators.UnalignedWords.selector, 33));
+        ops.sumWords(new bytes(33));
+    }
+
+    function test_core_judges_charset() public {
+        // charset composes as a constrained STATIC_CALL fetcher judged EQ 1
+        // (live-string splicing into the bytes-not-last arg is the module
+        // recipe's job, with the envelope +32 offset trick; here the call
+        // is fully encoded)
+        uint256 az;
+        for (uint256 i = 65; i <= 90; i++) {
+            az |= 1 << i;
+        }
+        InputParam memory judged = InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.STATIC_CALL,
+            abi.encode(address(ops), abi.encodeCall(Operators.charset, ("WETH", az))),
+            _c1(ConstraintType.EQ, abi.encode(uint256(1)))
+        );
+        assertions.assertParam(judged);
+
+        judged.paramData = abi.encode(address(ops), abi.encodeCall(Operators.charset, ("WETH-LP", az)));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ConstraintFailed.selector, "PARAM", 0, 0, 0, ConstraintType.EQ, bytes32(uint256(0)), abi.encode(uint256(1))
+            )
+        );
+        assertions.assertParam(judged);
+    }
+
     function test_core_judges_lowercasedSymbol() public {
         // hash(toLower(symbol())) == keccak("weth"), composed through the
         // core: the symbol envelope splices into toLower, toLower's

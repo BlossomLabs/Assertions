@@ -830,6 +830,19 @@ contract Operators {
         }
     }
 
+    /**
+     * @notice Whether every byte of `s` is a member of the 256-bit
+     *         character-class `mask` (bit i set means byte value i is
+     *         allowed) — a native single-call loop, the fixed-operation
+     *         form of the foldBytes(bitSet, All) recipe. An empty string
+     *         is vacuously in every set
+     */
+    function charset(bytes calldata s, uint256 mask) external pure returns (bool) {
+        for (uint256 i = 0; i < s.length; i++) {
+            if (mask & (uint256(1) << uint8(s[i])) == 0) return false;
+        }
+        return true;
+    }
 
     // ============ Parse ============
 
@@ -1281,6 +1294,19 @@ contract Operators {
      *         so set-semantics deduplication is uniqueWords(sortWords(s));
      *         on unsorted input this is run-length deduplication, by design
      */
+    /**
+     * @notice The checked sum of the payload's 32-byte words — a native
+     *         single-call loop, the fixed-operation form of the
+     *         foldWords(add) recipe (overflow reverts with Panic(0x11))
+     */
+    function sumWords(bytes calldata s) external pure returns (uint256 total) {
+        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        uint256 count = s.length / 32;
+        for (uint256 i = 0; i < count; i++) {
+            total += uint256(bytes32(s[i * 32:i * 32 + 32]));
+        }
+    }
+
     function uniqueWords(bytes calldata s) external pure returns (bytes memory out) {
         if (s.length % 32 != 0) revert UnalignedWords(s.length);
         uint256 count = s.length / 32;

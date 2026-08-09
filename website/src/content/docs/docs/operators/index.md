@@ -28,7 +28,18 @@ Why named functions instead of the old op-code enums: decoded calldata reads on 
 
 ## What earns a slot here
 
-The surface stays small on purpose, and every function passes one of two admission tests. Either the operation is inexpressible at any node count by composing the rest of the vocabulary (loops like `sortWords` or `replace`, opcode exposures like `gasPrice`, variable-length output like `filterWords`), or it is the single-call form of a fold or map lambda whose composed form would multiply the hot loop's external calls (`bitSet` for character-class folds, `hashPairSorted` for Merkle proofs: the sort inside the combiner is value-dependent at runtime, so no encoder layout can precompute it). Everything else composes and stays out: `join` is `concat` with the delimiter interleaved at composition time, pair hashing is `hash` over an encoder-built two-word payload, and packed encoding is `concat` over `slice`-narrowed words.
+The surface stays small on purpose, and every function passes one of two admission tests. Either the operation is inexpressible at any node count by composing the rest of the vocabulary (loops like `sortWords` or `replace`, opcode exposures like `gasPrice`, variable-length output like `filterWords`), or it is the single-call form of a fold or map lambda whose composed form would multiply the hot loop's external calls.
+
+The second test is the reason `bitSet` and `hashPairSorted` earn slots even though both compose in principle (`bitSet` is `bitAnd(shr(mask, i), 1)`, and once `sortWords` exists `hashPairSorted` is `hash(sortWords([a, b]))`). A fold or map lambda is one staticcall per element; the composed form routes each element through the core's `read` and a nested `read`, so every iteration pays roughly nine times the gas. Measured, per element:
+
+| Recipe | Native lambda | Composed lambda | Extra per element |
+|--------|---------------|-----------------|-------------------|
+| `bitSet` character-class fold | ~1,650 gas/byte | ~14,700 gas/byte | +13,100 |
+| `hashPairSorted` Merkle fold | ~2,350 gas/level | ~13,700 gas/level | +11,400 |
+
+So a 20-byte charset check is ~33k gas native against ~295k composed, and a depth-16 Merkle proof (a 65k-leaf allowlist) is ~38k against ~220k. Two roughly ten-line functions, about 340 bytes of runtime bytecode, buy back on the order of 180k to 260k gas on their loops, and more as inputs grow.
+
+Everything that fails both tests composes and stays out: `join` is `concat` with the delimiter interleaved at composition time, pair hashing (unsorted) is `hash` over an encoder-built two-word payload, and packed encoding is `concat` over `slice`-narrowed words.
 
 ## Signedness rides on overloads
 

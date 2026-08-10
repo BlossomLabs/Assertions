@@ -84,7 +84,7 @@ function uniqueWords (bytes s) external pure returns (bytes);
 function sumWords    (bytes s) external pure returns (uint256);
 ```
 
-**`mapWords`** applies a single-staticcall lambda to every word and returns the transformed payload: the bytes-producing map the scalar folds cannot express. Lambda conventions match the folds (`template` is complete calldata for `target` whose 32-byte window at `elemOffset` is rewritten per element; the lambda's FIRST return word is the mapped element), and so do the failure modes below. An empty payload returns empty without inspecting the lambda. In [EVMcrispr](/docs/evml) it is `@map!` with an Operators-backed lambda, e.g. `@map!($t::values() @num!(* 2))`.
+**`mapWords`** applies a single-staticcall lambda to every word and returns the transformed payload: the bytes-producing map the scalar folds cannot express. Lambda conventions match the folds (`template` is complete calldata for `target` whose 32-byte window at `elemOffset` is rewritten per element; the lambda's FIRST return word is the mapped element), and so do the failure modes below. An empty payload returns empty without inspecting the lambda. In [EVMcrispr](/docs/evml) it is `@map!` applied to a named definition, e.g. `def @dbl! "$x: number -> number" @num!($x * 2)` then `@map!($t::values() @dbl!)`.
 
 **`filterWords`** is `mapWords`' variable-length sibling, byte-identical in signature and lambda conventions: it keeps the ELEMENTS whose lambda application returns nonzero, in order, so the output length is the kept count and the result nests into `len`, the folds and the other word ops. EVMcrispr compiles `@filter!` to it, and `@find!` is a core `pick` of the first kept word (no match leaves the pick out of bounds, so it reverts).
 

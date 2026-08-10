@@ -73,6 +73,15 @@ These compile to the core's [`read`](/docs/core/reads): each nesting level becom
 
 Helpers with a trailing `!` evaluate **on-chain at assertion time** by compiling to core and Operators calldata; ordinary helpers (`@token`, `@get`, `@num`, ...) resolve at composition time and freeze into the calldata. Since the helper unification each helper is one name with up to two faces: the plain face runs (or snapshots) at script build time, the `!` face compiles to on-chain calldata.
 
+Array faces (`@map!`, `@filter!`, `@all!`, `@any!`, `@find!`, `@reduce!`) apply a NAMED definition rather than an inline expression. `def @name!` declares one, and the face supplies the arguments it takes:
+
+```evml
+def @ge100! "$x: number -> bool" @bool!($x >= 100)
+assertions:assert @all!($vault::{caps()(uint256[])} @ge100!)
+```
+
+The definition is inlined where it is used, so naming a parameter more than once stamps the element at each place it appears — `@num!($x * $x)` squares in one call. It compiles rather than runs, so it must be fully typed and cannot be called off-chain, and it is scoped like any other `def`.
+
 The on-chain surface spans five modules:
 
 - **std** (always available, no `load` needed): `@num!`, `@bool!`, `@bytes!`, `@hash!`, `@balance!`.
@@ -101,7 +110,7 @@ The on-chain surface spans five modules:
 | `@str.charset!(call "a-z0-9-")` | lang | bool | Whether every byte of a string return is in the character class (ranges + literals, byte-level ASCII) |
 | `@codehash!(addr-or-call)` | assertions | bytes32 | Live EXTCODEHASH; the argument may be a `::` call resolving to an address |
 | `@enumerate!(call)` | lang | array | Pair every element with its index on-chain (`zipWords(iotaWords(n), payload)` with the live length); the result is an on-chain record (see `@keys!`) |
-| `@filter!(call pred)` | lang | array | Keep the elements passing an Operators-backed predicate (`filterWords`, the same lambda machinery as `@map!`); the kept words payload composes with the other array faces |
+| `@filter!(call pred)` | lang | array | Keep the elements passing `pred`, a named `def @name!` of one parameter returning bool; the kept words payload composes with the other array faces |
 | `@find!(call pred)` | lang | any | The first element passing the predicate: a core pick over the `filterWords` output; no match REVERTS the assertion at judge time |
 | `@hash!(call)` | std | bytes32 | Hash of the decoded return payload, on-chain: keccak256 by default, sha256 with a second `"sha256"` argument |
 | `@str.includes!(call "part")` | lang | bool | Whether a string return contains a substring (exact bytes, case-sensitive) |

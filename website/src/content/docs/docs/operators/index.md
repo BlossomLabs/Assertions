@@ -3,7 +3,7 @@ title: The Operators vocabulary
 description: The plain-ABI operator contract, its whole surface, and how the core's read splices live operands into it.
 ---
 
-Assertion constraints revert or pass: they judge. Everything that *computes* lives in the separate `Operators` contract (v1.0, currently at the interim address `0xaE0a2f9A3065CE8E1Dd6D1007c32D0bCF6e5D4b9`; see [Deployments](/docs/reference/deployments)). Every function takes and returns plain ABI types: there is not one ERC-8211 import in the contract. The tagline of the two-contract split: **the core reads and judges; Operators compute.**
+Assertion constraints revert or pass: they judge. Everything that *computes* lives in the separate `Operators` contract (v1.0, currently at the interim address `0x8a9E5b20C8d2Eb57aA69bCF4C5E8eF5715a63876`; see [Deployments](/docs/reference/deployments)). Every function takes and returns plain ABI types: there is not one ERC-8211 import in the contract. The tagline of the two-contract split: **the core reads and judges; Operators compute.**
 
 Composition happens in the core. Its [`read` primitive](/docs/core/reads) resolves `InputParam` operand expressions and splices the resolved values into plain calldata, so an operator call IS the composed expression: `ge(token.balanceOf(treasury), 100e18)` with a live first argument is one `read` whose segments are the balance call and the literal. Any deployed view or pure contract extends the vocabulary through the same socket; Operators is just the canonical first extension. And because it is plain periphery, it stays versionable: old deployments never break, new versions ship at new addresses as pure opt-ins, without touching the frozen core.
 
@@ -20,15 +20,15 @@ Why named functions instead of the old op-code enums: decoded calldata reads on 
 | [Calls](/docs/operators/data) | `rawCall(address, bytes)` (raw staticcall, the precompile reach-through), `code(address)` (full runtime code as bytes) |
 | [Bytes](/docs/operators/data) | `concat(bytes[])`, `slice(bytes, start, len)`, `byteLen(bytes)`, `hash(bytes)`, `hashPairSorted(bytes32, bytes32)` (the sorted Merkle node combiner) |
 | [Search](/docs/operators/data) | `indexOf(bytes, bytes, int256 occurrence)` (signed occurrence ordinal: 0, 1, ... from the start, -1, -2, ... from the end) |
-| [Strings](/docs/operators/data) | `replace(bytes, bytes, bytes)`, `toLower(bytes)`, `toUpper(bytes)` (ASCII-only case folds) |
+| [Strings](/docs/operators/data) | `replace(bytes, bytes, bytes)`, `toLower(bytes)`, `toUpper(bytes)` (ASCII-only case folds), `charset(bytes, uint256)` (every byte in a 256-bit class, native) |
 | [Parse](/docs/operators/data) | `parseUint(bytes)` (decimal string to uint256), `toString(uint256)` (its inverse) |
 | [Encode](/docs/operators/data) | `encode(string types, bytes[] values)` (runtime `abi.encode`, `nav`'s inverse) |
 | [Folds](/docs/operators/fold) | `foldRange`, `foldBytes`, `foldWords`, with `FoldExit` `Full`/`Any`/`All` |
-| [Word arrays](/docs/operators/fold) | `mapWords`/`filterWords` (lambda map/filter over a word payload), `iotaWords(n)` (the index generator), `wordIndexOf` (word-count sentinel), `reverseWords`, `zipWords`, `unzipWords`, `sortWords`, `uniqueWords` |
+| [Word arrays](/docs/operators/fold) | `mapWords`/`filterWords` (lambda map/filter over a word payload), `iotaWords(n)` (the index generator), `wordIndexOf` (word-count sentinel), `reverseWords`, `zipWords`, `unzipWords`, `sortWords`, `uniqueWords`, `sumWords` (checked sum of a payload, native) |
 
 ## What earns a slot here
 
-The surface stays small on purpose, and every function passes one of two admission tests. Either the operation is inexpressible at any node count by composing the rest of the vocabulary (loops like `sortWords` or `replace`, opcode exposures like `gasPrice`, variable-length output like `filterWords`), or it is the single-call form of a fold or map lambda whose composed form would multiply the hot loop's external calls.
+The surface stays small on purpose, and every function passes one of three admission tests. It is inexpressible at any node count by composing the rest of the vocabulary (loops like `sortWords` or `replace`, opcode exposures like `gasPrice`, variable-length output like `filterWords`); or it is the single-call form of a fold or map lambda whose composed form would multiply the hot loop's external calls; or it is a native loop for a hot fixed reduction, collapsing a fold's N external calls into one.
 
 The second test is the reason `bitSet` and `hashPairSorted` earn slots even though both compose in principle (`bitSet` is `bitAnd(shr(mask, i), 1)`, and once `sortWords` exists `hashPairSorted` is `hash(sortWords([a, b]))`). A fold or map lambda is one staticcall per element; the composed form routes each element through the core's `read` and a nested `read`, so every iteration pays roughly nine times the gas. Measured, per element:
 
@@ -39,7 +39,16 @@ The second test is the reason `bitSet` and `hashPairSorted` earn slots even thou
 
 So a 20-byte charset check is ~33k gas native against ~295k composed, and a depth-16 Merkle proof (a 65k-leaf allowlist) is ~38k against ~220k. Two roughly ten-line functions, about 340 bytes of runtime bytecode, buy back on the order of 180k to 260k gas on their loops, and more as inputs grow.
 
-Everything that fails both tests composes and stays out: `join` is `concat` with the delimiter interleaved at composition time, pair hashing (unsorted) is `hash` over an encoder-built two-word payload, and packed encoding is `concat` over `slice`-narrowed words.
+The third test is why `charset` (every byte in a 256-bit class) and `sumWords` (the checked sum of a payload) are native despite composing as `foldBytes(bitSet, All)` and `foldWords(add)`. A fold makes one external call per element; a native loop makes one call total with the iteration inside Solidity. The lambda carve-outs above cut per-element cost but keep the N calls; these remove the calls. Measured:
+
+| Reduction | Fold recipe | Native loop | Saved |
+|-----------|-------------|-------------|-------|
+| `charset`, 21-byte string | 34,754 gas | 4,229 gas | 30,525 (~8x) |
+| `sumWords`, 12-word payload | 28,891 gas | 8,503 gas | 20,388 (~3.4x) |
+
+`charset`'s edge widens with length (its fold calls once per byte); together the two functions add about 290 bytes of runtime bytecode. The bar for this category is a hot, fixed reduction with a measured saving, not a speculative one, so it stays short.
+
+Everything that fails all three tests composes and stays out: `join` is `concat` with the delimiter interleaved at composition time, pair hashing (unsorted) is `hash` over an encoder-built two-word payload, and packed encoding is `concat` over `slice`-narrowed words.
 
 ## Signedness rides on overloads
 

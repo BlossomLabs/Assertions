@@ -44,13 +44,19 @@ An empty domain returns `init` without touching the lambda (the target is not ev
 
 ## Recipes
 
-**Charset**: "every byte of the string is in the class" is `foldBytes` with a `bitSet(mask, elem)` lambda and the `All` exit, `init = 1`. The mask is a 256-bit set where bit `i` covers byte value `i`, built off-chain (`a-z` is bits 97..122); `bitSet` ignores its accumulator, so both windows share the element offset:
+**Charset**: "every byte of the string is in the class" has a native operator, `charset(bytes s, uint256 mask)`, so EVMcrispr's [`@str.charset!`](/docs/evml) compiles straight to it (one call with the loop inside Solidity), not to a fold. The mask is a 256-bit set where bit `i` covers byte value `i`, built off-chain (`a-z` is bits 97..122):
 
 ```solidity
 // mask: bits 97..122 = a-z
+operators.charset(bytes(symbol), mask); // true iff every byte is a-z
+```
+
+The fold form is what `charset` collapses, and it stays the general pattern for any OTHER per-byte predicate: `foldBytes` with a lambda over the byte value, the `All` exit and `init = 1`. With `bitSet(mask, elem)` as the lambda it reproduces `charset` (both windows share the element offset, since `bitSet` ignores its accumulator):
+
+```solidity
+// the pre-native recipe, and the template for a custom per-byte test
 bytes memory template = abi.encodeWithSelector(Operators.bitSet.selector, mask, uint256(0));
 operators.foldBytes(bytes(symbol), address(operators), template, 36, 36, bytes32(uint256(1)), Operators.FoldExit.All);
-// 1 iff every byte is a-z
 ```
 
 The check is byte-level, so multi-byte UTF-8 characters (every byte >= 0x80) fail any ASCII-only mask, and the empty string is vacuously in every set.
@@ -75,6 +81,7 @@ function zipWords    (bytes a, bytes b) external pure returns (bytes);
 function unzipWords  (bytes s, uint256 which) external pure returns (bytes);
 function sortWords   (bytes s) external pure returns (bytes);
 function uniqueWords (bytes s) external pure returns (bytes);
+function sumWords    (bytes s) external pure returns (uint256);
 ```
 
 **`mapWords`** applies a single-staticcall lambda to every word and returns the transformed payload: the bytes-producing map the scalar folds cannot express. Lambda conventions match the folds (`template` is complete calldata for `target` whose 32-byte window at `elemOffset` is rewritten per element; the lambda's FIRST return word is the mapped element), and so do the failure modes below. An empty payload returns empty without inspecting the lambda. In [EVMcrispr](/docs/evml) it is `@map!` with an Operators-backed lambda, e.g. `@map!($t::values() @num!(* 2))`.
@@ -88,6 +95,8 @@ function uniqueWords (bytes s) external pure returns (bytes);
 **`reverseWords`** reverses the word order (`@reverse!`). **`zipWords(a, b)`** interleaves two payloads as `a0, b0, a1, b1, ...` for a fold or for `unzipWords` to split back; different word counts revert with `WordCountMismatch` (silent truncation would be a wrong-answer machine). **`unzipWords(s, which)`** is its inverse: every second word, lane 0 (words 0, 2, 4, ...) or lane 1 (words 1, 3, 5, ...); a lane past 1 reverts with `InvalidLane`, and an odd word count leaves the extra word in lane 0. EVMcrispr's `@zip!` and `@unzip!` compile to the pair.
 
 **`sortWords`** sorts ascending as UNSIGNED words (`@sort!`). Insertion sort: O(n^2) word moves, so gas caps practical inputs at hundreds of words, not thousands. Signed sorting is a three-node recipe instead of an overload: flip the sign bit (`mapWords` with `bitXor(2^255, elem)`), sort, flip back. **`uniqueWords`** collapses ADJACENT duplicates in O(n), so set-semantics deduplication is `uniqueWords(sortWords(s))`; on unsorted input it is run-length deduplication, by design (`@unique!`, nesting `@sort!` for the set form).
+
+**`sumWords`** is the checked sum of the payload's words (overflow past 2^256 - 1 reverts with `Panic(0x11)`): the native, fixed-operation form of the `foldWords(add)` recipe, one on-chain loop instead of a call per element. EVMcrispr compiles `@sum!` to it; use `@reduce!(add 0)` (or `foldWords` directly) for any other reduction (min, max, bitOr, bitAnd) or a nonzero initial accumulator.
 
 ## Failure modes and gas
 

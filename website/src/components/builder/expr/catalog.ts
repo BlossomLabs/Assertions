@@ -182,6 +182,7 @@ const COMPOSITION_TIME = [
   "str.replace!",
   "str.slice!",
   "str.upper!",
+  "sum!",
   "unique!",
   "unzip!",
   "values!",

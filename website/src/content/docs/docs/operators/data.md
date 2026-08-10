@@ -17,6 +17,7 @@ function indexOf(bytes s, bytes needle, int256 from) external pure returns (uint
 function replace(bytes s, bytes needle, bytes repl) external pure returns (bytes);
 function toLower(bytes s) external pure returns (bytes);
 function toUpper(bytes s) external pure returns (bytes);
+function charset(bytes s, uint256 mask) external pure returns (bool);
 function encode (string types, bytes[] values) external pure;   // raw return
 ```
 
@@ -80,6 +81,8 @@ Anchored checks compose from `slice` and `hash`: "starts with Curve" is `eq(hash
 `replace(s, needle, repl)` returns `s` with every occurrence of `needle` replaced by `repl`. The scan is non-overlapping and left-to-right, the same enumeration `indexOf` and occurrence counting use (in `"aaaa"` the needle `"aa"` is replaced at positions 0 and 2). An empty `repl` deletes; an empty needle reverts with `EmptyNeedle` (it would vacuously match everywhere). In [EVMcrispr](/docs/evml) this is `@str.replace!`.
 
 `toLower(s)` and `toUpper(s)` fold ASCII letters and pass every other byte through verbatim. Multi-byte UTF-8 units have the high bit set, so they are untouched: the folds are ASCII-only and UTF-8 safe (`@str.lower!` / `@str.upper!`). A case-insensitive comparison is a two-node recipe: `toLower` both sides, then `eq` on their hashes.
+
+`charset(s, mask)` returns true when every byte of `s` is a member of the 256-bit character class `mask` (bit `i` set means byte value `i` is allowed), the native single-call form of the `foldBytes(bitSet, All)` recipe. The empty string is vacuously in every set, and the check is byte-level, so multi-byte UTF-8 characters fail any ASCII-only class. EVMcrispr's `@str.charset!` builds the mask from a class spec (`a-z0-9-`) at composition time and compiles to this call; see the [fold recipes](/docs/operators/fold) for the general per-byte-predicate form.
 
 There is no join function: joining is pure composition over `concat`. EVMcrispr's `@str.join!` interleaves the delimiter between the parts at composition time and emits a single `concat` call (constant runs merge into one part).
 

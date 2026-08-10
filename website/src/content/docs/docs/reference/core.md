@@ -74,7 +74,7 @@ The primitives live on the core alongside the judge, because they hold operands 
 
 ## Operators (separate contract)
 
-These live at the Operators address (interim `0xaE0a2f9A3065CE8E1Dd6D1007c32D0bCF6e5D4b9`), not on the core, and take plain ABI types: live operands reach them through the core's `read` splicing. Functions marked "uint + int" are overloaded on `uint256` and `int256` (explicit selectors required in Solidity encoders). See [Operators](/docs/operators) for usage.
+These live at the Operators address (interim `0x8a9E5b20C8d2Eb57aA69bCF4C5E8eF5715a63876`), not on the core, and take plain ABI types: live operands reach them through the core's `read` splicing. Functions marked "uint + int" are overloaded on `uint256` and `int256` (explicit selectors required in Solidity encoders). See [Operators](/docs/operators) for usage.
 
 | Function | Description |
 |----------|-------------|

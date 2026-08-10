@@ -381,6 +381,160 @@ contract Operators {
         }
     }
 
+    /**
+     * @notice x raised to the n-th power in fixed point, where `base` is
+     *         one unit (1e27 for a ray, 1e18 for a wad) — the compounding
+     *         primitive, e.g. an APY from a per-second rate is
+     *         rpow(1e27 + ratePerSecond, 31536000, 1e27)
+     * @dev Binary exponentiation with the scale divided out after every
+     *      multiply, so the intermediate never leaves fixed point. This
+     *      cannot be composed from the rest of the vocabulary at any
+     *      practical cost: an expression is a tree with no way to name a
+     *      subterm, so squaring duplicates its operand's whole calldata
+     *      subtree and the composed form is 2^k copies (~33M for the
+     *      exponent above). Rounds down at each step; the error is bounded
+     *      by the number of multiplies, about 2*log2(n) units in the last
+     *      place. Reverts with Panic(0x11) if an intermediate overflows
+     */
+    function rpow(uint256 x, uint256 n, uint256 base) external pure returns (uint256) {
+        if (base == 0) revert();
+        // 0^0 is one unit, matching exp(0, 0) == 1 in the integer family.
+        if (x == 0) return n == 0 ? base : 0;
+        uint256 result = base;
+        while (n > 0) {
+            if (n & 1 == 1) {
+                result = _mulDiv(result, x, base);
+            }
+            n >>= 1;
+            if (n > 0) {
+                x = _mulDiv(x, x, base);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @notice e^x in wad fixed point (1e18), for continuous compounding
+     *         and the inverse of lnWad
+     * @dev Remco Bloemen's algorithm: range-reduce by ln(2), evaluate a
+     *      rational approximation, then scale by 2^k. Reverts above
+     *      135305999368893231589 (where the result leaves int256) and
+     *      returns 0 below -42139678854452767551 (where it underflows wad)
+     */
+    function expWad(int256 x) external pure returns (int256 r) {
+        unchecked {
+            if (x <= -42139678854452767551) return 0;
+            if (x >= 135305999368893231589) revert();
+
+            // Convert to a 2^96 base for the polynomial's precision.
+            x = (x << 78) / 5 ** 18;
+
+            // Reduce the range to [-ln2/2, ln2/2], remembering the power
+            // of two to reapply at the end.
+            int256 k = ((x << 96) / 54916777467707473351141471128 + 2 ** 95) >> 96;
+            x = x - k * 54916777467707473351141471128;
+
+            int256 y = x + 1346386616545796478920950773328;
+            y = ((y * x) >> 96) + 57155421227552351082224309758442;
+            int256 p = y + x - 94201549194550492254356042504812;
+            p = ((p * y) >> 96) + 28719021644029726153956944680412240;
+            p = p * x + (4385272521454847904659076985693276 << 96);
+
+            int256 q = x - 2855989394907223263936484059900;
+            q = ((q * x) >> 96) + 50020603652535783019961831881945;
+            q = ((q * x) >> 96) - 533845033583426703283633433725380;
+            q = ((q * x) >> 96) + 3604857256930695427073651918091429;
+            q = ((q * x) >> 96) - 14423608567350463180887372962807573;
+            q = ((q * x) >> 96) + 26449188498355588339934803723976023;
+
+            // q is never zero on this range, so plain division is safe.
+            r = p / q;
+
+            // Reapply the wad scale and the reduced power of two.
+            r = int256((uint256(r) * 3822833074963236453042738258902158003155416615667) >> uint256(195 - k));
+        }
+    }
+
+    /**
+     * @notice The natural log of x in wad fixed point (1e18) — the
+     *         inverse of expWad, and how a growth factor becomes a rate
+     * @dev Remco Bloemen's algorithm. Reverts for x <= 0, where the log
+     *      is undefined
+     */
+    function lnWad(int256 x) external pure returns (int256 r) {
+        unchecked {
+            if (x <= 0) revert();
+
+            // Normalize to [1, 2) in a 2^96 base, remembering the shift.
+            int256 k = int256(_log2(uint256(x))) - 96;
+            x <<= uint256(159 - k);
+            x = int256(uint256(x) >> 159);
+
+            int256 p = x + 3273285459638523848632254066296;
+            p = ((p * x) >> 96) + 24828157081833163892658089445524;
+            p = ((p * x) >> 96) + 43456485725739037958740375743393;
+            p = ((p * x) >> 96) - 11111509109440967052023855526967;
+            p = ((p * x) >> 96) - 45023709667254063763336534515857;
+            p = ((p * x) >> 96) - 14706773417378608786704636184526;
+            p = p * x - (795164235651350426258249787498 << 96);
+
+            int256 q = x + 5573035233440673466300451813936;
+            q = ((q * x) >> 96) + 71694874799317883764090561454958;
+            q = ((q * x) >> 96) + 283447036172924575727196451306956;
+            q = ((q * x) >> 96) + 401686690394027663651624208769553;
+            q = ((q * x) >> 96) + 204048457590392012362485061816622;
+            q = ((q * x) >> 96) + 31853899698501571402653359427138;
+            q = ((q * x) >> 96) + 909429971244387300277376558375;
+
+            r = p / q;
+            r *= 1677202110996718588342820967067443963516166;
+            r += 16597577552685614221487285958193947469193820559219878177908093499208371 * k;
+            r += 600920179829731861736702779321621459595472258049074101567377883020018308;
+            r >>= 174;
+        }
+    }
+
+    /**
+     * @notice floor(log2(x)) — the position of the highest set bit, and
+     *         so the bit length of x minus one. Reverts for x = 0, where
+     *         the logarithm is undefined
+     * @dev The bit scan lnWad normalizes by, exposed on its own: it is a
+     *      byte of dispatch on top of code already here, and the composed
+     *      form is eight nested conds that each duplicate their operand's
+     *      calldata subtree
+     */
+    function log2(uint256 x) external pure returns (uint256) {
+        if (x == 0) revert();
+        return _log2(x);
+    }
+
+    /** Floor of log2(x) via a bit scan — the exponent lnWad normalizes by. */
+    function _log2(uint256 x) private pure returns (uint256 r) {
+        unchecked {
+            r = x >= 1 << 128 ? 128 : 0;
+            x >>= r;
+            uint256 s = x >= 1 << 64 ? 64 : 0;
+            x >>= s;
+            r |= s;
+            s = x >= 1 << 32 ? 32 : 0;
+            x >>= s;
+            r |= s;
+            s = x >= 1 << 16 ? 16 : 0;
+            x >>= s;
+            r |= s;
+            s = x >= 1 << 8 ? 8 : 0;
+            x >>= s;
+            r |= s;
+            s = x >= 1 << 4 ? 4 : 0;
+            x >>= s;
+            r |= s;
+            s = x >= 1 << 2 ? 2 : 0;
+            x >>= s;
+            r |= s;
+            r |= x >= 1 << 1 ? 1 : 0;
+        }
+    }
+
     // ============ Comparisons ============
 
     /**

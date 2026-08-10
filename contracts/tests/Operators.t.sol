@@ -190,6 +190,99 @@ contract OperatorsTest is Test {
         assertEq(ops.sqrt(type(uint256).max), x);
     }
 
+    // ============ Fixed-point ============
+
+    uint256 constant RAY = 1e27;
+    uint256 constant WAD = 1e18;
+    /** Seconds per year — the exponent an APY compounds over. */
+    uint256 constant SPY = 31_536_000;
+
+    function test_rpow_identities() public view {
+        assertEq(ops.rpow(2 * RAY, 0, RAY), RAY, "x^0 is one");
+        assertEq(ops.rpow(2 * RAY, 1, RAY), 2 * RAY, "x^1 is x");
+        assertEq(ops.rpow(0, 0, RAY), RAY, "0^0 is one, as in exp");
+        assertEq(ops.rpow(0, 5, RAY), 0, "0^n is zero");
+        assertEq(ops.rpow(RAY, SPY, RAY), RAY, "one to any power is one");
+    }
+
+    function test_rpow_squaresAndCubes() public view {
+        // 1.5^2 = 2.25, exactly representable in both scales.
+        assertEq(ops.rpow(15e26, 2, RAY), 225e25);
+        assertEq(ops.rpow(15e17, 2, WAD), 225e16);
+        // 1.1^3 = 1.331
+        assertEq(ops.rpow(11e26, 3, RAY), 1331e24);
+    }
+
+    function test_rpow_compoundsAnApy() public view {
+        // A 5% APR compounded per second: (1 + 0.05/SPY)^SPY, the shape
+        // an Aave supply rate takes. Continuous compounding puts the true
+        // value at e^0.05 = 1.051271…, so check the band rather than a
+        // digit-exact constant.
+        uint256 ratePerSecond = (5e25) / SPY; // 0.05 ray / seconds
+        uint256 growth = ops.rpow(RAY + ratePerSecond, SPY, RAY);
+        assertGt(growth, 1051e24, "at least 5.1% growth");
+        assertLt(growth, 10513e23, "below 5.13% growth");
+    }
+
+    function test_rpow_overflowPanics() public {
+        vm.expectRevert(stdError.arithmeticError);
+        ops.rpow(type(uint256).max, 2, 1);
+    }
+
+    function test_expWad_knownPoints() public view {
+        assertEq(ops.expWad(0), int256(WAD), "e^0 is one");
+        // e^1 = 2.718281828459045235…, wad-truncated.
+        assertApproxEqAbs(ops.expWad(int256(WAD)), 2718281828459045235, 1);
+        // e^-1 = 0.367879441171442321…
+        assertApproxEqAbs(ops.expWad(-int256(WAD)), 367879441171442321, 1);
+    }
+
+    function test_expWad_saturatesAndReverts() public {
+        // Far enough negative that the wad result underflows to zero.
+        assertEq(ops.expWad(-42139678854452767552), 0);
+        // Past the point where the result leaves int256.
+        vm.expectRevert();
+        ops.expWad(135305999368893231589);
+    }
+
+    function test_lnWad_knownPoints() public view {
+        assertEq(ops.lnWad(int256(WAD)), 0, "ln(1) is zero");
+        assertApproxEqAbs(ops.lnWad(2718281828459045235), int256(WAD), 1e6);
+        // ln(2) = 0.693147180559945309…
+        assertApproxEqAbs(ops.lnWad(2 * int256(WAD)), 693147180559945309, 1e6);
+    }
+
+    function test_lnWad_rejectsNonPositive() public {
+        vm.expectRevert();
+        ops.lnWad(0);
+        vm.expectRevert();
+        ops.lnWad(-1);
+    }
+
+    function test_log2() public view {
+        assertEq(ops.log2(1), 0);
+        assertEq(ops.log2(2), 1);
+        assertEq(ops.log2(3), 1, "floors");
+        assertEq(ops.log2(255), 7);
+        assertEq(ops.log2(256), 8);
+        assertEq(ops.log2(1 << 128), 128);
+        assertEq(ops.log2(type(uint256).max), 255);
+    }
+
+    function test_log2_rejectsZero() public {
+        vm.expectRevert();
+        ops.log2(0);
+    }
+
+    function test_expWad_lnWad_roundTrip() public view {
+        // ln is exp's inverse: the round trip lands within a wad's
+        // rounding noise, not on the nose.
+        for (uint256 i = 1; i <= 5; i++) {
+            int256 x = int256(i * WAD);
+            assertApproxEqRel(ops.lnWad(ops.expWad(x)), x, 1e9);
+        }
+    }
+
     // ============ Comparisons ============
 
     function test_comparisons() public view {

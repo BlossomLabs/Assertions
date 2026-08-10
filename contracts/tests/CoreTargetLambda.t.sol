@@ -83,23 +83,42 @@ contract CoreTargetLambdaTest is Test {
      * @dev Find `word`'s byte offset in `data` by scanning — the way the
      *      SDK's extractor locates the marker, never by re-deriving the
      *      offset from the ABI layout — and zero the window in place.
+     *      Requires exactly one occurrence (N=1 callers).
      */
     function _window(bytes memory data, bytes32 word) internal pure returns (uint256 offset) {
-        bool found;
+        uint256[] memory offs = _windows(data, word);
+        require(offs.length == 1, "window word must appear exactly once");
+        return offs[0];
+    }
+
+    /**
+     * @dev Find EVERY occurrence of `word` in `data` by scanning, zero
+     *      each window in place, and return the ascending byte offsets —
+     *      the multi-marker shape an element placeholder + prepend produces.
+     */
+    function _windows(bytes memory data, bytes32 word) internal pure returns (uint256[] memory offsets) {
+        uint256 n;
+        for (uint256 i = 0; i + 32 <= data.length; i++) {
+            bytes32 w;
+            assembly {
+                w := mload(add(add(data, 32), i))
+            }
+            if (w == word) n++;
+        }
+        require(n > 0, "window word not found");
+        offsets = new uint256[](n);
+        uint256 k;
         for (uint256 i = 0; i + 32 <= data.length; i++) {
             bytes32 w;
             assembly {
                 w := mload(add(add(data, 32), i))
             }
             if (w == word) {
-                require(!found, "window word must appear exactly once");
-                found = true;
-                offset = i;
+                offsets[k++] = i;
+                assembly {
+                    mstore(add(add(data, 32), i), 0)
+                }
             }
-        }
-        require(found, "window word not found");
-        assembly {
-            mstore(add(add(data, 32), offset), 0)
         }
     }
 
@@ -175,6 +194,27 @@ contract CoreTargetLambdaTest is Test {
             ops.mapWords(payload, address(assertions), template, _offs(elemOffset)),
             abi.encodePacked(uint256(3), uint256(5), uint256(7)),
             "add(mul(elem, 2), 1) mapped through nested core reads"
+        );
+    }
+
+    function test_mapWords_coreTargetTemplate_multiWindowSquare() public view {
+        // mul(<element>, <element>) — the element-placeholder + prepend
+        // shape: two identical markers in one core-target read, both
+        // windows found by scanning (never recomputed), both stamped
+        // per element.
+        InputParam[] memory args = new InputParam[](2);
+        args[0] = _litB32(MARKER);
+        args[1] = _litB32(MARKER);
+        bytes memory template = _readTemplate(MUL_U, args);
+        uint256[] memory offs = _windows(template, MARKER);
+        assertEq(offs.length, 2, "prepend + @it! yields two windows");
+        assertTrue(offs[0] < offs[1], "offsets ascend");
+
+        bytes memory payload = abi.encodePacked(uint256(1), uint256(2), uint256(3));
+        assertEq(
+            ops.mapWords(payload, address(assertions), template, offs),
+            abi.encodePacked(uint256(1), uint256(4), uint256(9)),
+            "mul(elem, elem) squares through a core-target multi-window template"
         );
     }
 

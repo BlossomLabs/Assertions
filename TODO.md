@@ -80,7 +80,7 @@ matches what that runner executes.
 
 ## Remaining
 
-### C leftovers (vanity + doctrine — not B2)
+### C leftovers (vanity re-mine)
 
 **Vanity re-mine: still deferred.** Both contracts remain on the interim zero salt in
 `hardhat.config.ts`. `website/scripts/mine-salt.mjs` is ready (compile, then
@@ -91,13 +91,15 @@ when bytecode is frozen for publish, then update the salts and
 **7,534** headroom after C; B2 is SDK-only so bytecode unchanged.
 
 **Still owed to the other session (docs, MAIN repo):**
-`website/src/content/docs/docs/operators/index.md:54` still claims a fold lambda "has a
-single accumulator window and so cannot square". The first half is still true — the
-engine takes one `accOffset` — but "cannot square" is now FALSE: a def naming its
-parameter twice squares in one call through two ELEMENT windows. The sentence is load
-bearing where it sits, since it is half the admission argument for `rpow`, so it needs
-rewriting rather than deleting: `rpow` still earns its slot, on ONE call total against
-one per element, which is the third test rather than the first.
+**Done** (`operators/index.md:54`), and my earlier note here was wrong, so the
+correction is worth keeping. I had recorded the sentence "a lambda template has a
+single accumulator window and so cannot square" as now FALSE. It is not. A def naming
+its parameter twice squares the ELEMENT, but binary exponentiation squares the
+ACCUMULATOR, and that still gets exactly one window — `mul(acc, acc)` is refused by
+`findAllWindows`, with a test pinning it. So `rpow` keeps its slot on the FIRST test,
+unchanged. What the sentence needed was precision, not reversal: it now separates the
+element (nameable as often as you like) from the accumulator (one window), and notes
+that the linear form `acc = acc * x` IS foldable, at one external call per iteration.
 
 **Non-goal, unchanged:** `elemOffsets` does NOT unlock `@merkle.root`. Array
 halving / one-to-one `mapWords` still binds.

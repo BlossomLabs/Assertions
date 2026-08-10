@@ -28,6 +28,7 @@ side of the same branch. Their commits are noted where they matter.
 | D2 | DEF resolution + AST substitution on the compile path | done |
 | D3 | array faces apply a definition by name; `@it!` retired | done |
 | D4 | `@reduce!` folds with a named definition | done |
+| D5 | `@sort!` direction + signed elements; docs audit | done |
 
 Every commit on `operators-1.0` desyncs the pin in `website/package.json` and must be
 followed by a bump. See Hazards.
@@ -57,10 +58,12 @@ followed by a bump. See Hazards.
 | `7c2f026` | `c3dd462` | D2: a `def @name!` is inlined where it is used |
 | `f8114cc` | `3f97df0` | D3: array faces apply a definition by name; `@it!` surface retired |
 | `518e2e3` | `e82c07f` | D4: `@reduce!` takes a two-parameter definition |
+| `8c0ccda` | `b11c59f` | D5: `@sort!(call asc\|desc)`, signed elements, and the docs audit |
+| — | `79eb1f1` | D5: builder prompt + CoreTargetLambda comments (main repo only) |
 
-Current gates (re-measured after D4): type-check 99/99, lang 318, assertions 152,
+Current gates (re-measured after D5): type-check 99/99, lang 321, assertions 152,
 std 510, ens 127, contracts 126, token 62, crypto 34, SDK unit 179, validate-docs
-556 blocks / 1061 links / 1386 descriptions, all zero. Main-repo Solidity 261
+558 blocks / 1061 links / 1386 descriptions, all zero. Main-repo Solidity 261. Main-repo Solidity 261
 passing (260 before B2's multi-window core-target square test).
 
 **Counting basis, so the numbers reproduce:** lang and assertions are
@@ -88,22 +91,34 @@ when bytecode is frozen for publish, then update the salts and
 **7,534** headroom after C; B2 is SDK-only so bytecode unchanged.
 
 **Still owed to the other session (docs, MAIN repo):**
-`website/src/content/docs/docs/operators/index.md` still claims a fold lambda "has a
-single accumulator window and so cannot square". That claim is about the
-*accumulator* window count (still one `accOffset`), not `elemOffsets` — but the
-sentence will mislead now that multi-window element substitution is live via `@it!`.
-Correct it when touching doctrine; B2 did not edit that file.
+`website/src/content/docs/docs/operators/index.md:54` still claims a fold lambda "has a
+single accumulator window and so cannot square". The first half is still true — the
+engine takes one `accOffset` — but "cannot square" is now FALSE: a def naming its
+parameter twice squares in one call through two ELEMENT windows. The sentence is load
+bearing where it sits, since it is half the admission argument for `rpow`, so it needs
+rewriting rather than deleting: `rpow` still earns its slot, on ONE call total against
+one per element, which is the third test rather than the first.
 
 **Non-goal, unchanged:** `elemOffsets` does NOT unlock `@merkle.root`. Array
 halving / one-to-one `mapWords` still binds.
 
-### Option recorded, not scheduled
+### Superseded: the accumulator marker (was "recorded, not scheduled")
 
-A second, distinct ACCUMULATOR marker (same technique as the element marker) would let
-`@reduce!` accept arbitrary Operators-backed binary lambdas — `foldParam` already takes
-`accOffset` independently. Not taken: `reduce.ts` excludes non-commutative reducers
-DELIBERATELY, for readability of the source form. Record so the idea is weighed against
-that choice rather than rediscovered as an oversight.
+This section used to record a second ACCUMULATOR marker as DECLINED, on the grounds
+that `reduce.ts` excludes non-commutative reducers deliberately, for readability.
+
+D4 shipped it, and the earlier reasoning was not wrong — it was about a different
+shape. The objection is that a BARE `sub` cannot say which side the accumulator is on,
+so `@reduce!(caps sub 1000)` computes `((1000 - c0) - c1) …` while half of readers
+picture `c - acc`. That is an argument about the SPELLING. A named definition writes
+the order down, so it does not reach:
+
+```evml
+def @subFrom! "$acc: number $e: number -> number" @num!($acc - $e)
+```
+
+So both halves stand: any two-parameter def is accepted with no gate, and the bare
+names keep theirs.
 
 ---
 
@@ -152,6 +167,13 @@ named at most once (the engine carries one `accOffset` against an array of eleme
 offsets); a body that never names it parks on the first element window, the trick
 `@all!`/`@any!` already use.
 
+**D5 in one line:** `@sort!` gained a direction and signed support, and both COMPOSE:
+`desc` is sort-then-reverse, and signed elements flip the sign bit in and back out.
+That was already the documented recipe, written by hand in sort.md; the compiler does
+it now, only when the elements are signed, because it costs two extra passes of one
+call per element. A comparator stays refused — sorting is not a reduction over
+elements, so a fold lambda cannot express one either.
+
 **A gate that cannot see this class of change:** `validate-docs` parses and
 statically analyses but does not COMPILE, so every now-invalid lambda example in the
 helper docs passed it silently. They were migrated by hand. Worth remembering before
@@ -185,12 +207,15 @@ trusting it on any future compile-face change.
 
 ### Things that turned out not to be true
 
-- **`@bool!(> 0 and < 100)` does not work, and multi-window will not fix it.** The
-  element is prepended once, so `evaluateTokens` throws `Missing operand for 'and'`;
-  and even parsed it is `bitAnd(gt(e,0), lt(e,100))`, three Operators calls where a
-  template hosts one. It needs B1 + B2 + C together, and even then costs ~4 staticcalls
-  per element against 2 for `@all!(a @bool!(> 0)) and @all!(a @bool!(< 100))`. The
-  decomposed form should stay the documented default.
+- **A compound predicate was impossible, then merely expensive.** It used to fail
+  because the element was PREPENDED once, so `@bool!(> 0 and < 100)` threw
+  `Missing operand for 'and'` in `evaluateTokens` before anything else could go wrong.
+  The def series removed that reason entirely — a body names its parameter, so
+  `def @band! "$x: number -> bool" @bool!($x > 0 and $x < 100)` parses and compiles
+  through B1's core-target path. The CONCLUSION survives on cost alone: it is still
+  ~4 staticcalls per element against 2 for two separate folds, so the decomposed form
+  stays the documented default. Worth keeping because the original entry gave the
+  right advice for a reason that no longer exists.
 - **Signed sorting is already expressible**, at three nodes: `@map!` xor the sign bit,
   `@sort!`, `@map!` back. Flipping the top bit maps signed order onto unsigned order
   exactly and, unlike adding 2^255, cannot overflow a checked add. So Operators should
@@ -239,29 +264,26 @@ The other session has queued the doctrine edit that states this generally.
 - Realistic-B1 composed fold measured (20,914 gas / 3 elems on the 964-byte fixture).
 - Doctrine doc sentence about "single accumulator window" left for the other session.
 
-### B2, as landed (`2445ed9` / `dd80f75` + `fe250e1`)
+### B2, as landed — and superseded by D3
 
-- **`@it!`** is an on-chain-only lang helper compiling to
-  `elementOperand(ctx.lambdaElemCat)`. `CompileCtx` now carries optional
-  `lambdaElemCat`, set/restored by `compileLambdaTemplate`. Outside a lambda it
-  errors.
-- **Multi-marker extraction is live.** `extractLambdaTemplate` collects every
-  aligned marker into ascending `elemOffsets` and zeros them all.
-  `LambdaTemplate.elemOffset` is gone; callers pass `tpl.elemOffsets` (folds park
-  `accOffset` on `elemOffsets[0]`).
-- **Prepend kept, not suppressed.** `@num!(* @it!)` is `mul(elem, elem)` — naming
-  the element twice in source is the point of `@it!`. Suppressing the prepend when
-  the body mentions `@it!` would force the uglier `@num!(@it! * @it!)` for the same
-  shape and break the partial-application convention. With multi-window extraction
-  both windows are valid.
-- **Nested outer-capture stays a safe rejection.** A precompiled outer-element
-  marker smuggled into an inner lambda's AST is rejected before compile (same global
-  marker would stamp the wrong binder). No per-binder markers. Ordinary `@it!` inside
-  an inner lambda binds to the inner element via scoped `lambdaElemCat`.
-- Decoder-level unit tests stamp a sentinel at every offset; lang wave-5 covers
-  `@map!(… @num!(* @it!))` → `[4n, 36n]`; Solidity
-  `test_mapWords_coreTargetTemplate_multiWindowSquare` executes the square through
-  the core with offsets found by scanning.
+`2445ed9` added `@it!` plus multi-marker extraction. D3 retired the helper one commit
+later, which reads like churn and is worth being precise about: the SURFACE was
+subsumed, the machinery was not.
+
+- **Gone:** `@it!` itself, and `CompileCtx.lambdaElemCat`, which only `@it!` read. A
+  def names its parameter, so naming the element twice is writing `$x` twice.
+- **Kept, and load-bearing for D3:** multi-marker extraction. `findWindows` collects
+  every aligned marker into ascending `elemOffsets` and zeros them all; folds park
+  `accOffset` on `elemOffsets[0]` when the body never names the accumulator. That is
+  exactly what makes `def @sq! "$x: number -> number" @num!($x * $x)` compile to two
+  windows and ONE call, so C's `uint256[]` Operators signature — which cost an address
+  roll — is spent, not stranded.
+- **Kept:** the nested outer-capture rejection. A precompiled outer-element marker
+  smuggled into an inner lambda's AST is still refused before compile, because the
+  marker is global and would stamp the wrong binder.
+- Coverage moved with the surface: the lang case is now `def @sq!`, and Solidity
+  `test_mapWords_coreTargetTemplate_multiWindowSquare` still executes the square
+  through the core with offsets found by scanning.
 
 ### B1 review, as landed (`6bfbd56` / `167dd90` + `2c7a87a`)
 

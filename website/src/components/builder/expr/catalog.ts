@@ -316,7 +316,7 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     ],
   },
   // The core's read primitive has no registry helper anymore: `@read!` was
-  // replaced by the `!::{sig(argTypes)(retTypes) args}` chain operator,
+  // replaced by the `::!{sig(argTypes)(retTypes) args}` chain operator,
   // which compiles to the same read. It has no builder node of its own
   // either (CallArg models the nesting directly).
 };

@@ -70,7 +70,7 @@ abi.encodeCall(Assertions.read, (
 ));
 ```
 
-The encoder owns the calldata layout: a segment resolving to anything other than its expected length shifts everything after it, so live word segments must fill single-word parameters and runtime-sized envelopes need their head offsets accounted for (see [the bytes page](/docs/operators/data) for the layout technique). Because any deployed view or pure contract is reachable this way with fully composable operands, `read` is how the frozen core stays extensible: [Operators](/docs/operators) is the canonical first extension, and deploying a custom pure function once makes it callable from every assertion with computed arguments. In [EVMcrispr](/docs/evml) nested live call arguments compile to `read` automatically, and the `<head>!::{sig(argTypes)(retTypes) args}` chain operator exposes it directly (any expression head, inline ABI mandatory).
+The encoder owns the calldata layout: a segment resolving to anything other than its expected length shifts everything after it, so live word segments must fill single-word parameters and runtime-sized envelopes need their head offsets accounted for (see [the bytes page](/docs/operators/data) for the layout technique). Because any deployed view or pure contract is reachable this way with fully composable operands, `read` is how the frozen core stays extensible: [Operators](/docs/operators) is the canonical first extension, and deploying a custom pure function once makes it callable from every assertion with computed arguments. In [EVMcrispr](/docs/evml) nested live call arguments compile to `read` automatically, and the `<head>::!{sig(argTypes)(retTypes) args}` chain operator exposes it directly (any expression head, inline ABI mandatory).
 
 ## Nested lengths
 

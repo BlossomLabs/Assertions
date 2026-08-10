@@ -146,12 +146,14 @@ assertions:assert @len!($registry::{holders()(address[])}) >= 3
 assertions:assert @codehash!($proxy::{implementation()(address)}) == 0x1234...cdef
 ```
 
-## Constructed calls: the `!::` operator
+## Constructed calls: the `::!` operator
 
-`<head>!::{sig(argTypes)(retTypes) args}` constructs a whole call **at assertion time** through the core's [`read`](/docs/core/reads), replacing the old `@read!` helper. The head may be any expression: a `::` chain, an on-chain helper, or a computed word, as long as it resolves to a clean address word on-chain. The arguments splice like nested live calls, and the inline ABI form is mandatory (a `!::` hop has no composition-time address to fetch an ABI from).
+`<head>::!{sig(argTypes)(retTypes) args}` constructs a whole call **at assertion time** through the core's [`read`](/docs/core/reads), replacing the old `@read!` helper. The head may be any expression: a `::` chain, an on-chain helper, or a computed word, as long as it resolves to a clean address word on-chain. The arguments splice like nested live calls, and the inline ABI form is mandatory (a `::!` hop has no composition-time address to fetch an ABI from).
+
+The `!` trails the `::` rather than leading it, so it never sits against the head. Leading, it would be indistinguishable from the trailing `!` of an on-chain helper face: `@name!::{…}` splits as `@name!` before a plain hop or as `@name` before a read hop, and the text does not say which. After the operator there is nothing to collide with, so `@me::!{…}` and `@name!::!{…}` each read one way only.
 
 ```evml
-assertions:assert @bytes!($reg::packedPool() ">>" 96)!::{fee()(uint24)} <= 3000
+assertions:assert @bytes!($reg::packedPool() ">>" 96)::!{fee()(uint24)} <= 3000
 ```
 
 ## Composition-time captures

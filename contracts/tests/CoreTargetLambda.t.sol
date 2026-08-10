@@ -42,6 +42,13 @@ contract CoreTargetLambdaTest is Test {
 
     // ============ Test Helpers ============
 
+    /** One-element elemOffsets array — the N=1 shape every pre-C caller uses. */
+    function _offs(uint256 o) internal pure returns (uint256[] memory a) {
+        a = new uint256[](1);
+        a[0] = o;
+    }
+
+
     function _none() internal pure returns (Constraint[] memory cs) {
         cs = new Constraint[](0);
     }
@@ -112,18 +119,14 @@ contract CoreTargetLambdaTest is Test {
         // element offset — the convention the SDK's foldParam uses.
         assertEq(
             uint256(
-                ops.foldWords(
-                    payload, address(assertions), template, elemOffset, elemOffset, bytes32(0), Operators.FoldExit.Any
-                )
+                ops.foldWords(payload, address(assertions), template, elemOffset, _offs(elemOffset), bytes32(0), Operators.FoldExit.Any)
             ),
             1,
             "one element beats the live floor"
         );
         assertEq(
             uint256(
-                ops.foldWords(
-                    payload, address(assertions), template, elemOffset, elemOffset, bytes32(0), Operators.FoldExit.All
-                )
+                ops.foldWords(payload, address(assertions), template, elemOffset, _offs(elemOffset), bytes32(0), Operators.FoldExit.All)
             ),
             0,
             "not every element beats the live floor"
@@ -145,15 +148,7 @@ contract CoreTargetLambdaTest is Test {
         bytes memory payload = abi.encodePacked(uint256(10), uint256(20), uint256(30));
         assertEq(
             uint256(
-                ops.foldWords(
-                    payload,
-                    address(assertions),
-                    template,
-                    accOffset,
-                    elemOffset,
-                    bytes32(uint256(5)),
-                    Operators.FoldExit.Full
-                )
+                ops.foldWords(payload, address(assertions), template, accOffset, _offs(elemOffset), bytes32(uint256(5)), Operators.FoldExit.Full)
             ),
             65,
             "5 + 10 + 20 + 30 through the core"
@@ -177,7 +172,7 @@ contract CoreTargetLambdaTest is Test {
 
         bytes memory payload = abi.encodePacked(uint256(1), uint256(2), uint256(3));
         assertEq(
-            ops.mapWords(payload, address(assertions), template, elemOffset),
+            ops.mapWords(payload, address(assertions), template, _offs(elemOffset)),
             abi.encodePacked(uint256(3), uint256(5), uint256(7)),
             "add(mul(elem, 2), 1) mapped through nested core reads"
         );
@@ -194,7 +189,7 @@ contract CoreTargetLambdaTest is Test {
 
         bytes memory payload = abi.encodePacked(uint256(10), uint256(200), uint256(30), uint256(400));
         assertEq(
-            ops.filterWords(payload, address(assertions), template, elemOffset),
+            ops.filterWords(payload, address(assertions), template, _offs(elemOffset)),
             abi.encodePacked(uint256(200), uint256(400)),
             "elements above the live floor survive"
         );
@@ -212,7 +207,7 @@ contract CoreTargetLambdaTest is Test {
 
         bytes memory payload = abi.encodePacked(uint256(1), uint256(3), uint256(5));
         assertEq(
-            ops.mapWords(payload, address(assertions), template, elemOffset),
+            ops.mapWords(payload, address(assertions), template, _offs(elemOffset)),
             abi.encodePacked(uint256(3), uint256(9), uint256(15)),
             "mul(elem, 3) through the core's pick"
         );
@@ -255,18 +250,14 @@ contract CoreTargetLambdaTest is Test {
         bytes memory payload = abi.encodePacked(uint256(10), uint256(200), uint256(30));
         assertEq(
             uint256(
-                Operators(ops_).foldWords(
-                    payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, SDK_ELEM_OFFSET, bytes32(0), Operators.FoldExit.Any
-                )
+                Operators(ops_).foldWords(payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, _offs(SDK_ELEM_OFFSET), bytes32(0), Operators.FoldExit.Any)
             ),
             1,
             "the SDK-compiled predicate finds 200 > 100"
         );
         assertEq(
             uint256(
-                Operators(ops_).foldWords(
-                    payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, SDK_ELEM_OFFSET, bytes32(0), Operators.FoldExit.All
-                )
+                Operators(ops_).foldWords(payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, _offs(SDK_ELEM_OFFSET), bytes32(0), Operators.FoldExit.All)
             ),
             0,
             "10 and 30 do not beat the floor"

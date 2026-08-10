@@ -40,6 +40,14 @@ contract OperatorsGasTest is Test {
         ops = new Operators();
     }
 
+
+    /** One-element elemOffsets array — the N=1 shape every pre-C caller uses. */
+    function _offs(uint256 o) internal pure returns (uint256[] memory a) {
+        a = new uint256[](1);
+        a[0] = o;
+    }
+
+
     /** Gas consumed by one staticcall, the unit both shapes are billed in. */
     function _cost(address target, bytes memory data) internal view returns (uint256) {
         uint256 before = gasleft();
@@ -82,7 +90,7 @@ contract OperatorsGasTest is Test {
             address(ops),
             abi.encodeCall(
                 Operators.foldBytes,
-                (s, address(ops), template, 36, 36, bytes32(uint256(1)), Operators.FoldExit.All)
+                (s, address(ops), template, 36, _offs(36), bytes32(uint256(1)), Operators.FoldExit.All)
             )
         );
 
@@ -120,7 +128,7 @@ contract OperatorsGasTest is Test {
             address(ops),
             abi.encodeCall(
                 Operators.foldWords,
-                (payload, address(ops), template, 4, 36, bytes32(0), Operators.FoldExit.Full)
+                (payload, address(ops), template, 4, _offs(36), bytes32(0), Operators.FoldExit.Full)
             )
         );
 
@@ -213,6 +221,53 @@ contract OperatorsGasTest is Test {
         // that stays well inside a block's budget replaces something that
         // cannot be encoded at all.
         assertLt(rpowApy, 100_000, "the whole compounding must stay cheap enough to sit inside an assertion");
+    }
+
+    // ============ Composed fold with a realistic B1 template ============
+
+    // The SDK fixture from CoreTargetLambda.t.sol (~964 bytes): a core-target
+    // `gt(<element>, tgt.getValue())` read. Measured here so the doctrine
+    // cap quotes a real composed-lambda cost at B1 template size, not the
+    // harness's minimal Operators templates.
+    bytes constant SDK_TEMPLATE =
+        hex"3efa16b7000000000000000000000000000000000000000000000000000000000000006021e5749b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000097e7a7000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000012000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000007a49e70000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000420965255000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+    uint256 constant SDK_ELEM_OFFSET = 580;
+
+    function test_gas_composedFold_realisticB1Template() public {
+        address core_ = address(uint160(0xA55E7));
+        address ops_ = address(uint160(0x97E7A7));
+        address tgt_ = address(uint160(0x7A49E7));
+        vm.etch(core_, address(assertions).code);
+        vm.etch(ops_, address(ops).code);
+        // Minimal getValue() stand-in: ignore calldata, return word 100.
+        vm.etch(tgt_, hex"606460005260206000f3");
+
+        bytes memory payload = abi.encodePacked(uint256(10), uint256(200), uint256(30));
+        uint256 composed = _cost(
+            ops_,
+            abi.encodeCall(
+                Operators.foldWords,
+                (payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, _offs(SDK_ELEM_OFFSET), bytes32(0), Operators.FoldExit.Any)
+            )
+        );
+
+        // Same domain, tiny Operators lambda (gt(elem, 100)) for the ratio.
+        bytes4 GT_U = bytes4(keccak256("gt(uint256,uint256)"));
+        bytes memory tiny = abi.encodeWithSelector(GT_U, uint256(0), uint256(100));
+        uint256 direct = _cost(
+            address(ops),
+            abi.encodeCall(
+                Operators.foldWords,
+                (payload, address(ops), tiny, 4, _offs(4), bytes32(0), Operators.FoldExit.Any)
+            )
+        );
+
+        emit log_named_uint("composed B1 fold (~964B tpl, 3 elems)", composed);
+        emit log_named_uint("direct Operators fold (tiny tpl, 3 elems)", direct);
+        emit log_named_uint("composed/direct ratio x100", (composed * 100) / direct);
+        // Calldata copying + core decode scale with template size; the
+        // composed form must stay a clear multiple of the tiny fold.
+        assertGt(composed, direct, "a ~1KB core-target fold must cost more than a tiny Operators fold");
     }
 
     // ============ Size ============

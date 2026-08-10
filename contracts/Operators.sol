@@ -1162,27 +1162,30 @@ contract Operators {
      *         substituted into the template is the index itself)
      * @dev The one loop primitive; foldBytes and foldWords share its
      *      engine and rules. The lambda is a single staticcall: `template`
-     *      is complete calldata for `target` in which two 32-byte windows
-     *      are rewritten per element — the accumulator at `accOffset`,
-     *      then the element at `elemOffset` (the element wins on overlap;
-     *      every byte outside the windows stays pristine template). The
-     *      first return word becomes the new accumulator; `Any` stops at
-     *      the first nonzero accumulator, `All` at the first zero, `Full`
-     *      scans everything; the final accumulator is returned either
-     *      way. An empty domain returns `init` without touching the
-     *      lambda. A lambda revert is an assertion failure: it reverts
-     *      the fold with LambdaCallFailed naming the element. Offsets
-     *      must leave room for a word inside the template
-     *      (LambdaOffsetOutOfBounds), a code-less target reverts with
-     *      LambdaCallFailed(0, target, ""), and a lambda returning fewer
-     *      than 32 bytes with LambdaReturnTooShort. Gas is the loop
-     *      bound: every application pays real call overhead, so domain
-     *      sizes are naturally limited by the block gas limit.
+     *      is complete calldata for `target` in which 32-byte windows are
+     *      rewritten per element — the accumulator at `accOffset` first,
+     *      then the element at each offset in `elemOffsets` in ascending
+     *      order (the element wins on overlap with the accumulator, and
+     *      later element windows win on mutual overlap; every byte
+     *      outside the windows stays pristine template). The first return
+     *      word becomes the new accumulator; `Any` stops at the first
+     *      nonzero accumulator, `All` at the first zero, `Full` scans
+     *      everything; the final accumulator is returned either way. An
+     *      empty domain returns `init` without touching the lambda. A
+     *      lambda revert is an assertion failure: it reverts the fold with
+     *      LambdaCallFailed naming the element. Offsets must leave room
+     *      for a word inside the template (LambdaOffsetOutOfBounds), a
+     *      code-less target reverts with LambdaCallFailed(0, target, ""),
+     *      and a lambda returning fewer than 32 bytes with
+     *      LambdaReturnTooShort. Gas is the loop bound: every application
+     *      pays real call overhead, so domain sizes are naturally limited
+     *      by the block gas limit.
      * @param n The number of iterations
      * @param target The lambda contract
-     * @param template Complete calldata for `target`, with the two windows
+     * @param template Complete calldata for `target`, with the windows
      * @param accOffset Byte offset of the accumulator window
-     * @param elemOffset Byte offset of the element window
+     * @param elemOffsets Byte offsets of the element windows (N=1 is the
+     *        common case; an empty array writes only the accumulator)
      * @param init The initial accumulator
      * @param exit The early-exit mode (see FoldExit)
      * @return The final accumulator
@@ -1192,11 +1195,11 @@ contract Operators {
         address target,
         bytes calldata template,
         uint256 accOffset,
-        uint256 elemOffset,
+        uint256[] calldata elemOffsets,
         bytes32 init,
         FoldExit exit
     ) external view returns (bytes32) {
-        return _fold(FoldDomain.Range, n, msg.data[0:0], target, template, accOffset, elemOffset, init, exit);
+        return _fold(FoldDomain.Range, n, msg.data[0:0], target, template, accOffset, elemOffsets, init, exit);
     }
 
     /**
@@ -1210,11 +1213,11 @@ contract Operators {
         address target,
         bytes calldata template,
         uint256 accOffset,
-        uint256 elemOffset,
+        uint256[] calldata elemOffsets,
         bytes32 init,
         FoldExit exit
     ) external view returns (bytes32) {
-        return _fold(FoldDomain.Bytes, s.length, s, target, template, accOffset, elemOffset, init, exit);
+        return _fold(FoldDomain.Bytes, s.length, s, target, template, accOffset, elemOffsets, init, exit);
     }
 
     /**
@@ -1229,12 +1232,12 @@ contract Operators {
         address target,
         bytes calldata template,
         uint256 accOffset,
-        uint256 elemOffset,
+        uint256[] calldata elemOffsets,
         bytes32 init,
         FoldExit exit
     ) external view returns (bytes32) {
         if (s.length % 32 != 0) revert UnalignedWords(s.length);
-        return _fold(FoldDomain.Words, s.length / 32, s, target, template, accOffset, elemOffset, init, exit);
+        return _fold(FoldDomain.Words, s.length / 32, s, target, template, accOffset, elemOffsets, init, exit);
     }
 
     // ============ Word Arrays ============
@@ -1251,8 +1254,9 @@ contract Operators {
      *         returns the transformed payload — the bytes-producing map
      *         the scalar folds cannot express
      * @dev Lambda conventions match the folds: `template` is complete
-     *      calldata for `target` whose 32-byte window at `elemOffset` is
-     *      rewritten per element; the lambda's FIRST return word is the
+     *      calldata for `target` whose 32-byte windows at `elemOffsets`
+     *      are rewritten per element (ascending order; later windows win
+     *      on mutual overlap); the lambda's FIRST return word is the
      *      mapped element. An empty payload returns empty without
      *      inspecting the lambda; a code-less target reverts with
      *      LambdaCallFailed(0, target, ""), a reverting application with
@@ -1260,16 +1264,16 @@ contract Operators {
      *      LambdaReturnTooShort. Gas is the loop bound, one call per word.
      * @param s The word payload to map
      * @param target The lambda contract
-     * @param template Complete calldata for `target` with the element window
-     * @param elemOffset Byte offset of the element window
+     * @param template Complete calldata for `target` with the element windows
+     * @param elemOffsets Byte offsets of the element windows
      * @return The mapped payload, same word count as `s`
      */
-    function mapWords(bytes calldata s, address target, bytes calldata template, uint256 elemOffset)
+    function mapWords(bytes calldata s, address target, bytes calldata template, uint256[] calldata elemOffsets)
         external
         view
         returns (bytes memory)
     {
-        return _applyWords(s, target, template, elemOffset, false);
+        return _applyWords(s, target, template, elemOffsets, false);
     }
 
     /**
@@ -1279,29 +1283,34 @@ contract Operators {
      *      output length is the kept count, so filters nest into len, at,
      *      folds and further word ops
      */
-    function filterWords(bytes calldata s, address target, bytes calldata template, uint256 elemOffset)
+    function filterWords(bytes calldata s, address target, bytes calldata template, uint256[] calldata elemOffsets)
         external
         view
         returns (bytes memory)
     {
-        return _applyWords(s, target, template, elemOffset, true);
+        return _applyWords(s, target, template, elemOffsets, true);
     }
 
     /**
      * @dev The shared map/filter engine: one staticcall per word with the
-     *      element window rewritten; filtering keeps the ELEMENT when the
+     *      element windows rewritten; filtering keeps the ELEMENT when the
      *      lambda word is nonzero, mapping stores the lambda word itself
      */
     function _applyWords(
         bytes calldata s,
         address target,
         bytes calldata template,
-        uint256 elemOffset,
+        uint256[] calldata elemOffsets,
         bool filterMode
     ) private view returns (bytes memory out) {
         if (s.length % 32 != 0) revert UnalignedWords(s.length);
-        if (template.length < 32 || elemOffset > template.length - 32) {
-            revert LambdaOffsetOutOfBounds(elemOffset, template.length);
+        if (template.length < 32) {
+            revert LambdaOffsetOutOfBounds(0, template.length);
+        }
+        for (uint256 j = 0; j < elemOffsets.length; j++) {
+            if (elemOffsets[j] > template.length - 32) {
+                revert LambdaOffsetOutOfBounds(elemOffsets[j], template.length);
+            }
         }
         uint256 count = s.length / 32;
         out = new bytes(s.length);
@@ -1311,8 +1320,11 @@ contract Operators {
             bytes memory callData = template;
             for (uint256 i = 0; i < count; i++) {
                 bytes32 elem = bytes32(s[i * 32:i * 32 + 32]);
-                assembly {
-                    mstore(add(add(callData, 32), elemOffset), elem)
+                for (uint256 j = 0; j < elemOffsets.length; j++) {
+                    uint256 elemOffset = elemOffsets[j];
+                    assembly {
+                        mstore(add(add(callData, 32), elemOffset), elem)
+                    }
                 }
                 (bool success, bytes memory ret) = target.staticcall(callData);
                 if (!success) revert LambdaCallFailed(i, target, callData);
@@ -1509,6 +1521,68 @@ contract Operators {
     }
 
     /**
+     * @dev Bounds-check the accumulator and every element window. Hoisted
+     *      out of the element loop so a bad offset fails before any call.
+     */
+    function _checkWindows(bytes calldata template, uint256 accOffset, uint256[] calldata elemOffsets) private pure {
+        if (template.length < 32 || accOffset > template.length - 32) {
+            revert LambdaOffsetOutOfBounds(accOffset, template.length);
+        }
+        for (uint256 j = 0; j < elemOffsets.length; j++) {
+            if (elemOffsets[j] > template.length - 32) {
+                revert LambdaOffsetOutOfBounds(elemOffsets[j], template.length);
+            }
+        }
+    }
+
+    /**
+     * @dev The i-th domain element: the index itself (Range), the byte
+     *      value (Bytes), or the 32-byte word (Words).
+     */
+    function _domainElem(FoldDomain domain, uint256 i, bytes calldata s) private pure returns (bytes32) {
+        if (domain == FoldDomain.Range) return bytes32(i);
+        if (domain == FoldDomain.Bytes) return bytes32(uint256(uint8(s[i])));
+        return bytes32(s[i * 32:i * 32 + 32]);
+    }
+
+    /**
+     * @dev Write the accumulator first, then every element window in the
+     *      order of `elemOffsets` (element wins on overlap with acc; later
+     *      element windows win on mutual overlap).
+     */
+    function _stampWindows(
+        bytes memory callData,
+        uint256 accOffset,
+        bytes32 acc,
+        uint256[] calldata elemOffsets,
+        bytes32 elem
+    ) private pure {
+        assembly {
+            mstore(add(add(callData, 32), accOffset), acc)
+        }
+        for (uint256 j = 0; j < elemOffsets.length; j++) {
+            uint256 elemOffset = elemOffsets[j];
+            assembly {
+                mstore(add(add(callData, 32), elemOffset), elem)
+            }
+        }
+    }
+
+    /**
+     * @dev Stack-friendly bundle for the fold loop: a memory struct is one
+     *      slot, where the same fields as free parameters blew the frame
+     *      once `elemOffsets` became a dynamic array.
+     */
+    struct FoldRun {
+        FoldDomain domain;
+        uint256 count;
+        address target;
+        uint256 accOffset;
+        bytes32 acc;
+        FoldExit exit;
+    }
+
+    /**
      * @dev The shared fold engine (see foldRange for the full rules).
      *      `count` is the domain size; `s` carries the subject bytes for
      *      the Bytes/Words domains and is empty for Range.
@@ -1520,44 +1594,47 @@ contract Operators {
         address target,
         bytes calldata template,
         uint256 accOffset,
-        uint256 elemOffset,
+        uint256[] calldata elemOffsets,
         bytes32 init,
         FoldExit exit
-    ) private view returns (bytes32 acc) {
-        if (template.length < 32 || accOffset > template.length - 32) {
-            revert LambdaOffsetOutOfBounds(accOffset, template.length);
-        }
-        if (elemOffset > template.length - 32) {
-            revert LambdaOffsetOutOfBounds(elemOffset, template.length);
-        }
-        acc = init;
-        if (count == 0) return acc;
+    ) private view returns (bytes32) {
+        _checkWindows(template, accOffset, elemOffsets);
+        if (count == 0) return init;
         if (target.code.length == 0) revert LambdaCallFailed(0, target, "");
+        FoldRun memory run = FoldRun(domain, count, target, accOffset, init, exit);
+        return _foldLoop(run, s, template, elemOffsets);
+    }
 
-        // One mutable copy; each iteration fully rewrites both windows.
+    /**
+     * @dev Element loop of {@link _fold}.
+     */
+    function _foldLoop(
+        FoldRun memory run,
+        bytes calldata s,
+        bytes calldata template,
+        uint256[] calldata elemOffsets
+    ) private view returns (bytes32) {
         bytes memory callData = template;
-        for (uint256 i = 0; i < count; i++) {
-            bytes32 elem;
-            if (domain == FoldDomain.Range) {
-                elem = bytes32(i);
-            } else if (domain == FoldDomain.Bytes) {
-                elem = bytes32(uint256(uint8(s[i])));
-            } else {
-                elem = bytes32(s[i * 32:i * 32 + 32]);
+        for (uint256 i = 0; i < run.count;) {
+            {
+                bytes32 elem = _domainElem(run.domain, i, s);
+                _stampWindows(callData, run.accOffset, run.acc, elemOffsets, elem);
             }
-            assembly {
-                mstore(add(add(callData, 32), accOffset), acc)
-                mstore(add(add(callData, 32), elemOffset), elem)
-            }
-            (bool success, bytes memory ret) = target.staticcall(callData);
-            if (!success) revert LambdaCallFailed(i, target, callData);
+            (bool success, bytes memory ret) = run.target.staticcall(callData);
+            if (!success) revert LambdaCallFailed(i, run.target, callData);
             if (ret.length < 32) revert LambdaReturnTooShort(i, ret.length);
+            bytes32 next;
             assembly {
-                acc := mload(add(ret, 32))
+                next := mload(add(ret, 32))
             }
-            if (exit == FoldExit.Any && acc != bytes32(0)) break;
-            if (exit == FoldExit.All && acc == bytes32(0)) break;
+            run.acc = next;
+            if (run.exit == FoldExit.Any && next != bytes32(0)) break;
+            if (run.exit == FoldExit.All && next == bytes32(0)) break;
+            unchecked {
+                i++;
+            }
         }
+        return run.acc;
     }
 
     /**

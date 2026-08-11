@@ -788,30 +788,30 @@ contract CoreReadsTest is Test {
         assertEq(abi.decode(ret, (uint256)), 7);
     }
 
-    // ============ Ok ============
+    // ============ IsValid ============
 
-    function test_ok_success() public view {
-        assertEq(assertions.ok(_call(address(target), abi.encodeCall(MockTarget.getValue, ()))), 1);
+    function test_isValid_success() public view {
+        assertEq(assertions.isValid(_call(address(target), abi.encodeCall(MockTarget.getValue, ()))), 1);
     }
 
-    function test_ok_revertingCall() public view {
-        assertEq(assertions.ok(_call(address(target), abi.encodeCall(MockTarget.revertingFunction, ()))), 0);
+    function test_isValid_revertingCall() public view {
+        assertEq(assertions.isValid(_call(address(target), abi.encodeCall(MockTarget.revertingFunction, ()))), 0);
     }
 
-    function test_ok_constraintViolation() public view {
+    function test_isValid_constraintViolation() public view {
         InputParam memory guarded = _call(address(target), abi.encodeCall(MockTarget.getValue, ()));
         guarded.constraints = _c1(ConstraintType.GTE, abi.encode(uint256(1000)));
-        assertEq(assertions.ok(guarded), 0);
+        assertEq(assertions.isValid(guarded), 0);
     }
 
-    function test_ok_judgedThroughCore() public {
-        // assert "this call fails" by judging ok(...) EQ 0 through the core
+    function test_isValid_judgedThroughCore() public {
+        // assert "this call fails" by judging isValid(...) EQ 0 through the core
         InputParam memory bomb = _call(address(target), abi.encodeCall(MockTarget.revertingFunction, ()));
-        bytes memory okCalldata = abi.encodeCall(Assertions.ok, (bomb));
+        bytes memory isValidCalldata = abi.encodeCall(Assertions.isValid, (bomb));
         InputParam memory judged = InputParam(
             InputParamType.CALL_DATA,
             InputParamFetcherType.STATIC_CALL,
-            abi.encode(address(assertions), okCalldata),
+            abi.encode(address(assertions), isValidCalldata),
             _c1(ConstraintType.EQ, abi.encode(uint256(0)))
         );
         assertions.assertParam(judged);
@@ -833,12 +833,256 @@ contract CoreReadsTest is Test {
         assertions.assertParam(judged);
     }
 
-    function test_ok_feedsCond() public view {
-        // cond(ok(failing), never, fallbackValue): branch on resolvability
+    function test_isValid_feedsCond() public view {
+        // cond(isValid(failing), never, fallbackValue): branch on resolvability
         InputParam memory bomb = _call(address(target), abi.encodeCall(MockTarget.revertingFunction, ()));
-        InputParam memory probe = _nested(abi.encodeCall(Assertions.ok, (bomb)));
+        InputParam memory probe = _nested(abi.encodeCall(Assertions.isValid, (bomb)));
         (bool ok_, bytes memory ret) = _cond(probe, bomb, _lit(7));
         assertTrue(ok_);
         assertEq(abi.decode(ret, (uint256)), 7);
+    }
+
+    function test_isValid_overRevertData() public view {
+        // isValid(revertData(x, sel)): "reverted with this reason" as a
+        // word — revertData resolves exactly when the call reverts with
+        // the expected error, and isValid collapses that to 1/0.
+        InputParam memory bomb = _call(address(target), abi.encodeCall(MockTarget.revertsWithArgs, ()));
+        InputParam memory matched =
+            _nested(abi.encodeCall(Assertions.revertData, (bomb, MockTarget.InsufficientBalance.selector)));
+        assertEq(assertions.isValid(matched), 1);
+
+        // A wrong selector makes revertData revert, so the word is 0.
+        InputParam memory mismatched =
+            _nested(abi.encodeCall(Assertions.revertData, (bomb, MockTarget.Unauthorized.selector)));
+        assertEq(assertions.isValid(mismatched), 0);
+
+        // A call that succeeds trips DidNotRevert inside revertData: 0.
+        InputParam memory calm = _call(address(target), abi.encodeCall(MockTarget.getValue, ()));
+        InputParam memory unexpected = _nested(abi.encodeCall(Assertions.revertData, (calm, bytes4(0))));
+        assertEq(assertions.isValid(unexpected), 0);
+    }
+
+    // ============ RevertData ============
+
+    bytes4 constant ERROR_STRING = bytes4(keccak256("Error(string)"));
+
+    /**
+     * @dev Raw staticcall into revertData (its result comes via assembly
+     *      return, so it cannot be called through the typed interface)
+     */
+    function _revertData(InputParam memory a, bytes4 sel)
+        internal
+        view
+        returns (bool ok_, bytes memory ret)
+    {
+        (ok_, ret) = address(assertions).staticcall(abi.encodeCall(Assertions.revertData, (a, sel)));
+    }
+
+    function test_revertData_stripsSelectorFromCustomError() public view {
+        (bool ok_, bytes memory ret) = _revertData(
+            _call(address(target), abi.encodeCall(MockTarget.revertsWithArgs, ())),
+            MockTarget.InsufficientBalance.selector
+        );
+        assertTrue(ok_);
+        // The selector is gone, so what comes back is a clean ABI tuple.
+        assertEq(ret, abi.encode(uint256(7), uint256(100)));
+        (uint256 available, uint256 required) = abi.decode(ret, (uint256, uint256));
+        assertEq(available, 7);
+        assertEq(required, 100);
+    }
+
+    function test_revertData_zeroSelectorReturnsWholeBlob() public view {
+        (bool ok_, bytes memory ret) = _revertData(
+            _call(address(target), abi.encodeCall(MockTarget.revertsWithArgs, ())),
+            bytes4(0)
+        );
+        assertTrue(ok_);
+        assertEq(ret, abi.encodeWithSelector(MockTarget.InsufficientBalance.selector, uint256(7), uint256(100)));
+    }
+
+    function test_revertData_capturesRequireReason() public view {
+        // Error(string) is just another selector: strip it and the payload
+        // is the ABI-encoded reason string.
+        (bool ok_, bytes memory ret) = _revertData(
+            _call(address(target), abi.encodeCall(MockTarget.revertingFunction, ())),
+            ERROR_STRING
+        );
+        assertTrue(ok_);
+        assertEq(abi.decode(ret, (string)), "MockTarget: intentional revert");
+    }
+
+    function test_revertData_selectorOnlyError() public view {
+        (bool ok_, bytes memory ret) = _revertData(
+            _call(address(target), abi.encodeCall(MockTarget.revertsUnauthorized, ())),
+            MockTarget.Unauthorized.selector
+        );
+        assertTrue(ok_);
+        assertEq(ret.length, 0);
+    }
+
+    function test_revertData_mismatchedSelectorReverts() public {
+        // The point of the primitive: failing for the WRONG reason is not
+        // the assertion being satisfied.
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Assertions.UnexpectedRevertData.selector,
+                MockTarget.Unauthorized.selector,
+                MockTarget.InsufficientBalance.selector
+            )
+        );
+        assertions.revertData(
+            _call(address(target), abi.encodeCall(MockTarget.revertsWithArgs, ())),
+            MockTarget.Unauthorized.selector
+        );
+    }
+
+    function test_revertData_bareRevertMatchesNoSelector() public {
+        // No data at all: `actual` is reported as zero, so any non-zero
+        // expectation fails.
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Assertions.UnexpectedRevertData.selector,
+                MockTarget.Unauthorized.selector,
+                bytes4(0)
+            )
+        );
+        assertions.revertData(
+            _call(address(target), abi.encodeCall(MockTarget.revertsBare, ())),
+            MockTarget.Unauthorized.selector
+        );
+    }
+
+    function test_revertData_bareRevertPassesWithZeroSelector() public view {
+        (bool ok_, bytes memory ret) = _revertData(
+            _call(address(target), abi.encodeCall(MockTarget.revertsBare, ())),
+            bytes4(0)
+        );
+        assertTrue(ok_);
+        assertEq(ret.length, 0);
+    }
+
+    function test_revertData_successReverts() public {
+        bytes memory cd = abi.encodeCall(MockTarget.getValue, ());
+        vm.expectRevert(
+            abi.encodeWithSelector(Assertions.DidNotRevert.selector, address(target), cd)
+        );
+        assertions.revertData(_call(address(target), cd), bytes4(0));
+    }
+
+    function test_revertData_codelessTargetHasNoReason() public {
+        // Agrees with isValid() that a code-less target is a failure, but there
+        // is no reason to report, so an expectation cannot be met.
+        (bool ok_, bytes memory ret) = _revertData(
+            _call(TEST_EOA, abi.encodeCall(MockTarget.getValue, ())),
+            bytes4(0)
+        );
+        assertTrue(ok_);
+        assertEq(ret.length, 0);
+
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Assertions.UnexpectedRevertData.selector,
+                MockTarget.Unauthorized.selector,
+                bytes4(0)
+            )
+        );
+        assertions.revertData(
+            _call(TEST_EOA, abi.encodeCall(MockTarget.getValue, ())),
+            MockTarget.Unauthorized.selector
+        );
+    }
+
+    function test_revertData_rejectsNonCallOperand() public {
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Assertions.RevertProbeNotACall.selector,
+                uint8(InputParamFetcherType.RAW_BYTES)
+            )
+        );
+        assertions.revertData(_lit(5), bytes4(0));
+    }
+
+    function test_revertData_rejectsConstrainedOperand() public {
+        InputParam memory guarded = _call(address(target), abi.encodeCall(MockTarget.revertsWithArgs, ()));
+        guarded.constraints = _c1(ConstraintType.GTE, abi.encode(uint256(1)));
+        vm.expectRevert(abi.encodeWithSelector(Assertions.RevertProbeConstrained.selector, uint256(1)));
+        assertions.revertData(guarded, bytes4(0));
+    }
+
+    function test_revertData_navSelectsAnErrorArgument() public view {
+        // The whole reason the selector is stripped: the payload is a clean
+        // ABI tuple, so nav navigates an error's arguments exactly as it
+        // navigates a call's return. Path [1] is the second argument.
+        InputParam memory probe = _nested(
+            abi.encodeCall(
+                Assertions.revertData,
+                (
+                    _call(address(target), abi.encodeCall(MockTarget.revertsWithArgs, ())),
+                    MockTarget.InsufficientBalance.selector
+                )
+            )
+        );
+        (bool ok_, bytes memory ret) = _nav(probe, "(uint256,uint256)", _path1(1));
+        assertTrue(ok_);
+        assertEq(abi.decode(ret, (uint256)), 100);
+
+        // and the first argument, for good measure
+        (ok_, ret) = _nav(probe, "(uint256,uint256)", _path1(0));
+        assertTrue(ok_);
+        assertEq(abi.decode(ret, (uint256)), 7);
+    }
+
+    function test_revertData_navIntoArrayThenChainOnward() public view {
+        // A revert payload as a stepping stone: select an address out of a
+        // dynamic array INSIDE the error's arguments (path [1, 0] through
+        // (address,address[])), then use it as the start of a chain — the
+        // EVML shape @reverts!(call -!> Redirect(address,address[])[_ [$]])::!{...}.
+        InputParam memory probe = _nested(
+            abi.encodeCall(
+                Assertions.revertData,
+                (
+                    _call(address(target), abi.encodeCall(MockTarget.revertsWithRedirect, ())),
+                    MockTarget.Redirect.selector
+                )
+            )
+        );
+        (bool ok_, bytes memory ret) = _nav(probe, "(address,address[])", _path2(1, 0));
+        assertTrue(ok_);
+        assertEq(abi.decode(ret, (address)), address(target));
+
+        // Continue reading from the selected address: chain(start, calls)
+        // resolves the navigated word as the first hop's target.
+        InputParam memory start = _nested(
+            abi.encodeCall(Assertions.nav, (probe, "(address,address[])", _path2(1, 0)))
+        );
+        bytes[] memory calls = new bytes[](1);
+        calls[0] = abi.encodeCall(MockTarget.getValue, ());
+        (bool chained, bytes memory value) =
+            address(assertions).staticcall(abi.encodeCall(Assertions.chain, (start, calls)));
+        assertTrue(chained);
+        assertEq(abi.decode(value, (uint256)), 42);
+    }
+
+    function test_revertData_judgedThroughCore() public view {
+        // End to end: assert that a call fails with a specific error AND
+        // that one of its arguments satisfies a constraint. Both facts ride
+        // one operand — a mismatched selector reverts inside revertData
+        // before the constraint is ever reached.
+        InputParam memory judged = InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.STATIC_CALL,
+            abi.encode(
+                address(assertions),
+                abi.encodeCall(
+                    Assertions.revertData,
+                    (
+                        _call(address(target), abi.encodeCall(MockTarget.revertsWithArgs, ())),
+                        MockTarget.InsufficientBalance.selector
+                    )
+                )
+            ),
+            _c1(ConstraintType.EQ, abi.encode(uint256(7)))
+        );
+        assertions.assertParam(judged);
     }
 }

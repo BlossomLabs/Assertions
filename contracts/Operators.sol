@@ -681,7 +681,7 @@ contract Operators {
      *         (nonexistent account: 0; existing code-less account:
      *         keccak256(""))
      */
-    function codehash(address account) external view returns (bytes32) {
+    function codeHash(address account) external view returns (bytes32) {
         return account.codehash;
     }
 
@@ -805,7 +805,7 @@ contract Operators {
 
     /**
      * @notice The full runtime code of `account` as a bytes value —
-     *         codehash's sibling for prefix/suffix/segment assertions
+     *         codeHash's sibling for prefix/suffix/segment assertions
      *         (a code-less account yields empty bytes)
      */
     function code(address account) external view returns (bytes memory) {

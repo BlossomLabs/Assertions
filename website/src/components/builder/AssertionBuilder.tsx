@@ -26,7 +26,7 @@ import { transports, wagmiConfig } from "./wagmi";
 const queryClient = new QueryClient();
 
 const SUGGEST_PROMPT =
-  "Read my current script and suggest assertions for it: fetch the verified source of every contract it touches, work out what the batch does, and insert the assert commands (with `load assertions`) that best protect it: pre-assertions for the state it relies on, post-assertions for the outcome. Then simulate to confirm the protected batch still passes, and summarize what each assertion guards against.";
+  "Read my current script and suggest assertions for it: fetch the verified source of every contract it touches, work out what the batch does, and insert the assert commands that best protect it: pre-assertions for the state it relies on, post-assertions for the outcome. Then simulate to confirm the protected batch still passes, and summarize what each assertion guards against.";
 
 function Section({
   step,

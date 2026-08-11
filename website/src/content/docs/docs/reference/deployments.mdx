@@ -11,8 +11,8 @@ export const fmtGas = (gas) => `~${(gas / 1e6).toFixed(2)}M gas`;
 Both contracts live at the same deterministic address on every chain. The current round uses **interim, non-vanity addresses**: the bytecode is still in flux, and the vanity `0xa55E...` addresses will be re-mined before the canonical roll (a new salt per contract against the final bytecode; the interim deployments stay live wherever they were sent).
 
 ```
-Assertions v2.0  0x637d99Ff8bcB919e5203b0B96Ad0520A9943a32C   (frozen core: judge + primitives)
-Operators  v1.0  0x7FE48d55c709AB58A7Da296893b5C6a8ab38D623   (versionable periphery)
+Assertions v2.0  0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F   (frozen core: judge + primitives)
+Operators  v1.0  0x8e832Ace3f433943eb605c258bA37AF24a69dC53   (versionable periphery)
 ```
 
 Deployed versions are immutable: earlier releases keep working forever at their own canonical addresses. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) always points to the latest canonical version of the core, and the original v1.0 core stays live at [`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).

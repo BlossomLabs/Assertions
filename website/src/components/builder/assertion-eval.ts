@@ -99,9 +99,9 @@ export function isEvaluable(expr: ValueExpr): boolean {
           : expr.account.kind === "literal")
       );
     case "clock":
-    case "chainid":
+    case "chainId":
       return true;
-    case "codehash":
+    case "codeHash":
       return (
         (expr.address.kind === "literal" &&
           isAddress(expr.address.value.trim())) ||
@@ -109,7 +109,7 @@ export function isEvaluable(expr: ValueExpr): boolean {
       );
     case "minmax":
       return expr.items.length >= 2 && expr.items.every(isEvaluable);
-    case "absdiff":
+    case "absDiff":
       return isEvaluable(expr.a) && isEvaluable(expr.b);
     case "arith":
     case "bytes":
@@ -233,12 +233,12 @@ export async function evalExpr(
       const block = await client.getBlock();
       return expr.which === "timestamp" ? block.timestamp : block.number;
     }
-    case "chainid":
+    case "chainId":
       return BigInt(await client.getChainId());
-    case "codehash":
+    case "codeHash":
       // bytes32 has no place in the numeric operators; readSubjectValue
       // special-cases it to a hex string instead.
-      throw new Error("codehash is not a numeric value");
+      throw new Error("codeHash is not a numeric value");
     case "minmax": {
       const values = await Promise.all(
         expr.items.map((i) => evalExpr(client, i, executor)),
@@ -247,7 +247,7 @@ export async function evalExpr(
         expr.op === "min" ? (b < a ? b : a) : (b > a ? b : a),
       );
     }
-    case "absdiff": {
+    case "absDiff": {
       const [a, b] = await Promise.all([
         evalExpr(client, expr.a, executor),
         evalExpr(client, expr.b, executor),
@@ -335,14 +335,14 @@ export async function readSubjectValue(
 ): Promise<string> {
   if (expr.kind === "call")
     return formatResult(await evalCall(client, expr, executor));
-  if (expr.kind === "codehash") {
+  if (expr.kind === "codeHash") {
     if (expr.address.kind !== "call" && expr.address.kind !== "literal")
-      throw new Error("unsupported codehash address");
+      throw new Error("unsupported codeHash address");
     const address =
       expr.address.kind === "call"
         ? ((await evalCall(client, expr.address, executor)) as Address)
         : (parseCallArg("address", expr.address.value, executor) as Address);
-    // EXTCODEHASH semantics, mirroring the @codehash helper: nonexistent
+    // EXTCODEHASH semantics, mirroring the @codeHash helper: nonexistent
     // account -> bytes32(0), existing code-less account -> keccak256("").
     const code = await client.getCode({ address });
     if (code && code !== "0x") return keccak256(code);

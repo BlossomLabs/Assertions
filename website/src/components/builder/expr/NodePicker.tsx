@@ -17,11 +17,11 @@ export type NodeKey =
   | "balance"
   | "timestamp"
   | "blocknumber"
-  | "chainid"
-  | "codehash"
+  | "chainId"
+  | "codeHash"
   | "min"
   | "max"
-  | "absdiff"
+  | "absDiff"
   | "arith"
   | "cmp"
   | "logic"
@@ -55,8 +55,8 @@ const SOURCE_KINDS = new Set<ValueExpr["kind"]>([
   "call",
   "balance",
   "clock",
-  "chainid",
-  "codehash",
+  "chainId",
+  "codeHash",
 ]);
 
 export const isSourceNode = (node: ValueExpr): boolean =>
@@ -75,7 +75,7 @@ function seedValue(node: ValueExpr): ValueExpr {
   return node;
 }
 
-/** An address-shaped seed (@balance! account, @codehash! target). */
+/** An address-shaped seed (@balance! account, @codeHash! target). */
 function seedAddress(node: ValueExpr): ValueExpr {
   if (node.kind === "call" || node.kind === "literal") return node;
   return emptyLiteral();
@@ -100,17 +100,17 @@ export function convertNode(node: ValueExpr, key: NodeKey): ValueExpr {
     case "timestamp":
     case "blocknumber":
       return { kind: "clock", which: key };
-    case "chainid":
-      return { kind: "chainid" };
-    case "codehash":
-      return { kind: "codehash", address: seedAddress(node) };
+    case "chainId":
+      return { kind: "chainId" };
+    case "codeHash":
+      return { kind: "codeHash", address: seedAddress(node) };
     case "min":
     case "max":
       return node.kind === "minmax"
         ? { ...node, op: key }
         : { kind: "minmax", op: key, items: [seedValue(node), emptyLiteral()] };
-    case "absdiff":
-      return { kind: "absdiff", a: seedValue(node), b: emptyLiteral() };
+    case "absDiff":
+      return { kind: "absDiff", a: seedValue(node), b: emptyLiteral() };
     case "arith":
       return {
         kind: "arith",
@@ -166,8 +166,8 @@ const SOURCE_ICONS: Partial<Record<NodeKey, IconName>> = {
   balance: "balance",
   timestamp: "timestamp",
   blocknumber: "block",
-  chainid: "chainid",
-  codehash: "code",
+  chainId: "chainId",
+  codeHash: "code",
 };
 
 /**

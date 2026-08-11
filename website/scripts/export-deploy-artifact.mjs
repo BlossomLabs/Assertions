@@ -63,7 +63,7 @@ const CONTRACTS = [
     // v1.0 remains at 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
     // (salt 0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb).
     salt: "0x0000000000000000000000000000000000000000000000000000000000000000",
-    expectedAddress: "0x637d99Ff8bcB919e5203b0B96Ad0520A9943a32C",
+    expectedAddress: "0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -80,7 +80,7 @@ const CONTRACTS = [
     // v1.0 remains at 0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC
     // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60027fbe3).
     salt: "0x0000000000000000000000000000000000000000000000000000000000000000",
-    expectedAddress: "0x7FE48d55c709AB58A7Da296893b5C6a8ab38D623",
+    expectedAddress: "0x8e832Ace3f433943eb605c258bA37AF24a69dC53",
     prefix: "OPERATORS",
     description: "Operators plain-value vocabulary contract",
     includeProxyConstants: false,

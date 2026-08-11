@@ -18,11 +18,6 @@ export const evml = createEvml().use(
     description: "Fork simulation",
   },
   {
-    name: "assertions",
-    load: () => import("@evmcrispr/module-assertions"),
-    description: "On-chain assertions via assertions.eth",
-  },
-  {
     name: "lang",
     load: vendored(() => import("@evmcrispr/module-lang")),
     description:
@@ -32,12 +27,12 @@ export const evml = createEvml().use(
     name: "receipts",
     load: vendored(() => import("@evmcrispr/module-receipts")),
     description:
-      "Block/tx context reads (block.timestamp!, tx.from!, tx.gasprice!, ...)",
+      "Block/tx context reads (block.timestamp!, tx.from!, tx.gasPrice!, ...)",
   },
   {
     name: "math",
     load: vendored(() => import("@evmcrispr/module-math")),
-    description: "Plain math (min, max, absdiff, sqrt) with on-chain ! faces",
+    description: "Plain math (min, max, absDiff, sqrt) with on-chain ! faces",
   },
   {
     name: "token",

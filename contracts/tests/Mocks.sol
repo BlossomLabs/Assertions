@@ -110,6 +110,58 @@ contract MockTarget {
     }
 
     /**
+     * @notice Custom error carrying two words, for revertData tests: the
+     *         args are what a lens navigates once the selector is stripped
+     */
+    error InsufficientBalance(uint256 available, uint256 required);
+
+    /**
+     * @notice A no-argument custom error, for selector-only matching
+     */
+    error Unauthorized();
+
+    /**
+     * @notice Always reverts with InsufficientBalance(7, 100)
+     */
+    function revertsWithArgs() external pure {
+        revert InsufficientBalance(7, 100);
+    }
+
+    /**
+     * @notice Always reverts with Unauthorized()
+     */
+    function revertsUnauthorized() external pure {
+        revert Unauthorized();
+    }
+
+    /**
+     * @notice Always reverts with NO data at all — the case an expected
+     *         selector can never match
+     */
+    function revertsBare() external pure {
+        // solhint-disable-next-line reason-string
+        revert();
+    }
+
+    /**
+     * @notice Error carrying a dynamic array, for lens navigation into a
+     *         revert payload: alternates[0] is meant to be read from next
+     */
+    error Redirect(address hint, address[] alternates);
+
+    /**
+     * @notice Always reverts with Redirect(0xBEEF, [this, 0xCAFE]) — the
+     *         first alternate is this contract itself, so a probe that
+     *         selects it can continue reading from a live address
+     */
+    function revertsWithRedirect() external view {
+        address[] memory alternates = new address[](2);
+        alternates[0] = address(this);
+        alternates[1] = address(0xCAFE);
+        revert Redirect(address(0xBEEF), alternates);
+    }
+
+    /**
      * @notice Reverts unless called with exactly 42 — verifies calldata
      *         constructed by the ERC-8211 judge arrives intact
      */

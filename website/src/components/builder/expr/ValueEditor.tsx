@@ -1,4 +1,4 @@
-import type { OpFamily } from "@evmcrispr/module-assertions/composition";
+import type { OpFamily } from "@evmcrispr/sdk/onchain";
 import { type ReactNode, useState } from "react";
 
 import {
@@ -38,8 +38,8 @@ function kindLabel(node: ValueExpr): string {
   switch (node.kind) {
     case "minmax":
       return `@${node.op}!`;
-    case "absdiff":
-      return "@absdiff!";
+    case "absDiff":
+      return "@absDiff!";
     case "arith":
       return "arithmetic";
     case "cmp":
@@ -118,7 +118,7 @@ function summarize(node: ValueExpr): string {
       return `@balance!(${node.token} …)`;
     case "minmax":
       return `@${node.op}! of ${node.items.length} values`;
-    case "absdiff":
+    case "absDiff":
       return "|a − b|";
     case "arith":
       return `arithmetic (${node.op})`;
@@ -138,10 +138,10 @@ function summarize(node: ValueExpr): string {
       return `@str.${node.helper}!(… ${node.arg ? JSON.stringify(node.arg) : "…"})`;
     case "clock":
       return `@${node.which}!`;
-    case "chainid":
-      return "@chainid!";
-    case "codehash":
-      return "@codehash!(…)";
+    case "chainId":
+      return "@chainId!";
+    case "codeHash":
+      return "@codeHash!(…)";
   }
 }
 
@@ -319,7 +319,7 @@ export function ValueEditor({
         </div>
       );
       break;
-    case "absdiff":
+    case "absDiff":
       body = (
         <div className="space-y-2">
           {child("a", node.a)}
@@ -441,15 +441,14 @@ export function ValueEditor({
         </p>
       );
       break;
-    case "chainid":
+    case "chainId":
       body = (
         <p className="text-xs text-[var(--color-ink-3)]">
-          The chain id at assertion time — composable, unlike the flat
-          assert-chainid form.
+          The chain id, read on-chain at assertion time.
         </p>
       );
       break;
-    case "codehash":
+    case "codeHash":
       body = (
         <div className="space-y-2">
           <div>

@@ -90,7 +90,7 @@ export function ExpressionAssertionEditor({
   const toAbsdiff = () =>
     setAssertion((a) => ({
       ...a,
-      subject: { kind: "absdiff", a: a.subject, b: a.expected! },
+      subject: { kind: "absDiff", a: a.subject, b: a.expected! },
       operator: "<=",
       expected: emptyLiteral(),
       delta: "",

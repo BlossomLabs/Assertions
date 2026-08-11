@@ -17,7 +17,8 @@ const sections = [
       { name: 'read', desc: 'Construct a staticcall at judge time: selector plus runtime-resolved calldata segments against a runtime-resolved target — the composition socket every Operators call (and any view contract) is reached through' },
       { name: 'cond', desc: 'Lazy conditional: resolve the condition, then resolve and return ONLY the winning branch — the losing branch’s calls never happen' },
       { name: 'orElse', desc: 'Composable try/catch: resolve the attempt; on ANY revert (constraints double as guards) resolve the fallback instead' },
-      { name: 'ok', desc: '1 if an operand resolves without reverting, else 0 — assert that a call succeeds, fails, or branch on resolvability' },
+      { name: 'isValid', desc: '1 if an operand resolves and passes its constraints, else 0 — assert that a call succeeds, fails, or branch on resolvability' },
+      { name: 'revertData', desc: 'The revert data of a call that MUST fail: match an expected error selector, strip it, and navigate the error’s arguments like a return value' },
     ],
   },
   {

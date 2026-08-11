@@ -5,13 +5,13 @@ export type AssertionPlacement = "pre" | "post";
 
 /** Whether the script contains any assertion commands. */
 export function hasAssertions(script: string): boolean {
-  return /^\s*assertions:/m.test(script);
+  return /^\s*assert\b/m.test(script);
 }
 
 /**
  * On-chain helpers owned by the lang module (`@str.*!`, `@bytes.*!`,
  * `@len!` and the array faces), whose presence in a line requires
- * `load lang` alongside `load assertions`. The builder's codegen emits a
+ * `load lang`. The builder's codegen emits a
  * subset of these; the pattern covers the whole lang bang surface so
  * chat-authored lines keep the load line alive too.
  */
@@ -24,38 +24,54 @@ export function usesLangHelpers(text: string): boolean {
 
 /**
  * Helpers owned by the receipts module: the block/tx context reads
- * (`@block.timestamp!`, `@tx.from!`, `@tx.gasprice!`, ...) plus the
- * off-chain receipt readers (`@receipts:tx`, `@receipts:txs`, ...).
- * Their presence requires `load receipts`.
+ * (`@block.timestamp!`, `@tx.from!`, `@tx.gasPrice!`, ...), the chain id
+ * (`@chainId!`) and the off-chain receipt readers (`@receipts:tx`,
+ * `@receipts:txs`, ...). Their presence requires `load receipts`.
  */
 const RECEIPTS_HELPER =
-  /@(?:receipts:)?(?:(?:block|tx)\.[a-zA-Z]+!?|txs?(?![\w.]))/i;
+  /@(?:receipts:)?(?:(?:block|tx)\.[a-zA-Z]+!?|txs?(?![\w.])|chainId!?(?![\w.]))/i;
 
 export function usesReceiptsHelpers(text: string): boolean {
   return RECEIPTS_HELPER.test(text);
 }
 
 /**
- * Helpers owned by the math module (`@min!`, `@max!`, `@absdiff!`,
+ * Helpers owned by the contracts module: the code and storage reads
+ * (`@codeHash!`, `@contracts:codeAt!`, ...), whose presence requires
+ * `load contracts`.
+ */
+const CONTRACTS_HELPER =
+  /@(?:contracts:)?(?:codeHash|codeAt|storageAt|account|next|slot\.[a-zA-Z0-9]+)!?(?![\w.])/i;
+
+export function usesContractsHelpers(text: string): boolean {
+  return CONTRACTS_HELPER.test(text);
+}
+
+/**
+ * Helpers owned by the math module (`@min!`, `@max!`, `@absDiff!`,
  * `@sqrt!` and their plain off-chain faces), whose presence requires
  * `load math`.
  */
-const MATH_HELPER = /@(?:math:)?(?:min|max|absdiff|sqrt)!?(?![\w.])/i;
+const MATH_HELPER = /@(?:math:)?(?:min|max|absDiff|sqrt)!?(?![\w.])/i;
 
 export function usesMathHelpers(text: string): boolean {
   return MATH_HELPER.test(text);
 }
 
+/** The load lines an assertion brings with it: the helper modules its
+ *  faces are owned by. `assert` itself is std's and needs none, so these
+ *  are the lines the assertion surfaces hide as scaffolding. */
+export function isHelperLoad(line: string): boolean {
+  return /^load (?:lang|receipts|contracts|math)$/.test(line.trim());
+}
+
 /**
- * The script without its assertions: assertion command lines are dropped,
- * and the then-unused `load assertions` with them. Used to simulate the raw
- * batch actions separately from the protected script.
+ * The script without its assertions: `assert` lines are dropped, and the
+ * helper-module load lines they were the only user of go with them. Used
+ * to simulate the raw batch actions separately from the protected script.
  */
 export function stripAssertions(script: string): string {
-  const kept = script.split("\n").filter((l) => {
-    const t = l.trim();
-    return !t.startsWith("assertions:") && t !== "load assertions";
-  });
+  const kept = script.split("\n").filter((l) => !/^\s*assert\b/.test(l));
   // The helper-module load lines usually ride along with the assertions;
   // drop each once no remaining line uses one of its helpers.
   return kept
@@ -63,16 +79,20 @@ export function stripAssertions(script: string): string {
     .filter(
       (l) => l.trim() !== "load receipts" || kept.some(usesReceiptsHelpers),
     )
+    .filter(
+      (l) => l.trim() !== "load contracts" || kept.some(usesContractsHelpers),
+    )
     .filter((l) => l.trim() !== "load math" || kept.some(usesMathHelpers))
     .join("\n");
 }
 
 /**
- * Pure merge of an assertion line into an action block: ensures
- * `load assertions` heads the script, hoists missing `set` lines into the
- * leading header, then places the assertion before the first action line
- * (pre-condition) or at the end (post-condition). Exported so the assertion
- * form can preview/validate the candidate script before committing it.
+ * Pure merge of an assertion line into an action block: adds the load line
+ * of every helper module the assertion reaches for, hoists missing `set`
+ * lines into the leading header, then places the assertion before the
+ * first action line (pre-condition) or at the end (post-condition).
+ * Exported so the assertion form can preview/validate the candidate script
+ * before committing it.
  */
 export function insertAssertionLines(
   script: string,
@@ -91,12 +111,15 @@ export function insertAssertionLines(
       loadEnd++;
     lines.splice(loadEnd, 0, `load ${name}`);
   };
-  ensureLoad("assertions");
-  // Lang-owned helpers (@str.split!, @bytes.len!, @len!, ...) live in
-  // their own module since the helper unification; the block/tx context
-  // reads live in receipts and the arithmetic conveniences in math.
+  // `assert` and @reverts! are std's, which is always loaded, so an assertion
+  // needs no load line of its own. What it may need belongs to the helpers
+  // it uses: the array/string faces (@str.split!, @bytes.len!, @len!, ...)
+  // are lang's, the block/tx context reads and the chain id are receipts',
+  // the code and storage reads contracts', the arithmetic conveniences
+  // math's.
   if (usesLangHelpers(line)) ensureLoad("lang");
   if (usesReceiptsHelpers(line)) ensureLoad("receipts");
+  if (usesContractsHelpers(line)) ensureLoad("contracts");
   if (usesMathHelpers(line)) ensureLoad("math");
 
   // Header = leading load/set/comment/blank lines; everything below is
@@ -116,7 +139,7 @@ export function insertAssertionLines(
   if (placement === "pre") {
     // Group with any existing pre-assertions right below the header.
     let at = headerEnd;
-    while (at < lines.length && t(lines[at]).startsWith("assertions:")) at++;
+    while (at < lines.length && /^assert\b/.test(t(lines[at]))) at++;
     lines.splice(at, 0, line);
   } else {
     lines.push(line);
@@ -178,8 +201,8 @@ export function useScriptState(initial = "") {
 
   /**
    * Remove the line at the given index, then drop scaffolding it orphaned:
-   * `set $var …` lines whose variable no other line references, and
-   * `load assertions` once no assertion command remains.
+   * `set $var …` lines whose variable no other line references, and a
+   * helper module's load line once nothing uses its helpers.
    */
   const removeLine = useCallback(
     (index: number) => {
@@ -198,10 +221,14 @@ export function useScriptState(initial = "") {
             );
             return cleaned.some((l, j) => j !== i && ref.test(l));
           }
-          if (t === "load assertions")
-            return cleaned.some((l) => l.trim().startsWith("assertions:"));
           if (t === "load lang")
             return cleaned.some((l, j) => j !== i && usesLangHelpers(l));
+          if (t === "load receipts")
+            return cleaned.some((l, j) => j !== i && usesReceiptsHelpers(l));
+          if (t === "load contracts")
+            return cleaned.some((l, j) => j !== i && usesContractsHelpers(l));
+          if (t === "load math")
+            return cleaned.some((l, j) => j !== i && usesMathHelpers(l));
           return true;
         });
         if (next.length === cleaned.length) break;

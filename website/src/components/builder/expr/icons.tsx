@@ -9,7 +9,7 @@ export type IconName =
   | "balance"
   | "code"
   | "block"
-  | "chainid"
+  | "chainId"
   | "timestamp";
 
 export const ICON_PATHS: Record<IconName, string[]> = {
@@ -31,7 +31,7 @@ export const ICON_PATHS: Record<IconName, string[]> = {
     "m12 11.5 8-4.5",
     "M12 11.5v10",
   ],
-  chainid: [
+  chainId: [
     "m9 15 6-6",
     "M11 5.5 12.5 4a4 4 0 0 1 5.6 5.6L16.5 11",
     "M13 18.5 11.5 20a4 4 0 0 1-5.6-5.6L7.5 13",

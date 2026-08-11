@@ -7,7 +7,7 @@ Assertions is an on-chain assertion system for verifying view function return va
 
 It ships as **two contracts** with one tagline: **the core reads and judges; Operators compute.**
 
-- **`Assertions` (the frozen core)** is the judge, designed around [ERC-8211 (Smart Batching)](https://eips.ethereum.org/EIPS/eip-8211), plus every primitive that speaks the ERC-8211 wire format. An assertion IS an ERC-8211 predicate: an `InputParam` describes how to fetch a live value (a raw literal, a `staticcall`, or a balance read) and carries inline constraints (`EQ`, `GTE`, `LTE`, `IN`) the value must satisfy. `assertParam` judges one parameter (the 90% case) and `assertComposable` judges whole batches; a failing constraint reverts with a descriptive `ConstraintFailed` error. Around the judge sit eight primitives in three families: selection ([`resolve`, `pick`, `nav`](/docs/core/reads)), call construction ([`chain`, `read`](/docs/core/reads)) and resolution control ([`cond`, `orElse`, `ok`](/docs/core/control)). The admission test for the core: only what needs operands to arrive *unresolved* lives there.
+- **`Assertions` (the frozen core)** is the judge, designed around [ERC-8211 (Smart Batching)](https://eips.ethereum.org/EIPS/eip-8211), plus every primitive that speaks the ERC-8211 wire format. An assertion IS an ERC-8211 predicate: an `InputParam` describes how to fetch a live value (a raw literal, a `staticcall`, or a balance read) and carries inline constraints (`EQ`, `GTE`, `LTE`, `IN`) the value must satisfy. `assertParam` judges one parameter (the 90% case) and `assertComposable` judges whole batches; a failing constraint reverts with a descriptive `ConstraintFailed` error. Around the judge sit nine primitives in three families: selection ([`resolve`, `pick`, `nav`](/docs/core/reads)), call construction ([`chain`, `read`](/docs/core/reads)) and resolution control ([`cond`, `orElse`, `isValid`, `revertData`](/docs/core/control)). The admission test for the core: only what needs operands to arrive *unresolved* lives there.
 - **`Operators` (the versionable periphery)** is the computation vocabulary: named word arithmetic and comparisons (with int256 overloads for signed semantics), bitwise operations, environment reads, bytes and string operations, a runtime ABI encoder and bounded folds. Every function takes and returns plain ABI types, with zero ERC-8211 anywhere. Composition happens in the core: its `read` primitive resolves operand expressions and splices the values into plain Operators calldata, so expressions nest recursively and the judge consumes the final value through a `STATIC_CALL` fetcher pointed at the core. Any deployed view or pure contract extends the vocabulary the same way; Operators is the canonical first extension.
 
 Because Operators is a stateless view target reached only through `read`, the periphery can evolve: old deployments never break (anything referencing them keeps working), and new versions ship at new addresses as pure opt-ins, without touching the frozen core.
@@ -17,8 +17,8 @@ Because Operators is a stateless view target reached only through `read`, the pe
 The current deployments are **interim, non-vanity addresses**: the bytecode is still in flux, and the vanity `0xa55E...` addresses will be re-mined before the canonical roll (see [Deployments](/docs/reference/deployments)):
 
 ```
-Assertions v2.0  0x637d99Ff8bcB919e5203b0B96Ad0520A9943a32C   (frozen core: judge + primitives)
-Operators  v1.0  0x7FE48d55c709AB58A7Da296893b5C6a8ab38D623   (versionable periphery)
+Assertions v2.0  0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F   (frozen core: judge + primitives)
+Operators  v1.0  0x8e832Ace3f433943eb605c258bA37AF24a69dC53   (versionable periphery)
 ```
 
 Earlier versions remain deployed and working forever at their own canonical addresses: the v2.0-rc core at [`0xa55E47F37088b6D0212BdfD56b175ec08744DB19`](https://etherscan.io/address/0xa55E47F37088b6D0212BdfD56b175ec08744DB19) with Combinators v2.0-rc at [`0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9`](https://etherscan.io/address/0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9), the v1.1 typed-assert core at [`0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0`](https://etherscan.io/address/0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0), and the original v1.0 core at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F). V2 replaces v1.1's 140 typed assertion functions (`assertEqCallUint`, ...) with the ERC-8211 model: `assertEqCallUint(target, data, expected)` is now `assertParam` over a `STATIC_CALL` fetcher with an `EQ` constraint.
@@ -36,7 +36,7 @@ Earlier versions remain deployed and working forever at their own canonical addr
 | **Treasury protection** | Assert treasury balance doesn't drop below threshold |
 | **Permission safety** | Assert admin roles haven't been changed unexpectedly |
 | **Price manipulation guards** | Assert oracle price is within expected bounds |
-| **Upgrade verification** | Assert proxy implementation matches expected codehash |
+| **Upgrade verification** | Assert proxy implementation matches expected code hash |
 | **Timelock validation** | Assert current timestamp is after unlock period |
 | **Liquidity checks** | Assert pool reserves meet minimum requirements |
 | **Ownership verification** | Assert critical contracts still owned by DAO |
@@ -51,7 +51,7 @@ Earlier versions remain deployed and working forever at their own canonical addr
 - **Inline constraints**: `EQ`, `GTE`, `LTE` and `IN` (inclusive range) validate any fetched value; everything richer routes through a read-spliced Operators comparison judged `EQ 1`
 - **Three fetchers**: raw literals, arbitrary `staticcall`s, and balance reads (native or ERC-20); one `assertParam` call covers balances, view returns and constants alike
 - **Core reads**: raw word selection (`pick`), typed navigation into tuples and dynamic arrays (`nav`), runtime-address chains (`chain`) and runtime-argument calls (`read`), all composable from recursive `InputParam` operands
-- **Resolution control**: lazy branching (`cond`), composable try/catch with constraints doubling as guards (`orElse`), and did-it-resolve probes (`ok`)
+- **Resolution control**: lazy branching (`cond`), composable try/catch with constraints doubling as guards (`orElse`), and did-it-resolve probes (`isValid`) and the reason-carrying failure probe (`revertData`)
 - **Operators vocabulary**: named arithmetic, comparisons, bitwise, environment, bytes, search, a runtime ABI encoder and bounded folds, readable directly in decoded explorer calldata
 - **Nested live call arguments**: use the result of one view call as an argument of another, resolved at assertion time via the core's `read`
 - **Approximate equality**: the `IN` constraint asserts a value within inclusive bounds; `absDiff(a, b)` judged `LTE d` covers live-vs-live tolerance

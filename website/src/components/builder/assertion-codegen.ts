@@ -1,5 +1,7 @@
 import { isAddress } from "viem";
 
+import { chainById } from "../deployments/wagmi";
+
 import {
   type Assertion,
   type ValueExpr,
@@ -10,7 +12,7 @@ import {
 import { ensVarName, evmlArg } from "./useContractFunctions";
 
 /**
- * Renders the assertion expression tree into `assertions:assert` lines
+ * Renders the assertion expression tree into `assert` lines
  * (plus the hoisted `set $x @ens(...)` lines that ENS names need).
  *
  * Formatting rules that matter to the compiler all funnel through here:
@@ -171,11 +173,11 @@ export async function renderExpr(
       if (items.length < 1 || items.some((i) => i === null)) return null;
       return `@${expr.op}!(${items.join(" ")})`;
     }
-    case "absdiff": {
+    case "absDiff": {
       const a = await renderExpr(expr.a, ctx);
       const b = await renderExpr(expr.b, ctx);
       if (!a || !b) return null;
-      return `@absdiff!(${a} ${b})`;
+      return `@absDiff!(${a} ${b})`;
     }
     case "arith": {
       const inner = { ...ctx, num: true };
@@ -244,12 +246,12 @@ export async function renderExpr(
     }
     case "clock":
       return expr.which === "timestamp" ? "@block.timestamp!" : "@block.number!";
-    case "chainid":
-      return "@chainid!";
-    case "codehash": {
+    case "chainId":
+      return "@chainId!";
+    case "codeHash": {
       const addr = await renderExpr(expr.address, ctx);
       if (!addr) return null;
-      return `@codehash!(${addr})`;
+      return `@codeHash!(${addr})`;
     }
   }
 }
@@ -288,63 +290,13 @@ function makeCtx(options: CodegenOptions) {
 }
 
 /**
- * Collapse an expression assertion to its dedicated flat command when one
- * exists (chain id, block, ETH balance, codehash against a constant) — so a
- * promoted-but-uncustomized assertion emits the exact line the simple form
- * would. Anything composed returns null and renders as `assertions:assert`.
- */
-function toFlat(a: Assertion): FlatAssertion | null {
-  if (a.operator === null || a.expected?.kind !== "literal") return null;
-  const expected = a.expected.value.trim();
-  if (!expected) return null;
-  const s = a.subject;
-  const op = a.operator;
-  const base = {
-    account: "",
-    targetInput: "",
-    targetResolved: null,
-    codeVariant: "codehash" as CodeVariant,
-    blockField: "number" as BlockField,
-    operator: op,
-    expected,
-    delta: a.delta,
-    message: a.message,
-  };
-  if (s.kind === "chainid" && op === "==") return { ...base, kind: "chainid" };
-  if (s.kind === "clock" && ["==", ">", "<", ">=", "<="].includes(op))
-    return {
-      ...base,
-      kind: "block",
-      blockField: s.which === "timestamp" ? "timestamp" : "number",
-    };
-  if (
-    s.kind === "balance" &&
-    s.token.trim().toUpperCase() === "ETH" &&
-    s.account.kind === "literal" &&
-    ["==", ">", "<", ">=", "<=", "~="].includes(op)
-  )
-    return { ...base, kind: "balance", account: s.account.value };
-  if (
-    s.kind === "codehash" &&
-    s.address.kind === "literal" &&
-    isAddress(s.address.value.trim()) &&
-    op === "=="
-  )
-    return { ...base, kind: "code", targetInput: s.address.value.trim() };
-  return null;
-}
-
-/**
- * Build the `assertions:assert` line (+ hoisted set lines) from the
- * expression model, or null while the form is incomplete. Byte-compatible
- * with the old flat `buildAssertion` for single-call subjects.
+ * Build the `assert` line (+ hoisted set lines) from the
+ * expression model, or null while the form is incomplete.
  */
 export async function buildAssertionLine(
   assertion: Assertion,
   options: CodegenOptions,
 ): Promise<BuiltLine | null> {
-  const flat = toFlat(assertion);
-  if (flat) return buildFlatLine(flat, options);
   const { ctx, sets } = makeCtx(options);
   const stringCmp =
     inferCategory(assertion.subject) === "string" ||
@@ -364,7 +316,7 @@ export async function buildAssertionLine(
     : "";
 
   if (assertion.operator === null || assertion.expected === null)
-    return { line: `assertions:assert ${lhs}${msg}`, sets };
+    return { line: `assert ${lhs}${msg}`, sets };
 
   const rhs = await renderExpr(
     assertion.expected,
@@ -378,18 +330,18 @@ export async function buildAssertionLine(
     if (!assertion.delta.trim()) return null;
     cmp += ` --delta ${assertion.delta.trim()}`;
   }
-  return { line: `assertions:assert ${lhs}${cmp}${msg}`, sets };
+  return { line: `assert ${lhs}${cmp}${msg}`, sets };
 }
 
 // ---------------------------------------------------------------------------
-// Flat (non-expression) assertion commands.
+// The simple form's chain-state assertions.
 // ---------------------------------------------------------------------------
 
-export type CodeVariant = "has-code" | "no-code" | "codehash";
+export type CodeVariant = "has-code" | "no-code" | "codeHash";
 export type BlockField = "number" | "timestamp";
 
 export interface FlatAssertion {
-  kind: "balance" | "code" | "block" | "chainid";
+  kind: "balance" | "code" | "block" | "chainId";
   account: string;
   targetInput: string;
   /** Resolved address when targetInput is an ENS name. */
@@ -402,8 +354,15 @@ export interface FlatAssertion {
   message: string;
 }
 
-/** Build the line for the dedicated assert-* commands (balance, code,
- *  block, chainid) — moved verbatim from the old form codegen. */
+/**
+ * Build the line for the simple form's chain-state kinds (balance, code,
+ * block, chainId). Each is an `assert` over the on-chain face that reads
+ * that piece of state — the dedicated `assert-*` commands these once
+ * emitted were retired once every one of them had a helper face.
+ *
+ * The `load` lines those faces need are not this function's business:
+ * `useScriptState` derives them from the helpers the line mentions.
+ */
 export async function buildFlatLine(
   flat: FlatAssertion,
   options: CodegenOptions,
@@ -431,33 +390,41 @@ export async function buildFlatLine(
           : await evmlArg("address", flat.account, ctx.ensToVar);
       const cmp = comparison(true);
       if (!cmp) return null;
-      return { line: `assertions:assert-balance ${acct}${cmp}${msg}`, sets };
+      // @balance! reads a NATIVE balance only for the chain's own currency
+      // symbol (ETH on mainnet, XDAI on Gnosis) — anything else resolves
+      // through the token list as an ERC-20, which is a different question
+      // and the expression editor's job.
+      const native = chainById(ctx.chainId)?.nativeCurrency.symbol ?? "ETH";
+      return { line: `assert @balance!(${native} ${acct})${cmp}${msg}`, sets };
     }
     case "code": {
       const t = renderTarget(flat.targetInput, flat.targetResolved, ctx);
       if (!t) return null;
-      if (flat.codeVariant === "codehash") {
+      if (flat.codeVariant === "codeHash") {
         const exp = flat.expected.trim();
         if (!exp) return null;
-        return { line: `assertions:assert-codehash ${t} ${exp}${msg}`, sets };
+        return { line: `assert @codeHash!(${t}) == ${exp}${msg}`, sets };
       }
-      const cmd =
-        flat.codeVariant === "has-code" ? "assert-code" : "assert-no-code";
-      return { line: `assertions:${cmd} ${t}${msg}`, sets };
+      // Code exists exactly when the deployed payload is non-empty — the
+      // same predicate the retired assert-code spelled out as
+      // `codehash != 0 && codehash != keccak256("")`.
+      const op = flat.codeVariant === "has-code" ? ">" : "==";
+      return {
+        line: `assert @bytes.len!(@codeAt!(${t})) ${op} 0${msg}`,
+        sets,
+      };
     }
     case "block": {
       const cmp = comparison(false);
       if (!cmp) return null;
-      const cmd =
-        flat.blockField === "number"
-          ? "assert-block-number"
-          : "assert-timestamp";
-      return { line: `assertions:${cmd}${cmp}${msg}`, sets };
+      const face =
+        flat.blockField === "number" ? "@block.number!" : "@block.timestamp!";
+      return { line: `assert ${face}${cmp}${msg}`, sets };
     }
-    case "chainid": {
+    case "chainId": {
       if (!flat.expected.trim()) return null;
       return {
-        line: `assertions:assert-chainid ${flat.expected.trim()}${msg}`,
+        line: `assert @chainId! == ${flat.expected.trim()}${msg}`,
         sets,
       };
     }

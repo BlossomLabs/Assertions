@@ -3,7 +3,7 @@ title: The Operators vocabulary
 description: The plain-ABI operator contract, its whole surface, and how the core's read splices live operands into it.
 ---
 
-Assertion constraints revert or pass: they judge. Everything that *computes* lives in the separate `Operators` contract (v1.0, currently at the interim address `0x7FE48d55c709AB58A7Da296893b5C6a8ab38D623`; see [Deployments](/docs/reference/deployments)). Every function takes and returns plain ABI types: there is not one ERC-8211 import in the contract. The tagline of the two-contract split: **the core reads and judges; Operators compute.**
+Assertion constraints revert or pass: they judge. Everything that *computes* lives in the separate `Operators` contract (v1.0, currently at the interim address `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`; see [Deployments](/docs/reference/deployments)). Every function takes and returns plain ABI types: there is not one ERC-8211 import in the contract. The tagline of the two-contract split: **the core reads and judges; Operators compute.**
 
 Composition happens in the core. Its [`read` primitive](/docs/core/reads) resolves `InputParam` operand expressions and splices the resolved values into plain calldata, so an operator call IS the composed expression: `ge(token.balanceOf(treasury), 100e18)` with a live first argument is one `read` whose segments are the balance call and the literal. Any deployed view or pure contract extends the vocabulary through the same socket; Operators is just the canonical first extension. And because it is plain periphery, it stays versionable: old deployments never break, new versions ship at new addresses as pure opt-ins, without touching the frozen core.
 
@@ -17,7 +17,7 @@ Why named functions instead of the old op-code enums: decoded calldata reads on 
 | [Fixed point](/docs/operators/words) | `rpow(x, n, base)` (compounding, `base` is one unit — 1e27 ray or 1e18 wad), `expWad`/`lnWad` (e^x and its inverse, wad, signed) |
 | [Comparisons](/docs/operators/words) | `eq`, `ne` (bit-level, uint), `lt`, `gt`, `le`, `ge` (uint256 + int256 overloads); all return `bool` |
 | [Bitwise](/docs/operators/words) | `bitAnd`, `bitOr`, `bitXor`, `shl`, `shr` (uint, plus an int256 overload: arithmetic shift, EVM SAR), `bitSet(mask, index)` |
-| [Environment](/docs/operators/words) | `balance(address)`, `codehash(address)`, `timestamp()`, `blockNumber()`, `chainId()`, `baseFee()`, `prevRandao()`, `coinbase()`, `gasLimit()`, `blobBaseFee()`, `blockHash(n)`, `origin()`, `gasPrice()`, `blobHash(uint256)` |
+| [Environment](/docs/operators/words) | `balance(address)`, `codeHash(address)`, `timestamp()`, `blockNumber()`, `chainId()`, `baseFee()`, `prevRandao()`, `coinbase()`, `gasLimit()`, `blobBaseFee()`, `blockHash(n)`, `origin()`, `gasPrice()`, `blobHash(uint256)` |
 | [Calls](/docs/operators/data) | `rawCall(address, bytes)` (raw staticcall, the precompile reach-through), `code(address)` (full runtime code as bytes) |
 | [Bytes](/docs/operators/data) | `concat(bytes[])`, `slice(bytes, start, len)`, `byteLen(bytes)`, `hash(bytes)`, `hashPairSorted(bytes32, bytes32)` (the sorted Merkle node combiner) |
 | [Search](/docs/operators/data) | `indexOf(bytes, bytes, int256 occurrence)` (signed occurrence ordinal: 0, 1, ... from the start, -1, -2, ... from the end) |

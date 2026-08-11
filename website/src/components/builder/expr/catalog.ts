@@ -1,10 +1,10 @@
-import { INFIX_OPS } from "@evmcrispr/module-assertions/composition";
-import type { OpFamily } from "@evmcrispr/module-assertions/composition";
-import { helpers as assertionsHelpers } from "@evmcrispr/module-assertions/registry";
+import { helpers as contractsHelpers } from "@evmcrispr/module-contracts/registry";
 import { helpers as langHelpers } from "@evmcrispr/module-lang/registry";
 import { helpers as mathHelpers } from "@evmcrispr/module-math/registry";
 import { helpers as receiptsHelpers } from "@evmcrispr/module-receipts/registry";
 import { helpers as stdHelpers } from "@evmcrispr/module-std/registry";
+import { INFIX_OPS } from "@evmcrispr/sdk/onchain";
+import type { OpFamily } from "@evmcrispr/sdk/onchain";
 
 import {
   type Category,
@@ -24,14 +24,15 @@ import { type NodeKey, nodeKey } from "./NodePicker";
  *
  * The on-chain (`!`) helper surface spans five modules since the unified
  * helper rework: std owns the composition engines (@num!/@bool!/@bytes!/
- * @hash!/@balance!), lang owns the array/string faces (@len!, @str.split!,
- * @bytes.len!, ...), receipts owns the block/tx context reads
- * (@block.timestamp!, @tx.from!, ...), math owns the arithmetic
- * conveniences (@min!, @absdiff!, ...), and assertions keeps the judges
- * (@ok!, @not!, @chainid!, @codehash!). The catalog merges the assertions,
- * receipts and math registries with the on-chain faces of lang and std
- * (their plain faces are ordinary build-time helpers the builder never
- * offers as nodes).
+ * @hash!/@balance!) plus the revert probe @reverts! and the `assert` command
+ * itself, lang owns the array/string faces (@len!, @str.split!,
+ * @bytes.len!, ...), receipts owns the block/tx context reads and the chain
+ * id (@block.timestamp!, @tx.from!, @chainId!), contracts owns the code and
+ * storage reads (@codeHash!, @codeAt!), and math owns the arithmetic
+ * conveniences (@min!, @absDiff!, ...). The catalog merges the receipts and
+ * math registries with the on-chain faces of lang, std and contracts (their
+ * plain faces are ordinary build-time helpers the builder never offers as
+ * nodes).
  *
  * What stays local is the UI *role* of each helper — whether it is a value
  * source, a wrap around an existing node, or an infix engine reached
@@ -52,7 +53,7 @@ const onchainFaces = (
 const helpers: Record<string, HelperInfo> = {
   ...onchainFaces(langHelpers),
   ...onchainFaces(stdHelpers),
-  ...assertionsHelpers,
+  ...onchainFaces(contractsHelpers),
   ...receiptsHelpers,
   ...mathHelpers,
 };
@@ -90,7 +91,7 @@ type HelperRole =
       role: "source";
       key: NodeKey;
       label: string;
-      /** Also offered as a wrap when a node matches (e.g. @codehash! around
+      /** Also offered as a wrap when a node matches (e.g. @codeHash! around
        *  an address-returning call). */
       wrapAccepts?: Accepts;
     }
@@ -109,33 +110,39 @@ type HelperRole =
   | { role: "composition-time" };
 
 /** Registry helpers with no dedicated builder node. The build-time plain
- *  faces (@block.timestamp, @codehash, ...) snapshot at composition time; the
+ *  faces (@block.timestamp, @chainId, ...) snapshot at composition time; the
  *  `!` faces here are on-chain but only reachable through chat/EVML. */
 const COMPOSITION_TIME = [
-  // assertions: plain build-time faces of the env bangs
-  "chainid",
-  "codehash",
-  "ok!",
+  // receipts: plain build-time face of the chain id
+  "chainId",
+  // contracts: the code read with no builder node (@codeHash! has one)
+  "codeAt!",
+  // std: the revert probe and the fallback it pairs with, reachable
+  // through chat/EVML only (no builder node)
+  "reverts!",
+  "orElse!",
+  // std: the lazy ternary over the core's cond, chat/EVML only
+  "ifElse!",
   // receipts: plain build-time faces of the block reads (addressed by
   // block number or tag, default latest)
   "block.timestamp",
   "block.number",
-  "block.basefee",
-  "block.blobbasefee",
+  "block.baseFee",
+  "block.blobBaseFee",
   "block.hash",
   "block.coinbase",
-  "block.gaslimit",
+  "block.gasLimit",
   "block.prevrandao",
   // receipts: block/tx context faces without a builder node
-  "block.basefee!",
-  "block.blobbasefee!",
+  "block.baseFee!",
+  "block.blobBaseFee!",
   "block.hash!",
   "block.coinbase!",
-  "block.gaslimit!",
+  "block.gasLimit!",
   "block.prevrandao!",
   "tx.from!",
-  "tx.gasprice!",
-  "tx.blobhash!",
+  "tx.gasPrice!",
+  "tx.blobHash!",
   // receipts: off-chain receipt readers (chat/EVML only)
   "tx",
   "tx.block",
@@ -149,17 +156,29 @@ const COMPOSITION_TIME = [
   "tx.value",
   "txs",
   // math: plain build-time faces and the on-chain sqrt
-  "absdiff",
+  "absDiff",
   "min",
   "max",
   "sqrt",
   "sqrt!",
+  // math: the fixed-point family, both faces. Their wad/ray scaling has no
+  // builder node yet (the exponent and the unit are arguments, not operands),
+  // so they stay chat/EVML-level.
+  "exp",
+  "exp!",
+  "ln",
+  "ln!",
+  "log2",
+  "log2!",
+  "pow",
+  "pow!",
   // lang: array/string on-chain faces without a builder node
   "all!",
   "any!",
   "at!",
   "bytes.at!",
   "bytes.concat!",
+  "bytes.not!", // the bitwise word complement; @bool!'s `not` is the logic one
   "bytes.slice!",
   "concat!",
   "enumerate!",
@@ -209,10 +228,10 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     key: "blocknumber",
     label: "block number",
   },
-  "chainid!": { role: "source", key: "chainid", label: "chain id" },
-  "codehash!": {
+  "chainId!": { role: "source", key: "chainId", label: "chain id" },
+  "codeHash!": {
     role: "source",
-    key: "codehash",
+    key: "codeHash",
     label: "code hash",
     wrapAccepts: addressCall,
   },
@@ -228,9 +247,9 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     label: "max of…",
     accepts: familyAccepts("arith"),
   },
-  "absdiff!": {
+  "absDiff!": {
     role: "wrap",
-    key: "absdiff",
+    key: "absDiff",
     label: "|a − b|",
     accepts: familyAccepts("arith"),
   },
@@ -295,13 +314,9 @@ const HELPER_ROLES: Record<string, HelperRole> = {
         label: "logic (and/or/xor)…",
         accepts: familyAccepts("logic", "and"),
       },
-    ],
-  },
-  "not!": {
-    role: "infix",
-    entries: [
-      // Boolean-only in the builder; @not!'s bitwise word complement stays
-      // chat/EVML-level.
+      // Prefix `not` is one of @bool!'s operators, which is also what the
+      // codegen emits. The bitwise word complement is a different thing
+      // (@lang:bytes.not!) and stays chat/EVML-level.
       { key: "not", label: "not…", accepts: familyAccepts("logic", "and") },
     ],
   },
@@ -326,7 +341,7 @@ const NODE_GROUP: Partial<Record<NodeKey, string>> = {
   arith: "arithmetic",
   min: "arithmetic",
   max: "arithmetic",
-  absdiff: "arithmetic",
+  absDiff: "arithmetic",
   cmp: "comparison & logic",
   logic: "comparison & logic",
   not: "comparison & logic",
@@ -338,7 +353,7 @@ const NODE_GROUP: Partial<Record<NodeKey, string>> = {
   includes: "strings",
   charset: "strings",
   balance: "environment",
-  codehash: "environment",
+  codeHash: "environment",
 };
 
 if (import.meta.env.DEV) {

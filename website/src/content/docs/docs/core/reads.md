@@ -5,7 +5,7 @@ description: Getting values out of contract state with the frozen core's selecti
 
 Every way of getting a value out of contract state goes through five primitives on the `Assertions` core itself. Each resolves an ERC-8211 `InputParam` operand and returns its selection via a raw assembly return, indistinguishable from a contract returning that value directly, so any consumer (a judge fetcher, another primitive's operand) decodes it as if it had called the final target itself.
 
-They live on the frozen core, not the versionable periphery, because of the core's admission test: only what needs operands to arrive **unresolved**, in the ERC-8211 `InputParam` format, belongs there. Every primitive holds unresolved operands and decides how (or whether) to resolve them, and a `STATIC_CALL` operand may target the core itself, so the primitives nest into arbitrary expressions. Computation over already-resolved values belongs to [Operators](/docs/operators), reached through `read`; the [control primitives](/docs/core/control) (`cond`, `orElse`, `ok`) decide *whether* operands resolve at all.
+They live on the frozen core, not the versionable periphery, because of the core's admission test: only what needs operands to arrive **unresolved**, in the ERC-8211 `InputParam` format, belongs there. Every primitive holds unresolved operands and decides how (or whether) to resolve them, and a `STATIC_CALL` operand may target the core itself, so the primitives nest into arbitrary expressions. Computation over already-resolved values belongs to [Operators](/docs/operators), reached through `read`; the [control primitives](/docs/core/control) (`cond`, `orElse`, `isValid`, `revertData`) decide *whether* operands resolve at all.
 
 ```solidity
 function resolve(InputParam param) external view;                             // raw return
@@ -40,7 +40,7 @@ abi.encodeCall(Assertions.chain, (
 Every hop except the last must return an address as its first word (a dirty-upper-bytes word reverts with `InvalidAddressWord`, identifying the hop); the final hop's returndata passes through raw. In [EVMcrispr](/docs/evml) the same chain is written inline:
 
 ```evml
-assertions:assert $pool::{token()(address)}::{symbol()(string)} == "WETH"
+assert $pool::{token()(address)}::{symbol()(string)} == "WETH"
 ```
 
 ## Typed navigation

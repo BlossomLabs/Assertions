@@ -84,24 +84,16 @@ const local = evmcrisprSourceAliases(evmcrisprSrc);
 // The modules' generated helper registries (name/returnType/argDefs per
 // helper) drive the builder's combinator catalog; they have no package
 // export of their own, so alias them explicitly. The catalog merges the
-// assertions registry with the on-chain faces lang and std contribute.
-for (const mod of ['assertions', 'lang', 'math', 'receipts', 'std']) {
+// receipts, math and contracts registries with the on-chain faces lang and
+// std contribute (std owns `assert` and @ok! since the assertions module
+// dissolved; the type-composition table it consults lives in
+// @evmcrispr/sdk/onchain, which resolves through the generic alias above).
+for (const mod of ['contracts', 'lang', 'math', 'receipts', 'std']) {
   local.alias.push({
     find: exact(`@evmcrispr/module-${mod}/registry`),
     replacement: path.resolve(evmcrisprSrc, `modules/${mod}/src/_generated.ts`),
   });
 }
-
-// The module's type-composition table (which operators accept which operand
-// categories) drives the builder's operator menus — same single source of
-// truth the assert compiler consults.
-local.alias.push({
-  find: /^@evmcrispr\/module-assertions\/composition$/,
-  replacement: path.resolve(
-    evmcrisprSrc,
-    'modules/assertions/src/lib/composition.ts',
-  ),
-});
 
 if (!local.ids.length) {
   throw new Error(

@@ -354,9 +354,9 @@ contract OperatorsTest is Test {
         assertEq(ops.balance(TEST_EOA), 3 ether);
     }
 
-    function test_codehash() public view {
-        assertEq(ops.codehash(address(token)), address(token).codehash);
-        assertEq(ops.codehash(address(0xdead)), bytes32(0));
+    function test_codeHash() public view {
+        assertEq(ops.codeHash(address(token)), address(token).codehash);
+        assertEq(ops.codeHash(address(0xdead)), bytes32(0));
     }
 
     function test_blockValues() public {
@@ -919,7 +919,7 @@ contract OperatorsTest is Test {
     function test_code() public view {
         assertEq(ops.code(address(token)), address(token).code);
         assertEq(ops.code(TEST_EOA).length, 0);
-        // codehash's sibling: hashing the code reproduces the hash
+        // codeHash's sibling: hashing the code reproduces the hash
         assertEq(keccak256(ops.code(address(token))), address(token).codehash);
     }
 

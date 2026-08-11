@@ -39,6 +39,7 @@ import {
 import {
   type AssertionPlacement,
   insertAssertionLines,
+  isHelperLoad,
   type useScriptState,
 } from "./useScriptState";
 import {
@@ -56,7 +57,7 @@ import {
  *  (subject ⟨op⟩ expected over the read-spliced Operators tree). Suggest hands the
  *  batch to the AI assistant instead of building one manually. */
 type Mode = "simple" | "advanced" | "suggest";
-type SimpleKind = "call" | "balance" | "code" | "block" | "chainid";
+type SimpleKind = "call" | "balance" | "code" | "block" | "chainId";
 
 /** The subject shape the "Contract call" simple kind edits. */
 type CallNode = Extract<ValueExpr, { kind: "call" }>;
@@ -83,7 +84,7 @@ const SIMPLE_KINDS: { value: SimpleKind; label: string; hint: string }[] = [
     hint: "Block number or timestamp, e.g. a proposal executes before a deadline",
   },
   {
-    value: "chainid",
+    value: "chainId",
     label: "Chain ID",
     hint: "e.g. a reused signature can't land on another chain",
   },
@@ -182,7 +183,7 @@ export function AssertionForm({
 
   // Code fields.
   const [addressInput, setAddressInput] = useState("");
-  const [codeVariant, setCodeVariant] = useState<CodeVariant>("codehash");
+  const [codeVariant, setCodeVariant] = useState<CodeVariant>("codeHash");
   const [blockField, setBlockField] = useState<BlockField>("number");
 
   // Balance fields.
@@ -210,11 +211,11 @@ export function AssertionForm({
     setAssertion(emptyAssertion());
     setCallNode(emptyCall() as CallNode);
     setAddressInput("");
-    setCodeVariant("codehash");
+    setCodeVariant("codeHash");
     setBlockField("number");
     setAccount("@me");
     setOperator(nextKind === "balance" || nextKind === "block" ? ">=" : "==");
-    setExpected(nextKind === "chainid" ? String(chainId) : "");
+    setExpected(nextKind === "chainId" ? String(chainId) : "");
     setDelta("");
     setMessage("");
     setFetchStatus(null);
@@ -241,7 +242,7 @@ export function AssertionForm({
       case "block":
         return BLOCK_OPS;
       default:
-        return null; // code & chainid have no operator select
+        return null; // code & chainId have no operator select
     }
   }, [simpleKind, callNode, expected]);
 
@@ -401,7 +402,7 @@ export function AssertionForm({
   const showExpected =
     simpleKind === "call"
       ? operator !== BARE_OP
-      : simpleKind !== "code" || codeVariant === "codehash";
+      : simpleKind !== "code" || codeVariant === "codeHash";
   const canAdd =
     !!preview && validation?.state === "done" && validation.valid && !adding;
 
@@ -434,13 +435,13 @@ export function AssertionForm({
           which: blockField === "number" ? "blocknumber" : "timestamp",
         };
         break;
-      case "chainid":
-        subject = { kind: "chainid" };
+      case "chainId":
+        subject = { kind: "chainId" };
         op = "==";
         break;
       case "code":
         subject = {
-          kind: "codehash",
+          kind: "codeHash",
           address: { kind: "literal", value: targetInput },
         };
         op = "==";
@@ -456,7 +457,7 @@ export function AssertionForm({
     setMode("advanced");
   };
 
-  const canPromote = simpleKind !== "code" || codeVariant === "codehash";
+  const canPromote = simpleKind !== "code" || codeVariant === "codeHash";
 
   // Eager guidance for the contract-call kind (the expression editor shows
   // these inline per node; here the call is the only node).
@@ -689,13 +690,13 @@ export function AssertionForm({
             value={codeVariant}
             onChange={(e) => setCodeVariant(e.target.value as CodeVariant)}
           >
-            <option value="codehash">
+            <option value="codeHash">
               Code hash equals a known value (e.g. audited bytecode)
             </option>
             <option value="has-code">Address has deployed code</option>
             <option value="no-code">Address has no code</option>
           </select>
-          {codeVariant === "codehash" && (
+          {codeVariant === "codeHash" && (
             <p className="mt-1 text-xs text-[var(--color-ink-3)]">
               Note: proxy upgrades don't change code. To guard against them,
               assert implementation() under Contract state instead.
@@ -932,10 +933,8 @@ export function AssertionForm({
           <BatchList
             script={script}
             onRemoveLine={removeLine}
-            canRemove={(line) => line.startsWith("assertions:")}
-            hideLine={(line) =>
-              line === "load assertions" || line === "load lang"
-            }
+            canRemove={(line) => /^assert\b/.test(line)}
+            hideLine={isHelperLoad}
           />
         </div>
       )}

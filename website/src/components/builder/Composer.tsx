@@ -5,7 +5,7 @@ import { Suspense, useRef, useState } from "react";
 import { AbiForm } from "./AbiForm";
 import { BatchList } from "./BatchList";
 import { isTxBuilderBatch, txBuilderToEvml } from "./safe-tx-builder";
-import type { useScriptState } from "./useScriptState";
+import { isHelperLoad, type useScriptState } from "./useScriptState";
 
 type Mode = "form" | "editor" | "txbuilder";
 
@@ -102,10 +102,8 @@ export function Composer({
                 onRemoveLine={scriptState.removeLine}
                 // Assertions are added and removed in step 4; here they
                 // render dimmed, without a delete button.
-                canRemove={(line) => !line.startsWith("assertions:")}
-                hideLine={(line) =>
-                  line === "load assertions" || line === "load lang"
-                }
+                canRemove={(line) => !/^assert\b/.test(line)}
+                hideLine={isHelperLoad}
               />
             </div>
           )}

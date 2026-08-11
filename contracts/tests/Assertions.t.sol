@@ -1018,11 +1018,11 @@ contract AssertionsTest is Test {
     // ---- Parity: code checks (v1 assertEqCodeHash, assertHasCode, assertNoCode) ----
 
     function _codeHashExpr(address account) internal pure returns (bytes memory) {
-        return abi.encodeCall(Operators.codehash, (account));
+        return abi.encodeCall(Operators.codeHash, (account));
     }
 
     /**
-     * @dev hasCode(a) := codehash != 0 && codehash != keccak256("")
+     * @dev hasCode(a) := codeHash != 0 && codeHash != keccak256("")
      */
     function _hasCodeExpr(address account) internal view returns (bytes memory) {
         InputParam memory hashOp = _op(address(ops), _codeHashExpr(account));
@@ -1044,7 +1044,7 @@ contract AssertionsTest is Test {
     }
 
     function test_parity_noCode() public {
-        // noCode(a) := codehash == 0 || codehash == keccak256("")
+        // noCode(a) := codeHash == 0 || codeHash == keccak256("")
         vm.deal(TEST_EOA, 1 wei); // funded EOA: codehash == keccak256("")
         InputParam memory eoaHash = _op(address(ops), _codeHashExpr(TEST_EOA));
         bytes memory eqZero = _read2(EQ_U, eoaHash, _raw(abi.encode(bytes32(0)), _none()));

@@ -28,7 +28,7 @@ function switchLine(chainId: number): string | null {
 }
 
 /** `load` must sit at the top level, so pull the block's load lines (e.g.
- *  the AI-inserted `load assertions`) out and above the wrapper. */
+ *  the AI-inserted `load lang`) out and above the wrapper. */
 function hoistLoads(block: string): { loads: string[]; body: string } {
   const loads = new Set<string>();
   const body: string[] = [];

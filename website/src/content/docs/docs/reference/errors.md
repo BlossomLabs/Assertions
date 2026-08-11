@@ -39,6 +39,10 @@ View-mode batch restrictions from the judge, plus the primitives' own errors:
 | `BalanceCannotBeTarget(uint256, uint256)` | a `TARGET` input parameter uses the `BALANCE` fetcher (a balance is not an address) |
 | `EmptyCallChain()` | `chain` received an empty `calls` array |
 | `InvalidNavigation(uint256)` | a `nav` path step indexes a non-composite value, or the terminal cannot be represented as a single return (descriptor *parse* failures revert with `InvalidTypeDescriptor` instead) |
+| `RevertProbeNotACall(uint8)` | `revertData`'s operand is not a `STATIC_CALL` fetcher — a literal or a balance read has no call whose reason could be reported |
+| `RevertProbeConstrained(uint256)` | `revertData`'s operand carries constraints — the call itself is the subject, so its value is never validated |
+| `DidNotRevert(address, bytes)` | the call `revertData` probed succeeded — an assertion that a call fails is not satisfied by it working (identifies the offending call) |
+| `UnexpectedRevertData(bytes4, bytes4)` | the probed call reverted, but its data does not start with the expected error selector (arguments: expected, actual — `0x00000000` actual means the revert carried fewer than four bytes) |
 
 ## Operators
 

@@ -27,7 +27,7 @@ The examples reuse `callParam`/`eq`/`noConstraints` from [the Solidity guide](/d
 
 `rawCall(target, data)` executes a staticcall with raw calldata and returns the returndata as a bytes value: the precompile reach-through. Unlike the core's constructed calls, no selector is prepended and no code-length check is performed, because precompiles (sha256 at `0x02`, ecrecover at `0x01`, modexp at `0x05`, ...) have no code and raw calldata is their entire input. The caveat is the flip side: a staticcall to a code-less non-precompile address "succeeds" with empty returndata, so pin the result with `byteLen` or a constraint when that matters. A revert wraps as `RawCallFailed` carrying the calldata, consistent with the fold lambdas. In [EVMcrispr](/docs/evml), `@hash!(call "sha256")` routes its digest through a `rawCall` to the SHA-256 precompile.
 
-`code(account)` returns the full runtime code of an account as a bytes value: `codehash`'s sibling for prefix/suffix/segment assertions (slice out the ERC-1167 target of a minimal proxy, pin a code segment). A code-less account yields empty bytes.
+`code(account)` returns the full runtime code of an account as a bytes value: `codeHash`'s sibling for prefix/suffix/segment assertions (slice out the ERC-1167 target of a minimal proxy, pin a code segment). A code-less account yields empty bytes.
 
 ## Hashing: the payload semantic
 

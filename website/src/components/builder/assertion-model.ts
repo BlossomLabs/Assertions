@@ -1,19 +1,12 @@
-import type {
-  Category as ModCategory,
-  OpFamily,
-} from "@evmcrispr/module-assertions/composition";
-import {
-  allowedInfixOps,
-  checkInfix,
-  INFIX_OPS,
-} from "@evmcrispr/module-assertions/composition";
+import type { Category as ModCategory, OpFamily } from "@evmcrispr/sdk/onchain";
+import { allowedInfixOps, checkInfix, INFIX_OPS } from "@evmcrispr/sdk/onchain";
 import { isAddress } from "viem";
 
 /**
  * The assertion expression model. An assertion compares two value
  * expressions; each side is a tree of contract calls, literals and
- * Operators v1 helpers (`@min!`, `@absdiff!`, `@num!`, …) that the
- * codegen renders into an `assertions:assert` line.
+ * Operators v1 helpers (`@min!`, `@absDiff!`, `@num!`, …) that the
+ * codegen renders into an `assert` line.
  *
  * Nodes hold only serializable strings — ABI fetching and ENS resolution
  * stay in the editor components (one `useContractFunctions` per call node).
@@ -92,7 +85,7 @@ export type ValueExpr =
     }
   | { kind: "balance"; token: string; account: ValueExpr }
   | { kind: "minmax"; op: "min" | "max"; items: ValueExpr[] }
-  | { kind: "absdiff"; a: ValueExpr; b: ValueExpr }
+  | { kind: "absDiff"; a: ValueExpr; b: ValueExpr }
   | {
       kind: "arith";
       op: "+" | "-" | "*" | "/" | "//" | "%" | "^";
@@ -124,9 +117,9 @@ export type ValueExpr =
   // the lang module's @bytes.len! — see callwrapHelperName)
   | { kind: "split"; call: ValueExpr; delimiter: string; index: string }
   | { kind: "clock"; which: "timestamp" | "blocknumber" }
-  | { kind: "chainid" }
+  | { kind: "chainId" }
   /** EXTCODEHASH of an address (literal or address-returning call). */
-  | { kind: "codehash"; address: ValueExpr }
+  | { kind: "codeHash"; address: ValueExpr }
   /** String predicates over a call's string return (@str.includes!/@str.charset!). */
   | {
       kind: "strtest";
@@ -332,15 +325,15 @@ export function inferCategory(expr: ValueExpr): Category {
     }
     case "balance":
     case "clock":
-    case "chainid":
+    case "chainId":
       return "uint";
-    case "codehash":
+    case "codeHash":
       return "bytes32";
     case "strtest":
       return "bool";
     case "minmax":
       return expr.items.some((i) => inferCategory(i) === "int") ? "int" : "uint";
-    case "absdiff":
+    case "absDiff":
       return "uint";
     case "arith":
       return inferCategory(expr.left) === "int" ||
@@ -432,7 +425,7 @@ export const BARE_OP = "is true";
 /**
  * Operators available for a subject/expected pair, from the composition
  * table's cmp family. `~=` needs exactly one build-time-constant side; two
- * live numeric sides suggest `@absdiff!(a b) <= d` instead (the editor
+ * live numeric sides suggest `@absDiff!(a b) <= d` instead (the editor
  * offers that transform). Dynamic values (string/bytes/array/tuple) keep
  * == / != — the top-level judge compares them where nested expressions
  * can't.
@@ -479,7 +472,7 @@ export function unwrapNode(node: ValueExpr): ValueExpr | null {
   switch (node.kind) {
     case "minmax":
       return node.items[0] ?? null;
-    case "absdiff":
+    case "absDiff":
       return node.a;
     case "arith":
     case "cmp":
@@ -694,7 +687,7 @@ function walk(
       );
       break;
     }
-    case "absdiff":
+    case "absDiff":
       walk(expr.a, [...path, "a"], depth + 1, issues);
       walk(expr.b, [...path, "b"], depth + 1, issues);
       break;
@@ -782,32 +775,32 @@ function walk(
       walk(expr.call, [...path, "call"], depth + 1, issues, true);
       break;
     }
-    case "codehash": {
+    case "codeHash": {
       const addr = expr.address;
       if (addr.kind === "literal") {
         if (addr.value.trim() && literalCategory(addr.value) !== "address")
           issues.push({
             path,
-            message: "@codehash! needs an address (or a call returning one).",
+            message: "@codeHash! needs an address (or a call returning one).",
           });
       } else if (addr.kind === "call") {
         const cat = inferCategory(addr);
         if (cat !== "address" && cat !== "unknown")
           issues.push({
             path,
-            message: "@codehash! account call must return a single address.",
+            message: "@codeHash! account call must return a single address.",
           });
       } else {
         issues.push({
           path,
-          message: "@codehash! needs an address (or a call returning one).",
+          message: "@codeHash! needs an address (or a call returning one).",
         });
       }
       walk(addr, [...path, "address"], depth + 1, issues);
       break;
     }
     case "clock":
-    case "chainid":
+    case "chainId":
       break;
   }
 
@@ -858,7 +851,7 @@ export function validateAssertion(assertion: Assertion): Issue[] {
         issues.push({
           path: [],
           message:
-            "~= needs one constant side. For two live values use @absdiff!(a b) <= delta.",
+            "~= needs one constant side. For two live values use @absDiff!(a b) <= delta.",
         });
     }
   }

@@ -38,7 +38,7 @@ interface IERC20Balance {
  *         contract owns every primitive that speaks the ERC-8211 wire
  *         format: selection (`resolve`, `pick`, `nav`), call construction
  *         (`chain`, `read`) and resolution control (`cond`, `orElse`,
- *         `ok`).
+ *         `isValid`, `revertData`).
  * @dev The judge is view-only: assertComposable(executions) evaluates the
  *      ERC-8211 execution algorithm directly, restricted to what a view
  *      context can express: every fetcher resolution is a staticcall,
@@ -120,6 +120,39 @@ contract Assertions {
      *        failed
      */
     error InvalidNavigation(uint256 position);
+
+    /**
+     * @notice Thrown when revertData's operand is not a STATIC_CALL
+     *         parameter — only a call has a target whose revert reason
+     *         could be reported
+     * @param fetcherType The operand's fetcher type
+     */
+    error RevertProbeNotACall(uint8 fetcherType);
+
+    /**
+     * @notice Thrown when revertData's operand carries constraints. The
+     *         probed call never produces a value, so a constraint on it
+     *         could never be checked; rejecting it beats passing it over
+     *         in silence
+     * @param count The number of constraints on the operand
+     */
+    error RevertProbeConstrained(uint256 count);
+
+    /**
+     * @notice Thrown when revertData's operand did NOT revert
+     * @param target The call target
+     * @param callData The calldata that unexpectedly succeeded
+     */
+    error DidNotRevert(address target, bytes callData);
+
+    /**
+     * @notice Thrown when the revert data does not begin with the required
+     *         error selector
+     * @param expected The selector the caller required
+     * @param actual The selector the call actually reverted with (zero when
+     *        the revert carried fewer than four bytes)
+     */
+    error UnexpectedRevertData(bytes4 expected, bytes4 actual);
 
     // ============ Composable Batch Assertions ============
 
@@ -423,7 +456,7 @@ contract Assertions {
         }
     }
 
-    // ============ OrElse / Ok ============
+    // ============ OrElse / IsValid ============
 
     /**
      * @notice Resolves `a`; if that reverts for ANY reason, resolves and
@@ -454,18 +487,111 @@ contract Assertions {
     }
 
     /**
-     * @notice Returns 1 when `a` resolves without reverting, 0 otherwise
-     * @dev The failure probe: the same external self-staticcall boundary
-     *      as orElse (and the same all-reverts-count caveat, including the
-     *      subframe-OOG edge), collapsed to a word. Point a constrained
-     *      fetcher here to assert that a call succeeds (EQ 1) or that it
-     *      fails (EQ 0), or feed it to cond to branch on resolvability.
+     * @notice Returns 1 when `a` resolves AND passes its constraints, 0
+     *         otherwise
+     * @dev The failure probe, collapsed to a word: validity covers the
+     *      WHOLE resolution — the fetch succeeding (a reverting or
+     *      code-less target, malformed data all count as invalid) and any
+     *      inline constraints passing (they double as guards here). The
+     *      attempt runs behind the same external self-staticcall boundary
+     *      as orElse, with the same all-reverts-count caveat including the
+     *      subframe-OOG edge. Point a constrained fetcher here to assert
+     *      that a call succeeds (EQ 1) or that it fails (EQ 0), or feed it
+     *      to cond to branch on resolvability. Compose it over
+     *      `revertData` to get "reverted with this reason" as a word.
      * @param a The attempt to probe
      * @return 1 if `a` resolved (constraints included), else 0
      */
-    function ok(InputParam calldata a) external view returns (uint256) {
+    function isValid(InputParam calldata a) external view returns (uint256) {
         (bool success, ) = address(this).staticcall(abi.encodeCall(this.resolve, (a)));
         return success ? 1 : 0;
+    }
+
+    /**
+     * @notice Returns the revert data of a call that must fail, optionally
+     *         requiring a specific error selector
+     * @dev The reason-carrying probe. `isValid` and `orElse` route the
+     *      attempt through `resolve`, where `_staticCall` converts a
+     *      target's revert into this contract's own CallFailed and the
+     *      reason is lost; this performs the operand's staticcall IN-FRAME
+     *      so the target's revert data survives. That is what restricts it
+     *      to a STATIC_CALL operand — a literal or a balance read has no
+     *      call whose reason could be reported, and is rejected. A nested
+     *      core expression IS a staticcall (back into this contract), so
+     *      it is accepted — but the reason observed is then the core's own
+     *      error, not the inner target's, which is why reason MATCHING
+     *      only makes sense on a direct target call; composers must keep
+     *      the operand direct when expectedSelector is non-zero. An OOG
+     *      inside the probed frame counts as a revert here too (63/64
+     *      caveat, as with orElse) — with no reason to match.
+     *
+     *      With `expectedSelector` non-zero the first four bytes of the
+     *      revert data must match, and THE SELECTOR IS STRIPPED from the
+     *      result: what returns is the error's ABI-encoded arguments,
+     *      word-aligned, so `pick` and `nav` navigate them exactly as they
+     *      navigate a call's return. Leaving the four bytes in place would
+     *      misalign every word after them. A zero selector accepts any
+     *      revert and passes the data through whole, selector included.
+     *
+     *      A mismatch REVERTS rather than resolving to a value: an
+     *      assertion that a call fails for a specific reason is not
+     *      satisfied by it failing for a different one, and answering
+     *      otherwise would let an unrelated revert stand in for the
+     *      expected one. Same for a call that succeeds.
+     *
+     *      A code-less target counts as a failure, as it does for
+     *      `isValid` — but it carries no reason. A staticcall into an
+     *      empty account
+     *      succeeds with empty returndata, so there is nothing for an
+     *      expectation to match and one fails here.
+     * @param a The call operand, which must revert (STATIC_CALL fetcher,
+     *        no constraints)
+     * @param expectedSelector Required error selector, or 0x00000000 to
+     *        accept any revert and return the data unstripped
+     */
+    function revertData(InputParam calldata a, bytes4 expectedSelector) external view {
+        if (a.fetcherType != InputParamFetcherType.STATIC_CALL) {
+            revert RevertProbeNotACall(uint8(a.fetcherType));
+        }
+        if (a.constraints.length != 0) {
+            revert RevertProbeConstrained(a.constraints.length);
+        }
+        (address target, bytes memory callData) = abi.decode(a.paramData, (address, bytes));
+
+        if (target.code.length == 0) {
+            // Agrees with isValid(), which counts a code-less target a failure
+            // (there is no word to splice). But an empty account produces no
+            // revert data, so no expectation can be satisfied here.
+            if (expectedSelector != bytes4(0)) {
+                revert UnexpectedRevertData(expectedSelector, bytes4(0));
+            }
+            assembly {
+                return(0, 0)
+            }
+        }
+
+        (bool success, bytes memory ret) = target.staticcall(callData);
+        if (success) revert DidNotRevert(target, callData);
+
+        if (expectedSelector == bytes4(0)) {
+            assembly {
+                return(add(ret, 32), mload(ret))
+            }
+        }
+
+        // bytes4 takes the high four bytes of the loaded word; a revert
+        // shorter than a selector leaves `got` zero, which cannot match a
+        // non-zero expectation.
+        bytes4 got;
+        if (ret.length >= 4) {
+            assembly {
+                got := mload(add(ret, 32))
+            }
+        }
+        if (got != expectedSelector) revert UnexpectedRevertData(expectedSelector, got);
+        assembly {
+            return(add(ret, 36), sub(mload(ret), 4))
+        }
     }
 
     // ============ Internal Judge ============

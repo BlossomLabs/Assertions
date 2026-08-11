@@ -301,6 +301,37 @@ contract MockToken {
         rows[1][1] = address(0xbbb2);
     }
 
+    /**
+     * @notice A word beside an encoded-bytes blob — the (ok, data) shape
+     *         whose payload only nav's PAYLOAD sentinel can re-enter
+     *         (`bytes` is a sealed leaf in the descriptor grammar)
+     */
+    function wrappedReport() external pure returns (uint256 ok, bytes memory data) {
+        ok = 7;
+        data = abi.encode(uint256(100), uint256(200));
+    }
+
+    /**
+     * @notice An encoded blob whose payload carries a dynamic member, for
+     *         payload-relative offset checks after PAYLOAD re-entry
+     */
+    function wrappedString() external pure returns (bytes memory) {
+        return abi.encode(uint256(5), "hello");
+    }
+
+    /**
+     * @notice A string[] behind a leading word — a dynamic array of
+     *         dynamic elements, whose length only nav's LEN sentinel can
+     *         reach (the array itself has no single-envelope form)
+     */
+    function tags() external pure returns (address owner, string[] memory list) {
+        owner = address(0xb055);
+        list = new string[](3);
+        list[0] = "alpha";
+        list[1] = "beta";
+        list[2] = "gamma";
+    }
+
     struct Proposal {
         address proposer;
         uint256 votes;

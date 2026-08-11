@@ -250,10 +250,23 @@ contract Assertions {
      *         selects the decoded LENGTH of the dynamic value the preceding
      *         steps navigate to (array element count, or string/bytes byte
      *         length) instead of the value itself
-     * @dev type(int256).min is unusable as an index (any real index bound
-     *      catches it first), so the sentinel is unambiguous
+     * @dev The sentinels sit at the bottom of the int256 range, where no
+     *      value is usable as an index (any real index bound catches them
+     *      first), so both are unambiguous
      */
     int256 public constant LEN = type(int256).min;
+
+    /**
+     * @notice Sentinel path entry for nav: as the LAST entry of a path it
+     *         selects the raw PAYLOAD of the string or bytes value the
+     *         preceding steps navigate to — exactly its byte length, no
+     *         envelope, no padding. The typed-bytes re-entry point: a nav
+     *         over THIS result claims the payload's encoding with an
+     *         ordinary descriptor, so an encoded blob's content is
+     *         reachable without the descriptor grammar leaving ABI syntax
+     * @dev type(int256).min + 1, unusable as an index like LEN
+     */
+    int256 public constant PAYLOAD = type(int256).min + 1;
 
     /**
      * @notice Resolves an input parameter, interprets the resolved bytes as
@@ -289,7 +302,17 @@ contract Assertions {
      *      - a path ending in the LEN sentinel: the decoded length of the
      *        dynamic value the preceding steps navigate to, as a uint256
      *        word (element count for arrays, byte length for string/bytes
-     *        — UTF-8 characters may span multiple bytes).
+     *        — UTF-8 characters may span multiple bytes);
+     *      - a path ending in the PAYLOAD sentinel: the raw payload of the
+     *        string or bytes value the preceding steps navigate to —
+     *        exactly its byte length, unpadded, no envelope. This is the
+     *        typed-bytes re-entry point: a blob's content is opaque to
+     *        THIS descriptor (bytes is a sealed leaf, and the grammar
+     *        stays plain ABI), but a nav over the PAYLOAD result claims
+     *        its encoding with an ordinary descriptor, same author's-claim
+     *        status as any other. Arrays and dynamic tuples revert with
+     *        InvalidNavigation — their payload's extent would require the
+     *        recursive re-encoder the core deliberately lacks.
      *
      *      Operand failures revert with CallFailed / ConstraintFailed
      *      identifying them; a malformed descriptor reverts with
@@ -318,6 +341,12 @@ contract Assertions {
             assembly {
                 mstore(0, length)
                 return(0, 32)
+            }
+        }
+        if (path[path.length - 1] == PAYLOAD) {
+            (uint256 start, uint256 length) = _navPayload(result, t, path[:path.length - 1]);
+            assembly {
+                return(add(add(result, 32), start), length)
             }
         }
         (uint256 pos, bool isWord, uint256 ts, uint256 te) = _navigate(result, t, path);
@@ -789,6 +818,36 @@ contract Assertions {
         // dynamic tuple's position is its first head word — no length there.
         if (t[te - 1] != "]" && t[ts] == "(") revert InvalidNavigation(ts);
         return _navWord(result, pos);
+    }
+
+    /**
+     * @dev Resolves a PAYLOAD-terminated path: navigates the non-sentinel
+     *      steps to a string or bytes value and returns the span of its raw
+     *      payload — start offset into `result` and exact byte length, no
+     *      envelope, no padding. Static values, arrays, dynamic tuples and
+     *      empty paths revert with InvalidNavigation: an array or tuple
+     *      payload's extent would require the recursive re-encoder the
+     *      core deliberately lacks. A length word overrunning the data
+     *      reverts with ReturnDataOutOfBounds.
+     */
+    function _navPayload(bytes memory result, bytes calldata t, int256[] calldata path)
+        internal
+        pure
+        returns (uint256 start, uint256 length)
+    {
+        if (path.length == 0) revert InvalidNavigation(0);
+        (uint256 pos, bool isWord, uint256 ts, uint256 te) = _navigate(result, t, path);
+        if (isWord) revert InvalidNavigation(ts);
+        // Only bytes/string base terminals carry a byte-counted payload
+        // behind their length word.
+        if (t[te - 1] == "]" || t[ts] == "(") revert InvalidNavigation(ts);
+        length = _navWord(result, pos);
+        // _navWord guarantees pos + 32 <= result.length, so the
+        // subtraction cannot underflow.
+        if (length > result.length - pos - 32) {
+            revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+        }
+        start = pos + 32;
     }
 
     /**

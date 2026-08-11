@@ -27,6 +27,8 @@ The examples reuse `callParam`/`eq`/`noConstraints` from [the Solidity guide](/d
 
 `rawCall(target, data)` executes a staticcall with raw calldata and returns the returndata as a bytes value: the precompile reach-through. Unlike the core's constructed calls, no selector is prepended and no code-length check is performed, because precompiles (sha256 at `0x02`, ecrecover at `0x01`, modexp at `0x05`, ...) have no code and raw calldata is their entire input. The caveat is the flip side: a staticcall to a code-less non-precompile address "succeeds" with empty returndata, so pin the result with `byteLen` or a constraint when that matters. A revert wraps as `RawCallFailed` carrying the calldata, consistent with the fold lambdas. In [EVMcrispr](/docs/evml), `@hash!(call "sha256")` routes its digest through a `rawCall` to the SHA-256 precompile.
 
+Its second role is the envelope wrapper: because the returndata comes back as a bytes value, `rawCall` bridges any call's raw return, whatever its shape or runtime length, into every bytes-consuming operator. The [whole-returndata recipe](#whole-returndata-hash-over-rawcall) below builds on it.
+
 `code(account)` returns the full runtime code of an account as a bytes value: `codeHash`'s sibling for prefix/suffix/segment assertions (slice out the ERC-1167 target of a minimal proxy, pin a code segment). A code-less account yields empty bytes.
 
 ## Hashing: the payload semantic
@@ -42,13 +44,26 @@ assertions.assertParam(
 );
 ```
 
-For returns that are not a single dynamic value (multi-word tuples, structs), extract the field first with the core's `pick` or `nav` and compare words directly; the envelope framing above only holds for single dynamic returns.
+One warning before leaning on the envelope framing: it holds for `string` and `bytes` returns only. An **array** return also arrives as an envelope, so the splice compiles and executes, but its length word counts *elements*, not bytes: `hash` over a spliced `address[3]` return digests the first 3 bytes of a 96-byte payload and returns a plausible word for a value nobody computed. Never splice an array return directly into `hash` (or `byteLen`, which would report the element count as a byte length); use the whole-returndata form below, or extract a field with the core's `pick`/`nav` and compare words directly.
+
+### Whole returndata: hash over rawCall
+
+For everything the envelope framing does not cover (multi-value returns, structs with dynamic members, array returns, revert payloads, even empty returndata), `rawCall` is the bridge: it returns the target call's **raw returndata as a bytes value**, at its true byte length, whatever its shape. Composing `hash` over it pins a call's entire return with a standard `EQ` constraint:
+
+```text
+hash(rawCall(target, callData))        keccak256 of the whole returndata
+hash(rawCall(core, resolveCalldata))   keccak256 of any resolved operand
+```
+
+The second form routes through the core's [`resolve`](/docs/core/reads), so constraint-guarded operands, `BALANCE` fetchers, and nested core expressions are all reachable. Snapshot equality falls out: "the signer set and owner have not changed" is one hash judged `EQ` against the precomputed value, with no per-element navigation and no build-time length knowledge. Empty returndata works too: a call returning nothing hashes as `keccak256("")`, the one way to assert emptiness (a direct constraint on an empty value has no word to judge). Two care points: the digest covers the raw bytes, envelope words included, so precompute the expected hash from the full ABI encoding rather than the payload alone; and `rawCall`'s code-less caveat carries over, so pair with `codeHash` when "returned nothing" must not be satisfied by "was nothing".
+
+When you need the *conventional* digest of a single string or bytes value (the `keccak256(value)` the rest of the EVM computes: stored name hashes, Merkle leaves), keep the direct splice from the example above; the payload semantic is exactly right there.
 
 `hashPairSorted(a, b)` hashes the ascending-sorted pair of two words, byte-identical to OpenZeppelin MerkleProof's node combiner, so a `foldWords` over a proof payload with `hashPairSorted` as the lambda and the leaf as the initial accumulator reproduces the root (the crypto module's `@crypto:merkle.verify!` compiles exactly this fold). Order-preserving pair hashing needs no dedicated function: it composes as `hash` over `concat`.
 
 ## Byte length
 
-`byteLen(data)` is the raw byte length of its argument. Spliced over a string or bytes return it measures the decoded payload (`"Curve LP Token"` measures 14), matching [`nav`'s `LEN` sentinel](/docs/core/reads) for those types; the empty string measures 0. Its main role in composition is the `includes` recipe below, where it doubles as `indexOf`'s not-found sentinel.
+`byteLen(data)` is the raw byte length of its argument. Spliced over a string or bytes return it measures the decoded payload (`"Curve LP Token"` measures 14), matching [`nav`'s `LEN` sentinel](/docs/core/reads) for those types; the empty string measures 0. Its main role in composition is the `includes` recipe below, where it doubles as `indexOf`'s not-found sentinel. Composed like the hashing recipe, `byteLen(rawCall(target, callData))` measures a call's raw returndata length, whatever its shape.
 
 ## Slice and concat
 

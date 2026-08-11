@@ -47,7 +47,7 @@ assert $pool::{token()(address)}::{symbol()(string)} == "WETH"
 
 Typed navigation is self-describing calldata: `nav(param, "(address[][],address)", [0, 3, 1])` reads as "return value 0, element 3, element 1". The first path step selects a return component; each further step indexes the current tuple or array, and array steps accept negative indices resolved against the live length (`-1` = last). The contract derives every offset-follow and bounds check from the descriptor, parsing only the *shape* (dynamic vs static, head footprints). Struct arrays navigate the same way: `proposals()[1].executed` against `"((address,uint256,bool)[])"` is path `[0, 1, 2]`, EVMcrispr's nested lens `[[_ [_ _ $]]]`. The declared type is the author's claim about the encoder, like an inline ABI: a wrong claim reverts loudly in almost all cases, but a shape-compatible wrong type can read the wrong value.
 
-The terminal may be a single word, or a dynamic value (string/bytes/array of static single-word elements) returned as the canonical `[0x20][length][payload]` envelope; dynamic tuples and arrays of dynamic elements revert with `InvalidNavigation`. An empty path is a byte-for-byte passthrough (`nav` degenerates to `resolve`).
+The terminal may be a single word, or a dynamic value (string/bytes/array of static single-word elements) returned as the canonical `[0x20][length][payload]` envelope; dynamic tuples and arrays of dynamic elements revert with `InvalidNavigation`. An empty path is a byte-for-byte passthrough (`nav` degenerates to `resolve`). An encoded `bytes` value's *content* is reachable too, through [the `PAYLOAD` sentinel](#typed-re-entry-the-payload-sentinel) below.
 
 ## Raw word extraction
 
@@ -75,6 +75,19 @@ The encoder owns the calldata layout: a segment resolving to anything other than
 ## Nested lengths
 
 EVMcrispr's `@len!`: a path ending in the `LEN` sentinel (`type(int256).min`, exposed as the public constant `LEN`) returns the decoded *length* of the dynamic value the preceding steps navigate to: element count for arrays, byte length for string/bytes. `nav(holdersParam, "(address[])", [0, LEN])` returns the holder count as a word. Because the sentinel composes with navigation, the length of an array *inside* a struct is one call too.
+
+## Typed re-entry: the PAYLOAD sentinel
+
+`bytes` is a sealed leaf in the descriptor grammar: an encoded blob's content is opaque to the descriptor that reaches it, and the grammar stays plain ABI syntax. A path ending in the `PAYLOAD` sentinel (`type(int256).min + 1`, exposed as the public constant `PAYLOAD`) opens the seal: it navigates to a string or bytes value and returns its raw payload, exactly its byte length, no envelope, no padding. Re-entry is then ordinary composition, with the payload's encoding claimed by the consuming nav's own descriptor:
+
+```solidity
+// f() returns (uint256 ok, bytes data), where data encodes (address,uint256):
+// the inner nav strips the blob in the same frame that navigates to it, and
+// the outer nav claims the payload's type
+nav( nav(x, "(uint256,bytes)", [1, PAYLOAD]), "(address,uint256)", [0] )
+```
+
+The claim has the same status as any descriptor: the author's statement about the encoder, checked by shape. Composed over `rawCall` (which wraps any call's raw returndata as a bytes value, see [the bytes page](/docs/operators/data)) the sentinel is a general unwrapper, and on a string value it returns the true unpadded bytes. Arrays and dynamic tuples refuse the sentinel with `InvalidNavigation`: their payload's extent would require a recursive re-encoder the core deliberately lacks. Like `LEN`, the sentinel is only meaningful as the last path entry; anywhere else it falls into the ordinary bounds checks and reverts loudly.
 
 ## Failure modes
 

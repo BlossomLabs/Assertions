@@ -65,7 +65,7 @@ The primitives live on the core alongside the judge, because they hold operands 
 |----------|-------------|
 | `resolve` | Resolve one operand and return its bytes raw; constraint violations revert with `ConstraintFailed`, turning any expression node into an inline assert |
 | `pick` | Select one raw 32-byte word from a resolved operand (signed index, negative from the end) |
-| `nav` | Typed navigation: interpret the resolved bytes as a declared return tuple (`retTypes`) and walk an index path through tuples and dynamic arrays: single-word terminals, canonical dynamic envelopes, and decoded lengths via the `LEN` sentinel |
+| `nav` | Typed navigation: interpret the resolved bytes as a declared return tuple (`retTypes`) and walk an index path through tuples and dynamic arrays: single-word terminals, canonical dynamic envelopes, decoded lengths via the `LEN` sentinel, and raw string/bytes payloads (typed re-entry into encoded blobs) via the `PAYLOAD` sentinel |
 | `chain` | Follow runtime-resolved addresses: each hop staticcalls the address word the previous hop returned |
 | `read` | Construct a staticcall at judge time: resolve the target and concatenate the selector with each argument segment's full resolved bytes (ERC-8211 CALL_DATA routing), then return the call's raw returndata; the composition socket that splices operand expressions into plain calldata for Operators or any other view/pure contract |
 | `cond` | EVML: `@ifElse!`. Resolve the condition (first word nonzero = true), then resolve and return ONLY the winning branch; the losing branch is never resolved |
@@ -96,7 +96,7 @@ These live at the Operators address (interim `0x8e832Ace3f433943eb605c258bA37AF2
 | `baseFee` / `prevRandao` / `coinbase` / `gasLimit` / `blobBaseFee` / `origin` / `gasPrice` / `blobHash` | Block-header and transaction environment values at judge time |
 | `blockHash` | The hash of block `n`, BLOCKHASH semantics (0 for the current block, the future, and blocks older than 256) |
 | `concat` / `slice` / `byteLen` | Bytes concatenation, bounds-checked slicing, and raw byte length |
-| `hash` | keccak256 of the `bytes` argument; through `read` splicing the digest covers the decoded payload |
+| `hash` | keccak256 of the `bytes` argument; through `read` splicing the digest covers the decoded payload, and `hash` over `rawCall` pins a call's whole returndata (see [the bytes page](/docs/operators/data)) |
 | `indexOf` | Position of the occurrence-th non-overlapping occurrence of `needle` in `s` (0, 1, ... from the start; -1, -2, ... from the end); sentinel `s.length` when it does not exist; total |
 | `parseUint` / `toString` | Decimal ASCII string to `uint256` (strict: reverts on empty input or non-digit bytes) and its no-leading-zeros inverse |
 | `encode` | Runtime `abi.encode` of a tuple from canonical single-value encodings (`nav`'s inverse); raw return, a calldata segment for `read` splicing |

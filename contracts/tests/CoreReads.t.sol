@@ -362,6 +362,156 @@ contract CoreReadsTest is Test {
         assertions.nav(p, "(address,string[])", _path1(1));
     }
 
+    function test_nav_payload_flagship_okRevertDataShape() public view {
+        // the (ok, data) probe shape: bytes is a sealed leaf, so the blob's
+        // content is reached by re-entry — PAYLOAD strips the value in the
+        // same frame that navigates to it, and an outer nav claims the
+        // payload's encoding with an ordinary descriptor
+        InputParam memory report = _call(address(token), abi.encodeCall(MockToken.wrappedReport, ()));
+        InputParam memory payload = _nested(
+            abi.encodeCall(Assertions.nav, (report, "(uint256,bytes)", _path2(1, assertions.PAYLOAD())))
+        );
+        (bool ok, bytes memory ret) = _nav(payload, "(uint256,uint256)", _path1(0));
+        assertTrue(ok);
+        assertEq(abi.decode(ret, (uint256)), 100);
+
+        (ok, ret) = _nav(payload, "(uint256,uint256)", _path1(1));
+        assertTrue(ok);
+        assertEq(abi.decode(ret, (uint256)), 200);
+
+        // the sibling word stays reachable through the plain path
+        (ok, ret) = _nav(report, "(uint256,bytes)", _path1(0));
+        assertTrue(ok);
+        assertEq(abi.decode(ret, (uint256)), 7);
+    }
+
+    function test_nav_payload_stringUnpadded() public view {
+        // PAYLOAD of a string is its true bytes — length 5, not the
+        // word-padded envelope
+        InputParam memory p = _call(address(target), abi.encodeCall(MockTarget.getTupleWithString, ()));
+        (bool ok, bytes memory ret) = _nav(p, "(uint256,string,address)", _path2(1, assertions.PAYLOAD()));
+        assertTrue(ok);
+        assertEq(ret.length, 5);
+        assertEq(ret, bytes("hello"));
+    }
+
+    function test_nav_payload_reentryDynamicContent() public view {
+        // the blob's payload carries its own dynamic member; offsets are
+        // payload-relative, so the re-entered frame navigates them honestly
+        InputParam memory blob = _call(address(token), abi.encodeCall(MockToken.wrappedString, ()));
+        InputParam memory payload = _nested(
+            abi.encodeCall(Assertions.nav, (blob, "(bytes)", _path2(0, assertions.PAYLOAD())))
+        );
+        (bool ok, bytes memory ret) = _nav(payload, "(uint256,string)", _path1(1));
+        assertTrue(ok);
+        assertEq(ret, abi.encode("hello"));
+
+        (ok, ret) = _nav(payload, "(uint256,string)", _path2(1, assertions.LEN()));
+        assertTrue(ok);
+        assertEq(abi.decode(ret, (uint256)), 5);
+
+        (ok, ret) = _nav(payload, "(uint256,string)", _path1(0));
+        assertTrue(ok);
+        assertEq(abi.decode(ret, (uint256)), 5);
+    }
+
+    function test_nav_payload_wholeValueUnwrap() public view {
+        // rawCall wraps raw returndata as a bytes value; PAYLOAD strips it
+        // back — inverses, so any call's raw return becomes navigable bytes
+        InputParam memory wrapped = _call(
+            address(ops),
+            abi.encodeCall(Operators.rawCall, (address(token), abi.encodeCall(MockToken.getReserves, ())))
+        );
+        (bool ok, bytes memory ret) = _nav(wrapped, "(bytes)", _path2(0, assertions.PAYLOAD()));
+        assertTrue(ok);
+        assertEq(ret, abi.encode(uint256(5000e18), uint256(1000e18), uint256(123456)));
+    }
+
+    function test_nav_payload_emptyBytes() public view {
+        InputParam memory p = InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.RAW_BYTES,
+            abi.encode(bytes("")),
+            _none()
+        );
+        (bool ok, bytes memory ret) = _nav(p, "(bytes)", _path2(0, assertions.PAYLOAD()));
+        assertTrue(ok);
+        assertEq(ret.length, 0);
+    }
+
+    function test_nav_payload_invalidTerminals() public {
+        int256 payloadStep = assertions.PAYLOAD();
+
+        // a static word has no payload
+        InputParam memory tuple = _call(address(target), abi.encodeCall(MockTarget.getTupleWithString, ()));
+        vm.expectRevert(abi.encodeWithSelector(Assertions.InvalidNavigation.selector, 1));
+        assertions.nav(tuple, "(uint256,string,address)", _path2(0, payloadStep));
+
+        // arrays and dynamic tuples: their payload's extent would require
+        // the recursive re-encoder the core deliberately lacks
+        InputParam memory tagsParam = _call(address(token), abi.encodeCall(MockToken.tags, ()));
+        vm.expectRevert(abi.encodeWithSelector(Assertions.InvalidNavigation.selector, 9));
+        assertions.nav(tagsParam, "(address,string[])", _path2(1, payloadStep));
+
+        InputParam memory items = _call(address(token), abi.encodeCall(MockToken.items, ()));
+        vm.expectRevert(abi.encodeWithSelector(Assertions.InvalidNavigation.selector, 1));
+        assertions.nav(items, "((string,uint256)[])", _path3(0, 0, payloadStep));
+
+        // an empty prefix has nothing to navigate
+        vm.expectRevert(abi.encodeWithSelector(Assertions.InvalidNavigation.selector, 0));
+        assertions.nav(tuple, "(uint256,string,address)", _path1(payloadStep));
+
+        // mid-path, the sentinel is just an impossible index
+        InputParam memory arr = _call(address(target), abi.encodeCall(MockTarget.getArray, ()));
+        vm.expectRevert(abi.encodeWithSelector(ElementIndexOutOfBounds.selector, payloadStep, 1));
+        assertions.nav(arr, "(uint256[])", _path2(payloadStep, 0));
+    }
+
+    function test_nav_payload_lyingLength() public {
+        // a length word overrunning the data cannot leak past the end
+        bytes memory lie = abi.encode(uint256(0x20), uint256(100));
+        InputParam memory p = InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, lie, _none());
+        // hoisted: PAYLOAD() is itself a call, and expectRevert arms on the
+        // NEXT call — inlining it in the nav arguments would disarm the check
+        int256[] memory path = _path2(0, assertions.PAYLOAD());
+        vm.expectRevert(abi.encodeWithSelector(ReturnDataOutOfBounds.selector, 1, 64));
+        assertions.nav(p, "(bytes)", path);
+    }
+
+    function test_nav_payload_judgedThroughCore() public {
+        // the re-entry expression rides a constrained fetcher: assert the
+        // blob's first payload word through the core
+        InputParam memory report = _call(address(token), abi.encodeCall(MockToken.wrappedReport, ()));
+        bytes memory innerNav = abi.encodeCall(
+            Assertions.nav, (report, "(uint256,bytes)", _path2(1, assertions.PAYLOAD()))
+        );
+        bytes memory outerNav = abi.encodeCall(
+            Assertions.nav, (_nested(innerNav), "(uint256,uint256)", _path1(0))
+        );
+        InputParam memory judged = InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.STATIC_CALL,
+            abi.encode(address(assertions), outerNav),
+            _c1(ConstraintType.EQ, abi.encode(uint256(100)))
+        );
+        assertions.assertParam(judged);
+
+        judged.constraints = _c1(ConstraintType.EQ, abi.encode(uint256(101)));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ConstraintFailed.selector,
+                "PARAM",
+                0,
+                0,
+                0,
+                ConstraintType.EQ,
+                bytes32(uint256(100)),
+                abi.encode(uint256(101))
+            )
+        );
+        assertions.assertParam(judged);
+    }
+
     function test_nav_indexOutOfBounds() public {
         InputParam memory signers = _call(address(token), abi.encodeCall(MockToken.signers, ()));
         vm.expectRevert(abi.encodeWithSelector(ElementIndexOutOfBounds.selector, 3, 3));

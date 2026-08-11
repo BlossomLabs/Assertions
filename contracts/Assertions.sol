@@ -815,8 +815,15 @@ contract Assertions {
         (uint256 pos, bool isWord, uint256 ts, uint256 te) = _navigate(result, t, path);
         if (isWord) revert InvalidNavigation(ts);
         // Dynamic arrays and bytes/string sit on their length word; a
-        // dynamic tuple's position is its first head word — no length there.
-        if (t[te - 1] != "]" && t[ts] == "(") revert InvalidNavigation(ts);
+        // dynamic tuple's position is its first head word — no length
+        // there, and a FIXED array's position is its first element (its
+        // length is known at composition time, so it has no length word
+        // to read either).
+        if (t[te - 1] == "]") {
+            if (AbiShape.suffixStart(t, ts, te) + 1 != te - 1) revert InvalidNavigation(ts);
+        } else if (t[ts] == "(") {
+            revert InvalidNavigation(ts);
+        }
         return _navWord(result, pos);
     }
 
@@ -874,9 +881,15 @@ contract Assertions {
             // dynamic tuple terminal: not extractable as a single envelope
             revert InvalidNavigation(ts);
         } else {
-            // bytes / string: byte length, stored padded to full words
+            // bytes / string: byte length, stored padded to full words.
+            // Bound len BEFORE the padding round-up so a hostile length
+            // word near 2^256 cannot overflow the checked arithmetic
+            // into a Panic.
+            if (len > result.length - pos - 32) {
+                revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+            }
             payloadBytes = ((len + 31) / 32) * 32;
-            if (len > result.length - pos - 32 || payloadBytes > result.length - pos - 32) {
+            if (payloadBytes > result.length - pos - 32) {
                 revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
             }
         }

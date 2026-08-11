@@ -12,7 +12,7 @@ The core (judge + primitives) lives at the interim address `0xA01bC220Efc4c730BB
 | `assertParam(InputParam)` | Resolve one input parameter (raw bytes, staticcall, or balance read) and validate its inline constraints (the 90% case, no batch scaffolding) |
 | `assertComposable(ComposableExecution[])` | Evaluate an ERC-8211 composable batch under view semantics: predicate entries resolve and validate their parameters; entries with a `TARGET` parameter construct a call by splicing resolved values into calldata and execute it via `staticcall` (the call must not revert) |
 
-The judge consumes the **unmodified ERC-8211 wire format**, so batches built by any ERC-8211 SDK judge here unchanged. Being view-only, it rejects what a view context cannot express: output parameters (Storage writes) revert with `OutputParamsNotSupported`, `VALUE` parameters with `ValueParamNotSupported`, a second `TARGET` parameter with `DuplicateTargetParam`, and a `BALANCE`-fetched target with `BalanceCannotBeTarget`.
+The judge consumes the **unmodified ERC-8211 wire format**, so batches built by any ERC-8211 SDK judge here unchanged. Being view, it is also itself an operand: a `STATIC_CALL` parameter encoding an `assertComposable` self-call makes a whole batch probeable with `isValid`, `orElse` and `revertData` ([a batch as an operand](/docs/core/control#a-batch-as-an-operand)). Being view-only, it rejects what a view context cannot express: output parameters (Storage writes) revert with `OutputParamsNotSupported`, `VALUE` parameters with `ValueParamNotSupported`, a second `TARGET` parameter with `DuplicateTargetParam`, and a `BALANCE`-fetched target with `BalanceCannotBeTarget`.
 
 ## Wire format
 

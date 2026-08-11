@@ -9,6 +9,15 @@ import "../AbiShape.sol";
 import "./Mocks.sol";
 
 /**
+ * @notice The single-batch judge surface by itself: abi.encodeCall cannot
+ *         disambiguate the assertComposable overloads, so the batch-as-
+ *         operand helpers name it through this one-function interface
+ */
+interface IAssertBatch {
+    function assertComposable(ComposableExecution[] calldata executions) external view;
+}
+
+/**
  * @notice Core read-primitive tests: resolve, pick, nav, chain and read
  *         live on the frozen Assertions core and are exercised directly
  *         against it, including nesting expressions through the core
@@ -330,6 +339,27 @@ contract CoreReadsTest is Test {
         (ok, ret) = _nav(p, "(uint256,string,address)", _path2(1, assertions.LEN()));
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), 5);
+    }
+
+    function test_nav_lenSentinel_dynamicElementArray() public {
+        // string[] elements are themselves dynamic, so _returnDynamic cannot
+        // hand the array out as a single envelope — LEN reads the length
+        // word in place, behind the runtime offset the tuple head introduces
+        InputParam memory p = _call(address(token), abi.encodeCall(MockToken.tags, ()));
+        (bool ok, bytes memory ret) = _nav(p, "(address,string[])", _path2(1, assertions.LEN()));
+        assertTrue(ok);
+        assertEq(abi.decode(ret, (uint256)), 3);
+
+        // and through both offset layers: the byte length of tags[1]
+        (ok, ret) = _nav(p, "(address,string[])", _path3(1, 1, assertions.LEN()));
+        assertTrue(ok);
+        assertEq(abi.decode(ret, (uint256)), 4);
+
+        // the value itself is unreachable — extracting the string[] reverts,
+        // which is why the sentinel exists (position 9 = "string[]" in the
+        // descriptor)
+        vm.expectRevert(abi.encodeWithSelector(Assertions.InvalidNavigation.selector, 9));
+        assertions.nav(p, "(address,string[])", _path1(1));
     }
 
     function test_nav_indexOutOfBounds() public {
@@ -1084,5 +1114,52 @@ contract CoreReadsTest is Test {
             _c1(ConstraintType.EQ, abi.encode(uint256(7)))
         );
         assertions.assertParam(judged);
+    }
+
+    // ============ A Batch As An Operand ============
+
+    /**
+     * @dev A one-parameter predicate batch (no TARGET entry)
+     */
+    function _predicate(InputParam memory p) internal pure returns (ComposableExecution[] memory ex) {
+        InputParam[] memory ps = new InputParam[](1);
+        ps[0] = p;
+        ex = new ComposableExecution[](1);
+        ex[0] = ComposableExecution(bytes4(0), ps, new OutputParam[](0));
+    }
+
+    /**
+     * @dev A whole batch as one STATIC_CALL operand: a self-call to the
+     *      view judge
+     */
+    function _batchProbe(ComposableExecution[] memory ex) internal view returns (InputParam memory) {
+        return _nested(abi.encodeCall(IAssertBatch.assertComposable, (ex)));
+    }
+
+    function test_isValid_batchAsOperand() public view {
+        // "would this batch pass, right now" as a 0/1 word
+        InputParam memory holds = _call(address(target), abi.encodeCall(MockTarget.getValue, ()));
+        holds.constraints = _c1(ConstraintType.EQ, abi.encode(uint256(42)));
+        assertEq(assertions.isValid(_batchProbe(_predicate(holds))), 1);
+
+        InputParam memory broken = _call(address(target), abi.encodeCall(MockTarget.getValue, ()));
+        broken.constraints = _c1(ConstraintType.EQ, abi.encode(uint256(43)));
+        assertEq(assertions.isValid(_batchProbe(_predicate(broken))), 0);
+    }
+
+    function test_revertData_batchFailsOnExactConstraint() public view {
+        // "this batch fails, and for a constraint": the stripped payload
+        // is ConstraintFailed's arguments, identifying the violation
+        InputParam memory broken = _call(address(target), abi.encodeCall(MockTarget.getValue, ()));
+        broken.constraints = _c1(ConstraintType.EQ, abi.encode(uint256(43)));
+        (bool ok_, bytes memory ret) = _revertData(_batchProbe(_predicate(broken)), ConstraintFailed.selector);
+        assertTrue(ok_);
+
+        (string memory assertion, uint256 entryIndex, uint256 paramIndex,,, bytes32 actual,) =
+            abi.decode(ret, (string, uint256, uint256, uint256, ConstraintType, bytes32, bytes));
+        assertEq(assertion, "COMPOSABLE");
+        assertEq(entryIndex, 0);
+        assertEq(paramIndex, 0);
+        assertEq(actual, bytes32(uint256(42)));
     }
 }

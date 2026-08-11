@@ -200,7 +200,7 @@ assertions.assertParam(
 
 ## Judging whole batches
 
-`assertComposable(executions[, message])` judges an ERC-8211 batch: entries without a `TARGET` parameter are plain predicate entries (each input parameter is resolved and constraint-checked), and entries **with** one construct a call by splicing the resolved parameter values into calldata (the call is executed via `staticcall` and must not revert). It accepts unmodified batches built by any ERC-8211 SDK. For nested live call arguments ("use the result of `b()` as an argument of `a()`") judged through `assertParam`, the core's [`read` primitive](/docs/core/reads) constructs the same call as a composable expression.
+`assertComposable(executions[, message])` judges an ERC-8211 batch: entries without a `TARGET` parameter are plain predicate entries (each input parameter is resolved and constraint-checked), and entries **with** one construct a call by splicing the resolved parameter values into calldata (the call is executed via `staticcall` and must not revert). It accepts unmodified batches built by any ERC-8211 SDK. For nested live call arguments ("use the result of `b()` as an argument of `a()`") judged through `assertParam`, the core's [`read` primitive](/docs/core/reads) constructs the same call as a composable expression. And because the judge is view, a whole batch is itself one `STATIC_CALL` operand: the resolution-control probes turn it into "would this batch pass" as a value ([a batch as an operand](/docs/core/control#a-batch-as-an-operand)).
 
 ## Custom error messages
 

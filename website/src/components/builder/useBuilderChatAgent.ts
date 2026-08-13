@@ -3,6 +3,7 @@ import {
   createContractTools,
   createDocTools,
   createLocalStorageChatStorage,
+  createNexusAuth,
   createScriptTools,
   createWebTools,
   type ScriptToolsHost,
@@ -19,6 +20,15 @@ import type { useScriptState } from "./useScriptState";
  *  key's liveness. Own localStorage namespace so nothing collides with other
  *  EVMcrispr hosts that might share this origin. */
 export const builderChatStorage = createLocalStorageChatStorage("assertions");
+
+/** Auth bound to {@link builderChatStorage}. The module-level `loginWithNexus`
+ *  and `logoutNexus` exported by `@evmcrispr/ai` are pre-bound to the default
+ *  `evmcrispr` namespace, so calling them here would split the OAuth session
+ *  (`evmcrispr:nexusAuth`) from the key it provisioned
+ *  (`assertions:nexusApiKey`) — and, on an origin shared with an EVMcrispr
+ *  terminal (localhost:3000 in development), each app's login would revoke the
+ *  other's key, since `loginWithNexus()` revokes the stored session first. */
+export const builderAuth = createNexusAuth({ storage: builderChatStorage });
 
 const SYSTEM_PROMPT = `You are the assertion assistant on assertions.eth's Assertion Builder. The user has composed an EVML action block — the transactions of a wallet batch, Safe transaction, Governor proposal or Aragon OSx proposal. Your job is to protect the USER'S OUTCOME with on-chain assertions — std's assert command: read the script (get_script), fetch the verified source of every contract it touches (get_contract), work out what the executor is supposed to gain or give up, and insert assert commands so the whole transaction reverts if the user would not get what they intended.
 

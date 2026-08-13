@@ -1,14 +1,13 @@
 import {
   type ChatItem,
   DEFAULT_NEXUS_CONFIG,
-  loginWithNexus,
-  logoutNexus,
   NexusBrokerClient,
 } from "@evmcrispr/ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Markdown } from "./Markdown";
 import {
+  builderAuth,
   builderChatStorage,
   type useBuilderChatAgent,
 } from "./useBuilderChatAgent";
@@ -23,11 +22,34 @@ const BROKER_URL = import.meta.env.PUBLIC_NEXUS_BROKER_URL as
   | string
   | undefined;
 
-/** True when Nexus says the key is dead (a definitive 401). The probe names
- *  a nonexistent model: key auth runs before model resolution, so a live key
- *  answers 400 without ever reaching a paid completion. Anything but a 401 —
- *  including network failure — counts as alive, so a Nexus outage can't log
- *  the user out. */
+/** Machine-readable `type`/`code` values that mean the key itself is dead.
+ *  Only these fields are matched, never the free-form `message`: an assistant
+ *  quoting "invalid_api_key" back into an error must not log the user out. */
+const KEY_DEAD_MARKERS = [
+  "authentication_error",
+  "permission_error",
+  "invalid_api_key",
+  "invalid_authentication",
+  "api_key_expired",
+  "api_key_revoked",
+];
+/** An empty wallet, not a bad key. Re-login cannot refill an account, so these
+ *  must never count as expired — checked before the markers and the status. */
+const BALANCE_MARKERS = [
+  "insufficient_balance",
+  "insufficient_quota",
+  "insufficient_credit",
+  "billing_hard_limit_reached",
+];
+
+/** True when Nexus says the key is dead. The probe names a nonexistent model:
+ *  key auth runs before model resolution, so a live key answers 400 without
+ *  ever reaching a paid completion. A network failure counts as alive, so a
+ *  Nexus outage can't log the user out.
+ *
+ *  The response body decides when it names a cause, because a balance
+ *  rejection can arrive under an auth-ish status; the status is the fallback
+ *  for bodies that say nothing (proxy HTML, empty). */
 async function nexusKeyExpired(key: string): Promise<boolean> {
   try {
     const res = await fetch(
@@ -44,6 +66,23 @@ async function nexusKeyExpired(key: string): Promise<boolean> {
         }),
       },
     );
+
+    let marker = "";
+    try {
+      const body: unknown = await res.json();
+      const outer = (body ?? {}) as Record<string, unknown>;
+      const inner =
+        typeof outer.error === "object" && outer.error !== null
+          ? (outer.error as Record<string, unknown>)
+          : outer;
+      const str = (v: unknown) => (typeof v === "string" ? v : "");
+      marker = `${str(inner.type)} ${str(inner.code)}`.toLowerCase();
+    } catch {
+      // Not JSON (proxy HTML, empty body): the status decides.
+    }
+
+    if (BALANCE_MARKERS.some((m) => marker.includes(m))) return false;
+    if (KEY_DEAD_MARKERS.some((m) => marker.includes(m))) return true;
     return res.status === 401;
   } catch {
     return false;
@@ -166,7 +205,9 @@ export function ChatPanel({
     const key = builderChatStorage.getApiKey();
     if (!key) return;
     void nexusKeyExpired(key).then((expired) => {
-      if (expired) {
+      // A fresh login can land while the probe is in flight; only the key we
+      // actually probed may be cleared, never its replacement.
+      if (expired && builderChatStorage.getApiKey() === key) {
         setSessionExpired(true);
         agent.clearApiKey();
       }
@@ -215,7 +256,7 @@ export function ChatPanel({
     setLoggingOut(true);
     try {
       if (BROKER_URL) await brokerLogout(BROKER_URL);
-      else await logoutNexus();
+      else await builderAuth.logoutNexus();
     } finally {
       agent.clearApiKey();
       setLoggingOut(false);
@@ -255,7 +296,7 @@ export function ChatPanel({
               setLoggingIn(true);
               setLoginError(null);
               try {
-                acceptKey(await loginWithNexus());
+                acceptKey(await builderAuth.loginWithNexus());
               } catch (e) {
                 setLoginError(e instanceof Error ? e.message : String(e));
               } finally {

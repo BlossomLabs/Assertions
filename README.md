@@ -11,11 +11,11 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 ## Canonical addresses (same on every chain)
 
 ```
-Assertions  v2.0  0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F   (ERC-8211 judge; INTERIM address)
-Operators   v1.0  0x8e832Ace3f433943eb605c258bA37AF24a69dC53   (versionable periphery; INTERIM address)
+Assertions  v2.0  0xA55E472841ca3D318205036724A94F5abDbf7b18   (ERC-8211 judge)
+Operators   v1.0  0x09e4a7e55200600314165ddFB381639dace41bEA   (versionable periphery)
 ```
 
-The current addresses use a zero CREATE2 salt while the 2.0 line is still in flux; vanity `0xa55E…` salts get re-mined before the canonical roll.
+These are the canonical vanity CREATE2 addresses for the 2.0 line (salts mined with `cast create2` against the frozen bytecode). The interim zero-salt deployments of the same bytecode (`0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F` / `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`) stay live where sent but are no longer canonical.
 
 Deployed versions are immutable and keep working forever at their own canonical addresses: the v2.0-rc core lives at `0xa55E47F37088b6D0212BdfD56b175ec08744DB19` with Combinators v2.0-rc at `0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9`, the v1.1 typed-assert core at `0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0` with Combinators v1.0 at `0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC`, and the original v1.0 core at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
 

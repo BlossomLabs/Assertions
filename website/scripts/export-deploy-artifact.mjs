@@ -53,17 +53,18 @@ const CONTRACTS = [
     key: "core",
     artifact: "artifacts/contracts/Assertions.sol/Assertions.json",
     output: "src/lib/assertions-deployment.ts",
-    // INTERIM non-vanity address (zero salt): the 2.0 core is still in flux,
-    // so no vanity salt is mined yet — re-mine (mine-salt.mjs) before the
-    // canonical roll. Prior vanity releases:
+    // Canonical vanity salt for the 2.0 core, mined with `cast create2`
+    // (random 32-byte salt; the old shared-base convention is retired).
+    // Prior releases:
+    // interim v2.0 (zero salt) remains at 0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F;
     // v2.0-rc remains at 0xa55E47F37088b6D0212BdfD56b175ec08744DB19
     // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f601469a3b);
     // v1.1 remains at 0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0
     // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6012c7cd0);
     // v1.0 remains at 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
     // (salt 0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb).
-    salt: "0x0000000000000000000000000000000000000000000000000000000000000000",
-    expectedAddress: "0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F",
+    salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
+    expectedAddress: "0xA55E472841ca3D318205036724A94F5abDbf7b18",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -73,14 +74,17 @@ const CONTRACTS = [
     key: "operators",
     artifact: "artifacts/contracts/Operators.sol/Operators.json",
     output: "src/lib/operators-deployment.ts",
-    // INTERIM non-vanity address (zero salt) for Operators v1.0, the plain
-    // periphery that replaced Combinators. Prior Combinators releases:
-    // v2.0-rc remains at 0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9
+    // Canonical vanity salt for Operators v1.0 ("0x09e4a7e" reads OPERATE),
+    // the plain periphery that replaced Combinators. Mined with `cast create2`
+    // (random 32-byte salt; the old shared-base convention is retired).
+    // Prior releases:
+    // interim v1.0 (zero salt) remains at 0x8e832Ace3f433943eb605c258bA37AF24a69dC53;
+    // Combinators v2.0-rc remains at 0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9
     // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6031de88b);
     // v1.0 remains at 0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC
     // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60027fbe3).
-    salt: "0x0000000000000000000000000000000000000000000000000000000000000000",
-    expectedAddress: "0x8e832Ace3f433943eb605c258bA37AF24a69dC53",
+    salt: "0x92d34082f305b501d427bef474df394f826a347b55dba79ecfe2bfe14b998cf9",
+    expectedAddress: "0x09e4a7e55200600314165ddFB381639dace41bEA",
     prefix: "OPERATORS",
     description: "Operators plain-value vocabulary contract",
     includeProxyConstants: false,

@@ -1,6 +1,6 @@
 ---
 title: Deployments
-description: Interim CREATE2 addresses, the vanity re-mine plan, and how to deploy to a new chain.
+description: Canonical CREATE2 addresses, how they stay deterministic, and how to deploy to a new chain.
 ---
 
 import { ASSERTIONS_DEPLOY_GAS } from '../../../../lib/assertions-deployment';
@@ -8,12 +8,14 @@ import { OPERATORS_DEPLOY_GAS } from '../../../../lib/operators-deployment';
 
 export const fmtGas = (gas) => `~${(gas / 1e6).toFixed(2)}M gas`;
 
-Both contracts live at the same deterministic address on every chain. The current round uses **interim, non-vanity addresses**: the bytecode is still in flux, and the vanity `0xa55E...` addresses will be re-mined before the canonical roll (a new salt per contract against the final bytecode; the interim deployments stay live wherever they were sent).
+Both contracts live at the same deterministic address on every chain. The vanity roll for the 2.0 line is done: each contract has its own CREATE2 salt mined against the final bytecode (Assertions keeps the `0xa55E47` prefix; Operators reads `0x09e4a7e`, "OPERATE").
 
 ```
-Assertions v2.0  0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F   (frozen core: judge + primitives)
-Operators  v1.0  0x8e832Ace3f433943eb605c258bA37AF24a69dC53   (versionable periphery)
+Assertions v2.0  0xA55E472841ca3D318205036724A94F5abDbf7b18   (frozen core: judge + primitives)
+Operators  v1.0  0x09e4a7e55200600314165ddFB381639dace41bEA   (versionable periphery)
 ```
+
+The interim zero-salt deployments of the same bytecode (Assertions `0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F`, Operators `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`) stay live wherever they were sent, but are no longer canonical.
 
 Deployed versions are immutable: earlier releases keep working forever at their own canonical addresses. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) always points to the latest canonical version of the core, and the original v1.0 core stays live at [`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
 
@@ -27,7 +29,7 @@ Deployment goes through [Arachnid's deterministic-deployment proxy](https://gith
 address = keccak256(0xff ++ 0x4e59b448...956C ++ salt ++ keccak256(initCode))[12:]
 ```
 
-Same proxy, same salt, same init code on every chain: same address. The vanity re-mine is exactly this mechanism run in reverse, searching salts until the derived address starts with `0xa55E...`; only the salt changes, never the bytecode.
+Same proxy, same salt, same init code on every chain: same address. Mining a vanity salt is exactly this mechanism run in reverse, searching random salts (`cast create2`) until the derived address starts with the wanted prefix; only the salt changes, never the bytecode.
 
 ## Deploying to a new chain
 

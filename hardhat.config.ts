@@ -11,10 +11,16 @@ export default defineConfig({
     // see website/scripts/export-deploy-artifact.mjs and the README.
     strategyConfig: {
       create2: {
-        // INTERIM zero salt: the 2.0 core and Operators 1.0 are still in
-        // flux, so no vanity salts are mined for the current bytecode.
-        // Re-mine with website/scripts/mine-salt.mjs before the canonical
-        // roll. Prior vanity releases (Arachnid-proxy addresses):
+        // This Ignition salt is NOT the canonical path (see the note above).
+        // The canonical per-contract vanity salts live in
+        // website/scripts/export-deploy-artifact.mjs, mined with
+        // `cast create2` as random 32-byte salts (the old shared-base
+        // convention is retired):
+        // core v2.0 salt 0xd4f532eb...faeae45b → 0xA55E472841ca3D318205036724A94F5abDbf7b18,
+        // Operators v1.0 salt 0x92d34082...4b998cf9 → 0x09e4a7e55200600314165ddFB381639dace41bEA.
+        // Prior releases (Arachnid-proxy addresses):
+        // interim core v2.0 zero salt → 0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F,
+        // interim Operators v1.0 zero salt → 0x8e832Ace3f433943eb605c258bA37AF24a69dC53,
         // core v2.0-rc salt 0x0b11b1be...01469a3b → 0xa55E47F37088b6D0212BdfD56b175ec08744DB19,
         // Combinators v2.0-rc salt 0x0b11b1be...031de88b → 0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9,
         // core v1.1 salt 0x0b11b1be...012c7cd0 → 0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0,

@@ -5,7 +5,18 @@
 // been published: the canonical address is derived from the exact init code,
 // so a new build requires a fresh salt.
 //
-// Usage: pnpm hardhat compile (from the repo root), then from website/:
+// PRIMARY ROUTE: Foundry's multi-threaded miner. The canonical v2.0 core and
+// Operators v1.0 salts were mined this way (random 32-byte salts; the shared
+// SALT_BASE convention below is retired and kept only for reproducing the
+// older releases):
+//   cast create2 -j 16 --deployer 0x4e59b44847b379578588920cA78FbF26c0B4956C \
+//     --init-code-hash $(cast keccak <artifact .bytecode>) --starts-with a55e47
+//   (Operators: --starts-with 09e4a7e, which reads "OPERATE")
+// Run it a few times and pick the best-reading address, then set salt +
+// expectedAddress in export-deploy-artifact.mjs.
+//
+// Fallback usage of this single-threaded script: pnpm hardhat compile (from
+// the repo root), then from website/:
 //   node scripts/mine-salt.mjs [artifactPath] [prefix]
 // Defaults: the Assertions artifact and prefix "a55e47".
 
@@ -21,8 +32,9 @@ const repoRoot = join(__dirname, "..", "..");
 // Arachnid deterministic-deployment-proxy (same address on every EVM chain).
 const CREATE2_PROXY = "0x4e59b44847b379578588920cA78FbF26c0B4956C";
 
-// All project salts share this random 28-byte base; only the low 4 bytes are
-// mined (matches the committed Assertions/Operators salts).
+// Legacy shared 28-byte base used by the pre-2.0 releases; only the low 4
+// bytes were mined. The current canonical salts are full random 32-byte
+// values from `cast create2` (see the header).
 const SALT_BASE = "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6";
 
 const artifactPath = join(

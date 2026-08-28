@@ -4,11 +4,11 @@
 
 /** Canonical deployment address of the Operators contract on every chain. */
 export const OPERATORS_ADDRESS =
-  "0x8e832Ace3f433943eb605c258bA37AF24a69dC53" as const;
+  "0x09e4a7e55200600314165ddFB381639dace41bEA" as const;
 
 /** Salt mined for the vanity address (see hardhat.config.ts). */
 export const OPERATORS_SALT =
-  "0x0000000000000000000000000000000000000000000000000000000000000000" as const;
+  "0x92d34082f305b501d427bef474df394f826a347b55dba79ecfe2bfe14b998cf9" as const;
 
 /** keccak256 of the creation bytecode. */
 export const OPERATORS_INIT_CODE_HASH =
@@ -18,7 +18,7 @@ export const OPERATORS_INIT_CODE_HASH =
  * Gas used by the canonical Arachnid-proxy CREATE2 deployment, measured by
  * replaying it on an in-process Hardhat network at export time.
  */
-export const OPERATORS_DEPLOY_GAS = 3746202;
+export const OPERATORS_DEPLOY_GAS = 3746586;
 
 /** Creation bytecode of the Operators contract (no constructor args). */
 export const OPERATORS_CREATION_BYTECODE =

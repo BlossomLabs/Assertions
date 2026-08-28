@@ -22,7 +22,7 @@ side of the same branch. Their commits are noted where they matter.
 | A5 | `@unzip!` lane optional | done |
 | B1 | lambda target may be the core | done |
 | B1r | review: word guard, any-staticcall lambdas, EVM-executed folds | done |
-| C | `elemOffsets` + address roll | done (vanity re-mine deferred — see Landed) |
+| C | `elemOffsets` + address roll | done (vanity re-mine done — see Landed) |
 | B2 | `@it!` element placeholder | done, then **subsumed by D3** |
 | D1 | `def @name!` is compile-only | done |
 | D2 | DEF resolution + AST substitution on the compile path | done |
@@ -82,13 +82,12 @@ matches what that runner executes.
 
 ### C leftovers (vanity re-mine)
 
-**Vanity re-mine: still deferred.** Both contracts remain on the interim zero salt in
-`hardhat.config.ts`. `website/scripts/mine-salt.mjs` is ready (compile, then
-`node scripts/mine-salt.mjs [artifact] [prefix]`), but no canonical address exists
-yet for a signature change to break. Run the miner for both Assertions and Operators
-when bytecode is frozen for publish, then update the salts and
-`website/src/lib/verification-inputs.ts` (generated). Runtime still **17,042** /
-**7,534** headroom after C; B2 is SDK-only so bytecode unchanged.
+**Vanity re-mine: done.** Salts mined with `cast create2` (random 32-byte salts,
+per contract) against the frozen bytecode: Assertions v2.0 →
+`0xA55E472841ca3D318205036724A94F5abDbf7b18`, Operators v1.0 →
+`0x09e4a7e55200600314165ddFB381639dace41bEA`. `export-deploy-artifact.mjs` carries the salts and
+regenerated `website/src/lib/*-deployment.ts` + `verification-inputs.ts`. Runtime
+still **17,042** / **7,534** headroom after C; B2 is SDK-only so bytecode unchanged.
 
 **Still owed to the other session (docs, MAIN repo):**
 **Done** (`operators/index.md:54`), and my earlier note here was wrong, so the

@@ -117,12 +117,22 @@ const COMPOSITION_TIME = [
   "chainId",
   // contracts: the code read with no builder node (@codeHash! has one)
   "codeAt!",
+  // contracts: slot derivations over live keys/indices, chat/EVML only
+  "slot.mapping!",
+  "slot.array!",
   // std: the revert probe and the fallback it pairs with, reachable
   // through chat/EVML only (no builder node)
   "reverts!",
   "orElse!",
   // std: the lazy ternary over the core's cond, chat/EVML only
   "ifElse!",
+  // std: the abi codec faces and the signature check, chat/EVML only
+  "abi.decode!",
+  "abi.decodeCall!",
+  "abi.encode!",
+  "abi.encodePacked!",
+  "abi.encodeCall!",
+  "sigValid!",
   // receipts: plain build-time faces of the block reads (addressed by
   // block number or tag, default latest)
   "block.timestamp",

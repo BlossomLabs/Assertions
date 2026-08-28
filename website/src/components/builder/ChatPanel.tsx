@@ -214,14 +214,15 @@ export function ChatPanel({
     });
   }, [agent.clearApiKey]);
 
-  // A 401 mid-run means the key was revoked or the session expired while
+  // A dead key mid-run means it was revoked or the session expired while
   // chatting; drop to the login screen. The conversation stays in the hook's
-  // state and resumes after re-login.
+  // state and resumes after re-login. Only "auth" — a "balance" rejection
+  // leaves the key valid, and a login cannot refill the account.
   useEffect(() => {
-    if (!agent.isAuthError) return;
+    if (agent.errorKind !== "auth") return;
     setSessionExpired(true);
     agent.clearApiKey();
-  }, [agent.isAuthError, agent.clearApiKey]);
+  }, [agent.errorKind, agent.clearApiKey]);
 
   const acceptKey = useCallback(
     (key: string) => {
@@ -371,7 +372,10 @@ export function ChatPanel({
             />
           ),
         )}
-        {agent.error && !agent.isAuthError && (
+        {/* "auth" is handled by dropping to the login screen, so it would
+            render behind it; everything else — including a "balance"
+            rejection, which the key survives — belongs inline. */}
+        {agent.error && agent.errorKind !== "auth" && (
           <p className="text-xs text-[var(--color-err)]">{agent.error}</p>
         )}
       </div>

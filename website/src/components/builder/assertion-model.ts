@@ -25,7 +25,7 @@ export type Category =
   | "bytes32"
   | "string"
   | "bytes"
-  /** Dynamic/array return — only legal inside len/bytes.len/hash (or as
+  /** Dynamic/array return — only legal inside len (or as
    *  the single operand of min/max). */
   | "array"
   /** Multi-output call without a return-value selection yet. */
@@ -725,6 +725,14 @@ function walk(
           path,
           message: "@hash! results can only be compared at the top level.",
         });
+      if (expr.helper === "hash" || expr.helper === "bytelen") {
+        const cat = inferCategory(expr.call);
+        if (cat !== "string" && cat !== "bytes" && cat !== "unknown")
+          issues.push({
+            path,
+            message: `@${callwrapHelperName(expr.helper)}! needs a string or bytes return value. Use @len! for an array's element count.`,
+          });
+      }
       if (expr.call.kind !== "call")
         issues.push({
           path,

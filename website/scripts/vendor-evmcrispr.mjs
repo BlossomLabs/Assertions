@@ -9,7 +9,7 @@
 // To bump the pin: update "evmcrispr.commit" in package.json (e.g. to the
 // output of `git ls-remote https://github.com/EVMcrispr/evmcrispr.git next`).
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -22,6 +22,7 @@ const { evmcrispr } = JSON.parse(
 );
 const { repo, commit } = evmcrispr;
 const dir = path.join(websiteDir, ".evmcrispr");
+const readyFile = path.join(dir, "node_modules", ".assertions-ready-commit");
 
 if (process.env.EVMCRISPR_SRC) {
   console.log(
@@ -47,6 +48,9 @@ if (existsSync(path.join(dir, ".git"))) {
 }
 
 if (!atPin) {
+  if (existsSync(path.join(dir, ".git")) && git("status", "--porcelain")) {
+    throw new Error("EVMcrispr checkout has local changes. Commit or preserve them before updating the pin, or use EVMCRISPR_SRC.");
+  }
   if (!existsSync(path.join(dir, ".git"))) {
     mkdirSync(dir, { recursive: true });
     git("init", "-q");
@@ -55,10 +59,10 @@ if (!atPin) {
   git("remote", "set-url", "origin", repo);
   console.log(`[evmcrispr] fetching ${repo} @ ${commit.slice(0, 10)}…`);
   git("fetch", "-q", "--depth", "1", "origin", commit);
-  git("checkout", "-qf", "--detach", commit);
+  git("checkout", "-q", "--detach", commit);
 }
 
-if (!atPin || !existsSync(path.join(dir, "node_modules"))) {
+if (!existsSync(readyFile) || readFileSync(readyFile, "utf-8").trim() !== commit) {
   console.log("[evmcrispr] installing dependencies (bun install)…");
   execFileSync("bun", ["install", "--frozen-lockfile"], {
     cwd: dir,
@@ -70,6 +74,7 @@ if (!atPin || !existsSync(path.join(dir, "node_modules"))) {
     cwd: dir,
     stdio: "inherit",
   });
+  writeFileSync(readyFile, `${commit}\n`);
 }
 
 console.log(`[evmcrispr] ready: .evmcrispr @ ${commit.slice(0, 10)}`);

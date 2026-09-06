@@ -13,6 +13,11 @@ import { createEvml, type ModuleLoader } from "@evmcrispr/core";
 const vendored = (load: () => Promise<unknown>) => load as ModuleLoader;
 export const evml = createEvml().use(
   {
+    name: "contracts",
+    load: vendored(() => import("@evmcrispr/module-contracts")),
+    description: "Contract code, storage and ABI helpers",
+  },
+  {
     name: "sim",
     load: () => import("@evmcrispr/module-sim"),
     description: "Fork simulation",

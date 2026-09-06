@@ -12,6 +12,33 @@ assert $token::balanceOf(@me) >= 100e18 "not enough tokens"
 
 ## The assert command
 
+### Builder compiler and execution account
+
+The builder and this site's EVML highlighting use EVMcrispr
+[`6513da6c`](https://github.com/EVMcrispr/evmcrispr/commit/6513da6c4407f912d41a6490995afb6ff204b498),
+pinned in `website/package.json`. It adds the corrected Assertions runtime to
+the latest `next` baseline, `4fd8ed6b`. This revision compiles against core
+`0x67DBB438FdC614466984Dc8F68dAB812d785a2aE` and Operators
+`0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD`. Both contracts must exist on
+the selected chain; check [deployments](/deployments) before executing.
+
+The builder supports `lang`, `receipts`, `contracts`, `math`, `token`,
+`vault`, `acl`, `sim`, `safe`, `governor` and `aragonosx`, in addition to
+the always-loaded `std`. Other modules in the full EVMcrispr terminal are
+not automatically available here.
+
+Use `@sender` for the account sending the surrounding block's calls. Inside
+a Safe, Governor or Aragon OSx block it refers to that executor; `@me`
+refers to the connected account. For example, inside a Safe block, an
+allowance assertion should usually check `allowance(@sender, spender)`.
+`@tx.from!` reads the transaction origin and is a different identity.
+
+`@hash!` and `@bytes.len!` require a decoded `string` or `bytes` return.
+Use `@len!` for an array's element count; array envelopes cannot be passed
+to bytes operators because their length word counts elements, not bytes.
+
+### Syntax
+
 ```evml
 assert <target>::<viewFn(args)> <op> <expected> "revert msg"            # named method, ABI fetched automatically
 assert <target>::{viewFn(argTypes)(returnType) <args>} <op> <expected>  # inline ABI when needed
@@ -53,7 +80,7 @@ A lens on a nested call argument selects the value to splice, including dynamic 
 assert $a::{a(address[])(uint256) $b::{b()(address,address[][])}[_ [_ $]]} == 5
 ```
 
-These compile to the core's [`read`](/docs/core/reads): each nesting level becomes a `read` whose segments fetch the inner values and splice them into the enclosing calldata at judge time. Word-typed arguments (uint, int, address, bool, bytes32) splice anywhere; a dynamic-typed argument (array/string/bytes selected by a lens) must be the last argument of the outermost judged call, and there can be at most one.
+These compile to the core's [`read`](/docs/core/reads): each nesting level becomes a `read` whose segments fetch the inner values and splice them into the enclosing calldata at judge time. Word-typed arguments (uint, int, address, bool, bytes32) splice anywhere. Up to four live dynamic values can share a call when the compiler can derive their runtime sizes. A live value whose size cannot be derived must be the last dynamic argument. Later offsets may re-resolve earlier values, so adding live parts increases execution cost.
 
 ### Chain state
 
@@ -120,9 +147,9 @@ The on-chain surface spans five modules:
 | `@reverts!(call)` | std | bool | Whether a live call reverts: true when the chain refuses it, false when it resolves; `-!> ErrName(types)` matches the reason and a `[_ $]` lens selects an error argument |
 | `@ifElse!(cond ? then : else)` | std | any | The lazy ternary, compiled to the core's `cond`: the condition's first word judges (nonzero = then) and the losing branch is never resolved — spaces required around `?` and `:` |
 | `@slice!(call start end?)` | lang | array | Elements `[start, end)` of an array return as a live words payload (indices scale to byte offsets at composition time, negative bounds resolve against the live length); composes with the other array faces |
-| `@str.concat!("a" call ...)` | lang | string | Concatenate constant strings with at most one live call part through a single on-chain `concat` |
+| `@str.concat!("a" call ...)` | lang | string | Concatenate constant strings with up to four live call parts through a single on-chain `concat` |
 | `@str.split!(call "delim" i)` | lang | string | Split a string return and select one segment; negative index counts from the end (`-1` = last, `-2` = second-last) |
-| `@sum!(call)` | lang | number | The checked sum of an array return's single-word elements, on-chain (native `sumWords`); the fixed-operation form of `@reduce!(add 0)` |
+| `@sum!(call)` | lang | number | The checked sum of an array return's single-word elements, on-chain (native `sumWords`); the fixed-operation form of `@reduce!(call add 0)` |
 | `@block.timestamp!` | receipts | number | The block timestamp at assertion time (plain `@block.timestamp(block? chain?)` reads a sealed block off-chain, default latest) |
 | `@tx.gasPrice!` | receipts | number | The gas price of the executing transaction in wei; bound what the batch is willing to pay |
 | `@tx.blobHash!(i)` | receipts | bytes32 | The versioned hash of blob `i` carried by the executing transaction (0 when out of range) |

@@ -10,12 +10,13 @@
     "commit": "6513da6c4407f912d41a6490995afb6ff204b498"
   },
   "scripts": {
-    "predev": "node scripts/vendor-evmcrispr.mjs && node scripts/copy-monaco.mjs",
-    "dev": "astro dev",
-    "prebuild": "node scripts/vendor-evmcrispr.mjs && node scripts/copy-monaco.mjs",
-    "build": "astro build",
+    "prepare:evmcrispr": "node scripts/vendor-evmcrispr.mjs && node scripts/copy-monaco.mjs",
+    "dev": "pnpm prepare:evmcrispr && astro dev",
+    "build": "pnpm prepare:evmcrispr && astro build",
+    "check:integration": "pnpm prepare:evmcrispr && node scripts/check-integration.mjs",
+    "test:vendor": "node --test scripts/vendor-evmcrispr.test.mjs",
     "preview": "astro preview",
-    "deploy:ipfs": "astro build && node scripts/deploy-ipfs.js",
+    "deploy:ipfs": "pnpm build && node scripts/deploy-ipfs.js",
     "sync:artifact": "node scripts/export-deploy-artifact.mjs",
     "astro": "astro"
   },

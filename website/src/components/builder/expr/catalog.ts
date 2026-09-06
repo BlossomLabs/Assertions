@@ -75,7 +75,8 @@ const familyAccepts =
 
 const stringCall: Accepts = (node, cat) =>
   node.kind === "call" && (cat === "string" || cat === "unknown");
-const anyCall: Accepts = (node) => node.kind === "call";
+const bytesCall: Accepts = (node, cat) =>
+  node.kind === "call" && (cat === "string" || cat === "bytes" || cat === "unknown");
 const addressCall: Accepts = (node, cat) =>
   node.kind === "call" && cat === "address";
 
@@ -286,7 +287,7 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     role: "wrap",
     key: "hash",
     label: "hash of…",
-    accepts: anyCall,
+    accepts: bytesCall,
     topLevelOnly: true,
   },
   "str.split!": {

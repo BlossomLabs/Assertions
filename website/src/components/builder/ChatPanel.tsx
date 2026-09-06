@@ -81,7 +81,7 @@ async function nexusKeyExpired(key: string): Promise<boolean> {
       // Not JSON (proxy HTML, empty body): the status decides.
     }
 
-    if (BALANCE_MARKERS.some((m) => marker.includes(m))) return false;
+    if (res.status === 402 || BALANCE_MARKERS.some((m) => marker.includes(m))) return false;
     if (KEY_DEAD_MARKERS.some((m) => marker.includes(m))) return true;
     return res.status === 401;
   } catch {
@@ -219,10 +219,10 @@ export function ChatPanel({
   // state and resumes after re-login. Only "auth" — a "balance" rejection
   // leaves the key valid, and a login cannot refill the account.
   useEffect(() => {
-    if (agent.errorKind !== "auth") return;
+    if (agent.error?.kind !== "auth") return;
     setSessionExpired(true);
     agent.clearApiKey();
-  }, [agent.errorKind, agent.clearApiKey]);
+  }, [agent.error?.kind, agent.clearApiKey]);
 
   const acceptKey = useCallback(
     (key: string) => {
@@ -375,8 +375,8 @@ export function ChatPanel({
         {/* "auth" is handled by dropping to the login screen, so it would
             render behind it; everything else — including a "balance"
             rejection, which the key survives — belongs inline. */}
-        {agent.error && agent.errorKind !== "auth" && (
-          <p className="text-xs text-[var(--color-err)]">{agent.error}</p>
+        {agent.error && agent.error.kind !== "auth" && (
+          <p className="text-xs text-[var(--color-err)]">{agent.error.message}</p>
         )}
       </div>
 

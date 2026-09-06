@@ -63,7 +63,7 @@ const CONTRACTS = [
     // v1.0 remains at 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
     // (salt 0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb).
     salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
-    expectedAddress: "0x67DBB438FdC614466984Dc8F68dAB812d785a2aE",
+    expectedAddress: "0x8794b0d097C07e7520B421d02201E34c9eE3E156",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -85,7 +85,7 @@ const CONTRACTS = [
     // v1.0 remains at 0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC
     // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60027fbe3).
     salt: "0x92d34082f305b501d427bef474df394f826a347b55dba79ecfe2bfe14b998cf9",
-    expectedAddress: "0x795a1E555147d09AB6eE972B4D63a0508b582492",
+    expectedAddress: "0x7B4F82C8A21dCaf7D96D4113D6d23578d1F0A91D",
     prefix: "OPERATORS",
     description: "Operators plain-value vocabulary contract",
     includeProxyConstants: false,
@@ -97,7 +97,7 @@ const CONTRACTS = [
     output: "src/lib/collection-operators-deployment.ts",
     // keccak256("Assertions.CollectionOperators.v1"), deterministic and not vanity-mined.
     salt: "0x825336df99b944bd996b20af47f5d80fad83ef8e5afc6acc4f531db6609a7514",
-    expectedAddress: "0xd3F401e4C356667B061B6129755B7a1A279f2e1f",
+    expectedAddress: "0x87841575F679dA8E877db0A95b1bCF2C0d0D55dc",
     prefix: "COLLECTION_OPERATORS",
     description: "generic ABI collection vocabulary contract",
     includeProxyConstants: false,

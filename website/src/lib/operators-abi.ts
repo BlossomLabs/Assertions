@@ -29,6 +29,32 @@ export const OPERATORS_ABI = [
   {
     "inputs": [
       {
+        "internalType": "bytes4",
+        "name": "operation",
+        "type": "bytes4"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "other",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "target",
+        "type": "address"
+      }
+    ],
+    "name": "InvalidCallbackResult",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "index",
         "type": "uint256"
@@ -66,6 +92,22 @@ export const OPERATORS_ABI = [
       }
     ],
     "name": "InvalidComponentLength",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "offset",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidComponentValue",
     "type": "error"
   },
   {
@@ -115,6 +157,17 @@ export const OPERATORS_ABI = [
       }
     ],
     "name": "InvalidTypeDescriptor",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "offset",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidValue",
     "type": "error"
   },
   {
@@ -664,6 +717,11 @@ export const OPERATORS_ABI = [
         "internalType": "bytes[]",
         "name": "parts",
         "type": "bytes[]"
+      },
+      {
+        "internalType": "bytes",
+        "name": "delimiter",
+        "type": "bytes"
       }
     ],
     "name": "concat",

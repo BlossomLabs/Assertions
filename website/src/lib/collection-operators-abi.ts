@@ -66,6 +66,64 @@ export const COLLECTION_OPERATORS_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "length",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "head",
+        "type": "bytes32"
+      }
+    ],
+    "name": "InvalidComponentEnvelope",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "expectedBytes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "actualBytes",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidComponentLength",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "offset",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidComponentValue",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "position",
         "type": "uint256"
       }

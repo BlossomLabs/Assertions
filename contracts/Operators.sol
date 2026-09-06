@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {AbiShape, InvalidTypeDescriptor} from "./AbiShape.sol";
+import {AbiCodec} from "./AbiCodec.sol";
 
 /**
  * @title Operators
@@ -48,31 +48,7 @@ contract Operators {
      */
     error SliceOutOfBounds(uint256 start, uint256 len, uint256 dataLength);
 
-    /**
-     * @notice Thrown when encode receives a values array whose length does
-     *         not match the descriptor's component count
-     * @param expected The component count the descriptor declares
-     * @param actual The number of values passed
-     */
-    error ComponentCountMismatch(uint256 expected, uint256 actual);
-
-    /**
-     * @notice Thrown when a static component's value is not exactly its
-     *         head footprint
-     * @param index The component's position in the tuple
-     * @param expectedBytes The component's head footprint in bytes
-     * @param actualBytes The length of the value that was passed
-     */
-    error InvalidComponentLength(uint256 index, uint256 expectedBytes, uint256 actualBytes);
-
-    /**
-     * @notice Thrown when a dynamic component's value is not a canonical
-     *         single-value envelope [0x20][tail]
-     * @param index The component's position in the tuple
-     * @param length The length of the value that was passed
-     * @param head The value's first word (0x20 expected)
-     */
-    error InvalidComponentEnvelope(uint256 index, uint256 length, bytes32 head);
+    // Canonical encoding errors are defined once in AbiCodec.
 
     /**
      * @notice Thrown when a fold lambda offset does not leave room for a
@@ -1203,19 +1179,19 @@ contract Operators {
      *      The output is returned via a raw assembly return with NO bytes
      *      envelope — deliberately the one raw-returning function here,
      *      because the output is a calldata SEGMENT for the core's read
-     *      to splice, not a value to decode. Deep tail validation is
-     *      skipped: like nav, the descriptor is the author's claim about
-     *      the encoding, and a wrong claim about a tail travels as-is.
+     *      to splice, not a value to decode. Nested offsets, bounds,
+     *      padding and complete consumption are validated by AbiCodec.
      *      Reverts with InvalidTypeDescriptor on a malformed descriptor,
      *      ComponentCountMismatch when values.length differs from the
      *      component count, InvalidComponentLength for a static component
      *      of the wrong size, and InvalidComponentEnvelope for a dynamic
-     *      component that is not an envelope.
+     *      component that is not an envelope. InvalidComponentValue identifies
+     *      the component and byte offset of a malformed nested value.
      * @param types The tuple type descriptor, e.g. "(address,uint256[])"
      * @param values One canonical single-value encoding per component
      */
     function encode(string calldata types, bytes[] calldata values) external pure {
-        bytes memory out = _encode(types, values);
+        bytes memory out = AbiCodec.tuple(bytes(types), values);
         assembly {
             return(add(out, 32), mload(out))
         }
@@ -1223,87 +1199,8 @@ contract Operators {
 
     /// @notice The runtime tuple encoder returned inside a normal bytes envelope.
     function encodeBytes(string calldata types, bytes[] calldata values) external pure returns (bytes memory) {
-        return _encode(types, values);
+        return AbiCodec.tuple(bytes(types), values);
     }
-
-    function _encode(string calldata types, bytes[] calldata values) private pure returns (bytes memory out) {
-        bytes calldata t = bytes(types);
-        if (t.length == 0 || t[0] != "(") revert InvalidTypeDescriptor(0);
-        {
-            (uint256 topEnd,,) = AbiShape.typeShape(t, 0, t.length);
-            if (topEnd != t.length) revert InvalidTypeDescriptor(topEnd);
-        }
-
-        (uint256 count, uint256 headBytes, uint256 tailBytes) = _measure(t, values);
-        if (count != values.length) revert ComponentCountMismatch(count, values.length);
-
-        out = new bytes(headBytes + tailBytes);
-        _assemble(t, values, out, headBytes);
-    }
-
-    /**
-     * @dev encode pass 1: walks the top-level components, validating each
-     *      value against its component's shape and accumulating head and
-     *      tail sizes. Returns the component count for the caller's
-     *      count-mismatch check (validation is skipped past the end of
-     *      `values` — the mismatch revert supersedes it).
-     */
-    function _measure(bytes calldata t, bytes[] calldata values)
-        private
-        pure
-        returns (uint256 count, uint256 headBytes, uint256 tailBytes)
-    {
-        uint256 q = 1;
-        while (true) {
-            (uint256 e, bool dyn, uint256 words) = AbiShape.typeShape(t, q, t.length);
-            if (count < values.length) {
-                bytes calldata v = values[count];
-                if (dyn) {
-                    headBytes += 32;
-                    if (v.length < 64 || v.length % 32 != 0 || bytes32(v[0:32]) != bytes32(uint256(0x20))) {
-                        revert InvalidComponentEnvelope(count, v.length, v.length >= 32 ? bytes32(v[0:32]) : bytes32(0));
-                    }
-                    tailBytes += v.length - 32;
-                } else {
-                    headBytes += words * 32;
-                    if (v.length != words * 32) {
-                        revert InvalidComponentLength(count, words * 32, v.length);
-                    }
-                }
-            }
-            count++;
-            if (t[e] == ")") break;
-            q = e + 1;
-        }
-    }
-
-    /**
-     * @dev encode pass 2: emits heads and tails into the caller-sized
-     *      allocation (values are pre-validated by _measure, so a static
-     *      value's length IS its head footprint)
-     */
-    function _assemble(bytes calldata t, bytes[] calldata values, bytes memory out, uint256 headBytes) private pure {
-        uint256 q = 1;
-        uint256 headPos;
-        uint256 tailPos = headBytes;
-        for (uint256 i = 0; i < values.length; i++) {
-            (uint256 e, bool dyn,) = AbiShape.typeShape(t, q, t.length);
-            if (dyn) {
-                assembly {
-                    mstore(add(add(out, 32), headPos), tailPos)
-                }
-                _copy(out, tailPos, values[i][32:]);
-                tailPos += values[i].length - 32;
-                headPos += 32;
-            } else {
-                _copy(out, headPos, values[i]);
-                headPos += values[i].length;
-            }
-            q = e + 1;
-        }
-    }
-
-
 
     // ============ Folds ============
 
@@ -1455,14 +1352,7 @@ contract Operators {
         bool filterMode
     ) private view returns (bytes memory out) {
         if (s.length % 32 != 0) revert UnalignedWords(s.length);
-        if (template.length < 32) {
-            revert LambdaOffsetOutOfBounds(0, template.length);
-        }
-        for (uint256 j = 0; j < elemOffsets.length; j++) {
-            if (elemOffsets[j] > template.length - 32) {
-                revert LambdaOffsetOutOfBounds(elemOffsets[j], template.length);
-            }
-        }
+        _checkElementWindows(template, elemOffsets);
         uint256 count = s.length / 32;
         out = new bytes(s.length);
         uint256 kept;
@@ -1471,19 +1361,8 @@ contract Operators {
             bytes memory callData = template;
             for (uint256 i = 0; i < count; i++) {
                 bytes32 elem = bytes32(s[i * 32:i * 32 + 32]);
-                for (uint256 j = 0; j < elemOffsets.length; j++) {
-                    uint256 elemOffset = elemOffsets[j];
-                    assembly {
-                        mstore(add(add(callData, 32), elemOffset), elem)
-                    }
-                }
-                (bool success, bytes memory ret) = target.staticcall(callData);
-                if (!success) revert LambdaCallFailed(i, target, callData);
-                if (ret.length < 32) revert LambdaReturnTooShort(i, ret.length);
-                bytes32 word;
-                assembly {
-                    word := mload(add(ret, 32))
-                }
+                _stampElements(callData, elemOffsets, elem);
+                bytes32 word = _callWord(target, callData, i);
                 if (filterMode) {
                     if (word != bytes32(0)) {
                         _setWord(out, kept, uint256(elem));
@@ -1700,6 +1579,11 @@ contract Operators {
         if (template.length < 32 || accOffset > template.length - 32) {
             revert LambdaOffsetOutOfBounds(accOffset, template.length);
         }
+        _checkElementWindows(template, elemOffsets);
+    }
+
+    function _checkElementWindows(bytes calldata template, uint256[] calldata elemOffsets) private pure {
+        if (template.length < 32) revert LambdaOffsetOutOfBounds(0, template.length);
         for (uint256 j = 0; j < elemOffsets.length; j++) {
             if (elemOffsets[j] > template.length - 32) {
                 revert LambdaOffsetOutOfBounds(elemOffsets[j], template.length);
@@ -1732,6 +1616,10 @@ contract Operators {
         assembly {
             mstore(add(add(callData, 32), accOffset), acc)
         }
+        _stampElements(callData, elemOffsets, elem);
+    }
+
+    function _stampElements(bytes memory callData, uint256[] calldata elemOffsets, bytes32 elem) private pure {
         for (uint256 j = 0; j < elemOffsets.length; j++) {
             uint256 elemOffset = elemOffsets[j];
             assembly {
@@ -1780,6 +1668,13 @@ contract Operators {
     /**
      * @dev Element loop of {@link _fold}.
      */
+    function _callWord(address target, bytes memory callData, uint256 index) private view returns (bytes32 word) {
+        (bool success, bytes memory ret) = target.staticcall(callData);
+        if (!success) revert LambdaCallFailed(index, target, callData);
+        if (ret.length < 32) revert LambdaReturnTooShort(index, ret.length);
+        assembly ("memory-safe") { word := mload(add(ret, 32)) }
+    }
+
     function _foldLoop(
         FoldRun memory run,
         bytes calldata s,
@@ -1792,13 +1687,7 @@ contract Operators {
                 bytes32 elem = _domainElem(run.domain, i, s);
                 _stampWindows(callData, run.accOffset, run.acc, elemOffsets, elem);
             }
-            (bool success, bytes memory ret) = run.target.staticcall(callData);
-            if (!success) revert LambdaCallFailed(i, run.target, callData);
-            if (ret.length < 32) revert LambdaReturnTooShort(i, ret.length);
-            bytes32 next;
-            assembly {
-                next := mload(add(ret, 32))
-            }
+            bytes32 next = _callWord(run.target, callData, i);
             run.acc = next;
             if (run.exit == FoldExit.Any && next != bytes32(0)) break;
             if (run.exit == FoldExit.All && next == bytes32(0)) break;

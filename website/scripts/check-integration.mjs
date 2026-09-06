@@ -27,10 +27,12 @@ try {
   const fixtures = await load(`${evmcrisprSrc}/packages/test-utils/src/onchain/assertions-bytecode.ts`);
   const core = await load("/src/lib/assertions-deployment.ts");
   const operators = await load("/src/lib/operators-deployment.ts");
+  const collections = await load("/src/lib/collection-operators-deployment.ts");
 
   for (const [name, exports, prefix, sdkAddress] of [
     ["Assertions", core, "ASSERTIONS", sdk.CORE_ADDRESS],
     ["Operators", operators, "OPERATORS", sdk.OPERATORS_ADDRESS],
+    ["CollectionOperators", collections, "COLLECTION_OPERATORS", sdk.COLLECTION_OPERATORS_ADDRESS],
   ]) {
     const artifact = JSON.parse(readFileSync(`../artifacts/contracts/${name}.sol/${name}.json`, "utf8"));
     assert.equal(exports[`${prefix}_ADDRESS`], sdkAddress, `${name}: compiler address drift`);

@@ -18,9 +18,9 @@ Defined once in `ERC8211.sol`, the standard's shared vocabulary, thrown by the c
 | `InvalidBalanceData(uint256, uint256, uint256)` | a `BALANCE` fetcher's `paramData` is not exactly 40 bytes (two packed addresses) |
 | `InvalidConstraintData(uint256, uint256, uint256, uint256)` | a constraint's `referenceData` has the wrong length (32 bytes for EQ/GTE/LTE, 64 for IN) |
 
-## AbiShape (shared descriptor grammar)
+## AbiCodec (shared ABI machinery)
 
-Defined in `AbiShape.sol`, the type-descriptor grammar both contracts import: the core raises them from `nav`, Operators from `encode`:
+`InvalidTypeDescriptor` is declared in `AbiCodec.sol`; the core and both periphery contracts share its descriptor grammar. `ElementIndexOutOfBounds` is declared in `Assertions.sol` for navigation:
 
 | Error | Description |
 |-------|-------------|
@@ -52,6 +52,8 @@ View-mode batch restrictions from the judge, plus the primitives' own errors:
 | `ComponentCountMismatch(uint256, uint256)` | `encode` received a `values` array whose length differs from the descriptor's component count |
 | `InvalidComponentLength(uint256, uint256, uint256)` | an `encode` static component's value is not exactly its head footprint (arguments: component index, expected bytes, actual bytes) |
 | `InvalidComponentEnvelope(uint256, uint256, bytes32)` | an `encode` dynamic component's value is not a canonical `[0x20][tail]` envelope (arguments: component index, value length, first word) |
+| `InvalidComponentValue(uint256, uint256)` | a nested ABI value is malformed (component index and byte offset within its single-value encoding) |
+| `InvalidValue(uint256)` | a canonical value or array encoding is malformed (byte offset) |
 | `LambdaOffsetOutOfBounds(uint256, uint256)` | a fold or `mapWords` window offset does not leave room for a 32-byte word inside the template |
 | `LambdaCallFailed(uint256, address, bytes)` | a fold or `mapWords` lambda call reverted, or the lambda target has no code (index 0 with empty calldata for the code check); names the element index, target and constructed calldata |
 | `LambdaReturnTooShort(uint256, uint256)` | a fold or `mapWords` lambda returned fewer than 32 bytes |

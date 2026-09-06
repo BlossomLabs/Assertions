@@ -22,6 +22,8 @@ the latest `next` baseline, `4fd8ed6b`. This revision compiles against core
 `0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD`. Both contracts must exist on
 the selected chain; check [deployments](/deployments) before executing.
 
+The shared-codec refactor has newer artifact candidates. Its local SDK integration is verified with `EVMCRISPR_SRC`, but this published vendor pin has not yet been updated. Update it to a tested, published SDK commit before releasing the new artifacts through the default builder.
+
 The builder supports `lang`, `receipts`, `contracts`, `math`, `token`,
 `vault`, `acl`, `sim`, `safe`, `governor` and `aragonosx`, in addition to
 the always-loaded `std`. Other modules in the full EVMcrispr terminal are

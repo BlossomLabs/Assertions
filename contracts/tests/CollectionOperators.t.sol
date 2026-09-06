@@ -157,7 +157,7 @@ contract CollectionOperatorsTest is Test {
         CollectionOperators.Callback memory c = cb(this.malformed.selector, "(string)", 1);
         vm.expectRevert(
             abi.encodeWithSelector(
-                CollectionOperators.InvalidCallbackResult.selector,
+                AbiCodec.InvalidCallbackResult.selector,
                 ops.mapValues.selector,
                 uint256(0),
                 uint256(0),
@@ -234,14 +234,14 @@ contract CollectionOperatorsTest is Test {
 
     function testMalformedPredicateAndComparatorAreRejected() public {
         CollectionOperators.Callback memory c = cb(this.invalidBool.selector, "(string)", 1);
-        vm.expectRevert(abi.encodeWithSelector(CollectionOperators.InvalidCallbackResult.selector,
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
             ops.filterValues.selector, uint256(0), uint256(0), address(this)));
         ops.filterValues("string", strings(), c);
         bytes[] memory records = new bytes[](2);
         records[0] = abi.encode(Record(1, "one"));
         records[1] = abi.encode(Record(2, "two"));
         c = cb(this.invalidComparator.selector, "((uint256,string),(uint256,string))", 2);
-        vm.expectRevert(abi.encodeWithSelector(CollectionOperators.InvalidCallbackResult.selector,
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
             ops.sortValues.selector, uint256(0), uint256(1), address(this)));
         ops.sortValues("(uint256,string)", records, c);
     }

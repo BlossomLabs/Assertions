@@ -9,7 +9,7 @@ description: Multiword collection values, typed callback envelopes, and stable c
 
 Each `bytes[]` element is one canonical `abi.encode(value)`, not packed bytes and not a raw array payload. A string includes its leading offset, length and padded data; a static struct includes all its words. Elements may be words, structs, strings, nested arrays, or tuples containing dynamic fields.
 
-`packArray(elementType, values)` returns the canonical encoding of the complete array inside a bytes return envelope. `unpackArray(elementType, encodedArray)` reverses that operation and rebases dynamic element offsets. `validateValue(valueType,value)` validates a single envelope. The grammar is the existing AbiShape grammar, for example `(uint256,string)` or `string[2]`.
+`packArray(elementType, values)` returns the canonical encoding of the complete array inside a bytes return envelope. `unpackArray(elementType, encodedArray)` reverses that operation and rebases dynamic element offsets. `validateValue(valueType,value)` validates a single envelope. The grammar is the shared AbiCodec shape grammar, for example `(uint256,string)` or `string[2]`.
 
 The codec checks descriptor structure, canonical offsets, bounds, exact lengths and zero bytes/string padding. It is a shape validator, not a scalar type checker: a shape-compatible incorrect scalar claim remains the caller's responsibility. It does not turn a word into a checked `uint8` or validate an address's upper bits. Predicate callbacks separately require canonical booleans.
 
@@ -48,3 +48,5 @@ These routines perform finite loops over supplied inputs; transaction gas bounds
 In Operators, `distinctWords(bytes)` provides stable whole-word deduplication. `uniqueWords(bytes)` retains its original adjacent-only behavior. `split(bytes,bytes)` returns every segment, preserves empty segments, and rejects an empty delimiter.
 
 This contract release does not update the vendored EVMcrispr compiler or helper APIs. Its integration is a separate change.
+
+Typed callbacks prepare their argument layout and validate constants once per operation. Each invocation validates substituted values and results. Word-template operations remain in Operators: their fixed-width windows can reach nested calldata, while typed callbacks rebuild complete argument slots when encoded sizes change.

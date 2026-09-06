@@ -15,7 +15,9 @@ import {
     InvalidConstraintData,
     ReturnDataOutOfBounds
 } from "./ERC8211.sol";
-import {AbiShape, ElementIndexOutOfBounds, InvalidTypeDescriptor} from "./AbiShape.sol";
+import {AbiCodec, InvalidTypeDescriptor} from "./AbiCodec.sol";
+
+error ElementIndexOutOfBounds(int256 index, uint256 count);
 
 /**
  * @notice Minimal ERC-20 surface the BALANCE fetcher needs
@@ -72,9 +74,8 @@ contract Assertions {
     //
     // ConstraintFailed, CallFailed, InvalidBalanceData, InvalidConstraintData,
     // ReturnDataOutOfBounds and InvalidAddressWord are the standard's shared
-    // errors, declared in ERC8211.sol; ElementIndexOutOfBounds and
-    // InvalidTypeDescriptor come from AbiShape.sol with the descriptor
-    // grammar that raises them.
+    // errors, declared in ERC8211.sol. ElementIndexOutOfBounds is declared
+    // above; InvalidTypeDescriptor comes from the shared AbiCodec grammar.
 
     /**
      * @notice Thrown when an entry carries output parameters — Storage
@@ -824,9 +825,9 @@ contract Assertions {
         // length is known at composition time, so it has no length word
         // to read either).
         if (t[te - 1] == "]") {
-            uint256 suffix = AbiShape.suffixStart(t, ts, te);
+            uint256 suffix = AbiCodec.suffixStart(t, ts, te);
             if (suffix + 1 != te - 1) revert InvalidNavigation(ts);
-            (, , uint256 elemWords) = AbiShape.typeShape(t, ts, suffix);
+            (, , uint256 elemWords) = AbiCodec.typeShape(t, ts, suffix);
             if (elemWords == 0) revert InvalidNavigation(ts);
             // Divide before multiplying: hostile counts/descriptor sizes
             // must not overflow before the bounds check. Dynamic elements
@@ -887,8 +888,8 @@ contract Assertions {
         uint256 len = _navWord(result, pos);
         uint256 payloadBytes;
         if (t[te - 1] == "]") {
-            uint256 suffix = AbiShape.suffixStart(t, ts, te);
-            (, bool elemDyn, uint256 elemWords) = AbiShape.typeShape(t, ts, suffix);
+            uint256 suffix = AbiCodec.suffixStart(t, ts, te);
+            (, bool elemDyn, uint256 elemWords) = AbiCodec.typeShape(t, ts, suffix);
             if (elemDyn) revert InvalidNavigation(ts);
             if (len > (result.length - pos - 32) / (elemWords * 32)) {
                 revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
@@ -968,7 +969,7 @@ contract Assertions {
         if (t.length == 0 || t[0] != "(") revert InvalidTypeDescriptor(0);
         if (path.length == 0) revert InvalidNavigation(0);
         {
-            (uint256 topEnd,,) = AbiShape.typeShape(t, 0, t.length);
+            (uint256 topEnd,,) = AbiCodec.typeShape(t, 0, t.length);
             if (topEnd != t.length) revert InvalidTypeDescriptor(topEnd);
         }
 
@@ -997,8 +998,8 @@ contract Assertions {
      *      (or fixed) length and advances the cursor to the element
      */
     function _navArrayStep(bytes memory result, bytes calldata t, NavCursor memory c, int256 idx) private pure {
-        uint256 suffix = AbiShape.suffixStart(t, c.ts, c.te);
-        (, bool elemDyn, uint256 elemWords) = AbiShape.typeShape(t, c.ts, suffix);
+        uint256 suffix = AbiCodec.suffixStart(t, c.ts, c.te);
+        (, bool elemDyn, uint256 elemWords) = AbiCodec.typeShape(t, c.ts, suffix);
         uint256 count;
         uint256 dataStart;
         if (suffix + 1 == c.te - 1) {
@@ -1015,7 +1016,7 @@ contract Assertions {
             }
             dataStart = c.base;
         }
-        uint256 wanted = AbiShape.normalizeIndex(idx, count);
+        uint256 wanted = _normalizeIndex(idx, count);
         if (elemDyn) {
             uint256 off = _navWord(result, dataStart + wanted * 32);
             if (off > result.length) {
@@ -1041,7 +1042,7 @@ contract Assertions {
         uint256 j;
         if (idx < 0) {
             while (true) {
-                (uint256 e,,) = AbiShape.typeShape(t, q, c.te);
+                (uint256 e,,) = AbiCodec.typeShape(t, q, c.te);
                 j++;
                 if (t[e] == ")") break;
                 q = e + 1;
@@ -1049,7 +1050,7 @@ contract Assertions {
             revert ElementIndexOutOfBounds(idx, j);
         }
         while (true) {
-            (uint256 e, bool d, uint256 w) = AbiShape.typeShape(t, q, c.te);
+            (uint256 e, bool d, uint256 w) = AbiCodec.typeShape(t, q, c.te);
             if (j == uint256(idx)) {
                 if (d) {
                     uint256 off = _navWord(result, c.base + acc * 32);
@@ -1071,5 +1072,16 @@ contract Assertions {
             if (t[e] == ")") revert ElementIndexOutOfBounds(idx, j);
             q = e + 1;
         }
+    }
+
+    /// @dev Normalize a signed array index, rejecting indices outside -count .. count-1.
+    function _normalizeIndex(int256 index, uint256 count) internal pure returns (uint256) {
+        if (index < 0) {
+            // index == type(int256).min is caught here before -index could overflow.
+            if (index < -int256(count)) revert ElementIndexOutOfBounds(index, count);
+            return count - uint256(-index);
+        }
+        if (uint256(index) >= count) revert ElementIndexOutOfBounds(index, count);
+        return uint256(index);
     }
 }

@@ -110,7 +110,7 @@ function isDynamic(t: AbiT): boolean {
   }
 }
 
-// Head footprint in words, mirroring AbiShape.typeShape (dynamic = 1 offset word).
+// Head footprint in words, mirroring AbiCodec.typeShape (dynamic = 1 offset word).
 function headWords(t: AbiT): number {
   if (isDynamic(t)) return 1;
   switch (t.kind) {

@@ -7,7 +7,7 @@ fix it in the same change that falsified it.
 ## The two trees
 
 - **Main repo**: `contracts/` (the frozen `Assertions` core, the versionable
-  `Operators` periphery, `AbiShape`, `ERC8211`), Solidity tests under
+  `Operators` periphery, `CollectionOperators`, `AbiCodec`, `ERC8211`), Solidity tests under
   `contracts/tests/*.t.sol` run by `pnpm test` (hardhat 3), and the Astro site in
   `website/` with hand-written docs at `website/src/content/docs/docs/`.
 - **Vendored checkout**: `website/.evmcrispr` is an EVMcrispr monorepo checkout at a published commit

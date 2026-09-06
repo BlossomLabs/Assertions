@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 import "../Assertions.sol";
 import "../Operators.sol";
 import "../ERC8211.sol";
-import "../AbiShape.sol";
+import "../AbiCodec.sol";
 import "./Mocks.sol";
 
 /**
@@ -630,14 +630,14 @@ contract OperatorsTest is Test {
     function test_encode_countMismatch() public {
         bytes[] memory values = new bytes[](1);
         values[0] = abi.encode(uint256(1));
-        vm.expectRevert(abi.encodeWithSelector(Operators.ComponentCountMismatch.selector, 2, 1));
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.ComponentCountMismatch.selector, 2, 1));
         ops.encode("(uint256,uint256)", values);
     }
 
     function test_encode_badStaticLength() public {
         bytes[] memory values = new bytes[](1);
         values[0] = hex"01";
-        vm.expectRevert(abi.encodeWithSelector(Operators.InvalidComponentLength.selector, 0, 32, 1));
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidComponentLength.selector, 0, 32, 1));
         ops.encode("(uint256)", values);
     }
 
@@ -646,7 +646,7 @@ contract OperatorsTest is Test {
         bytes[] memory values = new bytes[](1);
         values[0] = abi.encode(uint256(0x40));
         vm.expectRevert(
-            abi.encodeWithSelector(Operators.InvalidComponentEnvelope.selector, 0, 32, bytes32(uint256(0x40)))
+            abi.encodeWithSelector(AbiCodec.InvalidComponentEnvelope.selector, 0, 32, bytes32(uint256(0x40)))
         );
         ops.encode("(bytes)", values);
     }

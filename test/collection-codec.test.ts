@@ -5,14 +5,17 @@ import { encodeAbiParameters, parseAbi, parseAbiParameters, type Hex } from "vie
 
 const codecAbi = parseAbi([
   "function packArray(string elementType, bytes[] values) pure returns (bytes)",
+  "function encodeBytes(string types, bytes[] values) pure returns (bytes)",
   "function unpackArray(string elementType, bytes encoded) pure returns (bytes[])",
 ]);
 
 async function deployCodec() {
   const { viem } = await network.connect();
   const { address } = await viem.deployContract("CollectionOperators");
+  const { address: operators } = await viem.deployContract("Operators");
   const client = await viem.getPublicClient();
   return {
+    encodeBytes: (args: [string, Hex[]]) => client.readContract({address: operators, abi: codecAbi, functionName: "encodeBytes", args}),
     packArray: (args: [string, Hex[]]) => client.readContract({address, abi: codecAbi, functionName: "packArray", args}),
     unpackArray: (args: [string, Hex]) => client.readContract({address, abi: codecAbi, functionName: "unpackArray", args}),
   };
@@ -36,6 +39,7 @@ describe("CollectionOperators independent ABI fixtures", () => {
       const single = parseAbiParameters(fixture.type);
       const values = fixture.values.map(value => encodeAbiParameters(single, [value]));
       const expected = encodeAbiParameters(parseAbiParameters(`${fixture.type}[]`), [fixture.values]);
+      for (const value of values) assert.equal(await ops.encodeBytes([`(${fixture.type})`, [value]]), value);
       assert.equal(await ops.packArray([fixture.type, values]), expected, fixture.type);
       assert.deepEqual(await ops.unpackArray([fixture.type, expected]), values, fixture.type);
       const empty = encodeAbiParameters(parseAbiParameters(`${fixture.type}[]`), [[]]);

@@ -433,8 +433,15 @@ contract OperatorsTest is Test {
         parts[0] = "ab";
         parts[1] = "";
         parts[2] = "cd";
-        assertEq(ops.concat(parts), bytes("abcd"));
-        assertEq(ops.concat(new bytes[](0)), bytes(""));
+        assertEq(ops.concat(parts, ""), bytes("abcd"));
+        assertEq(ops.concat(parts, "::"), bytes("ab::::cd"));
+        parts[0] = "";
+        parts[2] = "";
+        assertEq(ops.concat(parts, ","), bytes(",,"));
+        bytes[] memory singleton = new bytes[](1);
+        singleton[0] = "solo";
+        assertEq(ops.concat(singleton, ","), bytes("solo"));
+        assertEq(ops.concat(new bytes[](0), ","), bytes(""));
     }
 
     function test_slice() public {

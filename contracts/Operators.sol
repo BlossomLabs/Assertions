@@ -843,14 +843,24 @@ contract Operators {
     // ============ Bytes ============
 
     /**
-     * @notice Concatenates the parts in order
+     * @notice Concatenates the parts in order, inserting delimiter between parts
      * @dev Returned as a normal bytes value (ABI envelope): the canonical
      *      form every consumer of a single bytes argument expects,
      *      including encode's values[]
      */
-    function concat(bytes[] calldata parts) external pure returns (bytes memory out) {
-        for (uint256 i = 0; i < parts.length; i++) {
-            out = bytes.concat(out, parts[i]);
+    function concat(bytes[] calldata parts, bytes calldata delimiter) external pure returns (bytes memory out) {
+        uint256 length;
+        for (uint256 i; i < parts.length; i++) length += parts[i].length;
+        if (parts.length > 1) length += (parts.length - 1) * delimiter.length;
+        out = new bytes(length);
+        uint256 offset;
+        for (uint256 i; i < parts.length; i++) {
+            if (i != 0) {
+                _copy(out, offset, delimiter);
+                offset += delimiter.length;
+            }
+            _copy(out, offset, parts[i]);
+            offset += parts[i].length;
         }
     }
 

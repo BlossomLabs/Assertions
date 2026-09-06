@@ -67,7 +67,7 @@ When you need the *conventional* digest of a single string or bytes value (the `
 
 ## Slice and concat
 
-`slice(data, start, len)` returns `data[start .. start + len)` as a normal bytes value, reverting with `SliceOutOfBounds` when the range leaves the data (zero-length slices at any in-range position are fine). `concat(parts)` concatenates the parts in order, also returned as a normal bytes value: the canonical form every consumer of a single bytes argument expects, including `encode`'s `values[]`.
+`slice(data, start, len)` returns `data[start .. start + len)` as a normal bytes value, reverting with `SliceOutOfBounds` when the range leaves the data (zero-length slices at any in-range position are fine). `concat(parts, delimiter)` concatenates the parts in order with the delimiter between elements, also returned as a normal bytes value: the canonical form every consumer of a single bytes argument expects, including `encode`'s `values[]`.
 
 ## Search: indexOf
 
@@ -99,7 +99,7 @@ Anchored checks compose from `slice` and `hash`: "starts with Curve" is `eq(hash
 
 `charset(s, mask)` returns true when every byte of `s` is a member of the 256-bit character class `mask` (bit `i` set means byte value `i` is allowed), the native single-call form of the `foldBytes(bitSet, All)` recipe. The empty string is vacuously in every set, and the check is byte-level, so multi-byte UTF-8 characters fail any ASCII-only class. EVMcrispr's `@str.charset!` builds the mask from a class spec (`a-z0-9-`) at composition time and compiles to this call; see the [fold recipes](/docs/operators/fold) for the general per-byte-predicate form.
 
-There is no join function: joining is pure composition over `concat`. EVMcrispr's `@str.join!` interleaves the delimiter between the parts at composition time and emits a single `concat` call (constant runs merge into one part).
+`concat(parts, delimiter)` joins runtime arrays directly, including a runtime delimiter. It allocates once and preserves empty elements; empty arrays return empty bytes. Pass empty bytes as the delimiter for ordinary concatenation.
 
 ## Parse: parseUint and toString
 

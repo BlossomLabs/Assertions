@@ -294,10 +294,10 @@ const SPECS: Spec[] = [
   {
     label: "concat",
     name: "concat",
-    inTypes: ["bytes[]"],
+    inTypes: ["bytes[]", "bytes"],
     outType: "bytes",
-    gen: (rng) => [Array.from({ length: randInt(rng, 0, 4) }, () => toHexStr(genHay(rng)))],
-    ref: (parts: Hex[]) => ({ ok: parts.length === 0 ? "0x" : concatHex(parts) }),
+    gen: (rng) => [Array.from({ length: randInt(rng, 0, 4) }, () => toHexStr(genHay(rng))), toHexStr(genHay(rng))],
+    ref: (parts: Hex[], delimiter: Hex) => ({ ok: `0x${parts.map(p => p.slice(2)).join(delimiter.slice(2))}` }),
   },
   {
     label: "slice",

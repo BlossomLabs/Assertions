@@ -19,7 +19,7 @@ Why named functions instead of the old op-code enums: decoded calldata reads on 
 | [Bitwise](/docs/operators/words) | `bitAnd`, `bitOr`, `bitXor`, `shl`, `shr` (uint, plus an int256 overload: arithmetic shift, EVM SAR), `bitSet(mask, index)` |
 | [Environment](/docs/operators/words) | `balance(address)`, `codeHash(address)`, `timestamp()`, `blockNumber()`, `chainId()`, `baseFee()`, `prevRandao()`, `coinbase()`, `gasLimit()`, `blobBaseFee()`, `blockHash(n)`, `origin()`, `gasPrice()`, `blobHash(uint256)` |
 | [Calls](/docs/operators/data) | `rawCall(address, bytes)` (raw staticcall, the precompile reach-through), `code(address)` (full runtime code as bytes) |
-| [Bytes](/docs/operators/data) | `concat(bytes[])`, `slice(bytes, start, len)`, `byteLen(bytes)`, `hash(bytes)`, `hashPairSorted(bytes32, bytes32)` (the sorted Merkle node combiner) |
+| [Bytes](/docs/operators/data) | `concat(bytes[],bytes)`, `slice(bytes, start, len)`, `byteLen(bytes)`, `hash(bytes)`, `hashPairSorted(bytes32, bytes32)` (the sorted Merkle node combiner) |
 | [Search](/docs/operators/data) | `indexOf(bytes, bytes, int256 occurrence)` (signed occurrence ordinal: 0, 1, ... from the start, -1, -2, ... from the end) |
 | [Strings](/docs/operators/data) | `split(bytes, bytes)`, `replace(bytes, bytes, bytes)`, `toLower(bytes)`, `toUpper(bytes)` (ASCII-only case folds), `charset(bytes, uint256)` (every byte in a 256-bit class, native) |
 | [Parse](/docs/operators/data) | `parseUint`/`parseInt`, signed/unsigned `toString`, `parseUnits`/`parseUnitsUnsigned`, signed/unsigned `formatUnits` |
@@ -65,7 +65,7 @@ The first test is why the fixed-point family — `rpow`, `expWad`, `lnWad` — i
 
 `expWad` and `lnWad` are admitted as a unit with `rpow` rather than on their own measured saving: continuous compounding and its inverse are the same primitive seen from two sides, and splitting them would leave a surface that can grow a rate but not read one back. `log2` is a byte of dispatch over code `lnWad` already carries.
 
-Everything that fails all three tests composes and stays out: `join` is `concat` with the delimiter interleaved at composition time, pair hashing (unsorted) is `hash` over an encoder-built two-word payload, and packed encoding is `concat` over `slice`-narrowed words.
+Everything that fails all three tests composes and stays out: `join` uses the delimiter argument of `concat`, pair hashing (unsorted) is `hash` over an encoder-built two-word payload, and packed encoding is `concat` over `slice`-narrowed words.
 
 ## Signedness rides on overloads
 

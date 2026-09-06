@@ -2,12 +2,15 @@
 pragma solidity ^0.8.28;
 
 import "forge-std/Test.sol";
-import "../Operators.sol";
+import "../Operations.sol";
+import "../Collections.sol";
 
-contract OperatorsCollectionsTest is Test {
-    Operators ops;
+contract OperationsCollectionsTest is Test {
+    Operations ops;
+    Collections cols;
 
-    function setUp() public { ops = new Operators(); }
+    function setUp() public { ops = new Operations();
+        cols = new Collections(); }
 
     function testSplitPreservesEmptySegments() public view {
         bytes[] memory parts = ops.split(bytes(",a,,b,"), bytes(","));
@@ -31,22 +34,22 @@ contract OperatorsCollectionsTest is Test {
     }
 
     function testSplitRejectsEmptyDelimiter() public {
-        vm.expectRevert(Operators.EmptyNeedle.selector);
+        vm.expectRevert(Operations.EmptyNeedle.selector);
         ops.split(bytes("a"), bytes(""));
     }
 
-    function testDistinctStable() public view {
-        assertEq(ops.distinctWords(abi.encode(uint256(2), uint256(1), uint256(2), uint256(0), uint256(1))),
+    function testUniqueUnorderedStable() public view {
+        assertEq(cols.uniqueWords(abi.encode(uint256(2), uint256(1), uint256(2), uint256(0), uint256(1)), false),
             abi.encode(uint256(2), uint256(1), uint256(0)));
-        assertEq(ops.distinctWords(bytes("")), bytes(""));
+        assertEq(cols.uniqueWords(bytes(""), false), bytes(""));
         // Existing adjacent operation still keeps nonadjacent duplicates.
-        assertEq(ops.uniqueWords(abi.encode(uint256(2), uint256(1), uint256(2))),
+        assertEq(cols.uniqueWords(abi.encode(uint256(2), uint256(1), uint256(2)), true),
             abi.encode(uint256(2), uint256(1), uint256(2)));
     }
 
-    function testDistinctRejectsPartialWord() public {
-        vm.expectRevert(abi.encodeWithSelector(Operators.UnalignedWords.selector, 1));
-        ops.distinctWords(hex"01");
+    function testUniqueUnorderedRejectsPartialWord() public {
+        vm.expectRevert(abi.encodeWithSelector(Collections.UnalignedWords.selector, 1));
+        cols.uniqueWords(hex"01", false);
     }
 
     function testEncodeBytesDynamicEnvelope() public view {

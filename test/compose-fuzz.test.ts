@@ -10,9 +10,9 @@
 // in the frame that checks them, and orElse / isValid catch everything
 // through the self-staticcall boundary.
 //
-// The second half fuzzes the Operators fold/map/filter family against
+// The second half fuzzes the Operations fold/map/filter family against
 // DEPLOYED lambda targets, which the string/math fuzzers deliberately left
-// out. Operators-target templates are simulated at the byte level (the
+// out. Operations-target templates are simulated at the byte level (the
 // accumulator window is stamped first, then each element window in
 // elemOffsets order), so overlapping and UNALIGNED window offsets are
 // checked exactly, not just the well-formed ones. Core-target templates —
@@ -134,8 +134,9 @@ const ERROR_ABI = [
   { type: "error", name: "DidNotRevert", inputs: [{ type: "address" }, { type: "bytes" }] },
   { type: "error", name: "UnexpectedRevertData", inputs: [{ type: "bytes4" }, { type: "bytes4" }] },
   { type: "error", name: "LambdaOffsetOutOfBounds", inputs: [{ type: "uint256" }, { type: "uint256" }] },
-  { type: "error", name: "LambdaCallFailed", inputs: [{ type: "uint256" }, { type: "address" }, { type: "bytes" }] },
-  { type: "error", name: "LambdaReturnTooShort", inputs: [{ type: "uint256" }, { type: "uint256" }] },
+  { type: "error", name: "CallbackFailed", inputs: [{ type: "bytes4" }, { type: "uint256" }, { type: "uint256" }, { type: "address" }, { type: "bytes" }, { type: "bytes" }] },
+  { type: "error", name: "InvalidCallbackResult", inputs: [{ type: "bytes4" }, { type: "uint256" }, { type: "uint256" }, { type: "address" }] },
+  { type: "error", name: "InvalidCallbackTarget", inputs: [{ type: "address" }] },
   { type: "error", name: "UnalignedWords", inputs: [{ type: "uint256" }] },
   { type: "error", name: "Panic", inputs: [{ type: "uint256" }] },
   { type: "error", name: "Error", inputs: [{ type: "string" }] },
@@ -164,7 +165,9 @@ function decodeRevert(data: Hex): string {
 const { viem } = await network.connect();
 const publicClient = await viem.getPublicClient();
 const assertions = await viem.deployContract("Assertions");
-const operators = await viem.deployContract("Operators");
+const operators = await viem.deployContract("Operations");
+const collections = await viem.deployContract("Collections");
+const COLS = collections.address as Hex;
 
 const CORE = assertions.address as Hex;
 const OPS = operators.address as Hex;
@@ -381,7 +384,7 @@ function balanceLeaf(rng: Rng): P {
   return finishParam(rng, 2, data, REV("CallFailed"), "bal[eoa-token]");
 }
 
-// Word-level Operators leaves with exact bigint references. Only ok/revert
+// Word-level Operations leaves with exact bigint references. Only ok/revert
 // matters for nesting: a leaf revert always surfaces as CallFailed.
 type OpRef = (a: bigint, b: bigint) => bigint | null; // null = reverts
 
@@ -419,7 +422,7 @@ function opLeaf(rng: Rng): P {
     const n = randInt(rng, 0, 4);
     const payload = catHex(...Array.from({ length: n }, (_, i) => word(BigInt(i))));
     const env = encodeAbiParameters([{ type: "bytes" }], [payload]);
-    return scFetch(rng, OPS, opCalldata("iotaWords", [BigInt(n)]), { ok: env }, `sc:iota(${n})`);
+    return scFetch(rng, COLS, opCalldata("iotaWords", [BigInt(n)]), { ok: env }, `sc:iota(${n})`);
   }
   const op = OP_LEAVES[randInt(rng, 0, OP_LEAVES.length - 1)];
   const a = genOpArg(rng);
@@ -809,17 +812,17 @@ function genRevertData(rng: Rng): Expr {
     };
   }
   if (r < 0.5) {
-    // Bare revert: expWad above its overflow bound reverts with no data.
+    // Bare revert: log2 at zero reverts with no data.
     const abi = [
       {
         type: "function",
-        name: "expWad",
+        name: "log2",
         stateMutability: "view",
-        inputs: [{ type: "int256" }],
-        outputs: [{ type: "int256" }],
+        inputs: [{ type: "uint256" }],
+        outputs: [{ type: "uint256" }],
       },
     ] as const;
-    const data = encodeFunctionData({ abi, functionName: "expWad", args: [135305999368893231589n] });
+    const data = encodeFunctionData({ abi, functionName: "log2", args: [0n] });
     const p: ParamStruct = { paramType: 2, fetcherType: 1, paramData: scData(OPS, data), constraints: [] };
     const expectSel = rng() < 0.5;
     return {
@@ -829,7 +832,7 @@ function genRevertData(rng: Rng): Expr {
     };
   }
   if (r < 0.75) {
-    // Panic from Operators: div-by-zero (0x12) or checked underflow (0x11).
+    // Panic from Operations: div-by-zero (0x12) or checked underflow (0x11).
     const div = rng() < 0.5;
     const data = div ? opCalldata("div", [genOpArg(rng), 0n]) : opCalldata("sub", [0n, 1n + (randBig(rng, 64) | 1n)]);
     const p: ParamStruct = { paramType: 2, fetcherType: 1, paramData: scData(OPS, data), constraints: [] };
@@ -1039,7 +1042,7 @@ describe("assertComposable judge fuzz", () => {
 
 // ============ Folds / map / filter with deployed lambda targets ============
 
-// Byte-level template simulation: an Operators binary-op template is 68
+// Byte-level template simulation: an Operations binary-op template is 68
 // bytes (selector + two words); windows may land ANYWHERE in [4, 36], so a
 // stamp can straddle both argument slots. The simulator stamps exactly like
 // _stampWindows (accumulator first, then elemOffsets in order) and decodes
@@ -1086,7 +1089,7 @@ function wordFromBytes(bytes: number[], off: number): bigint {
   return v;
 }
 
-// One lambda application against an Operators binary-op template.
+// One lambda application against an Operations binary-op template.
 function simOpsLambda(template: number[], stamps: { off: number; w: bigint }[]): bigint | null {
   const t = template.slice();
   for (const s of stamps) stampWord(t, s.off, s.w);
@@ -1169,11 +1172,11 @@ function simFold(
   if (templateLen < 32 || accOffset > templateLen - 32) return REV("LambdaOffsetOutOfBounds");
   for (const off of elemOffsets) if (off > templateLen - 32) return REV("LambdaOffsetOutOfBounds");
   if (c.count === 0) return { ok: word(init) };
-  if (!targetHasCode) return REV("LambdaCallFailed");
+  if (!targetHasCode) return REV("InvalidCallbackTarget");
   let acc = init;
   for (const elem of c.elems) {
     const next = apply(acc, elem);
-    if (next === null) return REV("LambdaCallFailed");
+    if (next === null) return REV("CallbackFailed");
     acc = next;
     if (exit === 1 && acc !== 0n) break;
     if (exit === 2 && acc === 0n) break;
@@ -1264,7 +1267,7 @@ describe("fold differential fuzz (deployed lambda targets)", () => {
         const expect = simFold(c, tBytes.length, apply, accOffset, elemOffsets, init, exit, !deadTarget);
         const data = foldCalldata(domain, c, target, template, accOffset, elemOffsets, init, exit);
         const desc = `${op.name}(acc@${accOffset},elem@[${elemOffsets}]) n=${c.count} exit=${exit}${deadTarget ? " dead" : ""}${c.unaligned ? " unaligned" : ""}`;
-        await checkExpr(FOLD_FNS[domain], i, desc, OPS, data, expect);
+        await checkExpr(FOLD_FNS[domain], i, desc, COLS, data, expect);
       }
     });
   }
@@ -1290,26 +1293,28 @@ describe("fold differential fuzz (deployed lambda targets)", () => {
         else if (tBytes.length < 32) expect = REV("LambdaOffsetOutOfBounds");
         else if (elemOffsets.some((off) => off > tBytes.length - 32)) expect = REV("LambdaOffsetOutOfBounds");
         else if (c.count === 0) expect = { ok: encodeAbiParameters([{ type: "bytes" }], ["0x"]) };
-        else if (deadTarget) expect = REV("LambdaCallFailed");
+        else if (deadTarget) expect = REV("InvalidCallbackTarget");
         else {
           const kept: bigint[] = [];
           let failed = false;
+          let invalidBool = false;
           for (const elem of c.elems) {
             const v = simOpsLambda(tBytes, elemOffsets.map((off) => ({ off, w: elem })));
             if (v === null) {
               failed = true;
               break;
             }
+            if (fn === "filterWords" && v > 1n) { invalidBool = true; break; }
             if (fn === "mapWords") kept.push(v);
             else if (v !== 0n) kept.push(elem);
           }
-          expect = failed
-            ? REV("LambdaCallFailed")
+          expect = invalidBool ? REV("InvalidCallbackResult") : failed
+            ? REV("CallbackFailed")
             : { ok: encodeAbiParameters([{ type: "bytes" }], [kept.length ? catHex(...kept.map(word)) : "0x"]) };
         }
         const data = applyWordsCalldata(fn, c.sHex, target, template, elemOffsets);
         const desc = `${op.name}(elem@[${elemOffsets}]) n=${c.count}${deadTarget ? " dead" : ""}${c.unaligned ? " unaligned" : ""}`;
-        await checkExpr(fn, i, desc, OPS, data, expect);
+        await checkExpr(fn, i, desc, COLS, data, expect);
       }
     });
   }
@@ -1318,7 +1323,7 @@ describe("fold differential fuzz (deployed lambda targets)", () => {
 // ============ Core-target lambda templates ============
 //
 // The fold's lambda is a core expression: the template is complete
-// resolve(...) calldata whose operand reaches Operators (one or two decode
+// resolve(...) calldata whose operand reaches Operations (one or two decode
 // layers deep), and the window offsets are found by SCANNING the encoded
 // bytes for marker words — never recomputed from layout formulas, matching
 // the doctrine set by CoreTargetLambda.t.sol.
@@ -1369,7 +1374,7 @@ describe("core-target lambda fuzz", () => {
       const apply = (acc: bigint, elem: bigint) => (acc + elem > MAXU ? null : acc + elem);
       const expect = simFold(c, byteLen(template), apply, accOffset, [elemOffset], init, exit, true);
       const data = foldCalldata("words", c, CORE, template, accOffset, [elemOffset], init, exit);
-      await checkExpr("core-fold", i, `sum n=${c.count} deep=${deep} exit=${exit}`, OPS, data, expect);
+      await checkExpr("core-fold", i, `sum n=${c.count} deep=${deep} exit=${exit}`, COLS, data, expect);
     }
   });
 
@@ -1389,6 +1394,7 @@ describe("core-target lambda fuzz", () => {
         else {
           const out: bigint[] = [];
           let failed = false;
+          let invalidBool = false;
           for (const e of c.elems) {
             if (e * e > MAXU) {
               failed = true;
@@ -1396,12 +1402,12 @@ describe("core-target lambda fuzz", () => {
             }
             out.push(e * e);
           }
-          expect = failed
-            ? REV("LambdaCallFailed")
+          expect = invalidBool ? REV("InvalidCallbackResult") : failed
+            ? REV("CallbackFailed")
             : { ok: encodeAbiParameters([{ type: "bytes" }], [out.length ? catHex(...out.map(word)) : "0x"]) };
         }
         const data = applyWordsCalldata("mapWords", c.sHex, CORE, template, offs);
-        await checkExpr("core-map", i, `square n=${c.count} deep=${deep}`, OPS, data, expect);
+        await checkExpr("core-map", i, `square n=${c.count} deep=${deep}`, COLS, data, expect);
       } else {
         const k = rng() < 0.5 ? BigInt(randInt(rng, 0, 25)) : randBig(rng, 256) & MAXU;
         const template = coreTemplate("lt", ELEM_MARKER, k, deep);
@@ -1413,7 +1419,7 @@ describe("core-target lambda fuzz", () => {
           expect = { ok: encodeAbiParameters([{ type: "bytes" }], [kept.length ? catHex(...kept.map(word)) : "0x"]) };
         }
         const data = applyWordsCalldata("filterWords", c.sHex, CORE, template, [off]);
-        await checkExpr("core-filter", i, `lt(${k}) n=${c.count} deep=${deep}`, OPS, data, expect);
+        await checkExpr("core-filter", i, `lt(${k}) n=${c.count} deep=${deep}`, COLS, data, expect);
       }
     }
   });

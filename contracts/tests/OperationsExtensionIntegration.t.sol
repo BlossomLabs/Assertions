@@ -3,16 +3,16 @@ pragma solidity ^0.8.28;
 
 import "forge-std/Test.sol";
 import "../Assertions.sol";
-import "../Operators.sol";
+import "../Operations.sol";
 import "../ERC8211.sol";
 
-contract OperatorsExtensionIntegrationTest is Test {
+contract OperationsExtensionIntegrationTest is Test {
     Assertions core;
-    Operators ops;
+    Operations ops;
 
     function setUp() public {
         core = new Assertions();
-        ops = new Operators();
+        ops = new Operations();
     }
 
     function literal(bytes memory value) private pure returns (InputParam memory) {
@@ -34,7 +34,7 @@ contract OperatorsExtensionIntegrationTest is Test {
         args[0] = literal(abi.encode(int256(-7)));
         args[1] = literal(abi.encode(int256(1)));
         args[2] = literal(abi.encode(int256(3)));
-        args[3] = literal(abi.encode(Operators.Rounding.Floor));
+        args[3] = literal(abi.encode(Operations.Rounding.Floor));
         bytes memory read = abi.encodeCall(Assertions.read, (
             literal(abi.encode(address(ops))), bytes4(keccak256("mulDiv(int256,int256,int256,uint8)")), args));
         assertEq(abi.decode(evaluate(read), (int256)), -3);
@@ -46,7 +46,7 @@ contract OperatorsExtensionIntegrationTest is Test {
     }
 
     function testNavigateWholeSplitResult() public view {
-        InputParam memory parts = call(address(ops), abi.encodeCall(Operators.split, (bytes("a::longer::"), bytes("::"))));
+        InputParam memory parts = call(address(ops), abi.encodeCall(Operations.split, (bytes("a::longer::"), bytes("::"))));
         int256[] memory path = new int256[](2);
         path[0] = 0;
         path[1] = 1;

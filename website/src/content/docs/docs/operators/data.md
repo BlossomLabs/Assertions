@@ -21,7 +21,7 @@ function charset(bytes s, uint256 mask) external pure returns (bool);
 function encode (string types, bytes[] values) external pure;   // raw return
 ```
 
-The examples reuse `callParam`/`eq`/`noConstraints` from [the Solidity guide](/docs/solidity) and `lit`/`read1` from [the Operators overview](/docs/operators).
+The examples reuse `callParam`/`eq`/`noConstraints` from [the Solidity guide](/docs/solidity) and `lit`/`read1` from [the Operations overview](/docs/operators).
 
 ## Calls: rawCall and code
 
@@ -36,7 +36,7 @@ Its second role is the envelope wrapper: because the returndata comes back as a 
 `hash(data)` returns `keccak256` of its `bytes` argument, so an `EQ` constraint can pin complex or hard-to-decode values against a precomputed hash (keccak is an opcode, not a precompile, so it must be a function here). Through `read` splicing, a string operand's resolved envelope IS `hash`'s calldata encoding, which means **the digest covers the decoded payload**: pinning a `name()` return compares against `keccak256("Curve LP Token")`, the string itself.
 
 ```solidity
-bytes memory nameHash = read1(operators, Operators.hash.selector,
+bytes memory nameHash = read1(operators, Operations.hash.selector,
     callParam(pool, abi.encodeCall(IPool.name, ()), noConstraints())
 );
 assertions.assertParam(

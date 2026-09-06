@@ -1,9 +1,9 @@
 ---
 title: Error reference
-description: Every custom error both contracts can revert with.
+description: Every custom error all three contracts can revert with.
 ---
 
-Both contracts use typed custom errors for gas-efficient and informative failure messages.
+All three contracts use typed custom errors for gas-efficient and informative failure messages.
 
 ## Shared ERC-8211 errors
 
@@ -44,7 +44,7 @@ View-mode batch restrictions from the judge, plus the primitives' own errors:
 | `DidNotRevert(address, bytes)` | the call `revertData` probed succeeded — an assertion that a call fails is not satisfied by it working (identifies the offending call) |
 | `UnexpectedRevertData(bytes4, bytes4)` | the probed call reverted, but its data does not start with the expected error selector (arguments: expected, actual — `0x00000000` actual means the revert carried fewer than four bytes) |
 
-## Operators
+## Operations
 
 | Error | Description |
 |-------|-------------|
@@ -55,8 +55,9 @@ View-mode batch restrictions from the judge, plus the primitives' own errors:
 | `InvalidComponentValue(uint256, uint256)` | a nested ABI value is malformed (component index and byte offset within its single-value encoding) |
 | `InvalidValue(uint256)` | a canonical value or array encoding is malformed (byte offset) |
 | `LambdaOffsetOutOfBounds(uint256, uint256)` | a fold or `mapWords` window offset does not leave room for a 32-byte word inside the template |
-| `LambdaCallFailed(uint256, address, bytes)` | a fold or `mapWords` lambda call reverted, or the lambda target has no code (index 0 with empty calldata for the code check); names the element index, target and constructed calldata |
-| `LambdaReturnTooShort(uint256, uint256)` | a fold or `mapWords` lambda returned fewer than 32 bytes |
+| `CallbackFailed(bytes4,uint256,uint256,address,bytes,bytes)` | collection callback reverted; includes operation, indices, target, calldata and revert data |
+| `InvalidCallbackTarget(address)` | callback target has no bytecode; precompiles are excluded |
+| `InvalidCallbackResult(bytes4,uint256,uint256,address)` | callback returned an invalid ABI result, word length or boolean |
 | `UnalignedWords(uint256)` | `foldWords` or a word-array function received data that is not a whole number of 32-byte words |
 | `EmptyNumber()` | `parseUint` received empty input (0 would be a silent wrong answer) |
 | `InvalidDecimalDigit(uint256, bytes1)` | `parseUint` met a byte outside `0-9` (arguments: byte position, offending byte) |
@@ -65,6 +66,6 @@ View-mode batch restrictions from the judge, plus the primitives' own errors:
 | `InvalidLane(uint256)` | `unzipWords` received a lane other than 0 or 1 |
 | `EmptyNeedle()` | `replace` received an empty needle (it would match everywhere, and inserting the replacement between every byte is certainly a mistake) |
 
-Arithmetic failures in Operators surface as Solidity panics: overflow/underflow (including `exp`, `mulDiv` and `type(int256).min / -1`) as `Panic(0x11)`, division or modulo by zero (including `mulDiv`, `addMod` and `mulMod`) as `Panic(0x12)`, and an out-of-range `FoldExit` value as `Panic(0x21)`.
+Arithmetic failures in Operations surface as Solidity panics: overflow/underflow (including `exp`, `mulDiv` and `type(int256).min / -1`) as `Panic(0x11)`, division or modulo by zero (including `mulDiv`, `addMod` and `mulMod`) as `Panic(0x12)`. An out-of-range `FoldExit` in Collections surfaces as `Panic(0x21)`.
 
 The `Split`/`Includes`/`Charset` [recipes](/docs/operators/fold) have no dedicated errors: they are total compositions of `indexOf`, `slice`, `byteLen` and the folds. `replace` is the one string operation with an error of its own (`EmptyNeedle`).

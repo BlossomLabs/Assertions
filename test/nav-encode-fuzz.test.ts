@@ -1,5 +1,5 @@
 // Differential fuzzer for the manual ABI machinery: Assertions.nav (typed
-// navigation over encoded data) and Operators.encode (runtime abi.encode).
+// navigation over encoded data) and Operations.encode (runtime abi.encode).
 //
 // The oracle is viem's ABI encoder — the question these tests answer is
 // "does the Solidity shape parser agree with the real ABI spec?", so every
@@ -351,7 +351,7 @@ function decodeRevert(data: Hex): string {
 const { viem } = await network.connect();
 const publicClient = await viem.getPublicClient();
 const assertions = await viem.deployContract("Assertions");
-const operators = await viem.deployContract("Operators");
+const operators = await viem.deployContract("Operations");
 
 type CallResult = { ok: true; data: Hex } | { ok: false; errorName: string; raw: Hex };
 

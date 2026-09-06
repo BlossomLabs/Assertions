@@ -19,16 +19,16 @@ const solc = process.env.SOLC ?? "/home/sem/.cache/hardhat-nodejs/compilers-v3/l
 const sources = Object.fromEntries(readdirSync(dir)
   .filter(name => name.endsWith(".sol"))
   .map(name => [`contracts/${name}`, { content: readFileSync(join(dir, name), "utf8") }]));
-// Merged probe: only while Operators and CollectionOperators are separate contracts.
-// Once Operators inherits CollectionOperators it is the merged periphery itself.
-const hasCollections = "contracts/CollectionOperators.sol" in sources;
-const alreadyMerged = /contract Operators is CollectionOperators/.test(sources["contracts/Operators.sol"]?.content ?? "");
+// Merged probe: only while Operations and Collections are separate contracts.
+// Once Operations inherits Collections it is the merged periphery itself.
+const hasCollections = "contracts/Collections.sol" in sources;
+const alreadyMerged = /contract Operations is Collections/.test(sources["contracts/Operations.sol"]?.content ?? "");
 if (hasCollections && !alreadyMerged && !flag("--nomerge")) {
-  sources["contracts/MergedOperatorsProbe.sol"] = { content: `// SPDX-License-Identifier: MIT
+  sources["contracts/MergedOperationsProbe.sol"] = { content: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
-import {Operators} from "./Operators.sol";
-import {CollectionOperators} from "./CollectionOperators.sol";
-contract MergedOperatorsProbe is Operators, CollectionOperators {}` };
+import {Operations} from "./Operations.sol";
+import {Collections} from "./Collections.sol";
+contract MergedOperationsProbe is Operations, Collections {}` };
 }
 
 const settings = {
@@ -49,7 +49,7 @@ const result = JSON.parse(execFileSync(solc, ["--standard-json"], {
 const errors = result.errors?.filter(e => e.severity === "error");
 if (errors?.length) { console.error(errors.map(e => e.formattedMessage).join("\n")); process.exit(1); }
 
-const names = ["Assertions", "Operators", "CollectionOperators", "MergedOperatorsProbe"];
+const names = ["Assertions", "Operations", "Collections", "MergedOperationsProbe"];
 const sizes = {};
 for (const name of names) {
   const c = result.contracts[`contracts/${name}.sol`]?.[name];

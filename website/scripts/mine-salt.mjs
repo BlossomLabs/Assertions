@@ -6,12 +6,13 @@
 // so a new build requires a fresh salt.
 //
 // PRIMARY ROUTE: Foundry's multi-threaded miner. The canonical v2.0 core and
-// Operators v1.0 salts were mined this way (random 32-byte salts; the shared
+// Operations v1.0 salts were mined this way (random 32-byte salts; the shared
 // SALT_BASE convention below is retired and kept only for reproducing the
 // older releases):
 //   cast create2 -j 16 --deployer 0x4e59b44847b379578588920cA78FbF26c0B4956C \
 //     --init-code-hash $(cast keccak <artifact .bytecode>) --starts-with a55e47
-//   (Operators: --starts-with 09e4a7e, which reads "OPERATE")
+//   (Operations: --starts-with 09e4a7e, which reads "OPERATE")
+//   (Collections: --starts-with c011ec7, which reads "COLLECT")
 // Run it a few times and pick the best-reading address, then set salt +
 // expectedAddress in export-deploy-artifact.mjs.
 //

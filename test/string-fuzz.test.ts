@@ -1,4 +1,4 @@
-// Differential fuzzer for the Operators bytes/string/word-array vocabulary.
+// Differential fuzzer for the Operations bytes/string/word-array vocabulary.
 // Every function here is a pure data transformation with a few-line
 // JavaScript reference, so each case generates biased random inputs, runs
 // both, and compares exactly — values byte-for-byte, reverts by error name
@@ -221,7 +221,8 @@ function decodeRevert(data: Hex): { name: string; args: readonly unknown[] } {
 
 const { viem } = await network.connect();
 const publicClient = await viem.getPublicClient();
-const operators = await viem.deployContract("Operators");
+const operators = await viem.deployContract("Operations");
+const collections = await viem.deployContract("Collections");
 
 type Expect = { ok: unknown } | { revert: string; args?: unknown[] };
 type CallResult = { ok: true; value: unknown } | { ok: false; errorName: string; errorArgs: readonly unknown[] };
@@ -238,7 +239,7 @@ async function callFn(name: string, inTypes: string[], outType: string, args: un
   ] as const;
   try {
     const res = await publicClient.call({
-      to: operators.address,
+      to: /Words$|^wordIndexOf$/.test(name) ? collections.address : operators.address,
       data: encodeFunctionData({ abi, functionName: name, args }),
     });
     const [v] = decodeAbiParameters([{ type: outType }], (res.data ?? "0x") as Hex);
@@ -516,13 +517,14 @@ const SPECS: Spec[] = [
   {
     label: "uniqueWords",
     name: "uniqueWords",
-    inTypes: ["bytes"],
+    inTypes: ["bytes", "bool"],
     outType: "bytes",
-    gen: (rng) => [genPayload(rng)],
-    ref: (s: Hex) => {
+    gen: (rng) => [genPayload(rng), rng() < 0.5],
+    ref: (s: Hex, ordered: boolean) => {
       const w = wordsOf(s);
       if (!w) return { revert: "UnalignedWords" };
-      return { ok: toPayload(w.filter((x, i) => i === 0 || x !== w[i - 1])) };
+      const unique = ordered ? w.filter((x, i) => i === 0 || x !== w[i - 1]) : [...new Set(w)];
+      return { ok: toPayload(unique) };
     },
   },
   {

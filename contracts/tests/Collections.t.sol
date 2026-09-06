@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 import "forge-std/Test.sol";
-import "../CollectionOperators.sol";
+import "../Collections.sol";
 
-contract CollectionOperatorsTest is Test {
-    CollectionOperators ops;
+contract CollectionsTest is Test {
+    Collections ops;
 
     struct Record {
         uint256 key;
@@ -12,7 +12,32 @@ contract CollectionOperatorsTest is Test {
     }
 
     function setUp() public {
-        ops = new CollectionOperators();
+        ops = new Collections();
+    }
+
+    function testFuzzSortWordsMatchesInsertionOracle(bytes32 seed, uint8 size) public view {
+        uint256 n = uint256(size) % 129;
+        uint256[] memory expected = new uint256[](n);
+        bytes memory input = new bytes(n * 32);
+        for (uint256 i; i < n; i++) {
+            uint256 value = uint256(keccak256(abi.encode(seed, i)));
+            // Include duplicates as well as full-width unsigned values.
+            if (i % 3 == 0) value %= 7;
+            assembly { mstore(add(add(input, 32), mul(i, 32)), value) }
+            uint256 j = i;
+            while (j > 0 && expected[j - 1] > value) {
+                expected[j] = expected[j - 1];
+                j--;
+            }
+            expected[j] = value;
+        }
+        bytes memory actual = ops.sortWords(input);
+        assertEq(actual.length, input.length);
+        for (uint256 i; i < n; i++) {
+            uint256 word;
+            assembly { word := mload(add(add(actual, 32), mul(i, 32))) }
+            assertEq(word, expected[i]);
+        }
     }
 
     function append(string memory a, string memory b) external pure returns (string memory) {
@@ -45,7 +70,7 @@ contract CollectionOperatorsTest is Test {
     function cb(bytes4 selector, string memory args, uint256 count)
         private
         view
-        returns (CollectionOperators.Callback memory x)
+        returns (Collections.Callback memory x)
     {
         x.target = address(this);
         x.selector = selector;
@@ -105,7 +130,7 @@ contract CollectionOperatorsTest is Test {
 
     function testMapFilterFold() public view {
         bytes[] memory v = strings();
-        CollectionOperators.Callback memory c = cb(this.append.selector, "(string,string)", 2);
+        Collections.Callback memory c = cb(this.append.selector, "(string,string)", 2);
         c.constants[1] = abi.encode("!");
         bytes[] memory mapped = ops.mapValues("string", "string", v, c);
         assertEq(abi.decode(mapped[0], (string)), "a!");
@@ -131,14 +156,14 @@ contract CollectionOperatorsTest is Test {
         v[0] = abi.encode("b");
         v[1] = abi.encode("a");
         v[2] = abi.encode("b");
-        bytes[] memory distinct = ops.distinctValues("string", v, cb(this.equal.selector, "(string,string)", 2));
+        bytes[] memory distinct = ops.uniqueValues("string", v, cb(this.equal.selector, "(string,string)", 2), false);
         assertEq(distinct.length, 2);
         assertEq(distinct[0], v[0]);
         assertEq(distinct[1], v[1]);
         bytes[][] memory nested = new bytes[][](2);
         nested[0] = v;
         nested[1] = distinct;
-        assertEq(ops.flattenValues(nested).length, 5);
+        assertEq(ops.flattenValues("string", nested).length, 5);
     }
 
     function testRejectMalformedOffsetsAndPadding() public {
@@ -154,7 +179,7 @@ contract CollectionOperatorsTest is Test {
     }
 
     function testCallbackErrorsHaveContext() public {
-        CollectionOperators.Callback memory c = cb(this.malformed.selector, "(string)", 1);
+        Collections.Callback memory c = cb(this.malformed.selector, "(string)", 1);
         vm.expectRevert(
             abi.encodeWithSelector(
                 AbiCodec.InvalidCallbackResult.selector,
@@ -168,11 +193,12 @@ contract CollectionOperatorsTest is Test {
         c.selector = this.fail.selector;
         vm.expectRevert(
             abi.encodeWithSelector(
-                CollectionOperators.CallbackFailed.selector,
+                Collections.CallbackFailed.selector,
                 ops.mapValues.selector,
                 uint256(0),
                 uint256(0),
                 address(this),
+                abi.encodeCall(this.fail, ("a")),
                 abi.encodeWithSignature("Error(string)", "callback failed")
             )
         );
@@ -190,23 +216,102 @@ contract CollectionOperatorsTest is Test {
     }
     function testEmptyValidatesDescriptorsAndCallback() public {
         bytes[] memory empty = new bytes[](0);
-        CollectionOperators.Callback memory c = cb(this.nonempty.selector, "(string)", 1);
+        Collections.Callback memory c = cb(this.nonempty.selector, "(string)", 1);
         vm.expectRevert();
         ops.filterValues("", empty, c);
         c.first = 2;
-        vm.expectRevert(CollectionOperators.InvalidCallback.selector);
+        vm.expectRevert(Collections.InvalidCallback.selector);
         ops.filterValues("string", empty, c);
     }
 
-    function testDistinctChecksEveryPreviousValue() public view {
+    function testUniqueUnorderedChecksEveryPreviousValue() public view {
         bytes[] memory values = new bytes[](4);
         values[0] = abi.encode("a");
         values[1] = abi.encode("b");
         values[2] = abi.encode("c");
         values[3] = abi.encode("b");
-        bytes[] memory result = ops.distinctValues("string", values, cb(this.equal.selector, "(string,string)", 2));
+        bytes[] memory result = ops.uniqueValues("string", values, cb(this.equal.selector, "(string,string)", 2), false);
         assertEq(result.length, 3);
         assertEq(result[2], values[2]);
+    }
+
+    function equalRecord(Record memory a, Record memory b) external pure returns (bool) {
+        return a.key == b.key;
+    }
+
+    function testUniqueValuesOrderedKeepsFirstRepresentative() public view {
+        bytes[] memory values = new bytes[](5);
+        values[0] = abi.encode(Record(1, "first"));
+        values[1] = abi.encode(Record(1, "second"));
+        values[2] = abi.encode(Record(2, "third"));
+        values[3] = abi.encode(Record(2, "fourth"));
+        values[4] = abi.encode(Record(1, "later group"));
+        Collections.Callback memory eq = cb(this.equalRecord.selector, "((uint256,string),(uint256,string))", 2);
+        bytes[] memory grouped = ops.uniqueValues("(uint256,string)", values, eq, true);
+        assertEq(grouped.length, 3);
+        assertEq(grouped[0], values[0]);
+        assertEq(grouped[1], values[2]);
+        assertEq(grouped[2], values[4]);
+        bytes[] memory all = ops.uniqueValues("(uint256,string)", values, eq, false);
+        assertEq(all.length, 2);
+        assertEq(all[0], values[0]);
+        assertEq(all[1], values[2]);
+    }
+
+    function testUniqueValuesEmptyAndSingleton() public view {
+        Collections.Callback memory eq = cb(this.equal.selector, "(string,string)", 2);
+        bytes[] memory values = new bytes[](0);
+        assertEq(ops.uniqueValues("string", values, eq, true).length, 0);
+        assertEq(ops.uniqueValues("string", values, eq, false).length, 0);
+        values = new bytes[](1);
+        values[0] = abi.encode("only");
+        assertEq(ops.uniqueValues("string", values, eq, true)[0], values[0]);
+        assertEq(ops.uniqueValues("string", values, eq, false)[0], values[0]);
+    }
+
+    function nonCanonicalWord(uint256) external pure returns (uint256) { return 2; }
+    function extraWord(uint256) external pure returns (uint256, uint256) { return (1, 2); }
+
+    function testWordCallbacksRejectMalformedResults() public {
+        uint256[] memory offsets = new uint256[](1);
+        offsets[0] = 4;
+        bytes memory template = abi.encodeCall(this.nonCanonicalWord, (0));
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
+            ops.filterWords.selector, 0, 0, address(this)));
+        ops.filterWords(abi.encode(uint256(42)), address(this), template, offsets);
+        template = abi.encodeCall(this.extraWord, (0));
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
+            ops.mapWords.selector, 0, 0, address(this)));
+        ops.mapWords(abi.encode(uint256(42)), address(this), template, offsets);
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
+            ops.foldRange.selector, 0, 0, address(this)));
+        ops.foldRange(1, address(this), template, 4, offsets, bytes32(0), Collections.FoldExit.Full);
+    }
+
+    function testGenericCallbacksRejectCodelessTargetsWhenCalled() public {
+        Collections.Callback memory callback = cb(this.nonempty.selector, "(string)", 1);
+        callback.target = address(0xdead);
+        bytes[] memory values = strings();
+        vm.expectRevert(abi.encodeWithSelector(Collections.InvalidCallbackTarget.selector, callback.target));
+        ops.filterValues("string", values, callback);
+        callback.target = address(4); // Identity precompile: intentionally not an ABI callback.
+        vm.expectRevert(abi.encodeWithSelector(Collections.InvalidCallbackTarget.selector, callback.target));
+        ops.filterValues("string", values, callback);
+        assertEq(ops.filterValues("string", new bytes[](0), callback).length, 0);
+    }
+
+    function testFlattenValidatesEvenEmptyDescriptorsAndNestedValues() public {
+        bytes[][] memory values = new bytes[][](0);
+        vm.expectRevert();
+        ops.flattenValues("not-a-type", values);
+        assertEq(ops.flattenValues("string", values).length, 0);
+        values = new bytes[][](2);
+        values[0] = new bytes[](1);
+        values[0][0] = abi.encode("valid");
+        values[1] = new bytes[](1);
+        values[1][0] = hex"01";
+        vm.expectRevert();
+        ops.flattenValues("string", values);
     }
 
     function surround(string memory prefix, string memory value, string memory suffix)
@@ -222,7 +327,7 @@ contract CollectionOperatorsTest is Test {
     }
 
     function testCallbackSubstitutesMiddleDynamicSlot() public view {
-        CollectionOperators.Callback memory c = cb(this.surround.selector, "(string,string,string)", 3);
+        Collections.Callback memory c = cb(this.surround.selector, "(string,string,string)", 3);
         c.first = 1;
         c.constants[0] = abi.encode("prefix longer than a single ABI word:");
         c.constants[2] = abi.encode(":suffix");
@@ -233,7 +338,7 @@ contract CollectionOperatorsTest is Test {
     }
 
     function testMalformedPredicateAndComparatorAreRejected() public {
-        CollectionOperators.Callback memory c = cb(this.invalidBool.selector, "(string)", 1);
+        Collections.Callback memory c = cb(this.invalidBool.selector, "(string)", 1);
         vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
             ops.filterValues.selector, uint256(0), uint256(0), address(this)));
         ops.filterValues("string", strings(), c);

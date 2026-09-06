@@ -9,20 +9,27 @@ import {
   ASSERTIONS_SALT,
 } from "../../lib/assertions-deployment";
 import {
-  OPERATORS_ADDRESS,
-  OPERATORS_CREATION_BYTECODE,
-  OPERATORS_DEPLOY_GAS,
-  OPERATORS_SALT,
-} from "../../lib/operators-deployment";
+  OPERATIONS_ADDRESS,
+  OPERATIONS_CREATION_BYTECODE,
+  OPERATIONS_DEPLOY_GAS,
+  OPERATIONS_SALT,
+} from "../../lib/operations-deployment";
+
+import {
+  COLLECTIONS_ADDRESS,
+  COLLECTIONS_CREATION_BYTECODE,
+  COLLECTIONS_DEPLOY_GAS,
+  COLLECTIONS_SALT,
+} from "../../lib/collections-deployment";
 
 /** "1245095" -> "~1.2M", for UI copy. */
 export function formatDeployGas(gas: number): string {
   return `~${(gas / 1e6).toFixed(1)}M`;
 }
 
-/** The two contracts that make up a canonical deployment on a chain. */
+/** The contracts that make up a canonical deployment on a chain. */
 export interface DeployableContract {
-  key: "core" | "operators";
+  key: "core" | "operators" | "collections";
   name: string;
   address: `0x${string}`;
   salt: `0x${string}`;
@@ -42,11 +49,19 @@ export const DEPLOYED_CONTRACTS: DeployableContract[] = [
   },
   {
     key: "operators",
-    name: "Operators",
-    address: OPERATORS_ADDRESS,
-    salt: OPERATORS_SALT,
-    bytecode: OPERATORS_CREATION_BYTECODE,
-    gasLabel: formatDeployGas(OPERATORS_DEPLOY_GAS),
+    name: "Operations",
+    address: OPERATIONS_ADDRESS,
+    salt: OPERATIONS_SALT,
+    bytecode: OPERATIONS_CREATION_BYTECODE,
+    gasLabel: formatDeployGas(OPERATIONS_DEPLOY_GAS),
+  },
+  {
+    key: "collections",
+    name: "Collections",
+    address: COLLECTIONS_ADDRESS,
+    salt: COLLECTIONS_SALT,
+    bytecode: COLLECTIONS_CREATION_BYTECODE,
+    gasLabel: formatDeployGas(COLLECTIONS_DEPLOY_GAS),
   },
 ];
 

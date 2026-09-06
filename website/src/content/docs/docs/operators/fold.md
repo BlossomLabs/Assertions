@@ -21,7 +21,7 @@ function foldWords(bytes s,        address target, bytes template, ...) // same 
 
 ## Template-lambda mechanics
 
-The lambda is a single staticcall per element, described by a *template*: `template` is complete, valid calldata for `target` in which 32-byte windows are rewritten per iteration: the accumulator at `accOffset`, then the element at every offset in `elemOffsets`, in the supplied order (the element wins over the accumulator on overlap; later element windows win over earlier ones). The first word of the lambda's return becomes the new accumulator, and the final accumulator is the fold's result.
+The lambda is a single staticcall per element, described by a *template*: `template` is complete, valid calldata for `target` in which 32-byte windows are rewritten per iteration: the accumulator at `accOffset`, then the element at every offset in `elemOffsets`, in the supplied order (the element wins over the accumulator on overlap; later element windows win over earlier ones). The lambda must return exactly 32 bytes, which become the new accumulator, and the final accumulator is the fold's result.
 
 Any single-word-returning view or pure function is a lambda; there is no closure format to learn. Summing `0..4` with the `add` operator as the lambda:
 
@@ -32,7 +32,7 @@ bytes4 constant ADD_U = bytes4(keccak256("add(uint256,uint256)"));
 bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(0));
 uint256[] memory elemOffsets = new uint256[](1);
 elemOffsets[0] = 36;
-operators.foldRange(5, address(operators), template, 4, elemOffsets, bytes32(0), Operators.FoldExit.Full);
+operators.foldRange(5, address(operators), template, 4, elemOffsets, bytes32(0), Collections.FoldExit.Full);
 // = 10
 ```
 
@@ -57,10 +57,10 @@ The fold form is what `charset` collapses, and it stays the general pattern for 
 
 ```solidity
 // the pre-native recipe, and the template for a custom per-byte test
-bytes memory template = abi.encodeWithSelector(Operators.bitSet.selector, mask, uint256(0));
+bytes memory template = abi.encodeWithSelector(Collections.bitSet.selector, mask, uint256(0));
 uint256[] memory elemOffsets = new uint256[](1);
 elemOffsets[0] = 36;
-operators.foldBytes(bytes(symbol), address(operators), template, 36, elemOffsets, bytes32(uint256(1)), Operators.FoldExit.All);
+operators.foldBytes(bytes(symbol), address(operators), template, 36, elemOffsets, bytes32(uint256(1)), Collections.FoldExit.All);
 ```
 
 The check is byte-level, so multi-byte UTF-8 characters (every byte >= 0x80) fail any ASCII-only mask, and the empty string is vacuously in every set.
@@ -84,13 +84,13 @@ function reverseWords(bytes s) external pure returns (bytes);
 function zipWords    (bytes a, bytes b) external pure returns (bytes);
 function unzipWords  (bytes s, uint256 which) external pure returns (bytes);
 function sortWords   (bytes s) external pure returns (bytes);
-function uniqueWords (bytes s) external pure returns (bytes);
+function uniqueWords (bytes s, bool ordered) external pure returns (bytes);
 function sumWords    (bytes s) external pure returns (uint256);
 ```
 
 **`mapWords`** applies a single-staticcall lambda to every word and returns the transformed payload: the bytes-producing map the scalar folds cannot express. Lambda conventions match the folds (`template` is complete calldata for `target` whose 32-byte windows at `elemOffsets` are rewritten per element; the lambda's FIRST return word is the mapped element), and so do the failure modes below. An empty payload returns empty after validating the template length and window bounds, without inspecting or calling the target. In [EVMcrispr](/docs/evml) it is `@map!` applied to a named definition, e.g. `def @dbl! "$x: number -> number" @num!($x * 2)` then `@map!($t::values() @dbl!)`.
 
-**`filterWords`** is `mapWords`' variable-length sibling, byte-identical in signature and lambda conventions: it keeps the ELEMENTS whose lambda application returns nonzero, in order, so the output length is the kept count and the result nests into `len`, the folds and the other word ops. EVMcrispr compiles `@filter!` to it, and `@find!` is a core `pick` of the first kept word (no match leaves the pick out of bounds, so it reverts).
+**`filterWords`** is `mapWords`' variable-length sibling, byte-identical in signature and lambda conventions: it keeps the ELEMENTS whose lambda application returns canonical ABI true, in order, so the output length is the kept count and the result nests into `len`, the folds and the other word ops. EVMcrispr compiles `@filter!` to it, and `@find!` is a core `pick` of the first kept word (no match leaves the pick out of bounds, so it reverts).
 
 **`iotaWords(n)`** is the index generator: the payload `0, 1, ..., n-1`. Its canonical pairing is `zipWords(iotaWords(n), payload)`, the enumeration that EVMcrispr's `@enumerate!` compiles with a live `n`. That zipped key/value word-pair payload is also EVMcrispr's on-chain RECORD representation (string keys travel as their keccak digests), consumed by `@keys!`, `@values!` and `@lookup!`.
 
@@ -98,12 +98,12 @@ function sumWords    (bytes s) external pure returns (uint256);
 
 **`reverseWords`** reverses the word order (`@reverse!`). **`zipWords(a, b)`** interleaves two payloads as `a0, b0, a1, b1, ...` for a fold or for `unzipWords` to split back; different word counts revert with `WordCountMismatch` (silent truncation would be a wrong-answer machine). **`unzipWords(s, which)`** is its inverse: every second word, lane 0 (words 0, 2, 4, ...) or lane 1 (words 1, 3, 5, ...); a lane past 1 reverts with `InvalidLane`, and an odd word count leaves the extra word in lane 0. EVMcrispr's `@zip!` and `@unzip!` compile to the pair.
 
-**`sortWords`** sorts ascending as UNSIGNED words (`@sort!`). Insertion sort: O(n^2) word moves, so gas caps practical inputs at hundreds of words, not thousands. Signed sorting is a three-node recipe instead of an overload: flip the sign bit (`mapWords` with `bitXor(2^255, elem)`), sort, flip back. **`uniqueWords`** collapses ADJACENT duplicates in O(n), so set-semantics deduplication is `uniqueWords(sortWords(s))`; on unsorted input it is run-length deduplication, by design (`@unique!`, nesting `@sort!` for the set form).
+**`sortWords`** sorts ascending as UNSIGNED words (`@sort!`). Stable bottom-up merge sort uses O(n log n) comparisons and O(n) scratch memory. Signed sorting is a three-node recipe instead of an overload: flip the sign bit (`mapWords` with `bitXor(2^255, elem)`), sort, flip back. **`uniqueWords(s, ordered)`** removes duplicates while retaining first-occurrence order. With `ordered = true`, equal values must already be grouped: it compares adjacent words in O(n). With `false`, it checks all retained words in O(n squared). Sorted deduplication is `uniqueWords(sortWords(s), true)`; `@unique!` passes `false` for arbitrary inputs. Ordering is trusted, not validated.
 
 **`sumWords`** is the checked sum of the payload's words (overflow past 2^256 - 1 reverts with `Panic(0x11)`): the native, fixed-operation form of the `foldWords(add)` recipe, one on-chain loop instead of a call per element. EVMcrispr compiles `@sum!` to it; use `@reduce!(call add 0)` (or `foldWords` directly) for any other reduction (min, max, bitOr, bitAnd) or a nonzero initial accumulator.
 
 ## Failure modes and gas
 
-A lambda revert is an assertion failure: it reverts the fold (or `mapWords`) with `LambdaCallFailed` naming the element index, the target and the constructed calldata (early exits can make this data-dependent: an `Any` fold that satisfies before a poisoned element never reaches it, where `Full` reverts). Offsets must leave room for a 32-byte word inside the template or the call reverts with `LambdaOffsetOutOfBounds`; a code-less lambda target reverts with `LambdaCallFailed(0, target, "")`; a lambda returning fewer than 32 bytes with `LambdaReturnTooShort`.
+A callback revert produces `CallbackFailed(operation,index,other,target,callData,reason)`, preserving both the attempted call and its revert data. Invalid windows revert with `LambdaOffsetOutOfBounds`; a target without bytecode (including a precompile) reverts with `InvalidCallbackTarget`. Word callbacks must return exactly 32 bytes; filters additionally require 0 or 1. Invalid results revert with `InvalidCallbackResult`. Early exits may avoid a later failing callback.
 
 Gas is the loop bound. Every application pays real staticcall overhead, so domain sizes are naturally limited by the block gas limit: fine for symbols, names and moderate arrays, wrong for megabyte scans. Prefer the `indexOf`/`byteLen` compositions where they express the same predicate, and let `Any`/`All` exit early.

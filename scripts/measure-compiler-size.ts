@@ -6,12 +6,12 @@ import { readFileSync, readdirSync } from "node:fs";
 const sources = Object.fromEntries(readdirSync("contracts")
   .filter(name => name.endsWith(".sol"))
   .map(name => [`contracts/${name}`, { content: readFileSync(`contracts/${name}`, "utf8") }]));
-for (const [name, parent] of [["MergedOperatorsProbe", "Operators"], ["CoreWithCollectionsProbe", "Assertions"]]) {
+for (const [name, parent] of [["MergedOperationsProbe", "Operations"], ["CoreWithCollectionsProbe", "Assertions"]]) {
   sources[`contracts/${name}.sol`] = { content: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 import {${parent}} from "./${parent}.sol";
-import {CollectionOperators} from "./CollectionOperators.sol";
-contract ${name} is ${parent}, CollectionOperators {}` };
+import {Collections} from "./Collections.sol";
+contract ${name} is ${parent}, Collections {}` };
 }
 for (const viaIR of [false, true]) {
   for (const runs of [1, 50, 200]) {
@@ -24,7 +24,7 @@ for (const viaIR of [false, true]) {
     }));
     const errors = result.errors?.filter((e: {severity: string}) => e.severity === "error");
     if (errors?.length) throw new Error(JSON.stringify(errors));
-    const sizes = Object.fromEntries(["Assertions", "Operators", "CollectionOperators", "MergedOperatorsProbe", "CoreWithCollectionsProbe"]
+    const sizes = Object.fromEntries(["Assertions", "Operations", "Collections", "MergedOperationsProbe", "CoreWithCollectionsProbe"]
       .map(name => [name, result.contracts[`contracts/${name}.sol`][name].evm.deployedBytecode.object.length / 2]));
     console.log(JSON.stringify({ viaIR, runs, sizes }));
   }

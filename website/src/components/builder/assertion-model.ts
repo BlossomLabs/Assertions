@@ -5,7 +5,7 @@ import { isAddress } from "viem";
 /**
  * The assertion expression model. An assertion compares two value
  * expressions; each side is a tree of contract calls, literals and
- * Operators v1 helpers (`@min!`, `@absDiff!`, `@num!`, …) that the
+ * Operations v1 helpers (`@min!`, `@absDiff!`, `@num!`, …) that the
  * codegen renders into an `assert` line.
  *
  * Nodes hold only serializable strings — ABI fetching and ENS resolution
@@ -423,7 +423,7 @@ export function infixIssue(
 export const BARE_OP = "is true";
 
 /**
- * Operators available for a subject/expected pair, from the composition
+ * Operations available for a subject/expected pair, from the composition
  * table's cmp family. `~=` needs exactly one build-time-constant side; two
  * live numeric sides suggest `@absDiff!(a b) <= d` instead (the editor
  * offers that transform). Dynamic values (string/bytes/array/tuple) keep

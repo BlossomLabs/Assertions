@@ -26,13 +26,13 @@ try {
   const sdk = await load("@evmcrispr/sdk/onchain");
   const fixtures = await load(`${evmcrisprSrc}/packages/test-utils/src/onchain/assertions-bytecode.ts`);
   const core = await load("/src/lib/assertions-deployment.ts");
-  const operators = await load("/src/lib/operators-deployment.ts");
-  const collections = await load("/src/lib/collection-operators-deployment.ts");
+  const operators = await load("/src/lib/operations-deployment.ts");
+  const collections = await load("/src/lib/collections-deployment.ts");
 
   for (const [name, exports, prefix, sdkAddress] of [
     ["Assertions", core, "ASSERTIONS", sdk.CORE_ADDRESS],
-    ["Operators", operators, "OPERATORS", sdk.OPERATORS_ADDRESS],
-    ["CollectionOperators", collections, "COLLECTION_OPERATORS", sdk.COLLECTION_OPERATORS_ADDRESS],
+    ["Operations", operators, "OPERATIONS", sdk.OPERATIONS_ADDRESS],
+    ["Collections", collections, "COLLECTIONS", sdk.COLLECTIONS_ADDRESS],
   ]) {
     const artifact = JSON.parse(readFileSync(`../artifacts/contracts/${name}.sol/${name}.json`, "utf8"));
     assert.equal(exports[`${prefix}_ADDRESS`], sdkAddress, `${name}: compiler address drift`);
@@ -44,6 +44,10 @@ try {
     assert.ok(size <= 24576, `${name}: EIP-170 limit exceeded`);
     console.log(`${name}: ${size} runtime bytes; deployment, SDK and fixture agree`);
   }
+
+  const { DEPLOYED_CONTRACTS } = await load("/src/components/deployments/shared.ts");
+  assert.deepEqual(DEPLOYED_CONTRACTS.map((contract) => contract.name), ["Assertions", "Operations", "Collections"]);
+  assert.deepEqual(DEPLOYED_CONTRACTS.map((contract) => contract.address), [sdk.CORE_ADDRESS, sdk.OPERATIONS_ADDRESS, sdk.COLLECTIONS_ADDRESS]);
 
   const target = "0x0000000000000000000000000000000000000001";
   const tag = evml.with({ chainId: 1, account: target });

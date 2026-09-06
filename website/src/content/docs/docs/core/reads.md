@@ -5,7 +5,7 @@ description: Getting values out of contract state with the frozen core's selecti
 
 Every way of getting a value out of contract state goes through five primitives on the `Assertions` core itself. Each resolves an ERC-8211 `InputParam` operand and returns its selection via a raw assembly return, indistinguishable from a contract returning that value directly, so any consumer (a judge fetcher, another primitive's operand) decodes it as if it had called the final target itself.
 
-They live on the frozen core, not the versionable periphery, because of the core's admission test: only what needs operands to arrive **unresolved**, in the ERC-8211 `InputParam` format, belongs there. Every primitive holds unresolved operands and decides how (or whether) to resolve them, and a `STATIC_CALL` operand may target the core itself, so the primitives nest into arbitrary expressions. Computation over already-resolved values belongs to [Operators](/docs/operators), reached through `read`; the [control primitives](/docs/core/control) (`cond`, `orElse`, `isValid`, `revertData`) decide *whether* operands resolve at all.
+They live on the frozen core, not the versionable periphery, because of the core's admission test: only what needs operands to arrive **unresolved**, in the ERC-8211 `InputParam` format, belongs there. Every primitive holds unresolved operands and decides how (or whether) to resolve them, and a `STATIC_CALL` operand may target the core itself, so the primitives nest into arbitrary expressions. Computation over already-resolved values belongs to [Operations](/docs/operators), reached through `read`; the [control primitives](/docs/core/control) (`cond`, `orElse`, `isValid`, `revertData`) decide *whether* operands resolve at all.
 
 ```solidity
 function resolve(InputParam param) external view;                             // raw return
@@ -19,7 +19,7 @@ function read   (InputParam target, bytes4 selector, InputParam[] args) external
 - **`pick`** returns one raw 32-byte word of the resolved bytes. `wordIndex` is signed: 0-based from the start, negative from the end (`-1` = last word), resolved against the live data; outside the full words it reverts with `ReturnDataOutOfBounds`. Word positions follow the raw ABI encoding, so dynamic types contribute head offsets, not content; to select *into* tuples and arrays, use `nav`.
 - **`nav`** is the typed selector: interpret the resolved bytes as a declared return tuple and walk a path through it, following runtime offsets and lengths that raw word positions cannot express.
 - **`chain`** follows runtime-resolved addresses, the thing a `STATIC_CALL` fetcher cannot do, since its target is fixed at encoding time.
-- **`read`** constructs a call at judge time, the other thing a `STATIC_CALL` fetcher cannot do, since its calldata is also fixed at encoding time: any external view function becomes callable with computed arguments. This makes `read` the composition socket for the whole [Operators](/docs/operators) vocabulary, and the extension point for any other deployed view or pure contract.
+- **`read`** constructs a call at judge time, the other thing a `STATIC_CALL` fetcher cannot do, since its calldata is also fixed at encoding time: any external view function becomes callable with computed arguments. This makes `read` the composition socket for the whole [Operations](/docs/operators) vocabulary, and the extension point for any other deployed view or pure contract.
 
 ## Chained lookups
 
@@ -30,7 +30,7 @@ bytes[] memory hops = new bytes[](1);
 hops[0] = abi.encodeCall(IERC20.symbol, ());
 
 // judged value: chain(pool.token() -> symbol()); compare its hash EQ
-// keccak256("WETH") via Operators.hash, or navigate it with nav("(string)")
+// keccak256("WETH") via Operations.hash, or navigate it with nav("(string)")
 abi.encodeCall(Assertions.chain, (
     callParam(pool, abi.encodeCall(IPool.token, ()), noConstraints()),
     hops
@@ -70,7 +70,7 @@ abi.encodeCall(Assertions.read, (
 ));
 ```
 
-The encoder owns the calldata layout: a segment resolving to anything other than its expected length shifts everything after it, so live word segments must fill single-word parameters and runtime-sized envelopes need their head offsets accounted for (see [the bytes page](/docs/operators/data) for the layout technique). Because any deployed view or pure contract is reachable this way with fully composable operands, `read` is how the frozen core stays extensible: [Operators](/docs/operators) is the canonical first extension, and deploying a custom pure function once makes it callable from every assertion with computed arguments. In [EVMcrispr](/docs/evml) nested live call arguments compile to `read` automatically, and the `<head>::!{sig(argTypes)(retTypes) args}` chain operator exposes it directly (any expression head, inline ABI mandatory).
+The encoder owns the calldata layout: a segment resolving to anything other than its expected length shifts everything after it, so live word segments must fill single-word parameters and runtime-sized envelopes need their head offsets accounted for (see [the bytes page](/docs/operators/data) for the layout technique). Because any deployed view or pure contract is reachable this way with fully composable operands, `read` is how the frozen core stays extensible: [Operations](/docs/operators) is the canonical first extension, and deploying a custom pure function once makes it callable from every assertion with computed arguments. In [EVMcrispr](/docs/evml) nested live call arguments compile to `read` automatically, and the `<head>::!{sig(argTypes)(retTypes) args}` chain operator exposes it directly (any expression head, inline ABI mandatory).
 
 ## Nested lengths
 

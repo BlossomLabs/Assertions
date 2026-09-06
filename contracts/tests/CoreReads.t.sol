@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import "forge-std/Test.sol";
 import "../Assertions.sol";
-import "../Operators.sol";
+import "../Operations.sol";
 import "../ERC8211.sol";
 import "../AbiCodec.sol";
 import "./Mocks.sol";
@@ -26,7 +26,7 @@ interface IAssertBatch {
  */
 contract CoreReadsTest is Test {
     Assertions public assertions;
-    Operators public ops;
+    Operations public ops;
     MockTarget public target;
     MockToken public token;
     MockToken public underlyingToken;
@@ -36,7 +36,7 @@ contract CoreReadsTest is Test {
 
     function setUp() public {
         assertions = new Assertions();
-        ops = new Operators();
+        ops = new Operations();
         target = new MockTarget();
         underlyingToken = new MockToken(address(0), "DAI");
         token = new MockToken(address(underlyingToken), "WETH");
@@ -476,7 +476,7 @@ contract CoreReadsTest is Test {
         // back — inverses, so any call's raw return becomes navigable bytes
         InputParam memory wrapped = _call(
             address(ops),
-            abi.encodeCall(Operators.rawCall, (address(token), abi.encodeCall(MockToken.getReserves, ())))
+            abi.encodeCall(Operations.rawCall, (address(token), abi.encodeCall(MockToken.getReserves, ())))
         );
         (bool ok, bytes memory ret) = _nav(wrapped, "(bytes)", _path2(0, assertions.PAYLOAD()));
         assertTrue(ok);

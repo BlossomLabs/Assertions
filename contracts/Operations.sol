@@ -4,20 +4,19 @@ pragma solidity ^0.8.28;
 import {AbiCodec} from "./AbiCodec.sol";
 
 /**
- * @title Operators
+ * @title Operations
  * @author Sembrestels
  * @notice Plain-Solidity operator vocabulary for the Assertions core: word
  *         arithmetic and comparisons (with int256 overloads for signed
  *         semantics, and 512-bit mulDiv for overflow-free mul-then-div),
  *         bitwise operations, environment reads, bytes and string
- *         operations including decimal parsing, a runtime ABI encoder,
- *         and a bounded fold.
+ *         operations including decimal parsing and runtime ABI encoding.
  *         Every function takes and returns plain ABI types — no ERC-8211
  *         anywhere. Composition happens in the core: its `read` primitive
  *         resolves operand expressions and splices the resolved values
  *         into this contract's calldata, so an operator call IS the
  *         composed expression. Any deployed view or pure contract extends
- *         the vocabulary through the same socket; Operators is just the
+ *         the vocabulary through the same socket; Operations is just the
  *         canonical first extension.
  * @dev Named functions instead of op-code enums so decoded calldata reads
  *      on explorers: `ge(balance, 100e18)` needs no docs open. Signedness
@@ -26,11 +25,11 @@ import {AbiCodec} from "./AbiCodec.sol";
  *      through unchanged). Arithmetic uses Solidity 0.8 checked semantics
  *      (overflow reverts with Panic(0x11), division by zero with
  *      Panic(0x12)); shifts follow EVM semantics (256 or more yields 0).
- *      Operators is the versionable periphery to the frozen core: old
+ *      Operations is the versionable periphery to the frozen core: old
  *      versions never break, new versions deploy at new addresses.
  * @custom:version 1.0
  */
-contract Operators {
+contract Operations {
     enum Rounding {
         Trunc,
         Floor,
@@ -49,38 +48,6 @@ contract Operators {
     error SliceOutOfBounds(uint256 start, uint256 len, uint256 dataLength);
 
     // Canonical encoding errors are defined once in AbiCodec.
-
-    /**
-     * @notice Thrown when a fold lambda offset does not leave room for a
-     *         32-byte word inside the template
-     * @param offset The offending offset
-     * @param templateLength The template's byte length
-     */
-    error LambdaOffsetOutOfBounds(uint256 offset, uint256 templateLength);
-
-    /**
-     * @notice Thrown when a fold lambda call reverts, or the lambda target
-     *         has no code (index 0 with empty callData for the code check)
-     * @param index The element index whose application failed
-     * @param target The lambda target
-     * @param callData The constructed lambda calldata
-     */
-    error LambdaCallFailed(uint256 index, address target, bytes callData);
-
-    /**
-     * @notice Thrown when a fold lambda returns fewer than 32 bytes
-     * @param index The element index whose application returned short
-     * @param length The returndata length
-     */
-    error LambdaReturnTooShort(uint256 index, uint256 length);
-
-    /**
-     * @notice Thrown when foldWords receives data that is not a whole
-     *         number of 32-byte words — silent truncation of a partial
-     *         trailing word would be a wrong-answer machine
-     * @param length The offending data length
-     */
-    error UnalignedWords(uint256 length);
 
     /**
      * @notice Thrown when parseUint receives empty input — there is no
@@ -103,40 +70,11 @@ contract Operators {
     error RawCallFailed(address target, bytes data);
 
     /**
-     * @notice Thrown when zipWords receives payloads of different word
-     *         counts — silent truncation would be a wrong-answer machine
-     * @param aWords The first payload's word count
-     * @param bWords The second payload's word count
-     */
-    error WordCountMismatch(uint256 aWords, uint256 bWords);
-
-    /**
-     * @notice Thrown when unzipWords receives a lane other than 0 or 1
-     * @param which The offending lane
-     */
-    error InvalidLane(uint256 which);
-
-    /**
      * @notice Thrown when replace receives an empty needle — it would
      *         match everywhere, and inserting the replacement between
      *         every byte is certainly a mistake
      */
     error EmptyNeedle();
-
-    // ============ Types ============
-
-    /**
-     * @notice Early-exit modes for the folds
-     * @dev ABI-encoded as uint8: Full = 0 (scan every element), Any = 1
-     *      (stop at the first nonzero accumulator — exists), All = 2 (stop
-     *      at the first zero accumulator — forall). An out-of-range value
-     *      reverts with Panic(0x21).
-     */
-    enum FoldExit {
-        Full,
-        Any,
-        All
-    }
 
     // ============ Arithmetic ============
 
@@ -390,93 +328,10 @@ contract Operators {
     }
 
     /**
-     * @notice e^x in wad fixed point (1e18), for continuous compounding
-     *         and the inverse of lnWad
-     * @dev Remco Bloemen's algorithm: range-reduce by ln(2), evaluate a
-     *      rational approximation, then scale by 2^k. Reverts above
-     *      135305999368893231589 (where the result leaves int256) and
-     *      returns 0 below -42139678854452767551 (where it underflows wad)
-     */
-    function expWad(int256 x) external pure returns (int256 r) {
-        unchecked {
-            if (x <= -42139678854452767551) return 0;
-            if (x >= 135305999368893231589) revert();
-
-            // Convert to a 2^96 base for the polynomial's precision.
-            x = (x << 78) / 5 ** 18;
-
-            // Reduce the range to [-ln2/2, ln2/2], remembering the power
-            // of two to reapply at the end.
-            int256 k = ((x << 96) / 54916777467707473351141471128 + 2 ** 95) >> 96;
-            x = x - k * 54916777467707473351141471128;
-
-            int256 y = x + 1346386616545796478920950773328;
-            y = ((y * x) >> 96) + 57155421227552351082224309758442;
-            int256 p = y + x - 94201549194550492254356042504812;
-            p = ((p * y) >> 96) + 28719021644029726153956944680412240;
-            p = p * x + (4385272521454847904659076985693276 << 96);
-
-            int256 q = x - 2855989394907223263936484059900;
-            q = ((q * x) >> 96) + 50020603652535783019961831881945;
-            q = ((q * x) >> 96) - 533845033583426703283633433725380;
-            q = ((q * x) >> 96) + 3604857256930695427073651918091429;
-            q = ((q * x) >> 96) - 14423608567350463180887372962807573;
-            q = ((q * x) >> 96) + 26449188498355588339934803723976023;
-
-            // q is never zero on this range, so plain division is safe.
-            r = p / q;
-
-            // Reapply the wad scale and the reduced power of two.
-            r = int256((uint256(r) * 3822833074963236453042738258902158003155416615667) >> uint256(195 - k));
-        }
-    }
-
-    /**
-     * @notice The natural log of x in wad fixed point (1e18) — the
-     *         inverse of expWad, and how a growth factor becomes a rate
-     * @dev Remco Bloemen's algorithm. Reverts for x <= 0, where the log
-     *      is undefined
-     */
-    function lnWad(int256 x) external pure returns (int256 r) {
-        unchecked {
-            if (x <= 0) revert();
-
-            // Normalize to [1, 2) in a 2^96 base, remembering the shift.
-            int256 k = int256(_log2(uint256(x))) - 96;
-            x <<= uint256(159 - k);
-            x = int256(uint256(x) >> 159);
-
-            int256 p = x + 3273285459638523848632254066296;
-            p = ((p * x) >> 96) + 24828157081833163892658089445524;
-            p = ((p * x) >> 96) + 43456485725739037958740375743393;
-            p = ((p * x) >> 96) - 11111509109440967052023855526967;
-            p = ((p * x) >> 96) - 45023709667254063763336534515857;
-            p = ((p * x) >> 96) - 14706773417378608786704636184526;
-            p = p * x - (795164235651350426258249787498 << 96);
-
-            int256 q = x + 5573035233440673466300451813936;
-            q = ((q * x) >> 96) + 71694874799317883764090561454958;
-            q = ((q * x) >> 96) + 283447036172924575727196451306956;
-            q = ((q * x) >> 96) + 401686690394027663651624208769553;
-            q = ((q * x) >> 96) + 204048457590392012362485061816622;
-            q = ((q * x) >> 96) + 31853899698501571402653359427138;
-            q = ((q * x) >> 96) + 909429971244387300277376558375;
-
-            r = p / q;
-            r *= 1677202110996718588342820967067443963516166;
-            r += 16597577552685614221487285958193947469193820559219878177908093499208371 * k;
-            r += 600920179829731861736702779321621459595472258049074101567377883020018308;
-            r >>= 174;
-        }
-    }
-
-    /**
      * @notice floor(log2(x)) — the position of the highest set bit, and
      *         so the bit length of x minus one. Reverts for x = 0, where
      *         the logarithm is undefined
-     * @dev The bit scan lnWad normalizes by, exposed on its own: it is a
-     *      byte of dispatch on top of code already here, and the composed
-     *      form is eight nested conds that each duplicate their operand's
+     * @dev The composed form is eight nested conds that each duplicate their operand's
      *      calldata subtree
      */
     function log2(uint256 x) external pure returns (uint256) {
@@ -484,7 +339,7 @@ contract Operators {
         return _log2(x);
     }
 
-    /** Floor of log2(x) via a bit scan — the exponent lnWad normalizes by. */
+    /** Floor of log2(x) via a bit scan. */
     function _log2(uint256 x) private pure returns (uint256 r) {
         unchecked {
             r = x >= 1 << 128 ? 128 : 0;
@@ -1171,502 +1026,6 @@ contract Operators {
     /// @notice The runtime tuple encoder returned inside a normal bytes envelope.
     function encodeBytes(string calldata types, bytes[] calldata values) external pure returns (bytes memory) {
         return AbiCodec.tuple(bytes(types), values);
-    }
-
-    // ============ Folds ============
-
-    /**
-     * @notice Folds the lambda over the index range 0 .. n-1 (the element
-     *         substituted into the template is the index itself)
-     * @dev The one loop primitive; foldBytes and foldWords share its
-     *      engine and rules. The lambda is a single staticcall: `template`
-     *      is complete calldata for `target` in which 32-byte windows are
-     *      rewritten per element — the accumulator at `accOffset` first,
-     *      then the element at each offset in `elemOffsets` in the supplied
-     *      order (the element wins on overlap with the accumulator, and
-     *      later element windows win on mutual overlap; every byte
-     *      outside the windows stays pristine template). The first return
-     *      word becomes the new accumulator; `Any` stops at the first
-     *      nonzero accumulator, `All` at the first zero, `Full` scans
-     *      everything; the final accumulator is returned either way. An
-     *      empty domain validates template windows, then returns `init`
-     *      without inspecting or calling the target. A
-     *      lambda revert is an assertion failure: it reverts the fold with
-     *      LambdaCallFailed naming the element. Offsets must leave room
-     *      for a word inside the template (LambdaOffsetOutOfBounds), a
-     *      code-less target reverts with LambdaCallFailed(0, target, ""),
-     *      and a lambda returning fewer than 32 bytes with
-     *      LambdaReturnTooShort. Gas is the loop bound: every application
-     *      pays real call overhead, so domain sizes are naturally limited
-     *      by the block gas limit.
-     * @param n The number of iterations
-     * @param target The lambda contract
-     * @param template Complete calldata for `target`, with the windows
-     * @param accOffset Byte offset of the accumulator window
-     * @param elemOffsets Byte offsets of the element windows (N=1 is the
-     *        common case; an empty array writes only the accumulator)
-     * @param init The initial accumulator
-     * @param exit The early-exit mode (see FoldExit)
-     * @return The final accumulator
-     */
-    function foldRange(
-        uint256 n,
-        address target,
-        bytes calldata template,
-        uint256 accOffset,
-        uint256[] calldata elemOffsets,
-        bytes32 init,
-        FoldExit exit
-    ) external view returns (bytes32) {
-        return _fold(FoldDomain.Range, n, msg.data[0:0], target, template, accOffset, elemOffsets, init, exit);
-    }
-
-    /**
-     * @notice Folds the lambda over the bytes of `s` (the element is the
-     *         byte VALUE as a word) — with bitSet(mask, elem) as the
-     *         lambda and All exit, this is the character-set test
-     * @dev Engine and rules as foldRange
-     */
-    function foldBytes(
-        bytes calldata s,
-        address target,
-        bytes calldata template,
-        uint256 accOffset,
-        uint256[] calldata elemOffsets,
-        bytes32 init,
-        FoldExit exit
-    ) external view returns (bytes32) {
-        return _fold(FoldDomain.Bytes, s.length, s, target, template, accOffset, elemOffsets, init, exit);
-    }
-
-    /**
-     * @notice Folds the lambda over the 32-byte words of `s` (the element
-     *         is the word) — feed it an array PAYLOAD (elements without
-     *         the envelope), e.g. sliced out of a returned array
-     * @dev Engine and rules as foldRange; s.length must be a multiple of
-     *      32 or the fold reverts with UnalignedWords
-     */
-    function foldWords(
-        bytes calldata s,
-        address target,
-        bytes calldata template,
-        uint256 accOffset,
-        uint256[] calldata elemOffsets,
-        bytes32 init,
-        FoldExit exit
-    ) external view returns (bytes32) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
-        return _fold(FoldDomain.Words, s.length / 32, s, target, template, accOffset, elemOffsets, init, exit);
-    }
-
-    // ============ Word Arrays ============
-    //
-    // Pure shape operations over payloads of aligned 32-byte words (an
-    // array's elements without the ABI envelope — slice one out of a
-    // returned array, or feed the output of another word op). Every
-    // function validates alignment first (UnalignedWords) and returns a
-    // plain bytes payload, so they nest into each other, into the folds,
-    // and into read splicing.
-
-    /**
-     * @notice Applies a single-staticcall lambda to every word of `s` and
-     *         returns the transformed payload — the bytes-producing map
-     *         the scalar folds cannot express
-     * @dev Lambda conventions match the folds: `template` is complete
-     *      calldata for `target` whose 32-byte windows at `elemOffsets`
-     *      are rewritten per element (supplied order; later windows win
-     *      on mutual overlap); the lambda's FIRST return word is the
-     *      mapped element. An empty payload validates template windows
-     *      before returning empty without inspecting the target; a code-less target reverts with
-     *      LambdaCallFailed(0, target, ""), a reverting application with
-     *      LambdaCallFailed naming the element, a short return with
-     *      LambdaReturnTooShort. Gas is the loop bound, one call per word.
-     * @param s The word payload to map
-     * @param target The lambda contract
-     * @param template Complete calldata for `target` with the element windows
-     * @param elemOffsets Byte offsets of the element windows
-     * @return The mapped payload, same word count as `s`
-     */
-    function mapWords(bytes calldata s, address target, bytes calldata template, uint256[] calldata elemOffsets)
-        external
-        view
-        returns (bytes memory)
-    {
-        return _applyWords(s, target, template, elemOffsets, false);
-    }
-
-    /**
-     * @notice The words of `s` whose lambda application returns nonzero,
-     *         in order — the variable-length sibling of mapWords
-     * @dev Lambda conventions and errors match mapWords exactly; the
-     *      output length is the kept count, so filters nest into len, at,
-     *      folds and further word ops
-     */
-    function filterWords(bytes calldata s, address target, bytes calldata template, uint256[] calldata elemOffsets)
-        external
-        view
-        returns (bytes memory)
-    {
-        return _applyWords(s, target, template, elemOffsets, true);
-    }
-
-    /**
-     * @dev The shared map/filter engine: one staticcall per word with the
-     *      element windows rewritten; filtering keeps the ELEMENT when the
-     *      lambda word is nonzero, mapping stores the lambda word itself
-     */
-    function _applyWords(
-        bytes calldata s,
-        address target,
-        bytes calldata template,
-        uint256[] calldata elemOffsets,
-        bool filterMode
-    ) private view returns (bytes memory out) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
-        _checkElementWindows(template, elemOffsets);
-        uint256 count = s.length / 32;
-        out = new bytes(s.length);
-        uint256 kept;
-        if (count != 0) {
-            if (target.code.length == 0) revert LambdaCallFailed(0, target, "");
-            bytes memory callData = template;
-            for (uint256 i = 0; i < count; i++) {
-                bytes32 elem = bytes32(s[i * 32:i * 32 + 32]);
-                _stampElements(callData, elemOffsets, elem);
-                bytes32 word = _callWord(target, callData, i);
-                if (filterMode) {
-                    if (word != bytes32(0)) {
-                        _setWord(out, kept, uint256(elem));
-                        kept++;
-                    }
-                } else {
-                    _setWord(out, i, uint256(word));
-                    kept++;
-                }
-            }
-        }
-        if (filterMode) {
-            assembly {
-                mstore(out, mul(kept, 32))
-            }
-        }
-    }
-
-    /**
-     * @notice The payload 0, 1, 2, ..., n-1 — the index generator that
-     *         pairs with zipWords for enumerations
-     */
-    function iotaWords(uint256 n) external pure returns (bytes memory out) {
-        out = new bytes(n * 32);
-        for (uint256 i = 0; i < n; i++) {
-            _setWord(out, i, i);
-        }
-    }
-
-    /**
-     * @notice The index of the first word of `s` equal to `w`, or the
-     *         word COUNT as the not-found sentinel (it composes:
-     *         contains = lt(wordIndexOf(s, w), div(byteLen(s), 32)))
-     */
-    function wordIndexOf(bytes calldata s, bytes32 w) external pure returns (uint256) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
-        uint256 count = s.length / 32;
-        for (uint256 i = 0; i < count; i++) {
-            if (bytes32(s[i * 32:i * 32 + 32]) == w) return i;
-        }
-        return count;
-    }
-
-    /**
-     * @notice The payload with its word order reversed
-     */
-    function reverseWords(bytes calldata s) external pure returns (bytes memory out) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
-        uint256 count = s.length / 32;
-        out = new bytes(s.length);
-        for (uint256 i = 0; i < count; i++) {
-            bytes32 w = bytes32(s[i * 32:i * 32 + 32]);
-            assembly {
-                mstore(add(add(out, 32), mul(sub(sub(count, 1), i), 32)), w)
-            }
-        }
-    }
-
-    /**
-     * @notice The two payloads interleaved: a0, b0, a1, b1, ... — pairs
-     *         for a fold or for unzipWords to split back
-     * @dev Different word counts revert with WordCountMismatch (silent
-     *      truncation would be a wrong-answer machine)
-     */
-    function zipWords(bytes calldata a, bytes calldata b) external pure returns (bytes memory out) {
-        if (a.length % 32 != 0) revert UnalignedWords(a.length);
-        if (b.length % 32 != 0) revert UnalignedWords(b.length);
-        if (a.length != b.length) revert WordCountMismatch(a.length / 32, b.length / 32);
-        uint256 count = a.length / 32;
-        out = new bytes(a.length * 2);
-        for (uint256 i = 0; i < count; i++) {
-            bytes32 wa = bytes32(a[i * 32:i * 32 + 32]);
-            bytes32 wb = bytes32(b[i * 32:i * 32 + 32]);
-            assembly {
-                mstore(add(add(out, 32), mul(mul(i, 2), 32)), wa)
-                mstore(add(add(out, 32), mul(add(mul(i, 2), 1), 32)), wb)
-            }
-        }
-    }
-
-    /**
-     * @notice Every second word of the payload: lane 0 (words 0, 2, 4, …)
-     *         or lane 1 (words 1, 3, 5, …) — zipWords' inverse
-     * @dev A lane past 1 reverts with InvalidLane; an odd word count
-     *      leaves the extra word in lane 0
-     */
-    function unzipWords(bytes calldata s, uint256 which) external pure returns (bytes memory out) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
-        if (which > 1) revert InvalidLane(which);
-        uint256 count = s.length / 32;
-        uint256 laneCount = which == 0 ? (count + 1) / 2 : count / 2;
-        out = new bytes(laneCount * 32);
-        for (uint256 i = 0; i < laneCount; i++) {
-            bytes32 w = bytes32(s[(i * 2 + which) * 32:(i * 2 + which) * 32 + 32]);
-            assembly {
-                mstore(add(add(out, 32), mul(i, 32)), w)
-            }
-        }
-    }
-
-    /**
-     * @notice The payload sorted ascending as unsigned words
-     * @dev Insertion sort: O(n^2) word moves, so gas caps practical
-     *      inputs at hundreds of words, not thousands. Signed sorting is
-     *      a three-node recipe instead of an overload: flip the sign bit
-     *      (mapWords with bitXor(2^255, elem)), sort, flip back
-     */
-    function sortWords(bytes calldata s) external pure returns (bytes memory out) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
-        out = s;
-        uint256 count = s.length / 32;
-        for (uint256 i = 1; i < count; i++) {
-            uint256 key = _wordAt(out, i);
-            uint256 j = i;
-            while (j > 0 && _wordAt(out, j - 1) > key) {
-                _setWord(out, j, _wordAt(out, j - 1));
-                j--;
-            }
-            _setWord(out, j, key);
-        }
-    }
-
-    /**
-     * @notice The checked sum of the payload's 32-byte words — a native
-     *         single-call loop, the fixed-operation form of the
-     *         foldWords(add) recipe (overflow reverts with Panic(0x11))
-     */
-    function sumWords(bytes calldata s) external pure returns (uint256 total) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
-        uint256 count = s.length / 32;
-        for (uint256 i = 0; i < count; i++) {
-            total += uint256(bytes32(s[i * 32:i * 32 + 32]));
-        }
-    }
-
-    /**
-     * @notice The payload with ADJACENT duplicate words collapsed — O(n),
-     *         so set-semantics deduplication is uniqueWords(sortWords(s));
-     *         on unsorted input this is run-length deduplication, by design
-     */
-    function uniqueWords(bytes calldata s) external pure returns (bytes memory out) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
-        uint256 count = s.length / 32;
-        out = new bytes(s.length);
-        uint256 kept;
-        for (uint256 i = 0; i < count; i++) {
-            uint256 w = uint256(bytes32(s[i * 32:i * 32 + 32]));
-            if (i == 0 || w != _wordAt(out, kept - 1)) {
-                _setWord(out, kept, w);
-                kept++;
-            }
-        }
-        assembly {
-            mstore(out, mul(kept, 32))
-        }
-    }
-
-    /// @notice Remove all duplicate words, keeping first-occurrence order (O(n squared)).
-    function distinctWords(bytes calldata s) external pure returns (bytes memory out) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
-        out = new bytes(s.length);
-        uint256 kept;
-        for (uint256 i = 0; i < s.length / 32; i++) {
-            uint256 word = uint256(bytes32(s[i * 32:i * 32 + 32]));
-            bool seen;
-            for (uint256 j = 0; j < kept; j++) {
-                if (_wordAt(out, j) == word) {
-                    seen = true;
-                    break;
-                }
-            }
-            if (!seen) _setWord(out, kept++, word);
-        }
-        assembly {
-            mstore(out, mul(kept, 32))
-        }
-    }
-
-    // ============ Internal Helpers ============
-
-    /**
-     * @dev The i-th 32-byte word of a memory payload (caller bounds-checks)
-     */
-    function _wordAt(bytes memory b, uint256 i) private pure returns (uint256 w) {
-        assembly {
-            w := mload(add(add(b, 32), mul(i, 32)))
-        }
-    }
-
-    /**
-     * @dev Writes the i-th 32-byte word of a memory payload (caller bounds-checks)
-     */
-    function _setWord(bytes memory b, uint256 i, uint256 w) private pure {
-        assembly {
-            mstore(add(add(b, 32), mul(i, 32)), w)
-        }
-    }
-
-    /**
-     * @dev Fold iteration domains: Range substitutes the index, Bytes the
-     *      byte value at the index, Words the 32-byte word at the index
-     */
-    enum FoldDomain {
-        Range,
-        Bytes,
-        Words
-    }
-
-    /**
-     * @dev Bounds-check the accumulator and every element window. Hoisted
-     *      out of the element loop so a bad offset fails before any call.
-     */
-    function _checkWindows(bytes calldata template, uint256 accOffset, uint256[] calldata elemOffsets) private pure {
-        if (template.length < 32 || accOffset > template.length - 32) {
-            revert LambdaOffsetOutOfBounds(accOffset, template.length);
-        }
-        _checkElementWindows(template, elemOffsets);
-    }
-
-    function _checkElementWindows(bytes calldata template, uint256[] calldata elemOffsets) private pure {
-        if (template.length < 32) revert LambdaOffsetOutOfBounds(0, template.length);
-        for (uint256 j = 0; j < elemOffsets.length; j++) {
-            if (elemOffsets[j] > template.length - 32) {
-                revert LambdaOffsetOutOfBounds(elemOffsets[j], template.length);
-            }
-        }
-    }
-
-    /**
-     * @dev The i-th domain element: the index itself (Range), the byte
-     *      value (Bytes), or the 32-byte word (Words).
-     */
-    function _domainElem(FoldDomain domain, uint256 i, bytes calldata s) private pure returns (bytes32) {
-        if (domain == FoldDomain.Range) return bytes32(i);
-        if (domain == FoldDomain.Bytes) return bytes32(uint256(uint8(s[i])));
-        return bytes32(s[i * 32:i * 32 + 32]);
-    }
-
-    /**
-     * @dev Write the accumulator first, then every element window in the
-     *      order of `elemOffsets` (element wins on overlap with acc; later
-     *      element windows win on mutual overlap).
-     */
-    function _stampWindows(
-        bytes memory callData,
-        uint256 accOffset,
-        bytes32 acc,
-        uint256[] calldata elemOffsets,
-        bytes32 elem
-    ) private pure {
-        assembly {
-            mstore(add(add(callData, 32), accOffset), acc)
-        }
-        _stampElements(callData, elemOffsets, elem);
-    }
-
-    function _stampElements(bytes memory callData, uint256[] calldata elemOffsets, bytes32 elem) private pure {
-        for (uint256 j = 0; j < elemOffsets.length; j++) {
-            uint256 elemOffset = elemOffsets[j];
-            assembly {
-                mstore(add(add(callData, 32), elemOffset), elem)
-            }
-        }
-    }
-
-    /**
-     * @dev Stack-friendly bundle for the fold loop: a memory struct is one
-     *      slot, where the same fields as free parameters blew the frame
-     *      once `elemOffsets` became a dynamic array.
-     */
-    struct FoldRun {
-        FoldDomain domain;
-        uint256 count;
-        address target;
-        uint256 accOffset;
-        bytes32 acc;
-        FoldExit exit;
-    }
-
-    /**
-     * @dev The shared fold engine (see foldRange for the full rules).
-     *      `count` is the domain size; `s` carries the subject bytes for
-     *      the Bytes/Words domains and is empty for Range.
-     */
-    function _fold(
-        FoldDomain domain,
-        uint256 count,
-        bytes calldata s,
-        address target,
-        bytes calldata template,
-        uint256 accOffset,
-        uint256[] calldata elemOffsets,
-        bytes32 init,
-        FoldExit exit
-    ) private view returns (bytes32) {
-        _checkWindows(template, accOffset, elemOffsets);
-        if (count == 0) return init;
-        if (target.code.length == 0) revert LambdaCallFailed(0, target, "");
-        FoldRun memory run = FoldRun(domain, count, target, accOffset, init, exit);
-        return _foldLoop(run, s, template, elemOffsets);
-    }
-
-    /**
-     * @dev Element loop of {@link _fold}.
-     */
-    function _callWord(address target, bytes memory callData, uint256 index) private view returns (bytes32 word) {
-        (bool success, bytes memory ret) = target.staticcall(callData);
-        if (!success) revert LambdaCallFailed(index, target, callData);
-        if (ret.length < 32) revert LambdaReturnTooShort(index, ret.length);
-        assembly ("memory-safe") { word := mload(add(ret, 32)) }
-    }
-
-    function _foldLoop(
-        FoldRun memory run,
-        bytes calldata s,
-        bytes calldata template,
-        uint256[] calldata elemOffsets
-    ) private view returns (bytes32) {
-        bytes memory callData = template;
-        for (uint256 i = 0; i < run.count;) {
-            {
-                bytes32 elem = _domainElem(run.domain, i, s);
-                _stampWindows(callData, run.accOffset, run.acc, elemOffsets, elem);
-            }
-            bytes32 next = _callWord(run.target, callData, i);
-            run.acc = next;
-            if (run.exit == FoldExit.Any && next != bytes32(0)) break;
-            if (run.exit == FoldExit.All && next == bytes32(0)) break;
-            unchecked {
-                i++;
-            }
-        }
-        return run.acc;
     }
 
     /**

@@ -172,7 +172,7 @@ const SOURCE_ICONS: Partial<Record<NodeKey, IconName>> = {
 
 /**
  * The value-source select, shown on source nodes (literal, call, balance,
- * clock, chain id, code hash): what this value *is*. Operators are not
+ * clock, chain id, code hash): what this value *is*. Operations are not
  * listed here — they wrap a value via the WrapMenu instead.
  */
 export function SourcePicker({

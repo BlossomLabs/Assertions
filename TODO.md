@@ -2,7 +2,7 @@
 
 Lifting the restrictions the helper-description audit surfaced. Work happens in the
 vendored checkout (`website/.evmcrispr`, branch `operators-1.0`); the main repo carries
-`Operators.sol` and the pin.
+`Operations.sol` and the pin.
 
 Interleaved throughout with a second session working the fixed-point / lending / ENS
 side of the same branch. Their commits are noted where they matter.
@@ -52,7 +52,7 @@ followed by a bump. See Hazards.
 | `95559c6` | `cc32ec0` | A5 |
 | `a32a96b` | `4dbf47a` | B1 |
 | `6bfbd56` | `167dd90`, `2c7a87a` | B1 review: word-category guard, any-staticcall lambdas, EVM-executed core-target folds |
-| `504d59d` | `ee3c94e` | C: `elemOffsets` array on fold/map/filter (SDK layout + Operators engine); vanity re-mine deferred |
+| `504d59d` | `ee3c94e` | C: `elemOffsets` array on fold/map/filter (SDK layout + Operations engine); vanity re-mine deferred |
 | `2445ed9` | `dd80f75`, `fe250e1` | B2: `@it!` + multi-marker extraction (test + pin) |
 | `aaca108` | `e523416` | D1: bang defs are compile-only, and must be fully typed |
 | `7c2f026` | `c3dd462` | D2: a `def @name!` is inlined where it is used |
@@ -84,7 +84,7 @@ matches what that runner executes.
 
 **Vanity re-mine: done.** Salts mined with `cast create2` (random 32-byte salts,
 per contract) against the frozen bytecode: Assertions v2.0 →
-`0xA55E472841ca3D318205036724A94F5abDbf7b18`, Operators v1.0 →
+`0xA55E472841ca3D318205036724A94F5abDbf7b18`, Operations v1.0 →
 `0x09e4a7e55200600314165ddFB381639dace41bEA`. `export-deploy-artifact.mjs` carries the salts and
 regenerated `website/src/lib/*-deployment.ts` + `verification-inputs.ts`. Runtime
 still **17,042** / **7,534** headroom after C; B2 is SDK-only so bytecode unchanged.
@@ -156,7 +156,7 @@ asks whether a body can REACH itself through other bodies. Resolved at call time
 because mutual recursion is only visible once both halves exist.
 
 **`@it!` was subsumed one commit after it landed.** Its plumbing is untouched and
-load-bearing: `findWindows`, the `elemOffsets` array, and C's `uint256[]` Operators
+load-bearing: `findWindows`, the `elemOffsets` array, and C's `uint256[]` Operations
 signature are exactly what makes `@num!($x * $x)` compile to two windows and one
 call. Only the surface went, plus `ctx.lambdaElemCat`, which lost its only reader.
 
@@ -219,7 +219,7 @@ trusting it on any future compile-face change.
   right advice for a reason that no longer exists.
 - **Signed sorting is already expressible**, at three nodes: `@map!` xor the sign bit,
   `@sort!`, `@map!` back. Flipping the top bit maps signed order onto unsigned order
-  exactly and, unlike adding 2^255, cannot overflow a checked add. So Operators should
+  exactly and, unlike adding 2^255, cannot overflow a checked add. So Operations should
   NOT grow a signed `sortWords` — it fails the first admission test, and the second and
   third are about hot loops it does not touch.
 - **The multi-live-part technique already shipped.** `enumerateParam` splices two live
@@ -241,8 +241,8 @@ The other session has queued the doctrine edit that states this generally.
 ### B1, as landed
 
 - `LambdaTemplate` now carries its `target`. The fast path is unchanged bytes: a
-  predicate reducing to one Operators call with all-`RAW_BYTES` segments flattens to
-  direct Operators calldata. Anything else keeps the WHOLE `read(...)` calldata as the
+  predicate reducing to one Operations call with all-`RAW_BYTES` segments flattens to
+  direct Operations calldata. Anything else keeps the WHOLE `read(...)` calldata as the
   template and targets the core — `Assertions.read` raw-returns (`return(add(result,
   32), mload(result))`, verified), so the first return word is still the value.
   `foldParam` / `applyWordsParam` take the target as a parameter, in the contract's own
@@ -254,7 +254,7 @@ The other session has queued the doctrine edit that states this generally.
   B2's `@it!` therefore composes anywhere a word operand goes.
 - `@reduce!` keeps its restriction on purpose: its lambda carries an ACCUMULATOR
   window, which only the fixed binary-reducer table provides. Its note never said
-  "single Operators call" and did not change.
+  "single Operations call" and did not change.
 
 ### C, as landed (`504d59d` / `ee3c94e`)
 
@@ -277,7 +277,7 @@ subsumed, the machinery was not.
   every aligned marker into ascending `elemOffsets` and zeros them all; folds park
   `accOffset` on `elemOffsets[0]` when the body never names the accumulator. That is
   exactly what makes `def @sq! "$x: number -> number" @num!($x * $x)` compile to two
-  windows and ONE call, so C's `uint256[]` Operators signature — which cost an address
+  windows and ONE call, so C's `uint256[]` Operations signature — which cost an address
   roll — is spent, not stranded.
 - **Kept:** the nested outer-capture rejection. A precompiled outer-element marker
   smuggled into an inner lambda's AST is still refused before compile, because the
@@ -420,7 +420,7 @@ Recorded because each was believed and acted on before being caught.
   and were all exact, so only this figure was off. Recorded as measured now; the full
   counting basis for every gate is now written under Landed.
 - The B1 report claimed a composed lambda costs "roughly 9x per element by the
-  doctrine's own measurements". The doctrine's measurements (`OperatorsGas.t.sol`)
+  doctrine's own measurements". The doctrine's measurements (`OperationsGas.t.sol`)
   say ~5x (bitSet) and ~3x (Merkle step); 9x was the a-priori argument those
   measurements CORRECTED. Stated the wrong number with the confidence of the right
   provenance — the correction and the re-measure caveat now live in the C section.

@@ -7,7 +7,7 @@ fix it in the same change that falsified it.
 ## The two trees
 
 - **Main repo**: `contracts/` (the frozen `Assertions` core, the versionable
-  `Operators` periphery, `CollectionOperators`, `AbiCodec`, `ERC8211`), Solidity tests under
+  `Operations` periphery, `Collections`, `AbiCodec`, `ERC8211`), Solidity tests under
   `contracts/tests/*.t.sol` run by `pnpm test` (hardhat 3), and the Astro site in
   `website/` with hand-written docs at `website/src/content/docs/docs/`.
 - **Vendored checkout**: `website/.evmcrispr` is an EVMcrispr monorepo checkout at a published commit
@@ -23,8 +23,8 @@ fix it in the same change that falsified it.
 ## Design doctrine
 
 - **The core's admission test**: only what needs operands to arrive UNRESOLVED
-  (ERC-8211 `InputParam`s) lives on the frozen core. Computation over resolved
-  values belongs to Operators, which versions by deploying at new addresses. When
+  (ERC-8211 `InputParam`s) lives on the frozen core. Scalar computation over resolved
+  values belongs to Operations; iteration and collection processing belong to Collections. Both version by deploying at new addresses. When
   a capability is requested, first check whether composition already expresses it:
   `hash(rawCall(target, data))` made both a `hashOf` primitive and a `HASH_EQ`
   constraint type unnecessary.
@@ -59,11 +59,11 @@ fix it in the same change that falsified it.
 - **Errors identify the operand** (entry index, param index, hop index, binding
   index). Constraints judge only the first 32-byte word, unsigned, per the
   standard: anything richer (signedness, `!=`, string equality, tolerance) lowers
-  to an Operators expression judged `EQ 1`, and tests must assert that op-judge
+  to an Operations expression judged `EQ 1`, and tests must assert that op-judge
   shape.
-- **Operators admission**: a new function must not be expressible as a few-node
+- **Operations admission**: a new function must not be expressible as a few-node
   recipe at practical cost. Signed `sortWords` was refused (flip the sign bit,
-  sort, flip back); generic comparator sorting lives in CollectionOperators (sorting is not a reduction);
+  sort, flip back); generic comparator sorting lives in Collections (sorting is not a reduction);
   `join` is composition over `concat`. What earns a slot: hot loops (one call per
   element otherwise) and calldata-exponential compositions (`rpow`, `log2`).
 - **Signedness is a dimension in every word-level design.** Unsigned order and
@@ -109,7 +109,7 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
 - Every both-faced helper's run and compile faces must agree, or declare the
   divergence: a parity case with `diverges` fails unless the helper carries a
   `compileDescription`, and fails again if the faces secretly agree. That field is
-  a ledger, not decoration: one user-visible sentence, no Operators internals, no
+  a ledger, not decoration: one user-visible sentence, no Operations internals, no
   compiler vocabulary (the description lint enforces this).
 - Parity `compile` strings are spelled out, never derived from `run` by adding
   `!`. An undeclared compile failure fails the case rather than skipping.
@@ -161,7 +161,7 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   changes (including comments in compiler metadata) may change CREATE2 addresses;
   regenerate and verify deployment artifacts, fixtures and SDK addresses together.
 - Bytecode size: `(len(deployedBytecode) - 2) / 2` against 24,576, per artifact.
-  Operators must stay byte-identical through core-only changes; any drift there is
+  Operations must stay byte-identical through core-only changes; any drift there is
   a red flag.
 
 - When running tests in a restricted sandbox, verify the nodejs test count: a

@@ -1,14 +1,9 @@
-// Differential fuzzer for the Operators math vocabulary. Every function
+// Differential fuzzer for the Operations math vocabulary. Every function
 // with an exact mathematical definition is fuzzed against a BigInt oracle
 // that computes the same thing with unbounded integers — including the
 // EXACT revert expected (Panic(0x11) overflow, Panic(0x12) division by
 // zero, bare revert) — so checked semantics, truncation direction and
 // panic codes are all part of the contract being verified.
-//
-// The transcendentals (expWad, lnWad) have no exact integer oracle, so
-// they get a three-way check: a double-precision float reference with a
-// tolerance far below any real bug but far above float noise, exact
-// anchors (expWad(0), e, ln(1e18)), and the lnWad∘expWad round trip.
 //
 // Deterministic: FUZZ_SEED / FUZZ_RUNS env vars override the defaults
 // (FUZZ_RUNS is per-operator here), and every failure message carries the
@@ -28,11 +23,6 @@ const MAXU = U256 - 1n;
 const I_MAX = (1n << 255n) - 1n;
 const I_MIN = -(1n << 255n);
 const WAD = 10n ** 18n;
-
-// Boundaries and anchors of the wad transcendentals.
-const EXP_OVERFLOW = 135305999368893231589n; // expWad reverts at and above
-const EXP_UNDERFLOW = -42139678854452767551n; // expWad returns 0 at and below
-const E_WAD = 2718281828459045235n; // floor(e * 1e18)
 
 // ============ Deterministic PRNG ============
 
@@ -181,7 +171,7 @@ function revertLabel(data: Hex): string {
 
 const { viem } = await network.connect();
 const publicClient = await viem.getPublicClient();
-const operators = await viem.deployContract("Operators");
+const operators = await viem.deployContract("Operations");
 
 type CallResult = { ok: true; value: bigint } | { ok: false; errorName: string };
 
@@ -410,101 +400,6 @@ describe("rpow differential fuzz", () => {
           assert.ok(exact - got.value <= 2048n, `${ctx} — rpow lost more than the rounding bound vs ${exact}`);
         }
       }
-    }
-  });
-});
-
-// ============ expWad / lnWad ============
-
-async function callWad(name: string, x: bigint): Promise<CallResult> {
-  return callOp(name, ["int256"], [x], true);
-}
-
-function assertClose(actual: bigint, ref: number, absTol: number, ctx: string): void {
-  const diff = Math.abs(Number(actual) - ref);
-  const tol = Math.max(absTol, Math.abs(ref) * 1e-12);
-  assert.ok(diff <= tol, `${ctx} — got ${actual}, float reference ${ref}, diff ${diff} > tol ${tol}`);
-}
-
-describe("wad transcendental fuzz", () => {
-  it("expWad tracks e^x, its boundaries and anchors", async () => {
-    // Exact anchors first: the identity and floor(e * 1e18).
-    const one = await callWad("expWad", 0n);
-    assert.ok(one.ok && one.value === WAD, `expWad(0) = ${one.ok ? one.value : one.errorName}, expected 1e18`);
-    const e = await callWad("expWad", WAD);
-    assert.ok(e.ok && e.value >= E_WAD - 2n && e.value <= E_WAD + 2n, `expWad(1e18) = ${e.ok ? e.value : e.errorName}, expected ~${E_WAD}`);
-    // Boundary behavior, exact.
-    const over = await callWad("expWad", EXP_OVERFLOW);
-    assert.ok(!over.ok, "expWad must revert at its documented overflow bound");
-    const under = await callWad("expWad", EXP_UNDERFLOW);
-    assert.ok(under.ok && under.value === 0n, "expWad must return 0 at its documented underflow bound");
-
-    for (let i = 0; i < RUNS * 2; i++) {
-      const rng = mulberry32((SEED + (0x10000000 + i) * 0x9e3779b9) >>> 0);
-      const r = rng();
-      let x: bigint;
-      if (r < 0.5) {
-        // Uniform across the whole live range, cutoffs included.
-        x = -45n * WAD + (randBig(rng, 128) % (185n * WAD));
-      } else if (r < 0.7) {
-        x = (rng() < 0.5 ? EXP_OVERFLOW : EXP_UNDERFLOW) + BigInt(randInt(rng, -3, 3));
-      } else if (r < 0.9) {
-        x = BigInt(randInt(rng, -1000000, 1000000)); // near zero
-      } else {
-        x = genI(rng); // far outside: huge positive reverts, huge negative is 0
-      }
-
-      const got = await callWad("expWad", x);
-      const ctx = `[seed=${SEED} case=${i}] expWad(${x})`;
-      if (x >= EXP_OVERFLOW) {
-        assert.ok(!got.ok && got.errorName === "<empty>", `${ctx} — expected bare revert, got ${got.ok ? got.value : got.errorName}`);
-      } else if (x <= EXP_UNDERFLOW) {
-        assert.ok(got.ok && got.value === 0n, `${ctx} — expected 0, got ${got.ok ? got.value : got.errorName}`);
-      } else {
-        assert.ok(got.ok, `${ctx} — unexpected revert ${got.ok ? "" : got.errorName}`);
-        assertClose(got.value, Math.exp(Number(x) / 1e18) * 1e18, 5, ctx);
-      }
-    }
-  });
-
-  it("lnWad tracks ln(x) and rejects the non-positive domain", async () => {
-    const zero = await callWad("lnWad", WAD);
-    assert.ok(zero.ok && zero.value >= -1n && zero.value <= 1n, `lnWad(1e18) = ${zero.ok ? zero.value : zero.errorName}, expected ~0`);
-    for (const bad of [0n, -1n, -WAD, I_MIN]) {
-      const got = await callWad("lnWad", bad);
-      assert.ok(!got.ok && got.errorName === "<empty>", `lnWad(${bad}) must bare-revert, got ${got.ok ? got.value : got.errorName}`);
-    }
-
-    for (let i = 0; i < RUNS * 2; i++) {
-      const rng = mulberry32((SEED + (0x20000000 + i) * 0x9e3779b9) >>> 0);
-      const r = rng();
-      let x: bigint;
-      if (r < 0.25) x = BigInt(randInt(rng, 1, 1000));
-      else if (r < 0.5) x = WAD + BigInt(randInt(rng, -1000000, 1000000));
-      else if (r < 0.75) x = randBig(rng, randInt(rng, 8, 128));
-      else x = randBig(rng, 255) & I_MAX;
-      if (x <= 0n) x = 1n;
-
-      const got = await callWad("lnWad", x);
-      const ctx = `[seed=${SEED} case=${i}] lnWad(${x})`;
-      assert.ok(got.ok, `${ctx} — unexpected revert ${got.ok ? "" : got.errorName}`);
-      assertClose(got.value, Math.log(Number(x) / 1e18) * 1e18, 1e5, ctx);
-    }
-  });
-
-  it("lnWad inverts expWad within tolerance", async () => {
-    for (let i = 0; i < RUNS; i++) {
-      const rng = mulberry32((SEED + (0x28000000 + i) * 0x9e3779b9) >>> 0);
-      // Restricted to expWad(x) >= ~0.36e18 so the integer floor of the
-      // exponential cannot dominate the round-trip error.
-      const x = -WAD + (randBig(rng, 128) % (136n * WAD));
-      const y = await callWad("expWad", x);
-      if (!y.ok || y.value === 0n) continue;
-      const back = await callWad("lnWad", y.value);
-      const ctx = `[seed=${SEED} case=${i}] lnWad(expWad(${x})) via ${y.value}`;
-      assert.ok(back.ok, `${ctx} — unexpected revert`);
-      const diff = back.value - x;
-      assert.ok(diff >= -1000000n && diff <= 1000000n, `${ctx} — round trip drifted by ${diff}`);
     }
   });
 });

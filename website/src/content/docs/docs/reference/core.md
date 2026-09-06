@@ -1,9 +1,9 @@
 ---
 title: Core reference
-description: The ERC-8211 judge's functions and wire format, the core primitives, and the Operators surface.
+description: The ERC-8211 judge's functions and wire format, the core primitives, and the Operations surface.
 ---
 
-The core (judge + primitives) lives at the interim address `0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F` (a vanity `0xa55E...` address will be re-mined before the canonical roll; see [Deployments](/docs/reference/deployments)). Every judge function has an overloaded version accepting a custom `string` message as the last parameter, echoed inside `ConstraintFailed` on failure. The computation vocabulary lives on the separate [Operators contract](/docs/operators).
+The core (judge + primitives) lives at the interim address `0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F` (a vanity `0xa55E...` address will be re-mined before the canonical roll; see [Deployments](/docs/reference/deployments)). Every judge function has an overloaded version accepting a custom `string` message as the last parameter, echoed inside `ConstraintFailed` on failure. The computation vocabulary lives on the separate [Operations contract](/docs/operators).
 
 ## Judge functions
 
@@ -55,7 +55,7 @@ Constraints compare the resolved value's first 32-byte word, unsigned:
 | `LTE` | word <= reference |
 | `IN` | lo <= word <= hi (inclusive; `abi.encode(lo, hi)` as reference) |
 
-Everything richer (`!=`, signed comparisons, string equality, live-vs-live tolerance) is a read-spliced [Operators](/docs/operators) expression that returns a 0/1 word or a hash, judged with `EQ`.
+Everything richer (`!=`, signed comparisons, string equality, live-vs-live tolerance) is a read-spliced [Operations](/docs/operators) expression that returns a 0/1 word or a hash, judged with `EQ`.
 
 ## Core primitives
 
@@ -67,15 +67,15 @@ The primitives live on the core alongside the judge, because they hold operands 
 | `pick` | Select one raw 32-byte word from a resolved operand (signed index, negative from the end) |
 | `nav` | Typed navigation: interpret the resolved bytes as a declared return tuple (`retTypes`) and walk an index path through tuples and dynamic arrays: single-word terminals, canonical dynamic envelopes, decoded lengths via the `LEN` sentinel, and raw string/bytes payloads (typed re-entry into encoded blobs) via the `PAYLOAD` sentinel |
 | `chain` | Follow runtime-resolved addresses: each hop staticcalls the address word the previous hop returned |
-| `read` | Construct a staticcall at judge time: resolve the target and concatenate the selector with each argument segment's full resolved bytes (ERC-8211 CALL_DATA routing), then return the call's raw returndata; the composition socket that splices operand expressions into plain calldata for Operators or any other view/pure contract |
+| `read` | Construct a staticcall at judge time: resolve the target and concatenate the selector with each argument segment's full resolved bytes (ERC-8211 CALL_DATA routing), then return the call's raw returndata; the composition socket that splices operand expressions into plain calldata for Operations or any other view/pure contract |
 | `cond` | EVML: `@ifElse!`. Resolve the condition (first word nonzero = true), then resolve and return ONLY the winning branch; the losing branch is never resolved |
 | `orElse` | Resolve the attempt behind a self-staticcall boundary; ANY failure (revert, code-less target, violated constraint) selects and resolves the fallback instead |
 | `isValid` | 1 when the operand resolves and passes its constraints, else 0; the failure probe, judged `EQ 1` / `EQ 0` or fed to `cond` |
 | `revertData` | the revert data of a call that MUST fail; a non-zero expected selector must match and is stripped, leaving the error's arguments word-aligned for `pick`/`nav` |
 
-## Operators (separate contract)
+## Operations (separate contract)
 
-These live at the Operators address (interim `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`), not on the core, and take plain ABI types: live operands reach them through the core's `read` splicing. Functions marked "uint + int" are overloaded on `uint256` and `int256` (explicit selectors required in Solidity encoders). See [Operators](/docs/operators) for usage.
+These live at the Operations address (interim `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`), not on the core, and take plain ABI types: live operands reach them through the core's `read` splicing. Functions marked "uint + int" are overloaded on `uint256` and `int256` (explicit selectors required in Solidity encoders). See [Operations](/docs/operators) for usage.
 
 | Function | Description |
 |----------|-------------|

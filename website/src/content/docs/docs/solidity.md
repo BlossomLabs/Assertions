@@ -62,7 +62,7 @@ function within(uint256 lo, uint256 hi) pure returns (Constraint[] memory cs) {
 }
 ```
 
-Constraints compare the value's **first 32-byte word**, unsigned, which covers `uint256`, `address`, `bool` and `bytes32` returns directly. Multi-value selections use the core's own [`pick` and `nav`](/docs/core/reads); signed comparisons and `!=` route through a read-spliced [Operators](/docs/operators) comparison that returns 0/1, judged `EQ 1`.
+Constraints compare the value's **first 32-byte word**, unsigned, which covers `uint256`, `address`, `bool` and `bytes32` returns directly. Multi-value selections use the core's own [`pick` and `nav`](/docs/core/reads); signed comparisons and `!=` route through a read-spliced [Operations](/docs/operators) comparison that returns 0/1, judged `EQ 1`.
 
 ## DAO proposal with safety checks
 
@@ -131,12 +131,12 @@ assertions.assertParam(
 // Execute upgrade
 proxyAdmin.upgrade(proxy, newImplementation);
 
-// Assert new implementation has expected code, via Operators.codeHash
+// Assert new implementation has expected code, via Operations.codeHash
 // as the fetched value (EXTCODEHASH semantics)
 assertions.assertParam(
     callParam(
         address(operators),
-        abi.encodeCall(Operators.codeHash, (newImplementation)),
+        abi.encodeCall(Operations.codeHash, (newImplementation)),
         eq(keccak256(newImplementationCode))
     ),
     "Implementation code mismatch"
@@ -151,7 +151,7 @@ assertions.assertParam(
 
 ## Balance, block and environment assertions
 
-Balance reads have a dedicated fetcher; block and chain values are plain [Operators](/docs/operators/words) calls, no splicing needed since they take no live arguments:
+Balance reads have a dedicated fetcher; block and chain values are plain [Operations](/docs/operators/words) calls, no splicing needed since they take no live arguments:
 
 ```solidity
 // Assert account has at least 1 ETH (native balance fetcher)
@@ -167,16 +167,16 @@ assertions.assertParam(
 
 // Assert we're on mainnet
 assertions.assertParam(
-    callParam(address(operators), abi.encodeCall(Operators.chainId, ()), eq(bytes32(uint256(1))))
+    callParam(address(operators), abi.encodeCall(Operations.chainId, ()), eq(bytes32(uint256(1))))
 );
 
 // Assert block timestamp is past the unlock time
 assertions.assertParam(
-    callParam(address(operators), abi.encodeCall(Operators.timestamp, ()), gte(unlockTime + 1))
+    callParam(address(operators), abi.encodeCall(Operations.timestamp, ()), gte(unlockTime + 1))
 );
 ```
 
-When the account is *computed* at judge time (the balance of `registry.treasury()`, the code hash of `proxy.implementation()`), splice the resolved address into `Operators.balance` / `Operators.codeHash` with the core's `read`; see [the words page](/docs/operators/words).
+When the account is *computed* at judge time (the balance of `registry.treasury()`, the code hash of `proxy.implementation()`), splice the resolved address into `Operations.balance` / `Operations.codeHash` with the core's `read`; see [the words page](/docs/operators/words).
 
 ## Multi-value returns and deep reads
 
@@ -215,8 +215,8 @@ assertions.assertParam(
 
 ## Caveats
 
-- **Constraints are unsigned word comparisons.** `GTE`/`LTE`/`IN` compare the first 32-byte word as a `uint256`. For `int256` returns use the [Operators int256 overloads](/docs/operators/words) (`gt(int256,int256)`, `le(int256,int256)`, ...) read-spliced and judged `EQ 1`, and the signed `absDiff` overload for tolerance. Overloads need explicit selectors in Solidity: `bytes4(keccak256("gt(int256,int256)"))`.
-- **EIP-7702 delegated EOAs carry code.** A delegated EOA has a 23-byte delegation designator as its code, so a "has no code" check (`Operators.codeHash` equal to `bytes32(0)` or `keccak256("")`) is not a strict "is an EOA" check on chains with EIP-7702.
-- **`block.number` semantics differ across chains.** On OP-stack and most L2s, `Operators.blockNumber()` sees the L2 block number (on Arbitrum, `block.number` returns the approximate L1 block). Block times also vary per chain, so avoid porting block-number thresholds between networks.
+- **Constraints are unsigned word comparisons.** `GTE`/`LTE`/`IN` compare the first 32-byte word as a `uint256`. For `int256` returns use the [Operations int256 overloads](/docs/operators/words) (`gt(int256,int256)`, `le(int256,int256)`, ...) read-spliced and judged `EQ 1`, and the signed `absDiff` overload for tolerance. Overloads need explicit selectors in Solidity: `bytes4(keccak256("gt(int256,int256)"))`.
+- **EIP-7702 delegated EOAs carry code.** A delegated EOA has a 23-byte delegation designator as its code, so a "has no code" check (`Operations.codeHash` equal to `bytes32(0)` or `keccak256("")`) is not a strict "is an EOA" check on chains with EIP-7702.
+- **`block.number` semantics differ across chains.** On OP-stack and most L2s, `Operations.blockNumber()` sees the L2 block number (on Arbitrum, `block.number` returns the approximate L1 block). Block times also vary per chain, so avoid porting block-number thresholds between networks.
 - **Calls to code-less addresses revert with `CallFailed`.** A `staticcall` to an address without code would otherwise "succeed" with empty returndata; the fetcher detects this and reverts descriptively. To *tolerate* a missing or reverting target instead, wrap the operand in the core's [`orElse`](/docs/core/control).
 - **View-only judging.** The judge rejects batches with output parameters (Storage writes) or `VALUE` parameters (ETH forwarding): assertions never change state.

@@ -3,7 +3,8 @@ pragma solidity ^0.8.28;
 
 import "forge-std/Test.sol";
 import "../Assertions.sol";
-import "../Operators.sol";
+import "../Operations.sol";
+import "../Collections.sol";
 import "../ERC8211.sol";
 import "./Mocks.sol";
 
@@ -11,7 +12,7 @@ import "./Mocks.sol";
  * @notice Lambda templates that target the CORE, executed through the
  *         fold engine on a real EVM — the form the SDK emits for composed
  *         predicates. Every other fold test drives the engine with
- *         `target = address(ops)` and a bare Operators template; these
+ *         `target = address(ops)` and a bare Operations template; these
  *         drive it with `target = core` and full ABI-encoded `read(...)`
  *         calldata, so the three legs the SDK otherwise only derives are
  *         executed: the element window is FOUND by scanning the encoded
@@ -22,7 +23,8 @@ import "./Mocks.sol";
  */
 contract CoreTargetLambdaTest is Test {
     Assertions public assertions;
-    Operators public ops;
+    Operations public ops;
+    Collections cols;
     MockTarget public target;
 
     /// The SDK's element marker (keccak256 of "evmcrispr/fold-element"):
@@ -35,7 +37,8 @@ contract CoreTargetLambdaTest is Test {
 
     function setUp() public {
         assertions = new Assertions();
-        ops = new Operators();
+        ops = new Operations();
+        cols = new Collections();
         target = new MockTarget();
         target.setValue(100);
     }
@@ -139,14 +142,14 @@ contract CoreTargetLambdaTest is Test {
         // element offset — the convention the SDK's foldParam uses.
         assertEq(
             uint256(
-                ops.foldWords(payload, address(assertions), template, elemOffset, _offs(elemOffset), bytes32(0), Operators.FoldExit.Any)
+                cols.foldWords(payload, address(assertions), template, elemOffset, _offs(elemOffset), bytes32(0), Collections.FoldExit.Any)
             ),
             1,
             "one element beats the live floor"
         );
         assertEq(
             uint256(
-                ops.foldWords(payload, address(assertions), template, elemOffset, _offs(elemOffset), bytes32(0), Operators.FoldExit.All)
+                cols.foldWords(payload, address(assertions), template, elemOffset, _offs(elemOffset), bytes32(0), Collections.FoldExit.All)
             ),
             0,
             "not every element beats the live floor"
@@ -168,7 +171,7 @@ contract CoreTargetLambdaTest is Test {
         bytes memory payload = abi.encodePacked(uint256(10), uint256(20), uint256(30));
         assertEq(
             uint256(
-                ops.foldWords(payload, address(assertions), template, accOffset, _offs(elemOffset), bytes32(uint256(5)), Operators.FoldExit.Full)
+                cols.foldWords(payload, address(assertions), template, accOffset, _offs(elemOffset), bytes32(uint256(5)), Collections.FoldExit.Full)
             ),
             65,
             "5 + 10 + 20 + 30 through the core"
@@ -192,7 +195,7 @@ contract CoreTargetLambdaTest is Test {
 
         bytes memory payload = abi.encodePacked(uint256(1), uint256(2), uint256(3));
         assertEq(
-            ops.mapWords(payload, address(assertions), template, _offs(elemOffset)),
+            cols.mapWords(payload, address(assertions), template, _offs(elemOffset)),
             abi.encodePacked(uint256(3), uint256(5), uint256(7)),
             "add(mul(elem, 2), 1) mapped through nested core reads"
         );
@@ -213,7 +216,7 @@ contract CoreTargetLambdaTest is Test {
 
         bytes memory payload = abi.encodePacked(uint256(1), uint256(2), uint256(3));
         assertEq(
-            ops.mapWords(payload, address(assertions), template, offs),
+            cols.mapWords(payload, address(assertions), template, offs),
             abi.encodePacked(uint256(1), uint256(4), uint256(9)),
             "mul(elem, elem) squares through a core-target multi-window template"
         );
@@ -230,7 +233,7 @@ contract CoreTargetLambdaTest is Test {
 
         bytes memory payload = abi.encodePacked(uint256(10), uint256(200), uint256(30), uint256(400));
         assertEq(
-            ops.filterWords(payload, address(assertions), template, _offs(elemOffset)),
+            cols.filterWords(payload, address(assertions), template, _offs(elemOffset)),
             abi.encodePacked(uint256(200), uint256(400)),
             "elements above the live floor survive"
         );
@@ -248,7 +251,7 @@ contract CoreTargetLambdaTest is Test {
 
         bytes memory payload = abi.encodePacked(uint256(1), uint256(3), uint256(5));
         assertEq(
-            ops.mapWords(payload, address(assertions), template, _offs(elemOffset)),
+            cols.mapWords(payload, address(assertions), template, _offs(elemOffset)),
             abi.encodePacked(uint256(3), uint256(9), uint256(15)),
             "mul(elem, 3) through the core's pick"
         );
@@ -292,14 +295,14 @@ contract CoreTargetLambdaTest is Test {
         bytes memory payload = abi.encodePacked(uint256(10), uint256(200), uint256(30));
         assertEq(
             uint256(
-                Operators(ops_).foldWords(payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, _offs(SDK_ELEM_OFFSET), bytes32(0), Operators.FoldExit.Any)
+                cols.foldWords(payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, _offs(SDK_ELEM_OFFSET), bytes32(0), Collections.FoldExit.Any)
             ),
             1,
             "the SDK-compiled predicate finds 200 > 100"
         );
         assertEq(
             uint256(
-                Operators(ops_).foldWords(payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, _offs(SDK_ELEM_OFFSET), bytes32(0), Operators.FoldExit.All)
+                cols.foldWords(payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, _offs(SDK_ELEM_OFFSET), bytes32(0), Collections.FoldExit.All)
             ),
             0,
             "10 and 30 do not beat the floor"

@@ -14,7 +14,7 @@ const sections = [
       { name: 'pick', desc: 'Select a raw 32-byte word from a resolved operand (signed index, negative from the end)' },
       { name: 'nav', desc: 'Typed navigation: interpret a resolved operand as a declared return tuple and walk a path through tuples and dynamic arrays — single words, canonical dynamic envelopes, and decoded lengths (LEN sentinel)' },
       { name: 'chain', desc: 'Follow runtime-resolved addresses: each hop staticcalls the address the previous hop returned' },
-      { name: 'read', desc: 'Construct a staticcall at judge time: selector plus runtime-resolved calldata segments against a runtime-resolved target — the composition socket every Operators call (and any view contract) is reached through' },
+      { name: 'read', desc: 'Construct a staticcall at judge time: selector plus runtime-resolved calldata segments against a runtime-resolved target — the composition socket every Operations call (and any view contract) is reached through' },
       { name: 'cond', desc: 'Lazy conditional: resolve the condition, then resolve and return ONLY the winning branch — the losing branch’s calls never happen' },
       { name: 'orElse', desc: 'Composable try/catch: resolve the attempt; on ANY revert (constraints double as guards) resolve the fallback instead' },
       { name: 'isValid', desc: '1 if an operand resolves and passes its constraints, else 0 — assert that a call succeeds, fails, or branch on resolvability' },
@@ -30,7 +30,7 @@ const sections = [
     ],
   },
   {
-    title: 'Operators (plain-value vocabulary)',
+    title: 'Operations (plain-value vocabulary)',
     fns: [
       { name: 'add … max, exp', desc: 'Checked word arithmetic as named functions — add, sub, mul, div, mod, min, max with int256 overloads for signed semantics, exp unsigned; decoded calldata reads on any explorer' },
       { name: 'absDiff', desc: 'The magnitude |a − b|, unsigned or signed, total even across the widest int256 span — the approximate-equality workhorse' },
@@ -38,8 +38,16 @@ const sections = [
       { name: 'bitAnd, bitOr, bitXor, shl, shr, bitSet', desc: 'Bitwise ops and shifts (EVM semantics), plus a one-call bit test for bitmap character classes' },
       { name: 'balance, codehash, timestamp, blockNumber, chainId', desc: 'Environment reads at judge time, as plain argument-free or address-taking calls' },
       { name: 'concat, slice, byteLen, hash', desc: 'Bytes assembly and keccak256 of the decoded payload — an EQ constraint over hash pins any string or bytes value' },
-      { name: 'indexOf, wordIndexOf', desc: 'Substring search by signed occurrence ordinal (-1 is the last match) and first-match word search over array payloads; both not-founds compose as length sentinels' },
+      { name: 'indexOf', desc: 'Substring search by signed occurrence ordinal (-1 is the last match)' },
       { name: 'encode', desc: 'Runtime abi.encode from pre-resolved component values (nav’s inverse) — its raw output is a calldata segment for read splicing' },
+    ],
+  },
+  {
+    title: 'Collections (iteration and arrays)',
+    fns: [
+      { name: 'mapWords, filterWords, mapValues, filterValues', desc: 'Transform and select word or ABI-valued elements through callbacks' },
+      { name: 'sortWords, sortValues', desc: 'Stable bottom-up merge sorting, with direct unsigned word comparisons or a generic comparator' },
+      { name: 'wordIndexOf, uniqueWords, uniqueValues', desc: 'Membership and stable deduplication' },
       { name: 'foldRange, foldBytes, foldWords', desc: 'Bounded folds over an index range, a byte string, or 32-byte words: a single-staticcall template lambda per element, with Any/All short-circuit — iteration without Turing completeness' },
     ],
   },
@@ -59,8 +67,8 @@ const sections = [
       message if you provide one. The core also owns every read primitive
       (selection, chained lookups, constructed calls, lazy conditionals);
       when a value needs computing, its read splices live operands into the
-      plain-typed Operators contract and judges the result. The core reads
-      and judges. Operators compute.
+      plain-typed Operations contract and judges the result. The core reads
+      and judges. Operations compute.
     </p>
     <div class="flex flex-col gap-3">
       {sections.map((section) => (

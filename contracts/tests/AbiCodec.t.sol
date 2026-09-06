@@ -1,24 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 import "forge-std/Test.sol";
-import "../Operators.sol";
-import "../CollectionOperators.sol";
+import "../Operations.sol";
+import "../Collections.sol";
 import "../AbiCodec.sol";
 
 contract AbiCodecTest is Test {
-    Operators ops;
-    CollectionOperators collections;
+    Operations ops;
+    Collections collections;
 
     function setUp() public {
-        ops = new Operators();
-        collections = new CollectionOperators();
+        ops = new Operations();
+        collections = new Collections();
     }
 
     function assertRejected(bytes memory value, string memory descriptor) private view {
         bytes[] memory args = new bytes[](1);
         args[0] = value;
-        (bool rawOK, bytes memory rawError) = address(ops).staticcall(abi.encodeCall(Operators.encode, (descriptor, args)));
-        (bool bytesOK, bytes memory bytesError) = address(ops).staticcall(abi.encodeCall(Operators.encodeBytes, (descriptor, args)));
+        (bool rawOK, bytes memory rawError) = address(ops).staticcall(abi.encodeCall(Operations.encode, (descriptor, args)));
+        (bool bytesOK, bytes memory bytesError) = address(ops).staticcall(abi.encodeCall(Operations.encodeBytes, (descriptor, args)));
         assertFalse(rawOK);
         assertFalse(bytesOK);
         assertEq(rawError, bytesError);
@@ -74,7 +74,7 @@ contract AbiCodecTest is Test {
         bytes[] memory values = new bytes[](2);
         values[0] = abi.encode(uint256(0));
         values[1] = abi.encode(uint256(1));
-        CollectionOperators.Callback memory cb = CollectionOperators.Callback(
+        Collections.Callback memory cb = Collections.Callback(
             address(this), this.extremeResult.selector, "(uint256)", new bytes[](1), 0, 0
         );
         vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
@@ -92,7 +92,7 @@ contract AbiCodecTest is Test {
             args[1] = abi.encode(pair);
             bytes memory expected = abi.encode(uint256(9), pair);
             assertEq(ops.encodeBytes("(uint256,bytes[2])", args), expected);
-            (bool ok, bytes memory raw) = address(ops).staticcall(abi.encodeCall(Operators.encode, ("(uint256,bytes[2])", args)));
+            (bool ok, bytes memory raw) = address(ops).staticcall(abi.encodeCall(Operations.encode, ("(uint256,bytes[2])", args)));
             assertTrue(ok);
             assertEq(raw, expected);
         }

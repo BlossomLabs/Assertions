@@ -4,7 +4,7 @@ description: Canonical CREATE2 addresses, how they stay deterministic, and how t
 ---
 
 import { ASSERTIONS_DEPLOY_GAS } from '../../../../lib/assertions-deployment';
-import { OPERATORS_DEPLOY_GAS } from '../../../../lib/operators-deployment';
+import { OPERATIONS_DEPLOY_GAS } from '../../../../lib/operations-deployment';
 
 export const fmtGas = (gas) => `~${(gas / 1e6).toFixed(2)}M gas`;
 
@@ -12,15 +12,15 @@ Each contract has the same deterministic address on every supported chain where 
 
 ```
 Assertions v2.0  0x8794b0d097C07e7520B421d02201E34c9eE3E156   (frozen core: judge + primitives)
-Operators  v1.0  0xE5c2D60293510f69456d006b8B177AAE0889911f   (unreleased periphery)
-Collections v1.0 0x87841575F679dA8E877db0A95b1bCF2C0d0D55dc   (unreleased generic collections)
+Operations  v1.0  0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e   (unreleased periphery)
+Collections v1.0 0xc011Ec7Cc443dA1218Da699EFd09639f35dd8379   (unreleased generic collections)
 ```
 
-Previous artifact candidates, including Operators `0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD`, use different bytecode. The interim zero-salt deployments (Assertions `0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F`, Operators `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`) stay live wherever they were sent, but are no longer canonical.
+Previous artifact candidates, including Operations `0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD`, use different bytecode. The interim zero-salt deployments (Assertions `0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F`, Operations `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`) stay live wherever they were sent, but are no longer canonical.
 
 Deployed versions are immutable: earlier releases keep working forever at their own canonical addresses. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) is updated separately after deployment, and the original v1.0 core stays live at [`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
 
-CollectionOperators is exported for manual deployment; the interactive page retains its existing core/Operators inventory. The [interactive deployments page](/deployments) shows per-chain status, lets you deploy with a connected wallet, and verifies contracts on explorers.
+Collections is exported for manual deployment; the interactive page retains its existing core/Operations inventory. The [interactive deployments page](/deployments) shows per-chain status, lets you deploy with a connected wallet, and verifies contracts on explorers.
 
 ## How the addresses stay deterministic
 
@@ -34,7 +34,7 @@ Same proxy, same salt, same init code on every chain: same address. Mining a van
 
 ## Deploying to a new chain
 
-The easiest way is the [deployments page](/deployments): connect a wallet, pick the network (or add a custom RPC), and send one transaction per contract (Assertions {fmtGas(ASSERTIONS_DEPLOY_GAS)}, Operators {fmtGas(OPERATORS_DEPLOY_GAS)}, measured by replaying the canonical deployment at export time). If the Arachnid proxy is missing on the chain, the page walks you through installing it permissionlessly first.
+The easiest way is the [deployments page](/deployments): connect a wallet, pick the network (or add a custom RPC), and send one transaction per contract (Assertions {fmtGas(ASSERTIONS_DEPLOY_GAS)}, Operations {fmtGas(OPERATIONS_DEPLOY_GAS)}, measured by replaying the canonical deployment at export time). If the Arachnid proxy is missing on the chain, the page walks you through installing it permissionlessly first.
 
 Manually, each deployment is a single transaction to the proxy with `salt ++ initCode` as calldata:
 
@@ -43,12 +43,12 @@ cast send 0x4e59b44847b379578588920cA78FbF26c0B4956C \
   "$(cat salt_and_initcode.hex)" --rpc-url <rpc> --private-key <key>
 ```
 
-The canonical salts live in `website/scripts/export-deploy-artifact.mjs`; the script regenerates `website/src/lib/assertions-deployment.ts` and `website/src/lib/operators-deployment.ts`, and `website/src/lib/collection-operators-deployment.ts` (salt, init code, measured deploy gas, and predicted address for each contract) from a fresh compile. It refuses to export if the compiled bytecode no longer reproduces the expected address.
+The canonical salts live in `website/scripts/export-deploy-artifact.mjs`; the script regenerates `website/src/lib/assertions-deployment.ts` and `website/src/lib/operations-deployment.ts`, and `website/src/lib/collections-deployment.ts` (salt, init code, measured deploy gas, and predicted address for each contract) from a fresh compile. It refuses to export if the compiled bytecode no longer reproduces the expected address.
 
 :::caution
 **Do not use `hardhat ignition deploy` for the canonical deployment.** Ignition's `create2` strategy goes through the CreateX factory, which re-hashes the salt and therefore produces a *different* address than the Arachnid proxy. The Ignition module is kept only for local testing.
 :::
 
 :::note[Chain requirements]
-The bytecode targets `cancun`. The deployment uses `PUSH0`, and blob-related Operators require Cancun opcode support; use Cancun-compatible chains for the full vocabulary. The exact compiler settings in `hardhat.config.ts` (solc 0.8.36, optimizer 200 runs, `evmVersion: cancun`) must not change, or the CREATE2 addresses change with the bytecode.
+The bytecode targets `cancun`. The deployment uses `PUSH0`, and blob-related Operations require Cancun opcode support; use Cancun-compatible chains for the full vocabulary. The exact compiler settings in `hardhat.config.ts` (solc 0.8.36, optimizer 200 runs, `evmVersion: cancun`) must not change, or the CREATE2 addresses change with the bytecode.
 :::

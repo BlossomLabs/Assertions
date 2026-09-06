@@ -1,20 +1,20 @@
 ---
-title: The Operators vocabulary
+title: The Operations vocabulary
 description: The plain-ABI operator contract, its whole surface, and how the core's read splices live operands into it.
 ---
 
-Assertion constraints revert or pass: they judge. Plain-value computation lives in `Operators` and the optional `CollectionOperators` periphery. Every function takes and returns plain ABI types, without ERC-8211 coupling. The core reads and judges; the periphery computes. Operators is unreleased; the current artifact addresses and deployment exports are listed in the repository README.
+Assertion constraints revert or pass: they judge. Plain-value computation lives in `Operations` and the optional `Collections` periphery. Every function takes and returns plain ABI types, without ERC-8211 coupling. The core reads and judges; the periphery computes. Operations is unreleased; the current artifact addresses and deployment exports are listed in the repository README.
 
-Composition happens in the core. Its [`read` primitive](/docs/core/reads) resolves `InputParam` operand expressions and splices the resolved values into plain calldata, so an operator call IS the composed expression: `ge(token.balanceOf(treasury), 100e18)` with a live first argument is one `read` whose segments are the balance call and the literal. Any deployed view or pure contract extends the vocabulary through the same socket; Operators is just the canonical first extension. And because it is plain periphery, it stays versionable: old deployments never break, new versions ship at new addresses as pure opt-ins, without touching the frozen core.
+Composition happens in the core. Its [`read` primitive](/docs/core/reads) resolves `InputParam` operand expressions and splices the resolved values into plain calldata, so an operator call IS the composed expression: `ge(token.balanceOf(treasury), 100e18)` with a live first argument is one `read` whose segments are the balance call and the literal. Any deployed view or pure contract extends the vocabulary through the same socket; Operations is just the canonical first extension. And because it is plain periphery, it stays versionable: old deployments never break, new versions ship at new addresses as pure opt-ins, without touching the frozen core.
 
 Why named functions instead of the old op-code enums: decoded calldata reads on explorers. `ge(balance, 100e18)` needs no docs open.
 
-## The surface
+## Operations surface
 
 | Group | Functions |
 |-------|-----------|
 | [Arithmetic](/docs/operators/words) | `add`, `sub`, `mul`, `div`, `mod`, `min`, `max` (uint256 + int256 overloads), `exp` (uint or int base, uint exponent), `absDiff` (uint + int operands, uint256 magnitude, total), `mulDiv` (signed/unsigned 512-bit mul-then-div, explicit rounding), `addMod`/`mulMod` (512-bit EVM builtins), `sqrt` (floor), `log2` (floor, reverts on 0) |
-| [Fixed point](/docs/operators/words) | `rpow(x, n, base)` (compounding, `base` is one unit — 1e27 ray or 1e18 wad), `expWad`/`lnWad` (e^x and its inverse, wad, signed) |
+| [Fixed point](/docs/operators/words) | `rpow(x, n, base)` (compounding, `base` is one unit — 1e27 ray or 1e18 wad) |
 | [Comparisons](/docs/operators/words) | `eq`, `ne` (bit-level, uint), `lt`, `gt`, `le`, `ge` (uint256 + int256 overloads); all return `bool` |
 | [Bitwise](/docs/operators/words) | `bitAnd`, `bitOr`, `bitXor`, `shl`, `shr` (uint, plus an int256 overload: arithmetic shift, EVM SAR), `bitSet(mask, index)` |
 | [Environment](/docs/operators/words) | `balance(address)`, `codeHash(address)`, `timestamp()`, `blockNumber()`, `chainId()`, `baseFee()`, `prevRandao()`, `coinbase()`, `gasLimit()`, `blobBaseFee()`, `blockHash(n)`, `origin()`, `gasPrice()`, `blobHash(uint256)` |
@@ -24,16 +24,27 @@ Why named functions instead of the old op-code enums: decoded calldata reads on 
 | [Strings](/docs/operators/data) | `split(bytes, bytes)`, `replace(bytes, bytes, bytes)`, `toLower(bytes)`, `toUpper(bytes)` (ASCII-only case folds), `charset(bytes, uint256)` (every byte in a 256-bit class, native) |
 | [Parse](/docs/operators/data) | `parseUint`/`parseInt`, signed/unsigned `toString`, `parseUnits`/`parseUnitsUnsigned`, signed/unsigned `formatUnits` |
 | [Encode](/docs/operators/data) | `encode` (raw runtime `abi.encode`) and `encodeBytes` (bytes envelope) |
-| [Folds](/docs/operators/fold) | `foldRange`, `foldBytes`, `foldWords`, with `FoldExit` `Full`/`Any`/`All` |
-| [Word arrays](/docs/operators/fold) | `mapWords`/`filterWords` (lambda map/filter over a word payload), `iotaWords(n)` (the index generator), `wordIndexOf` (word-count sentinel), `reverseWords`, `zipWords`, `unzipWords`, `sortWords`, `uniqueWords`, `distinctWords`, `sumWords` (checked sum of a payload, native) |
 
 See [generic ABI collections](/docs/operators/collections) for multiword map/filter/fold, stable sorting and deduplication.
+
+## Collections surface
+
+`Collections` owns iteration and array processing; `Operations` supplies scalar callback functions.
+
+| Group | Functions |
+|---|---|
+| [Folds](/docs/operators/fold) | `foldRange`, `foldBytes`, `foldWords`, with `FoldExit` `Full`/`Any`/`All` |
+| [Word arrays](/docs/operators/fold) | `mapWords`/`filterWords` (lambda map/filter over a word payload), `iotaWords(n)` (the index generator), `wordIndexOf` (word-count sentinel), `reverseWords`, `zipWords`, `unzipWords`, `sortWords`, `uniqueWords(s, ordered)`, `sumWords` (checked sum of a payload, native) |
+
+Generic ABI-valued operations are `mapValues`, `filterValues`, `foldValues`, `sortValues`, `uniqueValues`, and `flattenValues`; `validateValue`, `packArray`, and `unpackArray` adapt canonical ABI envelopes. See [generic collections](/docs/operators/collections).
+
+Both word sorting and generic comparator sorting use stable bottom-up merge sort.
 
 ## What earns a slot here
 
 The surface stays small on purpose, and every function passes one of three admission tests. It is inexpressible at any node count by composing the rest of the vocabulary (loops like `sortWords` or `replace`, opcode exposures like `gasPrice`, variable-length output like `filterWords`); or it is the single-call form of a fold or map lambda whose composed form would multiply the hot loop's external calls; or it is a native loop for a hot fixed reduction, collapsing a fold's N external calls into one.
 
-Every number below comes from `contracts/tests/OperatorsGas.t.sol` and moves with the compiler, so re-run `pnpm test` and read its log lines rather than trusting the table. Each figure is `gasleft()` around one staticcall, which is what a fold and the core's `read` each pay per element.
+Every number below comes from `contracts/tests/OperationsGas.t.sol` and moves with the compiler, so re-run `pnpm test` and read its log lines rather than trusting the table. Each figure is `gasleft()` around one staticcall, which is what a fold and the core's `read` each pay per element.
 
 The second test is the reason `bitSet` and `hashPairSorted` earn slots even though both compose in principle (`bitSet` is `bitAnd(shr(mask, i), 1)`, and once `sortWords` exists `hashPairSorted` is `hash(sortWords([a, b]))`). A fold or map lambda is one staticcall per element; the composed form routes each element through the core's `read` and a nested `read`, so every iteration pays several times the gas. Per element:
 
@@ -53,17 +64,14 @@ The third test is why `charset` (every byte in a 256-bit class) and `sumWords` (
 
 `charset`'s edge widens with length (its fold calls once per byte); together the two functions add about 290 bytes of runtime bytecode. The bar for this category is a hot, fixed reduction with a measured saving, not a speculative one, so it stays short.
 
-The first test is why the fixed-point family — `rpow`, `expWad`, `lnWad` — is here, and it is the starkest case of the three. An expression is a **tree with no way to name a subterm**: `InputParam` has no reference mechanism, so a repeated operand is physically duplicated in calldata. Squaring duplicates, which makes binary exponentiation `2^k` copies of its base — about 33 million for the per-second compounding an APY needs. The fold cannot rescue it either, and the reason is worth stating precisely now that a lambda may name its ELEMENT as often as it likes (`@num!($x * $x)` squares one in a single call). The ACCUMULATOR gets exactly one window, because the engine takes one `accOffset` against an array of element offsets — so `acc * acc` has nowhere to put its second operand, and binary exponentiation is out. What a fold can express is the linear form, `acc = acc * x`, at one external call per iteration: tens of millions of them for the same per-second year. Compounding a 5% APR over a year is one 12,354-gas call here against a composed form that cannot be encoded at any size:
+The first test is why `rpow` is here, and it is the starkest case of the three. An expression is a **tree with no way to name a subterm**: `InputParam` has no reference mechanism, so a repeated operand is physically duplicated in calldata. Squaring duplicates, which makes binary exponentiation `2^k` copies of its base — about 33 million for the per-second compounding an APY needs. The fold cannot rescue it either, and the reason is worth stating precisely now that a lambda may name its ELEMENT as often as it likes (`@num!($x * $x)` squares one in a single call). The ACCUMULATOR gets exactly one window, because the engine takes one `accOffset` against an array of element offsets — so `acc * acc` has nowhere to put its second operand, and binary exponentiation is out. What a fold can express is the linear form, `acc = acc * x`, at one external call per iteration: tens of millions of them for the same per-second year. Compounding a 5% APR over a year is one 12,354-gas call here against a composed form that cannot be encoded at any size:
 
 | Function | Gas | Note |
 |----------|-----|------|
 | `rpow(1e27 + r, 31536000, 1e27)` | 12,354 | ~25 squarings inside one call |
 | `rpow(x, 2, 1e27)` | 1,488 | a single squaring |
-| `expWad(1e18)` | 1,171 | e^x, wad |
-| `lnWad(2e18)` | 1,830 | its inverse |
-| `log2(2^255)` | 1,303 | the bit scan `lnWad` normalizes by, exposed on its own |
+| `log2(2^255)` | 1,303 | exact integer bit scan |
 
-`expWad` and `lnWad` are admitted as a unit with `rpow` rather than on their own measured saving: continuous compounding and its inverse are the same primitive seen from two sides, and splitting them would leave a surface that can grow a rate but not read one back. `log2` is a byte of dispatch over code `lnWad` already carries.
 
 Everything that fails all three tests composes and stays out: `join` uses the delimiter argument of `concat`, pair hashing (unsorted) is `hash` over an encoder-built two-word payload, and packed encoding is `concat` over `slice`-narrowed words.
 
@@ -77,7 +85,7 @@ bytes4 constant GE_U  = bytes4(keccak256("ge(uint256,uint256)"));
 bytes4 constant GT_S  = bytes4(keccak256("gt(int256,int256)"));
 ```
 
-Non-overloaded functions (`exp`, the bitwise ops, the environment reads, the calls, the bytes/string/search/parse/encode/fold family and the word-array ops) work with plain `Operators.exp.selector`. The one asymmetric pair is `shr`: its signed overload takes `(int256, uint256)` (the shift amount stays unsigned), so its explicit selector is `shr(int256,uint256)`.
+Non-overloaded functions (`exp`, the bitwise ops, the environment reads, the calls, the bytes/string/search/parse/encode/fold family and the word-array ops) work with plain `Operations.exp.selector`. The one asymmetric pair is `shr`: its signed overload takes `(int256, uint256)` (the shift amount stays unsigned), so its explicit selector is `shr(int256,uint256)`.
 
 ## The composition model
 
@@ -94,7 +102,7 @@ function lit(uint256 x) pure returns (InputParam memory) {
     );
 }
 
-/// Core `read` calldata splicing two operands into a binary Operators call.
+/// Core `read` calldata splicing two operands into a binary Operations call.
 function read2(address operators, bytes4 sel, InputParam memory a, InputParam memory b)
     pure returns (bytes memory)
 {
@@ -124,4 +132,4 @@ bytes memory holds = read2(operators, GE_U,
 assertions.assertParam(callParam(address(assertions), holds, eq(bytes32(uint256(1)))));
 ```
 
-Operands are still full `InputParam`s, so they nest (an operand may be another `read`, a `pick`, a `nav`, a `cond`) and they carry inline constraints, validated as they resolve. Operators functions take plain values, and the core's `read` is the one place operand expressions get resolved and spliced.
+Operands are still full `InputParam`s, so they nest (an operand may be another `read`, a `pick`, a `nav`, a `cond`) and they carry inline constraints, validated as they resolve. Operations functions take plain values, and the core's `read` is the one place operand expressions get resolved and spliced.

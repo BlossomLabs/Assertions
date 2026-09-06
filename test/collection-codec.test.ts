@@ -11,8 +11,8 @@ const codecAbi = parseAbi([
 
 async function deployCodec() {
   const { viem } = await network.connect();
-  const { address } = await viem.deployContract("CollectionOperators");
-  const { address: operators } = await viem.deployContract("Operators");
+  const { address } = await viem.deployContract("Collections");
+  const { address: operators } = await viem.deployContract("Operations");
   const client = await viem.getPublicClient();
   return {
     encodeBytes: (args: [string, Hex[]]) => client.readContract({address: operators, abi: codecAbi, functionName: "encodeBytes", args}),
@@ -22,7 +22,7 @@ async function deployCodec() {
 }
 
 // These fixtures come from viem rather than the Solidity codec's offset arithmetic.
-describe("CollectionOperators independent ABI fixtures", () => {
+describe("Collections independent ABI fixtures", () => {
   it("packs and extracts nested static and dynamic values exactly", async () => {
     const ops = await deployCodec();
     const cases: {type: string; values: any[]}[] = [

@@ -54,7 +54,7 @@ import {
 
 /** Direct mode ("simple") emits the dedicated assert-* commands of the
  *  Assertions core. Composed mode ("advanced") is the expression editor
- *  (subject ⟨op⟩ expected over the read-spliced Operators tree). Suggest hands the
+ *  (subject ⟨op⟩ expected over the read-spliced Operations tree). Suggest hands the
  *  batch to the AI assistant instead of building one manually. */
 type Mode = "simple" | "advanced" | "suggest";
 type SimpleKind = "call" | "balance" | "code" | "block" | "chainId";
@@ -111,7 +111,7 @@ const MODES: {
   {
     value: "advanced",
     label: "Composed expression",
-    dependency: "Uses Operators v1.0",
+    dependency: "Uses Operations v1.0",
     hint: "Chain, combine, or transform runtime values.",
   },
   {
@@ -473,7 +473,7 @@ export function AssertionForm({
   return (
     <div className="space-y-4">
       {/* First decision: build directly on the Assertions core, compose an
-          expression through the Operators contract, or hand the batch to
+          expression through the Operations contract, or hand the batch to
           the AI assistant */}
       <div role="group" aria-label="How do you want to add assertions?">
         <span className={labelCls}>How do you want to add assertions?</span>

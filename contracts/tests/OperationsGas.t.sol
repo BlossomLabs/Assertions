@@ -3,7 +3,8 @@ pragma solidity ^0.8.28;
 
 import "forge-std/Test.sol";
 import "../Assertions.sol";
-import "../Operators.sol";
+import "../Operations.sol";
+import "../Collections.sol";
 import "../ERC8211.sol";
 
 /**
@@ -23,21 +24,22 @@ import "../ERC8211.sol";
  *      Run with `pnpm test` and read the emitted log lines to refresh the
  *      tables in the docs.
  */
-contract OperatorsGasTest is Test {
+contract OperationsGasTest is Test {
     Assertions public assertions;
-    Operators public ops;
+    Operations public ops;
+    Collections cols;
 
     bytes4 constant ADD_U = bytes4(keccak256("add(uint256,uint256)"));
     bytes4 constant BITAND_U = bytes4(keccak256("bitAnd(uint256,uint256)"));
     bytes4 constant SHR_U = bytes4(keccak256("shr(uint256,uint256)"));
 
     uint256 constant RAY = 1e27;
-    uint256 constant WAD = 1e18;
     uint256 constant SPY = 31_536_000;
 
     function setUp() public {
         assertions = new Assertions();
-        ops = new Operators();
+        ops = new Operations();
+        cols = new Collections();
     }
 
 
@@ -83,14 +85,14 @@ contract OperatorsGasTest is Test {
             mask |= 1 << i;
         }
 
-        uint256 native = _cost(address(ops), abi.encodeCall(Operators.charset, (s, mask)));
+        uint256 native = _cost(address(ops), abi.encodeCall(Operations.charset, (s, mask)));
 
-        bytes memory template = abi.encodeWithSelector(Operators.bitSet.selector, mask, uint256(0));
+        bytes memory template = abi.encodeWithSelector(Operations.bitSet.selector, mask, uint256(0));
         uint256 fold = _cost(
-            address(ops),
+            address(cols),
             abi.encodeCall(
-                Operators.foldBytes,
-                (s, address(ops), template, 36, _offs(36), bytes32(uint256(1)), Operators.FoldExit.All)
+                Collections.foldBytes,
+                (s, address(ops), template, 36, _offs(36), bytes32(uint256(1)), Collections.FoldExit.All)
             )
         );
 
@@ -121,14 +123,14 @@ contract OperatorsGasTest is Test {
             uint256(12)
         );
 
-        uint256 native = _cost(address(ops), abi.encodeCall(Operators.sumWords, (payload)));
+        uint256 native = _cost(address(cols), abi.encodeCall(Collections.sumWords, (payload)));
 
         bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(0));
         uint256 fold = _cost(
-            address(ops),
+            address(cols),
             abi.encodeCall(
-                Operators.foldWords,
-                (payload, address(ops), template, 4, _offs(36), bytes32(0), Operators.FoldExit.Full)
+                Collections.foldWords,
+                (payload, address(ops), template, 4, _offs(36), bytes32(0), Collections.FoldExit.Full)
             )
         );
 
@@ -149,7 +151,7 @@ contract OperatorsGasTest is Test {
         uint256 ch = uint256(uint8(bytes1("h")));
 
         // What a fold pays per element with bitSet as the lambda.
-        uint256 native = _cost(address(ops), abi.encodeCall(Operators.bitSet, (mask, ch)));
+        uint256 native = _cost(address(ops), abi.encodeCall(Operations.bitSet, (mask, ch)));
 
         // The same predicate composed: bitAnd(shr(mask, ch), 1), routed
         // through the core's read with a nested read inside it — the shape
@@ -174,15 +176,15 @@ contract OperatorsGasTest is Test {
         bytes32 a = keccak256("left");
         bytes32 b = keccak256("right");
 
-        uint256 native = _cost(address(ops), abi.encodeCall(Operators.hashPairSorted, (a, b)));
+        uint256 native = _cost(address(ops), abi.encodeCall(Operations.hashPairSorted, (a, b)));
 
-        // Composed: hash(sortWords([a, b])) — two nested Operators calls
+        // Composed: hash(sortWords([a, b])) — two nested Operations calls
         // through the core per Merkle level.
         bytes memory payload = abi.encodePacked(a, b);
         InputParam memory sorted = InputParam(
             InputParamType.CALL_DATA,
             InputParamFetcherType.STATIC_CALL,
-            abi.encode(address(ops), abi.encodeCall(Operators.sortWords, (payload))),
+            abi.encode(address(cols), abi.encodeCall(Collections.sortWords, (payload))),
             _none()
         );
         InputParam[] memory one = new InputParam[](1);
@@ -201,16 +203,12 @@ contract OperatorsGasTest is Test {
 
     function test_gas_fixedPoint() public {
         uint256 ratePerSecond = 5e25 / SPY;
-        uint256 rpowApy = _cost(address(ops), abi.encodeCall(Operators.rpow, (RAY + ratePerSecond, SPY, RAY)));
-        uint256 rpowSmall = _cost(address(ops), abi.encodeCall(Operators.rpow, (15e26, 2, RAY)));
-        uint256 expCost = _cost(address(ops), abi.encodeCall(Operators.expWad, (int256(WAD))));
-        uint256 lnCost = _cost(address(ops), abi.encodeCall(Operators.lnWad, (2 * int256(WAD))));
-        uint256 log2Cost = _cost(address(ops), abi.encodeCall(Operators.log2, (type(uint256).max)));
+        uint256 rpowApy = _cost(address(ops), abi.encodeCall(Operations.rpow, (RAY + ratePerSecond, SPY, RAY)));
+        uint256 rpowSmall = _cost(address(ops), abi.encodeCall(Operations.rpow, (15e26, 2, RAY)));
+        uint256 log2Cost = _cost(address(ops), abi.encodeCall(Operations.log2, (type(uint256).max)));
 
         emit log_named_uint("rpow  (APY exponent, 2^25)", rpowApy);
         emit log_named_uint("rpow  (squaring)          ", rpowSmall);
-        emit log_named_uint("expWad(1e18)              ", expCost);
-        emit log_named_uint("lnWad (2e18)              ", lnCost);
         emit log_named_uint("log2  (2^255)             ", log2Cost);
 
         // rpow over the APY exponent is ~25 squarings INSIDE one call. The
@@ -228,7 +226,7 @@ contract OperatorsGasTest is Test {
     // The SDK fixture from CoreTargetLambda.t.sol (~964 bytes): a core-target
     // `gt(<element>, tgt.getValue())` read. Measured here so the doctrine
     // cap quotes a real composed-lambda cost at B1 template size, not the
-    // harness's minimal Operators templates.
+    // harness's minimal Operations templates.
     bytes constant SDK_TEMPLATE =
         hex"3efa16b7000000000000000000000000000000000000000000000000000000000000006021e5749b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000097e7a7000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000012000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000007a49e70000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000420965255000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
     uint256 constant SDK_ELEM_OFFSET = 580;
@@ -244,40 +242,40 @@ contract OperatorsGasTest is Test {
 
         bytes memory payload = abi.encodePacked(uint256(10), uint256(200), uint256(30));
         uint256 composed = _cost(
-            ops_,
+            address(cols),
             abi.encodeCall(
-                Operators.foldWords,
-                (payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, _offs(SDK_ELEM_OFFSET), bytes32(0), Operators.FoldExit.Any)
+                Collections.foldWords,
+                (payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, _offs(SDK_ELEM_OFFSET), bytes32(0), Collections.FoldExit.Any)
             )
         );
 
-        // Same domain, tiny Operators lambda (gt(elem, 100)) for the ratio.
+        // Same domain, tiny Operations lambda (gt(elem, 100)) for the ratio.
         bytes4 GT_U = bytes4(keccak256("gt(uint256,uint256)"));
         bytes memory tiny = abi.encodeWithSelector(GT_U, uint256(0), uint256(100));
         uint256 direct = _cost(
-            address(ops),
+            address(cols),
             abi.encodeCall(
-                Operators.foldWords,
-                (payload, address(ops), tiny, 4, _offs(4), bytes32(0), Operators.FoldExit.Any)
+                Collections.foldWords,
+                (payload, address(ops), tiny, 4, _offs(4), bytes32(0), Collections.FoldExit.Any)
             )
         );
 
         emit log_named_uint("composed B1 fold (~964B tpl, 3 elems)", composed);
-        emit log_named_uint("direct Operators fold (tiny tpl, 3 elems)", direct);
+        emit log_named_uint("direct Operations fold (tiny tpl, 3 elems)", direct);
         emit log_named_uint("composed/direct ratio x100", (composed * 100) / direct);
         // Calldata copying + core decode scale with template size; the
         // composed form must stay a clear multiple of the tiny fold.
-        assertGt(composed, direct, "a ~1KB core-target fold must cost more than a tiny Operators fold");
+        assertGt(composed, direct, "a ~1KB core-target fold must cost more than a tiny Operations fold");
     }
 
     // ============ Size ============
 
     function test_runtimeSizeWithinEip170() public {
         uint256 size = address(ops).code.length;
-        emit log_named_uint("Operators runtime bytes", size);
+        emit log_named_uint("Operations runtime bytes", size);
         emit log_named_uint("EIP-170 headroom       ", 24576 - size);
         // Nothing else in the repo checks this, and the periphery is the
         // contract that grows.
-        assertLt(size, 24576, "Operators must stay deployable under EIP-170");
+        assertLt(size, 24576, "Operations must stay deployable under EIP-170");
     }
 }

@@ -47,7 +47,7 @@ Syntax (check get_docs before using anything you are not sure of):
   assert @chainId! == <id> / assert @block.number! <op> <n> / assert @block.timestamp! <op> <t>   # needs load receipts
 <op> is == != > >= < <= or ~= with --delta for approximate values. Both sides may be live: assert $a::x() > $b::y() compares on-chain at execution time. int256 returns compare signed (negative expected values work); string/bytes/bytes32 support == and !=.
 
-On-chain composition — helpers with a trailing ! evaluate ON-CHAIN at assertion time (inside assert only), composed via the core's read primitive splicing live values into the Operators contract. Spaces around every operator are mandatory; top-level infix is invalid — wrap it:
+On-chain composition — helpers with a trailing ! evaluate ON-CHAIN at assertion time (inside assert only), composed via the core's read primitive splicing live values into the Operations contract. Spaces around every operator are mandatory; top-level infix is invalid — wrap it:
   @num!(<expr>)   on-chain arithmetic: + - * / % ^ and parentheses over live ::-calls, ! helpers and constants, e.g. @num!(@balance!(ETH @me) + @token(WETH)::balanceOf(@me))
   @bool!(<expr>)  on-chain comparisons and logic: == != < <= > >= and or xor not, e.g. @bool!(($gov::quorum() > 0) or (not $gov::paused()))
   @balance!(ETH|<token> <addr>)  live balance: native for ETH, else ERC-20 balanceOf; token symbols resolve like @token

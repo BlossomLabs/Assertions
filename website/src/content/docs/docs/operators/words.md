@@ -3,9 +3,9 @@ title: "Words: arithmetic, comparisons, bitwise & environment"
 description: Named word operations with int256 overloads, spliced over live operands by the core's read.
 ---
 
-Expressions over call results follow the same composition philosophy as everything else: every operand is an ERC-8211 `InputParam` (a raw literal, a staticcall, a balance read, or a nested core expression), the core's [`read`](/docs/core/reads) resolves them and splices the values into plain Operators calldata, and the judge consumes the result through a `STATIC_CALL` fetcher pointed at the core.
+Expressions over call results follow the same composition philosophy as everything else: every operand is an ERC-8211 `InputParam` (a raw literal, a staticcall, a balance read, or a nested core expression), the core's [`read`](/docs/core/reads) resolves them and splices the values into plain Operations calldata, and the judge consumes the result through a `STATIC_CALL` fetcher pointed at the core.
 
-The examples reuse the `callParam`/`balanceParam`/`eq`/`gte`/`noConstraints` helpers from [the Solidity guide](/docs/solidity) and `lit`/`read2`/`read1` from [the Operators overview](/docs/operators), plus the explicit selectors overloads require:
+The examples reuse the `callParam`/`balanceParam`/`eq`/`gte`/`noConstraints` helpers from [the Solidity guide](/docs/solidity) and `lit`/`read2`/`read1` from [the Operations overview](/docs/operators), plus the explicit selectors overloads require:
 
 ```solidity
 bytes4 constant ADD_U = bytes4(keccak256("add(uint256,uint256)"));
@@ -85,7 +85,7 @@ bytes memory hasTokens = read2(operators, GT_U,
     callParam(token, abi.encodeCall(IERC20.balanceOf, (addr1)), noConstraints()),
     lit(10)
 );
-bytes memory either = read2(operators, Operators.bitOr.selector,
+bytes memory either = read2(operators, Operations.bitOr.selector,
     callParam(address(assertions), hasEth, noConstraints()),
     callParam(address(assertions), hasTokens, noConstraints())
 );
@@ -103,7 +103,7 @@ Boolean negation is `eq(x, 0)`; the bitwise complement is `bitXor(x, type(uint25
 Flag checks on a packed config word, with a literal operand supplying the mask. "`config & MASK != 0`" is a `bitAnd` judged `GTE 1`:
 
 ```solidity
-bytes memory masked = read2(operators, Operators.bitAnd.selector,
+bytes memory masked = read2(operators, Operations.bitAnd.selector,
     callParam(configSource, abi.encodeCall(IConfig.packedConfig, ()), noConstraints()),
     lit(MASK)
 );
@@ -116,25 +116,25 @@ Sign extension is a two-op recipe over the shift pair: a narrow two's-complement
 
 ## Environment reads
 
-The environment functions turn non-call quantities into ordinary staticcalls, so for *known* addresses and argument-free reads no splicing is involved: the fetcher targets Operators directly.
+The environment functions turn non-call quantities into ordinary staticcalls, so for *known* addresses and argument-free reads no splicing is involved: the fetcher targets Operations directly.
 
 ```solidity
 // block timestamp past the unlock time
 assertions.assertParam(
-    callParam(address(operators), abi.encodeCall(Operators.timestamp, ()), gte(unlockTime + 1))
+    callParam(address(operators), abi.encodeCall(Operations.timestamp, ()), gte(unlockTime + 1))
 );
 // on mainnet
 assertions.assertParam(
-    callParam(address(operators), abi.encodeCall(Operators.chainId, ()), eq(bytes32(uint256(1))))
+    callParam(address(operators), abi.encodeCall(Operations.chainId, ()), eq(bytes32(uint256(1))))
 );
 ```
 
 Beyond `timestamp`, `blockNumber` and `chainId`, the block environment is fully readable: `baseFee()` and `blobBaseFee()` gate a batch on fee conditions ("only execute while basefee <= X"), `prevRandao()`, `coinbase()` and `gasLimit()` read the block header, `blockHash(n)` follows BLOCKHASH semantics (0 for the current block, the future, and blocks older than 256), and `origin()` reads the transaction origin, letting an assertion gate on who is executing the batch it guards. The transaction context is readable too: `gasPrice()` bounds what the batch is willing to pay ("only execute while gas <= X wei"), and `blobHash(uint256)` reads the versioned hash of a blob carried by the executing transaction (0 when the index is out of range), so a batch can assert it ships with the blobs it was built for. In EVMcrispr each is a bang helper in the receipts module (`load receipts`): `@block.baseFee!`, `@block.blobBaseFee!`, `@block.prevrandao!`, `@block.coinbase!`, `@block.gasLimit!`, `@block.hash!(n)` (the block number composes live, e.g. `@block.hash!(@block.number! - 1)`), `@tx.from!` (the origin: the from field the receipt will seal), `@tx.gasPrice!` and `@tx.blobHash!(i)`. The `@block.*` family also has plain off-chain faces addressed by block number or tag, `@block.baseFee(block? chain?)` and friends, which read sealed headers at build time; plain `@block.hash` reads any sealed block, unbounded by the opcode's 256-block window.
 
-`balance(account)` reads the native balance and `codeHash(account)` the EXTCODEHASH (`bytes32(0)` for a nonexistent account, `keccak256("")` for an existing code-less one). Note the `BALANCE` fetcher already covers native and ERC-20 balances of known addresses without any Operators call; these earn their keep when the address is *computed*. The balance of `registry.treasury()`, or "the proxy's current implementation is the audited contract":
+`balance(account)` reads the native balance and `codeHash(account)` the EXTCODEHASH (`bytes32(0)` for a nonexistent account, `keccak256("")` for an existing code-less one). Note the `BALANCE` fetcher already covers native and ERC-20 balances of known addresses without any Operations call; these earn their keep when the address is *computed*. The balance of `registry.treasury()`, or "the proxy's current implementation is the audited contract":
 
 ```solidity
-bytes memory implHash = read1(operators, Operators.codeHash.selector,
+bytes memory implHash = read1(operators, Operations.codeHash.selector,
     callParam(proxy, abi.encodeCall(IProxy.implementation, ()), noConstraints())
 );
 assertions.assertParam(callParam(address(assertions), implHash, eq(auditedCodeHash)));
@@ -145,7 +145,7 @@ assertions.assertParam(callParam(address(assertions), implHash, eq(auditedCodeHa
 **Exponentiation & live decimals scaling.** `exp` gives checked `**` (overflow reverts with `Panic(0x11)`, `0 ** 0 == 1` per EVM semantics). Both signed and unsigned bases are supported; the exponent is always unsigned. The canonical use is scaling thresholds by a live `decimals()` (EVMcrispr's `@num!` with `^`): "`a` holds at least 5 whole tokens":
 
 ```solidity
-bytes memory scale = read2(operators, Operators.exp.selector,       // 10 ** decimals()
+bytes memory scale = read2(operators, Operations.exp.selector,       // 10 ** decimals()
     lit(10),
     callParam(token, abi.encodeCall(IERC20.decimals, ()), noConstraints())
 );

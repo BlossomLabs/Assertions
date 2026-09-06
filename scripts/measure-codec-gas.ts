@@ -1,5 +1,5 @@
 // Transaction gas, including calldata/intrinsic costs. Optional baseline runtime
-// enables a same-input comparison: OPERATORS_BASELINE_RUNTIME=/path/to/runtime.hex
+// enables a same-input comparison: OPERATIONS_BASELINE_RUNTIME=/path/to/runtime.hex
 // pnpm hardhat run scripts/measure-codec-gas.ts
 import { readFileSync } from "node:fs";
 import { network } from "hardhat";
@@ -7,11 +7,11 @@ import { encodeAbiParameters, encodeFunctionData, parseAbiParameters, type Hex }
 
 const { viem } = await network.connect("hardhatMainnet");
 const client = await viem.getPublicClient();
-const ops = await viem.deployContract("Operators");
+const ops = await viem.deployContract("Operations");
 const targets: [string, `0x${string}`][] = [["current", ops.address]];
-if (process.env.OPERATORS_BASELINE_RUNTIME) {
+if (process.env.OPERATIONS_BASELINE_RUNTIME) {
   const baseline = "0x000000000000000000000000000000000000beef" as const;
-  const code = readFileSync(process.env.OPERATORS_BASELINE_RUNTIME, "utf8").trim() as Hex;
+  const code = readFileSync(process.env.OPERATIONS_BASELINE_RUNTIME, "utf8").trim() as Hex;
   await client.request({ method: "hardhat_setCode" as never, params: [baseline, code] as never });
   targets.unshift(["baseline", baseline]);
 }

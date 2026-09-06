@@ -6,9 +6,9 @@ import { encodeAbiParameters, encodeFunctionData, parseAbiParameters, toFunction
 
 const { viem } = await network.connect("hardhatMainnet");
 const publicClient = await viem.getPublicClient();
-const ops = await viem.deployContract("Operators");
-const collections = await viem.deployContract("CollectionOperators");
-const { abi } = JSON.parse(readFileSync("artifacts/contracts/CollectionOperators.sol/CollectionOperators.json", "utf8")) as {abi: Abi};
+const ops = await viem.deployContract("Operations");
+const collections = await viem.deployContract("Collections");
+const { abi } = JSON.parse(readFileSync("artifacts/contracts/Collections.sol/Collections.json", "utf8")) as {abi: Abi};
 const encodeInt = (value: bigint) => encodeAbiParameters(parseAbiParameters("int256"), [value]);
 const callback = {
   target: ops.address,

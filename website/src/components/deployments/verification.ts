@@ -55,7 +55,7 @@ export function getEtherscanChains(): Promise<Set<number>> {
   return supportedChainsPromise;
 }
 
-/** True when the source of BOTH contracts is verified on the chain's explorer. */
+/** True when the source of all three contracts is verified on the chain's explorer. */
 export async function isContractVerified(
   chainId: number,
   apiKey: string,
@@ -137,7 +137,7 @@ async function verifyOne(
 }
 
 /**
- * Verifies BOTH contracts (Assertions + Operators) on the target chain from
+ * Verifies all three contracts (Assertions + Operations + Collections) on the target chain from
  * the compiler inputs bundled with the site. Resolves with "already-verified"
  * only when every contract was already verified, "verified" otherwise; throws
  * on failure.

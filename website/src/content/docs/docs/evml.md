@@ -3,7 +3,7 @@ title: EVMcrispr integration
 description: Writing assertions as one-line EVML scripts with the assert command.
 ---
 
-[EVMcrispr](https://evmcrispr.blossom.software)'s `assert` command compiles readable one-line scripts into the exact core and Operators calldata described in the rest of these docs. It lives in the std module, which is always loaded, so an assertion needs no `load` line of its own. Scripts that use the lang module's array/string helpers (`@len!`, `@str.split!`, `@bytes.len!`, ...) also need `load lang`; the chain id and the block and transaction context reads (`@chainId!`, `@block.timestamp!`, `@tx.from!`, ...) need `load receipts`; the code and storage reads (`@codeHash!`, ...) need `load contracts`, and the arithmetic conveniences (`@min!`, `@sqrt!`, ...) need `load math`. The [visual builder](/builder) generates these lines for you and previews their live values.
+[EVMcrispr](https://evmcrispr.blossom.software)'s `assert` command compiles readable one-line scripts into the exact core and Operations calldata described in the rest of these docs. It lives in the std module, which is always loaded, so an assertion needs no `load` line of its own. Scripts that use the lang module's array/string helpers (`@len!`, `@str.split!`, `@bytes.len!`, ...) also need `load lang`; the chain id and the block and transaction context reads (`@chainId!`, `@block.timestamp!`, `@tx.from!`, ...) need `load receipts`; the code and storage reads (`@codeHash!`, ...) need `load contracts`, and the arithmetic conveniences (`@min!`, `@sqrt!`, ...) need `load math`. The [visual builder](/builder) generates these lines for you and previews their live values.
 
 ```evml
 
@@ -18,7 +18,7 @@ The builder and this site's EVML highlighting use EVMcrispr
 [`6513da6c`](https://github.com/EVMcrispr/evmcrispr/commit/6513da6c4407f912d41a6490995afb6ff204b498),
 pinned in `website/package.json`. It adds the corrected Assertions runtime to
 the latest `next` baseline, `4fd8ed6b`. This revision compiles against core
-`0x67DBB438FdC614466984Dc8F68dAB812d785a2aE` and Operators
+`0x67DBB438FdC614466984Dc8F68dAB812d785a2aE` and Operations
 `0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD`. Both contracts must exist on
 the selected chain; check [deployments](/deployments) before executing.
 
@@ -46,9 +46,9 @@ assert <target>::<viewFn(args)> <op> <expected> "revert msg"            # named 
 assert <target>::{viewFn(argTypes)(returnType) <args>} <op> <expected>  # inline ABI when needed
 ```
 
-Operators: `==` `!=` `>` `<` `>=` `<=` and `~=` (approximate equality, with `--delta`). Strings support `==` / `!=` anywhere (nested comparisons compile to on-chain keccak). A bare `assert <call>` with no operator requires a boolean call and compiles to an `EQ true` constraint.
+Operations: `==` `!=` `>` `<` `>=` `<=` and `~=` (approximate equality, with `--delta`). Strings support `==` / `!=` anywhere (nested comparisons compile to on-chain keccak). A bare `assert <call>` with no operator requires a boolean call and compiles to an `EQ true` constraint.
 
-Every line compiles to the ERC-8211 judge: the live expression becomes an `InputParam` (a staticcall, balance read, or nested core expression) validated by inline constraints (`EQ`/`GTE`/`LTE`/`IN`) via `assertParam`. Comparisons the constraints can't express directly (`!=`, signed and two-live-side comparisons) route through a read-spliced [Operators](/docs/operators) comparison judged `EQ 1`.
+Every line compiles to the ERC-8211 judge: the live expression becomes an `InputParam` (a staticcall, balance read, or nested core expression) validated by inline constraints (`EQ`/`GTE`/`LTE`/`IN`) via `assertParam`. Comparisons the constraints can't express directly (`!=`, signed and two-live-side comparisons) route through a read-spliced [Operations](/docs/operators) comparison judged `EQ 1`.
 
 ### Chained calls
 
@@ -98,7 +98,7 @@ assert @bytes.len!(@codeAt!($t)) > 0 "not a contract"              # needs load 
 
 ## On-chain helpers (trailing `!`)
 
-Helpers with a trailing `!` evaluate **on-chain at assertion time** by compiling to core and Operators calldata; ordinary helpers (`@token`, `@get`, `@num`, ...) resolve at composition time and freeze into the calldata. Since the helper unification each helper is one name with up to two faces: the plain face runs (or snapshots) at script build time, the `!` face compiles to on-chain calldata.
+Helpers with a trailing `!` evaluate **on-chain at assertion time** by compiling to core and Operations calldata; ordinary helpers (`@token`, `@get`, `@num`, ...) resolve at composition time and freeze into the calldata. Since the helper unification each helper is one name with up to two faces: the plain face runs (or snapshots) at script build time, the `!` face compiles to on-chain calldata.
 
 Array faces (`@map!`, `@filter!`, `@all!`, `@any!`, `@find!`, `@reduce!`) apply a NAMED definition rather than an inline expression. `def @name!` declares one, and the face supplies the arguments it takes:
 
@@ -200,4 +200,4 @@ Composition-time captures go stale, so for proposals executed later prefer absol
 | Variable | Type | Description |
 |----------|------|-------------|
 | `$assertions:address` | address | Override the resolved assertions contract address (forks / testing) |
-| `$assertions:operators` | address | Override the resolved Operators contract address (forks / testing) |
+| `$assertions:operators` | address | Override the resolved Operations contract address (forks / testing) |

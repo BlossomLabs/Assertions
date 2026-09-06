@@ -34,7 +34,7 @@ The EVML surface for this primitive is std's `@ifElse!(cond ? then : else)`.
 
 `cond(c, then_, else_)` resolves the condition, then resolves and returns ONLY the winning branch. The losing branch is never resolved, so its calls never happen: a branch may target a contract that reverts, or that does not exist yet, and the expression still evaluates.
 
-Truth is EVM truthiness: the first 32-byte word of the resolved condition, nonzero = true. [Operators](/docs/operators/words) comparisons return 0/1 words, so they compose directly as conditions; a condition resolving to fewer than 32 bytes reverts with `ReturnDataOutOfBounds`.
+Truth is EVM truthiness: the first 32-byte word of the resolved condition, nonzero = true. [Operations](/docs/operators/words) comparisons return 0/1 words, so they compose directly as conditions; a condition resolving to fewer than 32 bytes reverts with `ReturnDataOutOfBounds`.
 
 ```solidity
 // "the vault's spendable amount is at least min": staked() while locked,

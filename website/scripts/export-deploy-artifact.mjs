@@ -69,36 +69,26 @@ const CONTRACTS = [
     includeProxyConstants: true,
   },
   {
-    name: "Operators",
+    name: "Operations",
     key: "operators",
-    artifact: "artifacts/contracts/Operators.sol/Operators.json",
-    output: "src/lib/operators-deployment.ts",
-    // Operators is unreleased. Retain its salt while deriving a new address
-    // for the explicit-rounding ABI. Previous candidate: 0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD.
-    // Retained CREATE2 salt for Operators v1.0,
-    // the plain periphery that replaced Combinators. Mined with `cast create2`
-    // (random 32-byte salt; the old shared-base convention is retired).
-    // Prior releases:
-    // interim v1.0 (zero salt) remains at 0x8e832Ace3f433943eb605c258bA37AF24a69dC53;
-    // Combinators v2.0-rc remains at 0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9
-    // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6031de88b);
-    // v1.0 remains at 0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC
-    // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60027fbe3).
-    salt: "0x92d34082f305b501d427bef474df394f826a347b55dba79ecfe2bfe14b998cf9",
-    expectedAddress: "0xE5c2D60293510f69456d006b8B177AAE0889911f",
-    prefix: "OPERATORS",
-    description: "Operators plain-value vocabulary contract",
+    artifact: "artifacts/contracts/Operations.sol/Operations.json",
+    output: "src/lib/operations-deployment.ts",
+    // Vanity CREATE2 salt for Operations: 09e4a7e (OPERATE).
+    salt: "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
+    expectedAddress: "0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e",
+    prefix: "OPERATIONS",
+    description: "Operations plain-value vocabulary contract",
     includeProxyConstants: false,
   },
   {
-    name: "CollectionOperators",
+    name: "Collections",
     key: "collections",
-    artifact: "artifacts/contracts/CollectionOperators.sol/CollectionOperators.json",
-    output: "src/lib/collection-operators-deployment.ts",
-    // keccak256("Assertions.CollectionOperators.v1"), deterministic and not vanity-mined.
-    salt: "0x825336df99b944bd996b20af47f5d80fad83ef8e5afc6acc4f531db6609a7514",
-    expectedAddress: "0x87841575F679dA8E877db0A95b1bCF2C0d0D55dc",
-    prefix: "COLLECTION_OPERATORS",
+    artifact: "artifacts/contracts/Collections.sol/Collections.json",
+    output: "src/lib/collections-deployment.ts",
+    // Vanity CREATE2 salt for Collections: c011ec7 (COLLECT).
+    salt: "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
+    expectedAddress: "0xc011Ec7Cc443dA1218Da699EFd09639f35dd8379",
+    prefix: "COLLECTIONS",
     description: "generic ABI collection vocabulary contract",
     includeProxyConstants: false,
   },

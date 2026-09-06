@@ -95,7 +95,7 @@ export default defineConfig({
           ],
         },
         {
-          label: 'Operators',
+          label: 'Operations',
           items: [
             { slug: 'docs/operators' },
             { slug: 'docs/operators/words' },

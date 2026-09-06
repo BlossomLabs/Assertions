@@ -28,14 +28,14 @@ export type ChainSupport =
   | { state: "official" }
   | { state: "unknown-chain" }
   | { state: "checking"; chainName: string }
-  /** Both canonical contracts have code on this chain. */
+  /** All canonical contracts have code on this chain. */
   | { state: "ok"; chainName: string }
   | { state: "missing"; chainName: string; missing: string[] }
   | { state: "error"; chainName: string };
 
 /**
  * Whether the builder can work on `chainId`: official chains always can;
- * any other chain can when the canonical Assertions core and Operators
+ * any other chain can when the canonical Assertions core, Operations and Collections
  * deployments have code there (they live at the same CREATE2 address on
  * every chain — the deployments page can put them on a missing one).
  */

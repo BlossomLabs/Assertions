@@ -29,6 +29,22 @@ export const OPERATIONS_ABI = [
   {
     "inputs": [
       {
+        "internalType": "int256",
+        "name": "index",
+        "type": "int256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "length",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidByteIndex",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes4",
         "name": "operation",
         "type": "bytes4"
@@ -146,6 +162,17 @@ export const OPERATIONS_ABI = [
       }
     ],
     "name": "InvalidTypeDescriptor",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidUtf8",
     "type": "error"
   },
   {
@@ -564,6 +591,30 @@ export const OPERATIONS_ABI = [
         "internalType": "bytes",
         "name": "data",
         "type": "bytes"
+      },
+      {
+        "internalType": "int256",
+        "name": "index",
+        "type": "int256"
+      }
+    ],
+    "name": "byteAt",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
       }
     ],
     "name": "byteLen",
@@ -684,6 +735,30 @@ export const OPERATIONS_ABI = [
         "internalType": "bytes",
         "name": "out",
         "type": "bytes"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "s",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes",
+        "name": "needle",
+        "type": "bytes"
+      }
+    ],
+    "name": "contains",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "pure",
@@ -846,6 +921,25 @@ export const OPERATIONS_ABI = [
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "int256",
+        "name": "x",
+        "type": "int256"
+      }
+    ],
+    "name": "expWad",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "r",
+        "type": "int256"
       }
     ],
     "stateMutability": "pure",
@@ -1136,6 +1230,25 @@ export const OPERATIONS_ABI = [
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "int256",
+        "name": "x",
+        "type": "int256"
+      }
+    ],
+    "name": "lnWad",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "r",
+        "type": "int256"
       }
     ],
     "stateMutability": "pure",
@@ -1979,6 +2092,35 @@ export const OPERATIONS_ABI = [
         "type": "bytes"
       },
       {
+        "internalType": "int256",
+        "name": "start",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "end",
+        "type": "int256"
+      }
+    ],
+    "name": "sliceRange",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      },
+      {
         "internalType": "bytes",
         "name": "delimiter",
         "type": "bytes"
@@ -2009,6 +2151,59 @@ export const OPERATIONS_ABI = [
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      },
+      {
+        "internalType": "int256",
+        "name": "index",
+        "type": "int256"
+      }
+    ],
+    "name": "stringAt",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      },
+      {
+        "internalType": "int256",
+        "name": "start",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "end",
+        "type": "int256"
+      }
+    ],
+    "name": "stringSlice",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
       }
     ],
     "stateMutability": "pure",

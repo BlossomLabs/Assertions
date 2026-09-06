@@ -16,7 +16,7 @@ const callback = {
   arguments: "(int256,int256)",
   constants: ["0x", "0x"],
   first: 0n,
-  second: 1n,
+  second: 1n, program: "0x",
 };
 for (const length of [1, 4, 16]) {
   const values = Array.from({length}, (_, i) => encodeInt(BigInt(length - i)));

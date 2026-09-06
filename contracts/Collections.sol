@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
+import {ExpressionResolver} from "./ExpressionResolver.sol";
 import {AbiCodec} from "./AbiCodec.sol";
 
 /// @notice Word and ABI-valued collection operations, including folds and stable merge sorting.
 /// Callbacks must be consistent and side-effect free.
 contract Collections {
-
     // ============ Types and errors ============
 
     /**
@@ -85,6 +85,7 @@ contract Collections {
         bytes[] constants;
         uint256 first;
         uint256 second;
+        bytes program;
     }
 
     error InvalidCallback();
@@ -96,6 +97,7 @@ contract Collections {
     struct PreparedCallback {
         AbiCodec.TupleLayout plan;
         bytes[] args;
+        bool targetChecked;
     }
 
     struct SortCursor {
@@ -473,7 +475,9 @@ contract Collections {
         SortCursor memory c;
         c.n = out.length;
         bytes[] memory scratch = new bytes[](c.n);
-        for (uint256 i; i < c.n; i++) AbiCodec.validate(bytes(inputType), out[i]);
+        for (uint256 i; i < c.n; i++) {
+            AbiCodec.validate(bytes(inputType), out[i]);
+        }
         for (c.width = 1; c.width < c.n; c.width *= 2) {
             for (c.start = 0; c.start < c.n; c.start += 2 * c.width) {
                 c.middle = c.start + c.width < c.n ? c.start + c.width : c.n;
@@ -524,7 +528,11 @@ contract Collections {
     }
 
     /// @notice Flatten one level of canonical ABI values, validating inputType and preserving order.
-    function flattenValues(string calldata inputType, bytes[][] calldata values) external pure returns (bytes[] memory out) {
+    function flattenValues(string calldata inputType, bytes[][] calldata values)
+        external
+        pure
+        returns (bytes[] memory out)
+    {
         AbiCodec.shape(bytes(inputType));
         uint256 count;
         for (uint256 i; i < values.length; i++) {
@@ -537,6 +545,117 @@ contract Collections {
                 AbiCodec.validate(bytes(inputType), values[i][j]);
                 out[k++] = values[i][j];
             }
+        }
+    }
+
+    /// @notice Reverse canonical values without changing their encodings.
+    function reverseValues(string calldata inputType, bytes[] calldata values)
+        external
+        pure
+        returns (bytes[] memory out)
+    {
+        AbiCodec.shape(bytes(inputType));
+        out = new bytes[](values.length);
+        for (uint256 i; i < values.length; i++) {
+            AbiCodec.validate(bytes(inputType), values[i]);
+            out[values.length - i - 1] = values[i];
+        }
+    }
+
+    /// @notice Slice using clamped signed start/end indexes, with end exclusive, as Array.slice.
+    function sliceValues(string calldata inputType, bytes[] calldata values, int256 start, int256 end)
+        external
+        pure
+        returns (bytes[] memory out)
+    {
+        AbiCodec.shape(bytes(inputType));
+        uint256 a = _sliceIndex(start, values.length);
+        uint256 b = _sliceIndex(end, values.length);
+        out = new bytes[](b > a ? b - a : 0);
+        for (uint256 i; i < out.length; i++) {
+            AbiCodec.validate(bytes(inputType), values[a + i]);
+            out[i] = values[a + i];
+        }
+    }
+
+    /// @notice First equality match, or uint256.max; calls stop immediately at a match.
+    function indexOfValues(
+        string calldata inputType,
+        bytes[] calldata values,
+        bytes calldata needle,
+        Callback calldata cb
+    ) external view returns (uint256) {
+        PreparedCallback memory prepared = _prepareCallback(cb, true);
+        AbiCodec.validate(bytes(inputType), needle);
+        for (uint256 i; i < values.length; i++) {
+            AbiCodec.validate(bytes(inputType), values[i]);
+            if (_predicate(cb, prepared, values[i], needle, true, i, 0)) return i;
+        }
+        return type(uint256).max;
+    }
+
+    /// @notice Whether any value matches; empty input is false. Predicate calls short circuit.
+    function anyValues(string calldata inputType, bytes[] calldata values, Callback calldata cb)
+        external
+        view
+        returns (bool)
+    {
+        return _findValue(inputType, values, cb, true) != type(uint256).max;
+    }
+
+    /// @notice Whether all values match; empty input is true. Predicate calls short circuit.
+    function allValues(string calldata inputType, bytes[] calldata values, Callback calldata cb)
+        external
+        view
+        returns (bool)
+    {
+        return _findValue(inputType, values, cb, false) == type(uint256).max;
+    }
+
+    /// @notice Index of the first predicate match, or uint256.max when absent.
+    function findValues(string calldata inputType, bytes[] calldata values, Callback calldata cb)
+        external
+        view
+        returns (uint256)
+    {
+        return _findValue(inputType, values, cb, true);
+    }
+
+    /// @notice Pair equally sized arrays into canonical single tuple envelopes, preserving order.
+    function zipValues(
+        string calldata leftType,
+        string calldata rightType,
+        bytes[] calldata left,
+        bytes[] calldata right
+    ) external pure returns (bytes[] memory out) {
+        if (left.length != right.length) revert WordCountMismatch(left.length, right.length);
+        AbiCodec.TupleLayout memory plan = _zipPlan(leftType, rightType);
+        out = new bytes[](left.length);
+        bytes[] memory pair = new bytes[](2);
+        for (uint256 i; i < left.length; i++) {
+            AbiCodec.validate(bytes(leftType), left[i]);
+            AbiCodec.validate(bytes(rightType), right[i]);
+            pair[0] = left[i];
+            pair[1] = right[i];
+            bytes memory tuple = AbiCodec.assemble(plan.dynamic, plan.headSize, pair, false);
+            out[i] = plan.dynamic[0] || plan.dynamic[1] ? bytes.concat(abi.encode(uint256(32)), tuple) : tuple;
+        }
+    }
+
+    /// @notice Extract lane 0 or 1 from canonical pair tuples, validating both component envelopes.
+    function unzipValues(string calldata leftType, string calldata rightType, bytes[] calldata pairs, uint256 lane)
+        external
+        pure
+        returns (bytes[] memory out)
+    {
+        if (lane > 1) revert InvalidLane(lane);
+        AbiCodec.TupleLayout memory plan = _zipPlan(leftType, rightType);
+        out = new bytes[](pairs.length);
+        for (uint256 i; i < pairs.length; i++) {
+            bytes[] memory parts = _unzipPair(pairs[i], plan);
+            AbiCodec.validate(bytes(leftType), parts[0]);
+            AbiCodec.validate(bytes(rightType), parts[1]);
+            out[i] = parts[lane];
         }
     }
 
@@ -588,6 +707,66 @@ contract Collections {
     /**
      * @dev The i-th 32-byte word of a memory payload (caller bounds-checks)
      */
+    function _sliceIndex(int256 index, uint256 length) private pure returns (uint256) {
+        if (index < 0) return index < -int256(length) ? 0 : uint256(int256(length) + index);
+        return uint256(index) > length ? length : uint256(index);
+    }
+
+    function _findValue(string calldata inputType, bytes[] calldata values, Callback calldata cb, bool wanted)
+        private
+        view
+        returns (uint256)
+    {
+        PreparedCallback memory prepared = _prepareCallback(cb, false);
+        AbiCodec.shape(bytes(inputType));
+        for (uint256 i; i < values.length; i++) {
+            AbiCodec.validate(bytes(inputType), values[i]);
+            if (_predicate(cb, prepared, values[i], "", false, i, 0) == wanted) return i;
+        }
+        return type(uint256).max;
+    }
+
+    function _unzipPair(bytes memory pair, AbiCodec.TupleLayout memory plan)
+        private
+        pure
+        returns (bytes[] memory parts)
+    {
+        uint256 base = plan.dynamic[0] || plan.dynamic[1] ? 32 : 0;
+        if (base != 0 && AbiCodec.word(pair, 0) != 32) revert AbiCodec.InvalidValue(0);
+        parts = new bytes[](2);
+        uint256 head;
+        uint256 tail = plan.headSize;
+        for (uint256 i; i < 2; i++) {
+            if (plan.dynamic[i]) {
+                if (AbiCodec.word(pair, base + head) != tail) revert AbiCodec.InvalidValue(base + head);
+                uint256 end = i == 0 && plan.dynamic[1] ? AbiCodec.word(pair, base + head + 32) : pair.length - base;
+                if (end < tail) revert AbiCodec.InvalidValue(base + head);
+                parts[i] = bytes.concat(abi.encode(uint256(32)), AbiCodec.slice(pair, base + tail, end - tail));
+                tail = end;
+            } else {
+                parts[i] = AbiCodec.slice(pair, base + head, plan.words[i] * 32);
+            }
+            head += plan.words[i] * 32;
+        }
+        if (base + tail != pair.length) revert AbiCodec.InvalidValue(base + tail);
+    }
+
+    function _zipPlan(string calldata leftType, string calldata rightType)
+        private
+        pure
+        returns (AbiCodec.TupleLayout memory plan)
+    {
+        (bool a, uint256 aw) = AbiCodec.shape(bytes(leftType));
+        (bool b, uint256 bw) = AbiCodec.shape(bytes(rightType));
+        plan.dynamic = new bool[](2);
+        plan.dynamic[0] = a;
+        plan.dynamic[1] = b;
+        plan.headSize = (aw + bw) * 32;
+        plan.words = new uint256[](2);
+        plan.words[0] = aw;
+        plan.words[1] = bw;
+    }
+
     function _wordAt(bytes memory b, uint256 i) private pure returns (uint256 w) {
         assembly {
             w := mload(add(add(b, 32), mul(i, 32)))
@@ -695,12 +874,11 @@ contract Collections {
         assembly ("memory-safe") { word := mload(add(ret, 32)) }
     }
 
-    function _foldLoop(
-        FoldRun memory run,
-        bytes calldata s,
-        bytes calldata template,
-        uint256[] calldata elemOffsets
-    ) private view returns (bytes32) {
+    function _foldLoop(FoldRun memory run, bytes calldata s, bytes calldata template, uint256[] calldata elemOffsets)
+        private
+        view
+        returns (bytes32)
+    {
         bytes memory callData = template;
         for (uint256 i = 0; i < run.count;) {
             {
@@ -725,9 +903,12 @@ contract Collections {
         AbiCodec.validate(bytes(valueType), value, AbiCodec.Context(1, msg.sig, i, 0, cb.target));
     }
 
-    function _prepareCallback(Callback calldata cb, bool binary) private pure returns (PreparedCallback memory prepared) {
-        if (cb.first >= cb.constants.length ||
-            (binary && (cb.second >= cb.constants.length || cb.first == cb.second))) revert InvalidCallback();
+    function _prepareCallback(Callback calldata cb, bool binary)
+        private
+        pure
+        returns (PreparedCallback memory prepared)
+    {
+        if (cb.first >= cb.constants.length || (binary && (cb.second >= cb.constants.length || cb.first == cb.second))) revert InvalidCallback();
         bytes calldata descriptor = bytes(cb.arguments);
         if (descriptor.length != 0 && (descriptor[0] != "(" || descriptor[descriptor.length - 1] != ")")) {
             AbiCodec.shape(descriptor);
@@ -738,35 +919,74 @@ contract Collections {
         prepared.args = cb.constants;
         for (uint256 i; i < cb.constants.length; i++) {
             if (i != cb.first && (!binary || i != cb.second)) {
-                AbiCodec.validateComponent(descriptor[prepared.plan.starts[i]:prepared.plan.ends[i]], prepared.args[i], i);
+                AbiCodec.validateComponent(
+                    descriptor[prepared.plan.starts[i]:prepared.plan.ends[i]],
+                    prepared.args[i],
+                    i,
+                    prepared.plan.dynamic[i],
+                    prepared.plan.words[i]
+                );
             }
         }
     }
 
-    function _bindValue(Callback calldata cb, PreparedCallback memory prepared, uint256 slot, bytes memory value) private pure {
-        AbiCodec.validateComponent(bytes(cb.arguments)[prepared.plan.starts[slot]:prepared.plan.ends[slot]], value, slot);
+    function _bindValue(Callback calldata cb, PreparedCallback memory prepared, uint256 slot, bytes memory value)
+        private
+        pure
+    {
+        AbiCodec.validateComponent(
+            bytes(cb.arguments)[prepared.plan.starts[slot]:prepared.plan.ends[slot]],
+            value,
+            slot,
+            prepared.plan.dynamic[slot],
+            prepared.plan.words[slot]
+        );
         prepared.args[slot] = value;
     }
 
-    function _callValue(Callback calldata cb, PreparedCallback memory prepared, bytes memory a, bytes memory b, bool binary, uint256 i, uint256 j)
-        private view returns (bytes memory out)
-    {
-        _checkTarget(cb.target);
+    function _callValue(
+        Callback calldata cb,
+        PreparedCallback memory prepared,
+        bytes memory a,
+        bytes memory b,
+        bool binary,
+        uint256 i,
+        uint256 j
+    ) private view returns (bytes memory out) {
+        // Validate lazily so empty and singleton operations retain their no-call behavior.
+        // All applications are staticcalls, so the target code cannot change during this operation.
+        if (!prepared.targetChecked) {
+            _checkTarget(cb.target);
+            prepared.targetChecked = true;
+        }
         _bindValue(cb, prepared, cb.first, a);
         if (binary) _bindValue(cb, prepared, cb.second, b);
-        bytes memory data = bytes.concat(cb.selector, AbiCodec.assemble(prepared.plan.dynamic, prepared.plan.headSize, prepared.args, false));
+        bytes memory data;
+        if (cb.program.length == 0) {
+            data = bytes.concat(
+                cb.selector, AbiCodec.assemble(prepared.plan.dynamic, prepared.plan.headSize, prepared.args, false)
+            );
+        } else {
+            data = abi.encodeCall(ExpressionResolver.evaluateEncoded, (cb.program, prepared.args));
+        }
         bool ok;
         (ok, out) = cb.target.staticcall(data);
         if (!ok) revert CallbackFailed(msg.sig, i, j, cb.target, data, out);
     }
 
-    function _predicate(Callback calldata cb, PreparedCallback memory prepared, bytes memory a, bytes memory b, bool binary, uint256 i, uint256 j)
-        private
-        view
-        returns (bool)
-    {
+    function _predicate(
+        Callback calldata cb,
+        PreparedCallback memory prepared,
+        bytes memory a,
+        bytes memory b,
+        bool binary,
+        uint256 i,
+        uint256 j
+    ) private view returns (bool) {
         bytes memory out = _callValue(cb, prepared, a, b, binary, i, j);
-        if (out.length != 32 || AbiCodec.word(out, 0) > 1) revert AbiCodec.InvalidCallbackResult(msg.sig, i, j, cb.target);
-        return AbiCodec.word(out, 0) == 1;
+        if (out.length != 32) revert AbiCodec.InvalidCallbackResult(msg.sig, i, j, cb.target);
+        uint256 answer = AbiCodec.word(out, 0);
+        if (answer > 1) revert AbiCodec.InvalidCallbackResult(msg.sig, i, j, cb.target);
+        return answer == 1;
     }
 }

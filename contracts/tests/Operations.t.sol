@@ -1159,6 +1159,21 @@ contract OperationsTest is Test {
         assertEq(ops.replace("a-b", "-", " and "), bytes("a and b"));
     }
 
+    function test_replace_manyMatchesAndUnalignedTail() public view {
+        bytes memory input = new bytes(257);
+        bytes memory expected = new bytes(769);
+        for (uint256 i; i < 256; i++) {
+            input[i] = "a";
+            expected[i * 3] = "x";
+            expected[i * 3 + 1] = "y";
+            expected[i * 3 + 2] = "z";
+        }
+        input[256] = "!";
+        expected[768] = "!";
+        assertEq(ops.replace(input, "a", "xyz"), expected);
+        assertEq(ops.replace(input, "a", ""), bytes("!"));
+    }
+
     function test_replace_emptyNeedle() public {
         vm.expectRevert(Operations.EmptyNeedle.selector);
         ops.replace("abc", "", "x");

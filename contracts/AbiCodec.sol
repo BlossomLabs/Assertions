@@ -26,10 +26,15 @@ library AbiCodec {
         uint256[] starts;
         uint256[] ends;
         bool[] dynamic;
+        uint256[] words;
         uint256 headSize;
     }
 
-    function typeShape(bytes calldata t, uint256 p, uint256 limit) internal pure returns (uint256 end, bool dyn, uint256 words) {
+    function typeShape(bytes calldata t, uint256 p, uint256 limit)
+        internal
+        pure
+        returns (uint256 end, bool dyn, uint256 words)
+    {
         if (p >= limit) revert InvalidTypeDescriptor(p);
         if (t[p] == "(") {
             uint256 q = p + 1;
@@ -56,8 +61,19 @@ library AbiCodec {
                 q++;
             }
             if (q == p) revert InvalidTypeDescriptor(p);
-            dyn = (q - p == 5 && t[p] == "b" && t[p + 1] == "y" && t[p + 2] == "t" && t[p + 3] == "e" && t[p + 4] == "s")
-                || (q - p == 6 && t[p] == "s" && t[p + 1] == "t" && t[p + 2] == "r" && t[p + 3] == "i" && t[p + 4] == "n" && t[p + 5] == "g");
+            dyn = (q - p == 5
+                    && t[p] == "b"
+                    && t[p + 1] == "y"
+                    && t[p + 2] == "t"
+                    && t[p + 3] == "e"
+                    && t[p + 4] == "s")
+                || (q - p == 6
+                    && t[p] == "s"
+                    && t[p + 1] == "t"
+                    && t[p + 2] == "r"
+                    && t[p + 3] == "i"
+                    && t[p + 4] == "n"
+                    && t[p + 5] == "g");
             words = 1;
             end = q;
         }
@@ -93,7 +109,6 @@ library AbiCodec {
         if (t[j] != "[") revert InvalidTypeDescriptor(j);
     }
 
-
     function shape(bytes calldata t) internal pure returns (bool dynamic, uint256 words) {
         uint256 end;
         (end, dynamic, words) = typeShape(t, 0, t.length);
@@ -102,7 +117,9 @@ library AbiCodec {
 
     function requireValue(bool valid, uint256 offset, Context memory context) private pure {
         if (valid) return;
-        if (context.kind == 1) revert InvalidCallbackResult(context.operation, context.index, context.other, context.target);
+        if (context.kind == 1) {
+            revert InvalidCallbackResult(context.operation, context.index, context.other, context.target);
+        }
         if (context.kind == 2) revert InvalidComponentValue(context.index, offset);
         revert InvalidValue(offset);
     }
@@ -158,7 +175,9 @@ library AbiCodec {
     }
 
     function body(bytes calldata t, uint256 s, uint256 e, bytes memory v, uint256 p, Context memory context)
-        private pure returns (uint256)
+        private
+        pure
+        returns (uint256)
     {
         requireValue(p <= v.length, p, context);
         if (t[e - 1] == "]") {
@@ -169,7 +188,9 @@ library AbiCodec {
                 x.count = word(v, p, context);
                 x.base += 32;
             } else {
-                for (uint256 k = x.j + 1; k < e - 1; k++) x.count = x.count * 10 + uint8(t[k]) - 48;
+                for (uint256 k = x.j + 1; k < e - 1; k++) {
+                    x.count = x.count * 10 + uint8(t[k]) - 48;
+                }
             }
             (, x.dynamic, x.words) = typeShape(t, s, x.j);
             // Bound multiplication and traversal before trusting an encoded length.
@@ -214,7 +235,9 @@ library AbiCodec {
         uint256 padding = padded - n;
         if (padding != 0 && word(v, p + padded, context) & (type(uint256).max >> ((32 - padding) * 8)) != 0) {
             // The common canonical case checks one word; scan only to locate an error.
-            for (uint256 i = n; i < padded; i++) requireValue(v[p + 32 + i] == 0, p + 32 + i, context);
+            for (uint256 i = n; i < padded; i++) {
+                requireValue(v[p + 32 + i] == 0, p + 32 + i, context);
+            }
         }
         return 32 + padded;
     }
@@ -233,19 +256,23 @@ library AbiCodec {
         plan.starts = new uint256[](count);
         plan.ends = new uint256[](count);
         plan.dynamic = new bool[](count);
+        plan.words = new uint256[](count);
         p = 1;
         for (uint256 i; i < count; i++) {
-            (uint256 end, bool dynamic,) = typeShape(t, p, t.length - 1);
+            (uint256 end, bool dynamic, uint256 words) = typeShape(t, p, t.length - 1);
             plan.starts[i] = p;
             plan.ends[i] = end;
             plan.dynamic[i] = dynamic;
+            plan.words[i] = words;
             p = end + 1;
         }
     }
 
-    /// @dev Preserve component-level diagnostics before recursively validating the body.
-    function validateComponent(bytes calldata t, bytes memory value, uint256 index) internal pure {
-        (bool dynamic, uint256 words) = shape(t);
+    /// @dev Reuse a validated descriptor's shape; every value still receives full body validation.
+    function validateComponent(bytes calldata t, bytes memory value, uint256 index, bool dynamic, uint256 words)
+        internal
+        pure
+    {
         if (dynamic) {
             bytes32 head = value.length >= 32 ? bytes32(word(value, 0)) : bytes32(0);
             if (value.length < 64 || value.length % 32 != 0 || head != bytes32(uint256(32))) {
@@ -262,14 +289,18 @@ library AbiCodec {
     function tuple(bytes calldata t, bytes[] memory args) internal pure returns (bytes memory) {
         TupleLayout memory plan = tupleLayout(t);
         if (args.length != plan.starts.length) revert ComponentCountMismatch(plan.starts.length, args.length);
-        for (uint256 i; i < args.length; i++) validateComponent(t[plan.starts[i]:plan.ends[i]], args[i], i);
+        for (uint256 i; i < args.length; i++) {
+            validateComponent(t[plan.starts[i]:plan.ends[i]], args[i], i, plan.dynamic[i], plan.words[i]);
+        }
         return assemble(plan.dynamic, plan.headSize, args, false);
     }
 
     /// @dev Caller has validated every value against the prepared plan.
     /// Array encodings prepend offset/length; offsets remain relative to their element head.
     function assemble(bool[] memory dynamic, uint256 headSize, bytes[] memory values, bool array)
-        internal pure returns (bytes memory out)
+        internal
+        pure
+        returns (bytes memory out)
     {
         uint256 prefix = array ? 64 : 0;
         uint256 size = headSize;
@@ -299,7 +330,9 @@ library AbiCodec {
 
     function pack(bytes calldata t, bytes[] memory values) internal pure returns (bytes memory) {
         (bool dynamic, uint256 words) = shape(t);
-        for (uint256 i; i < values.length; i++) validate(t, values[i]);
+        for (uint256 i; i < values.length; i++) {
+            validate(t, values[i]);
+        }
         bool[] memory dynamics = new bool[](1);
         dynamics[0] = dynamic;
         return assemble(dynamics, values.length * words * 32, values, true);

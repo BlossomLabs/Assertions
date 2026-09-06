@@ -63,10 +63,10 @@ interface IERC20Balance {
  *      Computation over resolved values belongs to the versionable
  *      periphery: `read` resolves operand expressions and splices the
  *      values into plain calldata for any deployed view or pure contract
- *      — canonically the Operators contract, whose word arithmetic,
- *      comparisons, bytes operations, runtime encoder and bounded folds
- *      extend the vocabulary without touching this frozen core. The core
- *      reads and judges; Operators compute.
+ *      — canonically Operations for arithmetic, comparisons, bytes and runtime
+ *      encoding, and Collections for folds and collection processing.
+ *      These extend the vocabulary without touching this frozen core.
+ *      The core reads and judges; the periphery computes.
  * @custom:version 2.0
  */
 contract Assertions {
@@ -387,10 +387,7 @@ contract Assertions {
      */
     function chain(InputParam calldata start, bytes[] calldata calls) external view {
         if (calls.length == 0) revert EmptyCallChain();
-        address current = _asAddress(
-            _firstWord(_resolve(start, "", 0, 0)),
-            0
-        );
+        address current = _asAddress(_firstWord(_resolve(start, "", 0, 0)), 0);
         uint256 last = calls.length - 1;
         for (uint256 i = 0; i < last; i++) {
             bytes memory hopResult = _staticCall(current, calls[i]);
@@ -438,10 +435,7 @@ contract Assertions {
      *        selector (may be empty for a selector-only call)
      */
     function read(InputParam calldata target, bytes4 selector, InputParam[] calldata args) external view {
-        address callTarget = _asAddress(
-            _firstWord(_resolve(target, "", 0, 0)),
-            0
-        );
+        address callTarget = _asAddress(_firstWord(_resolve(target, "", 0, 0)), 0);
         bytes memory callData = abi.encodePacked(selector);
         for (uint256 i = 0; i < args.length; i++) {
             callData = bytes.concat(callData, _resolve(args[i], "", 0, i + 1));
@@ -478,9 +472,7 @@ contract Assertions {
      */
     function cond(InputParam calldata c, InputParam calldata then_, InputParam calldata else_) external view {
         bytes memory cValue = _resolve(c, "", 0, 0);
-        bytes memory value = _firstWord(cValue) != bytes32(0)
-            ? _resolve(then_, "", 0, 1)
-            : _resolve(else_, "", 0, 2);
+        bytes memory value = _firstWord(cValue) != bytes32(0) ? _resolve(then_, "", 0, 1) : _resolve(else_, "", 0, 2);
         assembly {
             return(add(value, 32), mload(value))
         }
@@ -533,7 +525,7 @@ contract Assertions {
      * @return 1 if `a` resolved (constraints included), else 0
      */
     function isValid(InputParam calldata a) external view returns (uint256) {
-        (bool success, ) = address(this).staticcall(abi.encodeCall(this.resolve, (a)));
+        (bool success,) = address(this).staticcall(abi.encodeCall(this.resolve, (a)));
         return success ? 1 : 0;
     }
 
@@ -676,12 +668,11 @@ contract Assertions {
      *      abi.encode(uint256 balance). `assertion`, `entryIndex` and
      *      `paramIndex` are error-reporting context only.
      */
-    function _resolve(
-        InputParam calldata param,
-        string memory assertion,
-        uint256 entryIndex,
-        uint256 paramIndex
-    ) internal view returns (bytes memory value) {
+    function _resolve(InputParam calldata param, string memory assertion, uint256 entryIndex, uint256 paramIndex)
+        internal
+        view
+        returns (bytes memory value)
+    {
         if (param.fetcherType == InputParamFetcherType.RAW_BYTES) {
             value = param.paramData;
         } else if (param.fetcherType == InputParamFetcherType.STATIC_CALL) {
@@ -827,7 +818,7 @@ contract Assertions {
         if (t[te - 1] == "]") {
             uint256 suffix = AbiCodec.suffixStart(t, ts, te);
             if (suffix + 1 != te - 1) revert InvalidNavigation(ts);
-            (, , uint256 elemWords) = AbiCodec.typeShape(t, ts, suffix);
+            (,, uint256 elemWords) = AbiCodec.typeShape(t, ts, suffix);
             if (elemWords == 0) revert InvalidNavigation(ts);
             // Divide before multiplying: hostile counts/descriptor sizes
             // must not overflow before the bounds check. Dynamic elements

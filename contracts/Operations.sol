@@ -30,6 +30,7 @@ import {AbiCodec} from "./AbiCodec.sol";
  * @custom:version 1.0
  */
 contract Operations {
+    /// @notice Trunc rounds toward zero; Floor toward negative infinity; Ceil toward positive infinity.
     enum Rounding {
         Trunc,
         Floor,
@@ -221,23 +222,25 @@ contract Operations {
     /// @notice Full-width product followed by one explicitly rounded division.
     /// @dev Zero denominator panics 0x12; an unrepresentable rounded result panics 0x11.
     function mulDiv(uint256 a, uint256 b, uint256 denominator, Rounding rounding)
-        external pure returns (uint256 result)
+        external
+        pure
+        returns (uint256 result)
     {
         result = _mulDiv(a, b, denominator);
         if (rounding == Rounding.Ceil && mulmod(a, b, denominator) != 0) result += 1;
     }
 
     /// @notice Signed full-width multiplication/division, including negative denominators.
-    function mulDiv(int256 a, int256 b, int256 denominator, Rounding rounding)
-        external pure returns (int256)
-    {
+    function mulDiv(int256 a, int256 b, int256 denominator, Rounding rounding) external pure returns (int256) {
         bool negative = (a < 0) != (b < 0) != (denominator < 0);
         uint256 x = _magnitude(a);
         uint256 y = _magnitude(b);
         uint256 d = _magnitude(denominator);
         uint256 result = _mulDiv(x, y, d);
-        if (mulmod(x, y, d) != 0 &&
-            ((negative && rounding == Rounding.Floor) || (!negative && rounding == Rounding.Ceil))) {
+        if (
+            mulmod(x, y, d) != 0
+                && ((negative && rounding == Rounding.Floor) || (!negative && rounding == Rounding.Ceil))
+        ) {
             result += 1;
         }
         return _signedMagnitude(result, negative);
@@ -287,9 +290,7 @@ contract Operations {
             return _signedMagnitude(addmod(x, y, modulus), a < 0);
         }
         // Opposite signs subtract magnitudes; the larger operand sets the sign.
-        return x >= y
-            ? _signedMagnitude((x - y) % modulus, a < 0)
-            : _signedMagnitude((y - x) % modulus, b < 0);
+        return x >= y ? _signedMagnitude((x - y) % modulus, a < 0) : _signedMagnitude((y - x) % modulus, b < 0);
     }
 
     /**
@@ -416,6 +417,87 @@ contract Operations {
     }
 
     /**
+     * @notice e^x in wad fixed point (1e18), for continuous compounding
+     *         and the inverse of lnWad
+     * @dev Remco Bloemen's algorithm: range-reduce by ln(2), evaluate a
+     *      rational approximation, then scale by 2^k. Reverts above
+     *      135305999368893231589 (where the result leaves int256) and
+     *      returns 0 below -42139678854452767551 (where it underflows wad)
+     */
+    function expWad(int256 x) external pure returns (int256 r) {
+        unchecked {
+            if (x <= -42139678854452767551) return 0;
+            if (x >= 135305999368893231589) revert();
+
+            // Convert to a 2^96 base for the polynomial's precision.
+            x = (x << 78) / 5 ** 18;
+
+            // Reduce the range to [-ln2/2, ln2/2], remembering the power
+            // of two to reapply at the end.
+            int256 k = ((x << 96) / 54916777467707473351141471128 + 2 ** 95) >> 96;
+            x = x - k * 54916777467707473351141471128;
+
+            int256 y = x + 1346386616545796478920950773328;
+            y = ((y * x) >> 96) + 57155421227552351082224309758442;
+            int256 p = y + x - 94201549194550492254356042504812;
+            p = ((p * y) >> 96) + 28719021644029726153956944680412240;
+            p = p * x + (4385272521454847904659076985693276 << 96);
+
+            int256 q = x - 2855989394907223263936484059900;
+            q = ((q * x) >> 96) + 50020603652535783019961831881945;
+            q = ((q * x) >> 96) - 533845033583426703283633433725380;
+            q = ((q * x) >> 96) + 3604857256930695427073651918091429;
+            q = ((q * x) >> 96) - 14423608567350463180887372962807573;
+            q = ((q * x) >> 96) + 26449188498355588339934803723976023;
+
+            // q is never zero on this range, so plain division is safe.
+            r = p / q;
+
+            // Reapply the wad scale and the reduced power of two.
+            r = int256((uint256(r) * 3822833074963236453042738258902158003155416615667) >> uint256(195 - k));
+        }
+    }
+
+    /**
+     * @notice The natural log of x in wad fixed point (1e18) — the
+     *         inverse of expWad, and how a growth factor becomes a rate
+     * @dev Remco Bloemen's algorithm. Reverts for x <= 0, where the log
+     *      is undefined
+     */
+    function lnWad(int256 x) external pure returns (int256 r) {
+        unchecked {
+            if (x <= 0) revert();
+
+            // Normalize to [1, 2) in a 2^96 base, remembering the shift.
+            int256 k = int256(_log2(uint256(x))) - 96;
+            x <<= uint256(159 - k);
+            x = int256(uint256(x) >> 159);
+
+            int256 p = x + 3273285459638523848632254066296;
+            p = ((p * x) >> 96) + 24828157081833163892658089445524;
+            p = ((p * x) >> 96) + 43456485725739037958740375743393;
+            p = ((p * x) >> 96) - 11111509109440967052023855526967;
+            p = ((p * x) >> 96) - 45023709667254063763336534515857;
+            p = ((p * x) >> 96) - 14706773417378608786704636184526;
+            p = p * x - (795164235651350426258249787498 << 96);
+
+            int256 q = x + 5573035233440673466300451813936;
+            q = ((q * x) >> 96) + 71694874799317883764090561454958;
+            q = ((q * x) >> 96) + 283447036172924575727196451306956;
+            q = ((q * x) >> 96) + 401686690394027663651624208769553;
+            q = ((q * x) >> 96) + 204048457590392012362485061816622;
+            q = ((q * x) >> 96) + 31853899698501571402653359427138;
+            q = ((q * x) >> 96) + 909429971244387300277376558375;
+
+            r = p / q;
+            r *= 1677202110996718588342820967067443963516166;
+            r += 16597577552685614221487285958193947469193820559219878177908093499208371 * k;
+            r += 600920179829731861736702779321621459595472258049074101567377883020018308;
+            r >>= 174;
+        }
+    }
+
+    /**
      * @notice floor(log2(x)) — the position of the highest set bit, and
      *         so the bit length of x minus one. Reverts for x = 0, where
      *         the logarithm is undefined
@@ -427,7 +509,9 @@ contract Operations {
         return _log2(x);
     }
 
-    /** Floor of log2(x) via a bit scan. */
+    /**
+     * Floor of log2(x) via a bit scan.
+     */
     function _log2(uint256 x) private pure returns (uint256 r) {
         unchecked {
             r = x >= 1 << 128 ? 128 : 0;
@@ -711,7 +795,7 @@ contract Operations {
      *      to a code-less non-precompile address "succeeds" with empty
      *      returndata — pin the result with byteLen or a constraint when
      *      that matters. A revert is wrapped as RawCallFailed carrying
-     *      the calldata, consistent with the fold lambdas.
+     *      the calldata. Collection callbacks additionally preserve the revert reason.
      * @param target The address to staticcall (precompiles included)
      * @param data The raw calldata
      * @return The raw returndata as a bytes value
@@ -741,7 +825,9 @@ contract Operations {
      */
     function concat(bytes[] calldata parts, bytes calldata delimiter) external pure returns (bytes memory out) {
         uint256 length;
-        for (uint256 i; i < parts.length; i++) length += parts[i].length;
+        for (uint256 i; i < parts.length; i++) {
+            length += parts[i].length;
+        }
         if (parts.length > 1) length += (parts.length - 1) * delimiter.length;
         out = new bytes(length);
         uint256 offset;
@@ -766,6 +852,76 @@ contract Operations {
         return data[start:start + len];
     }
 
+    error InvalidByteIndex(int256 index, uint256 length);
+    error InvalidUtf8(uint256 index);
+
+    /// @notice Byte slice with clamped signed start/end indexes; end is exclusive.
+    function sliceRange(bytes calldata data, int256 start, int256 end) external pure returns (bytes memory) {
+        uint256 a = _rangeIndex(start, data.length);
+        uint256 b = _rangeIndex(end, data.length);
+        return b > a ? data[a:b] : data[0:0];
+    }
+
+    /// @notice One byte at a signed index; negative indexes count from the end; out of range reverts.
+    function byteAt(bytes calldata data, int256 index) external pure returns (bytes memory) {
+        uint256 position = _strictIndex(index, data.length);
+        return data[position:position + 1];
+    }
+
+    /// @notice UTF-8 byte slice; rejects malformed input and nonempty ranges splitting a code point.
+    function stringSlice(bytes calldata data, int256 start, int256 end) external pure returns (bytes memory) {
+        _checkUtf8(data);
+        uint256 a = _rangeIndex(start, data.length);
+        uint256 b = _rangeIndex(end, data.length);
+        if (b <= a) return data[0:0];
+        if (a < data.length && uint8(data[a]) & 0xc0 == 0x80) revert InvalidUtf8(a);
+        if (b < data.length && uint8(data[b]) & 0xc0 == 0x80) revert InvalidUtf8(b);
+        return data[a:b];
+    }
+
+    /// @notice One UTF-8 byte as a string; a byte belonging to a multibyte code point is rejected.
+    function stringAt(bytes calldata data, int256 index) external pure returns (bytes memory) {
+        _checkUtf8(data);
+        uint256 position = _strictIndex(index, data.length);
+        if (uint8(data[position]) >= 0x80) revert InvalidUtf8(position);
+        return data[position:position + 1];
+    }
+
+    function _rangeIndex(int256 index, uint256 length) private pure returns (uint256) {
+        if (index < 0) return index < -int256(length) ? 0 : uint256(int256(length) + index);
+        return uint256(index) > length ? length : uint256(index);
+    }
+
+    function _strictIndex(int256 index, uint256 length) private pure returns (uint256) {
+        if (index >= int256(length) || index < -int256(length)) revert InvalidByteIndex(index, length);
+        return index < 0 ? uint256(int256(length) + index) : uint256(index);
+    }
+
+    function _checkUtf8(bytes calldata data) private pure {
+        for (uint256 i; i < data.length;) {
+            uint8 first = uint8(data[i]);
+            if (first < 0x80) {
+                i++;
+                continue;
+            }
+            uint256 count;
+            if (first >= 0xc2 && first <= 0xdf) count = 1;
+            else if (first >= 0xe0 && first <= 0xef) count = 2;
+            else if (first >= 0xf0 && first <= 0xf4) count = 3;
+            else revert InvalidUtf8(i);
+            if (data.length - i <= count) revert InvalidUtf8(i);
+            uint8 second = uint8(data[i + 1]);
+            if (
+                (first == 0xe0 && second < 0xa0) || (first == 0xed && second >= 0xa0)
+                    || (first == 0xf0 && second < 0x90) || (first == 0xf4 && second >= 0x90)
+            ) revert InvalidUtf8(i + 1);
+            for (uint256 j = 1; j <= count; j++) {
+                if (uint8(data[i + j]) & 0xc0 != 0x80) revert InvalidUtf8(i + j);
+            }
+            i += count + 1;
+        }
+    }
+
     /**
      * @notice The raw byte length of `data`
      */
@@ -782,7 +938,6 @@ contract Operations {
         return keccak256(data);
     }
 
-
     /**
      * @notice keccak256 of the two words concatenated in ascending order —
      *         byte-identical to OpenZeppelin MerkleProof's node combiner,
@@ -796,6 +951,16 @@ contract Operations {
     }
 
     // ============ Search ============
+
+    /// @notice Whether needle occurs in s; an empty needle always matches, including an empty s.
+    function contains(bytes calldata s, bytes calldata needle) external pure returns (bool) {
+        if (needle.length == 0) return true;
+        if (needle.length > s.length) return false;
+        for (uint256 i; i <= s.length - needle.length; i++) {
+            if (_matchesAt(s, needle, i)) return true;
+        }
+        return false;
+    }
 
     /**
      * @notice Position of the occurrence-th occurrence of `needle` in `s`,
@@ -858,7 +1023,6 @@ contract Operations {
         return s.length;
     }
 
-
     /// @notice Split on non-overlapping delimiter matches, preserving all empty segments.
     function split(bytes calldata data, bytes calldata delimiter) external pure returns (bytes[] memory parts) {
         if (delimiter.length == 0) revert EmptyNeedle();
@@ -894,18 +1058,31 @@ contract Operations {
         returns (bytes memory out)
     {
         if (needle.length == 0) revert EmptyNeedle();
+        // Record each match once, then size and fill the output without rescanning.
+        uint256[] memory matches = new uint256[](s.length / needle.length);
+        uint256 count;
         uint256 p;
-        uint256 start;
         while (p + needle.length <= s.length) {
             if (_matchesAt(s, needle, p)) {
-                out = bytes.concat(out, s[start:p], repl);
+                matches[count++] = p;
                 p += needle.length;
-                start = p;
             } else {
                 p++;
             }
         }
-        return bytes.concat(out, s[start:]);
+        if (count == 0) return s;
+        out = new bytes(s.length - count * needle.length + count * repl.length);
+        uint256 start;
+        uint256 dest;
+        for (uint256 i; i < count; i++) {
+            p = matches[i];
+            _copy(out, dest, s[start:p]);
+            dest += p - start;
+            _copy(out, dest, repl);
+            dest += repl.length;
+            start = p + needle.length;
+        }
+        _copy(out, dest, s[start:]);
     }
 
     /**
@@ -993,28 +1170,43 @@ contract Operations {
         return string(buf);
     }
 
+    /// @notice Decimal ASCII rendering, including a minus sign for negative values.
     function toString(int256 value) external pure returns (string memory) {
         return string.concat(value < 0 ? "-" : "", toString(_magnitude(value)));
     }
 
+    /// @notice Parse decimal digits with an optional leading + or - sign.
+    /// @dev Empty digits, invalid characters and int256 overflow revert. Leading zeros are accepted.
     function parseInt(bytes calldata value) external pure returns (int256) {
         if (value.length == 0) revert EmptyNumber();
         bool negative = value[0] == "-";
         return _signedMagnitude(_parseDigits(value, negative || value[0] == "+" ? 1 : 0), negative);
     }
 
+    /// @notice Parse a signed decimal into integer units with the requested rounding.
+    /// @dev Accepts an optional sign and one decimal point; at least one digit is required.
+    ///      Precision above 77, invalid characters and int256 overflow revert.
     function parseUnits(bytes calldata value, uint256 decimals, Rounding rounding) external pure returns (int256) {
         (uint256 magnitude, bool negative) = _parseUnits(value, decimals, rounding, true);
         return _signedMagnitude(magnitude, negative);
     }
 
-    function parseUnitsUnsigned(bytes calldata value, uint256 decimals, Rounding rounding) external pure returns (uint256) {
+    /// @notice Parse a nonnegative decimal into integer units with the requested rounding.
+    /// @dev A leading + is accepted; - is rejected, including negative zero.
+    ///      Precision above 77, missing digits, invalid characters and uint256 overflow revert.
+    function parseUnitsUnsigned(bytes calldata value, uint256 decimals, Rounding rounding)
+        external
+        pure
+        returns (uint256)
+    {
         (uint256 magnitude,) = _parseUnits(value, decimals, rounding, false);
         return magnitude;
     }
 
     function _parseUnits(bytes calldata value, uint256 decimals, Rounding rounding, bool signed)
-        private pure returns (uint256 magnitude, bool negative)
+        private
+        pure
+        returns (uint256 magnitude, bool negative)
     {
         if (decimals > 77) revert InvalidPrecision(decimals);
         if (value.length == 0) revert EmptyNumber();
@@ -1042,9 +1234,13 @@ contract Operations {
         }
         if (!digit) revert EmptyNumber();
         magnitude *= 10 ** (decimals - fractional);
-        if (remainder && ((negative && rounding == Rounding.Floor) || (!negative && rounding == Rounding.Ceil))) magnitude++;
+        if (remainder && ((negative && rounding == Rounding.Floor) || (!negative && rounding == Rounding.Ceil))) {
+            magnitude++;
+        }
     }
 
+    /// @notice Format integer units as decimal ASCII, trimming trailing fractional zeros.
+    /// @dev Precision above 77 reverts; zero precision returns the integer without a decimal point.
     function formatUnits(uint256 value, uint256 decimals) public pure returns (string memory) {
         if (decimals > 77) revert InvalidPrecision(decimals);
         if (decimals == 0) return toString(value);
@@ -1065,6 +1261,8 @@ contract Operations {
         return string.concat(integer, ".", string(fraction));
     }
 
+    /// @notice Format signed integer units, preserving the sign and trimming fractional zeros.
+    /// @dev Supports int256.min; precision above 77 reverts.
     function formatUnits(int256 value, uint256 decimals) external pure returns (string memory) {
         return string.concat(value < 0 ? "-" : "", formatUnits(_magnitude(value), decimals));
     }

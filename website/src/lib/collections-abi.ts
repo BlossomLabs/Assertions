@@ -24,6 +24,11 @@ export const COLLECTIONS_ABI = [
       },
       {
         "internalType": "bytes",
+        "name": "callData",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes",
         "name": "reason",
         "type": "bytes"
       }
@@ -60,6 +65,17 @@ export const COLLECTIONS_ABI = [
       }
     ],
     "name": "InvalidCallbackResult",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "target",
+        "type": "address"
+      }
+    ],
+    "name": "InvalidCallbackTarget",
     "type": "error"
   },
   {
@@ -157,27 +173,6 @@ export const COLLECTIONS_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "index",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "target",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "callData",
-        "type": "bytes"
-      }
-    ],
-    "name": "LambdaCallFailed",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
         "name": "offset",
         "type": "uint256"
       },
@@ -188,22 +183,6 @@ export const COLLECTIONS_ABI = [
       }
     ],
     "name": "LambdaOffsetOutOfBounds",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "index",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "length",
-        "type": "uint256"
-      }
-    ],
-    "name": "LambdaReturnTooShort",
     "type": "error"
   },
   {
@@ -276,6 +255,11 @@ export const COLLECTIONS_ABI = [
             "internalType": "uint256",
             "name": "second",
             "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "program",
+            "type": "bytes"
           }
         ],
         "internalType": "struct Collections.Callback",
@@ -283,12 +267,12 @@ export const COLLECTIONS_ABI = [
         "type": "tuple"
       }
     ],
-    "name": "distinctValues",
+    "name": "allValues",
     "outputs": [
       {
-        "internalType": "bytes[]",
-        "name": "out",
-        "type": "bytes[]"
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -337,6 +321,77 @@ export const COLLECTIONS_ABI = [
             "internalType": "uint256",
             "name": "second",
             "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "program",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct Collections.Callback",
+        "name": "cb",
+        "type": "tuple"
+      }
+    ],
+    "name": "anyValues",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "inputType",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "values",
+        "type": "bytes[]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes4",
+            "name": "selector",
+            "type": "bytes4"
+          },
+          {
+            "internalType": "string",
+            "name": "arguments",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "constants",
+            "type": "bytes[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "first",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "second",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "program",
+            "type": "bytes"
           }
         ],
         "internalType": "struct Collections.Callback",
@@ -391,6 +446,77 @@ export const COLLECTIONS_ABI = [
   },
   {
     "inputs": [
+      {
+        "internalType": "string",
+        "name": "inputType",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "values",
+        "type": "bytes[]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes4",
+            "name": "selector",
+            "type": "bytes4"
+          },
+          {
+            "internalType": "string",
+            "name": "arguments",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "constants",
+            "type": "bytes[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "first",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "second",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "program",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct Collections.Callback",
+        "name": "cb",
+        "type": "tuple"
+      }
+    ],
+    "name": "findValues",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "inputType",
+        "type": "string"
+      },
       {
         "internalType": "bytes[][]",
         "name": "values",
@@ -559,6 +685,11 @@ export const COLLECTIONS_ABI = [
             "internalType": "uint256",
             "name": "second",
             "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "program",
+            "type": "bytes"
           }
         ],
         "internalType": "struct Collections.Callback",
@@ -621,6 +752,77 @@ export const COLLECTIONS_ABI = [
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "inputType",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "values",
+        "type": "bytes[]"
+      },
+      {
+        "internalType": "bytes",
+        "name": "needle",
+        "type": "bytes"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes4",
+            "name": "selector",
+            "type": "bytes4"
+          },
+          {
+            "internalType": "string",
+            "name": "arguments",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "constants",
+            "type": "bytes[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "first",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "second",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "program",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct Collections.Callback",
+        "name": "cb",
+        "type": "tuple"
+      }
+    ],
+    "name": "indexOfValues",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -693,6 +895,11 @@ export const COLLECTIONS_ABI = [
             "internalType": "uint256",
             "name": "second",
             "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "program",
+            "type": "bytes"
           }
         ],
         "internalType": "struct Collections.Callback",
@@ -772,6 +979,30 @@ export const COLLECTIONS_ABI = [
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "inputType",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "values",
+        "type": "bytes[]"
+      }
+    ],
+    "name": "reverseValues",
+    "outputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "out",
+        "type": "bytes[]"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes",
         "name": "s",
         "type": "bytes"
@@ -783,6 +1014,40 @@ export const COLLECTIONS_ABI = [
         "internalType": "bytes",
         "name": "out",
         "type": "bytes"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "inputType",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "values",
+        "type": "bytes[]"
+      },
+      {
+        "internalType": "int256",
+        "name": "start",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "end",
+        "type": "int256"
+      }
+    ],
+    "name": "sliceValues",
+    "outputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "out",
+        "type": "bytes[]"
       }
     ],
     "stateMutability": "pure",
@@ -831,6 +1096,11 @@ export const COLLECTIONS_ABI = [
             "internalType": "uint256",
             "name": "second",
             "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "program",
+            "type": "bytes"
           }
         ],
         "internalType": "struct Collections.Callback",
@@ -890,6 +1160,77 @@ export const COLLECTIONS_ABI = [
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "inputType",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "values",
+        "type": "bytes[]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes4",
+            "name": "selector",
+            "type": "bytes4"
+          },
+          {
+            "internalType": "string",
+            "name": "arguments",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "constants",
+            "type": "bytes[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "first",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "second",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "program",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct Collections.Callback",
+        "name": "cb",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bool",
+        "name": "ordered",
+        "type": "bool"
+      }
+    ],
+    "name": "uniqueValues",
+    "outputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "out",
+        "type": "bytes[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes",
         "name": "s",
         "type": "bytes"
@@ -929,6 +1270,40 @@ export const COLLECTIONS_ABI = [
       {
         "internalType": "bytes[]",
         "name": "",
+        "type": "bytes[]"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "leftType",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "rightType",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "pairs",
+        "type": "bytes[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lane",
+        "type": "uint256"
+      }
+    ],
+    "name": "unzipValues",
+    "outputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "out",
         "type": "bytes[]"
       }
     ],
@@ -996,6 +1371,40 @@ export const COLLECTIONS_ABI = [
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "leftType",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "rightType",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "left",
+        "type": "bytes[]"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "right",
+        "type": "bytes[]"
+      }
+    ],
+    "name": "zipValues",
+    "outputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "out",
+        "type": "bytes[]"
       }
     ],
     "stateMutability": "pure",

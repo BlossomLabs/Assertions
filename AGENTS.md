@@ -32,13 +32,16 @@ fix it in the same change that falsified it.
   constraint enum was refused because a batch carrying an extension value reverts
   on every other executor and squats on wire space a future revision could
   redefine. Portability breaks are one-way doors; refuse them.
-- **`InputParam` is a tree, not a DAG**: there is no way to name a subterm, so a
-  repeated operand duplicates calldata AND re-resolves at judge time. This is why
-  `rpow` exists as a function (the composed form is 2^k copies), why `@includes!`
-  keeps two compile paths, and why splice layouts cap their live parts. Word-sized
-  reuse has a workaround: fold templates overwrite 32-byte windows, and a 32-byte
-  overwrite shifts no ABI offsets, so a window works at any nesting depth inside
-  encoded calldata.
+- **Raw `InputParam` is a tree; `ExpressionResolver` adds a graph alternative.**
+  Raw operands cannot name subterms: repeated expressions duplicate calldata and
+  resolution. Prefer resolver `resolveArguments` / `resolveValues` for dynamic ABI
+  construction: each supplied input resolves once, with no four-live-input cap.
+  Repeated input entries are still independent; graph references share evaluated
+  nodes. Graphs bind whole canonical ABI values, support lazy branches and guarded
+  evaluation, and memoize per evaluation (per callback invocation in Collections),
+  not across collection iterations. Keep word-window folds for efficient word-only
+  workloads; a 32-byte overwrite changes no dynamic ABI offsets. Specialized math
+  such as `rpow` still avoids an impractically large composed expression.
 - **Sentinels ride the path**: `LEN` (`type(int256).min`) and `PAYLOAD` (min + 1)
   are nav path entries because no real index bound can ever admit them, and the
   path is where selection intent lives. This kept the descriptor grammar pure ABI
@@ -167,3 +170,5 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
 - When running tests in a restricted sandbox, verify the nodejs test count: a
   sandboxed run has reported success with zero fuzz tests. Run outside that
   environment before treating the fuzz suites as passed.
+
+- Format production Solidity consistently with `forge fmt contracts/AbiCodec.sol contracts/Assertions.sol contracts/Collections.sol contracts/ERC8211.sol contracts/Operations.sol`; use `--check` to verify. Public NatSpec describes rounding and rejection behavior; implementation helpers document caller preconditions.

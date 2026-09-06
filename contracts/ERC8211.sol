@@ -9,7 +9,7 @@ pragma solidity ^0.8.28;
  *         standard `IComposableExecution` interface, and the shared errors
  *         of the standard's resolution semantics. Pure vocabulary — no
  *         code; the Assertions core implements resolution and constraint
- *         validation internally, and the Operators periphery speaks plain
+ *         validation internally, and the Operations periphery speaks plain
  *         ABI types and needs none of this.
  * @dev The structs and enums mirror the ERC-8211 wire format byte-for-byte,
  *      so batches produced by any ERC-8211 SDK decode here unchanged, and

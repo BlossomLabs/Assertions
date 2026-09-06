@@ -75,7 +75,7 @@ contract AbiCodecTest is Test {
         values[0] = abi.encode(uint256(0));
         values[1] = abi.encode(uint256(1));
         Collections.Callback memory cb = Collections.Callback(
-            address(this), this.extremeResult.selector, "(uint256)", new bytes[](1), 0, 0
+            address(this), this.extremeResult.selector, "(uint256)", new bytes[](1), 0, 0, ""
         );
         vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
             collections.mapValues.selector, uint256(1), uint256(0), address(this)));

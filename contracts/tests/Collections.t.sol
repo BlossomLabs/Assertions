@@ -40,6 +40,25 @@ contract CollectionsTest is Test {
         }
     }
 
+    function firstOfPair(uint256[2] memory pair) external pure returns (uint256) {
+        return pair[0];
+    }
+
+    function testPreparedCallbackRetainsStaticSlotWidth() public {
+        Collections.Callback memory callback = cb(this.firstOfPair.selector, "(uint256[2])", 1);
+        bytes[] memory values = new bytes[](2);
+        values[0] = abi.encode(uint256(7), uint256(8));
+        values[1] = abi.encode(uint256(9), uint256(10));
+        bytes[] memory mapped = ops.mapValues("uint256[2]", "uint256", values, callback);
+        assertEq(mapped[0], abi.encode(uint256(7)));
+        assertEq(mapped[1], abi.encode(uint256(9)));
+
+        // Valid input values can still disagree with the callback's declared slot width.
+        callback.arguments = "(uint256[3])";
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidComponentLength.selector, 0, 96, 64));
+        ops.mapValues("uint256[2]", "uint256", values, callback);
+    }
+
     function append(string memory a, string memory b) external pure returns (string memory) {
         return string.concat(a, b);
     }

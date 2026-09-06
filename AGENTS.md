@@ -10,8 +10,8 @@ fix it in the same change that falsified it.
   `Operators` periphery, `AbiShape`, `ERC8211`), Solidity tests under
   `contracts/tests/*.t.sol` run by `pnpm test` (hardhat 3), and the Astro site in
   `website/` with hand-written docs at `website/src/content/docs/docs/`.
-- **Vendored checkout**: `website/.evmcrispr` is the EVMcrispr monorepo on branch
-  `next`, pinned by `evmcrispr.commit` in `website/package.json`. The EVML
+- **Vendored checkout**: `website/.evmcrispr` is an EVMcrispr monorepo checkout at a published commit
+  (normally `next`, or a tested compatibility branch), pinned by `evmcrispr.commit` in `website/package.json`. The EVML
   language, SDK compiler, helper faces and parity harness all live there, not in
   `website/src`.
 - Two sessions may share either tree at once. Never `checkout`/`restore`/`stash` a
@@ -51,11 +51,11 @@ fix it in the same change that falsified it.
   shape-compatible wrong claim reads the wrong value. This class is documented,
   not defended against.
 - **No wrong-answer machines**: silent truncation is always a bug
-  (`UnalignedWords`, `WordCountMismatch` exist for this). The known live footgun:
-  splicing an ARRAY return directly into `hash`/`byteLen` compiles and silently
-  digests N bytes of an N-element payload, because an array envelope's length word
-  counts elements. `hash(rawCall(...))` is the correct whole-returndata spelling;
-  the SDK-side refusal/rewrite of the bare splice is still unbuilt.
+  (`UnalignedWords`, `WordCountMismatch` exist for this). At the raw Solidity boundary,
+  splicing an ARRAY return directly into `hash`/`byteLen` silently digests N bytes
+  of an N-element payload: its length word counts elements. The SDK now rejects
+  non-string/non-bytes operands through `requireBytesLike`; the builder mirrors
+  that guard. `hash(rawCall(...))` is the raw whole-returndata spelling.
 - **Errors identify the operand** (entry index, param index, hop index, binding
   index). Constraints judge only the first 32-byte word, unsigned, per the
   standard: anything richer (signedness, `!=`, string equality, tolerance) lowers
@@ -73,29 +73,27 @@ fix it in the same change that falsified it.
 
 ## The vendored checkout: how work lands
 
-The landing order matters and is enforced by the vendor script's behavior:
+For an upstream pin update, verify the published `origin/next` SHA, check the
+vendor tree is clean, fetch it, and move to that commit without forcing checkout.
+Verify it with `git cat-file -e`, then set `evmcrispr.commit` in
+`website/package.json`. Run `pnpm prepare:evmcrispr` and
+`pnpm check:integration` from `website/`.
 
-1. Verify the checkout is on `next` and clean (`git -C website/.evmcrispr status -sb`).
-2. Work, test, commit on `next`. Then **push** `origin/next`: the vendor script
-   fetches the pinned SHA with `--depth 1`, so an unpushed pin is a broken pin.
-3. Bump `evmcrispr.commit` in `website/package.json` to the pushed SHA. Verify the
-   SHA resolves before writing it: `git -C website/.evmcrispr cat-file -e <sha>`.
-4. `node website/scripts/vendor-evmcrispr.mjs` must print `ready` with NO
-   fetch/checkout line. Commit the bump in the main repo.
+If developing upstream changes, switch the clean vendor checkout to a working
+branch, test, commit and push before pinning: the vendor script fetches the SHA
+with `--depth 1`, so an unpushed pin is broken. Never discard another session's
+changes to make a checkout clean.
 
-Why the ceremony: whenever pin ≠ checkout HEAD, any `pnpm dev`/`pnpm build` in
-`website/` runs `git checkout -qf --detach <pin>`, which discards every
-uncommitted checkout change, leaves the checkout on a detached HEAD (the next
-commit lands on no branch, silently), and reruns `bun install` + `turbo run
-codegen` under you. The pin has also been ORPHANED once (a history rewrite left
-the pinned SHA on no branch), which makes the trip destructive even with a clean
-tree.
+The vendor script refuses to change commits with local tracked or untracked
+changes and never force-checks out. A stamp under `node_modules` records the SHA
+only after dependency installation AND codegen succeed; an interrupted preparation
+is retried even if HEAD already equals the pin. `dev`, `build` and `deploy:ipfs`
+explicitly run preparation: pnpm may not run implicit pre/post hooks.
 
 - **Contract bytecode changed → regenerate the fixture**: `pnpm compile` in the
-  main repo, then `bun scripts/sync-assertions-bytecode.ts` in the checkout. The
-  `ASSERTIONS_RUNTIME_HASH` staleness comparison described in that file is an
-  intention, not a live gate: nothing in either repo checks it, so a stale
-  fixture silently runs every parity case against the OLD core.
+  main repo, then `bun scripts/sync-assertions-bytecode.ts` in the checkout. The website
+  `pnpm check:integration` gate compares both runtime fixtures with compiled
+  artifacts, and both deployment bytecodes/CREATE2 addresses with the SDK.
 - **Codegen is regex-based**: `defineHelper` configs must keep `name`,
   `description`, `compileDescription`, `returnType`, `args` before `run`/`compile`
   at two-space indentation. `src/_generated.ts` is uncommitted output; rerun
@@ -158,9 +156,14 @@ tree.
 
 ## Release
 
-- Both contracts sit on interim zero salts. Before any canonical deploy, re-mine
-  the vanity salts (`website/scripts/mine-salt.mjs`, then update
-  `hardhat.config.ts` and regenerate `website/src/lib/verification-inputs.ts`).
+- Canonical vanity salts live in `website/scripts/export-deploy-artifact.mjs`.
+  The zero salt in Ignition is not the canonical deployment path. Contract source
+  changes (including comments in compiler metadata) may change CREATE2 addresses;
+  regenerate and verify deployment artifacts, fixtures and SDK addresses together.
 - Bytecode size: `(len(deployedBytecode) - 2) / 2` against 24,576, per artifact.
   Operators must stay byte-identical through core-only changes; any drift there is
   a red flag.
+
+- When running tests in a restricted sandbox, verify the nodejs test count: a
+  sandboxed run has reported success with zero fuzz tests. Run outside that
+  environment before treating the fuzz suites as passed.

@@ -9,7 +9,7 @@ The folds are the one loop primitive in the system: apply a lambda over a bounde
 enum FoldExit { Full, Any, All }
 
 function foldRange(uint256 n,      address target, bytes template,
-                   uint256 accOffset, uint256 elemOffset, bytes32 init, FoldExit exit)
+                   uint256 accOffset, uint256[] elemOffsets, bytes32 init, FoldExit exit)
     external view returns (bytes32);
 function foldBytes(bytes s,        address target, bytes template, ...) // same tail
 function foldWords(bytes s,        address target, bytes template, ...) // same tail
@@ -21,7 +21,7 @@ function foldWords(bytes s,        address target, bytes template, ...) // same 
 
 ## Template-lambda mechanics
 
-The lambda is a single staticcall per element, described by a *template*: `template` is complete, valid calldata for `target` in which two 32-byte windows are rewritten per iteration, the accumulator at `accOffset`, then the element at `elemOffset` (the element wins on overlap; every byte outside the windows stays pristine template). The first word of the lambda's return becomes the new accumulator, and the final accumulator is the fold's result.
+The lambda is a single staticcall per element, described by a *template*: `template` is complete, valid calldata for `target` in which 32-byte windows are rewritten per iteration: the accumulator at `accOffset`, then the element at every offset in `elemOffsets`, in the supplied order (the element wins over the accumulator on overlap; later element windows win over earlier ones). The first word of the lambda's return becomes the new accumulator, and the final accumulator is the fold's result.
 
 Any single-word-returning view or pure function is a lambda; there is no closure format to learn. Summing `0..4` with the `add` operator as the lambda:
 
@@ -30,7 +30,9 @@ bytes4 constant ADD_U = bytes4(keccak256("add(uint256,uint256)"));
 
 // template: add(0, 0); acc window at byte 4 (first arg), elem at 36 (second)
 bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(0));
-operators.foldRange(5, address(operators), template, 4, 36, bytes32(0), Operators.FoldExit.Full);
+uint256[] memory elemOffsets = new uint256[](1);
+elemOffsets[0] = 36;
+operators.foldRange(5, address(operators), template, 4, elemOffsets, bytes32(0), Operators.FoldExit.Full);
 // = 10
 ```
 
@@ -40,7 +42,7 @@ Window offsets are byte offsets into the template: after the 4-byte selector, ar
 
 `Full` scans every element. `Any` stops at the first NONZERO accumulator (exists), `All` at the first ZERO (forall); the final accumulator is returned either way, so `Any` folds judge `EQ 1`-shaped words and `All` folds start from `init = 1`. Early exit is also failure-avoidance: elements after the exit point are never touched, so a would-revert application past a satisfied `Any` never happens.
 
-An empty domain returns `init` without touching the lambda (the target is not even inspected).
+An empty domain returns `init` after validating the template length and window bounds; the target is not inspected or called.
 
 ## Recipes
 
@@ -56,7 +58,9 @@ The fold form is what `charset` collapses, and it stays the general pattern for 
 ```solidity
 // the pre-native recipe, and the template for a custom per-byte test
 bytes memory template = abi.encodeWithSelector(Operators.bitSet.selector, mask, uint256(0));
-operators.foldBytes(bytes(symbol), address(operators), template, 36, 36, bytes32(uint256(1)), Operators.FoldExit.All);
+uint256[] memory elemOffsets = new uint256[](1);
+elemOffsets[0] = 36;
+operators.foldBytes(bytes(symbol), address(operators), template, 36, elemOffsets, bytes32(uint256(1)), Operators.FoldExit.All);
 ```
 
 The check is byte-level, so multi-byte UTF-8 characters (every byte >= 0x80) fail any ASCII-only mask, and the empty string is vacuously in every set.
@@ -70,9 +74,9 @@ The check is byte-level, so multi-byte UTF-8 characters (every byte >= 0x80) fai
 The word-array family operates on the same payloads `foldWords` consumes: aligned 32-byte words without the ABI envelope (an array's elements, sliced out of a returned array or produced by another word op). Every function validates alignment first (`UnalignedWords`) and returns a plain bytes payload, so they nest into each other, into the folds, and into `read` splicing.
 
 ```solidity
-function mapWords    (bytes s, address target, bytes template, uint256 elemOffset)
+function mapWords    (bytes s, address target, bytes template, uint256[] elemOffsets)
     external view returns (bytes);
-function filterWords (bytes s, address target, bytes template, uint256 elemOffset)
+function filterWords (bytes s, address target, bytes template, uint256[] elemOffsets)
     external view returns (bytes);
 function iotaWords   (uint256 n) external pure returns (bytes);
 function wordIndexOf (bytes s, bytes32 w) external pure returns (uint256);
@@ -84,7 +88,7 @@ function uniqueWords (bytes s) external pure returns (bytes);
 function sumWords    (bytes s) external pure returns (uint256);
 ```
 
-**`mapWords`** applies a single-staticcall lambda to every word and returns the transformed payload: the bytes-producing map the scalar folds cannot express. Lambda conventions match the folds (`template` is complete calldata for `target` whose 32-byte window at `elemOffset` is rewritten per element; the lambda's FIRST return word is the mapped element), and so do the failure modes below. An empty payload returns empty without inspecting the lambda. In [EVMcrispr](/docs/evml) it is `@map!` applied to a named definition, e.g. `def @dbl! "$x: number -> number" @num!($x * 2)` then `@map!($t::values() @dbl!)`.
+**`mapWords`** applies a single-staticcall lambda to every word and returns the transformed payload: the bytes-producing map the scalar folds cannot express. Lambda conventions match the folds (`template` is complete calldata for `target` whose 32-byte windows at `elemOffsets` are rewritten per element; the lambda's FIRST return word is the mapped element), and so do the failure modes below. An empty payload returns empty after validating the template length and window bounds, without inspecting or calling the target. In [EVMcrispr](/docs/evml) it is `@map!` applied to a named definition, e.g. `def @dbl! "$x: number -> number" @num!($x * 2)` then `@map!($t::values() @dbl!)`.
 
 **`filterWords`** is `mapWords`' variable-length sibling, byte-identical in signature and lambda conventions: it keeps the ELEMENTS whose lambda application returns nonzero, in order, so the output length is the kept count and the result nests into `len`, the folds and the other word ops. EVMcrispr compiles `@filter!` to it, and `@find!` is a core `pick` of the first kept word (no match leaves the pick out of bounds, so it reverts).
 
@@ -96,7 +100,7 @@ function sumWords    (bytes s) external pure returns (uint256);
 
 **`sortWords`** sorts ascending as UNSIGNED words (`@sort!`). Insertion sort: O(n^2) word moves, so gas caps practical inputs at hundreds of words, not thousands. Signed sorting is a three-node recipe instead of an overload: flip the sign bit (`mapWords` with `bitXor(2^255, elem)`), sort, flip back. **`uniqueWords`** collapses ADJACENT duplicates in O(n), so set-semantics deduplication is `uniqueWords(sortWords(s))`; on unsorted input it is run-length deduplication, by design (`@unique!`, nesting `@sort!` for the set form).
 
-**`sumWords`** is the checked sum of the payload's words (overflow past 2^256 - 1 reverts with `Panic(0x11)`): the native, fixed-operation form of the `foldWords(add)` recipe, one on-chain loop instead of a call per element. EVMcrispr compiles `@sum!` to it; use `@reduce!(add 0)` (or `foldWords` directly) for any other reduction (min, max, bitOr, bitAnd) or a nonzero initial accumulator.
+**`sumWords`** is the checked sum of the payload's words (overflow past 2^256 - 1 reverts with `Panic(0x11)`): the native, fixed-operation form of the `foldWords(add)` recipe, one on-chain loop instead of a call per element. EVMcrispr compiles `@sum!` to it; use `@reduce!(call add 0)` (or `foldWords` directly) for any other reduction (min, max, bitOr, bitAnd) or a nonzero initial accumulator.
 
 ## Failure modes and gas
 

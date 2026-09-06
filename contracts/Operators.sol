@@ -392,9 +392,11 @@ contract Operators {
      *      practical cost: an expression is a tree with no way to name a
      *      subterm, so squaring duplicates its operand's whole calldata
      *      subtree and the composed form is 2^k copies (~33M for the
-     *      exponent above). Rounds down at each step; the error is bounded
-     *      by the number of multiplies, about 2*log2(n) units in the last
-     *      place. Reverts with Panic(0x11) if an intermediate overflows
+     *      exponent above). Rounds down at each step; earlier rounding
+     *      losses can be amplified by later squarings, so the final error
+     *      is not bounded by the number of multiplies. Choose the scale
+     *      and tolerance for the input range and exponent. Reverts with
+     *      Panic(0x11) if a scaled intermediate does not fit uint256
      */
     function rpow(uint256 x, uint256 n, uint256 base) external pure returns (uint256) {
         if (base == 0) revert();
@@ -1164,14 +1166,15 @@ contract Operators {
      *      engine and rules. The lambda is a single staticcall: `template`
      *      is complete calldata for `target` in which 32-byte windows are
      *      rewritten per element — the accumulator at `accOffset` first,
-     *      then the element at each offset in `elemOffsets` in ascending
+     *      then the element at each offset in `elemOffsets` in the supplied
      *      order (the element wins on overlap with the accumulator, and
      *      later element windows win on mutual overlap; every byte
      *      outside the windows stays pristine template). The first return
      *      word becomes the new accumulator; `Any` stops at the first
      *      nonzero accumulator, `All` at the first zero, `Full` scans
      *      everything; the final accumulator is returned either way. An
-     *      empty domain returns `init` without touching the lambda. A
+     *      empty domain validates template windows, then returns `init`
+     *      without inspecting or calling the target. A
      *      lambda revert is an assertion failure: it reverts the fold with
      *      LambdaCallFailed naming the element. Offsets must leave room
      *      for a word inside the template (LambdaOffsetOutOfBounds), a
@@ -1255,10 +1258,10 @@ contract Operators {
      *         the scalar folds cannot express
      * @dev Lambda conventions match the folds: `template` is complete
      *      calldata for `target` whose 32-byte windows at `elemOffsets`
-     *      are rewritten per element (ascending order; later windows win
+     *      are rewritten per element (supplied order; later windows win
      *      on mutual overlap); the lambda's FIRST return word is the
-     *      mapped element. An empty payload returns empty without
-     *      inspecting the lambda; a code-less target reverts with
+     *      mapped element. An empty payload validates template windows
+     *      before returning empty without inspecting the target; a code-less target reverts with
      *      LambdaCallFailed(0, target, ""), a reverting application with
      *      LambdaCallFailed naming the element, a short return with
      *      LambdaReturnTooShort. Gas is the loop bound, one call per word.
@@ -1456,11 +1459,6 @@ contract Operators {
     }
 
     /**
-     * @notice The payload with ADJACENT duplicate words collapsed — O(n),
-     *         so set-semantics deduplication is uniqueWords(sortWords(s));
-     *         on unsorted input this is run-length deduplication, by design
-     */
-    /**
      * @notice The checked sum of the payload's 32-byte words — a native
      *         single-call loop, the fixed-operation form of the
      *         foldWords(add) recipe (overflow reverts with Panic(0x11))
@@ -1473,6 +1471,11 @@ contract Operators {
         }
     }
 
+    /**
+     * @notice The payload with ADJACENT duplicate words collapsed — O(n),
+     *         so set-semantics deduplication is uniqueWords(sortWords(s));
+     *         on unsorted input this is run-length deduplication, by design
+     */
     function uniqueWords(bytes calldata s) external pure returns (bytes memory out) {
         if (s.length % 32 != 0) revert UnalignedWords(s.length);
         uint256 count = s.length / 32;

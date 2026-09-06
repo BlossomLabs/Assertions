@@ -362,6 +362,62 @@ contract CoreReadsTest is Test {
         assertions.nav(p, "(address,string[])", _path1(1));
     }
 
+    function test_nav_len_rejectsMissingPayloadAndHostileCounts() public view {
+        string[5] memory descriptors = ["(uint256[])", "(bytes)", "(string)", "(string[])", "((uint256,uint256)[])"];
+        int256[] memory path = _path2(0, assertions.LEN());
+        InputParam memory p = _lit(0);
+        for (uint256 i = 0; i < descriptors.length; i++) {
+            p.paramData = abi.encode(uint256(32), uint256(999));
+            (bool ok, bytes memory ret) = _nav(p, descriptors[i], path);
+            assertFalse(ok, descriptors[i]);
+            assertEq(bytes4(ret), ReturnDataOutOfBounds.selector);
+            p.paramData = abi.encode(uint256(32), type(uint256).max);
+            (ok, ret) = _nav(p, descriptors[i], path);
+            assertFalse(ok, descriptors[i]);
+            assertEq(bytes4(ret), ReturnDataOutOfBounds.selector);
+        }
+    }
+
+    function test_nav_len_requiresPaddedBytesPayload() public view {
+        int256[] memory path = _path2(0, assertions.LEN());
+        InputParam memory p = _lit(0);
+        for (uint256 length = 31; length <= 33; length++) {
+            p.paramData = abi.encode(new bytes(length));
+            (bool ok, bytes memory ret) = _nav(p, "(bytes)", path);
+            assertTrue(ok);
+            assertEq(abi.decode(ret, (uint256)), length);
+        }
+        p.paramData = bytes.concat(abi.encode(uint256(32), uint256(33)), new bytes(33));
+        (bool ok, bytes memory ret) = _nav(p, "(bytes)", path);
+        assertFalse(ok);
+        assertEq(bytes4(ret), ReturnDataOutOfBounds.selector);
+    }
+
+    function test_nav_len_arrayHeadFootprintsAndEmptyValues() public view {
+        int256[] memory path = _path2(0, assertions.LEN());
+        InputParam memory p = _lit(0);
+        uint256[2][] memory pairs = new uint256[2][](2);
+        pairs[0] = [uint256(1), uint256(2)];
+        pairs[1] = [uint256(3), uint256(4)];
+        p.paramData = abi.encode(pairs);
+        (bool ok, bytes memory ret) = _nav(p, "(uint256[2][])", path);
+        assertTrue(ok);
+        assertEq(abi.decode(ret, (uint256)), 2);
+        // Two elements claimed, but only one two-word element supplied.
+        p.paramData = abi.encode(uint256(32), uint256(2), uint256(1), uint256(2));
+        (ok, ret) = _nav(p, "(uint256[2][])", path);
+        assertFalse(ok);
+        assertEq(bytes4(ret), ReturnDataOutOfBounds.selector);
+        // Empty strings and dynamic-element arrays still have valid lengths.
+        p.paramData = abi.encode(uint256(32), uint256(0));
+        (ok, ret) = _nav(p, "(string[])", path);
+        assertTrue(ok);
+        assertEq(abi.decode(ret, (uint256)), 0);
+        (ok, ret) = _nav(p, "(string)", path);
+        assertTrue(ok);
+        assertEq(abi.decode(ret, (uint256)), 0);
+    }
+
     function test_nav_payload_flagship_okRevertDataShape() public view {
         // the (ok, data) probe shape: bytes is a sealed leaf, so the blob's
         // content is reached by re-entry — PAYLOAD strips the value in the

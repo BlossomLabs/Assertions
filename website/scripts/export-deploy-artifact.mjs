@@ -53,7 +53,7 @@ const CONTRACTS = [
     key: "core",
     artifact: "artifacts/contracts/Assertions.sol/Assertions.json",
     output: "src/lib/assertions-deployment.ts",
-    // Canonical vanity salt for the 2.0 core, mined with `cast create2`
+    // Retained CREATE2 salt for the corrected 2.0 core
     // (random 32-byte salt; the old shared-base convention is retired).
     // Prior releases:
     // interim v2.0 (zero salt) remains at 0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F;
@@ -64,7 +64,7 @@ const CONTRACTS = [
     // v1.0 remains at 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
     // (salt 0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb).
     salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
-    expectedAddress: "0xA55E472841ca3D318205036724A94F5abDbf7b18",
+    expectedAddress: "0x67DBB438FdC614466984Dc8F68dAB812d785a2aE",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -74,7 +74,7 @@ const CONTRACTS = [
     key: "operators",
     artifact: "artifacts/contracts/Operators.sol/Operators.json",
     output: "src/lib/operators-deployment.ts",
-    // Canonical vanity salt for Operators v1.0 ("0x09e4a7e" reads OPERATE),
+    // Retained CREATE2 salt for Operators v1.0,
     // the plain periphery that replaced Combinators. Mined with `cast create2`
     // (random 32-byte salt; the old shared-base convention is retired).
     // Prior releases:
@@ -84,7 +84,7 @@ const CONTRACTS = [
     // v1.0 remains at 0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC
     // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60027fbe3).
     salt: "0x92d34082f305b501d427bef474df394f826a347b55dba79ecfe2bfe14b998cf9",
-    expectedAddress: "0x09e4a7e55200600314165ddFB381639dace41bEA",
+    expectedAddress: "0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD",
     prefix: "OPERATORS",
     description: "Operators plain-value vocabulary contract",
     includeProxyConstants: false,
@@ -188,7 +188,7 @@ for (const c of CONTRACTS) {
 export const ${c.prefix}_ADDRESS =
   "${c.expectedAddress}" as const;
 
-/** Salt mined for the vanity address (see hardhat.config.ts). */
+/** Canonical CREATE2 salt (see scripts/export-deploy-artifact.mjs). */
 export const ${c.prefix}_SALT =
   "${c.salt}" as const;
 

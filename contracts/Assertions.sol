@@ -296,7 +296,7 @@ contract Assertions {
      *      - word terminal (static single-word value): the 32-byte word;
      *      - dynamic terminal (string/bytes/array): the canonical
      *        single-value envelope [0x20][length][payload]. Arrays must
-     *        have single-word static elements; dynamic tuples and arrays
+     *        have statically encoded elements; dynamic tuples and arrays
      *        of dynamic elements revert with InvalidNavigation (their
      *        extent would require a recursive re-encoder);
      *      - a path ending in the LEN sentinel: the decoded length of the
@@ -808,23 +808,40 @@ contract Assertions {
      * @dev Resolves a LEN-terminated path: navigates the non-sentinel steps
      *      to a dynamic value and returns its length word. Static values,
      *      dynamic tuples and empty paths revert with InvalidNavigation
-     *      (a fixed array's length is known at composition time).
+     *      (a fixed array's length is known at composition time). The
+     *      selected bytes/string payload or array element heads must fit
+     *      in the resolved data; dynamic element tails are not traversed.
      */
     function _navLength(bytes memory result, bytes calldata t, int256[] calldata path) internal pure returns (uint256) {
         if (path.length == 0) revert InvalidNavigation(0);
         (uint256 pos, bool isWord, uint256 ts, uint256 te) = _navigate(result, t, path);
         if (isWord) revert InvalidNavigation(ts);
+        uint256 length = _navWord(result, pos);
+        uint256 available = result.length - pos - 32;
         // Dynamic arrays and bytes/string sit on their length word; a
         // dynamic tuple's position is its first head word — no length
         // there, and a FIXED array's position is its first element (its
         // length is known at composition time, so it has no length word
         // to read either).
         if (t[te - 1] == "]") {
-            if (AbiShape.suffixStart(t, ts, te) + 1 != te - 1) revert InvalidNavigation(ts);
+            uint256 suffix = AbiShape.suffixStart(t, ts, te);
+            if (suffix + 1 != te - 1) revert InvalidNavigation(ts);
+            (, , uint256 elemWords) = AbiShape.typeShape(t, ts, suffix);
+            if (elemWords == 0) revert InvalidNavigation(ts);
+            // Divide before multiplying: hostile counts/descriptor sizes
+            // must not overflow before the bounds check. Dynamic elements
+            // occupy one offset word; static elements may span many words.
+            if (length > available / 32 / elemWords) {
+                revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+            }
         } else if (t[ts] == "(") {
             revert InvalidNavigation(ts);
+        } else if (length > available - available % 32) {
+            // Bytes/string require the payload rounded up to full words,
+            // matching _returnDynamic, without rounding a hostile length.
+            revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
         }
-        return _navWord(result, pos);
+        return length;
     }
 
     /**
@@ -861,7 +878,7 @@ contract Assertions {
      * @dev Returns a navigated dynamic terminal re-encoded as a canonical
      *      single-value return: [0x20][length][payload], indistinguishable
      *      from a contract returning that value directly. Terminals may be
-     *      string, bytes, or a dynamic array of single-word static
+     *      string, bytes, or a dynamic array of statically encoded
      *      elements; dynamic tuples and arrays of dynamic elements revert
      *      with InvalidNavigation (their extent would require a recursive
      *      re-encoder).

@@ -8,16 +8,16 @@ import { OPERATORS_DEPLOY_GAS } from '../../../../lib/operators-deployment';
 
 export const fmtGas = (gas) => `~${(gas / 1e6).toFixed(2)}M gas`;
 
-Both contracts live at the same deterministic address on every chain. The vanity roll for the 2.0 line is done: each contract has its own CREATE2 salt mined against the final bytecode (Assertions keeps the `0xa55E47` prefix; Operators reads `0x09e4a7e`, "OPERATE").
+Both contracts have the same deterministic address on every supported chain where they are deployed. The corrected 2.0 core and the Operators documentation update use the existing salts with new bytecode, producing the addresses below. These replace the earlier vanity candidates; check the deployment page for availability on your chain.
 
 ```
-Assertions v2.0  0xA55E472841ca3D318205036724A94F5abDbf7b18   (frozen core: judge + primitives)
-Operators  v1.0  0x09e4a7e55200600314165ddFB381639dace41bEA   (versionable periphery)
+Assertions v2.0  0x67DBB438FdC614466984Dc8F68dAB812d785a2aE   (frozen core: judge + primitives)
+Operators  v1.0  0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD   (versionable periphery)
 ```
 
 The interim zero-salt deployments of the same bytecode (Assertions `0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F`, Operators `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`) stay live wherever they were sent, but are no longer canonical.
 
-Deployed versions are immutable: earlier releases keep working forever at their own canonical addresses. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) always points to the latest canonical version of the core, and the original v1.0 core stays live at [`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
+Deployed versions are immutable: earlier releases keep working forever at their own canonical addresses. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) is updated separately after deployment, and the original v1.0 core stays live at [`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
 
 The [interactive deployments page](/deployments) shows per-chain status, lets you deploy with a connected wallet, and verifies contracts on explorers.
 
@@ -49,5 +49,5 @@ The salts live in `hardhat.config.ts` and `website/scripts/export-deploy-artifac
 :::
 
 :::note[Chain requirements]
-The bytecode targets `cancun` and contains `PUSH0`, so the target chain must support the Shanghai upgrade or later. The exact compiler settings in `hardhat.config.ts` (solc 0.8.36, optimizer 200 runs, `evmVersion: cancun`) must not change, or the CREATE2 addresses change with the bytecode.
+The bytecode targets `cancun`. The deployment uses `PUSH0`, and blob-related Operators require Cancun opcode support; use Cancun-compatible chains for the full vocabulary. The exact compiler settings in `hardhat.config.ts` (solc 0.8.36, optimizer 200 runs, `evmVersion: cancun`) must not change, or the CREATE2 addresses change with the bytecode.
 :::

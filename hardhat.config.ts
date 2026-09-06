@@ -6,18 +6,18 @@ export default defineConfig({
   ignition: {
     // NOTE: Ignition's create2 strategy deploys through the CreateX factory,
     // which guards (re-hashes) the salt, so it does NOT reproduce the canonical
-    // vanity address below. The canonical deployment goes through the Arachnid
+    // address below. The canonical deployment goes through the Arachnid
     // deterministic-deployment proxy (0x4e59b44847b379578588920cA78FbF26c0B4956C);
     // see website/scripts/export-deploy-artifact.mjs and the README.
     strategyConfig: {
       create2: {
         // This Ignition salt is NOT the canonical path (see the note above).
-        // The canonical per-contract vanity salts live in
+        // The canonical per-contract CREATE2 salts live in
         // website/scripts/export-deploy-artifact.mjs, mined with
         // `cast create2` as random 32-byte salts (the old shared-base
         // convention is retired):
-        // core v2.0 salt 0xd4f532eb...faeae45b → 0xA55E472841ca3D318205036724A94F5abDbf7b18,
-        // Operators v1.0 salt 0x92d34082...4b998cf9 → 0x09e4a7e55200600314165ddFB381639dace41bEA.
+        // core v2.0 salt 0xd4f532eb...faeae45b → 0x67DBB438FdC614466984Dc8F68dAB812d785a2aE,
+        // Operators v1.0 salt 0x92d34082...4b998cf9 → 0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD.
         // Prior releases (Arachnid-proxy addresses):
         // interim core v2.0 zero salt → 0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F,
         // interim Operators v1.0 zero salt → 0x8e832Ace3f433943eb605c258bA37AF24a69dC53,
@@ -30,7 +30,7 @@ export default defineConfig({
     },
   },
   solidity: {
-    // The two profiles are intentionally identical: the CREATE2 vanity address
+    // The two profiles are intentionally identical: the CREATE2 address
     // is derived from the exact bytecode, so test builds and production builds
     // must produce the same output. Do not let them drift.
     profiles: {

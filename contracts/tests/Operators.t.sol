@@ -212,6 +212,15 @@ contract OperatorsTest is Test {
         assertEq(ops.rpow(RAY, SPY, RAY), RAY, "one to any power is one");
     }
 
+    function test_rpow_roundingLossCanExceedMultiplicationCount() public view {
+        // Independent rational-power oracle: round only once at the end.
+        uint256 exactFloor = uint256(19) ** 16 / uint256(10) ** 15;
+        uint256 actual = ops.rpow(19, 16, 10);
+        assertEq(actual, 276889);
+        assertEq(exactFloor, 288441);
+        assertGt(exactFloor - actual, 8); // 2 * log2(16) is NOT an error bound.
+    }
+
     function test_rpow_squaresAndCubes() public view {
         // 1.5^2 = 2.25, exactly representable in both scales.
         assertEq(ops.rpow(15e26, 2, RAY), 225e25);

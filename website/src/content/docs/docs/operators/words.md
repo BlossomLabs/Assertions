@@ -44,6 +44,18 @@ assert @num!(@balance!(ETH $addr1) + $weth::balanceOf($addr1)) > 0
 
 `sqrt(x)` is the floor square root, the AMM invariant form: `sqrt(mulDiv(x, y, 1e18))` style checks, or EVMcrispr's `@sqrt!($pool::reserve0() * $pool::reserve1())`. The raw product still reverts past `2^256` (checked `mul`), so scale wide reserves down through `mulDiv` first.
 
+## Fixed-point rounding
+
+`rpow(x, n, base)` computes a scaled power using integer division after
+each multiplication. It rounds down at each step, so its result can be
+lower than a single final rounding of `base * (x / base)^n`. Earlier
+rounding errors are amplified by later squarings: there is no general
+`2 * log2(n)` bound on the final error in units of the output.
+For example, `rpow(19, 16, 10)` returns `276889`, while rounding the exact
+rational power once gives `288441`. Choose the scale and assertion tolerance
+for the input range and exponent; wad/ray precision does not establish a
+universal absolute error bound.
+
 ## Signed comparisons
 
 Constraints compare unsigned words, so anything signed routes through the int256 overloads. "The rate is above -10" (where an unsigned comparison would see -10 as astronomically large):

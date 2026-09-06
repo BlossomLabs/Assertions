@@ -13,7 +13,7 @@ Why named functions instead of the old op-code enums: decoded calldata reads on 
 
 | Group | Functions |
 |-------|-----------|
-| [Arithmetic](/docs/operators/words) | `add`, `sub`, `mul`, `div`, `mod`, `min`, `max` (uint256 + int256 overloads), `exp` (uint or int base, uint exponent), `absDiff` (uint + int operands, uint256 magnitude, total), `mulDiv` (signed/unsigned 512-bit mul-then-div, explicit rounding), `addMod`/`mulMod` (512-bit EVM builtins), `sqrt` (floor), `log2` (floor, reverts on 0) |
+| [Arithmetic](/docs/operators/words) | `add`, `sub`, `mul`, `div`, `mod`, `min`, `max` (uint256 + int256 overloads), `exp` (uint or int base, uint exponent), `absDiff` (uint + int operands, uint256 magnitude, total), `mulDiv` (signed/unsigned 512-bit mul-then-div, explicit rounding), `addMod`/`mulMod` (signed/unsigned full-width remainder), `powMod` (modular powers and inverses), `sqrt` (floor), `log2` (floor, reverts on 0) |
 | [Fixed point](/docs/operators/words) | `rpow(x, n, base)` (compounding, `base` is one unit — 1e27 ray or 1e18 wad) |
 | [Comparisons](/docs/operators/words) | `eq`, `ne` (bit-level, uint), `lt`, `gt`, `le`, `ge` (uint256 + int256 overloads); all return `bool` |
 | [Bitwise](/docs/operators/words) | `bitAnd`, `bitOr`, `bitXor`, `shl`, `shr` (uint, plus an int256 overload: arithmetic shift, EVM SAR), `bitSet(mask, index)` |

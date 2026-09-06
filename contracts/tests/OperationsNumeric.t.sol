@@ -7,6 +7,45 @@ contract OperationsNumericTest is Test {
     Operations ops;
     function setUp() public { ops = new Operations(); }
 
+    function test_signedModBoundaries() public view {
+        int256 low = type(int256).min;
+        int256 high = type(int256).max;
+        assertEq(ops.addMod(high, high, 7), 0);
+        assertEq(ops.addMod(low, low, 7), -2);
+        assertEq(ops.addMod(low, low, low), 0);
+        assertEq(ops.addMod(high, high, low), high - 1);
+        assertEq(ops.addMod(low, high, -7), -1);
+        assertEq(ops.addMod(high, low, 7), -1);
+        assertEq(ops.addMod(int256(-3), 7, -3), 1);
+        assertEq(ops.addMod(int256(7), -3, 3), 1);
+        assertEq(ops.addMod(int256(7), -7, low), 0);
+        assertEq(ops.mulMod(low, low, 7), 1);
+        assertEq(ops.mulMod(low, high, -7), 0);
+        assertEq(ops.mulMod(low, -1, low), 0);
+        assertEq(ops.mulMod(low, 1, -7), -1);
+        assertEq(ops.mulMod(int256(-7), -2, -3), 2);
+        assertEq(ops.mulMod(int256(7), -2, -3), -2);
+        assertEq(ops.mulMod(int256(0), low, low), 0);
+    }
+
+    function test_signedModZero() public {
+        vm.expectRevert(stdError.divisionError);
+        ops.addMod(int256(-1), -1, 0);
+        vm.expectRevert(stdError.divisionError);
+        ops.addMod(int256(-1), 1, 0);
+        vm.expectRevert(stdError.divisionError);
+        ops.addMod(int256(1), -2, 0);
+        vm.expectRevert(stdError.divisionError);
+        ops.mulMod(int256(0), type(int256).min, 0);
+    }
+
+    function testFuzz_signedMod(int128 a, int128 b, int256 m) public view {
+        if (m == 0) return;
+        // These intermediates fit int256, providing an independent native oracle.
+        assertEq(ops.addMod(int256(a), int256(b), m), (int256(a) + int256(b)) % m);
+        assertEq(ops.mulMod(int256(a), int256(b), m), (int256(a) * int256(b)) % m);
+    }
+
     function test_signedMulDivBoundaries() public {
         assertEq(ops.mulDiv(int256(-7), 1, 3, Operations.Rounding.Trunc), -2);
         assertEq(ops.mulDiv(int256(-7), 1, 3, Operations.Rounding.Floor), -3);

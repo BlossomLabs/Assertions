@@ -42,7 +42,13 @@ assert @num!(@balance!(ETH $addr1) + $weth::balanceOf($addr1)) > 0
 
 This unreleased ABI replaces both three-argument `mulDiv` and `mulDivUp`; there are no compatibility aliases. Explicit rounding does not change the checked behavior of ordinary `mul` or `div`. `exp(int256,uint256)` adds checked signed-base powers (including `0 ** 0 == 1`); negative exponents are unsupported. The EVMcrispr integration for this ABI is a separate change.
 
-`addMod(a, b, m)` and `mulMod(a, b, m)` are the EVM ADDMOD/MULMOD builtins: the sum or product is taken over 512 bits before the modulo, so nothing wraps at `2^256` (modulo by zero reverts with `Panic(0x12)`).
+`addMod(a, b, m)` and `mulMod(a, b, m)` take a full-width sum or product before the remainder. Both `uint256` and `int256` overloads are available. The signed remainder follows the sign of the mathematical sum or product, independent of the modulus's sign; `int256.min` is supported in every operand. Modulo by zero reverts with `Panic(0x12)`.
+
+EVMcrispr's `@calc!((a + b) % m)` and `@calc!(a * b % m)` select the matching overload, with identical off-chain `@calc` behavior. Mixed signed/unsigned operands must fit int256. Only the immediately preceding sum or product is fused; earlier intermediates remain checked.
+
+`powMod(a, exponent, m)` computes modular powers without materializing the power. Base/modulus pairs have unsigned and signed overloads, independently of whether the exponent is uint256 or int256. Negative exponents use the modular inverse and revert with `ModularInverseDoesNotExist(baseMagnitude, modulusMagnitude)` when those magnitudes are not coprime. Odd exponents preserve a negative base's sign; the modulus's sign is ignored. Modulus zero panics, modulus ±1 returns zero, and exponent zero returns `1 % m` (including `0 ** 0`).
+
+EVMcrispr fuses `a ^ e % m` in `calc`/`calc!` and evaluates it directly in `num`: `3 ^ -1 % 11` is `4`, `3 ^ -2 % 11` is `5`, and `-3 ^ -1 % 11` is `-4`. Outside the immediately-following remainder form, `calc` still rejects negative powers while `num` keeps exact rational arithmetic.
 
 `sqrt(x)` is the floor square root, the AMM invariant form: `sqrt(mulDiv(x, y, 1e18, Rounding.Floor))` style checks, or EVMcrispr's `@sqrt!($pool::reserve0() * $pool::reserve1())`. The raw product still reverts past `2^256` (checked `mul`), so scale wide reserves down through `mulDiv` first.
 

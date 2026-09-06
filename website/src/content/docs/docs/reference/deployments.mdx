@@ -12,11 +12,11 @@ Each contract has the same deterministic address on every supported chain where 
 
 ```
 Assertions v2.0  0x8794b0d097C07e7520B421d02201E34c9eE3E156   (frozen core: judge + primitives)
-Operations  v1.0  0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e   (unreleased periphery)
+Operations  v1.0  0x69Db28Fef09ca3f814c6701589EE96C20593ae66   (unreleased periphery)
 Collections v1.0 0xc011Ec7Cc443dA1218Da699EFd09639f35dd8379   (unreleased generic collections)
 ```
 
-Previous artifact candidates, including Operations `0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD`, use different bytecode. The interim zero-salt deployments (Assertions `0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F`, Operations `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`) stay live wherever they were sent, but are no longer canonical.
+Previous artifact candidates, including Operations `0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e` and `0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD`, use different bytecode. The interim zero-salt deployments (Assertions `0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F`, Operations `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`) stay live wherever they were sent, but are no longer canonical.
 
 Deployed versions are immutable: earlier releases keep working forever at their own canonical addresses. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) is updated separately after deployment, and the original v1.0 core stays live at [`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
 
@@ -43,7 +43,7 @@ cast send 0x4e59b44847b379578588920cA78FbF26c0B4956C \
   "$(cat salt_and_initcode.hex)" --rpc-url <rpc> --private-key <key>
 ```
 
-The canonical salts live in `website/scripts/export-deploy-artifact.mjs`; the script regenerates `website/src/lib/assertions-deployment.ts` and `website/src/lib/operations-deployment.ts`, and `website/src/lib/collections-deployment.ts` (salt, init code, measured deploy gas, and predicted address for each contract) from a fresh compile. It refuses to export if the compiled bytecode no longer reproduces the expected address.
+The canonical salts live in `website/scripts/export-deploy-artifact.mjs`; the script regenerates `website/src/lib/assertions-deployment.ts` and `website/src/lib/operations-deployment.ts`, and `website/src/lib/collections-deployment.ts` (salt, init code, measured deploy gas, and predicted address for each contract) from a fresh compile. It refuses to export if the compiled bytecode no longer reproduces the expected address. Pass `--contract Operations` to regenerate only Operations and preserve the other contracts' deployment and verification artifacts.
 
 :::caution
 **Do not use `hardhat ignition deploy` for the canonical deployment.** Ignition's `create2` strategy goes through the CreateX factory, which re-hashes the salt and therefore produces a *different* address than the Arachnid proxy. The Ignition module is kept only for local testing.

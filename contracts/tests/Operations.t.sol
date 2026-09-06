@@ -182,9 +182,9 @@ contract OperationsTest is Test {
         assertEq(ops.addMod(type(uint256).max, 5, type(uint256).max), 5);
         assertEq(ops.mulMod(type(uint256).max, 2, 7), 2);
         vm.expectRevert(stdError.divisionError);
-        ops.addMod(1, 1, 0);
+        ops.addMod(uint256(1), 1, 0);
         vm.expectRevert(stdError.divisionError);
-        ops.mulMod(1, 1, 0);
+        ops.mulMod(uint256(1), 1, 0);
     }
 
     function test_sqrt() public view {

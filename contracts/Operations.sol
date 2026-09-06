@@ -76,6 +76,9 @@ contract Operations {
      */
     error EmptyNeedle();
 
+    /// @notice The base magnitude and modulus are not coprime, so no inverse exists.
+    error ModularInverseDoesNotExist(uint256 base, uint256 modulus);
+
     // ============ Arithmetic ============
 
     /**
@@ -269,6 +272,91 @@ contract Operations {
      */
     function mulMod(uint256 a, uint256 b, uint256 m) external pure returns (uint256) {
         return mulmod(a, b, m);
+    }
+
+    /**
+     * @notice (a + b) % m with an overflow-free intermediate sum.
+     * @dev The remainder has the sum's sign, independent of m's sign.
+     *      Handles int256.min; modulo by zero reverts with Panic(0x12).
+     */
+    function addMod(int256 a, int256 b, int256 m) external pure returns (int256) {
+        uint256 x = _magnitude(a);
+        uint256 y = _magnitude(b);
+        uint256 modulus = _magnitude(m);
+        if ((a < 0) == (b < 0)) {
+            return _signedMagnitude(addmod(x, y, modulus), a < 0);
+        }
+        // Opposite signs subtract magnitudes; the larger operand sets the sign.
+        return x >= y
+            ? _signedMagnitude((x - y) % modulus, a < 0)
+            : _signedMagnitude((y - x) % modulus, b < 0);
+    }
+
+    /**
+     * @notice (a * b) % m with an overflow-free intermediate product.
+     * @dev The remainder has the product's sign, independent of m's sign.
+     *      Handles int256.min; modulo by zero reverts with Panic(0x12).
+     */
+    function mulMod(int256 a, int256 b, int256 m) external pure returns (int256) {
+        return _signedMagnitude(mulmod(_magnitude(a), _magnitude(b), _magnitude(m)), (a < 0) != (b < 0));
+    }
+
+    /// @notice a ** exponent % m, without overflowing the intermediate power.
+    /// @dev 0 ** 0 is 1; a zero modulus reverts with Panic(0x12).
+    function powMod(uint256 a, uint256 exponent, uint256 m) external pure returns (uint256) {
+        return _powMod(a, exponent, m);
+    }
+
+    /// @notice Signed-base modular power; odd powers retain the base's sign.
+    /// @dev The modulus's sign is ignored. All int256.min operands are supported.
+    function powMod(int256 a, uint256 exponent, int256 m) external pure returns (int256) {
+        return _signedMagnitude(_powMod(_magnitude(a), exponent, _magnitude(m)), a < 0 && exponent & 1 != 0);
+    }
+
+    /// @notice Negative exponents raise the modular inverse to |exponent|.
+    /// @dev Reverts with ModularInverseDoesNotExist unless gcd(a, m) == 1.
+    ///      Modulus 1 returns 0; modulus 0 reverts with Panic(0x12).
+    function powMod(uint256 a, int256 exponent, uint256 m) external pure returns (uint256) {
+        return _powMod(exponent < 0 ? _inverseMod(a, m) : a, _magnitude(exponent), m);
+    }
+
+    /// @notice Signed modular powers, including negative exponents via inversion.
+    /// @dev Odd exponents (positive or negative) retain the base's sign.
+    ///      Negative exponents require coprime base/modulus magnitudes.
+    function powMod(int256 a, int256 exponent, int256 m) external pure returns (int256) {
+        uint256 base = _magnitude(a);
+        uint256 modulus = _magnitude(m);
+        if (exponent < 0) base = _inverseMod(base, modulus);
+        return _signedMagnitude(_powMod(base, _magnitude(exponent), modulus), a < 0 && exponent & 1 != 0);
+    }
+
+    function _powMod(uint256 base, uint256 exponent, uint256 modulus) private pure returns (uint256 result) {
+        result = 1 % modulus;
+        base %= modulus;
+        // At most 256 iterations for any uint256 exponent.
+        while (exponent != 0) {
+            if (exponent & 1 != 0) result = mulmod(result, base, modulus);
+            exponent >>= 1;
+            if (exponent != 0) base = mulmod(base, base, modulus);
+        }
+    }
+
+    function _inverseMod(uint256 base, uint256 modulus) private pure returns (uint256) {
+        uint256 r = modulus;
+        uint256 nextR = base % modulus;
+        uint256 t;
+        uint256 nextT = 1 % modulus;
+        // Extended Euclid with coefficients reduced modulo m. mulmod avoids
+        // overflowing q * nextT even when the modulus uses the full word.
+        while (nextR != 0) {
+            uint256 q = r / nextR;
+            (r, nextR) = (nextR, r % nextR);
+            uint256 product = mulmod(q, nextT, modulus);
+            uint256 next = t >= product ? t - product : modulus - (product - t);
+            (t, nextT) = (nextT, next);
+        }
+        if (r != 1) revert ModularInverseDoesNotExist(base, modulus);
+        return t;
     }
 
     /**

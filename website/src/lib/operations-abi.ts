@@ -162,6 +162,22 @@ export const OPERATIONS_ABI = [
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "base",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "modulus",
+        "type": "uint256"
+      }
+    ],
+    "name": "ModularInverseDoesNotExist",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "target",
         "type": "address"
@@ -282,6 +298,35 @@ export const OPERATIONS_ABI = [
       }
     ],
     "name": "add",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "int256",
+        "name": "a",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "b",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "m",
+        "type": "int256"
+      }
+    ],
+    "name": "addMod",
     "outputs": [
       {
         "internalType": "int256",
@@ -1426,6 +1471,35 @@ export const OPERATIONS_ABI = [
   {
     "inputs": [
       {
+        "internalType": "int256",
+        "name": "a",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "b",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "m",
+        "type": "int256"
+      }
+    ],
+    "name": "mulMod",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "a",
         "type": "uint256"
@@ -1575,6 +1649,122 @@ export const OPERATIONS_ABI = [
       }
     ],
     "name": "parseUnitsUnsigned",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "int256",
+        "name": "a",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "exponent",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "m",
+        "type": "int256"
+      }
+    ],
+    "name": "powMod",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "a",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "exponent",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "m",
+        "type": "uint256"
+      }
+    ],
+    "name": "powMod",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "int256",
+        "name": "a",
+        "type": "int256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "exponent",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int256",
+        "name": "m",
+        "type": "int256"
+      }
+    ],
+    "name": "powMod",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "a",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int256",
+        "name": "exponent",
+        "type": "int256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "m",
+        "type": "uint256"
+      }
+    ],
+    "name": "powMod",
     "outputs": [
       {
         "internalType": "uint256",

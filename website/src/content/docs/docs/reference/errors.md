@@ -59,6 +59,7 @@ View-mode batch restrictions from the judge, plus the primitives' own errors:
 | `InvalidCallbackTarget(address)` | callback target has no bytecode; precompiles are excluded |
 | `InvalidCallbackResult(bytes4,uint256,uint256,address)` | callback returned an invalid ABI result, word length or boolean |
 | `UnalignedWords(uint256)` | `foldWords` or a word-array function received data that is not a whole number of 32-byte words |
+| `ModularInverseDoesNotExist(uint256,uint256)` | a negative modular exponent has no inverse because the base and modulus magnitudes are not coprime (arguments: base magnitude, modulus magnitude) |
 | `EmptyNumber()` | `parseUint` received empty input (0 would be a silent wrong answer) |
 | `InvalidDecimalDigit(uint256, bytes1)` | `parseUint` met a byte outside `0-9` (arguments: byte position, offending byte) |
 | `RawCallFailed(address, bytes)` | a `rawCall` staticcall reverted (arguments: the called address and the calldata that was sent) |
@@ -66,6 +67,6 @@ View-mode batch restrictions from the judge, plus the primitives' own errors:
 | `InvalidLane(uint256)` | `unzipWords` received a lane other than 0 or 1 |
 | `EmptyNeedle()` | `replace` received an empty needle (it would match everywhere, and inserting the replacement between every byte is certainly a mistake) |
 
-Arithmetic failures in Operations surface as Solidity panics: overflow/underflow (including `exp`, `mulDiv` and `type(int256).min / -1`) as `Panic(0x11)`, division or modulo by zero (including `mulDiv`, `addMod` and `mulMod`) as `Panic(0x12)`. An out-of-range `FoldExit` in Collections surfaces as `Panic(0x21)`.
+Arithmetic failures in Operations surface as Solidity panics: overflow/underflow (including `exp`, `mulDiv` and `type(int256).min / -1`) as `Panic(0x11)`, division or modulo by zero (including `mulDiv`, `addMod`, `mulMod` and `powMod`) as `Panic(0x12)`. An out-of-range `FoldExit` in Collections surfaces as `Panic(0x21)`.
 
 The `Split`/`Includes`/`Charset` [recipes](/docs/operators/fold) have no dedicated errors: they are total compositions of `indexOf`, `slice`, `byteLen` and the folds. `replace` is the one string operation with an error of its own (`EmptyNeedle`).

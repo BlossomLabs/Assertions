@@ -5,7 +5,7 @@
 // gitignored Hardhat artifacts at build time.
 //
 // Usage: pnpm hardhat compile (from the repo root), then from website/:
-//   node scripts/export-deploy-artifact.mjs
+//   node scripts/export-deploy-artifact.mjs [--contract Operations]
 
 import { execSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -73,9 +73,10 @@ const CONTRACTS = [
     key: "operators",
     artifact: "artifacts/contracts/Operations.sol/Operations.json",
     output: "src/lib/operations-deployment.ts",
-    // Vanity CREATE2 salt for Operations: 09e4a7e (OPERATE).
+    // Retained salt; the modular power and inverse overloads change the candidate address.
+    // Previous artifact: 0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e.
     salt: "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
-    expectedAddress: "0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e",
+    expectedAddress: "0x69Db28Fef09ca3f814c6701589EE96C20593ae66",
     prefix: "OPERATIONS",
     description: "Operations plain-value vocabulary contract",
     includeProxyConstants: false,
@@ -94,6 +95,25 @@ const CONTRACTS = [
   },
 ];
 
+// A periphery update can be exported independently of other artifact candidates.
+const args = process.argv.slice(2);
+if (
+  args.length &&
+  (args.length !== 2 || args[0] !== "--contract" || !CONTRACTS.some((c) => c.name === args[1]))
+) {
+  throw new Error("Usage: export-deploy-artifact.mjs [--contract Assertions|Operations|Collections]");
+}
+const selectedContracts = args.length
+  ? CONTRACTS.filter((c) => c.name === args[1])
+  : CONTRACTS;
+let previousVerificationInputs = {};
+if (args.length) {
+  const previous = readFileSync(join(__dirname, "..", "src/lib/verification-inputs.ts"), "utf8");
+  const match = previous.match(/>\s*=\s*(\{[\s\S]*\});\s*$/);
+  if (!match) throw new Error("Cannot preserve existing verification inputs; run a full export first");
+  previousVerificationInputs = JSON.parse(match[1]);
+}
+
 // Measure the real deploy gas of each contract by replaying the canonical
 // Arachnid-proxy deployment on an in-process Hardhat network (see
 // scripts/measure-deploy-gas.ts at the repo root). Never hardcode gas: it
@@ -104,7 +124,7 @@ const measureOutput = execSync("npx hardhat run scripts/measure-deploy-gas.ts", 
   env: {
     ...process.env,
     MEASURE_DEPLOY_GAS_CONFIG: JSON.stringify(
-      CONTRACTS.map((c) => ({
+      selectedContracts.map((c) => ({
         name: c.name,
         artifact: c.artifact,
         salt: c.salt,
@@ -157,7 +177,7 @@ function importClosure(sources, entry) {
 
 const verificationInputs = [];
 
-for (const c of CONTRACTS) {
+for (const c of selectedContracts) {
   const artifactPath = join(repoRoot, c.artifact);
   const artifact = JSON.parse(readFileSync(artifactPath, "utf8"));
   const creationBytecode = artifact.bytecode;
@@ -271,12 +291,15 @@ export const VERIFICATION_INPUTS: Record<
   ${CONTRACTS.map((c) => JSON.stringify(c.key)).join(" | ")},
   VerificationInput
 > = ${JSON.stringify(
-  Object.fromEntries(
-    verificationInputs.map(({ key, contractName, compilerVersion, input }) => [
-      key,
-      { contractName, compilerVersion, input },
-    ]),
-  ),
+  {
+    ...previousVerificationInputs,
+    ...Object.fromEntries(
+      verificationInputs.map(({ key, contractName, compilerVersion, input }) => [
+        key,
+        { contractName, compilerVersion, input },
+      ]),
+    ),
+  },
   null,
   2,
 )};

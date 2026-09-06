@@ -45,7 +45,7 @@ See [ABI codec refactor measurements](abi-codec-refactor.md) for reproducible co
 Current artifact candidates (not public deployment claims):
 
 - Assertions: `0x8794b0d097C07e7520B421d02201E34c9eE3E156` (13,116 runtime bytes).
-- Operators: `0x7B4F82C8A21dCaf7D96D4113D6d23578d1F0A91D` (23,737 runtime bytes).
+- Operators: `0xE5c2D60293510f69456d006b8B177AAE0889911f` (23,205 runtime bytes).
 - CollectionOperators: `0x87841575F679dA8E877db0A95b1bCF2C0d0D55dc` (13,825 runtime bytes).
 
 The local EVMcrispr SDK addresses and runtime fixtures are updated together. Compiler routing still uses fixed windows for word templates and whole argument slots for typed callbacks. The website integration checker now checks all three artifacts and can run against the local checkout with `EVMCRISPR_SRC`.

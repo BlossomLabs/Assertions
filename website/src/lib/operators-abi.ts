@@ -1902,7 +1902,7 @@ export const OPERATORS_ABI = [
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "result",
+        "name": "",
         "type": "uint256"
       }
     ],
@@ -2336,7 +2336,7 @@ export const OPERATORS_ABI = [
     "outputs": [
       {
         "internalType": "bytes",
-        "name": "out",
+        "name": "",
         "type": "bytes"
       }
     ],
@@ -2393,7 +2393,7 @@ export const OPERATORS_ABI = [
     "outputs": [
       {
         "internalType": "bytes",
-        "name": "out",
+        "name": "",
         "type": "bytes"
       }
     ],

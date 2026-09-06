@@ -85,7 +85,7 @@ const CONTRACTS = [
     // v1.0 remains at 0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC
     // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60027fbe3).
     salt: "0x92d34082f305b501d427bef474df394f826a347b55dba79ecfe2bfe14b998cf9",
-    expectedAddress: "0x7B4F82C8A21dCaf7D96D4113D6d23578d1F0A91D",
+    expectedAddress: "0xE5c2D60293510f69456d006b8B177AAE0889911f",
     prefix: "OPERATORS",
     description: "Operators plain-value vocabulary contract",
     includeProxyConstants: false,

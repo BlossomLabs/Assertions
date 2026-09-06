@@ -341,36 +341,8 @@ contract Operators {
      */
     function sqrt(uint256 x) external pure returns (uint256) {
         if (x == 0) return 0;
-        uint256 xx = x;
-        uint256 r = 1;
-        if (xx >= 0x100000000000000000000000000000000) {
-            xx >>= 128;
-            r <<= 64;
-        }
-        if (xx >= 0x10000000000000000) {
-            xx >>= 64;
-            r <<= 32;
-        }
-        if (xx >= 0x100000000) {
-            xx >>= 32;
-            r <<= 16;
-        }
-        if (xx >= 0x10000) {
-            xx >>= 16;
-            r <<= 8;
-        }
-        if (xx >= 0x100) {
-            xx >>= 8;
-            r <<= 4;
-        }
-        if (xx >= 0x10) {
-            xx >>= 4;
-            r <<= 2;
-        }
-        if (xx >= 0x4) {
-            r <<= 1;
-        }
         unchecked {
+            uint256 r = 1 << (_log2(x) >> 1);
             r = (r + x / r) >> 1;
             r = (r + x / r) >> 1;
             r = (r + x / r) >> 1;
@@ -876,7 +848,8 @@ contract Operators {
      *         (order-preserving pair hashing composes as hash over concat)
      */
     function hashPairSorted(bytes32 a, bytes32 b) external pure returns (bytes32) {
-        return a < b ? keccak256(abi.encodePacked(a, b)) : keccak256(abi.encodePacked(b, a));
+        if (a > b) (a, b) = (b, a);
+        return keccak256(abi.encodePacked(a, b));
     }
 
     // ============ Search ============
@@ -997,23 +970,24 @@ contract Operators {
      *         through verbatim (multi-byte UTF-8 units have the high bit
      *         set, so they are untouched — the fold is ASCII-only)
      */
-    function toLower(bytes calldata s) external pure returns (bytes memory out) {
-        out = s;
-        for (uint256 i = 0; i < out.length; i++) {
-            bytes1 c = out[i];
-            if (c >= "A" && c <= "Z") out[i] = bytes1(uint8(c) + 32);
-        }
+    function toLower(bytes calldata s) external pure returns (bytes memory) {
+        return _foldCase(s, "A", "Z");
     }
 
     /**
      * @notice `s` with ASCII a-z folded to A-Z; every other byte passes
      *         through verbatim (ASCII-only, like toLower)
      */
-    function toUpper(bytes calldata s) external pure returns (bytes memory out) {
+    function toUpper(bytes calldata s) external pure returns (bytes memory) {
+        return _foldCase(s, "a", "z");
+    }
+
+    /// @dev Flip the ASCII case bit only within the requested letter range.
+    function _foldCase(bytes calldata s, bytes1 low, bytes1 high) private pure returns (bytes memory out) {
         out = s;
         for (uint256 i = 0; i < out.length; i++) {
             bytes1 c = out[i];
-            if (c >= "a" && c <= "z") out[i] = bytes1(uint8(c) - 32);
+            if (c >= low && c <= high) out[i] = c ^ 0x20;
         }
     }
 
@@ -1044,9 +1018,14 @@ contract Operators {
      *      reverts with Panic(0x11) via the checked accumulator.
      *      Leading zeros are accepted ("007" is 7)
      */
-    function parseUint(bytes calldata s) external pure returns (uint256 result) {
-        if (s.length == 0) revert EmptyNumber();
-        for (uint256 i = 0; i < s.length; i++) {
+    function parseUint(bytes calldata s) external pure returns (uint256) {
+        return _parseDigits(s, 0);
+    }
+
+    /// @dev Parse at least one decimal digit; the signed entry point handles the sign.
+    function _parseDigits(bytes calldata s, uint256 start) private pure returns (uint256 result) {
+        if (start == s.length) revert EmptyNumber();
+        for (uint256 i = start; i < s.length; i++) {
             bytes1 c = s[i];
             if (c < "0" || c > "9") revert InvalidDecimalDigit(i, c);
             result = result * 10 + (uint8(c) - 48);
@@ -1078,15 +1057,7 @@ contract Operators {
     function parseInt(bytes calldata value) external pure returns (int256) {
         if (value.length == 0) revert EmptyNumber();
         bool negative = value[0] == "-";
-        uint256 start = negative || value[0] == "+" ? 1 : 0;
-        if (start == value.length) revert EmptyNumber();
-        uint256 magnitude;
-        for (uint256 i = start; i < value.length; i++) {
-            bytes1 c = value[i];
-            if (c < "0" || c > "9") revert InvalidDecimalDigit(i, c);
-            magnitude = magnitude * 10 + uint256(uint8(c) - 48);
-        }
-        return _signedMagnitude(magnitude, negative);
+        return _signedMagnitude(_parseDigits(value, negative || value[0] == "+" ? 1 : 0), negative);
     }
 
     function parseUnits(bytes calldata value, uint256 decimals, Rounding rounding) external pure returns (int256) {

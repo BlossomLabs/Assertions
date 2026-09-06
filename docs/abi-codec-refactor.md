@@ -17,7 +17,7 @@ Run `SOLC=/path/to/solc-0.8.36 pnpm hardhat run scripts/measure-compiler-size.ts
 | Yes | 50 | 11,158 | 21,701 | 12,323 | 27,529 | 20,669 |
 | Yes | 200 | 11,168 | 21,781 | 12,323 | 27,608 | 20,679 |
 
-Even the smallest merged periphery does not fit. Production therefore retains the agreed split. Moving typed collections into Assertions does fit, but changes the core's responsibility; that alternative has only been compiled for review, not adopted or runtime-tested. Alternative optimizer configurations are size experiments, not approved production builds.
+Even the smallest merged periphery in this stock-settings matrix does not fit. Production therefore retains the agreed split. Moving typed collections into Assertions does fit, but changes the core's responsibility; that alternative has only been compiled for review, not adopted or runtime-tested. Alternative optimizer configurations are size experiments, not approved production builds.
 
 ## Gas comparison
 
@@ -62,3 +62,41 @@ Encoding now checks complete nested values rather than trusting tails. It also b
 - Artifact export verifies all three runtime limits and replays CREATE2 deployments. The website checker validates all three artifacts against the local SDK via `EVMCRISPR_SRC=/home/sem/Projects/EVMcrispr node scripts/check-integration.mjs` from `website/`.
 - The local website check passes all three artifact comparisons and nine builder compilation cases. It reports existing catalog drift for the in-progress arithmetic helper migration (`num!` versus `calc!` and decimal helpers); this refactor does not change that UI catalog.
 - The published website vendor pin is unchanged until a tested SDK commit is published. No public-chain deployments were performed.
+
+
+## Selected source simplifications
+
+Production keeps the original solc 0.8.36, Cancun, optimizer-200 pipeline and
+separate Operators/CollectionOperators. The custom Yul sequence, inheritance,
+unchecked calldata word loads, blanket memory-safe annotations and merge-sort
+rewrite from the size spike were reverted. All public functions remain.
+
+Only four source simplifications are retained: sqrt seeds its Newton iteration
+using the existing _log2; hashPairSorted swaps before one hash; ASCII case
+conversion shares one loop; signed and unsigned integer parsing share the strict
+digit loop. These reduce Operators from 23,737 to 23,205 runtime bytes. Core and
+CollectionOperators remain byte-identical to the pre-spike production artifacts.
+
+Gas comparisons use the pre-spike runtime and the selected source changes under
+identical original compiler settings and calldata, with transaction intrinsic
+costs included. Every compared return value matched:
+
+| Operation/input | Before | After |
+|---|---:|---:|
+| sqrt(99) | 22,293 | 22,698 |
+| sqrt(UINT256_MAX) | 22,785 | 23,016 |
+| hashPairSorted(2, 1), both encoded as bytes32 | 22,021 | 22,024 |
+| toLower("ABCDEFGHIJKLMNOPQRSTUVWXYZ012345") | 34,487 | 32,388 |
+| toUpper("abcdefghijklmnopqrstuvwxyz012345") | 34,485 | 32,386 |
+| parseUint("123") | 23,691 | 23,740 |
+| parseUint(UINT256_MAX decimal) | 60,997 | 61,046 |
+| parseInt("-123") | 23,991 | 24,019 |
+
+The smaller/shared source is not uniformly cheaper to execute: sqrt trades a
+small amount of gas for eliminating its duplicate bit scan, while ASCII case
+conversion improves both size and gas. The unchanged Solidity/Node suites cover
+square-root boundaries, integer ranges/errors and byte-level ASCII behavior.
+
+Validation: `pnpm test` passed 410 tests (323 Solidity, 87 Node). Deployment
+artifacts, verification inputs, SDK addresses and runtime fixtures are regenerated
+together. The published website SDK pin still awaits a published tested revision.

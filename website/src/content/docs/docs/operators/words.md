@@ -38,11 +38,13 @@ assert @num!(@balance!(ETH $addr1) + $weth::balanceOf($addr1)) > 0
 
 ## 512-bit math: mulDiv, the mod pair & sqrt
 
-`mulDiv(a, b, denominator)` is `floor(a * b / denominator)` with a full 512-bit intermediate product: the mul-then-div for price, share and bps math where the plain composition `div(mul(a, b), d)` would revert on an intermediate past `2^256` (think `balance * price / 1e18`). It keeps the checked semantics of the plain operators: a zero denominator reverts with `Panic(0x12)`, a result that does not fit 256 bits with `Panic(0x11)`. `mulDivUp` is the ceiling variant for round-up share math. In EVMcrispr no special form is needed: `@num!(a * b / c)` over unsigned operands **fuses into one mulDiv read automatically** (signed operands keep the nested lowering, since there is no signed mulDiv).
+`mulDiv(a, b, denominator, rounding)` uses a full 512-bit intermediate product and rounds the quotient once. Both `uint256` and `int256` overloads are available. `Rounding.Trunc` (ABI value 0) rounds toward zero, `Floor` (1) toward negative infinity, and `Ceil` (2) toward positive infinity. Unsigned truncation and floor coincide. Signed operands may include negative denominators and `int256.min`. A zero denominator reverts with `Panic(0x12)`; an out-of-range rounded result reverts with `Panic(0x11)`. For rounded division alone, use `mulDiv(a, 1, b, rounding)`.
+
+This unreleased ABI replaces both three-argument `mulDiv` and `mulDivUp`; there are no compatibility aliases. Explicit rounding does not change the checked behavior of ordinary `mul` or `div`. `exp(int256,uint256)` adds checked signed-base powers (including `0 ** 0 == 1`); negative exponents are unsupported. The EVMcrispr integration for this ABI is a separate change.
 
 `addMod(a, b, m)` and `mulMod(a, b, m)` are the EVM ADDMOD/MULMOD builtins: the sum or product is taken over 512 bits before the modulo, so nothing wraps at `2^256` (modulo by zero reverts with `Panic(0x12)`).
 
-`sqrt(x)` is the floor square root, the AMM invariant form: `sqrt(mulDiv(x, y, 1e18))` style checks, or EVMcrispr's `@sqrt!($pool::reserve0() * $pool::reserve1())`. The raw product still reverts past `2^256` (checked `mul`), so scale wide reserves down through `mulDiv` first.
+`sqrt(x)` is the floor square root, the AMM invariant form: `sqrt(mulDiv(x, y, 1e18, Rounding.Floor))` style checks, or EVMcrispr's `@sqrt!($pool::reserve0() * $pool::reserve1())`. The raw product still reverts past `2^256` (checked `mul`), so scale wide reserves down through `mulDiv` first.
 
 ## Fixed-point rounding
 
@@ -140,7 +142,7 @@ assertions.assertParam(callParam(address(assertions), implHash, eq(auditedCodeHa
 
 ## More composition patterns
 
-**Exponentiation & live decimals scaling.** `exp` gives checked `**` (overflow reverts with `Panic(0x11)`, `0 ** 0 == 1` per EVM semantics). It is unsigned-only: Solidity defines `**` for unsigned operands, so signed exponentiation is ill-defined. The canonical use is scaling thresholds by a live `decimals()` (EVMcrispr's `@num!` with `^`): "`a` holds at least 5 whole tokens":
+**Exponentiation & live decimals scaling.** `exp` gives checked `**` (overflow reverts with `Panic(0x11)`, `0 ** 0 == 1` per EVM semantics). Both signed and unsigned bases are supported; the exponent is always unsigned. The canonical use is scaling thresholds by a live `decimals()` (EVMcrispr's `@num!` with `^`): "`a` holds at least 5 whole tokens":
 
 ```solidity
 bytes memory scale = read2(operators, Operators.exp.selector,       // 10 ** decimals()

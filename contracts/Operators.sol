@@ -31,6 +31,13 @@ import {AbiShape, InvalidTypeDescriptor} from "./AbiShape.sol";
  * @custom:version 1.0
  */
 contract Operators {
+    enum Rounding {
+        Trunc,
+        Floor,
+        Ceil
+    }
+    error InvalidPrecision(uint256 decimals);
+
     // ============ Custom Errors ============
 
     /**
@@ -231,11 +238,19 @@ contract Operators {
     /**
      * @notice a ** b, checked (0 ** 0 == 1) — canonical use is live
      *         decimals scaling, e.g. mul(5, exp(10, token.decimals())).
-     *         Unsigned only: Solidity defines ** for unsigned operands, so
-     *         signed exponentiation is ill-defined
      */
     function exp(uint256 a, uint256 b) external pure returns (uint256) {
         return a ** b;
+    }
+
+    /// @notice Checked signed-base power; 0 ** 0 is one.
+    function exp(int256 a, uint256 b) external pure returns (int256 result) {
+        result = 1;
+        while (b != 0) {
+            if (b & 1 != 0) result *= a;
+            b >>= 1;
+            if (b != 0) a *= a;
+        }
     }
 
     /**
@@ -286,31 +301,42 @@ contract Operators {
         }
     }
 
-    /**
-     * @notice floor(a * b / denominator) with a full 512-bit intermediate
-     *         product — mul-then-div for values where the plain
-     *         composition div(mul(a, b), d) would overflow, e.g.
-     *         balance * price / 1e18
-     * @dev Reverts with Panic(0x12) on a zero denominator and Panic(0x11)
-     *      when the result does not fit 256 bits, matching the checked
-     *      semantics of the plain operators
-     */
-    function mulDiv(uint256 a, uint256 b, uint256 denominator) external pure returns (uint256) {
-        return _mulDiv(a, b, denominator);
+    /// @notice Full-width product followed by one explicitly rounded division.
+    /// @dev Zero denominator panics 0x12; an unrepresentable rounded result panics 0x11.
+    function mulDiv(uint256 a, uint256 b, uint256 denominator, Rounding rounding)
+        external pure returns (uint256 result)
+    {
+        result = _mulDiv(a, b, denominator);
+        if (rounding == Rounding.Ceil && mulmod(a, b, denominator) != 0) result += 1;
     }
 
-    /**
-     * @notice ceil(a * b / denominator) with a full 512-bit intermediate
-     *         product — mulDiv rounding up
-     * @dev Revert semantics as mulDiv (a ceiling that lands on 2^256
-     *      reverts with Panic(0x11))
-     */
-    function mulDivUp(uint256 a, uint256 b, uint256 denominator) external pure returns (uint256) {
-        uint256 result = _mulDiv(a, b, denominator);
-        if (mulmod(a, b, denominator) > 0) {
+    /// @notice Signed full-width multiplication/division, including negative denominators.
+    function mulDiv(int256 a, int256 b, int256 denominator, Rounding rounding)
+        external pure returns (int256)
+    {
+        bool negative = (a < 0) != (b < 0) != (denominator < 0);
+        uint256 x = _magnitude(a);
+        uint256 y = _magnitude(b);
+        uint256 d = _magnitude(denominator);
+        uint256 result = _mulDiv(x, y, d);
+        if (mulmod(x, y, d) != 0 &&
+            ((negative && rounding == Rounding.Floor) || (!negative && rounding == Rounding.Ceil))) {
             result += 1;
         }
-        return result;
+        return _signedMagnitude(result, negative);
+    }
+
+    function _magnitude(int256 value) private pure returns (uint256) {
+        unchecked {
+            return value < 0 ? uint256(-(value + 1)) + 1 : uint256(value);
+        }
+    }
+
+    function _signedMagnitude(uint256 value, bool negative) private pure returns (int256) {
+        if (value > (negative ? uint256(1) << 255 : uint256(type(int256).max))) _panic(0x11);
+        unchecked {
+            return negative ? -int256(value) : int256(value);
+        }
     }
 
     /**
@@ -931,6 +957,25 @@ contract Operators {
     }
 
 
+    /// @notice Split on non-overlapping delimiter matches, preserving all empty segments.
+    function split(bytes calldata data, bytes calldata delimiter) external pure returns (bytes[] memory parts) {
+        if (delimiter.length == 0) revert EmptyNeedle();
+        parts = new bytes[](_countOccurrences(data, delimiter) + 1);
+        uint256 start;
+        uint256 position;
+        uint256 index;
+        while (position + delimiter.length <= data.length) {
+            if (_matchesAt(data, delimiter, position)) {
+                parts[index++] = data[start:position];
+                position += delimiter.length;
+                start = position;
+            } else {
+                position++;
+            }
+        }
+        parts[index] = data[start:];
+    }
+
     // ============ Strings ============
 
     /**
@@ -1026,7 +1071,7 @@ contract Operators {
      * @notice The decimal ASCII rendering of `v` — parseUint's inverse
      *         (no leading zeros, so toString(parseUint(s)) normalizes)
      */
-    function toString(uint256 v) external pure returns (string memory) {
+    function toString(uint256 v) public pure returns (string memory) {
         if (v == 0) return "0";
         uint256 digits;
         for (uint256 t = v; t > 0; t /= 10) {
@@ -1038,6 +1083,90 @@ contract Operators {
             buf[digits] = bytes1(uint8(48 + (t % 10)));
         }
         return string(buf);
+    }
+
+    function toString(int256 value) external pure returns (string memory) {
+        return string.concat(value < 0 ? "-" : "", toString(_magnitude(value)));
+    }
+
+    function parseInt(bytes calldata value) external pure returns (int256) {
+        if (value.length == 0) revert EmptyNumber();
+        bool negative = value[0] == "-";
+        uint256 start = negative || value[0] == "+" ? 1 : 0;
+        if (start == value.length) revert EmptyNumber();
+        uint256 magnitude;
+        for (uint256 i = start; i < value.length; i++) {
+            bytes1 c = value[i];
+            if (c < "0" || c > "9") revert InvalidDecimalDigit(i, c);
+            magnitude = magnitude * 10 + uint256(uint8(c) - 48);
+        }
+        return _signedMagnitude(magnitude, negative);
+    }
+
+    function parseUnits(bytes calldata value, uint256 decimals, Rounding rounding) external pure returns (int256) {
+        (uint256 magnitude, bool negative) = _parseUnits(value, decimals, rounding, true);
+        return _signedMagnitude(magnitude, negative);
+    }
+
+    function parseUnitsUnsigned(bytes calldata value, uint256 decimals, Rounding rounding) external pure returns (uint256) {
+        (uint256 magnitude,) = _parseUnits(value, decimals, rounding, false);
+        return magnitude;
+    }
+
+    function _parseUnits(bytes calldata value, uint256 decimals, Rounding rounding, bool signed)
+        private pure returns (uint256 magnitude, bool negative)
+    {
+        if (decimals > 77) revert InvalidPrecision(decimals);
+        if (value.length == 0) revert EmptyNumber();
+        negative = value[0] == "-";
+        if (negative && !signed) revert InvalidDecimalDigit(0, value[0]);
+        uint256 start = negative || value[0] == "+" ? 1 : 0;
+        bool point;
+        bool digit;
+        bool remainder;
+        uint256 fractional;
+        for (uint256 i = start; i < value.length; i++) {
+            bytes1 c = value[i];
+            if (c == "." && !point) {
+                point = true;
+                continue;
+            }
+            if (c < "0" || c > "9") revert InvalidDecimalDigit(i, c);
+            digit = true;
+            if (point && fractional >= decimals) {
+                if (c != "0") remainder = true;
+            } else {
+                magnitude = magnitude * 10 + uint256(uint8(c) - 48);
+                if (point) fractional++;
+            }
+        }
+        if (!digit) revert EmptyNumber();
+        magnitude *= 10 ** (decimals - fractional);
+        if (remainder && ((negative && rounding == Rounding.Floor) || (!negative && rounding == Rounding.Ceil))) magnitude++;
+    }
+
+    function formatUnits(uint256 value, uint256 decimals) public pure returns (string memory) {
+        if (decimals > 77) revert InvalidPrecision(decimals);
+        if (decimals == 0) return toString(value);
+        uint256 scale = 10 ** decimals;
+        string memory integer = toString(value / scale);
+        uint256 remainder = value % scale;
+        if (remainder == 0) return integer;
+        bytes memory fraction = new bytes(decimals);
+        for (uint256 i = decimals; i != 0;) {
+            fraction[--i] = bytes1(uint8(48 + remainder % 10));
+            remainder /= 10;
+        }
+        uint256 length = decimals;
+        while (fraction[length - 1] == "0") length--;
+        assembly ("memory-safe") {
+            mstore(fraction, length)
+        }
+        return string.concat(integer, ".", string(fraction));
+    }
+
+    function formatUnits(int256 value, uint256 decimals) external pure returns (string memory) {
+        return string.concat(value < 0 ? "-" : "", formatUnits(_magnitude(value), decimals));
     }
 
     // ============ Encode ============
@@ -1076,6 +1205,18 @@ contract Operators {
      * @param values One canonical single-value encoding per component
      */
     function encode(string calldata types, bytes[] calldata values) external pure {
+        bytes memory out = _encode(types, values);
+        assembly {
+            return(add(out, 32), mload(out))
+        }
+    }
+
+    /// @notice The runtime tuple encoder returned inside a normal bytes envelope.
+    function encodeBytes(string calldata types, bytes[] calldata values) external pure returns (bytes memory) {
+        return _encode(types, values);
+    }
+
+    function _encode(string calldata types, bytes[] calldata values) private pure returns (bytes memory out) {
         bytes calldata t = bytes(types);
         if (t.length == 0 || t[0] != "(") revert InvalidTypeDescriptor(0);
         {
@@ -1086,11 +1227,8 @@ contract Operators {
         (uint256 count, uint256 headBytes, uint256 tailBytes) = _measure(t, values);
         if (count != values.length) revert ComponentCountMismatch(count, values.length);
 
-        bytes memory out = new bytes(headBytes + tailBytes);
+        out = new bytes(headBytes + tailBytes);
         _assemble(t, values, out, headBytes);
-        assembly {
-            return(add(out, 32), mload(out))
-        }
     }
 
     /**
@@ -1487,6 +1625,27 @@ contract Operators {
                 _setWord(out, kept, w);
                 kept++;
             }
+        }
+        assembly {
+            mstore(out, mul(kept, 32))
+        }
+    }
+
+    /// @notice Remove all duplicate words, keeping first-occurrence order (O(n squared)).
+    function distinctWords(bytes calldata s) external pure returns (bytes memory out) {
+        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        out = new bytes(s.length);
+        uint256 kept;
+        for (uint256 i = 0; i < s.length / 32; i++) {
+            uint256 word = uint256(bytes32(s[i * 32:i * 32 + 32]));
+            bool seen;
+            for (uint256 j = 0; j < kept; j++) {
+                if (_wordAt(out, j) == word) {
+                    seen = true;
+                    break;
+                }
+            }
+            if (!seen) _setWord(out, kept++, word);
         }
         assembly {
             mstore(out, mul(kept, 32))

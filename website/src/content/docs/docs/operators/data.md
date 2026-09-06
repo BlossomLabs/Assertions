@@ -131,3 +131,16 @@ The output comes back via a raw assembly return with NO bytes envelope, delibera
 Like `nav`, deep tail validation is skipped: the descriptor is the author's claim about the encoding, and a wrong claim about a tail travels as-is. Failure modes: a malformed descriptor reverts with `InvalidTypeDescriptor`, a `values` array whose length differs from the component count with `ComponentCountMismatch`, a static component of the wrong size with `InvalidComponentLength`, and a dynamic component that is not an envelope with `InvalidComponentEnvelope`.
 
 Packed encoding (Solidity's `abi.encodePacked`) needs no runtime encoder at all: it is pure composition over `concat` and `slice`. Full-width words (`uint256`/`int256`/`bytes32`) and dynamic payloads go straight into `concat`'s parts (a compiler synthesizes the constant envelopes around spliced words), and each narrowed part costs one `slice` over its word-as-bytes value: `address` is `slice(w, 12, 20)`, `bool`/`uintN` is `slice(w, 32 - N/8, N/8)`, `bytesN` is `slice(w, 0, N)`. So `hash(concat(...))` over sliced parts reproduces a Solidity `keccak256(abi.encodePacked(...))` commitment over live operands.
+
+
+## Signed and decimal conversion
+
+`parseInt(bytes)` accepts an optional `+` or `-` followed by decimal digits, including the full signed minimum. `toString(int256)` formats signed integers without leading zeros.
+
+`parseUnits(value, decimals, rounding)` returns an `int256`; `parseUnitsUnsigned` returns a `uint256`. Precision is 0–77. Inputs accept one optional sign and decimal point, require at least one digit, and reject whitespace, exponent notation, separators and additional points. The unsigned variant rejects a minus sign, including negative zero. Excess fractional digits are rounded using `Trunc=0`, `Floor=1`, or `Ceil=2`, with range validation after rounding. `formatUnits` has signed and unsigned overloads, trims trailing fractional zeros and omits the point for integral values.
+
+## Whole split and encoded bytes
+
+`split(data, delimiter)` returns all byte segments, including empty leading, trailing and consecutive segments. Matches are non-overlapping; an empty delimiter reverts with `EmptyNeedle`.
+
+`encodeBytes(types, values)` returns the same tuple payload as `encode` inside a normal bytes envelope. The original `encode` continues to return raw tuple data. Both preserve the original shape-level validation policy; generic collections apply stricter canonical envelope validation.

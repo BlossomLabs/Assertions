@@ -5,14 +5,15 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 **The core reads and judges, Operators compute.**
 
 - **`Assertions` (the core)** owns everything that speaks ERC-8211. It judges batches in view mode: `assertParam` resolves one input parameter and validates its constraints; `assertComposable(executions)` evaluates a full `ComposableExecution[]` batch with every fetcher and every constructed call executed via `staticcall`. And it carries the read primitives whose operands arrive unresolved: `resolve`, `pick`, `nav`, `chain`, `read` (construct a staticcall from runtime-resolved segments) and the lazy control primitives `cond`, `orElse`, `isValid`, `revertData`.
-- **`Operators` (the periphery)** is a plain-Solidity vocabulary with zero ERC-8211 coupling: named word ops with `int256` overloads (`add`, `gt`, `absDiff`, ...), 512-bit `mulDiv` and `sqrt`, bitwise ops (including the arithmetic-shift `shr` overload), environment reads, bytes, search and parse operations (`hash`, occurrence-ordinal `indexOf`, `parseUint`), a runtime `encode`, and bounded folds. The core's `read` resolves operand expressions and splices the values into Operators calldata; any deployed view contract extends the vocabulary through the same socket.
+- **`Operators` (the periphery)** is a plain-Solidity vocabulary with zero ERC-8211 coupling: named word ops with `int256` overloads (`add`, `gt`, `absDiff`, ...), explicit-rounding signed/unsigned 512-bit `mulDiv` and `sqrt`, bitwise ops (including the arithmetic-shift `shr` overload), environment reads, bytes, search and parse operations (`hash`, occurrence-ordinal `indexOf`, `parseUint`), a runtime `encode`, and bounded folds. The core's `read` resolves operand expressions and splices the values into Operators calldata; any deployed view contract extends the vocabulary through the same socket.
 - **`ERC8211.sol`** carries the standard's wire format (`ComposableExecution`, `InputParam`, `Constraint`) and the `IComposableExecution` interface — batches produced by any ERC-8211 SDK decode here unchanged. **`AbiShape.sol`** is the shared ABI type-descriptor grammar `nav` and `encode` both parse.
 
 ## Canonical addresses (same on every chain)
 
 ```
 Assertions  v2.0  0x67DBB438FdC614466984Dc8F68dAB812d785a2aE   (ERC-8211 judge)
-Operators   v1.0  0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD   (versionable periphery)
+Operators   v1.0  0x795a1E555147d09AB6eE972B4D63a0508b582492   (unreleased periphery)
+Collections v1.0  0xd3F401e4C356667B061B6129755B7a1A279f2e1f   (unreleased generic collections)
 ```
 
 These are the CREATE2 addresses of the corrected 2.0 core and Operators artifact set, derived with the retained per-contract salts. They replace the earlier vanity candidates after the LEN validation fix and documentation corrections. No public-chain deployment is implied by listing an address; check the website's deployments page for availability.
@@ -68,3 +69,10 @@ The contracts target solc 0.8.36 with `evmVersion: cancun`; compiler settings in
 ## License
 
 MIT
+
+
+### Unreleased operator extensions
+
+Operators now takes `Rounding { Trunc, Floor, Ceil }` in both signed and unsigned `mulDiv`; the old three-argument call and `mulDivUp` were removed before official release. Signed powers and integer/decimal conversions are included. `CollectionOperators` supplies canonical ABI-valued map/filter/fold, stable comparator sort and distinct, and array packing/unpacking. See [the contract integration handoff](docs/operators-extension-handoff.md).
+
+The expanded combined vocabulary exceeds the 24,576-byte EVM runtime limit, so generic collections remain a separate periphery. No rational contract or core/ERC-8211 change is needed. The vendored EVMcrispr SDK and helper vocabulary have not been migrated to this ABI; update them separately before consuming the new artifacts. No public-chain deployment is implied.

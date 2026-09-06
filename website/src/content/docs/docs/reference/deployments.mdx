@@ -8,18 +8,19 @@ import { OPERATORS_DEPLOY_GAS } from '../../../../lib/operators-deployment';
 
 export const fmtGas = (gas) => `~${(gas / 1e6).toFixed(2)}M gas`;
 
-Both contracts have the same deterministic address on every supported chain where they are deployed. The corrected 2.0 core and the Operators documentation update use the existing salts with new bytecode, producing the addresses below. These replace the earlier vanity candidates; check the deployment page for availability on your chain.
+Each contract has the same deterministic address on every supported chain where its artifact is deployed. The Assertions core is unchanged. Operators and CollectionOperators are unreleased periphery artifacts; listing their addresses does not imply public-chain deployment.
 
 ```
 Assertions v2.0  0x67DBB438FdC614466984Dc8F68dAB812d785a2aE   (frozen core: judge + primitives)
-Operators  v1.0  0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD   (versionable periphery)
+Operators  v1.0  0x795a1E555147d09AB6eE972B4D63a0508b582492   (unreleased periphery)
+Collections v1.0 0xd3F401e4C356667B061B6129755B7a1A279f2e1f   (unreleased generic collections)
 ```
 
-The interim zero-salt deployments of the same bytecode (Assertions `0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F`, Operators `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`) stay live wherever they were sent, but are no longer canonical.
+Previous artifact candidates, including Operators `0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD`, use different bytecode. The interim zero-salt deployments (Assertions `0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F`, Operators `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`) stay live wherever they were sent, but are no longer canonical.
 
 Deployed versions are immutable: earlier releases keep working forever at their own canonical addresses. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) is updated separately after deployment, and the original v1.0 core stays live at [`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
 
-The [interactive deployments page](/deployments) shows per-chain status, lets you deploy with a connected wallet, and verifies contracts on explorers.
+CollectionOperators is exported for manual deployment; the interactive page retains its existing core/Operators inventory. The [interactive deployments page](/deployments) shows per-chain status, lets you deploy with a connected wallet, and verifies contracts on explorers.
 
 ## How the addresses stay deterministic
 
@@ -42,7 +43,7 @@ cast send 0x4e59b44847b379578588920cA78FbF26c0B4956C \
   "$(cat salt_and_initcode.hex)" --rpc-url <rpc> --private-key <key>
 ```
 
-The salts live in `hardhat.config.ts` and `website/scripts/export-deploy-artifact.mjs`; the script regenerates `website/src/lib/assertions-deployment.ts` and `website/src/lib/operators-deployment.ts` (salt, init code, measured deploy gas, and predicted address for each contract) from a fresh compile. It refuses to export if the compiled bytecode no longer reproduces the expected address.
+The canonical salts live in `website/scripts/export-deploy-artifact.mjs`; the script regenerates `website/src/lib/assertions-deployment.ts` and `website/src/lib/operators-deployment.ts`, and `website/src/lib/collection-operators-deployment.ts` (salt, init code, measured deploy gas, and predicted address for each contract) from a fresh compile. It refuses to export if the compiled bytecode no longer reproduces the expected address.
 
 :::caution
 **Do not use `hardhat ignition deploy` for the canonical deployment.** Ignition's `create2` strategy goes through the CreateX factory, which re-hashes the salt and therefore produces a *different* address than the Arachnid proxy. The Ignition module is kept only for local testing.

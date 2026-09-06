@@ -3,7 +3,7 @@ title: The Operators vocabulary
 description: The plain-ABI operator contract, its whole surface, and how the core's read splices live operands into it.
 ---
 
-Assertion constraints revert or pass: they judge. Everything that *computes* lives in the separate `Operators` contract (v1.0, currently at the interim address `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`; see [Deployments](/docs/reference/deployments)). Every function takes and returns plain ABI types: there is not one ERC-8211 import in the contract. The tagline of the two-contract split: **the core reads and judges; Operators compute.**
+Assertion constraints revert or pass: they judge. Plain-value computation lives in `Operators` and the optional `CollectionOperators` periphery. Every function takes and returns plain ABI types, without ERC-8211 coupling. The core reads and judges; the periphery computes. Operators is unreleased; the current artifact addresses and deployment exports are listed in the repository README.
 
 Composition happens in the core. Its [`read` primitive](/docs/core/reads) resolves `InputParam` operand expressions and splices the resolved values into plain calldata, so an operator call IS the composed expression: `ge(token.balanceOf(treasury), 100e18)` with a live first argument is one `read` whose segments are the balance call and the literal. Any deployed view or pure contract extends the vocabulary through the same socket; Operators is just the canonical first extension. And because it is plain periphery, it stays versionable: old deployments never break, new versions ship at new addresses as pure opt-ins, without touching the frozen core.
 
@@ -13,7 +13,7 @@ Why named functions instead of the old op-code enums: decoded calldata reads on 
 
 | Group | Functions |
 |-------|-----------|
-| [Arithmetic](/docs/operators/words) | `add`, `sub`, `mul`, `div`, `mod`, `min`, `max` (uint256 + int256 overloads), `exp` (uint only), `absDiff` (uint + int operands, uint256 magnitude, total), `mulDiv`/`mulDivUp` (512-bit mul-then-div), `addMod`/`mulMod` (512-bit EVM builtins), `sqrt` (floor), `log2` (floor, reverts on 0) |
+| [Arithmetic](/docs/operators/words) | `add`, `sub`, `mul`, `div`, `mod`, `min`, `max` (uint256 + int256 overloads), `exp` (uint or int base, uint exponent), `absDiff` (uint + int operands, uint256 magnitude, total), `mulDiv` (signed/unsigned 512-bit mul-then-div, explicit rounding), `addMod`/`mulMod` (512-bit EVM builtins), `sqrt` (floor), `log2` (floor, reverts on 0) |
 | [Fixed point](/docs/operators/words) | `rpow(x, n, base)` (compounding, `base` is one unit — 1e27 ray or 1e18 wad), `expWad`/`lnWad` (e^x and its inverse, wad, signed) |
 | [Comparisons](/docs/operators/words) | `eq`, `ne` (bit-level, uint), `lt`, `gt`, `le`, `ge` (uint256 + int256 overloads); all return `bool` |
 | [Bitwise](/docs/operators/words) | `bitAnd`, `bitOr`, `bitXor`, `shl`, `shr` (uint, plus an int256 overload: arithmetic shift, EVM SAR), `bitSet(mask, index)` |
@@ -21,11 +21,13 @@ Why named functions instead of the old op-code enums: decoded calldata reads on 
 | [Calls](/docs/operators/data) | `rawCall(address, bytes)` (raw staticcall, the precompile reach-through), `code(address)` (full runtime code as bytes) |
 | [Bytes](/docs/operators/data) | `concat(bytes[])`, `slice(bytes, start, len)`, `byteLen(bytes)`, `hash(bytes)`, `hashPairSorted(bytes32, bytes32)` (the sorted Merkle node combiner) |
 | [Search](/docs/operators/data) | `indexOf(bytes, bytes, int256 occurrence)` (signed occurrence ordinal: 0, 1, ... from the start, -1, -2, ... from the end) |
-| [Strings](/docs/operators/data) | `replace(bytes, bytes, bytes)`, `toLower(bytes)`, `toUpper(bytes)` (ASCII-only case folds), `charset(bytes, uint256)` (every byte in a 256-bit class, native) |
-| [Parse](/docs/operators/data) | `parseUint(bytes)` (decimal string to uint256), `toString(uint256)` (its inverse) |
-| [Encode](/docs/operators/data) | `encode(string types, bytes[] values)` (runtime `abi.encode`, `nav`'s inverse) |
+| [Strings](/docs/operators/data) | `split(bytes, bytes)`, `replace(bytes, bytes, bytes)`, `toLower(bytes)`, `toUpper(bytes)` (ASCII-only case folds), `charset(bytes, uint256)` (every byte in a 256-bit class, native) |
+| [Parse](/docs/operators/data) | `parseUint`/`parseInt`, signed/unsigned `toString`, `parseUnits`/`parseUnitsUnsigned`, signed/unsigned `formatUnits` |
+| [Encode](/docs/operators/data) | `encode` (raw runtime `abi.encode`) and `encodeBytes` (bytes envelope) |
 | [Folds](/docs/operators/fold) | `foldRange`, `foldBytes`, `foldWords`, with `FoldExit` `Full`/`Any`/`All` |
-| [Word arrays](/docs/operators/fold) | `mapWords`/`filterWords` (lambda map/filter over a word payload), `iotaWords(n)` (the index generator), `wordIndexOf` (word-count sentinel), `reverseWords`, `zipWords`, `unzipWords`, `sortWords`, `uniqueWords`, `sumWords` (checked sum of a payload, native) |
+| [Word arrays](/docs/operators/fold) | `mapWords`/`filterWords` (lambda map/filter over a word payload), `iotaWords(n)` (the index generator), `wordIndexOf` (word-count sentinel), `reverseWords`, `zipWords`, `unzipWords`, `sortWords`, `uniqueWords`, `distinctWords`, `sumWords` (checked sum of a payload, native) |
+
+See [generic ABI collections](/docs/operators/collections) for multiword map/filter/fold, stable sorting and deduplication.
 
 ## What earns a slot here
 

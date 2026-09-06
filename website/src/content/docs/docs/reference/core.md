@@ -80,8 +80,8 @@ These live at the Operators address (interim `0x8e832Ace3f433943eb605c258bA37AF2
 | Function | Description |
 |----------|-------------|
 | `add` / `sub` / `mul` / `div` / `mod` | Checked word arithmetic, uint + int (`div` truncates toward zero; `mod` takes the dividend's sign) |
-| `exp` | Checked `**`, unsigned only (`0 ** 0 == 1`) |
-| `mulDiv` / `mulDivUp` | `floor(a * b / d)` / `ceil(a * b / d)` with a full 512-bit intermediate product; `Panic(0x12)` on a zero denominator, `Panic(0x11)` when the result does not fit 256 bits |
+| `exp` | Checked `**`, signed or unsigned base with unsigned exponent (`0 ** 0 == 1`) |
+| `mulDiv(a,b,d,rounding)` | Signed/unsigned full-width product with `Trunc`, `Floor`, or `Ceil` rounding; `Panic(0x12)` on a zero denominator, `Panic(0x11)` when the result does not fit 256 bits |
 | `addMod` / `mulMod` | `(a + b) % m` / `(a * b) % m` over 512-bit intermediates (EVM ADDMOD/MULMOD); `Panic(0x12)` on `m == 0` |
 | `sqrt` | Floor square root |
 | `min` / `max` | Smaller / larger of two values, uint + int |

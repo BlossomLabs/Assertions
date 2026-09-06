@@ -97,10 +97,16 @@ function mulDivRef(a: bigint, b: bigint, d: bigint): Expect {
   return q > MAXU ? P11 : { ok: q };
 }
 
-function mulDivUpRef(a: bigint, b: bigint, d: bigint): Expect {
+function roundedMulDivRef(a: bigint, b: bigint, d: bigint, mode: bigint, signed: boolean): Expect {
   if (d === 0n) return P12;
-  const q = (a * b + d - 1n) / d;
-  return q > MAXU ? P11 : { ok: q };
+  const product = a * b;
+  let q = product / d;
+  if (product % d !== 0n) {
+    const negative = (product < 0n) !== (d < 0n);
+    if (mode === 1n && negative) q--;
+    if (mode === 2n && !negative) q++;
+  }
+  return signed ? okI(q) : okU(q);
 }
 
 function expRef(a: bigint, b: bigint): Expect {
@@ -254,8 +260,19 @@ const SPECS: OpSpec[] = [
   { label: "min(u)", name: "min", inTypes: ["uint256", "uint256"], gen: uu, ref: (a, b) => ({ ok: a < b ? a : b }) },
   { label: "max(u)", name: "max", inTypes: ["uint256", "uint256"], gen: uu, ref: (a, b) => ({ ok: a > b ? a : b }) },
   { label: "absDiff(u)", name: "absDiff", inTypes: ["uint256", "uint256"], gen: uu, ref: (a, b) => ({ ok: a > b ? a - b : b - a }) },
-  { label: "mulDiv", name: "mulDiv", inTypes: ["uint256", "uint256", "uint256"], gen: uuu, ref: mulDivRef },
-  { label: "mulDivUp", name: "mulDivUp", inTypes: ["uint256", "uint256", "uint256"], gen: uuu, ref: mulDivUpRef },
+  ...[0n, 1n, 2n].flatMap((mode): OpSpec[] => [
+    { label: `mulDiv(u,${mode})`, name: "mulDiv", inTypes: ["uint256", "uint256", "uint256", "uint8"], gen: rng => [...uuu(rng), mode], ref: (a,b,d,m) => roundedMulDivRef(a,b,d,m,false) },
+    { label: `mulDiv(i,${mode})`, name: "mulDiv", inTypes: ["int256", "int256", "int256", "uint8"], signedOut: true, gen: rng => [genI(rng), genI(rng), genI(rng), mode], ref: (a,b,d,m) => roundedMulDivRef(a,b,d,m,true) },
+  ]),
+  { label: "exp(i)", name: "exp", inTypes: ["int256", "uint256"], signedOut: true,
+    gen: rng => [genI(rng), genU(rng)],
+    ref: (a,b) => {
+      if (a === 0n) return {ok: b === 0n ? 1n : 0n};
+      if (a === 1n) return {ok: 1n};
+      if (a === -1n) return {ok: b % 2n === 0n ? 1n : -1n};
+      return b > 255n ? P11 : okI(a ** b);
+    }
+  },
   { label: "addMod", name: "addMod", inTypes: ["uint256", "uint256", "uint256"], gen: uuu, ref: (a, b, m) => (m === 0n ? P12 : { ok: (a + b) % m }) },
   { label: "mulMod", name: "mulMod", inTypes: ["uint256", "uint256", "uint256"], gen: uuu, ref: (a, b, m) => (m === 0n ? P12 : { ok: (a * b) % m }) },
   {
@@ -490,4 +507,22 @@ describe("wad transcendental fuzz", () => {
       assert.ok(diff >= -1000000n && diff <= 1000000n, `${ctx} — round trip drifted by ${diff}`);
     }
   });
+});
+
+it("records numeric transaction gas estimates", async () => {
+  const samples: [string, string[], unknown[]][] = [
+    ...[0, 1, 2].map((mode): [string, string[], unknown[]] =>
+      ["mulDiv", ["uint256", "uint256", "uint256", "uint8"], [MAXU, 2n, 4n, mode]]),
+    ...[0, 1, 2].map((mode): [string, string[], unknown[]] =>
+      ["mulDiv", ["int256", "int256", "int256", "uint8"], [-7n, 1n, 3n, mode]]),
+    ["parseUnits", ["bytes", "uint256", "uint8"], ["0x2d312e323339", 2n, 1]],
+    ["formatUnits", ["int256", "uint256"], [-10020n, 4n]],
+  ];
+  for (const [name, types, args] of samples) {
+    const abi = [{type: "function", name, stateMutability: "pure", inputs: types.map(type => ({type})), outputs: []}] as const;
+    const data = encodeFunctionData({abi, functionName: name, args});
+    const gas = await publicClient.estimateGas({to: operators.address, data});
+    console.log(`numeric-gas ${name}(${types.join(",")}) args=${args.map(String).join(",")} ${gas} (transaction estimate including intrinsic/calldata)`);
+    assert.ok(gas > 21000n);
+  }
 });

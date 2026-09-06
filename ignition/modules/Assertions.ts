@@ -10,5 +10,7 @@ export default buildModule("AssertionsModule", (m) => {
   const assertions = m.contract("Assertions");
   const operators = m.contract("Operators");
 
-  return { assertions, operators };
+  const collectionOperators = m.contract("CollectionOperators");
+
+  return { assertions, operators, collectionOperators };
 });

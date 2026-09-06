@@ -63,7 +63,7 @@ fix it in the same change that falsified it.
   shape.
 - **Operators admission**: a new function must not be expressible as a few-node
   recipe at practical cost. Signed `sortWords` was refused (flip the sign bit,
-  sort, flip back); a sort comparator was refused (sorting is not a reduction);
+  sort, flip back); generic comparator sorting lives in CollectionOperators (sorting is not a reduction);
   `join` is composition over `concat`. What earns a slot: hot loops (one call per
   element otherwise) and calldata-exponential compositions (`rpow`, `log2`).
 - **Signedness is a dimension in every word-level design.** Unsigned order and

@@ -128,8 +128,8 @@ contract OperatorsTest is Test {
     }
 
     function test_exp() public view {
-        assertEq(ops.exp(10, 18), 1e18);
-        assertEq(ops.exp(0, 0), 1);
+        assertEq(ops.exp(uint256(10), 18), 1e18);
+        assertEq(ops.exp(uint256(0), 0), 1);
     }
 
     function test_minMax() public view {
@@ -150,28 +150,28 @@ contract OperatorsTest is Test {
     }
 
     function test_mulDiv() public {
-        assertEq(ops.mulDiv(6, 7, 2), 21);
+        assertEq(ops.mulDiv(uint256(6), 7, 2, Operators.Rounding.Trunc), 21);
         // the intermediate product needs 512 bits; div(mul(a,b), d) would revert
-        assertEq(ops.mulDiv(type(uint256).max, 2, 4), type(uint256).max / 2);
-        assertEq(ops.mulDiv(type(uint256).max, type(uint256).max, type(uint256).max), type(uint256).max);
+        assertEq(ops.mulDiv(type(uint256).max, 2, 4, Operators.Rounding.Trunc), type(uint256).max / 2);
+        assertEq(ops.mulDiv(type(uint256).max, type(uint256).max, type(uint256).max, Operators.Rounding.Trunc), type(uint256).max);
         // result past 256 bits: overflow panic, like the checked operators
         vm.expectRevert(stdError.arithmeticError);
-        ops.mulDiv(type(uint256).max, 2, 1);
+        ops.mulDiv(type(uint256).max, 2, 1, Operators.Rounding.Trunc);
     }
 
     function test_mulDiv_zeroDenominator() public {
         vm.expectRevert(stdError.divisionError);
-        ops.mulDiv(1, 1, 0);
+        ops.mulDiv(uint256(1), 1, 0, Operators.Rounding.Trunc);
         // the 512-bit path panics identically
         vm.expectRevert(stdError.divisionError);
-        ops.mulDiv(type(uint256).max, type(uint256).max, 0);
+        ops.mulDiv(type(uint256).max, type(uint256).max, 0, Operators.Rounding.Trunc);
     }
 
-    function test_mulDivUp() public view {
-        assertEq(ops.mulDivUp(10, 10, 3), 34);
+    function test_mulDivCeil() public view {
+        assertEq(ops.mulDiv(uint256(10), 10, 3, Operators.Rounding.Ceil), 34);
         // exact division: no rounding
-        assertEq(ops.mulDivUp(10, 10, 4), 25);
-        assertEq(ops.mulDivUp(type(uint256).max, 2, 4), type(uint256).max / 2 + 1);
+        assertEq(ops.mulDiv(uint256(10), 10, 4, Operators.Rounding.Ceil), 25);
+        assertEq(ops.mulDiv(type(uint256).max, 2, 4, Operators.Rounding.Ceil), type(uint256).max / 2 + 1);
     }
 
     function test_addMod_mulMod() public {
@@ -525,8 +525,8 @@ contract OperatorsTest is Test {
     }
 
     function test_toString() public view {
-        assertEq(ops.toString(0), "0");
-        assertEq(ops.toString(123), "123");
+        assertEq(ops.toString(uint256(0)), "0");
+        assertEq(ops.toString(uint256(123)), "123");
         assertEq(
             ops.toString(type(uint256).max),
             "115792089237316195423570985008687907853269984665640564039457584007913129639935"
@@ -791,7 +791,7 @@ contract OperatorsTest is Test {
             Assertions.read,
             (
                 _lit(uint256(uint160(address(ops)))),
-                Operators.exp.selector,
+                bytes4(keccak256("exp(uint256,uint256)")),
                 _args2(_lit(10), _call(address(token), abi.encodeCall(MockToken.decimals, ())))
             )
         );

@@ -17,7 +17,8 @@ export default defineConfig({
         // `cast create2` as random 32-byte salts (the old shared-base
         // convention is retired):
         // core v2.0 salt 0xd4f532eb...faeae45b → 0x67DBB438FdC614466984Dc8F68dAB812d785a2aE,
-        // Operators v1.0 salt 0x92d34082...4b998cf9 → 0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD.
+        // Operators v1.0 salt 0x92d34082...4b998cf9 → see export-deploy-artifact.mjs.
+        // CollectionOperators v1.0 uses its own deterministic salt in that exporter.
         // Prior releases (Arachnid-proxy addresses):
         // interim core v2.0 zero salt → 0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F,
         // interim Operators v1.0 zero salt → 0x8e832Ace3f433943eb605c258bA37AF24a69dC53,

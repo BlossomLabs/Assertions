@@ -1,6 +1,6 @@
 ---
 title: Core reference
-description: The ERC-8211 judge's functions and wire format, and the frozen core's nine primitives.
+description: The ERC-8211 judge's functions and wire format, and the core's nine primitives.
 ---
 
 The core (judge + primitives) has the same CREATE2 address on every chain; the current address and the retired ones are on the [Deployments](/docs/reference/deployments) page. Every judge function has an overloaded version accepting a custom `string` message as the last parameter, echoed inside `ConstraintFailed` on failure. Computation over resolved values lives on the periphery contracts: [Operations](/docs/operators) for scalars, [Collections](/docs/operators/collections) for iteration and [Expressions](/docs/operators/expressions) for typed expression graphs; their surfaces are documented on those pages.

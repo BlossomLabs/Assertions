@@ -14,10 +14,10 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 ## Canonical addresses (same on every chain)
 
 ```
-Assertions          v2.0  0xa55E477cF2a24506317f0B2555e8B443522CBBf0   (frozen core: judge + primitives)
+Assertions          v2.0  0xA55E47Df0739353DFd7a914d65d935624F88A45d   (core: judge + primitives)
 Operations          v1.0  0x09e4A7eD11DeF3e3b98d9bB70995043cb51766CE   (versionable periphery)
-Collections         v1.0  0xC011EC7e97deC05655D3d169e44aB87217996b19   (generic collections)
-Expressions         v1.0  0xe5594E55E0fc24a271CA6bf55070a6bE63Cc43d8   (typed expression graphs)
+Collections         v1.0  0xc011EC7840D287b6b7Ccbad6E8Ef7D7C8411Ca19   (generic collections)
+Expressions         v1.0  0xe5594E555895542163715a3348B379976Acdfc81   (typed expression graphs)
 ```
 
 These are the CREATE2 addresses of the current artifact set: the shared-codec core, the split Operations/Collections periphery, and Expressions. Listing an address implies no public-chain deployment; check the website's Deployments page for per-chain availability. The SDK compiles against all four. Earlier releases and retired artifact candidates (which use different bytecode) are listed on the Deployments page, rendered from `website/src/lib/deployments.json`.
@@ -49,7 +49,7 @@ The same check encoded as an ERC-8211 predicate entry (a `ComposableExecution` w
 
 The full documentation lives on the website under `/docs`:
 
-- **Overview & architecture**: the four contracts, the admission test that splits them, and why the core stays frozen
+- **Overview & architecture**: the four contracts and the admission test that splits them
 - **Using assertions from Solidity**: complete patterns for proposals, Safe batches and upgrades
 - **Core primitives**: the reads (`resolve`, `pick`, `nav`, `chain`, `read`) and resolution control (`cond`, `orElse`, `isValid`, `revertData`)
 - **Operations, Collections and Expressions**: the plain-value vocabulary (word ops, comparisons, bytes and search operations, runtime encoding), the folds and collection traversals, and the expression graphs

@@ -67,8 +67,8 @@ const CONTRACTS = [
     output: "src/lib/assertions-deployment.ts",
     // Vanity salt for the 2.0 core release; earlier candidates under
     // previous salts are listed in HISTORY.
-    salt: "0x2e823aea45fadbba8356058dc60720447148149212e2deae10ecab2c431a95fc",
-    expectedAddress: "0xa55E477cF2a24506317f0B2555e8B443522CBBf0",
+    salt: "0xe650e74e2e7870dc5dde1aa4f797df9a7f83aa15758fe8716a281fbeca1db52e",
+    expectedAddress: "0xA55E47Df0739353DFd7a914d65d935624F88A45d",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -96,10 +96,10 @@ const CONTRACTS = [
     sdkAddressExport: "COLLECTIONS_ADDRESS",
     artifact: "artifacts/contracts/Collections.sol/Collections.json",
     output: "src/lib/collections-deployment.ts",
-    // Vanity salt for the 1.0 release. Collections imports Expressions, so
-    // an edit there moves this address too.
-    salt: "0xda9eb39c5aa9ec9ed00a2c5d22a805adf131862ea9de1d3491ce0a3c5c26298f",
-    expectedAddress: "0xC011EC7e97deC05655D3d169e44aB87217996b19",
+    // Vanity salt after removing the standalone validator. The callback
+    // interface is local, so Expressions source edits do not move this address.
+    salt: "0xb03362ee27179486e28877486ea6b09c2381fe4cecfaadbc0a6b535bd5ded106",
+    expectedAddress: "0xc011EC7840D287b6b7Ccbad6E8Ef7D7C8411Ca19",
     prefix: "COLLECTIONS",
     description: "generic ABI collection vocabulary contract",
     includeProxyConstants: false,
@@ -112,8 +112,9 @@ const CONTRACTS = [
     sdkAddressExport: "EXPRESSIONS_ADDRESS",
     artifact: "artifacts/contracts/Expressions.sol/Expressions.json",
     output: "src/lib/expressions-deployment.ts",
-    salt: "0xa393cf61cfa5031ede52d2b820e3910ffe0d820bda97edb15ac7bfe16b8f5408",
-    expectedAddress: "0xe5594E55E0fc24a271CA6bf55070a6bE63Cc43d8",
+    // Vanity salt after declaring the core interface and probe errors locally.
+    salt: "0xeefe23c619f31d6de8c3a62108e5521a6fa693f3b96c97459113a89e543728b8",
+    expectedAddress: "0xe5594E555895542163715a3348B379976Acdfc81",
     prefix: "EXPRESSIONS",
     description: "typed expression graphs contract",
     includeProxyConstants: false,
@@ -127,6 +128,27 @@ const CONTRACTS = [
 // live forever at their addresses; retired candidates were never canonical.
 const ZERO_SALT = `0x${"00".repeat(32)}`;
 const HISTORY = [
+  {
+    name: "Expressions",
+    version: "1.0",
+    address: "0xe5594E55E0fc24a271CA6bf55070a6bE63Cc43d8",
+    salt: "0xa393cf61cfa5031ede52d2b820e3910ffe0d820bda97edb15ac7bfe16b8f5408",
+    note: "previous artifact importing the core implementation rather than its local interface",
+  },
+  {
+    name: "Assertions",
+    version: "2.0",
+    address: "0xa55E477cF2a24506317f0B2555e8B443522CBBf0",
+    salt: "0x2e823aea45fadbba8356058dc60720447148149212e2deae10ecab2c431a95fc",
+    note: "previous core artifact before whole static array and tuple lenses",
+  },
+  {
+    name: "Collections",
+    version: "1.0",
+    address: "0xC011EC7e97deC05655D3d169e44aB87217996b19",
+    salt: "0xda9eb39c5aa9ec9ed00a2c5d22a805adf131862ea9de1d3491ce0a3c5c26298f",
+    note: "previous artifact with the standalone validator and an Expressions source import",
+  },
   {
     name: "Assertions",
     version: "1.0",

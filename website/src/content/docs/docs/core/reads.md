@@ -1,11 +1,11 @@
 ---
 title: "resolve, pick, nav, chain & read: core reads"
-description: Getting values out of contract state with the frozen core's selection and call-construction primitives.
+description: Getting values out of contract state with the core's selection and call-construction primitives.
 ---
 
 Every way of getting a value out of contract state goes through seven primitives on the `Assertions` core itself. Each resolves an ERC-8211 `InputParam` operand and returns its selection via a raw assembly return, indistinguishable from a contract returning that value directly, so any consumer (a judge fetcher, another primitive's operand) decodes it as if it had called the final target itself.
 
-They live on the frozen core, not the versionable periphery, because of [the core's admission test](/docs): every primitive holds operands **unresolved**, in the ERC-8211 `InputParam` format, and decides how (or whether) to resolve them. A `STATIC_CALL` operand may target the core itself, so the primitives nest into arbitrary expressions. Computation over already-resolved values belongs to [Operations](/docs/operators), reached through `read`; the [control primitives](/docs/core/control) (`cond`, `orElse`, `isValid`, `revertData`) decide *whether* operands resolve at all. The EVML spelling of every primitive is on the [EVMcrispr page](/docs/evml).
+They live on the core, not the versionable periphery, because of [the core's admission test](/docs): every primitive holds operands **unresolved**, in the ERC-8211 `InputParam` format, and decides how (or whether) to resolve them. A `STATIC_CALL` operand may target the core itself, so the primitives nest into arbitrary expressions. Computation over already-resolved values belongs to [Operations](/docs/operators), reached through `read`; the [control primitives](/docs/core/control) (`cond`, `orElse`, `isValid`, `revertData`) decide *whether* operands resolve at all. The EVML spelling of every primitive is on the [EVMcrispr page](/docs/evml).
 
 ```solidity
 function resolve(InputParam param) external view;                             // raw return
@@ -51,7 +51,7 @@ Every hop except the last must return an address as its first word (a dirty-uppe
 
 Typed navigation is self-describing calldata: `nav(param, "(address[][],address)", [0, 3, 1])` reads as "return value 0, element 3, element 1". The first path step selects a return component; each further step indexes the current tuple or array, and array steps accept negative indices resolved against the live length (`-1` = last). The contract derives every offset-follow and bounds check from the descriptor, parsing only the *shape* (dynamic vs static, head footprints). Struct arrays navigate the same way: `proposals()[1].executed` against `"((address,uint256,bool)[])"` is path `[0, 1, 2]`. The declared type is the author's claim about the encoder, like an inline ABI: a wrong claim reverts loudly in almost all cases, but a shape-compatible wrong type can read the wrong value.
 
-The terminal may be a single word, or a dynamic value returned as its canonical single-value encoding: `[0x20][length][payload]` for string, bytes and arrays of statically encoded elements, `abi.encode(value)` for dynamic tuples and arrays of dynamic elements (re-encoded from a canonical-form walk of their extent, so malformed nested data reverts with `AbiCodec`'s `InvalidValue` at the offending offset). An empty path is a byte-for-byte passthrough (`nav` degenerates to `resolve`). An encoded `bytes` value's *content* is reachable too, through [the `PAYLOAD` sentinel](#typed-re-entry-the-payload-sentinel) below.
+Every terminal returns its canonical single-value encoding. Static words, fixed arrays and static tuples return their complete bounded encoding without an offset or length prefix. Dynamic values return: `[0x20][length][payload]` for string, bytes and arrays of statically encoded elements, `abi.encode(value)` for dynamic tuples and arrays of dynamic elements (re-encoded from a canonical-form walk of their extent, so malformed nested data reverts with `AbiCodec`'s `InvalidValue` at the offending offset). `nav(param, "(uint256,int256[2])", [1])`, for example, returns exactly the two signed words. An empty path is a byte-for-byte passthrough (`nav` degenerates to `resolve`). An encoded `bytes` value's *content* is reachable too, through [the `PAYLOAD` sentinel](#typed-re-entry-the-payload-sentinel) below.
 
 ## Raw word extraction
 
@@ -74,7 +74,7 @@ abi.encodeCall(Assertions.read, (
 ));
 ```
 
-The encoder owns the calldata layout: a segment resolving to anything other than its expected length shifts everything after it, so live word segments must fill single-word parameters and runtime-sized envelopes need their head offsets accounted for (see [the bytes page](/docs/operators/data) for the layout technique). Because any deployed view or pure contract is reachable this way with fully composable operands, `read` is how the frozen core stays extensible: [Operations](/docs/operators) is the canonical first extension, and deploying a custom pure function once makes it callable from every assertion with computed arguments.
+The encoder owns the calldata layout: a segment resolving to anything other than its expected length shifts everything after it, so live word segments must fill single-word parameters and runtime-sized envelopes need their head offsets accounted for (see [the bytes page](/docs/operators/data) for the layout technique). Because any deployed view or pure contract is reachable this way with fully composable operands, `read` is how the core stays extensible: [Operations](/docs/operators) is the canonical first extension, and deploying a custom pure function once makes it callable from every assertion with computed arguments.
 
 ## Nested lengths
 

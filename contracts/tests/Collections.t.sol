@@ -2,6 +2,7 @@
 pragma solidity ^0.8.28;
 import "forge-std/Test.sol";
 import "../Collections.sol";
+import "../Expressions.sol";
 
 contract CollectionsTest is Test {
     Collections ops;
@@ -395,5 +396,14 @@ contract CollectionsTest is Test {
             previousKey = record.key;
             previousIndex = originalIndex;
         }
+    }
+
+    /**
+     * @dev Collections declares IExpressions locally instead of importing
+     *      Expressions, so the compiler no longer catches a signature change
+     *      on the other side. This does.
+     */
+    function testLocalExpressionsDeclarationMatches() public pure {
+        assertEq(IExpressions.evaluateEncoded.selector, Expressions.evaluateEncoded.selector);
     }
 }

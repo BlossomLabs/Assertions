@@ -9,7 +9,7 @@ description: The Collections contract's generic family, multiword value envelope
 
 Each `bytes[]` element is one canonical `abi.encode(value)`, not packed bytes and not a raw array payload. A string includes its leading offset, length and padded data; a static struct includes all its words. Elements may be words, structs, strings, nested arrays, or tuples containing dynamic fields. The type of the elements is a descriptor in the shared AbiCodec shape grammar, for example `(uint256,string)` or `string[2]`.
 
-`packArray(elementType, values)` returns the canonical encoding of the complete array inside a bytes return envelope. `unpackArray(elementType, encodedArray)` reverses that operation and rebases dynamic element offsets. `validateValue(valueType, value)` validates a single envelope.
+`packArray(elementType, values)` returns the canonical encoding of the complete array inside a bytes return envelope. `unpackArray(elementType, encodedArray)` reverses that operation and rebases dynamic element offsets. Both validate their inputs. To check a single encoded value without keeping the result, pass it as the only element of `packArray(elementType, values)` and discard the returned array encoding.
 
 The codec checks descriptor structure, canonical offsets, bounds, exact lengths and zero padding of bytes and strings. It is a shape validator, not a scalar type checker: a shape-compatible incorrect scalar claim remains the caller's responsibility, as with `nav` descriptors. It does not turn a word into a checked `uint8` or validate an address's upper bits. Predicate callbacks separately require canonical booleans.
 
@@ -56,7 +56,7 @@ Every function validates each visited element against `inputType` and reverts wi
 | `zipValues(leftType, rightType, left, right)` | Pair equally sized arrays into canonical `(leftType, rightType)` tuple envelopes, preserving order; different lengths revert with `LengthMismatch`. |
 | `unzipValues(leftType, rightType, pairs, lane)` | Extract lane 0 or 1 from canonical pair tuples (`InvalidLane` otherwise), validating both components of every pair. |
 
-These routines perform finite loops over supplied inputs; transaction gas bounds practical sizes. Unordered distinct performs quadratic comparisons in the worst case; sorting uses O(n log n) comparisons. Generic encoding and callback validation carry more overhead than the word-specialized family; use the [word arrays](/docs/operators/fold#word-arrays) when values really are single words. The EVMcrispr compiler emits the word family only; the generic family is reachable from Solidity encoders.
+These routines perform finite loops over supplied inputs; transaction gas bounds practical sizes. Unordered distinct performs quadratic comparisons in the worst case; sorting uses O(n log n) comparisons. Generic encoding and callback validation carry more overhead than the word-specialized family. The EVMcrispr compiler uses the [word arrays](/docs/operators/fold#word-arrays) for eligible word-sized values and callbacks, and the generic family for dynamic or multiword values and typed callbacks that need it.
 
 ## Callback policy
 

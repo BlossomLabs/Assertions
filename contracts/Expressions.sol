@@ -2,8 +2,19 @@
 pragma solidity ^0.8.28;
 
 import {AbiCodec} from "./lib/AbiCodec.sol";
-import {Assertions} from "./Assertions.sol";
 import {InputParam} from "./lib/ERC8211.sol";
+
+/**
+ * @notice The single core entry point a Resolve node calls
+ * @dev Declared locally rather than imported from Assertions so this
+ *      contract's metadata, and therefore its CREATE2 address, does not
+ *      move when the core's source changes. The binding is late anyway:
+ *      the core is `Expression.core`, supplied per call. Only the selector
+ *      is shared, and Expressions.t.sol asserts it still matches the core's.
+ */
+interface ICore {
+    function resolve(InputParam calldata param) external view;
+}
 
 /**
  * @title Expressions
@@ -155,6 +166,26 @@ contract Expressions {
      */
     error NotSelf(address caller);
 
+    /**
+     * @notice Thrown when a ProbeCall's target did NOT revert
+     * @dev Declared with the core's name and argument types so it shares the
+     *      core's DidNotRevert selector and both probes decode alike
+     * @param target The call target
+     * @param callData The calldata that unexpectedly succeeded
+     */
+    error DidNotRevert(address target, bytes callData);
+
+    /**
+     * @notice Thrown when a ProbeCall's revert data does not begin with the
+     *         required error selector
+     * @dev Shares the core's UnexpectedRevertData selector, as DidNotRevert
+     *      shares its own
+     * @param expected The selector the caller required
+     * @param actual The selector the call actually reverted with (zero when
+     *        the revert carried fewer than four bytes)
+     */
+    error UnexpectedRevertData(bytes4 expected, bytes4 actual);
+
     // ============ Evaluate ============
 
     /**
@@ -276,7 +307,7 @@ contract Expressions {
             result = parameters[parameter];
         } else if (node.kind == Kind.Resolve) {
             InputParam memory source = abi.decode(node.data, (InputParam));
-            result = _call(p.core, abi.encodeCall(Assertions.resolve, (source)), index);
+            result = _call(p.core, abi.encodeCall(ICore.resolve, (source)), index);
         } else if (node.kind == Kind.Select) {
             bytes memory condition = _evaluate(p, parameters, cache, node.refs[0]);
             if (condition.length < 32) revert InvalidNode(index);
@@ -366,23 +397,23 @@ contract Expressions {
      *      counts as a reason-less failure, and a non-zero `expected`
      *      selector must match the revert's first four bytes and is
      *      stripped from the returned reason (UnexpectedRevertData on a
-     *      mismatch). The core's errors are reused so both probes decode
-     *      alike.
+     *      mismatch). The error names and argument types match the core's,
+     *      so both probes decode alike.
      */
     function _probe(address target, bytes memory callData, bytes4 expected) private view returns (bytes memory reason) {
         if (target.code.length == 0) {
-            if (expected != bytes4(0)) revert Assertions.UnexpectedRevertData(expected, bytes4(0));
+            if (expected != bytes4(0)) revert UnexpectedRevertData(expected, bytes4(0));
             return "";
         }
         bool success;
         (success, reason) = target.staticcall(callData);
-        if (success) revert Assertions.DidNotRevert(target, callData);
+        if (success) revert DidNotRevert(target, callData);
         if (expected == bytes4(0)) return reason;
         bytes4 actual;
         if (reason.length >= 4) {
             assembly ("memory-safe") { actual := mload(add(reason, 32)) }
         }
-        if (actual != expected) revert Assertions.UnexpectedRevertData(expected, actual);
+        if (actual != expected) revert UnexpectedRevertData(expected, actual);
         return AbiCodec.slice(reason, 4, reason.length - 4);
     }
 

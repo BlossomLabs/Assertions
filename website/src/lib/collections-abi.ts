@@ -1353,24 +1353,6 @@ export const COLLECTIONS_ABI = [
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "valueType",
-        "type": "string"
-      },
-      {
-        "internalType": "bytes",
-        "name": "value",
-        "type": "bytes"
-      }
-    ],
-    "name": "validateValue",
-    "outputs": [],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes",
         "name": "s",
         "type": "bytes"

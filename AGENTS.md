@@ -6,7 +6,7 @@ fix it in the same change that falsified it.
 
 ## The two trees
 
-- **Main repo**: `contracts/` (the `Assertions` core, frozen once released, the versionable
+- **Main repo**: `contracts/` (the `Assertions` core (currently open to changes), the versionable
   `Operations` periphery, `Collections`, `Expressions`, `AbiCodec`, `ERC8211`), Solidity tests under
   `contracts/tests/*.t.sol` run by `pnpm test` (hardhat 3), and the Astro site in
   `website/` with hand-written docs at `website/src/content/docs/docs/`.
@@ -82,7 +82,12 @@ fix it in the same change that falsified it.
   plus 20k per `Call`, so it wins only when the resolutions it saves cost more than
   that: `add(x, x)` over a 75k leaf, 115,230 as a graph vs 144,374 as a tree; over a
   3.6k leaf, 50,531 vs 14,976.
-- **`nav` re-encodes every dynamic terminal.** Since 2026-09-07 arrays of dynamic
+- **The core is currently open to changes.** A release flag records SDK adoption;
+  it does not prohibit source changes. Regenerate addresses and artifacts when
+  changing it; never assume existing deployed code updates in place.
+- **`nav` returns every ABI terminal.** Static arrays and tuples return their full
+  bounded static encoding, without an offset or length prefix. Scalars retain
+  their one-word encoding. Dynamic terminals are re-encoded as follows. Since 2026-09-07 arrays of dynamic
   elements and dynamic tuples come back as `abi.encode(value)` (their extent from
   `AbiCodec.body`'s canonical-form walk, malformed data reverting `InvalidValue`);
   the earlier `InvalidNavigation` for them is gone. `PAYLOAD` is still string/bytes
@@ -116,11 +121,13 @@ fix it in the same change that falsified it.
   bit, sort, flip back); generic comparator sorting lives in Collections (sorting
   is not a reduction); `join` is composition over `concat`. What passes (i): hot
   loops (one call per element otherwise) and calldata-exponential compositions
-  (`rpow`, `log2`). Specialist families go to optional contracts. What the rule
-  prevents: Collections' `*Values` family (`Collections.sol:505-926` plus its
-  helpers `:1133-1335`) has zero SDK consumers and leaves Collections 1,098 bytes
-  under EIP-170 (measured 2026-09-07 by `test/bytecode-size.test.ts`). Documented next step when Collections needs bytes: split
-  `*Values` into a third periphery contract.
+  (`rpow`, `log2`). Specialist families go to optional contracts. All fourteen
+  Collections `*Values` traversals have SDK consumers through `modules/lang`;
+  eligible word-sized workloads retain the word fast path. Standalone value
+  validation is composition: pack a singleton with `packArray` and discard the
+  output. The shared `AbiCodec.validate` remains internal and is used throughout
+  the codec, collections and expression graphs. When Collections needs more
+  bytecode space, split `*Values` into another periphery contract.
 - **Signedness is a dimension in every word-level design.** Unsigned order and
   signed order disagree about which value absorbs, which element is minimal, and
   how a two's-complement word reads. One SDK path returning `elemType: "uint256"`
@@ -219,8 +226,10 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   `website/src/lib/deployments.json`, the one manifest every website consumer and
   `check:integration` read. Contract source changes (including comments in compiler
   metadata) may change CREATE2 addresses, and an edit to an IMPORTED source moves
-  the importer's address too (Collections imports Expressions); regenerate and
-  verify deployment artifacts, fixtures and SDK addresses together.
+  the importer's address too. Collections and Expressions now declare their
+  callback/core interfaces locally, so implementation edits no longer move
+  the caller's address through metadata alone. Regenerate and verify deployment
+  artifacts, fixtures and SDK addresses together.
 - Bytecode size: `test/bytecode-size.test.ts` checks `(len(deployedBytecode) - 2) / 2`
   against 24,576 for every production artifact under `pnpm test` and pins the
   artifact set. Operations must stay byte-identical through core-only changes; any

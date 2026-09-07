@@ -1,7 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
-import {Expressions} from "./Expressions.sol";
 import {AbiCodec} from "./lib/AbiCodec.sol";
+
+/**
+ * @notice The Expressions entry point a Callback with a non-empty
+ *         `expression` is applied through
+ * @dev Declared locally rather than imported from Expressions so this
+ *      contract's metadata, and therefore its CREATE2 address, does not
+ *      move when Expressions' source changes. The binding is late anyway:
+ *      the deployment is `Callback.target`, supplied per call. Only the
+ *      selector is shared, and Collections.t.sol asserts it still matches
+ *      Expressions'.
+ */
+interface IExpressions {
+    function evaluateEncoded(bytes calldata expression, bytes[] calldata parameters) external view;
+}
 
 /**
  * @title Collections
@@ -493,18 +506,6 @@ contract Collections {
     }
 
     // ============ Value Codec ============
-
-    /**
-     * @notice Asserts that `value` is the canonical single-value encoding
-     *         of `valueType`, reverting with AbiCodec's InvalidValue at the
-     *         offending offset otherwise (InvalidTypeDescriptor for a
-     *         malformed descriptor)
-     * @param valueType The value's type descriptor
-     * @param value The encoding to check
-     */
-    function validateValue(string calldata valueType, bytes calldata value) external pure {
-        AbiCodec.validate(bytes(valueType), value);
-    }
 
     /**
      * @notice The canonical abi.encode(T[]) assembled from canonical
@@ -1304,7 +1305,7 @@ contract Collections {
                 cb.selector, AbiCodec.assemble(prepared.plan.dynamic, prepared.plan.headSize, prepared.args, false)
             );
         } else {
-            data = abi.encodeCall(Expressions.evaluateEncoded, (cb.expression, prepared.args));
+            data = abi.encodeCall(IExpressions.evaluateEncoded, (cb.expression, prepared.args));
         }
         bool ok;
         (ok, out) = cb.target.staticcall(data);

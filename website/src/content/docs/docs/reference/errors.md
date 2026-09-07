@@ -26,7 +26,7 @@ Defined once in `ERC8211.sol`, the standard's shared vocabulary, thrown by the c
 |-------|-------------|
 | `InvalidTypeDescriptor(uint256)` | a type descriptor cannot be parsed: empty or non-tuple, an unknown character where a type was expected, an unterminated array suffix, or trailing garbage (the argument is the byte position where parsing failed) |
 | `ElementIndexOutOfBounds(int256, uint256)` | a path or component index is outside the tuple or array it steps into, in either direction for negative array indices (arguments: requested index as given, and the component/element count) |
-| `InvalidValue(uint256)` | a canonical value or array encoding is malformed at the given byte offset: `validateValue`, `packArray`/`unpackArray`, every Collections element check, `unzipValues`' pair envelopes, every Expressions node result and the array or tuple terminals `nav` re-encodes go through this validation |
+| `InvalidValue(uint256)` | a canonical value or array encoding is malformed at the given byte offset: `packArray`/`unpackArray`, every Collections element check, `unzipValues`' pair envelopes, every Expressions node result and the array or tuple terminals `nav` re-encodes go through this validation |
 | `ComponentCountMismatch(uint256, uint256)` | a tuple encoder received a `values` array whose length differs from the descriptor's component count (`encode`, `encodeBytes`, the core's `get`, the arguments of an Expressions `Call` or a `Tuple` node) |
 | `InvalidComponentLength(uint256, uint256, uint256)` | a static tuple component's value is not exactly its head footprint (arguments: component index, expected bytes, actual bytes) |
 | `InvalidComponentEnvelope(uint256, uint256, bytes32)` | a dynamic tuple component's value is not a canonical `[0x20][tail]` envelope (arguments: component index, value length, first word) |
@@ -44,7 +44,7 @@ View-mode batch restrictions from the judge, plus the primitives' own errors:
 | `DuplicateTargetParam(uint256)` | a batch entry carries more than one `TARGET` input parameter |
 | `BalanceCannotBeTarget(uint256, uint256)` | a `TARGET` input parameter uses the `BALANCE` fetcher (a balance is not an address) |
 | `EmptyCallChain()` | `chain` received an empty `calls` array |
-| `InvalidNavigation(uint256)` | a `nav` path step indexes a non-composite value, a multi-word static terminal has no single return, or `LEN`/`PAYLOAD` is applied to a value without a length word or byte payload (descriptor *parse* failures revert with `InvalidTypeDescriptor` instead) |
+| `InvalidNavigation(uint256)` | a `nav` path step indexes a non-composite value, `LEN`/`PAYLOAD` is applied to a value without a length word or byte payload (descriptor *parse* failures revert with `InvalidTypeDescriptor` instead) |
 | `RevertProbeNotACall(uint8)` | `revertData`'s operand is not a `STATIC_CALL` fetcher: a literal or a balance read has no call whose reason could be reported |
 | `RevertProbeConstrained(uint256)` | `revertData`'s operand carries constraints; the call itself is the subject, so its value is never validated |
 | `DidNotRevert(address, bytes)` | the call `revertData` (or an Expressions `ProbeCall`) probed succeeded; an assertion that a call fails is not satisfied by it working (identifies the offending call) |

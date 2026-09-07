@@ -110,20 +110,6 @@ function isDynamic(t: AbiT): boolean {
   }
 }
 
-// Head footprint in words, mirroring AbiCodec.typeShape (dynamic = 1 offset word).
-function headWords(t: AbiT): number {
-  if (isDynamic(t)) return 1;
-  switch (t.kind) {
-    case "word":
-      return 1;
-    case "tuple":
-      return t.comps.reduce((s, c) => s + headWords(c), 0);
-    case "array":
-      return (t.len ?? 0) * headWords(t.elem);
-    default:
-      return 1;
-  }
-}
 
 function descriptorOf(t: AbiT): string {
   switch (t.kind) {
@@ -209,12 +195,8 @@ function encodeSingle(t: AbiT, v: unknown): Hex {
 
 // What nav must return for a plain (non-sentinel) path ending on `node`.
 function terminalExpect(node: AbiT, val: unknown): Expect {
-  if (!isDynamic(node)) {
-    return headWords(node) === 1 ? { ok: encodeSingle(node, val) } : { revert: "InvalidNavigation" };
-  }
-  // Every dynamic terminal comes back as its canonical single-value encoding:
-  // string/bytes and T[] of static T from their length word, dynamic tuples
-  // and arrays of dynamic elements re-encoded from their canonical extent.
+  // Every terminal is its canonical single-value encoding, including
+  // static arrays and tuples with no dynamic offset or length prefix.
   return { ok: encodeSingle(node, val) };
 }
 

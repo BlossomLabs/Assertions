@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 import "forge-std/Test.sol";
+import "../Assertions.sol";
 import "../Expressions.sol";
 import "../Collections.sol";
 import "../Operations.sol";
@@ -434,5 +435,16 @@ contract ExpressionsTest is Test {
         assertTrue(operations.contains("abc", "bc"));
         assertFalse(operations.contains("", "a"));
         assertFalse(operations.contains("abc", "abcd"));
+    }
+
+    /**
+     * @dev Expressions declares ICore and its two probe errors locally
+     *      instead of importing the core, so the compiler no longer catches
+     *      a signature change on the other side. This does.
+     */
+    function testLocalCoreDeclarationsMatchTheCore() public pure {
+        assertEq(ICore.resolve.selector, Assertions.resolve.selector);
+        assertEq(Expressions.DidNotRevert.selector, Assertions.DidNotRevert.selector);
+        assertEq(Expressions.UnexpectedRevertData.selector, Assertions.UnexpectedRevertData.selector);
     }
 }

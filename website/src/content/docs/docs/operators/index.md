@@ -5,7 +5,7 @@ description: The plain-ABI operations contracts, their whole surface, and how th
 
 Assertion constraints revert or pass: they judge. Plain-value computation lives in the periphery: `Operations` for scalars, `Collections` for iteration and [`Expressions`](/docs/operators/expressions) for typed expression graphs. Every function takes and returns plain ABI types, without ERC-8211 coupling. The core reads and judges; the periphery computes. The contracts' addresses are on the [Deployments](/docs/reference/deployments) page.
 
-Composition happens in the core. Its [`read` primitive](/docs/core/reads) resolves `InputParam` operand expressions and splices the resolved values into plain calldata, so an operation call IS the composed expression: `ge(token.balanceOf(treasury), 100e18)` with a live first argument is one `read` whose segments are the balance call and the literal. Any deployed view or pure contract extends the vocabulary through the same socket; Operations is just the canonical first extension. And because it is plain periphery, it stays versionable: old deployments never break, new versions ship at new addresses as pure opt-ins, without touching the frozen core.
+Composition happens in the core. Its [`read` primitive](/docs/core/reads) resolves `InputParam` operand expressions and splices the resolved values into plain calldata, so an operation call IS the composed expression: `ge(token.balanceOf(treasury), 100e18)` with a live first argument is one `read` whose segments are the balance call and the literal. Any deployed view or pure contract extends the vocabulary through the same socket; Operations is just the canonical first extension. And because it is plain periphery, it stays versionable: old deployments never break, new versions ship at new addresses as pure opt-ins, without touching the core.
 
 Why named functions instead of op-code enums: decoded calldata reads on explorers. `ge(balance, 100e18)` needs no docs open.
 
@@ -34,7 +34,7 @@ Why named functions instead of op-code enums: decoded calldata reads on explorer
 | [Folds](/docs/operators/fold) | `foldRange`, `foldBytes`, `foldWords`, with `FoldExit` `Full`/`Any`/`All` |
 | [Word arrays](/docs/operators/fold#word-arrays) | `mapWords`/`filterWords` (lambda map/filter over a word payload), `iotaWords(n)` (the index generator), `wordIndexOf` (word-count sentinel), `reverseWords`, `zipWords`, `unzipWords`, `sortWords`, `uniqueWords(s, ordered)`, `sumWords` (checked sum of a payload, native) |
 | [Generic values](/docs/operators/collections) | `mapValues`, `filterValues`, `foldValues`, `sortValues`, `uniqueValues`, `flattenValues`, `reverseValues`, `sliceValues`, `indexOfValues`, `anyValues`, `allValues`, `findValues`, `zipValues`, `unzipValues` over arrays of canonical ABI values, with typed `Callback`s (direct, or through an [expression graph](/docs/operators/expressions)) |
-| [Envelope adapters](/docs/operators/collections#value-envelopes) | `validateValue`, `packArray`, `unpackArray` |
+| [Envelope adapters](/docs/operators/collections#value-envelopes) | `packArray`, `unpackArray` |
 
 Both word sorting and generic comparator sorting use stable bottom-up merge sort.
 

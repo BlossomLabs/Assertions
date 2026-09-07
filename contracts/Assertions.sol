@@ -327,7 +327,9 @@ contract Assertions {
      *      the element itself:
      *      - empty path: the resolved bytes pass through byte-for-byte
      *        (nav degenerates to resolve);
-     *      - word terminal (static single-word value): the 32-byte word;
+     *      - static terminal (word, fixed array or static tuple): its full
+     *        abi.encode(value), with no offset or length prefix. The complete
+     *        static footprint must fit in the resolved data;
      *      - dynamic terminal (string/bytes/array/dynamic tuple): the
      *        canonical single-value encoding, [0x20][length][payload] for
      *        string/bytes and abi.encode(value) for arrays and tuples.
@@ -352,8 +354,8 @@ contract Assertions {
      *
      *      Operand failures revert with CallFailed / ConstraintFailed
      *      identifying them; a malformed descriptor reverts with
-     *      InvalidTypeDescriptor, a step into a non-composite or an
-     *      unrepresentable terminal with InvalidNavigation, a path index
+     *      InvalidTypeDescriptor, a step into a non-composite with
+     *      InvalidNavigation, a path index
      *      outside its tuple or array with ElementIndexOutOfBounds, and
      *      data that does not match the declared shape (truncated
      *      returndata, out-of-range offsets) with ReturnDataOutOfBounds
@@ -386,15 +388,22 @@ contract Assertions {
                 return(add(add(result, 32), start), length)
             }
         }
-        (uint256 pos, bool isWord, uint256 ts, uint256 te) = _navigate(result, t, path);
-        if (isWord) {
-            uint256 word = _navWord(result, pos);
+        NavCursor memory c = _navigate(result, t, path);
+        if (!c.dyn) {
+            // Static values are already their complete canonical encoding:
+            // no offset or length prefix, even for a whole array or tuple.
+            // Bound the word count before multiplying so hostile descriptors
+            // or truncated data cannot overflow or return a partial value.
+            uint256 pos = c.base;
+            if (pos > result.length || c.words > (result.length - pos) / 32) {
+                revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+            }
+            uint256 size = c.words * 32;
             assembly ("memory-safe") {
-                mstore(0, word)
-                return(0, 32)
+                return(add(add(result, 32), pos), size)
             }
         }
-        _returnDynamic(result, t, pos, ts, te);
+        _returnDynamic(result, t, c.base, c.ts, c.te);
     }
 
     // ============ Chain ============
@@ -520,12 +529,10 @@ contract Assertions {
      * @param args One input parameter per argument, each resolving to the
      *        canonical single-value encoding of its declared type
      */
-    function get(
-        InputParam calldata target,
-        bytes4 selector,
-        string calldata argumentTypes,
-        InputParam[] calldata args
-    ) external view {
+    function get(InputParam calldata target, bytes4 selector, string calldata argumentTypes, InputParam[] calldata args)
+        external
+        view
+    {
         address callTarget = _asAddress(_firstWord(_resolve(target, "", 0, 0)), 0);
         bytes[] memory values = new bytes[](args.length);
         for (uint256 i = 0; i < args.length; i++) {
@@ -911,8 +918,9 @@ contract Assertions {
      */
     function _navLength(bytes memory result, bytes calldata t, int256[] calldata path) internal pure returns (uint256) {
         if (path.length == 0) revert InvalidNavigation(0);
-        (uint256 pos, bool isWord, uint256 ts, uint256 te) = _navigate(result, t, path);
-        if (isWord) revert InvalidNavigation(ts);
+        NavCursor memory c = _navigate(result, t, path);
+        if (!c.dyn) revert InvalidNavigation(c.ts);
+        (uint256 pos, uint256 ts, uint256 te) = (c.base, c.ts, c.te);
         uint256 length = _navWord(result, pos);
         uint256 available = result.length - pos - 32;
         // Dynamic arrays and bytes/string sit on their length word. A
@@ -957,8 +965,9 @@ contract Assertions {
         returns (uint256 start, uint256 length)
     {
         if (path.length == 0) revert InvalidNavigation(0);
-        (uint256 pos, bool isWord, uint256 ts, uint256 te) = _navigate(result, t, path);
-        if (isWord) revert InvalidNavigation(ts);
+        NavCursor memory c = _navigate(result, t, path);
+        if (!c.dyn) revert InvalidNavigation(c.ts);
+        (uint256 pos, uint256 ts, uint256 te) = (c.base, c.ts, c.te);
         // Only bytes/string base terminals carry a byte-counted payload
         // behind their length word.
         if (t[te - 1] == "]" || t[ts] == "(") revert InvalidNavigation(ts);
@@ -1072,18 +1081,15 @@ contract Assertions {
     /**
      * @dev Walks `path` through `result` as described by the type descriptor
      *      `t` (which must be a parenthesized tuple). Returns the byte
-     *      position of the terminal (the value word itself when `isWord`,
-     *      otherwise the length word or head of the selected dynamic value)
-     *      plus the terminal's type bounds [ts, te) for the callers' checks.
-     *      Offsets are followed relative to their enclosing frame per ABI
-     *      encoding rules. A static multi-word terminal (static tuple,
-     *      fixed array) has no single word to return and reverts with
-     *      InvalidNavigation.
+     *      position, dynamic/static shape, static head footprint and type
+     *      bounds of the selected value. Offsets are followed relative to
+     *      their enclosing frame per ABI encoding rules. The caller bounds
+     *      the selected span before returning it or reading its length.
      */
     function _navigate(bytes memory result, bytes calldata t, int256[] calldata path)
         internal
         pure
-        returns (uint256 pos, bool isWord, uint256 ts, uint256 te)
+        returns (NavCursor memory c)
     {
         if (t.length == 0 || t[0] != "(") revert InvalidTypeDescriptor(0);
         if (path.length == 0) revert InvalidNavigation(0);
@@ -1092,7 +1098,7 @@ contract Assertions {
             if (topEnd != t.length) revert InvalidTypeDescriptor(topEnd);
         }
 
-        NavCursor memory c = NavCursor(0, t.length, 0, true, 1);
+        c = NavCursor(0, t.length, 0, true, 1);
         for (uint256 i = 0; i < path.length; i++) {
             if (t[c.te - 1] == "]") {
                 _navArrayStep(result, t, c, path[i]);
@@ -1103,13 +1109,6 @@ contract Assertions {
                 revert InvalidNavigation(c.ts);
             }
         }
-        if (!c.dyn) {
-            // multi-word static terminals (static tuples / fixed arrays)
-            // have no single word to return
-            if (c.words != 1) revert InvalidNavigation(c.ts);
-            return (c.base, true, c.ts, c.te);
-        }
-        return (c.base, false, c.ts, c.te);
     }
 
     /**

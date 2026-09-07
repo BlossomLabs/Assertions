@@ -89,8 +89,8 @@ A malformed callback result reverts with `AbiCodec.InvalidCallbackResult` (above
 | `InvalidNode(uint256)` | a malformed node: the `result` index out of range, the wrong reference count for the node's kind, a `Parameter` whose data is not one word, a `Select` condition shorter than 32 bytes, a target word that is not a clean address |
 | `NotSelf(address)` | `evaluateGuarded` was called by anyone other than the Expressions contract itself |
 | `InvalidReference(uint256, uint256)` | a node references itself or a later node, or a `Parameter` index is past the supplied parameters |
-| `InvalidTarget(uint256, address)` | a `Call`, a `Resolve`, a resolve-once operand or the `evaluateEncoded` self-call targets an address without code |
-| `NodeCallFailed(uint256, address, bytes, bytes)` | the staticcall a node or a resolve-once entry point made reverted; carries the node (or operand) index, the target, the calldata and the reason. A different error from the core's two-argument `CallFailed` |
+| `InvalidTarget(uint256, address)` | a `Call`, a `Resolve` or the `evaluateEncoded` self-call targets an address without code |
+| `NodeCallFailed(uint256, address, bytes, bytes)` | the staticcall a node made reverted; carries the node index, the target, the calldata and the reason. A different error from the core's two-argument `CallFailed` |
 
 `ProbeCall` reuses the core's `DidNotRevert` and `UnexpectedRevertData`; descriptor and value validation raise the `AbiCodec` errors. See [Expressions](/docs/operators/expressions).
 

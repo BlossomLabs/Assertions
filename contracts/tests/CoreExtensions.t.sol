@@ -9,10 +9,11 @@ import "./Mocks.sol";
 
 /**
  * @notice The 2026-09-07 core additions: `readArgs` (resolve-once call
- *         construction over whole ABI values, the core staying the caller)
- *         and `nav` returning arrays of dynamic elements and dynamic tuples
- *         as canonical values, with the caller rule pinned: the core stays
- *         the destination's msg.sender.
+ *         construction over whole ABI values, the core staying the caller),
+ *         `resolveValues` (N operands resolved once each into a canonical
+ *         `bytes[]`) and `nav` returning arrays of dynamic elements and
+ *         dynamic tuples as canonical values, with the caller rule pinned:
+ *         the core stays the destination's msg.sender.
  */
 contract CoreExtensionsTest is Test {
     Assertions assertions;
@@ -23,6 +24,13 @@ contract CoreExtensionsTest is Test {
         assertions = new Assertions();
         target = new MockTarget();
         token = new MockToken(address(0), "WETH");
+    }
+
+    /// A `bytes[]` consumer for the resolveValues-into-readArgs shape.
+    function totalLength(bytes[] calldata parts) external pure returns (uint256 total) {
+        for (uint256 i; i < parts.length; i++) {
+            total += parts[i].length;
+        }
     }
 
     // ============ Helpers ============
@@ -179,6 +187,58 @@ contract CoreExtensionsTest is Test {
         for (uint256 i; i < out.length; i++) {
             out[i] = ret[i + 4];
         }
+    }
+
+    // ============ resolveValues ============
+
+    function test_resolveValues_resolvesEachOperandOnce() public {
+        InputParam[] memory args = new InputParam[](6);
+        for (uint256 i; i < 6; i++) {
+            args[i] = _string();
+        }
+        bytes memory expected = abi.encode(target.getString());
+        vm.expectCall(address(target), abi.encodeCall(MockTarget.getString, ()), uint64(6));
+        bytes[] memory values = assertions.resolveValues(args);
+        assertEq(values.length, 6);
+        for (uint256 i; i < 6; i++) {
+            assertEq(values[i], expected);
+        }
+    }
+
+    function test_resolveValues_empty() public view {
+        bytes[] memory values = assertions.resolveValues(new InputParam[](0));
+        assertEq(values.length, 0);
+    }
+
+    function test_resolveValues_isCanonicalBytesArrayForReadArgs() public {
+        // The operand's resolved bytes are abi.encode(bytes[]), so it feeds a
+        // `bytes[]` position of readArgs as one whole argument: the Phase 1b
+        // shape for concat and join over N live parts.
+        InputParam[] memory parts = new InputParam[](3);
+        parts[0] = _string();
+        parts[1] = _raw(hex"aabb");
+        parts[2] = _string();
+        InputParam[] memory args = new InputParam[](1);
+        args[0] = _call(address(assertions), abi.encodeCall(Assertions.resolveValues, (parts)));
+        uint256 envelope = abi.encode(target.getString()).length;
+        vm.expectCall(address(target), abi.encodeCall(MockTarget.getString, ()), uint64(2));
+        (bool ok, bytes memory ret) = _readArgs(address(this), this.totalLength.selector, "(bytes[])", args);
+        assertTrue(ok);
+        assertEq(abi.decode(ret, (uint256)), 2 * envelope + 2);
+    }
+
+    function test_resolveValues_constraintNamesOperand() public {
+        Constraint[] memory c = new Constraint[](1);
+        c[0] = Constraint(ConstraintType.EQ, abi.encode(uint256(1)));
+        InputParam[] memory args = new InputParam[](2);
+        args[0] = _raw(abi.encode(uint256(1)));
+        args[1] = InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, abi.encode(uint256(2)), c);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ConstraintFailed.selector, "", 0, 1, 0, ConstraintType.EQ, bytes32(uint256(2)), abi.encode(uint256(1))
+            )
+        );
+        assertions.resolveValues(args);
     }
 
     // ============ Caller ============

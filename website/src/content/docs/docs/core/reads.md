@@ -3,12 +3,13 @@ title: "resolve, pick, nav, chain & read: core reads"
 description: Getting values out of contract state with the frozen core's selection and call-construction primitives.
 ---
 
-Every way of getting a value out of contract state goes through six primitives on the `Assertions` core itself. Each resolves an ERC-8211 `InputParam` operand and returns its selection via a raw assembly return, indistinguishable from a contract returning that value directly, so any consumer (a judge fetcher, another primitive's operand) decodes it as if it had called the final target itself.
+Every way of getting a value out of contract state goes through seven primitives on the `Assertions` core itself. Each resolves an ERC-8211 `InputParam` operand and returns its selection via a raw assembly return, indistinguishable from a contract returning that value directly, so any consumer (a judge fetcher, another primitive's operand) decodes it as if it had called the final target itself.
 
 They live on the frozen core, not the versionable periphery, because of [the core's admission test](/docs): every primitive holds operands **unresolved**, in the ERC-8211 `InputParam` format, and decides how (or whether) to resolve them. A `STATIC_CALL` operand may target the core itself, so the primitives nest into arbitrary expressions. Computation over already-resolved values belongs to [Operations](/docs/operators), reached through `read`; the [control primitives](/docs/core/control) (`cond`, `orElse`, `isValid`, `revertData`) decide *whether* operands resolve at all. The EVML spelling of every primitive is on the [EVMcrispr page](/docs/evml).
 
 ```solidity
 function resolve(InputParam param) external view;                             // raw return
+function resolveValues(InputParam[] args) external view returns (bytes[] values);
 function pick   (InputParam param, int256 wordIndex) external view returns (bytes32);
 function nav    (InputParam a, string retTypes, int256[] path) external view; // raw return
 function chain  (InputParam start, bytes[] calls) external view;              // raw return
@@ -17,6 +18,7 @@ function readArgs(InputParam target, bytes4 selector, string argumentTypes, Inpu
 ```
 
 - **`resolve`** is THE primitive: the ERC-8211 static call exposed as a read. Resolve the operand, validate its constraints, return the bytes unchanged. Because a constraint violation reverts with `ConstraintFailed`, any expression node doubles as an inline assert.
+- **`resolveValues`** is `resolve` over a list: each operand resolves exactly once and the raw results come back as one `bytes[]`, in order, taken as-is and validated against no type. It is how a `bytes[]` value is assembled from N live operands without an encoder computing array offsets on-chain: the values list of [`Operations.concat`](/docs/operators/data) or `encode`, or a [generic collection](/docs/operators/collections)'s values array. Because an ordinary ABI return of `bytes[]` is that type's canonical single-value encoding, the operand feeds a `bytes[]` position of `readArgs` as one whole argument; the descriptor there does the type check. Constraint violations name the operand by its index.
 - **`pick`** returns one raw 32-byte word of the resolved bytes. `wordIndex` is signed: 0-based from the start, negative from the end (`-1` = last word), resolved against the live data; outside the full words it reverts with `ReturnDataOutOfBounds`. Word positions follow the raw ABI encoding, so dynamic types contribute head offsets, not content; to select *into* tuples and arrays, use `nav`.
 - **`nav`** is the typed selector: interpret the resolved bytes as a declared return tuple and walk a path through it, following runtime offsets and lengths that raw word positions cannot express.
 - **`chain`** follows runtime-resolved addresses, the thing a `STATIC_CALL` fetcher cannot do, since its target is fixed at encoding time.

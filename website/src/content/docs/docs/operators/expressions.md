@@ -1,29 +1,15 @@
 ---
 title: "Expressions: typed expression graphs"
-description: The unreleased Expressions contract, resolve-once ABI call construction, and backwards-referencing typed graphs with a lazy Select, guarded evaluation and per-evaluation memoisation.
+description: The unreleased Expressions contract, backwards-referencing typed graphs with a lazy Select, guarded evaluation and per-evaluation memoisation.
 ---
 
-`Expressions` is a stateless periphery contract that addresses one structural limit of raw operands: an ERC-8211 `InputParam` is a tree with no way to name a subterm, so a repeated expression is duplicated in calldata and resolved again at every occurrence. Expressions adds two things. **Resolve-once** entry points resolve every supplied operand exactly once and assemble canonical calldata from the results, with no cap on how many live arguments a call may take. **Typed expression graphs** are node lists whose nodes reference earlier nodes, so a shared value is evaluated once per evaluation, branches can be lazy, and a whole canonical ABI value (a string, an array, a tuple) binds to one node. It imports the core (for `Assertions.resolve`) and the shared `AbiCodec`; it adds nothing to the frozen core and changes no wire format.
+`Expressions` is a stateless periphery contract that addresses one structural limit of raw operands: an ERC-8211 `InputParam` is a tree with no way to name a subterm, so a repeated expression is duplicated in calldata and resolved again at every occurrence. Expressions adds **typed expression graphs**: node lists whose nodes reference earlier nodes, so a shared value is evaluated once per evaluation, branches can be lazy, and a whole canonical ABI value (a string, an array, a tuple) binds to one node. It imports the core (for `Assertions.resolve`) and the shared `AbiCodec`; it adds nothing to the frozen core and changes no wire format. Resolving N operands once each for a single call is the core's job, through [`readArgs`](/docs/core/reads) for a whole call and `resolveValues` for a `bytes[]`; a graph is for values shared across several places.
 
 **Status: unreleased.** The deployment manifest lists it with `released: false` (see [Deployments](/docs/reference/deployments)): it is an artifact candidate the EVMcrispr SDK does not compile against, and its only in-tree consumer is `Collections.Callback.expression` ([below](#collections-callbacks-through-an-expression)). Because `Collections` imports it, an edit to `Expressions.sol` moves the Collections address too.
 
-## Resolve once
+## Resolve once lives on the core
 
-```solidity
-function resolveArguments(address core, string argumentTypes, InputParam[] args)
-                          external view;                                            // raw return
-function resolveValues   (address core, InputParam[] args)
-                          external view returns (bytes[] values);
-```
-
-Both take the core's address explicitly and resolve each operand through `Assertions.resolve`, so operands keep their inline constraints and every [core primitive](/docs/core/reads) nests inside them as usual.
-
-- **`resolveArguments`** resolves each argument once, ABI-encodes them as the tuple `argumentTypes` describes (each resolved argument must be a canonical single-value envelope matching its position in the descriptor) and returns the encoded tuple itself, raw and without a bytes envelope: a calldata segment for the core's `read` to splice, the role [`Operations.encode`](/docs/operators/data#encode-runtime-abiencode) plays for already-resolved pieces.
-- **`resolveValues`** returns each operand's raw resolved bytes as one `bytes[]` element, the value shape the [generic collections](/docs/operators/collections) consume.
-
-Operands are resolved in a loop, once each: there is no four-live-argument limit. Duplicate entries in `args` are still independent resolutions; to share a value, put it in a graph. The empty descriptor `()` with no arguments encodes to nothing. In errors, both number arguments from 0.
-
-The core's own [`readArgs`](/docs/core/reads) is the host for a whole call: it resolves each argument in one frame and keeps the core as the destination's `msg.sender`. Measured through `Assertions.resolve` on 2026-09-07 (`contracts/tests/ExpressionsGas.t.sol`), two live string arguments cost 32,440 gas through `readArgs`, 41,011 through `read` over `resolveArguments` and 51,474 through the SDK's offset splice. The SDK targets `readArgs`; `resolveArguments` remains for a raw argument segment, and `resolveValues` is how a `bytes[]` is assembled from N operands. An earlier `resolveCall`, the same construction with Expressions as the caller, was removed: it lost on both gas and caller.
+Expressions once carried its own resolve-once entry points (`resolveCall`, `resolveArguments`, `resolveValues`), each resolving its operands through an external hop back to `Assertions.resolve`. All three were retired on 2026-09-07 in favour of the core's in-frame primitives: [`readArgs`](/docs/core/reads) for a whole call with several dynamic arguments, and [`resolveValues`](/docs/core/reads) for a `bytes[]` assembled from N operands. Measured through `Assertions.resolve` (`contracts/tests/ExpressionsGas.t.sol`), two live string arguments cost 32,440 gas through `readArgs` against 40,440 through `resolveCall` and 41,011 through `read` over `resolveArguments`: each Expressions form paid one external call per operand and, in `resolveCall`'s case, also made Expressions the destination's `msg.sender` instead of the core. A caller that wants Expressions to make the call still can, with a [`Call` node](#the-graph).
 
 ## The graph
 
@@ -75,7 +61,7 @@ function evaluateEncoded(bytes expression, bytes[] parameters) external view;   
 
 ### Memoisation scope
 
-Memoisation lasts one `evaluate` call. In a Collections traversal that is one callback invocation: a `Resolve` node reached in every iteration resolves once per iteration, not once per traversal. Resolve a source array once with the outer `resolveValues` (or the core) and pass its elements in as parameters instead.
+Memoisation lasts one `evaluate` call. In a Collections traversal that is one callback invocation: a `Resolve` node reached in every iteration resolves once per iteration, not once per traversal. Resolve a source array once outside the graph (the core's `resolveValues`, or a `Resolve` node in an enclosing graph) and pass its elements in as parameters instead.
 
 ## A graph with a shared subterm
 

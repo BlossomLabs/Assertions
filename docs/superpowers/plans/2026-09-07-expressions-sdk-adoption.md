@@ -13,6 +13,7 @@ Status: design, SDK scope. Written against the main repo working tree of 2026-09
 | `Assertions.readArgs(InputParam target, bytes4 selector, string argumentTypes, InputParam[] args)`: resolves the target and each argument once in-frame, encodes the tuple through `AbiCodec.tuple`, staticcalls the destination from the core frame, raw-returns | `contracts/Assertions.sol` after `read`; `_encodeArguments` beside `_staticCall`; tests `contracts/tests/CoreExtensions.t.sol` | A resolve-once host for calls with several dynamic arguments that keeps the core as `msg.sender`. Error numbering as `read` (target 0, `args[i]` at `i + 1`); `AbiCodec`'s `ComponentCountMismatch`, `InvalidComponentEnvelope`, `InvalidComponentLength`, `InvalidComponentValue` name the argument index; `"()"` with no arguments is the bare selector |
 | `nav` returns arrays of dynamic elements and dynamic tuples as `abi.encode(value)` (extent from `AbiCodec.body`; malformed nested data reverts `AbiCodec.InvalidValue(offset)`); `PAYLOAD` stays string/bytes only, `LEN` unchanged | `Assertions._returnDynamic`, `_extent`; `CoreReads.t.sol` flipped; `test/nav-encode-fuzz.test.ts` oracle updated | `lensedDataOperand` works for `string[]`, `bytes[]`, dynamic-struct arrays and struct fields; Phase 4 has no lens restriction |
 | `AbiCodec` parses with assembly scanners and `tupleLayout` parses once; `Expressions.evaluate` caches every node's shape (`Cache.dynamic`, `Cache.words`) and takes the tuple's dynamic flag from the layout | `contracts/lib/AbiCodec.sol`, `contracts/Expressions.sol`; `contracts/tests/AbiCodecGas.t.sol` | Descriptor parsing 3 to 4× cheaper everywhere (callback binds, graph nodes, `readArgs`) |
+| `Assertions.resolveValues(InputParam[] args) returns (bytes[])`: resolves N operands once each in-frame, returns the raw results as a canonical `bytes[]`; `Expressions.resolveCall`, `resolveArguments` and `resolveValues` removed (each paid an external hop per operand; `resolveCall` also changed the caller). Expressions is graphs only | `contracts/Assertions.sol` after `resolve`; tests `CoreExtensions.t.sol` (`test_resolveValues_*`, including the `readArgs(…, "(bytes[])", [resolveValues])` shape) | The `bytes[]` assembler for Phase 1b lives on the core: `EXPRESSIONS_ABI` carries no resolve-once functions and `encodeResolveValues` goes in `core.ts` beside `encodeReadArgs` |
 | Fixtures: `MockTarget.caller()`, `callerGated(address expected, string a, string b)`, `join3`, `join6`, `strings() returns (string[])`, `taggedPairs() returns (uint256, Pair[])` | `contracts/tests/Mocks.sol` | Caller-preservation and multi-argument fixtures, vendored to the checkout by the Phase 0 sync |
 | Gas tables as permanent tests | `contracts/tests/ExpressionsGas.t.sol` (`ExpressionsGasTest`, `GraphCostGasTest`), `contracts/tests/AbiCodecGas.t.sol` | Every constant in this plan cites a row there |
 
@@ -97,7 +98,7 @@ Also pinned: `mapValues("string", "uint256", values, Callback{target: expression
 |---|---|---|---|
 | `spliceLayout` with L runtime-sized lives | offset add chains | `L + L(L−1)/2` | `readArgs` (Phase 1) |
 | `enumerateParam` live `offset_b` (`recipes.ts:391`) | `add(mul(n,32),160)` | 2× | `readArgs(collections, zipWords, "(bytes,bytes)", [iotaWords(n), s])` (Phase 1) |
-| `concatParam`/`flat` N live parts (`recipes.ts:658`) | quadratic splice, cap 4 | `L(L−1)/2` | `readArgs(ops, concat, "(bytes[],bytes)", [resolveValues(core, payloads), delimiter])` (Phase 1b) |
+| `concatParam`/`flat` N live parts (`recipes.ts:658`) | quadratic splice, cap 4 | `L(L−1)/2` | `readArgs(ops, concat, "(bytes[],bytes)", [core.resolveValues(payloads), delimiter])` (Phase 1b) |
 | `wordsPayload` (`arrays.ts:67`, `arrayWordsParam` `recipes.ts:423`) | `slice(reframed env, 64, mul(count,32))` | 3× | `readArgs(ops, slice, "(bytes,uint256,uint256)", [wrapParam(env), 64, mul(count,32)])` resolves the source twice (row D decides) |
 | `@bool!((x > 0) and (x < 10))`, `def @sq!` applied to a call, `@absDiff!(a b)` named twice, `includesWordParam`, `calldataArgsParam`, `splitParam` | tree with a repeated leaf or subtree | 2–3× | graph only when the shared subtree is a costly composite (1.3); otherwise stays |
 | `mulOf` fusion, `x ^ 2` | n/a | 1× | unchanged |
@@ -106,7 +107,7 @@ Also pinned: `mapValues("string", "uint256", values, Callback{target: expression
 
 ### 1.1 Call host per shape (Q1)
 
-The SDK emits two hosts and never `Expressions.resolveCall` (Table A: it costs the same as the other resolve-once forms and changes the destination's `msg.sender` to Expressions).
+The SDK emits two hosts, both on the core. Expressions' resolve-once entry points no longer exist (Table A's last two columns are the pre-removal measurements: they cost the same as each other, more than `readArgs`, and `resolveCall` changed the destination's `msg.sender` to Expressions).
 
 | Shape | Host | Why (Table A, B) |
 |---|---|---|
@@ -137,7 +138,7 @@ export function callParam(ctx: CompileCtx, target: InputParam, call: CompiledCal
 
 `spliceLayout`'s runtime-add path (`layout.ts:184-200`) and `MAX_LIVE_SLOTS` are deleted in Phase 1; the function keeps literal offsets and throws `"internal: a runtime offset was requested; route through buildCall"` if handed two runtime-sized lives. `compileLiveHelperArg` (`compile.ts:995-1011`) hands a `String`/`Bytes` helper result to a dynamic parameter as `{kind:"dyn", param, payload: bytesPayloadParam(...)}` instead of rejecting.
 
-Consumers to switch in Phase 1: `compileHopArgs`/`readParam`, `callReadOperand`, `indexOfParam` (live needle), `replaceParam`, `zipParam` (both live), `enumerateParam`, `splitParam` (via `indexOfParam`). Phase 1b: `concatParam`, `flat`, `str.join` with N live parts through `Expressions.resolveValues(core, parts)` as the single `bytes[]` argument of `readArgs(ops, concat, "(bytes[],bytes)", …)`; each live part is `payloadParam(...)` (a `nav … PAYLOAD` operand resolves to the raw payload, and `resolveValues` wraps each raw result as one element), a literal part is `rawParam(bytes)`. The core still makes the `concat` call.
+Consumers to switch in Phase 1: `compileHopArgs`/`readParam`, `callReadOperand`, `indexOfParam` (live needle), `replaceParam`, `zipParam` (both live), `enumerateParam`, `splitParam` (via `indexOfParam`). Phase 1b: `concatParam`, `flat`, `str.join` with N live parts through the core's `resolveValues(parts)` as the single `bytes[]` argument of `readArgs(ops, concat, "(bytes[],bytes)", …)`; each live part is `payloadParam(...)` (a `nav … PAYLOAD` operand resolves to the raw payload, and `resolveValues` wraps each raw result as one element), a literal part is `rawParam(bytes)`. The core still makes the `concat` call.
 
 Lambda extraction (`lambda.ts:218-308`) is unaffected: a `readArgs` operand takes the general path (target and calldata kept verbatim), and marker windows stay word-aligned inside an encoded `InputParam[]`.
 
@@ -148,7 +149,7 @@ Who executes the destination `staticcall` decides `msg.sender`:
 | Lowering | Caller at the destination |
 |---|---|
 | core `read`, `readArgs`, `chain`, `cond`, `orElse`, `isValid`, `revertData` | core (today's behaviour) |
-| `Expressions.resolveCall`, graph `Call`, graph `ProbeCall` | Expressions |
+| graph `Call`, graph `ProbeCall` | Expressions |
 | word-template lambda | Collections (direct template) or core (composed `read` template) |
 | `Callback.expression` lambda | Expressions |
 
@@ -244,7 +245,7 @@ Error reporting: `decode.ts` gains `EXPRESSIONS_ERRORS` (`InvalidNode`, `Invalid
 ### 1.6 Plumbing (Q6)
 
 - `CompileCtx.expressions: Address` (`types.ts:78-94`); `EXPRESSIONS_ADDRESS` in `addresses.ts`; `defaultCompileCtx` (`assertion.ts:109-121`) and test-utils `compileExpression` (`packages/test-utils/src/onchain/compile.ts:77-87`) set it; the unit-test contexts (`splice-layout.test.ts:35-39`, `fold-hosts.test.ts:50-54`, `lambda-template.test.ts:40-44`, `operand-scale.test.ts:19-23`) gain `expressions` where reached.
-- New `packages/sdk/src/onchain/expressions.ts`: `EXPRESSIONS_ABI` (parseAbi of `resolveValues`, `evaluate`, `evaluateEncoded`, the `Node`/`Expression` structs, the four errors), `encodeResolveValues`, `resolveValuesParam(ctx, parts)`; `index.ts` re-exports `expressions`, `graph`, `lift`, `values`.
+- New `packages/sdk/src/onchain/expressions.ts`: `EXPRESSIONS_ABI` (parseAbi of `evaluate`, `evaluateEncoded`, the `Node`/`Expression` structs, the four errors); `index.ts` re-exports `expressions`, `graph`, `lift`, `values`. `resolveValues` is a core function: `"function resolveValues(InputParam[] args) view returns (bytes[])"` joins `CORE_ABI`, with `encodeResolveValues(args)` and `resolveValuesParam(ctx, parts) = staticCallParam(ctx.core, …)` in `core.ts`; the old `resolver.ts` (`EXPRESSION_RESOLVER_ABI`, `resolveCallParam`, `resolveArgumentsParam`, `resolveValuesParam`) is deleted.
 - The four canonical addresses in `addresses.ts` move together in Phase 0 (every contract imports `AbiCodec`); `installAssertionsCore` installs four and `InstalledCore` gains `expressions`.
 - Builder preview and the parity harness need no change: a `readArgs` operand or a graph is one `STATIC_CALL` param, and `Assertions.resolve(param)` staticcalls it like any operand.
 
@@ -289,7 +290,7 @@ Interfaces produced: `buildCall`, `callParam`, `chooseHost`, `runtimeSized`, `en
 
 Steps: write `call-host.test.ts` (fails: `chooseHost` undefined) → implement `construct.ts` → switch `compileHopArgs`/`callReadOperand` → run the existing shape tests (word-only and single-live calldata byte-identical) → switch the recipes → delete the `grown` loop → `expression-hosts.test.ts` walker clean → `bun test ./test/unit` → `read-hops.test.ts` and parity strings on Anvil → `bun run codegen` → `bun scripts/build.ts --types` → `bun run validate-docs` → pin bump → `pnpm check:integration`.
 
-Phase 1b (same bump if green): `expressions.ts` (`EXPRESSIONS_ABI`, `resolveValuesParam`), `concatParam`/`flat`/`str.join` over `resolveValues`; parity `@str.concat!` with 2–6 live parts; a row in `ExpressionsGas.t.sol` for `concat` with 2 and 4 live parts (splice vs `resolveValues`).
+Phase 1b (same bump if green): `resolveValuesParam` in `core.ts`, `concatParam`/`flat`/`str.join` over the core's `resolveValues`; parity `@str.concat!` with 2–6 live parts; a row in `ExpressionsGas.t.sol` for `concat` with 2 and 4 live parts (splice vs `resolveValues`).
 
 Exit: no `::` call or recipe emits an offset add chain; the `resolveCall` selector appears in no emitted operand; the `read` host is byte-identical for word-only and single-live calls; `callerGated(core, …)` passes through every emitted host on Anvil.
 
@@ -314,7 +315,7 @@ Exit: every word-only face has a generic sibling path with parity coverage and a
 - No change to the ERC-8211 wire format; no new constraint types.
 - No further contract change: every phase targets the bytecode Phase 0 releases.
 - Word-template folds stay the word-only path; no migration of all-word calls to `readArgs` or Expressions.
-- The SDK never emits `Expressions.resolveCall` or `ProbeCall`.
+- The SDK never emits `ProbeCall`; Expressions has no resolve-once entry points to emit.
 - No cross-iteration memoization in collection callbacks.
 - No Builder authoring UI for graphs; the Builder consumes `assert` output and previews through `resolve`.
 - No change to off-chain faces beyond the new both-faced `@field`.

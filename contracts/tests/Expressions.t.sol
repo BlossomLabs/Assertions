@@ -94,27 +94,6 @@ contract ExpressionsTest is Test {
         r[2] = c;
     }
 
-    function testResolveSixDynamicArgumentsAndValuesOnce() public {
-        InputParam[] memory args = new InputParam[](6);
-        for (uint256 i; i < 6; i++) {
-            args[i] = live(abi.encodeCall(this.source, ()));
-        }
-        vm.expectCall(address(this), abi.encodeCall(this.source, ()), uint64(13));
-        string memory value = this.source();
-        bytes[] memory values = expressions.resolveValues(address(core), args);
-        assertEq(values.length, 6);
-        assertEq(values[5], abi.encode(value));
-        (bool ok, bytes memory out) = address(expressions)
-            .staticcall(
-                abi.encodeCall(
-                    Expressions.resolveArguments,
-                    (address(core), "(string,string,string,string,string,string)", args)
-                )
-            );
-        assertTrue(ok);
-        assertEq(out, abi.encode(value, value, value, value, value, value));
-    }
-
     function testGraphMemoizesSharedDynamicCallAndLazyBranch() public {
         Expressions.Expression memory p;
         p.core = address(core);

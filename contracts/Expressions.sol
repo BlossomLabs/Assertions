@@ -8,9 +8,7 @@ import {InputParam} from "./lib/ERC8211.sol";
 /**
  * @title Expressions
  * @author Sembrestels
- * @notice Typed expression graphs for the Assertions core, and resolve-once
- *         operand construction (an argument tuple, a bytes[]) from live
- *         operands. A raw ERC-8211
+ * @notice Typed expression graphs for the Assertions core. A raw ERC-8211
  *         operand is a tree: it cannot name a subterm, so a value used
  *         twice is encoded and resolved twice. An `Expression` is a graph:
  *         nodes reference earlier nodes by index, every node evaluates at
@@ -134,8 +132,7 @@ contract Expressions {
      * @notice Thrown when a call target has no code (a staticcall there
      *         would succeed with empty returndata and surface as a silent
      *         wrong value)
-     * @param node The node making the call (the operand index for the
-     *        resolve-once entry points)
+     * @param node The node making the call
      * @param target The code-less address
      */
     error InvalidTarget(uint256 node, address target);
@@ -144,8 +141,7 @@ contract Expressions {
      * @notice Thrown when a staticcall reverts, carrying the target's revert
      *         data so the inner reason is not lost (a different error from
      *         the core's two-argument CallFailed)
-     * @param node The node making the call (the operand index for the
-     *        resolve-once entry points)
+     * @param node The node making the call
      * @param target The called address
      * @param callData The calldata that was sent
      * @param reason The raw revert data
@@ -158,53 +154,6 @@ contract Expressions {
      * @param caller The offending msg.sender
      */
     error NotSelf(address caller);
-
-    // ============ Resolve-Once Operands ============
-
-    /**
-     * @notice Resolves each argument exactly once through the core and
-     *         returns the canonical argument tuple `argumentTypes`
-     *         describes, without a bytes envelope
-     * @dev A calldata SEGMENT for the core's `read` to splice, the same
-     *      raw-return convention as Operations' `encode`, built from live
-     *      operands instead of resolved values. Each operand resolves
-     *      through the core's `resolve`, so its constraints are validated
-     *      there, and must yield the canonical single-value encoding of
-     *      its declared type (AbiCodec's component errors name the
-     *      argument index). InvalidTarget / NodeCallFailed identify the
-     *      operand by its index. `Assertions.readArgs` is the cheaper host
-     *      when the segment is a whole call's arguments.
-     * @param core The Assertions core that resolves the operands
-     * @param argumentTypes The argument tuple descriptor
-     * @param args One input parameter per argument
-     */
-    function resolveArguments(address core, string calldata argumentTypes, InputParam[] calldata args) external view {
-        bytes[] memory values = new bytes[](args.length);
-        for (uint256 i; i < args.length; i++) {
-            values[i] = _call(core, abi.encodeCall(Assertions.resolve, (args[i])), i);
-        }
-        (bytes memory result,) = _arguments(argumentTypes, values);
-        assembly ("memory-safe") { return(add(result, 32), mload(result)) }
-    }
-
-    /**
-     * @notice Resolves each operand exactly once through the core and
-     *         returns the raw results as a bytes[] value
-     * @dev The way to assemble a `bytes[]` argument (a Collections values
-     *      array, an `encode` values list) from N live operands without
-     *      an encoder computing offsets on-chain. Results are taken as-is,
-     *      not validated against any type. Operand errors identify the
-     *      operand by its index.
-     * @param core The Assertions core that resolves the operands
-     * @param args The operands, in output order
-     * @return values One raw result per operand
-     */
-    function resolveValues(address core, InputParam[] calldata args) external view returns (bytes[] memory values) {
-        values = new bytes[](args.length);
-        for (uint256 i; i < args.length; i++) {
-            values[i] = _call(core, abi.encodeCall(Assertions.resolve, (args[i])), i);
-        }
-    }
 
     // ============ Evaluate ============
 

@@ -44,9 +44,9 @@ interface IERC20Balance {
  *         proposals, Safe batches, upgrades): if any constraint fails, the
  *         entire transaction reverts, atomically. Beyond the judge, this
  *         contract owns every primitive that speaks the ERC-8211 wire
- *         format: selection (`resolve`, `pick`, `nav`), call construction
- *         (`chain`, `read`, `readArgs`) and resolution control (`cond`,
- *         `orElse`, `isValid`, `revertData`).
+ *         format: selection (`resolve`, `resolveValues`, `pick`, `nav`),
+ *         call construction (`chain`, `read`, `readArgs`) and resolution
+ *         control (`cond`, `orElse`, `isValid`, `revertData`).
  * @dev The judge is view-only: assertComposable(executions) evaluates the
  *      ERC-8211 execution algorithm directly, restricted to what a view
  *      context can express: every fetcher resolution is a staticcall,
@@ -226,6 +226,31 @@ contract Assertions {
         bytes memory value = _resolve(param, "", 0, 0);
         assembly ("memory-safe") {
             return(add(value, 32), mload(value))
+        }
+    }
+
+    /**
+     * @notice Resolves each operand exactly once and returns the raw
+     *         results as a bytes[] value, one element per operand
+     * @dev `resolve` over a list, for assembling a `bytes[]` from N live
+     *      operands without an encoder computing array offsets on-chain:
+     *      the canonical way to build the values list of Operations'
+     *      `concat` or `encode`, or a Collections values array, from
+     *      operands that are only known at judge time. Results are taken
+     *      as-is and not validated against any type; the consumer's
+     *      declared type (a `bytes[]` in a `readArgs` descriptor) does that.
+     *      Constraints on each operand are validated as in `resolve`, with
+     *      ConstraintFailed naming the operand by its index. Returned as an
+     *      ordinary ABI value, which is exactly the canonical single-value
+     *      encoding of `bytes[]`, so the result nests as a whole `bytes[]`
+     *      argument.
+     * @param args The operands, in output order
+     * @return values One raw result per operand
+     */
+    function resolveValues(InputParam[] calldata args) external view returns (bytes[] memory values) {
+        values = new bytes[](args.length);
+        for (uint256 i = 0; i < args.length; i++) {
+            values[i] = _resolve(args[i], "", 0, i);
         }
     }
 

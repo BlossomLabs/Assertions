@@ -46,16 +46,17 @@ fix it in the same change that falsified it.
   argument in-frame and encodes the tuple through `AbiCodec.tuple`, passing the
   admission test the way `read` does. Measured through `Assertions.resolve`
   (`contracts/tests/ExpressionsGas.t.sol`): two live string arguments cost 32,440
-  gas through `readArgs`, 41,011 through `read` over `resolveArguments` and
-  51,474 through the SDK's offset splice; at three, 43,887 against 126,757 for
-  the splice. `readArgs` also keeps the core as the destination's `msg.sender`
-  (`MockTarget.caller` pins it). One live argument stays on `read` (19,000 vs
-  20,217) and word-only calls too (14,718 vs 21,219). `Expressions.resolveCall`
-  (the same construction with Expressions as the caller, 40,440 at two
-  arguments) was removed on 2026-09-07: it lost on both gas and caller, and
-  nothing emitted it. Expressions keeps `resolveArguments` for a raw argument
-  segment and `resolveValues` for assembling a `bytes[]` from N operands.
-  Repeated input entries are still
+  gas through `readArgs` and 51,474 through the SDK's offset splice; at three,
+  43,887 against 126,757. `readArgs` also keeps the core as the destination's
+  `msg.sender` (`MockTarget.caller` pins it). One live argument stays on `read`
+  (19,000 vs 20,217) and word-only calls too (14,718 vs 21,219). The core's
+  `resolveValues(args)` resolves N operands once each into a canonical `bytes[]`
+  (the values list of `concat`, `encode` or a generic collection). Expressions'
+  own resolve-once entry points were all removed on 2026-09-07: `resolveCall`
+  (40,440 at two arguments, Expressions as caller) and `resolveArguments`
+  (41,011 under `read`) lost to `readArgs` on gas, and every one paid an
+  external hop per operand that the in-frame core versions do not. Expressions
+  is graphs only. Repeated input entries are still
   independent; graph references share evaluated nodes. Graphs bind whole
   canonical ABI values, support lazy branches and guarded evaluation, and memoize
   per evaluation (per callback invocation in Collections), not across collection

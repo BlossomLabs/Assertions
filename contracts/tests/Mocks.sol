@@ -184,6 +184,70 @@ contract MockTarget {
         return 12345;
     }
 
+    /**
+     * @notice The caller a constructed call arrives from: the core for
+     *         `read` / `readArgs`, Expressions for `resolveCall`. For the
+     *         caller-preservation tests.
+     */
+    function caller() external view returns (address) {
+        return msg.sender;
+    }
+
+    /**
+     * @notice Two dynamic arguments behind a word; reverts Unauthorized
+     *         unless the caller is `expected`, so one constructed call
+     *         proves both its layout and its caller
+     */
+    function callerGated(address expected, string calldata a, string calldata b) external view returns (uint256) {
+        if (msg.sender != expected) revert Unauthorized();
+        return bytes(a).length + bytes(b).length;
+    }
+
+    /**
+     * @notice Three and six dynamic arguments, for resolve-once construction
+     *         tests
+     */
+    function join3(string calldata a, string calldata b, string calldata c) external pure returns (string memory) {
+        return string.concat(a, b, c);
+    }
+
+    function join6(
+        string calldata a,
+        string calldata b,
+        string calldata c,
+        string calldata d,
+        string calldata e,
+        string calldata f
+    ) external pure returns (string memory) {
+        return string.concat(a, b, c, d, e, f);
+    }
+
+    /**
+     * @notice A string[] as the sole return value: the canonical envelope
+     *         the generic collection faces consume
+     */
+    function strings() external pure returns (string[] memory list) {
+        list = new string[](2);
+        list[0] = "ab";
+        list[1] = "a value with more than thirty-two bytes";
+    }
+
+    struct Pair {
+        address account;
+        uint256 amount;
+    }
+
+    /**
+     * @notice A static-element struct array behind a word, for lensed
+     *         generic-array tests
+     */
+    function taggedPairs() external pure returns (uint256 tag, Pair[] memory pairs) {
+        tag = 9;
+        pairs = new Pair[](2);
+        pairs[0] = Pair(address(1), 1);
+        pairs[1] = Pair(address(2), 2);
+    }
+
     address public storedToken;
 
     /**

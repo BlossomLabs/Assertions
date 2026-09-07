@@ -178,6 +178,50 @@ contract ExpressionsTest is Test {
         run(p, new bytes[](0));
     }
 
+    // Node 0 target, node 1 then (a bomb call or the literal "then"), node 2 the literal "else",
+    // node 3 the condition literal, node 4 the Select.
+    function selectGraph(string memory conditionType, bytes memory condition, bool thenBombs)
+        private
+        view
+        returns (Expressions.Expression memory p)
+    {
+        p.core = address(core);
+        p.nodes = new Expressions.Node[](5);
+        p.result = 4;
+        p.nodes[0] = node(Expressions.Kind.Literal, "address", abi.encode(address(this)));
+        uint256[] memory target = new uint256[](1);
+        target[0] = 0;
+        if (thenBombs) p.nodes[1] = callNode("string", this.bomb.selector, "()", target);
+        else p.nodes[1] = node(Expressions.Kind.Literal, "string", abi.encode("then"));
+        p.nodes[2] = node(Expressions.Kind.Literal, "string", abi.encode("else"));
+        p.nodes[3] = node(Expressions.Kind.Literal, conditionType, condition);
+        p.nodes[4] = node(Expressions.Kind.Select, "string", "");
+        p.nodes[4].refs = refs3(3, 1, 2);
+    }
+
+    function testSelectFalseTakesElseWithoutEvaluatingThen() public view {
+        Expressions.Expression memory p = selectGraph("bool", abi.encode(false), true);
+        assertEq(abi.decode(run(p, new bytes[](0)), (string)), "else");
+    }
+
+    function testSelectAcceptsAnyNonzeroFirstWord() public view {
+        Expressions.Expression memory p = selectGraph("uint256", abi.encode(uint256(7)), false);
+        assertEq(abi.decode(run(p, new bytes[](0)), (string)), "then");
+    }
+
+    function testSelectJudgesFirstWordOfMultiWordCondition() public view {
+        Expressions.Expression memory p = selectGraph("(uint256,uint256)", abi.encode(uint256(0), uint256(9)), false);
+        assertEq(abi.decode(run(p, new bytes[](0)), (string)), "else");
+        p.nodes[3].data = abi.encode(uint256(7), uint256(0));
+        assertEq(abi.decode(run(p, new bytes[](0)), (string)), "then");
+    }
+
+    function testSelectRejectsConditionShorterThanOneWord() public {
+        Expressions.Expression memory p = selectGraph("uint256[0]", "", false);
+        vm.expectRevert(abi.encodeWithSelector(Expressions.InvalidNode.selector, 4));
+        this.externalRun(p);
+    }
+
     function testComposedDynamicCallbackRepeatsParameter() public view {
         Expressions.Expression memory p;
         p.nodes = new Expressions.Node[](5);

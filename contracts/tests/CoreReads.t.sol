@@ -342,9 +342,8 @@ contract CoreReadsTest is Test {
     }
 
     function test_nav_lenSentinel_dynamicElementArray() public {
-        // string[] elements are themselves dynamic, so _returnDynamic cannot
-        // hand the array out as a single envelope — LEN reads the length
-        // word in place, behind the runtime offset the tuple head introduces
+        // LEN reads the length word in place, behind the runtime offset the
+        // tuple head introduces, without re-encoding the string[] it counts
         InputParam memory p = _call(address(token), abi.encodeCall(MockToken.tags, ()));
         (bool ok, bytes memory ret) = _nav(p, "(address,string[])", _path2(1, assertions.LEN()));
         assertTrue(ok);
@@ -355,11 +354,13 @@ contract CoreReadsTest is Test {
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), 4);
 
-        // the value itself is unreachable — extracting the string[] reverts,
-        // which is why the sentinel exists (position 9 = "string[]" in the
-        // descriptor)
-        vm.expectRevert(abi.encodeWithSelector(Assertions.InvalidNavigation.selector, 9));
-        assertions.nav(p, "(address,string[])", _path1(1));
+        // and the value itself comes back re-encoded as the canonical single
+        // value, exactly abi.encode(list) (CoreExtensions.t.sol covers the
+        // re-encoder; this pins that LEN and the value agree on one fixture)
+        (ok, ret) = _nav(p, "(address,string[])", _path1(1));
+        assertTrue(ok);
+        (, string[] memory list) = token.tags();
+        assertEq(ret, abi.encode(list));
     }
 
     function test_nav_len_rejectsMissingPayloadAndHostileCounts() public view {
@@ -583,11 +584,6 @@ contract CoreReadsTest is Test {
         InputParam memory tuple = _call(address(target), abi.encodeCall(MockTarget.getTuple, ()));
         vm.expectRevert(abi.encodeWithSelector(Assertions.InvalidNavigation.selector, 1));
         assertions.nav(tuple, "(uint256,address,bool,bytes32)", _path2(0, 0));
-
-        // a dynamic tuple terminal is not extractable as a single envelope
-        InputParam memory items = _call(address(token), abi.encodeCall(MockToken.items, ()));
-        vm.expectRevert(abi.encodeWithSelector(Assertions.InvalidNavigation.selector, 1));
-        assertions.nav(items, "((string,uint256)[])", _path2(0, 0));
 
         // malformed descriptor: not a parenthesized tuple
         vm.expectRevert(abi.encodeWithSelector(InvalidTypeDescriptor.selector, 0));

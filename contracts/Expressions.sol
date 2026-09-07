@@ -36,9 +36,13 @@ contract Expressions {
         uint256 result;
     }
 
+    /// @dev Per-evaluation memo: values and readiness per node, plus each node's
+    ///      parsed `valueType` shape so a descriptor is parsed once, not per visit.
     struct Cache {
         bytes[] values;
         bool[] ready;
+        bool[] dynamic;
+        uint256[] words;
     }
     error InvalidNode(uint256 node);
     error InvalidReference(uint256 node, uint256 ref);
@@ -60,7 +64,8 @@ contract Expressions {
         for (uint256 i; i < args.length; i++) {
             values[i] = _call(core, abi.encodeCall(Assertions.resolve, (args[i])), i + 1);
         }
-        bytes memory result = _call(to, bytes.concat(selector, _arguments(argumentTypes, values)), args.length + 1);
+        (bytes memory encoded,) = _arguments(argumentTypes, values);
+        bytes memory result = _call(to, bytes.concat(selector, encoded), args.length + 1);
         assembly ("memory-safe") { return(add(result, 32), mload(result)) }
     }
 
@@ -70,7 +75,7 @@ contract Expressions {
         for (uint256 i; i < args.length; i++) {
             values[i] = _call(core, abi.encodeCall(Assertions.resolve, (args[i])), i);
         }
-        bytes memory result = _arguments(argumentTypes, values);
+        (bytes memory result,) = _arguments(argumentTypes, values);
         assembly ("memory-safe") { return(add(result, 32), mload(result)) }
     }
 
@@ -83,12 +88,18 @@ contract Expressions {
     }
 
     /// @notice Evaluate a backwards-referencing graph, resolving shared nodes only once.
-    /// @dev Select is lazy. Only reachable nodes execute. Parameters are canonical single-value envelopes.
+    /// @dev Select judges truth like the core's `cond`: the first 32-byte word of a condition of at least
+    ///      32 bytes, nonzero evaluates refs[1] and zero evaluates refs[2]; a shorter condition reverts
+    ///      InvalidNode. Only the chosen branch executes. `Collections._predicate` still requires a
+    ///      canonical 0/1 word from callback results, a different concern. Only reachable nodes execute.
+    ///      Parameters are canonical single-value envelopes.
     function evaluate(Expression calldata expression, bytes[] calldata parameters) external view {
-        if (expression.result >= expression.nodes.length) revert InvalidNode(expression.result);
-        for (uint256 i; i < expression.nodes.length; i++) {
+        uint256 count = expression.nodes.length;
+        if (expression.result >= count) revert InvalidNode(expression.result);
+        Cache memory cache = Cache(new bytes[](count), new bool[](count), new bool[](count), new uint256[](count));
+        for (uint256 i; i < count; i++) {
             Node calldata node = expression.nodes[i];
-            AbiCodec.shape(bytes(node.valueType));
+            (cache.dynamic[i], cache.words[i]) = AbiCodec.shape(bytes(node.valueType));
             for (uint256 j; j < node.refs.length; j++) {
                 if (node.refs[j] >= i) revert InvalidReference(i, node.refs[j]);
             }
@@ -104,7 +115,6 @@ contract Expressions {
                 revert InvalidNode(i);
             }
         }
-        Cache memory cache = Cache(new bytes[](expression.nodes.length), new bool[](expression.nodes.length));
         bytes memory result = _evaluate(expression, parameters, cache, expression.result);
         assembly ("memory-safe") { return(add(result, 32), mload(result)) }
     }
@@ -128,8 +138,8 @@ contract Expressions {
             result = _call(p.core, abi.encodeCall(Assertions.resolve, (source)), index);
         } else if (node.kind == Kind.Select) {
             bytes memory condition = _evaluate(p, parameters, cache, node.refs[0]);
-            if (condition.length != 32 || AbiCodec.word(condition, 0) > 1) revert InvalidNode(index);
-            result = _evaluate(p, parameters, cache, node.refs[AbiCodec.word(condition, 0) == 1 ? 1 : 2]);
+            if (condition.length < 32) revert InvalidNode(index);
+            result = _evaluate(p, parameters, cache, node.refs[AbiCodec.word(condition, 0) != 0 ? 1 : 2]);
         } else if (node.kind == Kind.TryOrElse || node.kind == Kind.IsValid) {
             (bool success, bytes memory attempted) = _tryEvaluate(p, parameters, cache, node.refs[0]);
             if (node.kind == Kind.IsValid) result = abi.encode(success);
@@ -148,8 +158,8 @@ contract Expressions {
             if (node.kind == Kind.Array) {
                 result = AbiCodec.pack(bytes(node.arguments), values);
             } else {
-                result = _arguments(node.arguments, values);
-                (bool dynamic,) = AbiCodec.shape(bytes(node.arguments));
+                bool dynamic;
+                (result, dynamic) = _arguments(node.arguments, values);
                 if (dynamic) result = bytes.concat(abi.encode(uint256(32)), result);
             }
         } else {
@@ -158,9 +168,10 @@ contract Expressions {
             for (uint256 i; i < args.length; i++) {
                 args[i] = _evaluate(p, parameters, cache, node.refs[i + 1]);
             }
-            result = _call(target, bytes.concat(node.selector, _arguments(node.arguments, args)), index);
+            (bytes memory encoded,) = _arguments(node.arguments, args);
+            result = _call(target, bytes.concat(node.selector, encoded), index);
         }
-        AbiCodec.validate(bytes(node.valueType), result);
+        AbiCodec.validate(bytes(node.valueType), result, cache.dynamic[index], cache.words[index]);
         cache.values[index] = result;
         cache.ready[index] = true;
     }
@@ -201,11 +212,19 @@ contract Expressions {
         assembly ("memory-safe") { return(add(result, 32), mload(result)) }
     }
 
-    function _arguments(string calldata types, bytes[] memory values) private pure returns (bytes memory) {
+    /// @dev The canonical argument tuple for `types`, and whether that tuple is dynamic (a
+    ///      `Tuple` node then prefixes the 0x20 word). The descriptor is parsed once here.
+    function _arguments(string calldata types, bytes[] memory values)
+        private
+        pure
+        returns (bytes memory encoded, bool dynamic)
+    {
         if (bytes(types).length == 2 && bytes(types)[0] == "(" && bytes(types)[1] == ")" && values.length == 0) {
-            return "";
+            return ("", false);
         }
-        return AbiCodec.tuple(bytes(types), values);
+        AbiCodec.TupleLayout memory plan = AbiCodec.tupleLayout(bytes(types));
+        encoded = AbiCodec.tuple(plan, bytes(types), values);
+        dynamic = AbiCodec.isDynamic(plan);
     }
 
     function _probe(address target, bytes memory callData, bytes4 expected) private view returns (bytes memory reason) {

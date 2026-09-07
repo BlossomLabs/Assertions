@@ -39,8 +39,8 @@ interface IERC20Balance {
  *         entire transaction reverts, atomically. Beyond the judge, this
  *         contract owns every primitive that speaks the ERC-8211 wire
  *         format: selection (`resolve`, `pick`, `nav`), call construction
- *         (`chain`, `read`) and resolution control (`cond`, `orElse`,
- *         `isValid`, `revertData`).
+ *         (`chain`, `read`, `readArgs`) and resolution control (`cond`,
+ *         `orElse`, `isValid`, `revertData`).
  * @dev The judge is view-only: assertComposable(executions) evaluates the
  *      ERC-8211 execution algorithm directly, restricted to what a view
  *      context can express: every fetcher resolution is a staticcall,
@@ -295,11 +295,13 @@ contract Assertions {
      *      - empty path: the resolved bytes pass through byte-for-byte
      *        (nav degenerates to resolve);
      *      - word terminal (static single-word value): the 32-byte word;
-     *      - dynamic terminal (string/bytes/array): the canonical
-     *        single-value envelope [0x20][length][payload]. Arrays must
-     *        have statically encoded elements; dynamic tuples and arrays
-     *        of dynamic elements revert with InvalidNavigation (their
-     *        extent would require a recursive re-encoder);
+     *      - dynamic terminal (string/bytes/array/dynamic tuple): the
+     *        canonical single-value encoding, [0x20][length][payload] for
+     *        string/bytes and abi.encode(value) for arrays and tuples.
+     *        Arrays of dynamic elements and dynamic tuples are re-encoded
+     *        from a canonical-form walk of their extent (AbiCodec.body), so
+     *        malformed nested data reverts with AbiCodec's InvalidValue at
+     *        the offending offset;
      *      - a path ending in the LEN sentinel: the decoded length of the
      *        dynamic value the preceding steps navigate to, as a uint256
      *        word (element count for arrays, byte length for string/bytes
@@ -312,8 +314,8 @@ contract Assertions {
      *        stays plain ABI), but a nav over the PAYLOAD result claims
      *        its encoding with an ordinary descriptor, same author's-claim
      *        status as any other. Arrays and dynamic tuples revert with
-     *        InvalidNavigation — their payload's extent would require the
-     *        recursive re-encoder the core deliberately lacks.
+     *        InvalidNavigation: only string/bytes carry a byte-counted
+     *        payload (a plain path returns their canonical value).
      *
      *      Operand failures revert with CallFailed / ConstraintFailed
      *      identifying them; a malformed descriptor reverts with
@@ -321,7 +323,8 @@ contract Assertions {
      *      unrepresentable terminal with InvalidNavigation, a path index
      *      outside its tuple or array with ElementIndexOutOfBounds, and
      *      data that does not match the declared shape (truncated
-     *      returndata, out-of-range offsets) with ReturnDataOutOfBounds.
+     *      returndata, out-of-range offsets) with ReturnDataOutOfBounds
+     *      (AbiCodec.InvalidValue for a re-encoded array or tuple terminal).
      * @param a The input parameter whose resolved bytes are navigated
      * @param retTypes The resolved value's type as a parenthesized tuple
      * @param path The navigation path (see modes above)
@@ -441,6 +444,60 @@ contract Assertions {
             callData = bytes.concat(callData, _resolve(args[i], "", 0, i + 1));
         }
         bytes memory result = _staticCall(callTarget, callData);
+        assembly {
+            return(add(result, 32), mload(result))
+        }
+    }
+
+    /**
+     * @notice Constructs a staticcall from runtime-resolved WHOLE argument
+     *         values: resolves the target and each argument once, ABI-encodes
+     *         the arguments as the tuple `argumentTypes` describes (the
+     *         shared AbiCodec grammar, e.g. "(address,string,uint256[])"),
+     *         prefixes `selector`, executes the call against the resolved
+     *         target and returns its raw returndata
+     * @dev `read`'s sibling for calls carrying several dynamic arguments.
+     *      `read` splices resolved bytes as calldata SEGMENTS, so an encoder
+     *      that wants two runtime-sized values in one call has to compute
+     *      the second value's head offset from the first value's length
+     *      on-chain, re-resolving the first value once per later offset.
+     *      Here every argument arrives as a canonical single-value ABI
+     *      encoding (a 32-byte word for a static type, [0x20][len][payload]
+     *      for string/bytes, abi.encode(T[]) for an array) and the layout is
+     *      computed in this frame: each operand resolves exactly once, and
+     *      the destination sees this contract as the caller, exactly as with
+     *      `read`. The returndata is returned via a raw assembly return, so
+     *      the call nests inside any operand. Reverts with InvalidAddressWord
+     *      (index 0) when the target word has dirty upper bytes,
+     *      ConstraintFailed identifying the operand (target 0, args at
+     *      index + 1) on a violated constraint, AbiCodec's
+     *      ComponentCountMismatch / InvalidComponentLength /
+     *      InvalidComponentEnvelope / InvalidComponentValue (naming the
+     *      argument index) when a resolved value does not fit its declared
+     *      type, InvalidTypeDescriptor on a malformed descriptor, and
+     *      CallFailed when the target has no code or the constructed call
+     *      reverts. The empty descriptor "()" with no arguments encodes to
+     *      the bare selector.
+     * @param target The input parameter resolving to the call's target
+     *        address
+     * @param selector The 4-byte function selector
+     * @param argumentTypes The argument tuple descriptor, e.g.
+     *        "(string,string)"
+     * @param args One input parameter per argument, each resolving to the
+     *        canonical single-value encoding of its declared type
+     */
+    function readArgs(
+        InputParam calldata target,
+        bytes4 selector,
+        string calldata argumentTypes,
+        InputParam[] calldata args
+    ) external view {
+        address callTarget = _asAddress(_firstWord(_resolve(target, "", 0, 0)), 0);
+        bytes[] memory values = new bytes[](args.length);
+        for (uint256 i = 0; i < args.length; i++) {
+            values[i] = _resolve(args[i], "", 0, i + 1);
+        }
+        bytes memory result = _staticCall(callTarget, bytes.concat(selector, _encodeArguments(argumentTypes, values)));
         assembly {
             return(add(result, 32), mload(result))
         }
@@ -709,6 +766,18 @@ contract Assertions {
     }
 
     /**
+     * @dev The canonical argument tuple for `types` over resolved values,
+     *      through the shared AbiCodec encoder. "()" with no values is the
+     *      empty tuple; the grammar has no empty-tuple production, so it is
+     *      special-cased here exactly as Expressions does.
+     */
+    function _encodeArguments(string calldata types, bytes[] memory values) internal pure returns (bytes memory) {
+        bytes calldata t = bytes(types);
+        if (t.length == 2 && t[0] == "(" && t[1] == ")" && values.length == 0) return "";
+        return AbiCodec.tuple(t, values);
+    }
+
+    /**
      * @dev The first 32-byte word of `value` — the word constraints compare
      *      and words are routed from. Reverts with ReturnDataOutOfBounds
      *      when fewer than 32 bytes are available.
@@ -841,9 +910,9 @@ contract Assertions {
      *      steps to a string or bytes value and returns the span of its raw
      *      payload — start offset into `result` and exact byte length, no
      *      envelope, no padding. Static values, arrays, dynamic tuples and
-     *      empty paths revert with InvalidNavigation: an array or tuple
-     *      payload's extent would require the recursive re-encoder the
-     *      core deliberately lacks. A length word overrunning the data
+     *      empty paths revert with InvalidNavigation: only string/bytes
+     *      carry a byte-counted payload (a plain path returns an array or
+     *      tuple as its canonical value). A length word overrunning the data
      *      reverts with ReturnDataOutOfBounds.
      */
     function _navPayload(bytes memory result, bytes calldata t, int256[] calldata path)
@@ -868,50 +937,71 @@ contract Assertions {
 
     /**
      * @dev Returns a navigated dynamic terminal re-encoded as a canonical
-     *      single-value return: [0x20][length][payload], indistinguishable
-     *      from a contract returning that value directly. Terminals may be
-     *      string, bytes, or a dynamic array of statically encoded
-     *      elements; dynamic tuples and arrays of dynamic elements revert
-     *      with InvalidNavigation (their extent would require a recursive
-     *      re-encoder).
+     *      single-value return, indistinguishable from a contract returning
+     *      that value directly: [0x20][length][payload] for string/bytes and
+     *      arrays of statically encoded elements (bounds-checked in place),
+     *      abi.encode(value) for arrays of dynamic elements and dynamic
+     *      tuples, whose extent comes from AbiCodec.body's canonical-form
+     *      walk (tight offsets, zero padding; malformed data reverts with
+     *      AbiCodec.InvalidValue at the offending offset). Offsets inside
+     *      the copied body are relative to the body itself, so prefixing the
+     *      0x20 word is the whole re-encoding.
      */
     function _returnDynamic(bytes memory result, bytes calldata t, uint256 pos, uint256 ts, uint256 te) internal pure {
-        uint256 len = _navWord(result, pos);
-        uint256 payloadBytes;
+        // Bytes copied from `pos`: the value's complete in-place encoding.
+        uint256 size;
         if (t[te - 1] == "]") {
             uint256 suffix = AbiCodec.suffixStart(t, ts, te);
             (, bool elemDyn, uint256 elemWords) = AbiCodec.typeShape(t, ts, suffix);
-            if (elemDyn) revert InvalidNavigation(ts);
-            if (len > (result.length - pos - 32) / (elemWords * 32)) {
-                revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+            if (elemDyn) {
+                size = _extent(result, t, ts, te, pos);
+            } else {
+                uint256 len = _navWord(result, pos);
+                if (len > (result.length - pos - 32) / (elemWords * 32)) {
+                    revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+                }
+                size = 32 + len * elemWords * 32;
             }
-            payloadBytes = len * elemWords * 32;
         } else if (t[ts] == "(") {
-            // dynamic tuple terminal: not extractable as a single envelope
-            revert InvalidNavigation(ts);
+            size = _extent(result, t, ts, te, pos);
         } else {
             // bytes / string: byte length, stored padded to full words.
             // Bound len BEFORE the padding round-up so a hostile length
             // word near 2^256 cannot overflow the checked arithmetic
             // into a Panic.
+            uint256 len = _navWord(result, pos);
             if (len > result.length - pos - 32) {
                 revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
             }
-            payloadBytes = ((len + 31) / 32) * 32;
+            uint256 payloadBytes = ((len + 31) / 32) * 32;
             if (payloadBytes > result.length - pos - 32) {
                 revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
             }
+            size = 32 + payloadBytes;
         }
         assembly {
             let out := mload(0x40)
             mstore(out, 0x20)
             let src := add(add(result, 32), pos)
-            let size := add(32, payloadBytes)
             for { let i := 0 } lt(i, size) { i := add(i, 32) } {
                 mstore(add(add(out, 32), i), mload(add(src, i)))
             }
             return(out, add(32, size))
         }
+    }
+
+    /**
+     * @dev Byte extent of the array or tuple of type `t[ts:te]` encoded in
+     *      place at `pos` of `result`, from AbiCodec's canonical-form walk
+     *      (which also bounds every nested offset and length).
+     */
+    function _extent(bytes memory result, bytes calldata t, uint256 ts, uint256 te, uint256 pos)
+        private
+        pure
+        returns (uint256)
+    {
+        AbiCodec.Context memory context;
+        return AbiCodec.body(t, ts, te, result, pos, context);
     }
 
     /**

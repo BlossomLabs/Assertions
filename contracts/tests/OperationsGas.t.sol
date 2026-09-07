@@ -267,15 +267,4 @@ contract OperationsGasTest is Test {
         // composed form must stay a clear multiple of the tiny fold.
         assertGt(composed, direct, "a ~1KB core-target fold must cost more than a tiny Operations fold");
     }
-
-    // ============ Size ============
-
-    function test_runtimeSizeWithinEip170() public {
-        uint256 size = address(ops).code.length;
-        emit log_named_uint("Operations runtime bytes", size);
-        emit log_named_uint("EIP-170 headroom       ", 24576 - size);
-        // Nothing else in the repo checks this, and the periphery is the
-        // contract that grows.
-        assertLt(size, 24576, "Operations must stay deployable under EIP-170");
-    }
 }

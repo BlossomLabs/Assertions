@@ -30,13 +30,52 @@ library AbiCodec {
         uint256 headSize;
     }
 
+    // ASCII bytes the grammar recognises, compared as numbers. The scanners read
+    // calldata bytes through `byteAt` because bounds-checked `t[i]` indexing was
+    // the parse cost: four checked reads per character in the name scan made a
+    // 17-character descriptor cost about 7k gas to parse (measured 2026-09-07).
+    uint8 private constant LPAREN = 0x28;
+    uint8 private constant RPAREN = 0x29;
+    uint8 private constant COMMA = 0x2c;
+    uint8 private constant LBRACKET = 0x5b;
+    uint8 private constant RBRACKET = 0x5d;
+    uint256 private constant NAME_BYTES = 0x6279746573; // "bytes"
+    uint256 private constant NAME_STRING = 0x737472696e67; // "string"
+
+    /// @dev Byte `i` of a descriptor. Every caller bounds `i` by a `limit` that
+    ///      `typeShape` has checked against `t.length`, so no bounds check here.
+    function byteAt(bytes calldata t, uint256 i) private pure returns (uint8 c) {
+        assembly ("memory-safe") {
+            c := byte(0, calldataload(add(t.offset, i)))
+        }
+    }
+
+    /// @dev The end of the `[a-z0-9]*` run starting at `p`, bounded by `limit`.
+    function scanName(bytes calldata t, uint256 p, uint256 limit) private pure returns (uint256 q) {
+        assembly ("memory-safe") {
+            q := p
+            for {} lt(q, limit) {} {
+                let c := byte(0, calldataload(add(t.offset, q)))
+                if iszero(or(and(gt(c, 0x60), lt(c, 0x7b)), and(gt(c, 0x2f), lt(c, 0x3a)))) { break }
+                q := add(q, 1)
+            }
+        }
+    }
+
+    /**
+     * @dev Parses one type starting at `p` and ending before `limit`: returns
+     *      where it ends, whether it is dynamic and its head footprint in words.
+     *      Reverts InvalidTypeDescriptor at the offending byte. `limit` must not
+     *      exceed `t.length`; the scanners rely on it for bounds.
+     */
     function typeShape(bytes calldata t, uint256 p, uint256 limit)
         internal
         pure
         returns (uint256 end, bool dyn, uint256 words)
     {
+        if (limit > t.length) revert InvalidTypeDescriptor(limit);
         if (p >= limit) revert InvalidTypeDescriptor(p);
-        if (t[p] == "(") {
+        if (byteAt(t, p) == LPAREN) {
             uint256 q = p + 1;
             uint256 sum;
             while (true) {
@@ -44,11 +83,12 @@ library AbiCodec {
                 if (d) dyn = true;
                 sum += w;
                 if (e >= limit) revert InvalidTypeDescriptor(e);
-                if (t[e] == ",") {
+                uint8 c = byteAt(t, e);
+                if (c == COMMA) {
                     q = e + 1;
                     continue;
                 }
-                if (t[e] == ")") {
+                if (c == RPAREN) {
                     end = e + 1;
                     break;
                 }
@@ -56,37 +96,32 @@ library AbiCodec {
             }
             words = dyn ? 1 : sum;
         } else {
-            uint256 q = p;
-            while (q < limit && ((t[q] >= "a" && t[q] <= "z") || (t[q] >= "0" && t[q] <= "9"))) {
-                q++;
-            }
+            uint256 q = scanName(t, p, limit);
             if (q == p) revert InvalidTypeDescriptor(p);
-            dyn = (q - p == 5
-                    && t[p] == "b"
-                    && t[p + 1] == "y"
-                    && t[p + 2] == "t"
-                    && t[p + 3] == "e"
-                    && t[p + 4] == "s")
-                || (q - p == 6
-                    && t[p] == "s"
-                    && t[p + 1] == "t"
-                    && t[p + 2] == "r"
-                    && t[p + 3] == "i"
-                    && t[p + 4] == "n"
-                    && t[p + 5] == "g");
+            uint256 n = q - p;
+            if (n == 5 || n == 6) {
+                // The name as one right-aligned word, compared against "bytes" / "string".
+                uint256 name;
+                assembly ("memory-safe") {
+                    name := shr(sub(256, mul(8, n)), calldataload(add(t.offset, p)))
+                }
+                dyn = name == (n == 5 ? NAME_BYTES : NAME_STRING);
+            }
             words = 1;
             end = q;
         }
-        while (end < limit && t[end] == "[") {
+        while (end < limit && byteAt(t, end) == LBRACKET) {
             uint256 q2 = end + 1;
             uint256 k;
             bool fixedSize;
-            while (q2 < limit && t[q2] >= "0" && t[q2] <= "9") {
-                k = k * 10 + (uint8(t[q2]) - 48);
+            while (q2 < limit) {
+                uint8 c = byteAt(t, q2);
+                if (c < 0x30 || c > 0x39) break;
+                k = k * 10 + (c - 0x30);
                 fixedSize = true;
                 q2++;
             }
-            if (q2 >= limit || t[q2] != "]") revert InvalidTypeDescriptor(q2);
+            if (q2 >= limit || byteAt(t, q2) != RBRACKET) revert InvalidTypeDescriptor(q2);
             if (fixedSize) {
                 if (!dyn) words = words * k;
             } else {
@@ -160,6 +195,14 @@ library AbiCodec {
         else requireValue(v.length % 32 == 0 && words == v.length / 32, 0, context);
     }
 
+    /// @dev `validate` for a caller that already parsed `t` into `(dynamic, words)`
+    ///      and keeps it across values instead of re-parsing per value.
+    function validate(bytes calldata t, bytes memory v, bool dynamic, uint256 words) internal pure {
+        Context memory context;
+        if (dynamic) validateDynamic(t, v, context);
+        else requireValue(v.length % 32 == 0 && words == v.length / 32, 0, context);
+    }
+
     function validateDynamic(bytes calldata t, bytes memory v, Context memory context) private pure {
         requireValue(word(v, 0, context) == 32, 0, context);
         requireValue(body(t, 0, t.length, v, 32, context) == v.length - 32, 32, context);
@@ -174,8 +217,10 @@ library AbiCodec {
         bool dynamic;
     }
 
+    /// @dev Byte extent of the value of type `t[s:e]` encoded in place at `p`,
+    ///      validating canonical form on the way (tight offsets, zero padding).
     function body(bytes calldata t, uint256 s, uint256 e, bytes memory v, uint256 p, Context memory context)
-        private
+        internal
         pure
         returns (uint256)
     {
@@ -243,28 +288,52 @@ library AbiCodec {
     }
 
     function tupleLayout(bytes calldata t) internal pure returns (TupleLayout memory plan) {
-        shape(t);
-        if (t[0] != "(" || t[t.length - 1] != ")") revert InvalidTypeDescriptor(0);
-        uint256 count;
-        uint256 p = 1;
-        while (p < t.length - 1) {
-            (uint256 end,, uint256 words) = typeShape(t, p, t.length - 1);
-            plan.headSize += words * 32;
-            count++;
-            p = end + 1;
+        if (t.length < 2 || byteAt(t, 0) != LPAREN || byteAt(t, t.length - 1) != RPAREN) {
+            // Not a parenthesized tuple. `shape` reports a malformed descriptor at
+            // its own byte; a well-formed non-tuple is rejected at position 0.
+            shape(t);
+            revert InvalidTypeDescriptor(0);
         }
+        uint256 limit = t.length - 1;
+        // Components are the depth-0 comma-separated spans; count them with one
+        // byte scan (a stray ")" surfaces here, everything else in the parse below).
+        uint256 count = 1;
+        uint256 stray;
+        assembly ("memory-safe") {
+            let depth := 0
+            for { let i := 1 } lt(i, limit) { i := add(i, 1) } {
+                let c := byte(0, calldataload(add(t.offset, i)))
+                switch c
+                case 0x28 { depth := add(depth, 1) }
+                case 0x29 {
+                    if iszero(depth) {
+                        stray := i
+                        i := limit
+                    }
+                    depth := sub(depth, 1)
+                }
+                case 0x2c { if iszero(depth) { count := add(count, 1) } }
+            }
+        }
+        if (stray != 0) revert InvalidTypeDescriptor(stray);
         plan.starts = new uint256[](count);
         plan.ends = new uint256[](count);
         plan.dynamic = new bool[](count);
         plan.words = new uint256[](count);
-        p = 1;
+        uint256 p = 1;
         for (uint256 i; i < count; i++) {
-            (uint256 end, bool dynamic, uint256 words) = typeShape(t, p, t.length - 1);
+            (uint256 end, bool dynamic, uint256 words) = typeShape(t, p, limit);
             plan.starts[i] = p;
             plan.ends[i] = end;
             plan.dynamic[i] = dynamic;
             plan.words[i] = words;
-            p = end + 1;
+            plan.headSize += words * 32;
+            if (i + 1 == count) {
+                if (end != limit) revert InvalidTypeDescriptor(end);
+            } else {
+                if (end >= limit || byteAt(t, end) != COMMA) revert InvalidTypeDescriptor(end);
+                p = end + 1;
+            }
         }
     }
 
@@ -287,12 +356,30 @@ library AbiCodec {
     }
 
     function tuple(bytes calldata t, bytes[] memory args) internal pure returns (bytes memory) {
-        TupleLayout memory plan = tupleLayout(t);
-        if (args.length != plan.starts.length) revert ComponentCountMismatch(plan.starts.length, args.length);
+        return tuple(tupleLayout(t), t, args);
+    }
+
+    /// @dev `tuple` over a layout the caller computed for `t` (and may reuse).
+    function tuple(TupleLayout memory plan, bytes calldata t, bytes[] memory args)
+        internal
+        pure
+        returns (bytes memory)
+    {
+        if (args.length != plan.starts.length) {
+            revert ComponentCountMismatch(plan.starts.length, args.length);
+        }
         for (uint256 i; i < args.length; i++) {
             validateComponent(t[plan.starts[i]:plan.ends[i]], args[i], i, plan.dynamic[i], plan.words[i]);
         }
         return assemble(plan.dynamic, plan.headSize, args, false);
+    }
+
+    /// @dev Whether a tuple with this layout is itself dynamic (any dynamic component).
+    function isDynamic(TupleLayout memory plan) internal pure returns (bool) {
+        for (uint256 i; i < plan.dynamic.length; i++) {
+            if (plan.dynamic[i]) return true;
+        }
+        return false;
     }
 
     /// @dev Caller has validated every value against the prepared plan.

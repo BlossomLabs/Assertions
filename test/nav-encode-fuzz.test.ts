@@ -212,13 +212,10 @@ function terminalExpect(node: AbiT, val: unknown): Expect {
   if (!isDynamic(node)) {
     return headWords(node) === 1 ? { ok: encodeSingle(node, val) } : { revert: "InvalidNavigation" };
   }
-  if (node.kind === "bytes" || node.kind === "string") return { ok: encodeSingle(node, val) };
-  if (node.kind === "array" && node.len === null && !isDynamic(node.elem)) {
-    return { ok: encodeSingle(node, val) };
-  }
-  // Dynamic tuples, T[] of dynamic T, and fixed arrays of dynamic elements
-  // are documented as unrepresentable terminals.
-  return { revert: "InvalidNavigation" };
+  // Every dynamic terminal comes back as its canonical single-value encoding:
+  // string/bytes and T[] of static T from their length word, dynamic tuples
+  // and arrays of dynamic elements re-encoded from their canonical extent.
+  return { ok: encodeSingle(node, val) };
 }
 
 // What nav must return for a path ending in LEN or PAYLOAD on `node`.
@@ -301,6 +298,7 @@ function genPath(rng: Rng, top: AbiT & { kind: "tuple" }, topVal: unknown[], ful
 const ERROR_ABI = [
   { type: "error", name: "InvalidNavigation", inputs: [{ type: "uint256" }] },
   { type: "error", name: "InvalidTypeDescriptor", inputs: [{ type: "uint256" }] },
+  { type: "error", name: "InvalidValue", inputs: [{ type: "uint256" }] },
   { type: "error", name: "ElementIndexOutOfBounds", inputs: [{ type: "int256" }, { type: "uint256" }] },
   { type: "error", name: "ReturnDataOutOfBounds", inputs: [{ type: "int256" }, { type: "uint256" }] },
   { type: "error", name: "CallFailed", inputs: [{ type: "address" }, { type: "bytes" }] },
@@ -394,6 +392,9 @@ const TYPED_NAV_ERRORS = new Set([
   "InvalidTypeDescriptor",
   "ElementIndexOutOfBounds",
   "ReturnDataOutOfBounds",
+  // Re-encoded array/tuple terminals walk their canonical form, so corrupted
+  // nested data surfaces as AbiCodec's InvalidValue at the offending offset.
+  "InvalidValue",
 ]);
 
 // ============ nav suites ============

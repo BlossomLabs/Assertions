@@ -3,7 +3,7 @@ title: Core reference
 description: The ERC-8211 judge's functions and wire format, the core primitives, and the Operations surface.
 ---
 
-The core (judge + primitives) lives at the interim address `0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F` (a vanity `0xa55E...` address will be re-mined before the canonical roll; see [Deployments](/docs/reference/deployments)). Every judge function has an overloaded version accepting a custom `string` message as the last parameter, echoed inside `ConstraintFailed` on failure. The computation vocabulary lives on the separate [Operations contract](/docs/operators).
+The core (judge + primitives) lives at `0x4D710b5AaBcd7f8753307c71779904A562422A15`, the same CREATE2 address on every chain (see [Deployments](/docs/reference/deployments)). Every judge function has an overloaded version accepting a custom `string` message as the last parameter, echoed inside `ConstraintFailed` on failure. The computation vocabulary lives on the separate [Operations contract](/docs/operators).
 
 ## Judge functions
 
@@ -75,7 +75,7 @@ The primitives live on the core alongside the judge, because they hold operands 
 
 ## Operations (separate contract)
 
-These live at the Operations address (interim `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`), not on the core, and take plain ABI types: live operands reach them through the core's `read` splicing. Functions marked "uint + int" are overloaded on `uint256` and `int256` (explicit selectors required in Solidity encoders). See [Operations](/docs/operators) for usage.
+These live at the Operations address (`0xbe58Ca28d8FC1395F94E9871cB8A15f3D2Bd2f60`), not on the core, and take plain ABI types: live operands reach them through the core's `read` splicing. Functions marked "uint + int" are overloaded on `uint256` and `int256` (explicit selectors required in Solidity encoders). See [Operations](/docs/operators) for usage.
 
 | Function | Description |
 |----------|-------------|

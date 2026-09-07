@@ -14,13 +14,15 @@ It ships as **three contracts** with one tagline: **the core reads and judges; O
 
 Because Operations is a stateless view target reached only through `read`, the periphery can evolve: old deployments never break (anything referencing them keeps working), and new versions ship at new addresses as pure opt-ins, without touching the frozen core.
 
-## Current addresses (interim)
+## Current addresses
 
-The current deployments are **interim, non-vanity addresses**: the bytecode is still in flux, and the vanity `0xa55E...` addresses will be re-mined before the canonical roll (see [Deployments](/docs/reference/deployments)):
+Every contract has the same CREATE2 address on every chain. These are unreleased artifact candidates; listing an address implies no public-chain deployment (see [Deployments](/docs/reference/deployments)):
 
 ```
-Assertions v2.0  0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F   (frozen core: judge + primitives)
-Operations  v1.0  0x8e832Ace3f433943eb605c258bA37AF24a69dC53   (versionable periphery)
+Assertions          v2.0  0x4D710b5AaBcd7f8753307c71779904A562422A15   (frozen core: judge + primitives)
+Operations          v1.0  0xbe58Ca28d8FC1395F94E9871cB8A15f3D2Bd2f60   (versionable periphery)
+Collections         v1.0  0xd19bdD4a5462080F40B795c50d98827812B2C56b   (generic collections)
+ExpressionResolver  v1.0  0x255e580C85133DCECe94B67DaA21036Ed3C08997   (typed expression graphs)
 ```
 
 Earlier versions remain deployed and working forever at their own canonical addresses: the v2.0-rc core at [`0xa55E47F37088b6D0212BdfD56b175ec08744DB19`](https://etherscan.io/address/0xa55E47F37088b6D0212BdfD56b175ec08744DB19) with Combinators v2.0-rc at [`0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9`](https://etherscan.io/address/0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9), the v1.1 typed-assert core at [`0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0`](https://etherscan.io/address/0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0), and the original v1.0 core at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F). V2 replaces v1.1's 140 typed assertion functions (`assertEqCallUint`, ...) with the ERC-8211 model: `assertEqCallUint(target, data, expected)` is now `assertParam` over a `STATIC_CALL` fetcher with an `EQ` constraint.
@@ -66,4 +68,4 @@ Earlier versions remain deployed and working forever at their own canonical addr
 - [Operations](/docs/operators): the computation vocabulary and how `read` splicing composes it
 - [EVMcrispr integration](/docs/evml): writing assertions as one-line EVML scripts, and the [visual builder](/builder)
 - [Core reference](/docs/reference/core) and [error reference](/docs/reference/errors)
-- [Deployments](/docs/reference/deployments): interim addresses, CREATE2 mechanics and deploying to new chains
+- [Deployments](/docs/reference/deployments): canonical addresses, CREATE2 mechanics and deploying to new chains

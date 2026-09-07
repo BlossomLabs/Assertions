@@ -13,12 +13,13 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 ## Canonical addresses (same on every chain)
 
 ```
-Assertions  v2.0  0x67DBB438FdC614466984Dc8F68dAB812d785a2aE   (ERC-8211 judge)
-Operations   v1.0  0x795a1E555147d09AB6eE972B4D63a0508b582492   (unreleased periphery)
-Collections v1.0  0xd3F401e4C356667B061B6129755B7a1A279f2e1f   (unreleased generic collections)
+Assertions          v2.0  0x4D710b5AaBcd7f8753307c71779904A562422A15   (frozen core: judge + primitives)
+Operations          v1.0  0xbe58Ca28d8FC1395F94E9871cB8A15f3D2Bd2f60   (unreleased periphery)
+Collections         v1.0  0xd19bdD4a5462080F40B795c50d98827812B2C56b   (unreleased generic collections)
+ExpressionResolver  v1.0  0x255e580C85133DCECe94B67DaA21036Ed3C08997   (unreleased typed expression graphs)
 ```
 
-These are the CREATE2 addresses of the corrected 2.0 core and split Operations/Collections artifact set. The periphery uses freshly mined OPERATE and COLLECT vanity salts. No public-chain deployment is implied by listing an address; check the website's deployments page for availability.
+These are the CREATE2 addresses of the current artifact set: the shared-codec core, the split Operations/Collections periphery, and the ExpressionResolver. They are unreleased artifact candidates: no public-chain deployment is implied by listing an address; check the website's deployments page for availability. Previous candidates (the core at `0x67DBB438FdC614466984Dc8F68dAB812d785a2aE` under the same salt, among others) use different bytecode.
 
 Deployed versions are immutable and keep working forever at their own canonical addresses: the v2.0-rc core lives at `0xa55E47F37088b6D0212BdfD56b175ec08744DB19` with Combinators v2.0-rc at `0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9`, the v1.1 typed-assert core at `0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0` with Combinators v1.0 at `0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC`, and the original v1.0 core at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
 

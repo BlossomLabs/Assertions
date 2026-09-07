@@ -27,7 +27,14 @@ export default defineConfig({
     // Sources may live outside the Astro project root (EVMCRISPR_SRC), so Vite
     // must be allowed to serve them, and esbuild must not try to pre-bundle
     // them from node_modules.
-    server: { fs: { allow: [path.resolve('.'), evmcrisprSrc] } },
+    server: {
+      fs: { allow: [path.resolve('.'), evmcrisprSrc] },
+      // The vendored checkout carries turbo's cache (tens of thousands of
+      // files in .turbo/cache, one inotify watch each) which pushes the dev
+      // server past the kernel's watcher limit (ENOSPC) and kills it on
+      // startup. Vite ignores node_modules and .git by default, not .turbo.
+      watch: { ignored: ['**/.turbo/**'] },
+    },
     optimizeDeps: {
       exclude: local.ids,
       // Deps imported only from the excluded @evmcrispr sources are not
@@ -101,6 +108,8 @@ export default defineConfig({
             { slug: 'docs/operators/words' },
             { slug: 'docs/operators/data' },
             { slug: 'docs/operators/fold' },
+            { slug: 'docs/operators/collections' },
+            { slug: 'docs/operators/expressions' },
           ],
         },
         {

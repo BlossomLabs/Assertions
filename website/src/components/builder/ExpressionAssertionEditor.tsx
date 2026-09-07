@@ -13,6 +13,7 @@ import {
 } from "./assertion-model";
 import { previewSubjectValue } from "./compile-adapter";
 import { ValueEditor } from "./expr/ValueEditor";
+import { Select } from "../ui/Select";
 import { useChainClient } from "./useChainSupport";
 import { inputCls } from "./useContractFunctions";
 import { btnSmallCls, labelCls } from "./ui";
@@ -156,18 +157,12 @@ export function ExpressionAssertionEditor({
           <label className={labelCls} htmlFor="expr-operator">
             Operator
           </label>
-          <select
+          <Select
             id="expr-operator"
-            className={inputCls}
             value={currentOp}
-            onChange={(e) => changeOperator(e.target.value)}
-          >
-            {operators.map((op) => (
-              <option key={op} value={op}>
-                {op}
-              </option>
-            ))}
-          </select>
+            options={operators.map((op) => ({ value: op, label: op }))}
+            onChange={changeOperator}
+          />
         </div>
         {canFetch && (
           <button

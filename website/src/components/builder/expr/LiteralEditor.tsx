@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import type { Category } from "../assertion-model";
 import { inputCls } from "../useContractFunctions";
 import { smallLabelCls } from "../ui";
+import { Select } from "../../ui/Select";
 
 const PLACEHOLDERS: Partial<Record<Category, string>> = {
   uint: "e.g. 10e18",
@@ -50,14 +51,14 @@ export function LiteralEditor({
 
   if (boolValue)
     return (
-      <select
-        className={inputCls}
+      <Select
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        <option value="true">true</option>
-        <option value="false">false</option>
-      </select>
+        options={[
+          { value: "true", label: "true" },
+          { value: "false", label: "false" },
+        ]}
+        onChange={onChange}
+      />
     );
 
   return (

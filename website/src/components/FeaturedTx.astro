@@ -1,4 +1,6 @@
 ---
+import { Select } from './ui/Select';
+
 // The Jan 29, 2026 transaction in which TheDAO's curator multisig moved
 // 71,202 ETH (~$220M) and its remaining DAO tokens in one Safe batch,
 // sealed by nine calls to Assertions v1.0 (assertions.eth). Decoded from
@@ -125,16 +127,19 @@ const stats = [
           <span class="ml-2 font-mono text-xs text-[var(--color-ink-3)] truncate">
             Tx {TX.slice(0, 10)}&hellip;{TX.slice(-4)} &middot; decoded
           </span>
-          <span class="ftx-select-wrap ml-auto shrink-0">
-            <button type="button" class="ftx-select" aria-haspopup="listbox" aria-expanded="false" aria-label="Assertion encoding">
-              <span data-ftx-current>v1.0 &middot; as executed</span>
-              <svg class="ftx-select-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="ftx-menu" role="listbox" hidden>
-              <button type="button" class="ftx-option" role="option" data-ftx-option="v1" aria-selected="true">v1.0 &middot; as executed</button>
-              <button type="button" class="ftx-option" role="option" data-ftx-option="v2" aria-selected="false">v2.0 &middot; as written today</button>
-            </div>
-          </span>
+          <Select
+            client:load
+            variant="pill"
+            align="right"
+            name="ftx-encoding"
+            defaultValue="v1"
+            aria-label="Assertion encoding"
+            className="ml-auto shrink-0"
+            options={[
+              { value: 'v1', label: 'v1.0 · as executed' },
+              { value: 'v2', label: 'v2.0 · as written today' },
+            ]}
+          />
         </div>
         <div class="p-4 sm:p-5 overflow-x-auto font-mono text-[13px] leading-[1.7]">
           <div class="whitespace-nowrap text-[var(--color-ink-3)]">// OldCuratorsSafe (0x47b7&hellip;377D) &rarr; MultiSend, 19 calls</div>
@@ -161,113 +166,14 @@ const stats = [
   </div>
 </section>
 
-<style>
-  .ftx-select-wrap {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-  }
-  .ftx-select {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 1;
-    padding: 5px 10px;
-    border-radius: 9999px;
-    border: 1px solid color-mix(in srgb, var(--color-bp-400) 40%, transparent);
-    background: color-mix(in srgb, var(--color-bp-500) 8%, transparent);
-    color: var(--color-bp-400);
-    cursor: pointer;
-    white-space: nowrap;
-    transition: border-color 0.15s, background-color 0.15s;
-  }
-  .ftx-select:hover {
-    border-color: color-mix(in srgb, var(--color-bp-400) 70%, transparent);
-    background: color-mix(in srgb, var(--color-bp-500) 14%, transparent);
-  }
-  .ftx-select:focus-visible {
-    outline: 2px solid var(--color-bp-400);
-    outline-offset: 2px;
-  }
-  .ftx-select-chevron {
-    transition: transform 0.15s;
-  }
-  .ftx-select[aria-expanded='true'] .ftx-select-chevron {
-    transform: rotate(180deg);
-  }
-  .ftx-menu {
-    position: absolute;
-    top: calc(100% + 6px);
-    right: 0;
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 4px;
-    border-radius: 10px;
-    border: 1px solid color-mix(in srgb, var(--color-ink-3) 25%, transparent);
-    background: var(--color-surface-2);
-    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-bp-950) 25%, transparent);
-  }
-  .ftx-menu[hidden] {
-    display: none;
-  }
-  .ftx-option {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 1;
-    text-align: left;
-    white-space: nowrap;
-    padding: 7px 10px;
-    border-radius: 7px;
-    color: var(--color-ink-2);
-    cursor: pointer;
-    transition: background-color 0.15s, color 0.15s;
-  }
-  .ftx-option:hover {
-    background: color-mix(in srgb, var(--color-bp-500) 10%, transparent);
-    color: var(--color-ink);
-  }
-  .ftx-option[aria-selected='true'] {
-    color: var(--color-bp-400);
-  }
-</style>
-
 <script>
+  // The encoding pill is a React island; it reports picks through the DOM
+  // event the shared Select dispatches, and the panels follow.
   const section = document.getElementById('featured');
-  const wrap = section?.querySelector<HTMLElement>('.ftx-select-wrap');
-  const trigger = wrap?.querySelector<HTMLButtonElement>('.ftx-select');
-  const menu = wrap?.querySelector<HTMLElement>('.ftx-menu');
-  const current = wrap?.querySelector<HTMLElement>('[data-ftx-current]');
-
-  const setOpen = (open: boolean) => {
-    if (!trigger || !menu) return;
-    menu.hidden = !open;
-    trigger.setAttribute('aria-expanded', String(open));
-  };
-
-  trigger?.addEventListener('click', () => setOpen(menu ? menu.hidden !== false : true));
-
-  document.addEventListener('click', (e) => {
-    if (wrap && !wrap.contains(e.target as Node)) setOpen(false);
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') setOpen(false);
-  });
-
-  wrap?.querySelectorAll<HTMLButtonElement>('[data-ftx-option]').forEach((opt) => {
-    opt.addEventListener('click', () => {
-      const key = opt.dataset.ftxOption;
-      if (current) current.textContent = opt.textContent;
-      wrap?.querySelectorAll<HTMLButtonElement>('[data-ftx-option]').forEach((o) => {
-        o.setAttribute('aria-selected', String(o === opt));
-      });
-      section?.querySelectorAll<HTMLElement>('[data-ftx-panel]').forEach((p) => {
-        p.hidden = p.dataset.ftxPanel !== key;
-      });
-      setOpen(false);
+  section?.addEventListener('ui-select-change', (e) => {
+    const key = (e as CustomEvent<{ value: string }>).detail.value;
+    section.querySelectorAll<HTMLElement>('[data-ftx-panel]').forEach((p) => {
+      p.hidden = p.dataset.ftxPanel !== key;
     });
   });
 </script>

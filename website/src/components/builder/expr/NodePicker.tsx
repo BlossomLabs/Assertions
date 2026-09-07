@@ -1,12 +1,10 @@
-import { Fragment } from "react";
-
 import {
   type ValueExpr,
   emptyCall,
   emptyLiteral,
   unwrapNode,
 } from "../assertion-model";
-import { chipSelectCls } from "../ui";
+import { Select, type SelectItem } from "../../ui/Select";
 import { type CatalogEntry, sourceEntries, wrapEntriesFor } from "./catalog";
 import { type IconName, LineIcon } from "./icons";
 
@@ -191,9 +189,8 @@ export function convertNode(node: ValueExpr, key: NodeKey): ValueExpr {
   }
 }
 
-/** The source kinds' icons (shared with the simple form's check tiles;
- *  a native <select> can't render icons per option, so the current
- *  selection's icon sits beside the picker). */
+/** The source kinds' icons (shared with the simple form's check tiles),
+ *  shown on each option and beside the current selection. */
 const SOURCE_ICONS: Partial<Record<NodeKey, IconName>> = {
   literal: "value",
   call: "call",
@@ -218,23 +215,23 @@ export function SourcePicker({
   onConvert: (next: ValueExpr) => void;
 }) {
   const current = nodeKey(node);
-  const icon = SOURCE_ICONS[current];
+  const options = sourceEntries().map((entry) => {
+    const icon = SOURCE_ICONS[entry.key as NodeKey];
+    return {
+      value: entry.key as NodeKey,
+      label: entry.label,
+      description: entry.description,
+      icon: icon ? <LineIcon name={icon} className="size-3.5" /> : undefined,
+    };
+  });
   return (
-    <span className="inline-flex items-center gap-1.5 text-[var(--color-ink-2)]">
-      {icon && <LineIcon name={icon} className="size-3.5 shrink-0 opacity-70" />}
-      <select
-        className={chipSelectCls}
-        value={current}
-        onChange={(e) => onConvert(convertNode(node, e.target.value as NodeKey))}
-        title="Change what this value is"
-      >
-        {sourceEntries().map((entry) => (
-          <option key={entry.key} value={entry.key} title={entry.description}>
-            {entry.label}
-          </option>
-        ))}
-      </select>
-    </span>
+    <Select
+      variant="chip"
+      value={current}
+      options={options}
+      onChange={(key) => onConvert(convertNode(node, key))}
+      title="Change what this value is"
+    />
   );
 }
 
@@ -262,32 +259,26 @@ export function WrapMenu({
     if (existing) existing.items.push(entry);
     else groups.push({ name: entry.group, items: [entry] });
   }
-  const options = (items: CatalogEntry[]) =>
-    items.map((entry) => (
-      <option key={entry.key} value={entry.key} title={entry.description}>
-        {entry.label}
-      </option>
-    ));
+  const items: SelectItem<NodeKey>[] = groups.map((group) => ({
+    label: group.name,
+    options: group.items.map((entry) => ({
+      value: entry.key as NodeKey,
+      label: entry.label,
+      description: entry.description,
+    })),
+  }));
+  // Always empty: picking converts the node, the menu itself never holds a
+  // selection.
   return (
-    <select
-      className={chipSelectCls}
+    <Select<NodeKey | "">
+      variant="chip"
       value=""
-      onChange={(e) => {
-        if (e.target.value)
-          onConvert(convertNode(node, e.target.value as NodeKey));
+      placeholder="+ combine…"
+      options={items}
+      onChange={(key) => {
+        if (key) onConvert(convertNode(node, key));
       }}
       title="Combine or transform this value"
-    >
-      <option value="">+ combine…</option>
-      {groups.map((group, i) =>
-        group.name ? (
-          <optgroup key={group.name} label={group.name}>
-            {options(group.items)}
-          </optgroup>
-        ) : (
-          <Fragment key={i}>{options(group.items)}</Fragment>
-        ),
-      )}
-    </select>
+    />
   );
 }

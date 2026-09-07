@@ -11,6 +11,7 @@ import {
   toInputs,
   useContractFunctions,
 } from "./useContractFunctions";
+import { Select } from "../ui/Select";
 
 /** Sentinel value for the dropdown option that reveals the manual signature input. */
 const CUSTOM_SIG = "__custom__";
@@ -162,23 +163,22 @@ export function AbiForm({
           <label className="block text-sm text-[var(--color-ink-2)] mb-1.5">
             Function
           </label>
-          <select
-            className={inputCls}
+          <Select
             value={selectedSig}
-            onChange={(e) => {
-              setSelectedSig(e.target.value);
+            placeholder="Select a function…"
+            options={[
+              ...functions.map((fn) => ({
+                value: fn.signature,
+                label: fn.signature,
+              })),
+              { value: CUSTOM_SIG, label: "Custom signature (not in the ABI)…" },
+            ]}
+            onChange={(sig) => {
+              setSelectedSig(sig);
               setManualSig("");
               setArgs({});
             }}
-          >
-            <option value="">Select a function…</option>
-            {functions.map((fn) => (
-              <option key={fn.signature} value={fn.signature}>
-                {fn.signature}
-              </option>
-            ))}
-            <option value={CUSTOM_SIG}>Custom signature (not in the ABI)…</option>
-          </select>
+          />
         </div>
       )}
 

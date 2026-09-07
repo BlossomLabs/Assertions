@@ -11,7 +11,8 @@ import {
   unwrapNode,
 } from "../assertion-model";
 import { inputCls } from "../useContractFunctions";
-import { chipSelectCls, smallLabelCls } from "../ui";
+import { smallLabelCls } from "../ui";
+import { Select } from "../../ui/Select";
 import { CallEditor } from "./CallEditor";
 import { LiteralEditor } from "./LiteralEditor";
 import { SourcePicker, WrapMenu, isSourceNode } from "./NodePicker";
@@ -94,17 +95,12 @@ function OpSelect<T extends string>({
   onChange: (op: T) => void;
 }) {
   return (
-    <select
-      className={chipSelectCls}
+    <Select
+      variant="chip"
       value={value}
-      onChange={(e) => onChange(e.target.value as T)}
-    >
-      {options.map((op) => (
-        <option key={op} value={op}>
-          {op}
-        </option>
-      ))}
-    </select>
+      options={options.map((op) => ({ value: op, label: op }))}
+      onChange={onChange}
+    />
   );
 }
 

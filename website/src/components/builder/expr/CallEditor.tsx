@@ -10,6 +10,7 @@ import {
   useContractFunctions,
 } from "../useContractFunctions";
 import { labelCls, smallLabelCls } from "../ui";
+import { Select } from "../../ui/Select";
 
 /** Sentinel for the dropdown option that reveals the manual signature inputs. */
 const CUSTOM_SIG = "__custom__";
@@ -431,23 +432,22 @@ export function CallEditor({
       {viewFns && viewFns.length > 0 && (
         <div>
           {!compact && <label className={labelCls}>View function</label>}
-          <select
-            className={inputCls}
+          <Select
             value={selectedSig}
-            onChange={(e) => changeFn(e.target.value)}
-          >
-            <option value="">Select a view function…</option>
-            {viewFns.map((fn) => (
-              <option key={fn.signature} value={fn.signature}>
-                {fn.signature} → {fn.outputs.length === 1
-                  ? fn.outputs[0]
-                  : `(${fn.outputs.join(",")})`}
-              </option>
-            ))}
-            <option value={CUSTOM_SIG}>
-              Custom signature (not in the ABI)…
-            </option>
-          </select>
+            placeholder="Select a view function…"
+            options={[
+              ...viewFns.map((fn) => ({
+                value: fn.signature,
+                label: `${fn.signature} → ${
+                  fn.outputs.length === 1
+                    ? fn.outputs[0]
+                    : `(${fn.outputs.join(",")})`
+                }`,
+              })),
+              { value: CUSTOM_SIG, label: "Custom signature (not in the ABI)…" },
+            ]}
+            onChange={changeFn}
+          />
         </div>
       )}
 
@@ -495,24 +495,22 @@ export function CallEditor({
                   the selected address element
                 </span>
               ) : prev.returnTypes.length > 1 ? (
-                <select
-                  className="px-1.5 py-0.5 rounded-md bg-transparent border border-[var(--color-ink-3)]/25 text-xs font-mono text-[var(--color-ink-3)]"
-                  value={prev.lensIndex ?? prevAddressOutputs[0]?.j ?? 0}
-                  onChange={(e) =>
+                <Select
+                  variant="chip"
+                  value={String(prev.lensIndex ?? prevAddressOutputs[0]?.j ?? 0)}
+                  options={prevAddressOutputs.map((o) => ({
+                    value: String(o.j),
+                    label: `return value #${o.j + 1} (address)`,
+                  }))}
+                  onChange={(v) =>
                     setHop(i, {
                       ...prev,
-                      lensIndex: Number(e.target.value),
+                      lensIndex: Number(v),
                       lensPath: undefined,
                     })
                   }
                   title="Which return value the chain continues on"
-                >
-                  {prevAddressOutputs.map((o) => (
-                    <option key={o.j} value={o.j}>
-                      return value #{o.j + 1} (address)
-                    </option>
-                  ))}
-                </select>
+                />
               ) : (
                 <span className="text-xs font-mono text-[var(--color-ink-3)]">
                   the returned address
@@ -550,28 +548,23 @@ export function CallEditor({
                 <span className="text-xs font-mono text-[var(--color-ink-3)]">
                   use return value
                 </span>
-                <select
-                  className="px-1.5 py-0.5 rounded-md bg-transparent border border-[var(--color-ink-3)]/25 text-xs font-mono text-[var(--color-ink-3)]"
-                  value={lastHop.lensIndex ?? ""}
-                  onChange={(e) =>
+                <Select
+                  variant="chip"
+                  value={lastHop.lensIndex === undefined ? "" : String(lastHop.lensIndex)}
+                  placeholder="pick a return value…"
+                  options={lastHop.returnTypes.map((type, i) => ({
+                    value: String(i),
+                    label: `return value #${i + 1} (${type})`,
+                  }))}
+                  onChange={(v) =>
                     setHop(node.hops.length - 1, {
                       ...lastHop,
-                      lensIndex:
-                        e.target.value === ""
-                          ? undefined
-                          : Number(e.target.value),
+                      lensIndex: Number(v),
                       lensPath: undefined,
                     })
                   }
                   title="Which of the returned values the assertion uses (rendered as a destructure lens)"
-                >
-                  <option value="">pick a return value…</option>
-                  {lastHop.returnTypes.map((type, i) => (
-                    <option key={i} value={i}>
-                      return value #{i + 1} ({type})
-                    </option>
-                  ))}
-                </select>
+                />
                 {lastHop.lensIndex === undefined && (
                   <span className="text-xs text-[var(--color-err)]">
                     This call returns several values — pick the one to
@@ -595,36 +588,30 @@ export function CallEditor({
                     spellCheck={false}
                   />
                 ) : (
-                  <select
-                    className="px-1.5 py-0.5 rounded-md bg-transparent border border-[var(--color-ink-3)]/25 text-xs font-mono text-[var(--color-ink-3)]"
+                  <Select
+                    variant="chip"
                     value={value}
-                    onChange={(e) => setLensEntry(k, e.target.value)}
+                    placeholder={
+                      level.kind === "array" ? "pick an element…" : "pick a value…"
+                    }
+                    options={
+                      level.kind === "array"
+                        ? Array.from({ length: level.length ?? 0 }, (_, i) => ({
+                            value: String(i),
+                            label: `element #${i + 1} (${level.base})`,
+                          }))
+                        : level.components.map((c, i) => ({
+                            value: String(i),
+                            label: `value #${i + 1} (${c})`,
+                          }))
+                    }
+                    onChange={(v) => setLensEntry(k, v)}
                     title={
                       level.kind === "array"
                         ? "Which array element the assertion uses (rendered as a nested lens)"
                         : "Which value of the struct the assertion uses (rendered as a nested lens)"
                     }
-                  >
-                    <option value="">
-                      {level.kind === "array"
-                        ? "pick an element…"
-                        : "pick a value…"}
-                    </option>
-                    {(level.kind === "array"
-                      ? Array.from({ length: level.length ?? 0 }, (_, i) => ({
-                          i,
-                          label: `element #${i + 1} (${level.base})`,
-                        }))
-                      : level.components.map((c, i) => ({
-                          i,
-                          label: `value #${i + 1} (${c})`,
-                        }))
-                    ).map((o) => (
-                      <option key={o.i} value={o.i}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 )}
               </Fragment>
             ))}

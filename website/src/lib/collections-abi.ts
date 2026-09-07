@@ -189,6 +189,22 @@ export const COLLECTIONS_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "left",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "right",
+        "type": "uint256"
+      }
+    ],
+    "name": "LengthMismatch",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "length",
         "type": "uint256"
       }

@@ -16,12 +16,12 @@
       "key": "core",
       "version": "2.0",
       "released": true,
-      "address": "0xf601f42D6752dB5423efE6e5c16044d275F06aC2",
-      "salt": "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
-      "initCodeHash": "0xf7998aeef5ed3773bd65a3b9d464a7bc7b0e1c53fb86e981f67fcd1f4efa0928",
-      "runtimeHash": "0x5b8a2c1b971d59a7a9ba1ddc6bbe87fa65a6aab8a6194f15d430031b41abdd08",
-      "runtimeBytes": 17050,
-      "deployGas": 3748482,
+      "address": "0xa55E477cF2a24506317f0B2555e8B443522CBBf0",
+      "salt": "0x2e823aea45fadbba8356058dc60720447148149212e2deae10ecab2c431a95fc",
+      "initCodeHash": "0x1f9c885c936474224c3320aae0e6aa5bf71d8fdeaa50e793b323e9759099ab90",
+      "runtimeHash": "0xf0451458fdd10f11426b3ec7ea6c125a4afffb0d604d5ecbad9ef38c3b467bf9",
+      "runtimeBytes": 17397,
+      "deployGas": 3823570,
       "prefix": "ASSERTIONS",
       "sdkAddressExport": "CORE_ADDRESS",
       "deploymentModule": "src/lib/assertions-deployment.ts",
@@ -33,12 +33,12 @@
       "key": "operators",
       "version": "1.0",
       "released": true,
-      "address": "0xe3F9CCD4f6A11a044533055B9581765EB845AbB3",
-      "salt": "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
-      "initCodeHash": "0x7d51eb12a27dba7fd9bd4b997ad6e83bdcc5cb4cd72bb21bc850e357de4ce072",
-      "runtimeHash": "0xf7650ffb599a4c9d0cceb47832ea9a31e923d3c31e45bf64dd317eb198399c6f",
-      "runtimeBytes": 20080,
-      "deployGas": 4405042,
+      "address": "0x09e4A7eD11DeF3e3b98d9bB70995043cb51766CE",
+      "salt": "0x4bf30c2a9855e5bea0f62bc18f30addde025b45cb19b6f71a137c0578d7c9ee3",
+      "initCodeHash": "0x630b3ee74b97ab2fd52e29ba13d35a160afced136e32eea3db162a29344faf6d",
+      "runtimeHash": "0x30a6f06d615e7e215896db517e36f0a7fef56cf64b7a11890acaf360290e9618",
+      "runtimeBytes": 20255,
+      "deployGas": 4443015,
       "prefix": "OPERATIONS",
       "sdkAddressExport": "OPERATIONS_ADDRESS",
       "deploymentModule": "src/lib/operations-deployment.ts",
@@ -50,12 +50,12 @@
       "key": "collections",
       "version": "1.0",
       "released": true,
-      "address": "0x9647762c87a5Ff7a378c4a4752D23b88E5302e3B",
-      "salt": "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
-      "initCodeHash": "0xd98f6004c3e02501bc786339de6e9b79f1a15036a530f8fe93e7a2d14d3feb51",
-      "runtimeHash": "0x528206f5ed847a988c6f979408cc885a008902dde7c3baf31f16cfe550c5e03a",
-      "runtimeBytes": 23441,
-      "deployGas": 5133869,
+      "address": "0xC011EC7e97deC05655D3d169e44aB87217996b19",
+      "salt": "0xda9eb39c5aa9ec9ed00a2c5d22a805adf131862ea9de1d3491ce0a3c5c26298f",
+      "initCodeHash": "0x8292b3534c4928bfc73e36e348657faf441c63f1afe7f34177be55480a849956",
+      "runtimeHash": "0xd08686d4b0b0bb927ef811fb4d99972a85b9a824b78f0a028e7b8a0ae4634402",
+      "runtimeBytes": 23478,
+      "deployGas": 5141599,
       "prefix": "COLLECTIONS",
       "sdkAddressExport": "COLLECTIONS_ADDRESS",
       "deploymentModule": "src/lib/collections-deployment.ts",
@@ -66,15 +66,15 @@
       "name": "Expressions",
       "key": "expressions",
       "version": "1.0",
-      "released": false,
-      "address": "0xb3cC9B9821b990B7c7EAe4934555d04c273Ce487",
-      "salt": "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
-      "initCodeHash": "0x84dfc9e5006d7eb0785dedfda1ed699901d2e331bb3b85187c4283217b34a6d9",
-      "runtimeHash": "0xe77826dc4e34c10df600a31da07e716f8cf5602a50e9994e06639f0ea3a72110",
-      "runtimeBytes": 17860,
-      "deployGas": 3923818,
+      "released": true,
+      "address": "0xe5594E55E0fc24a271CA6bf55070a6bE63Cc43d8",
+      "salt": "0xa393cf61cfa5031ede52d2b820e3910ffe0d820bda97edb15ac7bfe16b8f5408",
+      "initCodeHash": "0x5a197f120e3b6e62c553346ffe0669a322b4e5871ecf8ccc6a0fe82dd21c97de",
+      "runtimeHash": "0x279a8c1cba2dba56dd424bdaac4fdf3b6874f16b326c76fae2e0694921c09c5a",
+      "runtimeBytes": 16176,
+      "deployGas": 3558498,
       "prefix": "EXPRESSIONS",
-      "sdkAddressExport": null,
+      "sdkAddressExport": "EXPRESSIONS_ADDRESS",
       "deploymentModule": "src/lib/expressions-deployment.ts",
       "abiModule": "src/lib/expressions-abi.ts",
       "description": "typed expression graphs contract"
@@ -135,14 +135,14 @@
       "version": "2.0",
       "address": "0x67DBB438FdC614466984Dc8F68dAB812d785a2aE",
       "salt": "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
-      "note": "retired artifact candidate under the current salt (the SDK pin 6513da6c still targets it)"
+      "note": "retired artifact candidate under a previous salt (the SDK pin 6513da6c still targets it)"
     },
     {
       "name": "Assertions",
       "version": "2.0",
       "address": "0x4D710b5AaBcd7f8753307c71779904A562422A15",
       "salt": "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
-      "note": "retired artifact candidate under the current salt"
+      "note": "retired artifact candidate under a previous salt"
     },
     {
       "name": "Operations",
@@ -156,49 +156,77 @@
       "version": "1.0",
       "address": "0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e",
       "salt": "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
-      "note": "retired artifact candidate under the current salt"
+      "note": "retired artifact candidate under a previous salt"
     },
     {
       "name": "Collections",
       "version": "1.0",
       "address": "0xc6D85B72bdF8040f61f4CD7957c7aa8e5f30a47f",
       "salt": "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
-      "note": "retired artifact candidate under the current salt (moved by the Expressions Select fix it imports)"
+      "note": "retired artifact candidate under a previous salt (moved by the Expressions Select fix it imports)"
     },
     {
       "name": "Expressions",
       "version": "1.0",
       "address": "0xc45C579021623712eE3f61D066a24218F6e01E22",
       "salt": "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
-      "note": "retired artifact candidate under the current salt (Select judged an exact 0/1 word)"
+      "note": "retired artifact candidate under a previous salt (Select judged an exact 0/1 word)"
     },
     {
       "name": "Assertions",
       "version": "2.0",
       "address": "0x94b07F5364b54471b065Ee74150864628Df722d7",
       "salt": "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
-      "note": "retired artifact candidate under the current salt (moved by readArgs and the dynamic-terminal re-encoding; the SDK pin 3f02b3aa targets it)"
+      "note": "retired artifact candidate under a previous salt (moved by readArgs and the dynamic-terminal re-encoding; the SDK pin 3f02b3aa targets it)"
     },
     {
       "name": "Operations",
       "version": "1.0",
       "address": "0x314e75BEFDb0f3e0621f68458f98Fce75246f7a7",
       "salt": "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
-      "note": "retired artifact candidate under the current salt (moved by the shared AbiCodec changes it imports)"
+      "note": "retired artifact candidate under a previous salt (moved by the shared AbiCodec changes it imports)"
     },
     {
       "name": "Collections",
       "version": "1.0",
       "address": "0x830a490449eC148CE4404e398eC7FA9903Ce5Bc2",
       "salt": "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
-      "note": "retired artifact candidate under the current salt (moved by the Expressions and AbiCodec changes it imports)"
+      "note": "retired artifact candidate under a previous salt (moved by the Expressions and AbiCodec changes it imports)"
     },
     {
       "name": "Expressions",
       "version": "1.0",
       "address": "0x03B82019Ed1802172606922e8F8c8d43d0cd6d12",
       "salt": "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
-      "note": "retired artifact candidate under the current salt (Select now judges truth like the core's cond)"
+      "note": "retired artifact candidate under a previous salt (Select now judges truth like the core's cond)"
+    },
+    {
+      "name": "Assertions",
+      "version": "2.0",
+      "address": "0xf601f42D6752dB5423efE6e5c16044d275F06aC2",
+      "salt": "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
+      "note": "retired artifact candidate under a previous salt (readArgs became get, gather joined the core, assertComposable became assertBatch; the SDK pin a36faaec targets it)"
+    },
+    {
+      "name": "Operations",
+      "version": "1.0",
+      "address": "0xe3F9CCD4f6A11a044533055B9581765EB845AbB3",
+      "salt": "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
+      "note": "retired artifact candidate under a previous salt (moved by the AbiCodec changes it imports)"
+    },
+    {
+      "name": "Collections",
+      "version": "1.0",
+      "address": "0x9647762c87a5Ff7a378c4a4752D23b88E5302e3B",
+      "salt": "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
+      "note": "retired artifact candidate under a previous salt (moved by the Expressions and AbiCodec changes it imports)"
+    },
+    {
+      "name": "Expressions",
+      "version": "1.0",
+      "address": "0xb3cC9B9821b990B7c7EAe4934555d04c273Ce487",
+      "salt": "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
+      "note": "retired artifact candidate under a previous salt (the resolve-once entry points moved to the core as get and gather)"
     }
   ]
 }

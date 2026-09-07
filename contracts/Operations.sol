@@ -49,6 +49,15 @@ contract Operations {
         Ceil
     }
 
+    // ============ Constants ============
+
+    /**
+     * @dev Exponents at or above this go to the modexp precompile in
+     *      _powMod; below it the MULMOD loop is cheaper. See _powMod for
+     *      the crossover arithmetic.
+     */
+    uint256 private constant POW_MOD_PRECOMPILE_THRESHOLD = 1 << 32;
+
     // ============ Custom Errors ============
 
     // The runtime encoder's errors are declared once in AbiCodec.
@@ -360,10 +369,12 @@ contract Operations {
     /**
      * @notice a ** exponent % m without overflowing the intermediate power
      *         (0 ** 0 == 1, and a modulus of 1 yields 0)
-     * @dev Square-and-multiply over MULMOD, at most 256 rounds. A zero
+     * @dev Square-and-multiply over MULMOD for small exponents, the
+     *      modexp precompile for exponents of 32 bits or more (the loop
+     *      remains the fallback if the precompile is unavailable). A zero
      *      modulus reverts with Panic(0x12).
      */
-    function powMod(uint256 a, uint256 exponent, uint256 m) external pure returns (uint256) {
+    function powMod(uint256 a, uint256 exponent, uint256 m) external view returns (uint256) {
         return _powMod(a, exponent, m);
     }
 
@@ -373,7 +384,7 @@ contract Operations {
      * @dev The modulus's sign is ignored. All int256.min operands are
      *      supported; a zero modulus reverts with Panic(0x12).
      */
-    function powMod(int256 a, uint256 exponent, int256 m) external pure returns (int256) {
+    function powMod(int256 a, uint256 exponent, int256 m) external view returns (int256) {
         return _signedMagnitude(_powMod(_magnitude(a), exponent, _magnitude(m)), a < 0 && exponent & 1 != 0);
     }
 
@@ -384,7 +395,7 @@ contract Operations {
      *      when the exponent is negative. A modulus of 1 yields 0; a zero
      *      modulus reverts with Panic(0x12).
      */
-    function powMod(uint256 a, int256 exponent, uint256 m) external pure returns (uint256) {
+    function powMod(uint256 a, int256 exponent, uint256 m) external view returns (uint256) {
         return _powMod(exponent < 0 ? _inverseMod(a, m) : a, _magnitude(exponent), m);
     }
 
@@ -398,7 +409,7 @@ contract Operations {
      *      int256.min operands are supported; a zero modulus reverts with
      *      Panic(0x12).
      */
-    function powMod(int256 a, int256 exponent, int256 m) external pure returns (int256) {
+    function powMod(int256 a, int256 exponent, int256 m) external view returns (int256) {
         uint256 base = _magnitude(a);
         uint256 modulus = _magnitude(m);
         if (exponent < 0) base = _inverseMod(base, modulus);
@@ -1408,13 +1419,35 @@ contract Operations {
     }
 
     /**
-     * @dev base ** exponent % modulus by square-and-multiply over MULMOD
-     *      (at most 256 rounds for any uint256 exponent). Reverts with
-     *      Panic(0x12) when the modulus is zero.
+     * @dev base ** exponent % modulus. Reverts with Panic(0x12) when the
+     *      modulus is zero. Exponents below POW_MOD_PRECOMPILE_THRESHOLD
+     *      run square-and-multiply over MULMOD (about 45 gas per exponent
+     *      bit); larger ones go to the modexp precompile at 0x05, whose
+     *      cost is flat (500 gas since EIP-7883, plus the call) and beats
+     *      the loop from roughly 30 bits up. The loop is also the fallback
+     *      when the precompile call fails or returns nothing, so a chain
+     *      without modexp still computes the right answer, only slower.
      */
-    function _powMod(uint256 base, uint256 exponent, uint256 modulus) private pure returns (uint256 result) {
+    function _powMod(uint256 base, uint256 exponent, uint256 modulus) private view returns (uint256 result) {
         result = 1 % modulus;
         base %= modulus;
+        if (exponent >= POW_MOD_PRECOMPILE_THRESHOLD) {
+            bool done;
+            assembly ("memory-safe") {
+                let p := mload(0x40)
+                mstore(p, 32)
+                mstore(add(p, 0x20), 32)
+                mstore(add(p, 0x40), 32)
+                mstore(add(p, 0x60), base)
+                mstore(add(p, 0x80), exponent)
+                mstore(add(p, 0xa0), modulus)
+                if and(staticcall(gas(), 0x05, p, 0xc0, p, 0x20), eq(returndatasize(), 32)) {
+                    result := mload(p)
+                    done := 1
+                }
+            }
+            if (done) return result;
+        }
         while (exponent != 0) {
             if (exponent & 1 != 0) result = mulmod(result, base, modulus);
             exponent >>= 1;

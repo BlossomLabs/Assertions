@@ -63,9 +63,10 @@ fix it in the same change that falsified it.
   iterations. `Select` judges truth like the core's `cond`: the first word of a
   condition of at least 32 bytes, nonzero selects `refs[1]`, zero `refs[2]`, and a
   shorter condition reverts `InvalidNode`; `Collections._predicate` still demands a
-  canonical 0/1 word from callback RESULTS, a different concern. Status: an
-  unreleased artifact with zero SDK adoption; `Collections.Callback.expression` is
-  the only in-tree consumer. Keep word-window folds for efficient word-only
+  canonical 0/1 word from callback RESULTS, a different concern. Status: released
+  on 2026-09-07; the SDK emits graphs for generic collection callbacks and for
+  the recipes that share a resolved envelope, and `Collections.Callback.expression`
+  runs them per element. Keep word-window folds for efficient word-only
   workloads; a 32-byte overwrite changes no dynamic ABI offsets. Specialized math
   such as `rpow` still avoids an impractically large composed expression.
 - **Descriptor parsing is the periphery's hot path.** Before 2026-09-07
@@ -210,8 +211,9 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
 
 ## Release
 
-- Canonical salts are random 32-byte values (the vanity convention is retired) and
-  live in `website/scripts/export-deploy-artifact.mjs`. The zero salt in Ignition
+- Canonical salts are 32-byte values mined with `cast create2` for a vanity prefix
+  (a55e47, 09e4a7e, c011ec7, e5594e55: the contract names in hex; see
+  `website/scripts/mine-salt.mjs`) and live in `website/scripts/export-deploy-artifact.mjs`. The zero salt in Ignition
   is not the canonical deployment path. `pnpm sync:artifact` (from `website/`)
   regenerates the per-contract `src/lib/*-deployment.ts` and `*-abi.ts` modules AND
   `website/src/lib/deployments.json`, the one manifest every website consumer and

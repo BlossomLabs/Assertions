@@ -7,20 +7,20 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 - **`Assertions` (the core)** owns everything that speaks ERC-8211. It judges batches in view mode: `assertParam` resolves one input parameter and validates its constraints; `assertBatch(executions)` evaluates a full `ComposableExecution[]` batch with every fetcher and every constructed call executed via `staticcall`. And it carries the read primitives whose operands arrive unresolved: `resolve`, `pick`, `nav`, `chain`, `read` (construct a staticcall from runtime-resolved segments) and the lazy control primitives `cond`, `orElse`, `isValid`, `revertData`.
 - **`Operations`** provides scalar arithmetic, comparisons, bitwise operations, environment reads, bytes/string processing, and ABI encoding.
 - **`Collections`** owns iteration: the bounded folds, the word-array family (map, filter, sort, deduplicate, zip, sum) and the generic ABI-valued traversals with typed callbacks. Both sorting paths use stable bottom-up merge sort.
-- **`Expressions`** (unreleased) adds typed expression graphs and resolve-once call construction, so a repeated subterm is evaluated once instead of being duplicated in calldata; `Collections.Callback.expression` is its only in-tree consumer.
+- **`Expressions`** adds typed expression graphs and resolve-once call construction, so a repeated subterm is evaluated once instead of being duplicated in calldata; the SDK emits graphs for collection callbacks and shared subterms, and `Collections.Callback.expression` runs them per element.
 
 - **`ERC8211.sol`** carries the standard's wire format (`ComposableExecution`, `InputParam`, `Constraint`) and the `IComposableExecution` interface, so batches produced by any ERC-8211 SDK decode here unchanged. **`AbiCodec.sol`** shares descriptor parsing, canonical value validation, and ABI assembly across the core and the periphery contracts. Navigation remains selective; public encoding validates complete values.
 
 ## Canonical addresses (same on every chain)
 
 ```
-Assertions          v2.0  0xf601f42D6752dB5423efE6e5c16044d275F06aC2   (frozen core: judge + primitives)
-Operations          v1.0  0xe3F9CCD4f6A11a044533055B9581765EB845AbB3   (versionable periphery)
-Collections         v1.0  0x9647762c87a5Ff7a378c4a4752D23b88E5302e3B   (generic collections)
-Expressions         v1.0  0xb3cC9B9821b990B7c7EAe4934555d04c273Ce487   (unreleased typed expression graphs)
+Assertions          v2.0  0xa55E477cF2a24506317f0B2555e8B443522CBBf0   (frozen core: judge + primitives)
+Operations          v1.0  0x09e4A7eD11DeF3e3b98d9bB70995043cb51766CE   (versionable periphery)
+Collections         v1.0  0xC011EC7e97deC05655D3d169e44aB87217996b19   (generic collections)
+Expressions         v1.0  0xe5594E55E0fc24a271CA6bf55070a6bE63Cc43d8   (typed expression graphs)
 ```
 
-These are the CREATE2 addresses of the current artifact set: the shared-codec core, the split Operations/Collections periphery, and Expressions. Listing an address implies no public-chain deployment; check the website's Deployments page for per-chain availability. Expressions is unreleased: the SDK does not compile against it. Earlier releases and retired artifact candidates (which use different bytecode) are listed on the Deployments page, rendered from `website/src/lib/deployments.json`.
+These are the CREATE2 addresses of the current artifact set: the shared-codec core, the split Operations/Collections periphery, and Expressions. Listing an address implies no public-chain deployment; check the website's Deployments page for per-chain availability. The SDK compiles against all four. Earlier releases and retired artifact candidates (which use different bytecode) are listed on the Deployments page, rendered from `website/src/lib/deployments.json`.
 
 ## Quick example
 

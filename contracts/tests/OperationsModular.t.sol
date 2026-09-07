@@ -67,6 +67,48 @@ contract OperationsModularTest is Test {
         }
     }
 
+    /**
+     * Reference square-and-multiply, independent of the contract's own
+     * loop, to pin the precompile path (exponents of 32 bits or more)
+     * against the MULMOD path (below) at and around the threshold.
+     */
+    function _referencePowMod(uint256 base, uint256 exponent, uint256 modulus) private pure returns (uint256 r) {
+        r = 1 % modulus;
+        base %= modulus;
+        while (exponent != 0) {
+            if (exponent & 1 != 0) r = mulmod(r, base, modulus);
+            base = mulmod(base, base, modulus);
+            exponent >>= 1;
+        }
+    }
+
+    function test_powModPrecompileThreshold() public view {
+        uint256 threshold = 1 << 32;
+        uint256 m = 1000000007;
+        assertEq(ops.powMod(uint256(3), threshold - 1, m), _referencePowMod(3, threshold - 1, m));
+        assertEq(ops.powMod(uint256(3), threshold, m), _referencePowMod(3, threshold, m));
+        assertEq(ops.powMod(uint256(3), threshold + 1, m), _referencePowMod(3, threshold + 1, m));
+        // The precompile must honor the loop's 1 % m and 0 ** e conventions
+        assertEq(ops.powMod(uint256(5), threshold, 1), 0);
+        assertEq(ops.powMod(uint256(0), threshold, 7), 0);
+        assertEq(ops.powMod(uint256(1), threshold, 7), 1);
+        assertEq(ops.powMod(int256(-3), threshold + 1, -11), -int256(_referencePowMod(3, threshold + 1, 11)));
+        assertEq(ops.powMod(int256(-3), threshold, -11), int256(_referencePowMod(3, threshold, 11)));
+        assertEq(ops.powMod(uint256(3), int256(-int256(threshold)), 11),
+            _referencePowMod(ops.powMod(uint256(3), int256(-1), 11), threshold, 11));
+    }
+
+    function testFuzz_powModAroundThreshold(uint256 a, uint8 offset, bool above, uint256 m) public view {
+        if (m == 0) return;
+        uint256 e = above ? (1 << 32) + uint256(offset) : (1 << 32) - 1 - uint256(offset);
+        assertEq(ops.powMod(a, e, m), _referencePowMod(a, e, m));
+    }
+
+    function testFuzz_powModFullWidth(uint256 a, uint256 e, uint256 m) public view {
+        if (m == 0) return;
+        assertEq(ops.powMod(a, e, m), _referencePowMod(a, e, m));
+    }
+
     function testFuzz_powModSmall(uint8 a, uint8 e, uint128 m) public view {
         if (m == 0) return;
         uint256 expected = 1 % uint256(m);

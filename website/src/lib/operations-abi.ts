@@ -189,6 +189,17 @@ export const OPERATIONS_ABI = [
   {
     "inputs": [
       {
+        "internalType": "int256",
+        "name": "x",
+        "type": "int256"
+      }
+    ],
+    "name": "LogarithmUndefined",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "base",
         "type": "uint256"
@@ -1798,7 +1809,7 @@ export const OPERATIONS_ABI = [
         "type": "int256"
       }
     ],
-    "stateMutability": "pure",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1827,7 +1838,7 @@ export const OPERATIONS_ABI = [
         "type": "uint256"
       }
     ],
-    "stateMutability": "pure",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1856,7 +1867,7 @@ export const OPERATIONS_ABI = [
         "type": "int256"
       }
     ],
-    "stateMutability": "pure",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1885,7 +1896,7 @@ export const OPERATIONS_ABI = [
         "type": "uint256"
       }
     ],
-    "stateMutability": "pure",
+    "stateMutability": "view",
     "type": "function"
   },
   {

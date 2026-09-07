@@ -4,32 +4,6 @@ export const EXPRESSIONS_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "node",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "target",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "callData",
-        "type": "bytes"
-      },
-      {
-        "internalType": "bytes",
-        "name": "reason",
-        "type": "bytes"
-      }
-    ],
-    "name": "CallFailed",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
         "name": "expected",
         "type": "uint256"
       },
@@ -205,6 +179,43 @@ export const EXPRESSIONS_ABI = [
       }
     ],
     "name": "InvalidValue",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "node",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "target",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "callData",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes",
+        "name": "reason",
+        "type": "bytes"
+      }
+    ],
+    "name": "NodeCallFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      }
+    ],
+    "name": "NotSelf",
     "type": "error"
   },
   {
@@ -435,222 +446,6 @@ export const EXPRESSIONS_ABI = [
         "internalType": "struct Expressions.Cache",
         "name": "updated",
         "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "core",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "argumentTypes",
-        "type": "string"
-      },
-      {
-        "components": [
-          {
-            "internalType": "enum InputParamType",
-            "name": "paramType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum InputParamFetcherType",
-            "name": "fetcherType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes",
-            "name": "paramData",
-            "type": "bytes"
-          },
-          {
-            "components": [
-              {
-                "internalType": "enum ConstraintType",
-                "name": "constraintType",
-                "type": "uint8"
-              },
-              {
-                "internalType": "bytes",
-                "name": "referenceData",
-                "type": "bytes"
-              }
-            ],
-            "internalType": "struct Constraint[]",
-            "name": "constraints",
-            "type": "tuple[]"
-          }
-        ],
-        "internalType": "struct InputParam[]",
-        "name": "args",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "resolveArguments",
-    "outputs": [],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "core",
-        "type": "address"
-      },
-      {
-        "components": [
-          {
-            "internalType": "enum InputParamType",
-            "name": "paramType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum InputParamFetcherType",
-            "name": "fetcherType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes",
-            "name": "paramData",
-            "type": "bytes"
-          },
-          {
-            "components": [
-              {
-                "internalType": "enum ConstraintType",
-                "name": "constraintType",
-                "type": "uint8"
-              },
-              {
-                "internalType": "bytes",
-                "name": "referenceData",
-                "type": "bytes"
-              }
-            ],
-            "internalType": "struct Constraint[]",
-            "name": "constraints",
-            "type": "tuple[]"
-          }
-        ],
-        "internalType": "struct InputParam",
-        "name": "target",
-        "type": "tuple"
-      },
-      {
-        "internalType": "bytes4",
-        "name": "selector",
-        "type": "bytes4"
-      },
-      {
-        "internalType": "string",
-        "name": "argumentTypes",
-        "type": "string"
-      },
-      {
-        "components": [
-          {
-            "internalType": "enum InputParamType",
-            "name": "paramType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum InputParamFetcherType",
-            "name": "fetcherType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes",
-            "name": "paramData",
-            "type": "bytes"
-          },
-          {
-            "components": [
-              {
-                "internalType": "enum ConstraintType",
-                "name": "constraintType",
-                "type": "uint8"
-              },
-              {
-                "internalType": "bytes",
-                "name": "referenceData",
-                "type": "bytes"
-              }
-            ],
-            "internalType": "struct Constraint[]",
-            "name": "constraints",
-            "type": "tuple[]"
-          }
-        ],
-        "internalType": "struct InputParam[]",
-        "name": "args",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "resolveCall",
-    "outputs": [],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "core",
-        "type": "address"
-      },
-      {
-        "components": [
-          {
-            "internalType": "enum InputParamType",
-            "name": "paramType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum InputParamFetcherType",
-            "name": "fetcherType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes",
-            "name": "paramData",
-            "type": "bytes"
-          },
-          {
-            "components": [
-              {
-                "internalType": "enum ConstraintType",
-                "name": "constraintType",
-                "type": "uint8"
-              },
-              {
-                "internalType": "bytes",
-                "name": "referenceData",
-                "type": "bytes"
-              }
-            ],
-            "internalType": "struct Constraint[]",
-            "name": "constraints",
-            "type": "tuple[]"
-          }
-        ],
-        "internalType": "struct InputParam[]",
-        "name": "args",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "resolveValues",
-    "outputs": [
-      {
-        "internalType": "bytes[]",
-        "name": "values",
-        "type": "bytes[]"
       }
     ],
     "stateMutability": "view",

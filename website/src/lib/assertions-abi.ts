@@ -493,9 +493,14 @@ export const ASSERTIONS_ABI = [
         "internalType": "struct ComposableExecution[]",
         "name": "executions",
         "type": "tuple[]"
+      },
+      {
+        "internalType": "string",
+        "name": "message",
+        "type": "string"
       }
     ],
-    "name": "assertComposable",
+    "name": "assertBatch",
     "outputs": [],
     "stateMutability": "view",
     "type": "function"
@@ -569,14 +574,9 @@ export const ASSERTIONS_ABI = [
         "internalType": "struct ComposableExecution[]",
         "name": "executions",
         "type": "tuple[]"
-      },
-      {
-        "internalType": "string",
-        "name": "message",
-        "type": "string"
       }
     ],
-    "name": "assertComposable",
+    "name": "assertBatch",
     "outputs": [],
     "stateMutability": "view",
     "type": "function"
@@ -853,6 +853,155 @@ export const ASSERTIONS_ABI = [
       }
     ],
     "name": "cond",
+    "outputs": [],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "enum InputParamType",
+            "name": "paramType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum InputParamFetcherType",
+            "name": "fetcherType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes",
+            "name": "paramData",
+            "type": "bytes"
+          },
+          {
+            "components": [
+              {
+                "internalType": "enum ConstraintType",
+                "name": "constraintType",
+                "type": "uint8"
+              },
+              {
+                "internalType": "bytes",
+                "name": "referenceData",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct Constraint[]",
+            "name": "constraints",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct InputParam[]",
+        "name": "args",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "gather",
+    "outputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "values",
+        "type": "bytes[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "enum InputParamType",
+            "name": "paramType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum InputParamFetcherType",
+            "name": "fetcherType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes",
+            "name": "paramData",
+            "type": "bytes"
+          },
+          {
+            "components": [
+              {
+                "internalType": "enum ConstraintType",
+                "name": "constraintType",
+                "type": "uint8"
+              },
+              {
+                "internalType": "bytes",
+                "name": "referenceData",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct Constraint[]",
+            "name": "constraints",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct InputParam",
+        "name": "target",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes4",
+        "name": "selector",
+        "type": "bytes4"
+      },
+      {
+        "internalType": "string",
+        "name": "argumentTypes",
+        "type": "string"
+      },
+      {
+        "components": [
+          {
+            "internalType": "enum InputParamType",
+            "name": "paramType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum InputParamFetcherType",
+            "name": "fetcherType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes",
+            "name": "paramData",
+            "type": "bytes"
+          },
+          {
+            "components": [
+              {
+                "internalType": "enum ConstraintType",
+                "name": "constraintType",
+                "type": "uint8"
+              },
+              {
+                "internalType": "bytes",
+                "name": "referenceData",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct Constraint[]",
+            "name": "constraints",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct InputParam[]",
+        "name": "args",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "get",
     "outputs": [],
     "stateMutability": "view",
     "type": "function"
@@ -1198,102 +1347,6 @@ export const ASSERTIONS_ABI = [
       }
     ],
     "name": "read",
-    "outputs": [],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "enum InputParamType",
-            "name": "paramType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum InputParamFetcherType",
-            "name": "fetcherType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes",
-            "name": "paramData",
-            "type": "bytes"
-          },
-          {
-            "components": [
-              {
-                "internalType": "enum ConstraintType",
-                "name": "constraintType",
-                "type": "uint8"
-              },
-              {
-                "internalType": "bytes",
-                "name": "referenceData",
-                "type": "bytes"
-              }
-            ],
-            "internalType": "struct Constraint[]",
-            "name": "constraints",
-            "type": "tuple[]"
-          }
-        ],
-        "internalType": "struct InputParam",
-        "name": "target",
-        "type": "tuple"
-      },
-      {
-        "internalType": "bytes4",
-        "name": "selector",
-        "type": "bytes4"
-      },
-      {
-        "internalType": "string",
-        "name": "argumentTypes",
-        "type": "string"
-      },
-      {
-        "components": [
-          {
-            "internalType": "enum InputParamType",
-            "name": "paramType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum InputParamFetcherType",
-            "name": "fetcherType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes",
-            "name": "paramData",
-            "type": "bytes"
-          },
-          {
-            "components": [
-              {
-                "internalType": "enum ConstraintType",
-                "name": "constraintType",
-                "type": "uint8"
-              },
-              {
-                "internalType": "bytes",
-                "name": "referenceData",
-                "type": "bytes"
-              }
-            ],
-            "internalType": "struct Constraint[]",
-            "name": "constraints",
-            "type": "tuple[]"
-          }
-        ],
-        "internalType": "struct InputParam[]",
-        "name": "args",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "readArgs",
     "outputs": [],
     "stateMutability": "view",
     "type": "function"

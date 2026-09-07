@@ -5,14 +5,16 @@
 // been published: the canonical address is derived from the exact init code,
 // so a new build requires a fresh salt.
 //
-// PRIMARY ROUTE: Foundry's multi-threaded miner. The canonical v2.0 core and
-// Operations v1.0 salts were mined this way (random 32-byte salts; the shared
+// PRIMARY ROUTE: Foundry's multi-threaded miner. The canonical salts of all
+// four contracts were mined this way (full random 32-byte salts; the shared
 // SALT_BASE convention below is retired and kept only for reproducing the
 // older releases):
 //   cast create2 -j 16 --deployer 0x4e59b44847b379578588920cA78FbF26c0B4956C \
 //     --init-code-hash $(cast keccak <artifact .bytecode>) --starts-with a55e47
 //   (Operations: --starts-with 09e4a7e, which reads "OPERATE")
 //   (Collections: --starts-with c011ec7, which reads "COLLECT")
+//   (Expressions: --starts-with e5594e55, which reads "E(X)PRESS": no hex digit
+//    resembles X, so it is dropped rather than approximated)
 // Run it a few times and pick the best-reading address, then set salt +
 // expectedAddress in export-deploy-artifact.mjs.
 //

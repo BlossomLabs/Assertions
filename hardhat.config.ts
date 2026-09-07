@@ -11,24 +11,13 @@ export default defineConfig({
     // see website/scripts/export-deploy-artifact.mjs and the README.
     strategyConfig: {
       create2: {
-        // This Ignition salt is NOT the canonical path (see the note above).
-        // The canonical per-contract CREATE2 salts live in
-        // website/scripts/export-deploy-artifact.mjs, mined with
-        // `cast create2` as random 32-byte salts (the old shared-base
-        // convention is retired):
-        // core v2.0 salt 0x2e823aea...431a95fc → 0xa55E477cF2a24506317f0B2555e8B443522CBBf0
-        // (the previous salt 0xd4f532eb...faeae45b derived 0x67DBB438FdC614466984Dc8F68dAB812d785a2aE,
-        // 0x4D710b5AaBcd7f8753307c71779904A562422A15,
-        // 0x94b07F5364b54471b065Ee74150864628Df722d7 and then
-        // 0xf601f42D6752dB5423efE6e5c16044d275F06aC2 for previous artifact candidates),
-        // Operations, Collections and Expressions salts → see export-deploy-artifact.mjs.
-        // Prior releases (Arachnid-proxy addresses):
-        // interim core v2.0 zero salt → 0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F,
-        // interim Operations v1.0 zero salt → 0x8e832Ace3f433943eb605c258bA37AF24a69dC53,
-        // core v2.0-rc salt 0x0b11b1be...01469a3b → 0xa55E47F37088b6D0212BdfD56b175ec08744DB19,
-        // Combinators v2.0-rc salt 0x0b11b1be...031de88b → 0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9,
-        // core v1.1 salt 0x0b11b1be...012c7cd0 → 0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0,
-        // core v1.0 salt 0xea760d18... → 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F.
+        // This Ignition salt is NOT the canonical path (see the note above),
+        // and this module exists for local testing only. The canonical
+        // per-contract CREATE2 salts are random 32-byte values mined with
+        // `cast create2` and live, with their expected addresses, in
+        // website/scripts/export-deploy-artifact.mjs. That script is the single
+        // source: it refuses to export when a compiled artifact no longer
+        // reproduces its expected address, so do not mirror addresses here.
         salt: "0x0000000000000000000000000000000000000000000000000000000000000000",
       },
     },

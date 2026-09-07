@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // Exports the compiled creation bytecode (plus the CREATE2 deployment
-// constants) of the Assertions core and its periphery contracts into
+// constants) of the four contracts into
 // committed modules, so the website can deploy them to their canonical
 // addresses on any chain without needing the gitignored Hardhat artifacts at
 // build time, and writes src/lib/deployments.json: the one manifest (names,
 // versions, release status, addresses, salts, hashes, sizes, measured gas and
-// prior releases) that every website consumer and check:integration read.
+// the prior release) that every website consumer and check:integration read.
 //
 // Usage: pnpm hardhat compile (from the repo root), then from website/:
 //   node scripts/export-deploy-artifact.mjs [--contract Operations]
@@ -65,10 +65,9 @@ const CONTRACTS = [
     sdkAddressExport: "CORE_ADDRESS",
     artifact: "artifacts/contracts/Assertions.sol/Assertions.json",
     output: "src/lib/assertions-deployment.ts",
-    // Vanity salt for the 2.0 core release; earlier candidates under
-    // previous salts are listed in HISTORY.
-    salt: "0xe650e74e2e7870dc5dde1aa4f797df9a7f83aa15758fe8716a281fbeca1db52e",
-    expectedAddress: "0xA55E47Df0739353DFd7a914d65d935624F88A45d",
+    // Vanity salt for the 2.0 release.
+    salt: "0x815b54312580b32036bde3218abe63b49e46ba9773ae5b4bdd089288679c811c",
+    expectedAddress: "0xA55e47F41968c49e084955524fA77c1B2ef2B638",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -76,14 +75,14 @@ const CONTRACTS = [
   {
     name: "Operations",
     key: "operators",
-    version: "1.0",
+    version: "2.0",
     released: true,
     sdkAddressExport: "OPERATIONS_ADDRESS",
     artifact: "artifacts/contracts/Operations.sol/Operations.json",
     output: "src/lib/operations-deployment.ts",
-    // Vanity salt for the 1.0 release; earlier candidates are listed in HISTORY.
-    salt: "0x4bf30c2a9855e5bea0f62bc18f30addde025b45cb19b6f71a137c0578d7c9ee3",
-    expectedAddress: "0x09e4A7eD11DeF3e3b98d9bB70995043cb51766CE",
+    // Vanity salt for the 2.0 release.
+    salt: "0x4b123c4d7b7581d183be92a28c56b467d37f1cde8a08a5cab6518e939c9555af",
+    expectedAddress: "0x09E4A7Ef72b44d3E16466Ca3517Af567eA7D8aDA",
     prefix: "OPERATIONS",
     description: "Operations plain-value vocabulary contract",
     includeProxyConstants: false,
@@ -91,15 +90,15 @@ const CONTRACTS = [
   {
     name: "Collections",
     key: "collections",
-    version: "1.0",
+    version: "2.0",
     released: true,
     sdkAddressExport: "COLLECTIONS_ADDRESS",
     artifact: "artifacts/contracts/Collections.sol/Collections.json",
     output: "src/lib/collections-deployment.ts",
-    // Vanity salt after removing the standalone validator. The callback
-    // interface is local, so Expressions source edits do not move this address.
-    salt: "0xb03362ee27179486e28877486ea6b09c2381fe4cecfaadbc0a6b535bd5ded106",
-    expectedAddress: "0xc011EC7840D287b6b7Ccbad6E8Ef7D7C8411Ca19",
+    // Vanity salt for the 2.0 release. The callback interface is local, so
+    // Expressions source edits do not move this address.
+    salt: "0xd05e880804757a5f5a4dad693f62ebb488cda0f5ef2a4cc2757d2963e8ca6eaf",
+    expectedAddress: "0xC011ec718c89903c3c5348837877f0FFCa67B500",
     prefix: "COLLECTIONS",
     description: "generic ABI collection vocabulary contract",
     includeProxyConstants: false,
@@ -107,194 +106,35 @@ const CONTRACTS = [
   {
     name: "Expressions",
     key: "expressions",
-    version: "1.0",
+    version: "2.0",
     released: true,
     sdkAddressExport: "EXPRESSIONS_ADDRESS",
     artifact: "artifacts/contracts/Expressions.sol/Expressions.json",
     output: "src/lib/expressions-deployment.ts",
-    // Vanity salt after declaring the core interface and probe errors locally.
-    salt: "0xeefe23c619f31d6de8c3a62108e5521a6fa693f3b96c97459113a89e543728b8",
-    expectedAddress: "0xe5594E555895542163715a3348B379976Acdfc81",
+    // Vanity salt for the 2.0 release. The core interface is local, so core
+    // source edits do not move this address.
+    salt: "0xae9e0eb2baca8771e7389dc50d7111b19293e3e0470e559a8f9438abf5af37d7",
+    expectedAddress: "0xE5594e551FA2209A28386418AAb971983A874029",
     prefix: "EXPRESSIONS",
     description: "typed expression graphs contract",
     includeProxyConstants: false,
   },
 ];
 
-// Prior releases and retired artifact candidates, hand-maintained here and
-// nowhere else: the docs render them from the manifest, and check:integration
+// The only prior release that was ever deployed publicly. Hand-maintained here
+// and nowhere else: the docs render it from the manifest, and check:integration
 // rejects any address in the docs that is neither current nor listed here.
-// "Combinators" is the periphery's pre-Operations name. Released rows stay
-// live forever at their addresses; retired candidates were never canonical.
-const ZERO_SALT = `0x${"00".repeat(32)}`;
+// Artifact candidates from development are deliberately NOT kept: they were
+// never deployed, never canonical, and listing them invited the reading that a
+// candidate address meant something. An address is a function of the bytecode;
+// when the bytecode moves, the old address simply has no code.
 const HISTORY = [
-  {
-    name: "Expressions",
-    version: "1.0",
-    address: "0xe5594E55E0fc24a271CA6bf55070a6bE63Cc43d8",
-    salt: "0xa393cf61cfa5031ede52d2b820e3910ffe0d820bda97edb15ac7bfe16b8f5408",
-    note: "previous artifact importing the core implementation rather than its local interface",
-  },
-  {
-    name: "Assertions",
-    version: "2.0",
-    address: "0xa55E477cF2a24506317f0B2555e8B443522CBBf0",
-    salt: "0x2e823aea45fadbba8356058dc60720447148149212e2deae10ecab2c431a95fc",
-    note: "previous core artifact before whole static array and tuple lenses",
-  },
-  {
-    name: "Collections",
-    version: "1.0",
-    address: "0xC011EC7e97deC05655D3d169e44aB87217996b19",
-    salt: "0xda9eb39c5aa9ec9ed00a2c5d22a805adf131862ea9de1d3491ce0a3c5c26298f",
-    note: "previous artifact with the standalone validator and an Expressions source import",
-  },
   {
     name: "Assertions",
     version: "1.0",
     address: "0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F",
     salt: "0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb",
-    note: "original v1.0 core, reachable as assertions.eth",
-  },
-  {
-    name: "Assertions",
-    version: "1.1",
-    address: "0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0",
-    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6012c7cd0",
-    note: "typed-assert core (140 assertEq*/assertGte* functions)",
-  },
-  {
-    name: "Combinators",
-    version: "1.0",
-    address: "0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC",
-    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60027fbe3",
-    note: "periphery of the v1.1 core",
-  },
-  {
-    name: "Assertions",
-    version: "2.0-rc",
-    address: "0xa55E47F37088b6D0212BdfD56b175ec08744DB19",
-    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f601469a3b",
-    note: "ERC-8211 release candidate core",
-  },
-  {
-    name: "Combinators",
-    version: "2.0-rc",
-    address: "0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9",
-    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6031de88b",
-    note: "periphery of the 2.0-rc core",
-  },
-  {
-    name: "Assertions",
-    version: "2.0",
-    address: "0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F",
-    salt: ZERO_SALT,
-    note: "interim zero-salt deployment; live wherever it was sent, no longer canonical",
-  },
-  {
-    name: "Operations",
-    version: "1.0",
-    address: "0x8e832Ace3f433943eb605c258bA37AF24a69dC53",
-    salt: ZERO_SALT,
-    note: "interim zero-salt deployment (then named Operators); live wherever it was sent, no longer canonical",
-  },
-  {
-    name: "Assertions",
-    version: "2.0",
-    address: "0x67DBB438FdC614466984Dc8F68dAB812d785a2aE",
-    salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
-    note: "retired artifact candidate under a previous salt (the SDK pin 6513da6c still targets it)",
-  },
-  {
-    name: "Assertions",
-    version: "2.0",
-    address: "0x4D710b5AaBcd7f8753307c71779904A562422A15",
-    salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
-    note: "retired artifact candidate under a previous salt",
-  },
-  {
-    name: "Operations",
-    version: "1.0",
-    address: "0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD",
-    salt: "0x92d34082f305b501d427bef474df394f826a347b55dba79ecfe2bfe14b998cf9",
-    note: "retired artifact candidate (then named Operators; the SDK pin 6513da6c still targets it)",
-  },
-  {
-    name: "Operations",
-    version: "1.0",
-    address: "0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e",
-    salt: "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
-    note: "retired artifact candidate under a previous salt",
-  },
-  {
-    name: "Collections",
-    version: "1.0",
-    address: "0xc6D85B72bdF8040f61f4CD7957c7aa8e5f30a47f",
-    salt: "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
-    note: "retired artifact candidate under a previous salt (moved by the Expressions Select fix it imports)",
-  },
-  {
-    name: "Expressions",
-    version: "1.0",
-    address: "0xc45C579021623712eE3f61D066a24218F6e01E22",
-    salt: "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
-    note: "retired artifact candidate under a previous salt (Select judged an exact 0/1 word)",
-  },
-  {
-    name: "Assertions",
-    version: "2.0",
-    address: "0x94b07F5364b54471b065Ee74150864628Df722d7",
-    salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
-    note: "retired artifact candidate under a previous salt (moved by readArgs and the dynamic-terminal re-encoding; the SDK pin 3f02b3aa targets it)",
-  },
-  {
-    name: "Operations",
-    version: "1.0",
-    address: "0x314e75BEFDb0f3e0621f68458f98Fce75246f7a7",
-    salt: "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
-    note: "retired artifact candidate under a previous salt (moved by the shared AbiCodec changes it imports)",
-  },
-  {
-    name: "Collections",
-    version: "1.0",
-    address: "0x830a490449eC148CE4404e398eC7FA9903Ce5Bc2",
-    salt: "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
-    note: "retired artifact candidate under a previous salt (moved by the Expressions and AbiCodec changes it imports)",
-  },
-  {
-    name: "Expressions",
-    version: "1.0",
-    address: "0x03B82019Ed1802172606922e8F8c8d43d0cd6d12",
-    salt: "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
-    note: "retired artifact candidate under a previous salt (Select now judges truth like the core's cond)",
-  },
-  {
-    name: "Assertions",
-    version: "2.0",
-    address: "0xf601f42D6752dB5423efE6e5c16044d275F06aC2",
-    salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
-    note: "retired artifact candidate under a previous salt (readArgs became get, gather joined the core, assertComposable became assertBatch; the SDK pin a36faaec targets it)",
-  },
-  {
-    name: "Operations",
-    version: "1.0",
-    address: "0xe3F9CCD4f6A11a044533055B9581765EB845AbB3",
-    salt: "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
-    note: "retired artifact candidate under a previous salt (moved by the AbiCodec changes it imports)",
-  },
-  {
-    name: "Collections",
-    version: "1.0",
-    address: "0x9647762c87a5Ff7a378c4a4752D23b88E5302e3B",
-    salt: "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
-    note: "retired artifact candidate under a previous salt (moved by the Expressions and AbiCodec changes it imports)",
-  },
-  {
-    name: "Expressions",
-    version: "1.0",
-    address: "0xb3cC9B9821b990B7c7EAe4934555d04c273Ce487",
-    salt: "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
-    note: "retired artifact candidate under a previous salt (the resolve-once entry points moved to the core as get and gather)",
+    note: "original v1.0 core, live on mainnet and reachable as assertions.eth",
   },
 ];
 

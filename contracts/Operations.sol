@@ -29,9 +29,10 @@ import {AbiCodec} from "./lib/AbiCodec.sol";
  *      is not a few-node recipe at practical cost AND a concrete assertion
  *      workload needs it; hot loops and calldata-exponential compositions
  *      (`rpow`, `log2`) pass, and iteration lives in Collections.
- *      Operations is the versionable periphery to the frozen core: old
- *      versions never break, new versions deploy at new addresses.
- * @custom:version 1.0
+ *      Operations is reached by address, never by source import, so it
+ *      versions on its own: old versions never break, new versions
+ *      deploy at new addresses.
+ * @custom:version 2.0
  */
 contract Operations {
     // ============ Types ============

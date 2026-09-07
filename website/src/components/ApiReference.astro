@@ -9,7 +9,7 @@ const sections: Section[] = [
     groups: [
       {
         fns: [
-          { name: 'assertParam', desc: 'Assert one ERC-8211 input parameter: resolve its value (raw bytes, staticcall, or balance read) and validate its inline constraints — the 90% case, no batch scaffolding' },
+          { name: 'assertParam', desc: 'Assert one ERC-8211 input parameter: resolve its value (raw bytes, staticcall, or balance read) and validate its inline constraints (the 90% case, no batch scaffolding)' },
           { name: 'assertBatch', desc: 'Assert an ERC-8211 composable batch under view semantics: entries construct calls by splicing resolved parameters, constraints validate along the way' },
         ],
       },
@@ -20,16 +20,16 @@ const sections: Section[] = [
     groups: [
       {
         fns: [
-          { name: 'resolve', desc: 'Resolve one operand and return its bytes — with constraint validation, any expression node becomes an inline assert' },
+          { name: 'resolve', desc: 'Resolve one operand and return its bytes; with constraint validation, any expression node becomes an inline assert' },
           { name: 'pick', desc: 'Select a raw 32-byte word from a resolved operand (signed index, negative from the end)' },
-          { name: 'nav', desc: 'Typed navigation: interpret a resolved operand as a declared return tuple and walk a path through tuples and dynamic arrays — single words, canonical dynamic envelopes, and decoded lengths (LEN sentinel)' },
+          { name: 'nav', desc: 'Typed navigation: interpret a resolved operand as a declared return tuple and walk a path through tuples and dynamic arrays: single words, whole static values, canonical dynamic envelopes, and decoded lengths (LEN sentinel)' },
           { name: 'chain', desc: 'Follow runtime-resolved addresses: each hop staticcalls the address the previous hop returned' },
-          { name: 'read', desc: 'Construct a staticcall at judge time: selector plus runtime-resolved calldata segments against a runtime-resolved target — the composition socket every Operations call (and any view contract) is reached through' },
-          { name: 'get', desc: 'The same call from WHOLE canonical values: each argument is resolved once in the core’s frame and encoded under a tuple descriptor — the host for a call carrying several dynamic arguments, where segment splicing would re-resolve to compute offsets' },
-          { name: 'gather', desc: 'Resolve N operands once each and return their raw results as a bytes[] — the values list of concat, encodeBytes or a generic collection, assembled from operands only known at judge time' },
-          { name: 'cond', desc: 'Lazy conditional: resolve the condition, then resolve and return ONLY the winning branch — the losing branch’s calls never happen' },
+          { name: 'read', desc: 'Construct a staticcall at judge time: selector plus runtime-resolved calldata segments against a runtime-resolved target: the composition socket every Operations call (and any view contract) is reached through' },
+          { name: 'get', desc: 'The same call from WHOLE canonical values: each argument is resolved once in the core’s frame and encoded under a tuple descriptor: the host for a call carrying several dynamic arguments, where segment splicing would re-resolve to compute offsets' },
+          { name: 'gather', desc: 'Resolve N operands once each and return their raw results as a bytes[]: the values list of concat, encodeBytes or a generic collection, assembled from operands only known at judge time' },
+          { name: 'cond', desc: 'Lazy conditional: resolve the condition, then resolve and return ONLY the winning branch, so the losing branch’s calls never happen' },
           { name: 'orElse', desc: 'Composable try/catch: resolve the attempt; on ANY revert (constraints double as guards) resolve the fallback instead' },
-          { name: 'isValid', desc: '1 if an operand resolves and passes its constraints, else 0 — assert that a call succeeds, fails, or branch on resolvability' },
+          { name: 'isValid', desc: '1 if an operand resolves and passes its constraints, else 0: assert that a call succeeds, fails, or branch on resolvability' },
           { name: 'revertData', desc: 'The revert data of a call that MUST fail: match an expected error selector, strip it, and navigate the error’s arguments like a return value' },
         ],
       },
@@ -40,7 +40,7 @@ const sections: Section[] = [
     groups: [
       {
         fns: [
-          { name: 'InputParam', desc: 'One runtime-resolved value: a fetcher (RAW_BYTES literal, STATIC_CALL, or BALANCE — native or ERC-20), inline constraints, and a routing type' },
+          { name: 'InputParam', desc: 'One runtime-resolved value: a fetcher (RAW_BYTES literal, STATIC_CALL, or BALANCE, native or ERC-20), inline constraints, and a routing type' },
           { name: 'Constraint', desc: 'An inline predicate on a resolved value: EQ, GTE, LTE, or IN (inclusive bounds) over its first 32-byte word' },
           { name: 'ComposableExecution', desc: 'One batch entry: a function selector plus input parameters whose resolved values are spliced into the constructed call' },
         ],
@@ -210,9 +210,11 @@ const hasGroups = (section: Section) => section.groups.some((g) => g.group);
     </h2>
     <p class="text-center text-[var(--color-ink-2)] text-lg mb-16 max-w-2xl mx-auto">
       Four contracts, one composable vocabulary. Assertions reads live values and
-      enforces <a href="https://www.erc8211.com/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-bp-400)] hover:underline underline-offset-4">ERC-8211</a> constraints.
+      enforces <a href="https://www.erc8211.com/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-bp-400)] hover:underline underline-offset-4">ERC-8211</a> constraints;
       Operations computes, Collections iterates, and Expressions shares results
-      across typed graphs. Explore the functions below, or
+      across typed graphs. The judge consumes the unmodified ERC-8211 wire
+      format, so a predicate batch built by any ERC-8211 SDK judges here without
+      a translation step. Explore the functions below, or
       <a href="/docs" class="text-[var(--color-bp-400)] hover:underline underline-offset-4">start with the docs</a>.
     </p>
     <div class="flex flex-col gap-3">

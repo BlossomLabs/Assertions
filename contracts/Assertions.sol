@@ -66,14 +66,14 @@ interface IERC20Balance {
  *      primitive holds InputParams and decides how (or whether) to
  *      resolve them; a STATIC_CALL operand may target this contract
  *      itself, so the primitives nest into arbitrary operand trees.
- *      Computation over resolved values belongs to the versionable
- *      periphery: `read` and `get` resolve their operands and splice
+ *      Computation over resolved values belongs to the other three
+ *      contracts: `read` and `get` resolve their operands and splice
  *      the values into plain calldata for any deployed view or pure
  *      contract, canonically Operations for arithmetic, comparisons,
  *      bytes and runtime encoding, Collections for folds and collection
- *      processing, and Expressions for graphs that share subterms. These
- *      extend the vocabulary without touching this frozen core. The core
- *      reads and judges; the periphery computes.
+ *      processing, and Expressions for graphs that share subterms. Each
+ *      is reached by address, never by source import, so all four
+ *      version independently by deploying at a new address.
  * @custom:version 2.0
  */
 contract Assertions {

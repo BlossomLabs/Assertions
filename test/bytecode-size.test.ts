@@ -1,4 +1,4 @@
-// EIP-170 guard for every production artifact. The periphery contracts are
+// EIP-170 guard for every production artifact. The computation contracts are
 // the ones that grow (Collections sits a few hundred bytes under the limit),
 // and a size regression must fail here rather than at deployment time.
 //

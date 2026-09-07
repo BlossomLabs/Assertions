@@ -7,7 +7,7 @@ fix it in the same change that falsified it.
 ## The two trees
 
 - **Main repo**: `contracts/` (the `Assertions` core (currently open to changes), the versionable
-  `Operations` periphery, `Collections`, `Expressions`, `AbiCodec`, `ERC8211`), Solidity tests under
+  `Operations`, `Collections`, `Expressions`, `AbiCodec`, `ERC8211`), Solidity tests under
   `contracts/tests/*.t.sol` run by `pnpm test` (hardhat 3), and the Astro site in
   `website/` with hand-written docs at `website/src/content/docs/docs/`.
 - **Vendored checkout**: `website/.evmcrispr` is an EVMcrispr monorepo checkout at a published commit
@@ -41,50 +41,37 @@ fix it in the same change that falsified it.
   redefine. Portability breaks are one-way doors; refuse them.
 - **Raw `InputParam` is a tree; `Expressions` adds a graph alternative.**
   Raw operands cannot name subterms: repeated expressions duplicate calldata and
-  resolution. Resolve-once ABI construction lives on the core since 2026-09-07:
-  `Assertions.get(target, selector, argumentTypes, args)` resolves each
-  argument in-frame and encodes the tuple through `AbiCodec.tuple`, passing the
-  admission test the way `read` does. Measured through `Assertions.resolve`
-  (`contracts/tests/ExpressionsGas.t.sol`): two live string arguments cost 32,440
-  gas through `get` and 51,474 through the SDK's offset splice; at three,
-  43,887 against 126,757. `get` also keeps the core as the destination's
-  `msg.sender` (`MockTarget.caller` pins it). One live argument stays on `read`
-  (19,000 vs 20,217) and word-only calls too (14,718 vs 21,219). The core's
-  `gather(args)` resolves N operands once each into a canonical `bytes[]`
-  (the values list of `concat`, `encode` or a generic collection). Expressions'
-  own resolve-once entry points were all removed on 2026-09-07: `resolveCall`
-  (40,440 at two arguments, Expressions as caller) and `resolveArguments`
-  (41,011 under `read`) lost to `get` on gas, and every one paid an
-  external hop per operand that the in-frame core versions do not. Expressions
-  is graphs only. Repeated input entries are still
-  independent; graph references share evaluated nodes. Graphs bind whole
-  canonical ABI values, support lazy branches and guarded evaluation, and memoize
-  per evaluation (per callback invocation in Collections), not across collection
-  iterations. `Select` judges truth like the core's `cond`: the first word of a
-  condition of at least 32 bytes, nonzero selects `refs[1]`, zero `refs[2]`, and a
-  shorter condition reverts `InvalidNode`; `Collections._predicate` still demands a
-  canonical 0/1 word from callback RESULTS, a different concern. Status: released
-  on 2026-09-07; the SDK emits graphs for generic collection callbacks and for
-  the recipes that share a resolved envelope, and `Collections.Callback.expression`
-  runs them per element. Keep word-window folds for efficient word-only
-  workloads; a 32-byte overwrite changes no dynamic ABI offsets. Specialized math
-  such as `rpow` still avoids an impractically large composed expression.
-- **Descriptor parsing is the periphery's hot path.** Before 2026-09-07
-  `AbiCodec.typeShape` cost about 400 gas per character (bounds-checked `t[i]`
-  calldata indexing, four reads per character), `tupleLayout` parsed a descriptor
-  three times and `Expressions` re-parsed every node's `valueType` on each visit:
-  a `Call` node with two word arguments cost 80,682 gas through `Assertions.resolve`
-  against 9,859 for the same call as a core `read`. Assembly scanners, a one-parse
-  `tupleLayout` and a per-node shape cache (`Expressions.Cache.dynamic/words`) cut
-  `shape("(uint256,uint256)")` from 6.9k to 1.9k net, a two-word `Tuple` node from
-  96k to 42k and that `Call` node to 44,498 (`AbiCodecGas.t.sol`,
-  `ExpressionsGas.t.sol`). A graph still costs about 10k fixed plus 3.5k per node
-  plus 20k per `Call`, so it wins only when the resolutions it saves cost more than
-  that: `add(x, x)` over a 75k leaf, 115,230 as a graph vs 144,374 as a tree; over a
-  3.6k leaf, 50,531 vs 14,976.
-- **The core is currently open to changes.** A release flag records SDK adoption;
-  it does not prohibit source changes. Regenerate addresses and artifacts when
-  changing it; never assume existing deployed code updates in place.
+  resolution. Resolve-once construction lives on the CORE, not on Expressions:
+  `get(target, selector, argumentTypes, args)` resolves each argument in-frame
+  and encodes the tuple through `AbiCodec.tuple`, and `gather(args)` resolves N
+  operands once each into a canonical `bytes[]`. Both pass the admission test the
+  way `read` does, and both keep the core as the destination's `msg.sender`
+  (`MockTarget.caller` pins it). Expressions once had its own resolve-once entry
+  points; they lost to `get` on gas because each paid an external hop per operand,
+  and they are gone. Expressions is graphs only. Reach for a graph when a value is
+  shared across several places, for `get`/`gather` when N operands feed one call.
+  Repeated input entries are still independent; graph references share evaluated
+  nodes. Graphs bind whole canonical ABI values, support lazy branches and guarded
+  evaluation, and memoize per evaluation (per callback invocation in Collections),
+  not across collection iterations. `Select` judges truth like the core's `cond`:
+  the first word of a condition of at least 32 bytes, nonzero selects `refs[1]`,
+  zero `refs[2]`, and a shorter condition reverts `InvalidNode`;
+  `Collections._predicate` still demands a canonical 0/1 word from callback
+  RESULTS, a different concern. Keep word-window folds for word-only workloads; a
+  32-byte overwrite changes no dynamic ABI offsets. Specialized math such as
+  `rpow` still avoids an impractically large composed expression.
+- **Descriptor parsing is the computation contracts' hot path**, and it is already
+  optimised: assembly scanners, a one-parse `tupleLayout`, and a per-node shape
+  cache in `Expressions.Cache.dynamic/words`. Do not reintroduce bounds-checked
+  `t[i]` calldata indexing or parse a descriptor more than once per call. A graph
+  carries real fixed overhead, so it only wins when the resolutions it saves cost
+  more than the nodes it adds: over an expensive leaf a graph beats the equivalent
+  tree, over a cheap one it loses badly. The thresholds live in `AbiCodecGas.t.sol`
+  and `ExpressionsGas.t.sol`; read them there rather than quoting a number here.
+- **No contract is frozen.** A release flag records SDK adoption; it does not
+  prohibit source changes, and all four contracts version the same way. Any source
+  edit, comments included, moves the CREATE2 address: regenerate addresses and
+  artifacts in the same change, and never assume deployed code updates in place.
 - **`nav` returns every ABI terminal.** Static arrays and tuples return their full
   bounded static encoding, without an offset or length prefix. Scalars retain
   their one-word encoding. Dynamic terminals are re-encoded as follows. Since 2026-09-07 arrays of dynamic
@@ -123,11 +110,8 @@ fix it in the same change that falsified it.
   loops (one call per element otherwise) and calldata-exponential compositions
   (`rpow`, `log2`). Specialist families go to optional contracts. All fourteen
   Collections `*Values` traversals have SDK consumers through `modules/lang`;
-  eligible word-sized workloads retain the word fast path. Standalone value
-  validation is composition: pack a singleton with `packArray` and discard the
-  output. The shared `AbiCodec.validate` remains internal and is used throughout
-  the codec, collections and expression graphs. When Collections needs more
-  bytecode space, split `*Values` into another periphery contract.
+  eligible word-sized workloads retain the word fast path. When Collections needs more
+  bytecode space, split `*Values` into a fourth computation contract.
 - **Signedness is a dimension in every word-level design.** Unsigned order and
   signed order disagree about which value absorbs, which element is minimal, and
   how a two's-complement word reads. One SDK path returning `elemType: "uint256"`
@@ -224,16 +208,22 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   is not the canonical deployment path. `pnpm sync:artifact` (from `website/`)
   regenerates the per-contract `src/lib/*-deployment.ts` and `*-abi.ts` modules AND
   `website/src/lib/deployments.json`, the one manifest every website consumer and
-  `check:integration` read. Contract source changes (including comments in compiler
-  metadata) may change CREATE2 addresses, and an edit to an IMPORTED source moves
-  the importer's address too. Collections and Expressions now declare their
-  callback/core interfaces locally, so implementation edits no longer move
-  the caller's address through metadata alone. Regenerate and verify deployment
-  artifacts, fixtures and SDK addresses together.
+  `check:integration` read. ANY contract source change moves the CREATE2 address,
+  comments and NatSpec included: they reach the metadata hash appended to the
+  bytecode, so `@custom:version` and a typo fix cost the same re-mine. An edit to
+  an IMPORTED source moves the importer's address too, which is why Collections
+  and Expressions declare their callback/core interfaces locally: only `AbiCodec`
+  is still compiled into all four, so an edit there moves all four. Budget the
+  re-mine before editing a comment: a55e47/09e4a7e/c011ec7 take seconds to a
+  minute, e5594e55 is 32 bits and takes minutes. Regenerate and verify deployment
+  artifacts, fixtures and SDK addresses together; the SDK lives in the vendored
+  checkout, so an address move is not finished until the pin is bumped.
 - Bytecode size: `test/bytecode-size.test.ts` checks `(len(deployedBytecode) - 2) / 2`
   against 24,576 for every production artifact under `pnpm test` and pins the
-  artifact set. Operations must stay byte-identical through core-only changes; any
-  drift there is a red flag.
+  artifact set.
+- The manifest's history carries the prior PUBLIC release only (Assertions v1.0).
+  Development artifact candidates are not recorded: they were never deployed, and
+  listing them taught readers that a candidate address meant something.
 
 - When running tests in a restricted sandbox, verify the nodejs test count: a
   sandboxed run has reported success with zero fuzz tests. Run outside that

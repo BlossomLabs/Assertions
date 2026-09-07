@@ -10,11 +10,11 @@ export const addressLine = (c) =>
   `${c.name.padEnd(12)} v${c.version.padEnd(5)} ${c.address}   (${c.description}${c.released ? '' : ', unreleased'})`;
 export const gasList = manifest.contracts.map((c) => `${c.name} ${fmtGas(c.deployGas)}`).join(', ');
 
-Each contract has the same deterministic address on every supported chain where its artifact is deployed. This page renders `website/src/lib/deployments.json`, the manifest `pnpm sync:artifact` writes from a fresh compile (solc {manifest.compiler.solcLongVersion}, optimizer {manifest.compiler.optimizer.runs} runs, evmVersion <code>{manifest.compiler.evmVersion}</code>). Listing an address implies no public-chain deployment; a contract marked unreleased is an artifact candidate the SDK does not compile against yet.
+Each contract has the same deterministic address on every supported chain where its artifact is deployed. This page renders `website/src/lib/deployments.json`, the manifest `pnpm sync:artifact` writes from a fresh compile (solc {manifest.compiler.solcLongVersion}, optimizer {manifest.compiler.optimizer.runs} runs, evmVersion <code>{manifest.compiler.evmVersion}</code>). Listing an address here is not itself proof of a deployment on any given chain: use the [interactive deployments page](/deployments) to see which chains actually carry the code. A contract marked unreleased is an artifact candidate the SDK does not compile against yet.
 
 <pre><code>{manifest.contracts.map(addressLine).join('\n')}</code></pre>
 
-Deployed versions are immutable: earlier releases keep working forever at their own canonical addresses, and retired artifact candidates use different bytecode and were never canonical. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) is updated separately after deployment. Combinators is the periphery's pre-Operations name.
+Deployed versions are immutable: a release keeps working forever at its own address, because the address is a function of the bytecode. The table below lists the prior release. Development artifact candidates are not listed: they were never deployed and never canonical, and an address with no code behind it is not history worth publishing. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) points at the v1.0 core and is repointed separately after a deployment.
 
 <table>
   <thead>
@@ -42,7 +42,7 @@ Deployment goes through [Arachnid's deterministic-deployment proxy](https://gith
 address = keccak256(0xff ++ 0x4e59b448...956C ++ salt ++ keccak256(initCode))[12:]
 ```
 
-Same proxy, same salt, same init code on every chain: same address. The salts are random 32-byte values that never change; an address moves only when the bytecode does, and an edit to an imported source moves the importer's address too (Collections imports Expressions).
+Same proxy, same salt, same init code on every chain: same address. The salts are random 32-byte values that never change; an address moves only when the bytecode does. The four contracts call each other through interfaces at runtime addresses, never through source imports, so each one's address moves only for its own changes. The exception is `AbiCodec`, the descriptor grammar and value validator all four compile in: an edit there moves all four addresses at once.
 
 ## Deploying to a new chain
 

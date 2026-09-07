@@ -8,6 +8,24 @@ import "../Collections.sol";
 import "../Expressions.sol";
 import "../lib/ERC8211.sol";
 
+/**
+ * Gas ledger for the resolve-once decisions. The assertions below pin the
+ * ORDERING, which is the durable claim; the emitted numbers are the evidence.
+ * Reference figures, solc 0.8.36 / optimizer 200 / cancun, measured through
+ * `Assertions.resolve` on 2026-09-07. Re-measure before quoting these; they
+ * move with the compiler, and nothing here asserts their exact values.
+ *
+ *   call shape                     read+splice     core get
+ *   one live string  (L=1)              20,217       19,000   -> stays on read
+ *   two live strings (L=2)              51,474       32,440   -> get wins
+ *   three live strings (L=3)           126,757       43,887   -> get wins big
+ *   word-only add(lit, lit)             14,718       21,219   -> stays on read
+ *
+ * Graph vs tree, same day: a graph costs roughly 10k fixed plus 3.5k per node
+ * plus 20k per Call, so it only pays off above a leaf cost of a few tens of k.
+ *   add(x, x) over a 75k leaf        graph 115,230   tree 144,374  -> graph wins
+ *   add(x, x) over a 3.6k leaf       graph  50,531   tree  14,976  -> tree wins
+ */
 contract Src {
     function str() external pure returns (string memory) {
         return "forty bytes of string payload for tests!";

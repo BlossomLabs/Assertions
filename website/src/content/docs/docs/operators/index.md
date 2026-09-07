@@ -1,11 +1,11 @@
 ---
 title: The Operations vocabulary
-description: The plain-ABI operations contracts, their whole surface, and how the core's read splices live operands into them.
+description: The plain-ABI computation contracts, their whole surface, and how the core's read splices live operands into them.
 ---
 
-Assertion constraints revert or pass: they judge. Plain-value computation lives in the periphery: `Operations` for scalars, `Collections` for iteration and [`Expressions`](/docs/operators/expressions) for typed expression graphs. Every function takes and returns plain ABI types, without ERC-8211 coupling. The core reads and judges; the periphery computes. The contracts' addresses are on the [Deployments](/docs/reference/deployments) page.
+Assertion constraints revert or pass: they judge. Plain-value computation lives on the other three contracts: `Operations` for scalars, `Collections` for iteration and [`Expressions`](/docs/operators/expressions) for typed expression graphs. Every function takes and returns plain ABI types, without ERC-8211 coupling. The contracts' addresses are on the [Deployments](/docs/reference/deployments) page.
 
-Composition happens in the core. Its [`read` primitive](/docs/core/reads) resolves `InputParam` operand expressions and splices the resolved values into plain calldata, so an operation call IS the composed expression: `ge(token.balanceOf(treasury), 100e18)` with a live first argument is one `read` whose segments are the balance call and the literal. Any deployed view or pure contract extends the vocabulary through the same socket; Operations is just the canonical first extension. And because it is plain periphery, it stays versionable: old deployments never break, new versions ship at new addresses as pure opt-ins, without touching the core.
+Composition happens in the core. Its [`read` primitive](/docs/core/reads) resolves `InputParam` operand expressions and splices the resolved values into plain calldata, so an operation call IS the composed expression: `ge(token.balanceOf(treasury), 100e18)` with a live first argument is one `read` whose segments are the balance call and the literal. Any deployed view or pure contract extends the vocabulary through the same socket; Operations is just the canonical first extension. And because a `read` names its target by address, versioning is a deployment, not a migration: old deployments never break, new versions ship at new addresses as pure opt-ins, and nothing else has to move with them.
 
 Why named functions instead of op-code enums: decoded calldata reads on explorers. `ge(balance, 100e18)` needs no docs open.
 
@@ -27,7 +27,7 @@ Why named functions instead of op-code enums: decoded calldata reads on explorer
 
 ## Collections surface
 
-`Collections` owns iteration and array processing; `Operations` supplies the scalar functions its lambdas call.
+`Collections` owns iteration and array processing; `Operations` supplies the scalar functions its lambdas call. Iteration is a separate contract because it is a separate concern, with its own callback protocol, its own element-validation rules and its own failure vocabulary; and because the two together would not fit under the EIP-170 runtime size limit anyway.
 
 | Group | Functions |
 |---|---|
@@ -40,7 +40,7 @@ Both word sorting and generic comparator sorting use stable bottom-up merge sort
 
 ## What earns a slot here
 
-Admission is a demand test: a function earns a slot only when it is not expressible as a few-node recipe at practical cost AND a concrete assertion workload needs it. What passes the first half is hot loops that would otherwise cost one external call per element (`charset`, `sumWords`, the lambda-shaped `bitSet` and `hashPairSorted`) and calldata-exponential compositions (`rpow`, `log2`: a raw operand tree cannot name a subterm, so squaring duplicates its whole operand). Everything else composes and stays out: `join` uses `concat`'s delimiter argument, unsorted pair hashing is `hash` over an encoder-built two-word payload, packed encoding is `concat` over `slice`-narrowed words, and specialist families go to optional contracts. The rule, its measurements (from `contracts/tests/OperationsGas.t.sol`, which move with the compiler) and what it has refused are recorded in the repository's [`AGENTS.md`](https://github.com/blossomlabs/Assertions/blob/master/AGENTS.md).
+Admission is a demand test: a function earns a slot only when it is not expressible as a few-node recipe at practical cost AND a concrete assertion workload needs it. What passes the first half is hot loops that would otherwise cost one external call per element (`charset`, `sumWords`, the lambda-shaped `bitSet` and `hashPairSorted`) and calldata-exponential compositions (`rpow`, `log2`: a raw operand tree cannot name a subterm, so squaring duplicates its whole operand). Everything else composes and stays out: `join` uses `concat`'s delimiter argument, unsorted pair hashing is `hash` over an encoder-built two-word payload, packed encoding is `concat` over `slice`-narrowed words, and specialist families go to optional contracts. Signed `sortWords` is the standard refusal: flip the sign bit with `mapWords`, sort, flip back. The measurements behind the rule live in `contracts/tests/OperationsGas.t.sol` and move with the compiler.
 
 ## Signedness rides on overloads
 

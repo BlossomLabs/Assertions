@@ -24,7 +24,9 @@ const cards = [
       Your intent, enforced on-chain.
     </h2>
     <p class="text-center text-[var(--color-ink-2)] text-lg mb-16 max-w-2xl mx-auto">
-      Define what must hold. Check it in the transaction that matters.
+      A <code class="font-mono text-[0.9em]">require</code> checks a value. These
+      checks compose: branch lazily, fall back when a source reverts, build a call
+      from an address you only learn at execution time.
     </p>
     <div class="grid md:grid-cols-3 gap-6">
       {cards.map((card, i) => (

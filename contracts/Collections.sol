@@ -41,7 +41,7 @@ interface IExpressions {
  *      UnalignedWords, WordCountMismatch and LengthMismatch exist so a
  *      partial word or a length mismatch reverts instead of producing a
  *      plausible answer.
- * @custom:version 1.0
+ * @custom:version 2.0
  */
 contract Collections {
     // ============ Custom Errors ============

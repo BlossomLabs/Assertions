@@ -41,7 +41,7 @@ interface ICore {
  *      strictly backwards (or a parameter index out of range),
  *      InvalidTarget for a code-less call target and NodeCallFailed carrying
  *      the target's revert reason, which the core's own CallFailed does not.
- * @custom:version 1.0
+ * @custom:version 2.0
  */
 contract Expressions {
     // ============ Types ============

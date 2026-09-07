@@ -1,0 +1,53 @@
+---
+const limits = [
+  {
+    title: 'A check is only as good as you wrote it',
+    description:
+      'An assertion is a precise instrument for the condition you name, not a safety net over the whole proposal. An under-specified constraint passes quietly.',
+  },
+  {
+    title: 'Where you put it is what it means',
+    description:
+      'A check runs at its place in the batch. The same assertion before and after an action answers two different questions, and neither speaks for the state after the transaction lands.',
+  },
+  {
+    title: 'Types are your claim, not a checked fact',
+    description:
+      'Navigation validates shape: offsets, lengths, bounds, padding. A wrong-but-shape-compatible type reads the wrong value and reverts nowhere.',
+  },
+  {
+    title: 'Guards cost gas',
+    description:
+      'Every assertion is an external call, every composed operand another, and a fold pays one call per element. Gas is what bounds how much you can check.',
+  },
+  {
+    title: 'Your transaction depends on these contracts',
+    description:
+      'An assertion calls out to Assertions, and usually Operations, at its canonical address on the executing chain. If the code is not there, the guarded transaction reverts.',
+  },
+  {
+    title: 'Not audited yet',
+    description:
+      'No external audit, no formal verification. Every function on all four contracts is view or pure: they hold no funds, own no permissions and write no storage, so the failure mode is a wrong answer rather than a theft. A wrong answer from a guard still matters.',
+  },
+];
+---
+
+<section class="py-24 px-6" id="limits" aria-labelledby="limits-heading">
+  <div class="max-w-4xl mx-auto">
+    <h2 id="limits-heading" class="font-mono font-bold text-3xl sm:text-4xl text-center mb-4">
+      What an assertion does not do
+    </h2>
+    <p class="text-center text-[var(--color-ink-2)] text-lg mb-16 max-w-2xl mx-auto">
+      Worth knowing before you put one in front of a treasury.
+    </p>
+    <ul class="grid sm:grid-cols-2 gap-4 list-none p-0 m-0">
+      {limits.map((limit) => (
+        <li class="p-6 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-ink-3)]/15">
+          <h3 class="font-mono font-semibold text-sm mb-2">{limit.title}</h3>
+          <p class="text-sm text-[var(--color-ink-2)] leading-relaxed">{limit.description}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

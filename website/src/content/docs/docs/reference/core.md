@@ -1,9 +1,9 @@
 ---
 title: Core reference
-description: The ERC-8211 judge's functions and wire format, and the core's nine primitives.
+description: The ERC-8211 judge's functions and wire format, and the core's eleven primitives.
 ---
 
-The core (judge + primitives) has the same CREATE2 address on every chain; the current address and the retired ones are on the [Deployments](/docs/reference/deployments) page. Every judge function has an overloaded version accepting a custom `string` message as the last parameter, echoed inside `ConstraintFailed` on failure. Computation over resolved values lives on the periphery contracts: [Operations](/docs/operators) for scalars, [Collections](/docs/operators/collections) for iteration and [Expressions](/docs/operators/expressions) for typed expression graphs; their surfaces are documented on those pages.
+The core (judge + primitives) has the same CREATE2 address on every chain; the current address and the earlier ones are on the [Deployments](/docs/reference/deployments) page. Every judge function has an overloaded version accepting a custom `string` message as the last parameter, echoed inside `ConstraintFailed` on failure. Computation over resolved values lives on the other three contracts: [Operations](/docs/operators) for scalars, [Collections](/docs/operators/collections) for iteration and [Expressions](/docs/operators/expressions) for typed expression graphs; their surfaces are documented on those pages. Each is reached by address, never by source import, so all four version independently.
 
 ## Judge functions
 
@@ -62,13 +62,17 @@ The primitives live on the core alongside the judge because they hold operands u
 | Function | Description |
 |----------|-------------|
 | `resolve` | Resolve one operand and return its bytes raw; constraint violations revert with `ConstraintFailed`, turning any expression node into an inline assert |
+| `gather` | Resolve N operands, once each, and return the raw results in order as one `bytes[]`: the values list of `concat`, `encode` or a generic collection, assembled from operands only known at judge time |
 | `pick` | Select one raw 32-byte word from a resolved operand (signed index, negative from the end) |
 | `nav` | Typed navigation: interpret the resolved bytes as a declared return tuple (`retTypes`) and walk an index path through tuples and dynamic arrays: single-word terminals, canonical dynamic envelopes, decoded lengths via the `LEN` sentinel, and raw string/bytes payloads (typed re-entry into encoded blobs) via the `PAYLOAD` sentinel |
 | `chain` | Follow runtime-resolved addresses: each hop staticcalls the address word the previous hop returned |
 | `read` | Construct a staticcall at judge time: resolve the target and concatenate the selector with each argument segment's full resolved bytes (ERC-8211 CALL_DATA routing), then return the call's raw returndata; the composition socket that splices operand expressions into plain calldata for Operations, Collections or any other view/pure contract |
+| `get` | The same constructed call from WHOLE canonical values instead of calldata segments: each argument resolves exactly once and the tuple is laid out under an `argumentTypes` descriptor through the shared `AbiCodec`. The host for a call carrying several dynamic arguments, where segment splicing would re-resolve earlier values to compute later offsets |
 | `cond` | Resolve the condition (first word nonzero = true), then resolve and return ONLY the winning branch; the losing branch is never resolved |
 | `orElse` | Resolve the attempt behind a self-staticcall boundary; ANY failure (revert, code-less target, violated constraint) selects and resolves the fallback instead |
 | `isValid` | 1 when the operand resolves and passes its constraints, else 0; the failure probe, judged `EQ 1` / `EQ 0` or fed to `cond` |
 | `revertData` | the revert data of a call that MUST fail; a non-zero expected selector must match and is stripped, leaving the error's arguments word-aligned for `pick`/`nav` |
+
+A path may also select a whole static value: a fixed array or a static tuple terminal returns its complete `abi.encode(value)`, with no offset or length prefix.
 
 The two sentinels are public constants: `LEN` is `type(int256).min` and `PAYLOAD` is `type(int256).min + 1`; both are only meaningful as the last entry of a `nav` path.

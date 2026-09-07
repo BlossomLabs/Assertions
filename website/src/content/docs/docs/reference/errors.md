@@ -11,7 +11,7 @@ Defined once in `ERC8211.sol`, the standard's shared vocabulary, thrown by the c
 
 | Error | Description |
 |-------|-------------|
-| `ConstraintFailed(string, uint256, uint256, uint256, ConstraintType, bytes32, bytes)` | **THE assertion failure**: a resolved value violated an inline constraint. Arguments: the assertion message (`""` on expression operands), entry index, parameter index (the operand's position in a primitive: a `read` or `get` target is 0 and args follow at index + 1; `cond`'s condition/then/else are 0/1/2; `orElse`'s fallback is 1), constraint index, the constraint kind, the actual word as compared, and the reference data echoed as given |
+| `ConstraintFailed(string, uint256, uint256, uint256, ConstraintType, bytes32, bytes)` | **THE assertion failure**: a resolved value violated an inline constraint. Arguments: the assertion message (`""` on expression operands), entry index, parameter index (the operand's position in a primitive: a `read` or `get` target is 0 and args follow at index + 1; `gather` names the operand by its position in the list; `cond`'s condition/then/else are 0/1/2; `orElse`'s fallback is 1), constraint index, the constraint kind, the actual word as compared, and the reference data echoed as given |
 | `CallFailed(address, bytes)` | a staticcall fetcher, chain hop, constructed call or expression operand reverted or targets a code-less address (identifies the exact failing call) |
 | `ReturnDataOutOfBounds(int256, uint256)` | resolved data is too short for the requested read: an operand returned fewer than 32 bytes, data doesn't match a declared shape, or a raw word index (possibly negative) lies outside the data |
 | `InvalidAddressWord(uint256, bytes32)` | a word that must hold an address has dirty upper bytes (arguments: position, a parameter or hop index, and the offending word) |
@@ -20,7 +20,7 @@ Defined once in `ERC8211.sol`, the standard's shared vocabulary, thrown by the c
 
 ## AbiCodec (shared ABI machinery)
 
-`InvalidTypeDescriptor` is declared at file level in `AbiCodec.sol` and the rest inside the library; the core and every periphery contract share its descriptor grammar and canonical-value validation. `ElementIndexOutOfBounds` is declared at file level in `Assertions.sol` for navigation:
+`InvalidTypeDescriptor` is declared at file level in `AbiCodec.sol` and the rest inside the library; all four contracts share its descriptor grammar and canonical-value validation. `ElementIndexOutOfBounds` is declared at file level in `Assertions.sol` for navigation:
 
 | Error | Description |
 |-------|-------------|
@@ -89,7 +89,7 @@ A malformed callback result reverts with `AbiCodec.InvalidCallbackResult` (above
 | `InvalidNode(uint256)` | a malformed node: the `result` index out of range, the wrong reference count for the node's kind, a `Parameter` whose data is not one word, a `Select` condition shorter than 32 bytes, a target word that is not a clean address |
 | `NotSelf(address)` | `evaluateGuarded` was called by anyone other than the Expressions contract itself |
 | `InvalidReference(uint256, uint256)` | a node references itself or a later node, or a `Parameter` index is past the supplied parameters |
-| `InvalidTarget(uint256, address)` | a `Call`, a `Resolve` or the `evaluateEncoded` self-call targets an address without code |
+| `InvalidTarget(uint256, address)` | a `Call`, a `Resolve` or the `evaluateEncoded` self-call targets an address without code (the argument is the node index) |
 | `NodeCallFailed(uint256, address, bytes, bytes)` | the staticcall a node made reverted; carries the node index, the target, the calldata and the reason. A different error from the core's two-argument `CallFailed` |
 
 `ProbeCall` reuses the core's `DidNotRevert` and `UnexpectedRevertData`; descriptor and value validation raise the `AbiCodec` errors. See [Expressions](/docs/operators/expressions).

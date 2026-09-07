@@ -31,14 +31,6 @@ contract ExpressionsTest is Test {
         revert("unused");
     }
 
-    function six(string memory a, string memory b, string memory c, string memory d, string memory e, string memory f)
-        external
-        pure
-        returns (string memory)
-    {
-        return string.concat(a, b, c, d, e, f);
-    }
-
     function nonempty(string memory a) external pure returns (bool) {
         require(keccak256(bytes(a)) != keccak256("bomb"));
         return bytes(a).length != 0;
@@ -107,27 +99,12 @@ contract ExpressionsTest is Test {
         for (uint256 i; i < 6; i++) {
             args[i] = live(abi.encodeCall(this.source, ()));
         }
-        vm.expectCall(address(this), abi.encodeCall(this.source, ()), uint64(19));
-        (bool ok, bytes memory out) = address(expressions)
-            .staticcall(
-                abi.encodeCall(
-                    Expressions.resolveCall,
-                    (
-                        address(core),
-                        literal(abi.encode(address(this))),
-                        this.six.selector,
-                        "(string,string,string,string,string,string)",
-                        args
-                    )
-                )
-            );
-        assertTrue(ok);
+        vm.expectCall(address(this), abi.encodeCall(this.source, ()), uint64(13));
         string memory value = this.source();
-        assertEq(abi.decode(out, (string)), string.concat(value, value, value, value, value, value));
         bytes[] memory values = expressions.resolveValues(address(core), args);
         assertEq(values.length, 6);
         assertEq(values[5], abi.encode(value));
-        (ok, out) = address(expressions)
+        (bool ok, bytes memory out) = address(expressions)
             .staticcall(
                 abi.encodeCall(
                     Expressions.resolveArguments,

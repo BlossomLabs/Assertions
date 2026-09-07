@@ -3,7 +3,6 @@ pragma solidity ^0.8.28;
 
 import "forge-std/Test.sol";
 import "../Assertions.sol";
-import "../Expressions.sol";
 import "../lib/ERC8211.sol";
 import "../lib/AbiCodec.sol";
 import "./Mocks.sol";
@@ -12,18 +11,16 @@ import "./Mocks.sol";
  * @notice The 2026-09-07 core additions: `readArgs` (resolve-once call
  *         construction over whole ABI values, the core staying the caller)
  *         and `nav` returning arrays of dynamic elements and dynamic tuples
- *         as canonical values. The caller rule is pinned side by side with
- *         `Expressions.resolveCall`, which calls from its own frame.
+ *         as canonical values, with the caller rule pinned: the core stays
+ *         the destination's msg.sender.
  */
 contract CoreExtensionsTest is Test {
     Assertions assertions;
-    Expressions expressions;
     MockTarget target;
     MockToken token;
 
     function setUp() public {
         assertions = new Assertions();
-        expressions = new Expressions();
         target = new MockTarget();
         token = new MockToken(address(0), "WETH");
     }
@@ -186,7 +183,7 @@ contract CoreExtensionsTest is Test {
 
     // ============ Caller ============
 
-    function test_caller_coreForReadAndReadArgs_expressionsForResolveCall() public {
+    function test_caller_coreForReadAndReadArgs() public {
         InputParam[] memory none = new InputParam[](0);
         (bool ok, bytes memory ret) = address(assertions).staticcall(
             abi.encodeCall(Assertions.read, (_raw(abi.encode(address(target))), MockTarget.caller.selector, none))
@@ -198,36 +195,13 @@ contract CoreExtensionsTest is Test {
         assertTrue(ok);
         assertEq(abi.decode(ret, (address)), address(assertions));
 
-        (ok, ret) = address(expressions).staticcall(
-            abi.encodeCall(
-                Expressions.resolveCall,
-                (address(assertions), _raw(abi.encode(address(target))), MockTarget.caller.selector, "()", none)
-            )
-        );
-        assertTrue(ok);
-        assertEq(abi.decode(ret, (address)), address(expressions));
-
-        // The same gated call passes through the core and fails through Expressions.
+        // A call gated on the core being the caller passes through readArgs.
         InputParam[] memory args = new InputParam[](3);
         args[0] = _raw(abi.encode(address(assertions)));
         args[1] = _raw(abi.encode("a"));
         args[2] = _raw(abi.encode("b"));
         (ok,) = _readArgs(address(target), MockTarget.callerGated.selector, "(address,string,string)", args);
         assertTrue(ok);
-        (ok, ret) = address(expressions).staticcall(
-            abi.encodeCall(
-                Expressions.resolveCall,
-                (
-                    address(assertions),
-                    _raw(abi.encode(address(target))),
-                    MockTarget.callerGated.selector,
-                    "(address,string,string)",
-                    args
-                )
-            )
-        );
-        assertFalse(ok);
-        assertEq(bytes4(ret), Expressions.NodeCallFailed.selector);
     }
 
     // ============ nav re-encoding ============

@@ -48,8 +48,8 @@ contract Sink {
 /**
  * @notice The measurements behind the SDK's call-host and graph-admission
  *         rules (docs/superpowers/plans/2026-09-07-expressions-sdk-adoption.md):
- *         L live dynamic arguments through the splice, the core's readArgs,
- *         Expressions.resolveCall and read + resolveArguments; a shared leaf as
+ *         L live dynamic arguments through the splice, the core's readArgs
+ *         and read + resolveArguments; a shared leaf as
  *         a tree and as a graph; the graph's fixed and per-node cost; and the
  *         wrap a bytes-typed parameter needs to receive an array envelope.
  *         Costs are gasleft() around one staticcall to Assertions.resolve, so
@@ -118,9 +118,6 @@ contract ExpressionsGasTest is Test {
         }
         for (uint256 j; j < L; j++) segs[L + j] = lives[j];
         return _read(target, sel, segs);
-    }
-    function _resolveCall(address to, bytes4 sel, string memory types, InputParam[] memory args) internal view returns (InputParam memory) {
-        return _sc(address(xp), abi.encodeCall(Expressions.resolveCall, (address(core), _addr(to), sel, types, args)));
     }
     /// read(target, sel, [resolveArguments(...)]): resolve-once through Expressions, the core calling.
     function _readResolveArgs(address to, bytes4 sel, string memory types, InputParam[] memory args) internal view returns (InputParam memory) {
@@ -227,13 +224,11 @@ contract ExpressionsGasTest is Test {
             InputParam[] memory lives = _lives(s, L);
             (uint256 gs, bytes memory a) = _resolve(_splice(_addr(address(sink)), sels[L - 1], lives));
             (uint256 gc, bytes memory b) = _resolve(_readArgs(address(sink), sels[L - 1], types[L - 1], lives));
-            (uint256 gr, bytes memory c) = _resolve(_resolveCall(address(sink), sels[L - 1], types[L - 1], lives));
             (uint256 ga, bytes memory d) = _resolve(_readResolveArgs(address(sink), sels[L - 1], types[L - 1], lives));
-            assertEq(a, b); assertEq(a, c); assertEq(a, d);
+            assertEq(a, b); assertEq(a, d);
             assertEq(abi.decode(a, (uint256)), 40 * L);
             emit log_named_uint(string.concat(label, " L=", vm.toString(L), " read+splice      "), gs);
             emit log_named_uint(string.concat(label, " L=", vm.toString(L), " core readArgs    "), gc);
-            emit log_named_uint(string.concat(label, " L=", vm.toString(L), " resolveCall      "), gr);
             emit log_named_uint(string.concat(label, " L=", vm.toString(L), " read+resolveArgs "), ga);
             if (L == 1) {
                 // One live argument stays on `read` (byte-identical calldata to
@@ -241,10 +236,9 @@ contract ExpressionsGasTest is Test {
                 assertLt(gc, gs * 12 / 10);
             } else {
                 // Two or more live dynamic arguments: the core's resolve-once
-                // construction beats the offset splice and both Expressions
-                // hosts, for a cheap and for a costly source alike.
+                // construction beats the offset splice and the Expressions
+                // host, for a cheap and for a costly source alike.
                 assertLt(gc, gs);
-                assertLt(gc, gr);
                 assertLt(gc, ga);
             }
         }
@@ -267,11 +261,9 @@ contract ExpressionsGasTest is Test {
     function test_caller() public {
         InputParam[] memory none = new InputParam[](0);
         (, bytes memory a) = _resolve(_read(_addr(address(sink)), Sink.who.selector, none));
-        (, bytes memory b) = _resolve(_resolveCall(address(sink), Sink.who.selector, "()", none));
         (, bytes memory c) = _resolve(_readResolveArgs(address(sink), Sink.who.selector, "()", none));
         (, bytes memory d) = _resolve(_readArgs(address(sink), Sink.who.selector, "()", none));
         assertEq(abi.decode(a, (address)), address(core));
-        assertEq(abi.decode(b, (address)), address(xp));
         assertEq(abi.decode(c, (address)), address(core));
         assertEq(abi.decode(d, (address)), address(core));
     }

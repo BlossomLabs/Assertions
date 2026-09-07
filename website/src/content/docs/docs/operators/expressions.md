@@ -10,23 +10,20 @@ description: The unreleased Expressions contract, resolve-once ABI call construc
 ## Resolve once
 
 ```solidity
-function resolveCall     (address core, InputParam target, bytes4 selector,
-                          string argumentTypes, InputParam[] args) external view;   // raw return
 function resolveArguments(address core, string argumentTypes, InputParam[] args)
                           external view;                                            // raw return
 function resolveValues   (address core, InputParam[] args)
                           external view returns (bytes[] values);
 ```
 
-All three take the core's address explicitly and resolve each operand through `Assertions.resolve`, so operands keep their inline constraints and every [core primitive](/docs/core/reads) nests inside them as usual.
+Both take the core's address explicitly and resolve each operand through `Assertions.resolve`, so operands keep their inline constraints and every [core primitive](/docs/core/reads) nests inside them as usual.
 
-- **`resolveCall`** resolves `target` (which must yield one clean address word), then each argument once, ABI-encodes the arguments as the tuple `argumentTypes` describes, staticcalls the target with `selector` prefixed, and returns the call's raw returndata. Each resolved argument must be a canonical single-value envelope matching its position in the descriptor.
-- **`resolveArguments`** returns the encoded argument tuple itself, raw and without a bytes envelope: a calldata segment for the core's `read` to splice, the role [`Operations.encode`](/docs/operators/data#encode-runtime-abiencode) plays for already-resolved pieces.
+- **`resolveArguments`** resolves each argument once, ABI-encodes them as the tuple `argumentTypes` describes (each resolved argument must be a canonical single-value envelope matching its position in the descriptor) and returns the encoded tuple itself, raw and without a bytes envelope: a calldata segment for the core's `read` to splice, the role [`Operations.encode`](/docs/operators/data#encode-runtime-abiencode) plays for already-resolved pieces.
 - **`resolveValues`** returns each operand's raw resolved bytes as one `bytes[]` element, the value shape the [generic collections](/docs/operators/collections) consume.
 
-Operands are resolved in a loop, once each: there is no four-live-argument limit. Duplicate entries in `args` are still independent resolutions; to share a value, put it in a graph. The empty descriptor `()` with no arguments encodes to nothing. In errors, `resolveCall` numbers its target 0, its arguments from 1 and the constructed call `args.length + 1`; the other two number arguments from 0.
+Operands are resolved in a loop, once each: there is no four-live-argument limit. Duplicate entries in `args` are still independent resolutions; to share a value, put it in a graph. The empty descriptor `()` with no arguments encodes to nothing. In errors, both number arguments from 0.
 
-The core's own [`readArgs`](/docs/core/reads) does the same construction in one frame: it resolves each argument in place and keeps the core as the destination's `msg.sender`, where `resolveCall` makes Expressions the caller. Measured through `Assertions.resolve` on 2026-09-07 (`contracts/tests/ExpressionsGas.t.sol`), two live string arguments cost 32,440 gas through `readArgs`, 40,440 through `resolveCall` and 51,474 through the SDK's offset splice. The SDK targets `readArgs`; `resolveCall` and `resolveArguments` remain for callers that want Expressions as the caller, and `resolveValues` is how a `bytes[]` is assembled from N operands.
+The core's own [`readArgs`](/docs/core/reads) is the host for a whole call: it resolves each argument in one frame and keeps the core as the destination's `msg.sender`. Measured through `Assertions.resolve` on 2026-09-07 (`contracts/tests/ExpressionsGas.t.sol`), two live string arguments cost 32,440 gas through `readArgs`, 41,011 through `read` over `resolveArguments` and 51,474 through the SDK's offset splice. The SDK targets `readArgs`; `resolveArguments` remains for a raw argument segment, and `resolveValues` is how a `bytes[]` is assembled from N operands. An earlier `resolveCall`, the same construction with Expressions as the caller, was removed: it lost on both gas and caller.
 
 ## The graph
 
@@ -108,7 +105,7 @@ Node 1 is referenced twice by node 3, and node 3 once by node 4; each is evaluat
 
 | Error | Description |
 |---|---|
-| `InvalidNode(uint256 node)` | the node is malformed: `result` out of range, the wrong reference count for its kind, a `Parameter` whose data is not one word, a `Select` condition shorter than 32 bytes, an address word that is not a clean address (a `Call` or `ProbeCall` target, or `resolveCall`'s resolved target at index 0) |
+| `InvalidNode(uint256 node)` | the node is malformed: `result` out of range, the wrong reference count for its kind, a `Parameter` whose data is not one word, a `Select` condition shorter than 32 bytes, an address word that is not a clean address (a `Call` or `ProbeCall` target) |
 | `NotSelf(address caller)` | `evaluateGuarded` was called by anyone other than the contract itself |
 | `InvalidReference(uint256 node, uint256 ref)` | a reference does not point strictly backward, or a `Parameter` index is past the supplied parameters |
 | `InvalidTarget(uint256 node, address target)` | a `Call`, a `Resolve`, a resolve-once operand or the `evaluateEncoded` self-call targets an address without code (the index is the node, or the operand position in the resolve-once entry points) |

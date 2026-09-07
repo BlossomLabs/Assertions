@@ -9,7 +9,8 @@ import {InputParam} from "./lib/ERC8211.sol";
  * @title Expressions
  * @author Sembrestels
  * @notice Typed expression graphs for the Assertions core, and resolve-once
- *         call construction with Expressions as the caller. A raw ERC-8211
+ *         operand construction (an argument tuple, a bytes[]) from live
+ *         operands. A raw ERC-8211
  *         operand is a tree: it cannot name a subterm, so a value used
  *         twice is encoded and resolved twice. An `Expression` is a graph:
  *         nodes reference earlier nodes by index, every node evaluates at
@@ -158,60 +159,21 @@ contract Expressions {
      */
     error NotSelf(address caller);
 
-    // ============ Resolve-Once Calls ============
-
-    /**
-     * @notice Resolves the target and each argument exactly once through
-     *         the core, ABI-encodes the arguments as the tuple
-     *         `argumentTypes` describes, prefixes `selector`, executes the
-     *         call and returns its raw returndata
-     * @dev The same construction as `Assertions.readArgs`, with this
-     *      contract as the destination's msg.sender instead of the core
-     *      (the reason to prefer it, and the only one: it costs one extra
-     *      hop per operand). Each operand resolves through the core's
-     *      `resolve`, so its constraints are validated there, and must
-     *      yield the canonical single-value encoding of its declared type.
-     *      Returned via a raw assembly return, so the call nests inside any
-     *      operand. Reverts with InvalidNode(0) when the target is not a
-     *      clean address word, InvalidTarget / NodeCallFailed identifying the
-     *      operand (target 0, args at index + 1, the destination at
-     *      args.length + 1), AbiCodec's component errors naming the
-     *      argument index, and InvalidTypeDescriptor on a malformed
-     *      descriptor.
-     * @param core The Assertions core that resolves the operands
-     * @param target The input parameter resolving to the call's target
-     *        address
-     * @param selector The 4-byte function selector
-     * @param argumentTypes The argument tuple descriptor, e.g.
-     *        "(string,string)"
-     * @param args One input parameter per argument
-     */
-    function resolveCall(
-        address core,
-        InputParam calldata target,
-        bytes4 selector,
-        string calldata argumentTypes,
-        InputParam[] calldata args
-    ) external view {
-        bytes memory destination = _call(core, abi.encodeCall(Assertions.resolve, (target)), 0);
-        address to = _address(destination, 0);
-        bytes[] memory values = new bytes[](args.length);
-        for (uint256 i; i < args.length; i++) {
-            values[i] = _call(core, abi.encodeCall(Assertions.resolve, (args[i])), i + 1);
-        }
-        (bytes memory encoded,) = _arguments(argumentTypes, values);
-        bytes memory result = _call(to, bytes.concat(selector, encoded), args.length + 1);
-        assembly ("memory-safe") { return(add(result, 32), mload(result)) }
-    }
+    // ============ Resolve-Once Operands ============
 
     /**
      * @notice Resolves each argument exactly once through the core and
      *         returns the canonical argument tuple `argumentTypes`
      *         describes, without a bytes envelope
-     * @dev The encoding half of `resolveCall`, for an encoder that wants
-     *      the tuple as a calldata SEGMENT for the core's `read` to splice
-     *      (the same raw-return convention as Operations' `encode`).
-     *      Operand errors identify the argument by its index.
+     * @dev A calldata SEGMENT for the core's `read` to splice, the same
+     *      raw-return convention as Operations' `encode`, built from live
+     *      operands instead of resolved values. Each operand resolves
+     *      through the core's `resolve`, so its constraints are validated
+     *      there, and must yield the canonical single-value encoding of
+     *      its declared type (AbiCodec's component errors name the
+     *      argument index). InvalidTarget / NodeCallFailed identify the
+     *      operand by its index. `Assertions.readArgs` is the cheaper host
+     *      when the segment is a whole call's arguments.
      * @param core The Assertions core that resolves the operands
      * @param argumentTypes The argument tuple descriptor
      * @param args One input parameter per argument

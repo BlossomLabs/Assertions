@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
-import {ExpressionResolver} from "./ExpressionResolver.sol";
+import {Expressions} from "./Expressions.sol";
 import {AbiCodec} from "./AbiCodec.sol";
 
 /// @notice Word and ABI-valued collection operations, including folds and stable merge sorting.
@@ -78,6 +78,8 @@ contract Collections {
     /// @dev Argument descriptor is a tuple. constants contains one single-value ABI envelope per slot.
     /// first is the element slot (or fold accumulator); second is the other element/fold element slot.
     /// Unary callbacks ignore second; substituted slots may contain empty placeholders.
+    /// A non-empty expression is an abi-encoded Expressions.Expression that target evaluates through
+    /// evaluateEncoded with the substituted slots as its parameters; selector is then ignored.
     struct Callback {
         address target;
         bytes4 selector;
@@ -85,7 +87,7 @@ contract Collections {
         bytes[] constants;
         uint256 first;
         uint256 second;
-        bytes program;
+        bytes expression;
     }
 
     error InvalidCallback();
@@ -962,12 +964,12 @@ contract Collections {
         _bindValue(cb, prepared, cb.first, a);
         if (binary) _bindValue(cb, prepared, cb.second, b);
         bytes memory data;
-        if (cb.program.length == 0) {
+        if (cb.expression.length == 0) {
             data = bytes.concat(
                 cb.selector, AbiCodec.assemble(prepared.plan.dynamic, prepared.plan.headSize, prepared.args, false)
             );
         } else {
-            data = abi.encodeCall(ExpressionResolver.evaluateEncoded, (cb.program, prepared.args));
+            data = abi.encodeCall(Expressions.evaluateEncoded, (cb.expression, prepared.args));
         }
         bool ok;
         (ok, out) = cb.target.staticcall(data);

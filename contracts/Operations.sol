@@ -13,9 +13,9 @@ import {AbiCodec} from "./AbiCodec.sol";
  *         operations including decimal parsing and runtime ABI encoding.
  *         Every function takes and returns plain ABI types — no ERC-8211
  *         anywhere. Composition happens in the core: its `read` primitive
- *         resolves operand expressions and splices the resolved values
+ *         resolves its operands and splices the resolved values
  *         into this contract's calldata, so an operator call IS the
- *         composed expression. Any deployed view or pure contract extends
+ *         composition. Any deployed view or pure contract extends
  *         the vocabulary through the same socket; Operations is just the
  *         canonical first extension.
  * @dev Named functions instead of op-code enums so decoded calldata reads
@@ -390,7 +390,7 @@ contract Operations {
      * @dev Binary exponentiation with the scale divided out after every
      *      multiply, so the intermediate never leaves fixed point. This
      *      cannot be composed from the rest of the vocabulary at any
-     *      practical cost: an expression is a tree with no way to name a
+     *      practical cost: a raw operand tree has no way to name a
      *      subterm, so squaring duplicates its operand's whole calldata
      *      subtree and the composed form is 2^k copies (~33M for the
      *      exponent above). Rounds down at each step; earlier rounding

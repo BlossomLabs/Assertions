@@ -7,7 +7,7 @@ fix it in the same change that falsified it.
 ## The two trees
 
 - **Main repo**: `contracts/` (the frozen `Assertions` core, the versionable
-  `Operations` periphery, `Collections`, `AbiCodec`, `ERC8211`), Solidity tests under
+  `Operations` periphery, `Collections`, `Expressions`, `AbiCodec`, `ERC8211`), Solidity tests under
   `contracts/tests/*.t.sol` run by `pnpm test` (hardhat 3), and the Astro site in
   `website/` with hand-written docs at `website/src/content/docs/docs/`.
 - **Vendored checkout**: `website/.evmcrispr` is an EVMcrispr monorepo checkout at a published commit
@@ -24,7 +24,7 @@ fix it in the same change that falsified it.
 
 - **The core's admission test**: only what needs operands to arrive UNRESOLVED
   (ERC-8211 `InputParam`s) lives on the frozen core. Scalar computation over resolved
-  values belongs to Operations; iteration and collection processing belong to Collections. Both version by deploying at new addresses. When
+  values belongs to Operations; iteration and collection processing belong to Collections; expression graphs belong to Expressions. All three version by deploying at new addresses. When
   a capability is requested, first check whether composition already expresses it:
   `hash(rawCall(target, data))` made both a `hashOf` primitive and a `HASH_EQ`
   constraint type unnecessary. Moving the primitives off the core was measured on
@@ -39,7 +39,7 @@ fix it in the same change that falsified it.
   constraint enum was refused because a batch carrying an extension value reverts
   on every other executor and squats on wire space a future revision could
   redefine. Portability breaks are one-way doors; refuse them.
-- **Raw `InputParam` is a tree; `ExpressionResolver` adds a graph alternative.**
+- **Raw `InputParam` is a tree; `Expressions` adds a graph alternative.**
   Raw operands cannot name subterms: repeated expressions duplicate calldata and
   resolution. Prefer resolver `resolveArguments` / `resolveValues` for dynamic ABI
   construction: each supplied input resolves once, with no four-live-input cap.
@@ -178,4 +178,4 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   sandboxed run has reported success with zero fuzz tests. Run outside that
   environment before treating the fuzz suites as passed.
 
-- Format production Solidity consistently with `forge fmt contracts/AbiCodec.sol contracts/Assertions.sol contracts/Collections.sol contracts/ERC8211.sol contracts/Operations.sol`; use `--check` to verify. Public NatSpec describes rounding and rejection behavior; implementation helpers document caller preconditions.
+- Format production Solidity consistently with `forge fmt contracts/AbiCodec.sol contracts/Assertions.sol contracts/Collections.sol contracts/ERC8211.sol contracts/Expressions.sol contracts/Operations.sol`; use `--check` to verify. Public NatSpec describes rounding and rejection behavior; implementation helpers document caller preconditions.

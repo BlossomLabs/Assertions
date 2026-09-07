@@ -258,7 +258,7 @@ export const COLLECTIONS_ABI = [
           },
           {
             "internalType": "bytes",
-            "name": "program",
+            "name": "expression",
             "type": "bytes"
           }
         ],
@@ -324,7 +324,7 @@ export const COLLECTIONS_ABI = [
           },
           {
             "internalType": "bytes",
-            "name": "program",
+            "name": "expression",
             "type": "bytes"
           }
         ],
@@ -390,7 +390,7 @@ export const COLLECTIONS_ABI = [
           },
           {
             "internalType": "bytes",
-            "name": "program",
+            "name": "expression",
             "type": "bytes"
           }
         ],
@@ -490,7 +490,7 @@ export const COLLECTIONS_ABI = [
           },
           {
             "internalType": "bytes",
-            "name": "program",
+            "name": "expression",
             "type": "bytes"
           }
         ],
@@ -688,7 +688,7 @@ export const COLLECTIONS_ABI = [
           },
           {
             "internalType": "bytes",
-            "name": "program",
+            "name": "expression",
             "type": "bytes"
           }
         ],
@@ -808,7 +808,7 @@ export const COLLECTIONS_ABI = [
           },
           {
             "internalType": "bytes",
-            "name": "program",
+            "name": "expression",
             "type": "bytes"
           }
         ],
@@ -898,7 +898,7 @@ export const COLLECTIONS_ABI = [
           },
           {
             "internalType": "bytes",
-            "name": "program",
+            "name": "expression",
             "type": "bytes"
           }
         ],
@@ -1099,7 +1099,7 @@ export const COLLECTIONS_ABI = [
           },
           {
             "internalType": "bytes",
-            "name": "program",
+            "name": "expression",
             "type": "bytes"
           }
         ],
@@ -1203,7 +1203,7 @@ export const COLLECTIONS_ABI = [
           },
           {
             "internalType": "bytes",
-            "name": "program",
+            "name": "expression",
             "type": "bytes"
           }
         ],

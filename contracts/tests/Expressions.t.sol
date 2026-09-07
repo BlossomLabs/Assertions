@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 import "forge-std/Test.sol";
-import "../ExpressionResolver.sol";
+import "../Expressions.sol";
 import "../Collections.sol";
 import "../Operations.sol";
 import "../ERC8211.sol";
 
-contract ExpressionResolverTest is Test {
-    ExpressionResolver resolver;
+contract ExpressionsTest is Test {
+    Expressions expressions;
     Assertions core;
     Collections collections;
     Operations operations;
 
     function setUp() public {
-        resolver = new ExpressionResolver();
+        expressions = new Expressions();
         core = new Assertions();
         collections = new Collections();
         operations = new Operations();
@@ -61,16 +61,16 @@ contract ExpressionResolverTest is Test {
         );
     }
 
-    function run(ExpressionResolver.Program memory p, bytes[] memory params) private view returns (bytes memory out) {
+    function run(Expressions.Expression memory p, bytes[] memory params) private view returns (bytes memory out) {
         bool ok;
-        (ok, out) = address(resolver).staticcall(abi.encodeCall(ExpressionResolver.evaluate, (p, params)));
+        (ok, out) = address(expressions).staticcall(abi.encodeCall(Expressions.evaluate, (p, params)));
         if (!ok) assembly { revert(add(out, 32), mload(out)) }
     }
 
-    function node(ExpressionResolver.Kind kind, string memory valueType, bytes memory data)
+    function node(Expressions.Kind kind, string memory valueType, bytes memory data)
         private
         pure
-        returns (ExpressionResolver.Node memory n)
+        returns (Expressions.Node memory n)
     {
         n.kind = kind;
         n.valueType = valueType;
@@ -80,9 +80,9 @@ contract ExpressionResolverTest is Test {
     function callNode(string memory valueType, bytes4 selector, string memory arguments, uint256[] memory refs)
         private
         pure
-        returns (ExpressionResolver.Node memory n)
+        returns (Expressions.Node memory n)
     {
-        n.kind = ExpressionResolver.Kind.Call;
+        n.kind = Expressions.Kind.Call;
         n.valueType = valueType;
         n.selector = selector;
         n.arguments = arguments;
@@ -108,10 +108,10 @@ contract ExpressionResolverTest is Test {
             args[i] = live(abi.encodeCall(this.source, ()));
         }
         vm.expectCall(address(this), abi.encodeCall(this.source, ()), uint64(19));
-        (bool ok, bytes memory out) = address(resolver)
+        (bool ok, bytes memory out) = address(expressions)
             .staticcall(
                 abi.encodeCall(
-                    ExpressionResolver.resolveCall,
+                    Expressions.resolveCall,
                     (
                         address(core),
                         literal(abi.encode(address(this))),
@@ -124,13 +124,13 @@ contract ExpressionResolverTest is Test {
         assertTrue(ok);
         string memory value = this.source();
         assertEq(abi.decode(out, (string)), string.concat(value, value, value, value, value, value));
-        bytes[] memory values = resolver.resolveValues(address(core), args);
+        bytes[] memory values = expressions.resolveValues(address(core), args);
         assertEq(values.length, 6);
         assertEq(values[5], abi.encode(value));
-        (ok, out) = address(resolver)
+        (ok, out) = address(expressions)
             .staticcall(
                 abi.encodeCall(
-                    ExpressionResolver.resolveArguments,
+                    Expressions.resolveArguments,
                     (address(core), "(string,string,string,string,string,string)", args)
                 )
             );
@@ -139,18 +139,18 @@ contract ExpressionResolverTest is Test {
     }
 
     function testGraphMemoizesSharedDynamicCallAndLazyBranch() public {
-        ExpressionResolver.Program memory p;
+        Expressions.Expression memory p;
         p.core = address(core);
-        p.nodes = new ExpressionResolver.Node[](6);
+        p.nodes = new Expressions.Node[](6);
         p.result = 5;
-        p.nodes[0] = node(ExpressionResolver.Kind.Literal, "address", abi.encode(address(this)));
+        p.nodes[0] = node(Expressions.Kind.Literal, "address", abi.encode(address(this)));
         uint256[] memory target = new uint256[](1);
         target[0] = 0;
         p.nodes[1] = callNode("string", this.source.selector, "()", target);
         p.nodes[2] = callNode("string", this.append.selector, "(string,string)", refs3(0, 1, 1));
         p.nodes[3] = callNode("string", this.bomb.selector, "()", target);
-        p.nodes[4] = node(ExpressionResolver.Kind.Literal, "bool", abi.encode(true));
-        p.nodes[5] = node(ExpressionResolver.Kind.Select, "string", "");
+        p.nodes[4] = node(Expressions.Kind.Literal, "bool", abi.encode(true));
+        p.nodes[5] = node(Expressions.Kind.Select, "string", "");
         p.nodes[5].refs = refs3(4, 2, 3);
         vm.expectCall(address(this), abi.encodeCall(this.source, ()), uint64(1));
         bytes memory out = run(p, new bytes[](0));
@@ -160,40 +160,40 @@ contract ExpressionResolverTest is Test {
     }
 
     function testGraphRejectsForwardReferenceAndInvalidTarget() public {
-        ExpressionResolver.Program memory p;
-        p.nodes = new ExpressionResolver.Node[](2);
+        Expressions.Expression memory p;
+        p.nodes = new Expressions.Node[](2);
         p.result = 1;
-        p.nodes[0] = node(ExpressionResolver.Kind.Literal, "address", abi.encode(type(uint256).max));
+        p.nodes[0] = node(Expressions.Kind.Literal, "address", abi.encode(type(uint256).max));
         p.nodes[1] = callNode("string", this.source.selector, "()", refs2(0, 1));
-        vm.expectRevert(abi.encodeWithSelector(ExpressionResolver.InvalidReference.selector, 1, 1));
+        vm.expectRevert(abi.encodeWithSelector(Expressions.InvalidReference.selector, 1, 1));
         this.externalRun(p);
         uint256[] memory r = new uint256[](1);
         r[0] = 0;
         p.nodes[1].refs = r;
-        vm.expectRevert(abi.encodeWithSelector(ExpressionResolver.InvalidNode.selector, 1));
+        vm.expectRevert(abi.encodeWithSelector(Expressions.InvalidNode.selector, 1));
         this.externalRun(p);
     }
 
-    function externalRun(ExpressionResolver.Program calldata p) external view {
+    function externalRun(Expressions.Expression calldata p) external view {
         run(p, new bytes[](0));
     }
 
     function testComposedDynamicCallbackRepeatsParameter() public view {
-        ExpressionResolver.Program memory p;
-        p.nodes = new ExpressionResolver.Node[](5);
+        Expressions.Expression memory p;
+        p.nodes = new Expressions.Node[](5);
         p.result = 4;
-        p.nodes[0] = node(ExpressionResolver.Kind.Literal, "address", abi.encode(address(this)));
-        p.nodes[1] = node(ExpressionResolver.Kind.Parameter, "string", abi.encode(uint256(0)));
-        p.nodes[2] = node(ExpressionResolver.Kind.Parameter, "string", abi.encode(uint256(1)));
+        p.nodes[0] = node(Expressions.Kind.Literal, "address", abi.encode(address(this)));
+        p.nodes[1] = node(Expressions.Kind.Parameter, "string", abi.encode(uint256(0)));
+        p.nodes[2] = node(Expressions.Kind.Parameter, "string", abi.encode(uint256(1)));
         p.nodes[3] = callNode("string", this.append.selector, "(string,string)", refs3(0, 1, 1));
         p.nodes[4] = callNode("string", this.append.selector, "(string,string)", refs3(0, 3, 2));
         Collections.Callback memory cb;
-        cb.target = address(resolver);
+        cb.target = address(expressions);
         cb.arguments = "(string,string)";
         cb.constants = new bytes[](2);
         cb.constants[1] = abi.encode("!");
         cb.first = 0;
-        cb.program = abi.encode(p);
+        cb.expression = abi.encode(p);
         bytes[] memory v = new bytes[](2);
         v[0] = abi.encode("ab");
         v[1] = abi.encode("a value with more than thirty-two bytes");
@@ -248,15 +248,15 @@ contract ExpressionResolverTest is Test {
     }
 
     function testGuardedGraphFallbackAndSuccessfulCacheMerge() public {
-        ExpressionResolver.Program memory p;
-        p.nodes = new ExpressionResolver.Node[](5);
+        Expressions.Expression memory p;
+        p.nodes = new Expressions.Node[](5);
         p.result = 4;
-        p.nodes[0] = node(ExpressionResolver.Kind.Literal, "address", abi.encode(address(this)));
+        p.nodes[0] = node(Expressions.Kind.Literal, "address", abi.encode(address(this)));
         uint256[] memory target = new uint256[](1);
         target[0] = 0;
         p.nodes[1] = callNode("string", this.source.selector, "()", target);
         p.nodes[2] = callNode("string", this.bomb.selector, "()", target);
-        p.nodes[3] = node(ExpressionResolver.Kind.TryOrElse, "string", "");
+        p.nodes[3] = node(Expressions.Kind.TryOrElse, "string", "");
         p.nodes[3].refs = refs2(1, 2);
         p.nodes[4] = callNode("string", this.append.selector, "(string,string)", refs3(0, 3, 1));
         vm.expectCall(address(this), abi.encodeCall(this.source, ()), uint64(1));
@@ -267,17 +267,17 @@ contract ExpressionResolverTest is Test {
     }
 
     function testGuardedGraphFailureAndValidity() public view {
-        ExpressionResolver.Program memory p;
-        p.nodes = new ExpressionResolver.Node[](5);
+        Expressions.Expression memory p;
+        p.nodes = new Expressions.Node[](5);
         p.result = 3;
-        p.nodes[0] = node(ExpressionResolver.Kind.Literal, "address", abi.encode(address(this)));
+        p.nodes[0] = node(Expressions.Kind.Literal, "address", abi.encode(address(this)));
         uint256[] memory target = new uint256[](1);
         target[0] = 0;
         p.nodes[1] = callNode("string", this.bomb.selector, "()", target);
-        p.nodes[2] = node(ExpressionResolver.Kind.Literal, "string", abi.encode("fallback"));
-        p.nodes[3] = node(ExpressionResolver.Kind.TryOrElse, "string", "");
+        p.nodes[2] = node(Expressions.Kind.Literal, "string", abi.encode("fallback"));
+        p.nodes[3] = node(Expressions.Kind.TryOrElse, "string", "");
         p.nodes[3].refs = refs2(1, 2);
-        p.nodes[4] = node(ExpressionResolver.Kind.IsValid, "bool", "");
+        p.nodes[4] = node(Expressions.Kind.IsValid, "bool", "");
         p.nodes[4].refs = new uint256[](1);
         p.nodes[4].refs[0] = 1;
         assertEq(abi.decode(run(p, new bytes[](0)), (string)), "fallback");
@@ -288,18 +288,18 @@ contract ExpressionResolverTest is Test {
     }
 
     function testGraphAbiConstructors() public view {
-        ExpressionResolver.Program memory p;
-        p.nodes = new ExpressionResolver.Node[](5);
+        Expressions.Expression memory p;
+        p.nodes = new Expressions.Node[](5);
         p.result = 4;
-        p.nodes[0] = node(ExpressionResolver.Kind.Literal, "string", abi.encode("abc"));
-        p.nodes[1] = node(ExpressionResolver.Kind.Wrap, "bytes", "");
+        p.nodes[0] = node(Expressions.Kind.Literal, "string", abi.encode("abc"));
+        p.nodes[1] = node(Expressions.Kind.Wrap, "bytes", "");
         p.nodes[1].refs = new uint256[](1);
         p.nodes[1].refs[0] = 0;
-        p.nodes[2] = node(ExpressionResolver.Kind.Array, "bytes[]", "");
+        p.nodes[2] = node(Expressions.Kind.Array, "bytes[]", "");
         p.nodes[2].arguments = "bytes";
         p.nodes[2].refs = refs2(1, 1);
-        p.nodes[3] = node(ExpressionResolver.Kind.Literal, "uint256", abi.encode(uint256(7)));
-        p.nodes[4] = node(ExpressionResolver.Kind.Tuple, "(uint256,bytes[])", "");
+        p.nodes[3] = node(Expressions.Kind.Literal, "uint256", abi.encode(uint256(7)));
+        p.nodes[4] = node(Expressions.Kind.Tuple, "(uint256,bytes[])", "");
         p.nodes[4].arguments = "(uint256,bytes[])";
         p.nodes[4].refs = refs2(3, 2);
         bytes[] memory values = new bytes[](2);
@@ -373,15 +373,15 @@ contract ExpressionResolverTest is Test {
     }
 
     function testProbeCallPreservesUnderlyingDynamicReason() public {
-        ExpressionResolver.Program memory p;
-        p.nodes = new ExpressionResolver.Node[](3);
+        Expressions.Expression memory p;
+        p.nodes = new Expressions.Node[](3);
         p.result = 2;
-        p.nodes[0] = node(ExpressionResolver.Kind.Literal, "address", abi.encode(address(this)));
+        p.nodes[0] = node(Expressions.Kind.Literal, "address", abi.encode(address(this)));
         p.nodes[1] =
             node(
-            ExpressionResolver.Kind.Literal, "bytes", abi.encode(abi.encodeCall(this.failWith, ("dynamic reason")))
+            Expressions.Kind.Literal, "bytes", abi.encode(abi.encodeCall(this.failWith, ("dynamic reason")))
         );
-        p.nodes[2] = node(ExpressionResolver.Kind.ProbeCall, "bytes", "");
+        p.nodes[2] = node(Expressions.Kind.ProbeCall, "bytes", "");
         p.nodes[2].refs = refs2(0, 1);
         p.nodes[2].selector = ProbeReason.selector;
         assertEq(abi.decode(run(p, new bytes[](0)), (bytes)), abi.encode("dynamic reason"));

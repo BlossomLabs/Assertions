@@ -63,7 +63,7 @@ const CONTRACTS = [
     // v1.0 remains at 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
     // (salt 0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb).
     salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
-    expectedAddress: "0x4D710b5AaBcd7f8753307c71779904A562422A15",
+    expectedAddress: "0x384722d90F35dE2121478cba640a8600C0B29B77",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -76,7 +76,7 @@ const CONTRACTS = [
     // Retained salt; the cleanup changes the unreleased artifact candidate.
     // Previous artifact: 0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e.
     salt: "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
-    expectedAddress: "0xbe58Ca28d8FC1395F94E9871cB8A15f3D2Bd2f60",
+    expectedAddress: "0xC31bac59fCf60c7212b474fCE6B0c4B92eC73c5E",
     prefix: "OPERATIONS",
     description: "Operations plain-value vocabulary contract",
     includeProxyConstants: false,
@@ -88,20 +88,20 @@ const CONTRACTS = [
     output: "src/lib/collections-deployment.ts",
     // Retained salt from the previous c011ec7 artifact candidate.
     salt: "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
-    expectedAddress: "0xd19bdD4a5462080F40B795c50d98827812B2C56b",
+    expectedAddress: "0xd4A153af77bEc446112523F96801733eE8c932D2",
     prefix: "COLLECTIONS",
     description: "generic ABI collection vocabulary contract",
     includeProxyConstants: false,
   },
   {
-    name: "ExpressionResolver",
-    key: "resolver",
-    artifact: "artifacts/contracts/ExpressionResolver.sol/ExpressionResolver.json",
-    output: "src/lib/expression-resolver-deployment.ts",
+    name: "Expressions",
+    key: "expressions",
+    artifact: "artifacts/contracts/Expressions.sol/Expressions.json",
+    output: "src/lib/expressions-deployment.ts",
     salt: "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
-    expectedAddress: "0x255e580C85133DCECe94B67DaA21036Ed3C08997",
-    prefix: "EXPRESSION_RESOLVER",
-    description: "typed expression resolver contract",
+    expectedAddress: "0x4787489ED7310f84b65C910BC32A15f641B06515",
+    prefix: "EXPRESSIONS",
+    description: "typed expression graphs contract",
     includeProxyConstants: false,
   },
 ];
@@ -112,7 +112,7 @@ if (
   args.length &&
   (args.length !== 2 || args[0] !== "--contract" || !CONTRACTS.some((c) => c.name === args[1]))
 ) {
-  throw new Error("Usage: export-deploy-artifact.mjs [--contract Assertions|Operations|Collections|ExpressionResolver]");
+  throw new Error("Usage: export-deploy-artifact.mjs [--contract Assertions|Operations|Collections|Expressions]");
 }
 const selectedContracts = args.length
   ? CONTRACTS.filter((c) => c.name === args[1])

@@ -11,17 +11,17 @@ export const fmtGas = (gas) => `~${(gas / 1e6).toFixed(2)}M gas`;
 Each contract has the same deterministic address on every supported chain where its artifact is deployed. Core behavior is unchanged, but the shared-codec refactor changes its artifact metadata and address. These are unreleased artifact candidates; listing their addresses does not imply public-chain deployment.
 
 ```
-Assertions v2.0  0x4D710b5AaBcd7f8753307c71779904A562422A15   (frozen core: judge + primitives)
-Operations  v1.0  0xbe58Ca28d8FC1395F94E9871cB8A15f3D2Bd2f60   (unreleased periphery)
-Collections v1.0 0xd19bdD4a5462080F40B795c50d98827812B2C56b   (unreleased generic collections)
-ExpressionResolver v1.0 0x255e580C85133DCECe94B67DaA21036Ed3C08997 (unreleased typed expression graphs)
+Assertions v2.0  0x384722d90F35dE2121478cba640a8600C0B29B77   (frozen core: judge + primitives)
+Operations  v1.0  0xC31bac59fCf60c7212b474fCE6B0c4B92eC73c5E   (unreleased periphery)
+Collections v1.0 0xd4A153af77bEc446112523F96801733eE8c932D2   (unreleased generic collections)
+Expressions v1.0 0x4787489ED7310f84b65C910BC32A15f641B06515 (unreleased typed expression graphs)
 ```
 
 Previous artifact candidates, including Operations `0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e` and `0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD`, use different bytecode. The interim zero-salt deployments (Assertions `0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F`, Operations `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`) stay live wherever they were sent, but are no longer canonical.
 
 Deployed versions are immutable: earlier releases keep working forever at their own canonical addresses. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) is updated separately after deployment, and the original v1.0 core stays live at [`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
 
-Collections and ExpressionResolver are exported for manual deployment; the interactive page retains its existing core/Operations inventory. The [interactive deployments page](/deployments) shows per-chain status, lets you deploy with a connected wallet, and verifies contracts on explorers.
+Collections and Expressions are exported for manual deployment; the interactive page retains its existing core/Operations inventory. The [interactive deployments page](/deployments) shows per-chain status, lets you deploy with a connected wallet, and verifies contracts on explorers.
 
 ## How the addresses stay deterministic
 
@@ -44,7 +44,7 @@ cast send 0x4e59b44847b379578588920cA78FbF26c0B4956C \
   "$(cat salt_and_initcode.hex)" --rpc-url <rpc> --private-key <key>
 ```
 
-The canonical salts live in `website/scripts/export-deploy-artifact.mjs`; the script regenerates `website/src/lib/assertions-deployment.ts` and `website/src/lib/operations-deployment.ts`, `website/src/lib/collections-deployment.ts`, and `website/src/lib/expression-resolver-deployment.ts` (salt, init code, measured deploy gas, and predicted address for each contract) from a fresh compile. It refuses to export if the compiled bytecode no longer reproduces the expected address. Pass `--contract Operations` to regenerate only Operations and preserve the other contracts' deployment and verification artifacts.
+The canonical salts live in `website/scripts/export-deploy-artifact.mjs`; the script regenerates `website/src/lib/assertions-deployment.ts` and `website/src/lib/operations-deployment.ts`, `website/src/lib/collections-deployment.ts`, and `website/src/lib/expressions-deployment.ts` (salt, init code, measured deploy gas, and predicted address for each contract) from a fresh compile. It refuses to export if the compiled bytecode no longer reproduces the expected address. Pass `--contract Operations` to regenerate only Operations and preserve the other contracts' deployment and verification artifacts.
 
 :::caution
 **Do not use `hardhat ignition deploy` for the canonical deployment.** Ignition's `create2` strategy goes through the CreateX factory, which re-hashes the salt and therefore produces a *different* address than the Arachnid proxy. The Ignition module is kept only for local testing.

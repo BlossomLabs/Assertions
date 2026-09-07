@@ -6,7 +6,7 @@ import {Assertions} from "./Assertions.sol";
 import {InputParam} from "./ERC8211.sol";
 
 /// @notice Stateless typed expression graphs and resolve-once ABI call construction.
-contract ExpressionResolver {
+contract Expressions {
     enum Kind {
         Literal,
         Parameter,
@@ -30,7 +30,7 @@ contract ExpressionResolver {
         string arguments;
     }
 
-    struct Program {
+    struct Expression {
         address core;
         Node[] nodes;
         uint256 result;
@@ -84,10 +84,10 @@ contract ExpressionResolver {
 
     /// @notice Evaluate a backwards-referencing graph, resolving shared nodes only once.
     /// @dev Select is lazy. Only reachable nodes execute. Parameters are canonical single-value envelopes.
-    function evaluate(Program calldata program, bytes[] calldata parameters) external view {
-        if (program.result >= program.nodes.length) revert InvalidNode(program.result);
-        for (uint256 i; i < program.nodes.length; i++) {
-            Node calldata node = program.nodes[i];
+    function evaluate(Expression calldata expression, bytes[] calldata parameters) external view {
+        if (expression.result >= expression.nodes.length) revert InvalidNode(expression.result);
+        for (uint256 i; i < expression.nodes.length; i++) {
+            Node calldata node = expression.nodes[i];
             AbiCodec.shape(bytes(node.valueType));
             for (uint256 j; j < node.refs.length; j++) {
                 if (node.refs[j] >= i) revert InvalidReference(i, node.refs[j]);
@@ -104,12 +104,12 @@ contract ExpressionResolver {
                 revert InvalidNode(i);
             }
         }
-        Cache memory cache = Cache(new bytes[](program.nodes.length), new bool[](program.nodes.length));
-        bytes memory result = _evaluate(program, parameters, cache, program.result);
+        Cache memory cache = Cache(new bytes[](expression.nodes.length), new bool[](expression.nodes.length));
+        bytes memory result = _evaluate(expression, parameters, cache, expression.result);
         assembly ("memory-safe") { return(add(result, 32), mload(result)) }
     }
 
-    function _evaluate(Program calldata p, bytes[] calldata parameters, Cache memory cache, uint256 index)
+    function _evaluate(Expression calldata p, bytes[] calldata parameters, Cache memory cache, uint256 index)
         private
         view
         returns (bytes memory result)
@@ -167,22 +167,25 @@ contract ExpressionResolver {
 
     /// @dev External self-frame gives guarded evaluation EVM rollback; callers cannot inject caches.
     function evaluateGuarded(
-        Program calldata program,
+        Expression calldata expression,
         bytes[] calldata parameters,
         uint256 index,
         Cache calldata initial
     ) external view returns (bytes memory result, Cache memory updated) {
         if (msg.sender != address(this)) revert InvalidNode(index);
         updated = initial;
-        result = _evaluate(program, parameters, updated, index);
+        result = _evaluate(expression, parameters, updated, index);
     }
 
-    function _tryEvaluate(Program calldata program, bytes[] calldata parameters, Cache memory cache, uint256 index)
-        private
-        view
-        returns (bool success, bytes memory result)
-    {
-        try this.evaluateGuarded(program, parameters, index, cache) returns (bytes memory value, Cache memory updated) {
+    function _tryEvaluate(
+        Expression calldata expression,
+        bytes[] calldata parameters,
+        Cache memory cache,
+        uint256 index
+    ) private view returns (bool success, bytes memory result) {
+        try this.evaluateGuarded(expression, parameters, index, cache) returns (
+            bytes memory value, Cache memory updated
+        ) {
             cache.values = updated.values;
             cache.ready = updated.ready;
             return (true, value);
@@ -191,9 +194,9 @@ contract ExpressionResolver {
         }
     }
 
-    /// @notice Bytes-program entry for collection callbacks; returns the same raw value as evaluate.
-    function evaluateEncoded(bytes calldata program, bytes[] calldata parameters) external view {
-        Program memory decoded = abi.decode(program, (Program));
+    /// @notice Encoded-expression entry for collection callbacks; returns the same raw value as evaluate.
+    function evaluateEncoded(bytes calldata expression, bytes[] calldata parameters) external view {
+        Expression memory decoded = abi.decode(expression, (Expression));
         bytes memory result = _call(address(this), abi.encodeCall(this.evaluate, (decoded, parameters)), 0);
         assembly ("memory-safe") { return(add(result, 32), mload(result)) }
     }

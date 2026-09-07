@@ -140,7 +140,7 @@ error CallFailed(address target, bytes data);
  * @notice Thrown when a resolved value violates one of its inline
  *         constraints — THE assertion failure
  * @param assertion The assertion message ("" when the constraint sits on an
- *        expression operand rather than a judged batch)
+ *        primitive's operand rather than a judged batch)
  * @param entryIndex The batch entry the parameter belongs to (0 outside a
  *        batch context)
  * @param paramIndex The input parameter's position within the entry (or

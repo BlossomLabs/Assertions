@@ -59,9 +59,9 @@ interface IERC20Balance {
  *      what needs operands to arrive UNRESOLVED lives here. Every
  *      primitive holds InputParams and decides how (or whether) to
  *      resolve them; a STATIC_CALL operand may target this contract
- *      itself, so the primitives nest into arbitrary expressions.
+ *      itself, so the primitives nest into arbitrary operand trees.
  *      Computation over resolved values belongs to the versionable
- *      periphery: `read` resolves operand expressions and splices the
+ *      periphery: `read` resolves its operands and splices the
  *      values into plain calldata for any deployed view or pure contract
  *      — canonically Operations for arithmetic, comparisons, bytes and runtime
  *      encoding, and Collections for folds and collection processing.
@@ -211,7 +211,7 @@ contract Assertions {
      *      calling the underlying target. Constraints on `param` are
      *      validated before returning (a violation reverts with
      *      ConstraintFailed identifying the constraint), which turns any
-     *      expression node into an inline assert.
+     *      nested operand into an inline assert.
      * @param param The input parameter to resolve (paramType is ignored;
      *        nothing is routed)
      */
@@ -417,7 +417,7 @@ contract Assertions {
      *      standard's CALL_DATA routing — a RAW_BYTES segment carries any
      *      literal span (head words, pre-encoded tails), a STATIC_CALL
      *      segment computes a span at judge time (word-returning
-     *      expressions contribute exactly 32 bytes; a segment resolving
+     *      operands contribute exactly 32 bytes; a segment resolving
      *      to any other length shifts everything after it, so the encoder
      *      owns the layout). Segment constraints are validated on the
      *      resolved values, turning any argument into an inline assert.
@@ -539,7 +539,7 @@ contract Assertions {
      *      so the target's revert data survives. That is what restricts it
      *      to a STATIC_CALL operand — a literal or a balance read has no
      *      call whose reason could be reported, and is rejected. A nested
-     *      core expression IS a staticcall (back into this contract), so
+     *      core primitive IS a staticcall (back into this contract), so
      *      it is accepted — but the reason observed is then the core's own
      *      error, not the inner target's, which is why reason MATCHING
      *      only makes sense on a direct target call; composers must keep

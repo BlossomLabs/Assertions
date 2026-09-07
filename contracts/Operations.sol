@@ -34,6 +34,8 @@ import {AbiCodec} from "./lib/AbiCodec.sol";
  * @custom:version 1.0
  */
 contract Operations {
+    // ============ Types ============
+
     /**
      * @notice Rounding modes for the division and parsing families
      * @dev ABI-encoded as uint8: Trunc = 0 rounds toward zero, Floor = 1
@@ -47,14 +49,9 @@ contract Operations {
         Ceil
     }
 
-    /**
-     * @notice Thrown when a decimals argument exceeds 77 (10^78 does not
-     *         fit a word, so no scale beyond that is representable)
-     * @param decimals The requested number of decimals
-     */
-    error InvalidPrecision(uint256 decimals);
-
     // ============ Custom Errors ============
+
+    // The runtime encoder's errors are declared once in AbiCodec.
 
     /**
      * @notice Thrown when slice bounds fall outside the data
@@ -64,7 +61,27 @@ contract Operations {
      */
     error SliceOutOfBounds(uint256 start, uint256 len, uint256 dataLength);
 
-    // The runtime encoder's errors are declared once in AbiCodec.
+    /**
+     * @notice Thrown when a strict signed index lies outside
+     *         -length .. length-1
+     * @param index The requested index as given
+     * @param length The data's byte length
+     */
+    error InvalidByteIndex(int256 index, uint256 length);
+
+    /**
+     * @notice Thrown when a string operation meets malformed UTF-8, or a
+     *         slice boundary that would split a multi-byte code point
+     * @param index The byte position of the offending byte
+     */
+    error InvalidUtf8(uint256 index);
+
+    /**
+     * @notice Thrown when replace or split receives an empty needle: it
+     *         would match everywhere, and inserting the replacement (or a
+     *         segment boundary) between every byte is certainly a mistake
+     */
+    error EmptyNeedle();
 
     /**
      * @notice Thrown when a parse function receives no digits: there is no
@@ -82,18 +99,11 @@ contract Operations {
     error InvalidDecimalDigit(uint256 position, bytes1 char);
 
     /**
-     * @notice Thrown when a rawCall staticcall reverts
-     * @param target The called address
-     * @param data The calldata that was sent
+     * @notice Thrown when a decimals argument exceeds 77 (10^78 does not
+     *         fit a word, so no scale beyond that is representable)
+     * @param decimals The requested number of decimals
      */
-    error RawCallFailed(address target, bytes data);
-
-    /**
-     * @notice Thrown when replace or split receives an empty needle: it
-     *         would match everywhere, and inserting the replacement (or a
-     *         segment boundary) between every byte is certainly a mistake
-     */
-    error EmptyNeedle();
+    error InvalidPrecision(uint256 decimals);
 
     /**
      * @notice Thrown when a negative modular exponent needs an inverse that
@@ -103,6 +113,13 @@ contract Operations {
      * @param modulus The modulus magnitude
      */
     error ModularInverseDoesNotExist(uint256 base, uint256 modulus);
+
+    /**
+     * @notice Thrown when a rawCall staticcall reverts
+     * @param target The called address
+     * @param data The calldata that was sent
+     */
+    error RawCallFailed(address target, bytes data);
 
     // ============ Arithmetic ============
 
@@ -288,26 +305,6 @@ contract Operations {
     }
 
     /**
-     * @dev |value| as a uint256; total, int256.min yields 2^255
-     */
-    function _magnitude(int256 value) private pure returns (uint256) {
-        unchecked {
-            return value < 0 ? uint256(-(value + 1)) + 1 : uint256(value);
-        }
-    }
-
-    /**
-     * @dev The int256 with magnitude `value` and the given sign, reverting
-     *      with Panic(0x11) when it does not fit (2^255 fits only negative)
-     */
-    function _signedMagnitude(uint256 value, bool negative) private pure returns (int256) {
-        if (value > (negative ? uint256(1) << 255 : uint256(type(int256).max))) _panic(0x11);
-        unchecked {
-            return negative ? -int256(value) : int256(value);
-        }
-    }
-
-    /**
      * @notice (a + b) % m over the full 512-bit sum (EVM ADDMOD: the
      *         addition does not wrap at 2^256)
      * @dev Modulo by zero reverts with Panic(0x12)
@@ -399,44 +396,6 @@ contract Operations {
         uint256 modulus = _magnitude(m);
         if (exponent < 0) base = _inverseMod(base, modulus);
         return _signedMagnitude(_powMod(base, _magnitude(exponent), modulus), a < 0 && exponent & 1 != 0);
-    }
-
-    /**
-     * @dev base ** exponent % modulus by square-and-multiply over MULMOD
-     *      (at most 256 rounds for any uint256 exponent). Reverts with
-     *      Panic(0x12) when the modulus is zero.
-     */
-    function _powMod(uint256 base, uint256 exponent, uint256 modulus) private pure returns (uint256 result) {
-        result = 1 % modulus;
-        base %= modulus;
-        while (exponent != 0) {
-            if (exponent & 1 != 0) result = mulmod(result, base, modulus);
-            exponent >>= 1;
-            if (exponent != 0) base = mulmod(base, base, modulus);
-        }
-    }
-
-    /**
-     * @dev The inverse of `base` modulo `modulus` by the extended Euclidean
-     *      algorithm with coefficients kept reduced modulo `modulus`
-     *      (MULMOD keeps q * t from overflowing even for a full-word
-     *      modulus). Reverts with ModularInverseDoesNotExist unless the two
-     *      are coprime, and with Panic(0x12) when the modulus is zero.
-     */
-    function _inverseMod(uint256 base, uint256 modulus) private pure returns (uint256) {
-        uint256 r = modulus;
-        uint256 nextR = base % modulus;
-        uint256 t;
-        uint256 nextT = 1 % modulus;
-        while (nextR != 0) {
-            uint256 q = r / nextR;
-            (r, nextR) = (nextR, r % nextR);
-            uint256 product = mulmod(q, nextT, modulus);
-            uint256 next = t >= product ? t - product : modulus - (product - t);
-            (t, nextT) = (nextT, next);
-        }
-        if (r != 1) revert ModularInverseDoesNotExist(base, modulus);
-        return t;
     }
 
     /**
@@ -589,36 +548,6 @@ contract Operations {
     function log2(uint256 x) external pure returns (uint256) {
         if (x == 0) revert();
         return _log2(x);
-    }
-
-    /**
-     * @dev floor(log2(x)) by a binary bit scan; returns 0 for x = 0 (the
-     *      public entry rejects that input)
-     */
-    function _log2(uint256 x) private pure returns (uint256 r) {
-        unchecked {
-            r = x >= 1 << 128 ? 128 : 0;
-            x >>= r;
-            uint256 s = x >= 1 << 64 ? 64 : 0;
-            x >>= s;
-            r |= s;
-            s = x >= 1 << 32 ? 32 : 0;
-            x >>= s;
-            r |= s;
-            s = x >= 1 << 16 ? 16 : 0;
-            x >>= s;
-            r |= s;
-            s = x >= 1 << 8 ? 8 : 0;
-            x >>= s;
-            r |= s;
-            s = x >= 1 << 4 ? 4 : 0;
-            x >>= s;
-            r |= s;
-            s = x >= 1 << 2 ? 2 : 0;
-            x >>= s;
-            r |= s;
-            r |= x >= 1 << 1 ? 1 : 0;
-        }
     }
 
     // ============ Comparisons ============
@@ -938,21 +867,6 @@ contract Operations {
     }
 
     /**
-     * @notice Thrown when a strict signed index lies outside
-     *         -length .. length-1
-     * @param index The requested index as given
-     * @param length The data's byte length
-     */
-    error InvalidByteIndex(int256 index, uint256 length);
-
-    /**
-     * @notice Thrown when a string operation meets malformed UTF-8, or a
-     *         slice boundary that would split a multi-byte code point
-     * @param index The byte position of the offending byte
-     */
-    error InvalidUtf8(uint256 index);
-
-    /**
      * @notice data[start .. end) with JavaScript Array.slice semantics:
      *         signed indices, negative counting from the end, both clamped
      *         to the data bounds, end exclusive, and empty bytes when end
@@ -1008,56 +922,6 @@ contract Operations {
         uint256 position = _strictIndex(index, data.length);
         if (uint8(data[position]) >= 0x80) revert InvalidUtf8(position);
         return data[position:position + 1];
-    }
-
-    /**
-     * @dev Clamps a signed slice index into 0 .. length (negative counts
-     *      from the end; out-of-range indices clamp to the nearest bound)
-     */
-    function _rangeIndex(int256 index, uint256 length) private pure returns (uint256) {
-        if (index < 0) return index < -int256(length) ? 0 : uint256(int256(length) + index);
-        return uint256(index) > length ? length : uint256(index);
-    }
-
-    /**
-     * @dev Normalizes a signed element index into 0 .. length-1, reverting
-     *      with InvalidByteIndex outside -length .. length-1
-     */
-    function _strictIndex(int256 index, uint256 length) private pure returns (uint256) {
-        if (index >= int256(length) || index < -int256(length)) revert InvalidByteIndex(index, length);
-        return index < 0 ? uint256(int256(length) + index) : uint256(index);
-    }
-
-    /**
-     * @dev Requires `data` to be well-formed UTF-8 per the Unicode table of
-     *      valid byte sequences: lead bytes C2-F4 with the right number of
-     *      continuation bytes, the second-byte ranges that exclude overlong
-     *      forms, surrogates and code points past U+10FFFF. Reverts with
-     *      InvalidUtf8 at the first offending byte.
-     */
-    function _checkUtf8(bytes calldata data) private pure {
-        for (uint256 i; i < data.length;) {
-            uint8 first = uint8(data[i]);
-            if (first < 0x80) {
-                i++;
-                continue;
-            }
-            uint256 count;
-            if (first >= 0xc2 && first <= 0xdf) count = 1;
-            else if (first >= 0xe0 && first <= 0xef) count = 2;
-            else if (first >= 0xf0 && first <= 0xf4) count = 3;
-            else revert InvalidUtf8(i);
-            if (data.length - i <= count) revert InvalidUtf8(i);
-            uint8 second = uint8(data[i + 1]);
-            if (
-                (first == 0xe0 && second < 0xa0) || (first == 0xed && second >= 0xa0)
-                    || (first == 0xf0 && second < 0x90) || (first == 0xf4 && second >= 0x90)
-            ) revert InvalidUtf8(i + 1);
-            for (uint256 j = 1; j <= count; j++) {
-                if (uint8(data[i + j]) & 0xc0 != 0x80) revert InvalidUtf8(i + j);
-            }
-            i += count + 1;
-        }
     }
 
     /**
@@ -1253,18 +1117,6 @@ contract Operations {
     }
 
     /**
-     * @dev Flips the ASCII case bit of every byte in the letter range
-     *      `low` .. `high`, leaving the rest untouched
-     */
-    function _foldCase(bytes calldata s, bytes1 low, bytes1 high) private pure returns (bytes memory out) {
-        out = s;
-        for (uint256 i = 0; i < out.length; i++) {
-            bytes1 c = out[i];
-            if (c >= low && c <= high) out[i] = c ^ 0x20;
-        }
-    }
-
-    /**
      * @notice Whether every byte of `s` is a member of the 256-bit
      *         character-class `mask` (bit i set means byte value i is
      *         allowed): a native single-call loop, the fixed-operation
@@ -1292,48 +1144,6 @@ contract Operations {
      */
     function parseUint(bytes calldata s) external pure returns (uint256) {
         return _parseDigits(s, 0);
-    }
-
-    /**
-     * @dev The digits s[start ..] as a checked uint256: at least one digit
-     *      (EmptyNumber), all in 0-9 (InvalidDecimalDigit at the offending
-     *      position). The signed entry point consumes the sign first.
-     */
-    function _parseDigits(bytes calldata s, uint256 start) private pure returns (uint256 result) {
-        if (start == s.length) revert EmptyNumber();
-        for (uint256 i = start; i < s.length; i++) {
-            bytes1 c = s[i];
-            if (c < "0" || c > "9") revert InvalidDecimalDigit(i, c);
-            result = result * 10 + (uint8(c) - 48);
-        }
-    }
-
-    /**
-     * @notice The decimal ASCII rendering of `v`: parseUint's inverse (no
-     *         leading zeros, so toString(parseUint(s)) normalizes)
-     */
-    function toString(uint256 v) public pure returns (string memory) {
-        if (v == 0) return "0";
-        uint256 digits;
-        for (uint256 t = v; t > 0; t /= 10) {
-            digits++;
-        }
-        bytes memory buf = new bytes(digits);
-        for (uint256 t = v; t > 0; t /= 10) {
-            digits--;
-            buf[digits] = bytes1(uint8(48 + (t % 10)));
-        }
-        return string(buf);
-    }
-
-    /**
-     * @notice The decimal ASCII rendering of `value`, signed: a leading
-     *         minus for negative values, no plus, no leading zeros
-     * @dev int256.min renders correctly (its magnitude is computed
-     *      unchecked)
-     */
-    function toString(int256 value) external pure returns (string memory) {
-        return string.concat(value < 0 ? "-" : "", toString(_magnitude(value)));
     }
 
     /**
@@ -1386,46 +1196,31 @@ contract Operations {
     }
 
     /**
-     * @dev The shared parseUnits engine: the magnitude scaled to
-     *      `decimals` places and the sign, with the dropped fraction folded
-     *      in per `rounding` (a non-zero remainder rounds away from zero
-     *      for Ceil on a positive value and Floor on a negative one). With
-     *      `signed` false a minus sign is an InvalidDecimalDigit.
+     * @notice The decimal ASCII rendering of `v`: parseUint's inverse (no
+     *         leading zeros, so toString(parseUint(s)) normalizes)
      */
-    function _parseUnits(bytes calldata value, uint256 decimals, Rounding rounding, bool signed)
-        private
-        pure
-        returns (uint256 magnitude, bool negative)
-    {
-        if (decimals > 77) revert InvalidPrecision(decimals);
-        if (value.length == 0) revert EmptyNumber();
-        negative = value[0] == "-";
-        if (negative && !signed) revert InvalidDecimalDigit(0, value[0]);
-        uint256 start = negative || value[0] == "+" ? 1 : 0;
-        bool point;
-        bool digit;
-        bool remainder;
-        uint256 fractional;
-        for (uint256 i = start; i < value.length; i++) {
-            bytes1 c = value[i];
-            if (c == "." && !point) {
-                point = true;
-                continue;
-            }
-            if (c < "0" || c > "9") revert InvalidDecimalDigit(i, c);
-            digit = true;
-            if (point && fractional >= decimals) {
-                if (c != "0") remainder = true;
-            } else {
-                magnitude = magnitude * 10 + uint256(uint8(c) - 48);
-                if (point) fractional++;
-            }
+    function toString(uint256 v) public pure returns (string memory) {
+        if (v == 0) return "0";
+        uint256 digits;
+        for (uint256 t = v; t > 0; t /= 10) {
+            digits++;
         }
-        if (!digit) revert EmptyNumber();
-        magnitude *= 10 ** (decimals - fractional);
-        if (remainder && ((negative && rounding == Rounding.Floor) || (!negative && rounding == Rounding.Ceil))) {
-            magnitude++;
+        bytes memory buf = new bytes(digits);
+        for (uint256 t = v; t > 0; t /= 10) {
+            digits--;
+            buf[digits] = bytes1(uint8(48 + (t % 10)));
         }
+        return string(buf);
+    }
+
+    /**
+     * @notice The decimal ASCII rendering of `value`, signed: a leading
+     *         minus for negative values, no plus, no leading zeros
+     * @dev int256.min renders correctly (its magnitude is computed
+     *      unchecked)
+     */
+    function toString(int256 value) external pure returns (string memory) {
+        return string.concat(value < 0 ? "-" : "", toString(_magnitude(value)));
     }
 
     /**
@@ -1520,6 +1315,41 @@ contract Operations {
         return AbiCodec.tuple(bytes(types), values);
     }
 
+    // ============ Internal Numeric Helpers ============
+
+    /**
+     * @dev |value| as a uint256; total, int256.min yields 2^255
+     */
+    function _magnitude(int256 value) private pure returns (uint256) {
+        unchecked {
+            return value < 0 ? uint256(-(value + 1)) + 1 : uint256(value);
+        }
+    }
+
+    /**
+     * @dev The int256 with magnitude `value` and the given sign, reverting
+     *      with Panic(0x11) when it does not fit (2^255 fits only negative)
+     */
+    function _signedMagnitude(uint256 value, bool negative) private pure returns (int256) {
+        if (value > (negative ? uint256(1) << 255 : uint256(type(int256).max))) _panic(0x11);
+        unchecked {
+            return negative ? -int256(value) : int256(value);
+        }
+    }
+
+    /**
+     * @dev Reverts with the Solidity panic `code` (0x11 arithmetic
+     *      overflow, 0x12 division by zero), byte-identical to the
+     *      compiler's own checked-arithmetic reverts
+     */
+    function _panic(uint256 panicCode) private pure {
+        assembly ("memory-safe") {
+            mstore(0, 0x4e487b7100000000000000000000000000000000000000000000000000000000)
+            mstore(4, panicCode)
+            revert(0, 36)
+        }
+    }
+
     /**
      * @dev floor(a * b / denominator) over the 512-bit product
      *      [prod1 prod0], the classic Remco Bloemen construction: subtract
@@ -1571,15 +1401,122 @@ contract Operations {
     }
 
     /**
-     * @dev Reverts with the Solidity panic `code` (0x11 arithmetic
-     *      overflow, 0x12 division by zero), byte-identical to the
-     *      compiler's own checked-arithmetic reverts
+     * @dev base ** exponent % modulus by square-and-multiply over MULMOD
+     *      (at most 256 rounds for any uint256 exponent). Reverts with
+     *      Panic(0x12) when the modulus is zero.
      */
-    function _panic(uint256 panicCode) private pure {
-        assembly ("memory-safe") {
-            mstore(0, 0x4e487b7100000000000000000000000000000000000000000000000000000000)
-            mstore(4, panicCode)
-            revert(0, 36)
+    function _powMod(uint256 base, uint256 exponent, uint256 modulus) private pure returns (uint256 result) {
+        result = 1 % modulus;
+        base %= modulus;
+        while (exponent != 0) {
+            if (exponent & 1 != 0) result = mulmod(result, base, modulus);
+            exponent >>= 1;
+            if (exponent != 0) base = mulmod(base, base, modulus);
+        }
+    }
+
+    /**
+     * @dev The inverse of `base` modulo `modulus` by the extended Euclidean
+     *      algorithm with coefficients kept reduced modulo `modulus`
+     *      (MULMOD keeps q * t from overflowing even for a full-word
+     *      modulus). Reverts with ModularInverseDoesNotExist unless the two
+     *      are coprime, and with Panic(0x12) when the modulus is zero.
+     */
+    function _inverseMod(uint256 base, uint256 modulus) private pure returns (uint256) {
+        uint256 r = modulus;
+        uint256 nextR = base % modulus;
+        uint256 t;
+        uint256 nextT = 1 % modulus;
+        while (nextR != 0) {
+            uint256 q = r / nextR;
+            (r, nextR) = (nextR, r % nextR);
+            uint256 product = mulmod(q, nextT, modulus);
+            uint256 next = t >= product ? t - product : modulus - (product - t);
+            (t, nextT) = (nextT, next);
+        }
+        if (r != 1) revert ModularInverseDoesNotExist(base, modulus);
+        return t;
+    }
+
+    /**
+     * @dev floor(log2(x)) by a binary bit scan; returns 0 for x = 0 (the
+     *      public entry rejects that input)
+     */
+    function _log2(uint256 x) private pure returns (uint256 r) {
+        unchecked {
+            r = x >= 1 << 128 ? 128 : 0;
+            x >>= r;
+            uint256 s = x >= 1 << 64 ? 64 : 0;
+            x >>= s;
+            r |= s;
+            s = x >= 1 << 32 ? 32 : 0;
+            x >>= s;
+            r |= s;
+            s = x >= 1 << 16 ? 16 : 0;
+            x >>= s;
+            r |= s;
+            s = x >= 1 << 8 ? 8 : 0;
+            x >>= s;
+            r |= s;
+            s = x >= 1 << 4 ? 4 : 0;
+            x >>= s;
+            r |= s;
+            s = x >= 1 << 2 ? 2 : 0;
+            x >>= s;
+            r |= s;
+            r |= x >= 1 << 1 ? 1 : 0;
+        }
+    }
+
+    // ============ Internal Bytes Helpers ============
+
+    /**
+     * @dev Clamps a signed slice index into 0 .. length (negative counts
+     *      from the end; out-of-range indices clamp to the nearest bound)
+     */
+    function _rangeIndex(int256 index, uint256 length) private pure returns (uint256) {
+        if (index < 0) return index < -int256(length) ? 0 : uint256(int256(length) + index);
+        return uint256(index) > length ? length : uint256(index);
+    }
+
+    /**
+     * @dev Normalizes a signed element index into 0 .. length-1, reverting
+     *      with InvalidByteIndex outside -length .. length-1
+     */
+    function _strictIndex(int256 index, uint256 length) private pure returns (uint256) {
+        if (index >= int256(length) || index < -int256(length)) revert InvalidByteIndex(index, length);
+        return index < 0 ? uint256(int256(length) + index) : uint256(index);
+    }
+
+    /**
+     * @dev Requires `data` to be well-formed UTF-8 per the Unicode table of
+     *      valid byte sequences: lead bytes C2-F4 with the right number of
+     *      continuation bytes, the second-byte ranges that exclude overlong
+     *      forms, surrogates and code points past U+10FFFF. Reverts with
+     *      InvalidUtf8 at the first offending byte.
+     */
+    function _checkUtf8(bytes calldata data) private pure {
+        for (uint256 i; i < data.length;) {
+            uint8 first = uint8(data[i]);
+            if (first < 0x80) {
+                i++;
+                continue;
+            }
+            uint256 count;
+            if (first >= 0xc2 && first <= 0xdf) count = 1;
+            else if (first >= 0xe0 && first <= 0xef) count = 2;
+            else if (first >= 0xf0 && first <= 0xf4) count = 3;
+            else revert InvalidUtf8(i);
+            if (data.length - i <= count) revert InvalidUtf8(i);
+            uint8 second = uint8(data[i + 1]);
+            if (
+                (first == 0xe0 && second < 0xa0) || (first == 0xed && second >= 0xa0)
+                    || (first == 0xf0 && second < 0x90) || (first == 0xf4 && second >= 0x90)
+            ) revert InvalidUtf8(i + 1);
+            for (uint256 j = 1; j <= count; j++) {
+                if (uint8(data[i + j]) & 0xc0 != 0x80) revert InvalidUtf8(i + j);
+            }
+            i += count + 1;
         }
     }
 
@@ -1612,6 +1549,18 @@ contract Operations {
     }
 
     /**
+     * @dev Flips the ASCII case bit of every byte in the letter range
+     *      `low` .. `high`, leaving the rest untouched
+     */
+    function _foldCase(bytes calldata s, bytes1 low, bytes1 high) private pure returns (bytes memory out) {
+        out = s;
+        for (uint256 i = 0; i < out.length; i++) {
+            bytes1 c = out[i];
+            if (c >= low && c <= high) out[i] = c ^ 0x20;
+        }
+    }
+
+    /**
      * @dev Copies `src` into `dst` starting at byte `dstOffset` (caller
      *      sizes dst)
      */
@@ -1619,6 +1568,65 @@ contract Operations {
         uint256 len = src.length;
         assembly ("memory-safe") {
             calldatacopy(add(add(dst, 32), dstOffset), src.offset, len)
+        }
+    }
+
+    // ============ Internal Parse Helpers ============
+
+    /**
+     * @dev The digits s[start ..] as a checked uint256: at least one digit
+     *      (EmptyNumber), all in 0-9 (InvalidDecimalDigit at the offending
+     *      position). The signed entry point consumes the sign first.
+     */
+    function _parseDigits(bytes calldata s, uint256 start) private pure returns (uint256 result) {
+        if (start == s.length) revert EmptyNumber();
+        for (uint256 i = start; i < s.length; i++) {
+            bytes1 c = s[i];
+            if (c < "0" || c > "9") revert InvalidDecimalDigit(i, c);
+            result = result * 10 + (uint8(c) - 48);
+        }
+    }
+
+    /**
+     * @dev The shared parseUnits engine: the magnitude scaled to
+     *      `decimals` places and the sign, with the dropped fraction folded
+     *      in per `rounding` (a non-zero remainder rounds away from zero
+     *      for Ceil on a positive value and Floor on a negative one). With
+     *      `signed` false a minus sign is an InvalidDecimalDigit.
+     */
+    function _parseUnits(bytes calldata value, uint256 decimals, Rounding rounding, bool signed)
+        private
+        pure
+        returns (uint256 magnitude, bool negative)
+    {
+        if (decimals > 77) revert InvalidPrecision(decimals);
+        if (value.length == 0) revert EmptyNumber();
+        negative = value[0] == "-";
+        if (negative && !signed) revert InvalidDecimalDigit(0, value[0]);
+        uint256 start = negative || value[0] == "+" ? 1 : 0;
+        bool point;
+        bool digit;
+        bool remainder;
+        uint256 fractional;
+        for (uint256 i = start; i < value.length; i++) {
+            bytes1 c = value[i];
+            if (c == "." && !point) {
+                point = true;
+                continue;
+            }
+            if (c < "0" || c > "9") revert InvalidDecimalDigit(i, c);
+            digit = true;
+            if (point && fractional >= decimals) {
+                if (c != "0") remainder = true;
+            } else {
+                magnitude = magnitude * 10 + uint256(uint8(c) - 48);
+                if (point) fractional++;
+            }
+        }
+        if (!digit) revert EmptyNumber();
+        magnitude *= 10 ** (decimals - fractional);
+        if (remainder && ((negative && rounding == Rounding.Floor) || (!negative && rounding == Rounding.Ceil))) {
+            magnitude++;
         }
     }
 }

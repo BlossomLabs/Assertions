@@ -32,6 +32,8 @@ import {AbiCodec} from "./lib/AbiCodec.sol";
 contract Collections {
     // ============ Custom Errors ============
 
+    // InvalidCallbackResult is shared with the codec and declared in AbiCodec.
+
     /**
      * @notice Thrown when a fold lambda offset does not leave room for a
      *         32-byte word inside the template
@@ -64,8 +66,37 @@ contract Collections {
      */
     error InvalidLane(uint256 which);
 
-    // InvalidCallbackResult is shared with the codec and declared in
-    // AbiCodec; the callback errors below sit with the Callback type.
+    /**
+     * @notice Thrown when a Callback descriptor is inconsistent: a slot
+     *         index past the constants, a binary callback binding both
+     *         elements to the same slot, an argument descriptor that is
+     *         not a parenthesized tuple, or a constants count that differs
+     *         from the descriptor's component count
+     */
+    error InvalidCallback();
+
+    /**
+     * @notice Thrown when a lambda or callback target has no code (a
+     *         staticcall there would succeed with empty returndata and
+     *         surface as a silent wrong value; precompiles are not
+     *         callbacks)
+     * @param target The code-less address
+     */
+    error InvalidCallbackTarget(address target);
+
+    /**
+     * @notice Thrown when a lambda or callback application reverts: an
+     *         assertion failure inside the loop, reported with the revert
+     *         reason preserved
+     * @param operation The selector of the Collections operation that ran
+     *        the callback
+     * @param index The element the callback was applied to
+     * @param other The second element for binary callbacks (0 otherwise)
+     * @param target The callback contract
+     * @param callData The calldata that was sent
+     * @param reason The raw revert data
+     */
+    error CallbackFailed(bytes4 operation, uint256 index, uint256 other, address target, bytes callData, bytes reason);
 
     // ============ Types ============
 
@@ -130,38 +161,6 @@ contract Collections {
         uint256 second;
         bytes expression;
     }
-
-    /**
-     * @notice Thrown when a Callback descriptor is inconsistent: a slot
-     *         index past the constants, a binary callback binding both
-     *         elements to the same slot, an argument descriptor that is
-     *         not a parenthesized tuple, or a constants count that differs
-     *         from the descriptor's component count
-     */
-    error InvalidCallback();
-
-    /**
-     * @notice Thrown when a lambda or callback target has no code (a
-     *         staticcall there would succeed with empty returndata and
-     *         surface as a silent wrong value; precompiles are not
-     *         callbacks)
-     * @param target The code-less address
-     */
-    error InvalidCallbackTarget(address target);
-
-    /**
-     * @notice Thrown when a lambda or callback application reverts: an
-     *         assertion failure inside the loop, reported with the revert
-     *         reason preserved
-     * @param operation The selector of the Collections operation that ran
-     *        the callback
-     * @param index The element the callback was applied to
-     * @param other The second element for binary callbacks (0 otherwise)
-     * @param target The callback contract
-     * @param callData The calldata that was sent
-     * @param reason The raw revert data
-     */
-    error CallbackFailed(bytes4 operation, uint256 index, uint256 other, address target, bytes callData, bytes reason);
 
     /**
      * @dev A Callback checked and parsed once per operation: the argument

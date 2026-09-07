@@ -290,6 +290,53 @@ contract Expressions {
     }
 
     /**
+     * @notice Internal entry point for guarded evaluation; reverts for any
+     *         caller other than this contract
+     * @dev External only because the EVM's sole catch primitive is a call
+     *      boundary: TryOrElse and IsValid evaluate their attempt through
+     *      it so a failure rolls back cleanly. The msg.sender check keeps
+     *      outside callers from injecting a cache. Returns the node's value
+     *      and the cache as extended by the attempt, which the caller
+     *      adopts on success.
+     * @param expression The graph being evaluated
+     * @param parameters The evaluation's parameters
+     * @param index The node to evaluate
+     * @param initial The cache as it stood when the attempt began
+     * @return result The evaluated node's value
+     * @return updated The cache after the attempt
+     */
+    function evaluateGuarded(
+        Expression calldata expression,
+        bytes[] calldata parameters,
+        uint256 index,
+        Cache calldata initial
+    ) external view returns (bytes memory result, Cache memory updated) {
+        if (msg.sender != address(this)) revert InvalidNode(index);
+        updated = initial;
+        result = _evaluate(expression, parameters, updated, index);
+    }
+
+    /**
+     * @notice `evaluate` over an abi-encoded Expression, for callers that
+     *         hold the graph as opaque bytes
+     * @dev The Collections callback socket: a `Callback` whose `expression`
+     *      is non-empty is applied by calling this with the substituted
+     *      slots as `parameters`. Evaluation happens through an external
+     *      self-call, so a failure inside the graph surfaces as
+     *      CallFailed(0, this, callData, reason) with the inner error as
+     *      the reason. Returns the same raw value as `evaluate`.
+     * @param expression abi.encode(Expression)
+     * @param parameters The values Parameter nodes read
+     */
+    function evaluateEncoded(bytes calldata expression, bytes[] calldata parameters) external view {
+        Expression memory decoded = abi.decode(expression, (Expression));
+        bytes memory result = _call(address(this), abi.encodeCall(this.evaluate, (decoded, parameters)), 0);
+        assembly ("memory-safe") { return(add(result, 32), mload(result)) }
+    }
+
+    // ============ Internal Helpers ============
+
+    /**
      * @dev Evaluates node `index`, memoizing into `cache`. The caller has
      *      run `evaluate`'s structural checks, so refs are in range and
      *      backwards; kinds dispatch as documented on Kind.
@@ -352,33 +399,6 @@ contract Expressions {
     }
 
     /**
-     * @notice Internal entry point for guarded evaluation; reverts for any
-     *         caller other than this contract
-     * @dev External only because the EVM's sole catch primitive is a call
-     *      boundary: TryOrElse and IsValid evaluate their attempt through
-     *      it so a failure rolls back cleanly. The msg.sender check keeps
-     *      outside callers from injecting a cache. Returns the node's value
-     *      and the cache as extended by the attempt, which the caller
-     *      adopts on success.
-     * @param expression The graph being evaluated
-     * @param parameters The evaluation's parameters
-     * @param index The node to evaluate
-     * @param initial The cache as it stood when the attempt began
-     * @return result The evaluated node's value
-     * @return updated The cache after the attempt
-     */
-    function evaluateGuarded(
-        Expression calldata expression,
-        bytes[] calldata parameters,
-        uint256 index,
-        Cache calldata initial
-    ) external view returns (bytes memory result, Cache memory updated) {
-        if (msg.sender != address(this)) revert InvalidNode(index);
-        updated = initial;
-        result = _evaluate(expression, parameters, updated, index);
-    }
-
-    /**
      * @dev Evaluates node `index` behind the `evaluateGuarded` boundary:
      *      on success adopts the attempt's memoized values into `cache`
      *      and returns them, on any failure leaves `cache` untouched and
@@ -400,26 +420,6 @@ contract Expressions {
             return (false, "");
         }
     }
-
-    /**
-     * @notice `evaluate` over an abi-encoded Expression, for callers that
-     *         hold the graph as opaque bytes
-     * @dev The Collections callback socket: a `Callback` whose `expression`
-     *      is non-empty is applied by calling this with the substituted
-     *      slots as `parameters`. Evaluation happens through an external
-     *      self-call, so a failure inside the graph surfaces as
-     *      CallFailed(0, this, callData, reason) with the inner error as
-     *      the reason. Returns the same raw value as `evaluate`.
-     * @param expression abi.encode(Expression)
-     * @param parameters The values Parameter nodes read
-     */
-    function evaluateEncoded(bytes calldata expression, bytes[] calldata parameters) external view {
-        Expression memory decoded = abi.decode(expression, (Expression));
-        bytes memory result = _call(address(this), abi.encodeCall(this.evaluate, (decoded, parameters)), 0);
-        assembly ("memory-safe") { return(add(result, 32), mload(result)) }
-    }
-
-    // ============ Internal Helpers ============
 
     /**
      * @dev The canonical argument tuple for `types` over resolved values,

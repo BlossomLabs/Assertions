@@ -3,6 +3,8 @@ import * as viemChains from "viem/chains";
 import { createConfig, http } from "wagmi";
 import { injected } from "wagmi/connectors";
 
+import { rpcUrl } from "./rpc";
+
 function isChain(value: unknown): value is Chain {
   return (
     typeof value === "object" &&
@@ -25,9 +27,10 @@ export function chainById(id: number): Chain | undefined {
   return ALL_CHAINS.find((chain) => chain.id === id);
 }
 
-/** Default public transports for every known chain. */
+/** Transports for every known chain: dRPC where configured, viem's public
+ *  defaults everywhere else. */
 export const transports = Object.fromEntries(
-  ALL_CHAINS.map((chain) => [chain.id, http()]),
+  ALL_CHAINS.map((chain) => [chain.id, http(rpcUrl(chain.id))]),
 );
 
 // Registering every viem chain lets wagmi's switchChain reach any of them

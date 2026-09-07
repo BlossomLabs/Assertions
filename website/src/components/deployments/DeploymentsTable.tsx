@@ -146,8 +146,16 @@ export function DeploymentsTable({
                             key={contract.key}
                             className="flex items-baseline gap-2"
                           >
-                            <span className="text-[10px] uppercase tracking-wide text-[var(--color-ink-3)] w-16">
+                            <span
+                              className="text-[10px] uppercase tracking-wide text-[var(--color-ink-3)] w-16"
+                              title={
+                                contract.released
+                                  ? undefined
+                                  : `${contract.name}: unreleased artifact candidate`
+                              }
+                            >
                               {contract.key}
+                              {contract.released ? "" : "*"}
                             </span>
                             {isDeployed && explorer ? (
                               <a

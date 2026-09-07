@@ -3,7 +3,7 @@ title: EVMcrispr integration
 description: Writing assertions as one-line EVML scripts with the assert command.
 ---
 
-[EVMcrispr](https://evmcrispr.blossom.software)'s `assert` command compiles readable one-line scripts into the exact core and Operations calldata described in the rest of these docs. It lives in the std module, which is always loaded, so an assertion needs no `load` line of its own. Scripts that use the lang module's array/string helpers (`@len!`, `@str.split!`, `@bytes.len!`, ...) also need `load lang`; the chain id and the block and transaction context reads (`@chainId!`, `@block.timestamp!`, `@tx.from!`, ...) need `load receipts`; the code and storage reads (`@codeHash!`, ...) need `load contracts`, and the arithmetic conveniences (`@min!`, `@sqrt!`, ...) need `load math`. The [visual builder](/builder) generates these lines for you and previews their live values.
+[EVMcrispr](https://evmcrispr.blossom.software)'s `assert` command compiles readable one-line scripts into the exact core, Operations and Collections calldata described in the rest of these docs. It lives in the std module, which is always loaded, so an assertion needs no `load` line of its own. Scripts that use the lang module's array/string helpers (`@len!`, `@str.split!`, `@bytes.len!`, ...) also need `load lang`; the chain id and the block and transaction context reads (`@chainId!`, `@block.timestamp!`, `@tx.from!`, ...) need `load receipts`; the code and storage reads (`@codeHash!`, ...) need `load contracts`, and the arithmetic conveniences (`@min!`, `@sqrt!`, ...) need `load math`. The [visual builder](/builder) generates these lines for you and previews their live values.
 
 ```evml
 
@@ -14,30 +14,13 @@ assert $token::balanceOf(@me) >= 100e18 "not enough tokens"
 
 ### Builder compiler and execution account
 
-The builder and this site's EVML highlighting use EVMcrispr
-[`6513da6c`](https://github.com/EVMcrispr/evmcrispr/commit/6513da6c4407f912d41a6490995afb6ff204b498),
-pinned in `website/package.json`. It adds the corrected Assertions runtime to
-the latest `next` baseline, `4fd8ed6b`. This revision compiles against core
-`0x67DBB438FdC614466984Dc8F68dAB812d785a2aE` and Operations
-`0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD`. Both contracts must exist on
-the selected chain; check [deployments](/deployments) before executing.
+The builder and this site's EVML highlighting use a vendored EVMcrispr checkout (`website/.evmcrispr`), pinned by `evmcrispr.commit` in `website/package.json`. The pinned revision compiles against the canonical Assertions, Operations and Collections addresses listed under [Deployments](/docs/reference/deployments): all three must exist on the selected chain, so check [the deployments page](/deployments) before executing. The addresses are the same on every chain, so there is nothing to configure; a fork that wants different code installs it at those addresses. Expressions is unreleased and has no SDK face.
 
-The shared-codec refactor has newer artifact candidates. Its local SDK integration is verified with `EVMCRISPR_SRC`, but this published vendor pin has not yet been updated. Update it to a tested, published SDK commit before releasing the new artifacts through the default builder.
+The builder supports `lang`, `receipts`, `contracts`, `math`, `token`, `vault`, `acl`, `sim`, `safe`, `governor` and `aragonosx`, in addition to the always-loaded `std`. Other modules in the full EVMcrispr terminal are not automatically available here. At the pinned revision, `receipts` and the protocol modules among these (`vault`, `acl`, `safe`, `governor`, `aragonosx`) are flagged experimental in the checkout: their faces may change between pins.
 
-The builder supports `lang`, `receipts`, `contracts`, `math`, `token`,
-`vault`, `acl`, `sim`, `safe`, `governor` and `aragonosx`, in addition to
-the always-loaded `std`. Other modules in the full EVMcrispr terminal are
-not automatically available here.
+Use `@sender` for the account sending the surrounding block's calls. Inside a Safe, Governor or Aragon OSx block it refers to that executor; `@me` refers to the connected account. For example, inside a Safe block, an allowance assertion should usually check `allowance(@sender, spender)`. `@tx.from!` reads the transaction origin and is a different identity.
 
-Use `@sender` for the account sending the surrounding block's calls. Inside
-a Safe, Governor or Aragon OSx block it refers to that executor; `@me`
-refers to the connected account. For example, inside a Safe block, an
-allowance assertion should usually check `allowance(@sender, spender)`.
-`@tx.from!` reads the transaction origin and is a different identity.
-
-`@hash!` and `@bytes.len!` require a decoded `string` or `bytes` return.
-Use `@len!` for an array's element count; array envelopes cannot be passed
-to bytes operators because their length word counts elements, not bytes.
+`@hash!` and `@bytes.len!` require a decoded `string` or `bytes` return. Use `@len!` for an array's element count; array envelopes cannot be passed to bytes operations because their length word counts elements, not bytes.
 
 ### Syntax
 
@@ -46,9 +29,9 @@ assert <target>::<viewFn(args)> <op> <expected> "revert msg"            # named 
 assert <target>::{viewFn(argTypes)(returnType) <args>} <op> <expected>  # inline ABI when needed
 ```
 
-Operations: `==` `!=` `>` `<` `>=` `<=` and `~=` (approximate equality, with `--delta`). Strings support `==` / `!=` anywhere (nested comparisons compile to on-chain keccak). A bare `assert <call>` with no operator requires a boolean call and compiles to an `EQ true` constraint.
+Comparison operators: `==` `!=` `>` `<` `>=` `<=` and `~=` (approximate equality, with `--delta`). Strings support `==` / `!=` anywhere (nested comparisons compile to on-chain keccak). A bare `assert <call>` with no operator requires a boolean call and compiles to an `EQ true` constraint.
 
-Every line compiles to the ERC-8211 judge: the live expression becomes an `InputParam` (a staticcall, balance read, or nested core expression) validated by inline constraints (`EQ`/`GTE`/`LTE`/`IN`) via `assertParam`. Comparisons the constraints can't express directly (`!=`, signed and two-live-side comparisons) route through a read-spliced [Operations](/docs/operators) comparison judged `EQ 1`.
+Every line compiles to the ERC-8211 judge: the live expression becomes an `InputParam` (a staticcall, balance read, or nested core expression) validated by inline constraints via `assertParam`. Comparisons the [constraints](/docs/core/reads#constraints) can't express directly (`!=`, signed and two-live-side comparisons) route through a read-spliced [Operations](/docs/operators) comparison judged `EQ 1`.
 
 ### Chained calls
 
@@ -98,7 +81,7 @@ assert @bytes.len!(@codeAt!($t)) > 0 "not a contract"              # needs load 
 
 ## On-chain helpers (trailing `!`)
 
-Helpers with a trailing `!` evaluate **on-chain at assertion time** by compiling to core and Operations calldata; ordinary helpers (`@token`, `@get`, `@num`, ...) resolve at composition time and freeze into the calldata. Since the helper unification each helper is one name with up to two faces: the plain face runs (or snapshots) at script build time, the `!` face compiles to on-chain calldata.
+Helpers with a trailing `!` evaluate **on-chain at assertion time** by compiling to core, Operations and Collections calldata; ordinary helpers (`@token`, `@get`, `@num`, ...) resolve at composition time and freeze into the calldata. Each helper is one name with up to two faces: the plain face runs (or snapshots) at script build time, the `!` face compiles to on-chain calldata.
 
 Array faces (`@map!`, `@filter!`, `@all!`, `@any!`, `@find!`, `@reduce!`) apply a NAMED definition rather than an inline expression. `def @name!` declares one, and the face supplies the arguments it takes:
 
@@ -107,58 +90,59 @@ def @ge100! "$x: number -> bool" @bool!($x >= 100)
 assert @all!($vault::{caps()(uint256[])} @ge100!)
 ```
 
-The definition is inlined where it is used, so naming a parameter more than once stamps the element at each place it appears — `@num!($x * $x)` squares in one call. It compiles rather than runs, so it must be fully typed and cannot be called off-chain, and it is scoped like any other `def`.
+The definition is inlined where it is used, so naming a parameter more than once stamps the element at each place it appears: `@calc!($x * $x)` squares in one call. It compiles rather than runs, so it must be fully typed and cannot be called off-chain, and it is scoped like any other `def`.
 
-The on-chain surface spans five modules:
+The on-chain surface of the builder's modules:
 
-- **std** (always available, no `load` needed): `@num!`, `@bool!`, `@bytes!`, `@hash!`, `@balance!` and the revert probe `@reverts!`.
+- **std** (always available, no `load` needed): `@calc!`, `@bool!`, `@bytes!`, `@hash!`, `@balance!`, the control faces `@ifElse!`, `@orElse!` and `@reverts!`, the signature check `@sigValid!`, and the `@abi.*!` family (`@abi.encode!`, `@abi.encodePacked!`, `@abi.encodeCall!`, `@abi.decode!`, `@abi.decodeCall!`).
 - **lang** (needs `load lang`): the array and string faces, including `@len!`, `@bytes.len!`, `@str.len!`, `@str.split!`, `@str.includes!`, `@str.charset!`.
-- **receipts** (needs `load receipts`): the chain id `@chainId!`, plus the block and transaction context reads, the `@block.*` and `@tx.*` families below.
-- **contracts** (needs `load contracts`): the code and storage reads, including `@codeHash!`.
-- **math** (needs `load math`): the arithmetic conveniences `@min!`, `@max!`, `@absDiff!` and `@sqrt!`.
+- **receipts** (needs `load receipts`): the chain id `@chainId!`, plus the block and transaction context reads, the `@block.*!` and `@tx.*!` families, tabulated on [the words page](/docs/operators/words#environment-reads).
+- **contracts** (needs `load contracts`): the code reads `@codeHash!` and `@codeAt!`, and the storage-slot derivations `@slot.array!` and `@slot.mapping!`.
+- **math** (needs `load math`): the arithmetic conveniences `@min!`, `@max!`, `@absDiff!`, `@sqrt!`, and the fixed-point family `@exp!`, `@ln!`, `@log2!`, `@pow!`.
 
 | Helper | Module | Returns | Description |
 |--------|--------|---------|-------------|
+| `@abi.encode!(types values...)` | std | bytes | `abi.encode` over live values: live values must be elementary static types, at most 4 per call; dynamic, array and tuple types only encode when every value is constant |
+| `@abi.encodePacked!(types values...)` | std | bytes | Packed encoding, compiled to `concat` over `slice`-narrowed words: live values are cut to their packed width and live string/bytes values pass through whole, at most 4 per call |
+| `@abi.encodeCall!(signature params...)` | std | bytes | Calldata for a call: the signature must be a constant, live arguments must be elementary static types contributing one word each (at most 4 per call) |
+| `@abi.decode!(types data)[_ $]` | std | any | Decode a live bytes value: needs a `[_ $]` lens and returns only the selected value; array selections are refused |
+| `@abi.decodeCall!(contract calldata)[...]` | std | any | Decode live calldata against an inline signature: checks the selector on-chain (a mismatch reverts) and returns the selected argument |
 | `@absDiff!(a b)` | math | number | Absolute difference computed on-chain; never underflows. `@absDiff!(a b) <= d` is the composable approximate-equality (plain `@absDiff` computes off-chain) |
-| `@balance!(ETH\|token addr)` | std | number | Live balance: native for ETH, else ERC-20 `balanceOf` (token symbols resolve like `@token`); replaces the removed `@token:balance` |
-| `@block.baseFee!` / `@block.blobBaseFee!` | receipts | number | The block base fee / blob base fee in wei at assertion time (plain `@block.baseFee(block? chain?)` / `@block.blobBaseFee(block? chain?)` read a sealed block off-chain; the blob fee with no block argument reads the live `eth_blobBaseFee` value) |
-| `@block.hash!(n)` | receipts | bytes32 | The hash of block `n` (0 outside the last 256 blocks); the number composes live, e.g. `@block.hash!(@block.number! - 1)`; plain `@block.hash(block? chain?)` reads ANY sealed block off-chain, unbounded by the 256-block window |
-| `@block.number!` | receipts | number | The block number at assertion time (plain `@block.number(block? chain?)` reads a sealed block off-chain, default latest) |
-| `@block.coinbase!` / `@tx.from!` | receipts | address | The block proposer fee recipient / the sender (origin) of the executing transaction at assertion time (plain `@block.coinbase(block? chain?)` and `@tx.from(hash chain?)` read sealed data off-chain) |
-| `@block.gasLimit!` | receipts | number | The block gas limit at assertion time (plain `@block.gasLimit(block? chain?)` reads a sealed block off-chain) |
-| `@block.prevrandao!` | receipts | number | The previous RANDAO mix at assertion time (plain `@block.prevrandao(block? chain?)` reads a sealed block's mixHash; pre-merge blocks carry difficulty semantics there) |
-| `@sqrt!(expr)` | math | number | Integer square root (floor) computed on-chain, e.g. `@sqrt!($pool::reserve0() * $pool::reserve1())` (plain `@sqrt` computes off-chain) |
+| `@balance!(ETH\|token addr)` | std | number | Live balance: native for ETH, else ERC-20 `balanceOf` (token symbols resolve like `@token`) |
 | `@bool!(expr)` | std | bool | On-chain comparisons and logic: `== != < <= > >= and or xor not` |
+| `@bytes!(a "&" b)` | std | number | Bitwise word ops (`&` `\|` `xor` `<<` `>>`, the operator quoted; spelled `xor` rather than `^`, which `@calc!` uses for powers); single-arg `@bytes!(x)` is the raw-word cast |
 | `@bytes.at!(call i)` | lang | bytes | One byte of a bytes/string return, sliced on-chain; a negative index resolves against the live byte length |
 | `@bytes.len!(call)` / `@str.len!(call)` | lang | number | Decoded byte length of a bytes/string return (multi-byte UTF-8 characters count once per byte) |
 | `@bytes.slice!(call start end?)` | lang | bytes | A byte range of a bytes/string return, sliced on-chain; negative bounds resolve against the live byte length (inverted live ranges revert, there is no silent clamp) |
-| `@bytes!(a "&" b)` | std | number | Bitwise word ops (`&` `\|` `^` `<<` `>>`, operator quoted); single-arg `@bytes!(x)` is the raw-word cast |
-| `@chainId!` | receipts | number | The chain id, read on-chain at assertion time |
-| `@str.charset!(call "a-z0-9-")` | lang | bool | Whether every byte of a string return is in the character class (ranges + literals, byte-level ASCII) |
+| `@codeAt!(addr)` | contracts | bytes | The deployed bytecode at an address, read at assertion time through `Operations.code`; sees code a batch deployed in an earlier step |
 | `@codeHash!(addr-or-call)` | contracts | bytes32 | Live EXTCODEHASH; the argument may be a `::` call resolving to an address |
-| `@enumerate!(call)` | lang | array | Pair every element with its index on-chain (`zipWords(iotaWords(n), payload)` with the live length); the result is an on-chain record (see `@keys!`) |
+| `@enumerate!(call)` | lang | array | Pair every element with its index on-chain (`zipWords(iotaWords(n), payload)` with the live length); the result is an on-chain record ([records](/docs/operators/fold#on-chain-records)) |
+| `@exp!(x)` / `@ln!(x)` | math | number | e^x and the natural log in wad (1e18) fixed point, via `expWad`/`lnWad`; the result carries its wad scale so surrounding arithmetic aligns to it |
 | `@filter!(call pred)` | lang | array | Keep the elements passing `pred`, a named `def @name!` of one parameter returning bool; the kept words payload composes with the other array faces |
 | `@find!(call pred)` | lang | any | The first element passing the predicate: a core pick over the `filterWords` output; no match REVERTS the assertion at judge time |
 | `@hash!(call)` | std | bytes32 | Hash of the decoded return payload, on-chain: keccak256 by default, sha256 with a second `"sha256"` argument |
-| `@str.includes!(call "part")` | lang | bool | Whether a string return contains a substring (exact bytes, case-sensitive) |
-| `@keys!(record)` / `@values!(record)` | lang | array | Lanes 0/1 of an on-chain record through `unzipWords`. A record is a zipped key/value word-pair payload, the interleaved words that `@zip!`/`@enumerate!` produce; string keys travel as their keccak digests |
+| `@ifElse!(cond ? then : else)` | std | any | The lazy ternary, compiled to the core's `cond`: the condition's first word judges (nonzero = then) and the losing branch is never resolved; spaces are required around `?` and `:`. Branching on resolvability is `@ifElse!(@bool!(not @reverts!(call)) ? a : b)` |
+| `@keys!(record)` / `@values!(record)` / `@lookup!(record name)` | lang | array / any | The lanes of an on-chain record and a keyed read into it ([records](/docs/operators/fold#on-chain-records)) |
 | `@len!(call)` | lang | number | Decoded length of a dynamic return: element count for arrays (nested array faces included), byte length for string/bytes |
-| `@lookup!(record name)` | lang | any | The value at `wordIndexOf(keys, key)` of a record: literal string keys keccak-hash at composition time, live keys hash on-chain; a missing key REVERTS (the sentinel index lands past the values lane) |
+| `@log2!(x)` | math | number | Floor binary logarithm on-chain (`log2`); 0 reverts |
 | `@min!(a b ...)` / `@max!(a b ...)` | math | number | On-chain minimum / maximum of two or more values (plain `@min` / `@max` compute off-chain) |
-| `@num!(expr)` | std | number | On-chain arithmetic (`+ - * / % ^`, `xor`) over live calls and constants; unsigned `a * b / c` fuses into one 512-bit `mulDiv`, and a live string operand coerces through `parseUint` |
-| `@reverts!(call)` | std | bool | Whether a live call reverts: true when the chain refuses it, false when it resolves; `-!> ErrName(types)` matches the reason and a `[_ $]` lens selects an error argument |
-| `@ifElse!(cond ? then : else)` | std | any | The lazy ternary, compiled to the core's `cond`: the condition's first word judges (nonzero = then) and the losing branch is never resolved — spaces required around `?` and `:` |
+| `@calc!(expr)` | std | number | On-chain checked integer arithmetic (`+ - * // % ^`, `xor`; integer division is `//`) over live calls and constants; unsigned `a * b / c` fuses into one 512-bit `mulDiv` with `Trunc` rounding, and a live string operand coerces through `parseUint` |
+| `@orElse!(a b)` | std | any | The core's `orElse`: the value of the first read, or the second one when the first reverts; both branches must resolve to the same kind of value, and a constant fallback must fit in one word |
+| `@pow!(x n base?)` | math | number | Fixed-point power via `rpow`, where `base` is one unit (default 1e18, 1e27 for a ray); unsigned operands only |
+| `@reverts!(call)` | std | bool | Whether a live call reverts: true when the chain refuses it, false when it resolves (the core's `isValid`, negated); `-!> ErrName(types)` matches the reason through `revertData` and a `[_ $]` lens selects an error argument |
+| `@sigValid!(signer data signature)` | std | bool | Whether a signature is valid on-chain: contract signers verify through ERC-1271, EOAs through the recovery precompile; the signer and message must be constants, and a delegated account verifies against its key |
 | `@slice!(call start end?)` | lang | array | Elements `[start, end)` of an array return as a live words payload (indices scale to byte offsets at composition time, negative bounds resolve against the live length); composes with the other array faces |
+| `@slot.array!(base index)` / `@slot.mapping!(base key)` | contracts | bytes32 | The storage slot of `array[index]` / `mapping[key]` declared at a constant base slot, with a live index or key; reading it on-chain needs a target with an extsload-style getter |
+| `@sqrt!(expr)` | math | number | Integer square root (floor) computed on-chain, e.g. `@sqrt!($pool::reserve0() * $pool::reserve1())` (plain `@sqrt` computes off-chain) |
+| `@str.charset!(call "a-z0-9-")` | lang | bool | Whether every byte of a string return is in the character class (ranges + literals, byte-level ASCII) |
 | `@str.concat!("a" call ...)` | lang | string | Concatenate constant strings with up to four live call parts through a single on-chain `concat` |
+| `@str.includes!(call "part")` | lang | bool | Whether a string return contains a substring (exact bytes, case-sensitive) |
 | `@str.split!(call "delim" i)` | lang | string | Split a string return and select one segment; negative index counts from the end (`-1` = last, `-2` = second-last) |
-| `@sum!(call)` | lang | number | The checked sum of an array return's single-word elements, on-chain (native `sumWords`); the fixed-operation form of `@reduce!(call add 0)` |
-| `@block.timestamp!` | receipts | number | The block timestamp at assertion time (plain `@block.timestamp(block? chain?)` reads a sealed block off-chain, default latest) |
-| `@tx.gasPrice!` | receipts | number | The gas price of the executing transaction in wei; bound what the batch is willing to pay |
-| `@tx.blobHash!(i)` | receipts | bytes32 | The versioned hash of blob `i` carried by the executing transaction (0 when out of range) |
+| `@sum!(call)` | lang | number | The checked sum of an array return's single-word elements, on-chain (Collections' native `sumWords`); the fixed-operation form of `@reduce!(call add 0)` |
 
-Beyond these, the lang module gives most of its array and string helpers an on-chain face too: `@str.slice!`, `@str.at!`, `@str.concat!`, `@str.replace!`, `@str.lower!`, `@str.upper!`, `@str.join!`, the bytes twins `@bytes.at!`/`@bytes.slice!`/`@bytes.concat!`, and over arrays `@at!`, `@slice!`, `@includes!`, `@all!`, `@any!`, `@map!`, `@filter!`, `@find!`, `@reduce!`, `@sum!`, `@sort!`, `@unique!`, `@reverse!`, `@zip!`, `@unzip!`, `@enumerate!`, `@flat!`, `@concat!`, plus the record faces `@keys!`/`@values!`/`@lookup!`. Protocol modules follow the same pattern with live read faces (token's `@token:decimals!`, `@token:allowance!` and `@token:symbol!` (digest-judged), safe's `@safe:threshold!` and the array operands `@safe:owners!`/`@safe:modules!` (composable with the lang array faces), governor's `@governor:proposalState!` and `@governor:timelockOperationState!` (OZ's numeric OperationState via nested conds), the vault and acl reads).
+Beyond these, the lang module gives most of its array and string helpers an on-chain face too: `@str.slice!`, `@str.at!`, `@str.concat!`, `@str.replace!`, `@str.lower!`, `@str.upper!`, `@str.join!`, the bytes twins `@bytes.at!`/`@bytes.slice!`/`@bytes.concat!`/`@bytes.not!`, and over arrays `@at!`, `@slice!`, `@includes!`, `@all!`, `@any!`, `@map!`, `@filter!`, `@find!`, `@reduce!`, `@sum!`, `@sort!`, `@unique!`, `@reverse!`, `@zip!`, `@unzip!`, `@enumerate!`, `@flat!`, `@concat!`, plus the record faces `@keys!`/`@values!`/`@lookup!`. Protocol modules follow the same pattern with live read faces: token's `@token:decimals!`, `@token:allowance!`, `@token:totalSupply!`, `@token:amount!` (scaled against a live `decimals()`) and `@token:symbol!` (digest-judged); safe's `@safe:threshold!`, `@safe:nonce!`, `@safe:guard!`, `@safe:isOwner!` and the array operands `@safe:owners!`/`@safe:modules!` (composable with the lang array faces); governor's `@governor:proposalState!` and `@governor:timelockOperationState!` (OZ's numeric OperationState via nested conds), and the vault and acl reads.
 
-The string helpers compile to compositions rather than dedicated ops: `@str.split!` compiles to `indexOf`/`slice`, `@str.includes!` to the `indexOf`/`byteLen` sentinel comparison, and `@str.join!` to a single `concat` with the delimiter interleaved at composition time. `@str.charset!` compiles to the native `charset` op (its class-spec mask baked in at composition time; the `foldBytes` + `bitSet` form it replaced stays the general pattern for other per-byte predicates), and `@sum!` to the native `sumWords` (see [the fold page](/docs/operators/fold)).
+The string helpers compile to compositions rather than dedicated ops: `@str.split!` compiles to `indexOf`/`slice`, `@str.includes!` to the `indexOf`/`byteLen` sentinel comparison, and `@str.join!` to a single `concat` with the delimiter interleaved at composition time. `@str.charset!` compiles to the native `charset` op with its class-spec mask baked in at composition time (the `foldBytes` + `bitSet` form stays the general pattern for other per-byte predicates), and `@sum!` to Collections' native `sumWords`; `@unique!` removes adjacent duplicates (`uniqueWords` with `ordered = true`), so nest `@sort!` for set-uniqueness. See [the fold page](/docs/operators/fold).
 
 Examples:
 
@@ -166,7 +150,7 @@ Examples:
 load lang
 load contracts
 
-assert @num!(@balance!(ETH $addr) + $weth::balanceOf($addr)) > 0
+assert @calc!(@balance!(ETH $addr) + $weth::balanceOf($addr)) > 0
 assert @bool!(($gov::quorum() > 0) or (not $gov::paused()))
 assert @str.split!($pool::name() " " -1) == "LP"
 assert @len!($registry::{holders()(address[])}) >= 3
@@ -175,7 +159,7 @@ assert @codeHash!($proxy::{implementation()(address)}) == 0x1234...cdef
 
 ## Constructed calls: the `::!` operator
 
-`<head>::!{sig(argTypes)(retTypes) args}` constructs a whole call **at assertion time** through the core's [`read`](/docs/core/reads), replacing the old `@read!` helper. The head may be any expression: a `::` chain, an on-chain helper, or a computed word, as long as it resolves to a clean address word on-chain. The arguments splice like nested live calls, and the inline ABI form is mandatory (a `::!` hop has no composition-time address to fetch an ABI from).
+`<head>::!{sig(argTypes)(retTypes) args}` constructs a whole call **at assertion time** through the core's [`read`](/docs/core/reads). The head may be any expression: a `::` chain, an on-chain helper, or a computed word, as long as it resolves to a clean address word on-chain. The arguments splice like nested live calls, and the inline ABI form is mandatory (a `::!` hop has no composition-time address to fetch an ABI from).
 
 The `!` trails the `::` rather than leading it, so it never sits against the head. Leading, it would be indistinguishable from the trailing `!` of an on-chain helper face: `@name!::{…}` splits as `@name!` before a plain hop or as `@name` before a read hop, and the text does not say which. After the operator there is nothing to collide with, so `@me::!{…}` and `@name!::!{…}` each read one way only.
 
@@ -193,11 +177,4 @@ set $before @get($token "balanceOf(address)(uint256)" @me)
 assert $token::balanceOf(@me) == @num($before + 100e18)
 ```
 
-Composition-time captures go stale, so for proposals executed later prefer absolute thresholds or live `@bool!` / `@num!` forms.
-
-## Configuration variables
-
-| Variable | Type | Description |
-|----------|------|-------------|
-| `$assertions:address` | address | Override the resolved assertions contract address (forks / testing) |
-| `$assertions:operators` | address | Override the resolved Operations contract address (forks / testing) |
+Composition-time captures go stale, so for proposals executed later prefer absolute thresholds or live `@bool!` / `@calc!` forms.

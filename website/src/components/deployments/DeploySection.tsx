@@ -576,14 +576,14 @@ export function DeploySection({
         {status.data?.allDeployed && (
           <div className="rounded-lg border border-[var(--color-ok)]/40 bg-[var(--color-ok)]/5 px-4 py-3 text-sm">
             <p className="text-[var(--color-ok)] font-medium">
-              All three contracts are already deployed on {chain.name}.
+              All {DEPLOYED_CONTRACTS.length} contracts are already deployed on {chain.name}.
             </p>
             {DEPLOYED_CONTRACTS.map((contract) => {
               const url = explorerAddressUrl(chain, contract.address);
               return (
                 <p key={contract.key} className="font-mono text-xs mt-1">
                   <span className="text-[var(--color-ink-3)]">
-                    {contract.name}:{" "}
+                    {contract.name}{contract.released ? "" : " (unreleased)"}:{" "}
                   </span>
                   {url ? (
                     <a
@@ -660,7 +660,9 @@ export function DeploySection({
                     <span className="text-[var(--color-ink-3)]">•</span>
                   )}
                   <span>
-                    {contract.name} ({contract.gasLabel} gas) at{" "}
+                    {contract.name}
+                    {contract.released ? "" : " (unreleased)"} ({contract.gasLabel}{" "}
+                    gas) at{" "}
                     <span className="font-mono">{contract.address}</span>
                     {status.data.deployed[i] && (
                       <span className="text-[var(--color-ok)]"> — deployed</span>
@@ -694,12 +696,14 @@ export function DeploySection({
         {deployState.step === "success" && (
           <div className="rounded-lg border border-[var(--color-ok)]/40 bg-[var(--color-ok)]/5 px-4 py-3 text-sm">
             <p className="text-[var(--color-ok)] font-medium">
-              Deployed! Assertions and Operations now live on {chain.name}:
+              Deployed!{" "}
+              {DEPLOYED_CONTRACTS.map((contract) => contract.name).join(", ")}{" "}
+              now live on {chain.name}:
             </p>
             {DEPLOYED_CONTRACTS.map((contract) => (
               <p key={contract.key} className="font-mono text-xs mt-1">
                 <span className="text-[var(--color-ink-3)]">
-                  {contract.name}:{" "}
+                  {contract.name}{contract.released ? "" : " (unreleased)"}:{" "}
                 </span>
                 {contract.address}
               </p>

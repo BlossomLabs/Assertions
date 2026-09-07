@@ -1,9 +1,9 @@
 ---
 title: "Folds & word arrays: bounded iteration"
-description: The fold family's template-lambda mechanics, early-exit modes, the word-array shape operations, and the charset, includes and split recipes.
+description: The fold family's template-lambda mechanics, early-exit modes, the word-array shape operations, the charset recipe and the on-chain record representation.
 ---
 
-The folds are the one loop primitive in the system: apply a lambda over a bounded domain, threading a 32-byte accumulator. Three functions share one engine, differing only in what the element is:
+The folds are the one loop primitive in the system: apply a lambda over a bounded domain, threading a 32-byte accumulator. They live on `Collections`, the iteration contract, and the lambda they call is typically an `Operations` function. Three functions share one engine, differing only in what the element is:
 
 ```solidity
 enum FoldExit { Full, Any, All }
@@ -23,16 +23,14 @@ function foldWords(bytes s,        address target, bytes template, ...) // same 
 
 The lambda is a single staticcall per element, described by a *template*: `template` is complete, valid calldata for `target` in which 32-byte windows are rewritten per iteration: the accumulator at `accOffset`, then the element at every offset in `elemOffsets`, in the supplied order (the element wins over the accumulator on overlap; later element windows win over earlier ones). The lambda must return exactly 32 bytes, which become the new accumulator, and the final accumulator is the fold's result.
 
-Any single-word-returning view or pure function is a lambda; there is no closure format to learn. Summing `0..4` with the `add` operator as the lambda:
+Any single-word-returning view or pure function is a lambda; there is no closure format to learn. Summing `0..4` with the `add` operation as the lambda (`ADD_U` from [the selector constants](/docs/solidity#selector-constants)):
 
 ```solidity
-bytes4 constant ADD_U = bytes4(keccak256("add(uint256,uint256)"));
-
 // template: add(0, 0); acc window at byte 4 (first arg), elem at 36 (second)
 bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(0));
 uint256[] memory elemOffsets = new uint256[](1);
 elemOffsets[0] = 36;
-operators.foldRange(5, address(operators), template, 4, elemOffsets, bytes32(0), Collections.FoldExit.Full);
+collections.foldRange(5, address(operations), template, 4, elemOffsets, bytes32(0), Collections.FoldExit.Full);
 // = 10
 ```
 
@@ -46,28 +44,26 @@ An empty domain returns `init` after validating the template length and window b
 
 ## Recipes
 
-**Charset**: "every byte of the string is in the class" has a native operator, `charset(bytes s, uint256 mask)`, so EVMcrispr's [`@str.charset!`](/docs/evml) compiles straight to it (one call with the loop inside Solidity), not to a fold. The mask is a 256-bit set where bit `i` covers byte value `i`, built off-chain (`a-z` is bits 97..122):
+**Charset**: "every byte of the string is in the class" has a native operation, `charset(bytes s, uint256 mask)` on Operations, so EVMcrispr's [`@str.charset!`](/docs/evml) compiles straight to it (one call with the loop inside Solidity), not to a fold. The mask is a 256-bit set where bit `i` covers byte value `i`, built off-chain (`a-z` is bits 97..122):
 
 ```solidity
 // mask: bits 97..122 = a-z
-operators.charset(bytes(symbol), mask); // true iff every byte is a-z
+operations.charset(bytes(symbol), mask); // true iff every byte is a-z
 ```
 
-The fold form is what `charset` collapses, and it stays the general pattern for any OTHER per-byte predicate: `foldBytes` with a lambda over the byte value, the `All` exit and `init = 1`. With `bitSet(mask, elem)` as the lambda it reproduces `charset` (both windows share the element offset, since `bitSet` ignores its accumulator):
+The fold form is what `charset` collapses, and it stays the general pattern for any OTHER per-byte predicate: `foldBytes` with a lambda over the byte value, the `All` exit and `init = 1`. With `bitSet(mask, elem)` from Operations as the lambda it reproduces `charset` (both windows share the element offset, since `bitSet` ignores its accumulator):
 
 ```solidity
-// the pre-native recipe, and the template for a custom per-byte test
-bytes memory template = abi.encodeWithSelector(Collections.bitSet.selector, mask, uint256(0));
+// the template for a custom per-byte test, shown with bitSet as the predicate
+bytes memory template = abi.encodeWithSelector(Operations.bitSet.selector, mask, uint256(0));
 uint256[] memory elemOffsets = new uint256[](1);
 elemOffsets[0] = 36;
-operators.foldBytes(bytes(symbol), address(operators), template, 36, elemOffsets, bytes32(uint256(1)), Collections.FoldExit.All);
+collections.foldBytes(bytes(symbol), address(operations), template, 36, elemOffsets, bytes32(uint256(1)), Collections.FoldExit.All);
 ```
 
 The check is byte-level, so multi-byte UTF-8 characters (every byte >= 0x80) fail any ASCII-only mask, and the empty string is vacuously in every set.
 
-**Includes**: no fold needed. Substring containment is `lt(indexOf(s, part, 0), byteLen(s))` judged `EQ 1` ([the sentinel composes](/docs/operators/data)), and its negation asserts absence. Array membership is either an `Any`-exit `foldWords` with an `eq(item, elem)` lambda, or `wordIndexOf`'s sentinel composition below.
-
-**Split segments**: `indexOf`/`slice` compositions, no fold needed. Segment k sits between delimiter occurrences k-1 and k, so any segment is two `indexOf` reads and a `slice`: segment 0 is `slice(s, 0, indexOf(s, delim, 0))`, segment 1 spans `[indexOf(s, delim, 0) + dlen, indexOf(s, delim, 1))`, and negative indexes anchor at the end the same way (`-1` = last, `-2` = second-last), with the not-found sentinel `byteLen(s)` supplying the trailing segment's end for free. Version-string checks work the same way: split `"2.1.0"` by `"."` and pin segment 0, or [parseUint](/docs/operators/data) a segment to compare it numerically.
+**Includes and split segments** need no fold: they are `indexOf`/`byteLen`/`slice` compositions, documented once on [the bytes page](/docs/operators/data#search-indexof). Array membership is either an `Any`-exit `foldWords` with an `eq(item, elem)` lambda, or `wordIndexOf`'s sentinel composition below.
 
 ## Word arrays
 
@@ -88,22 +84,33 @@ function uniqueWords (bytes s, bool ordered) external pure returns (bytes);
 function sumWords    (bytes s) external pure returns (uint256);
 ```
 
-**`mapWords`** applies a single-staticcall lambda to every word and returns the transformed payload: the bytes-producing map the scalar folds cannot express. Lambda conventions match the folds (`template` is complete calldata for `target` whose 32-byte windows at `elemOffsets` are rewritten per element; the lambda's FIRST return word is the mapped element), and so do the failure modes below. An empty payload returns empty after validating the template length and window bounds, without inspecting or calling the target. In [EVMcrispr](/docs/evml) it is `@map!` applied to a named definition, e.g. `def @dbl! "$x: number -> number" @num!($x * 2)` then `@map!($t::values() @dbl!)`.
+**`mapWords`** applies a single-staticcall lambda to every word and returns the transformed payload: the bytes-producing map the scalar folds cannot express. Lambda conventions match the folds (`template` is complete calldata for `target` whose 32-byte windows at `elemOffsets` are rewritten per element; the lambda's single return word is the mapped element), and so do the failure modes below. An empty payload returns empty after validating the template length and window bounds, without inspecting or calling the target. In [EVMcrispr](/docs/evml) it is `@map!` applied to a named definition, e.g. `def @dbl! "$x: number -> number" @calc!($x * 2)` then `@map!($t::values() @dbl!)`.
 
 **`filterWords`** is `mapWords`' variable-length sibling, byte-identical in signature and lambda conventions: it keeps the ELEMENTS whose lambda application returns canonical ABI true, in order, so the output length is the kept count and the result nests into `len`, the folds and the other word ops. EVMcrispr compiles `@filter!` to it, and `@find!` is a core `pick` of the first kept word (no match leaves the pick out of bounds, so it reverts).
 
-**`iotaWords(n)`** is the index generator: the payload `0, 1, ..., n-1`. Its canonical pairing is `zipWords(iotaWords(n), payload)`, the enumeration that EVMcrispr's `@enumerate!` compiles with a live `n`. That zipped key/value word-pair payload is also EVMcrispr's on-chain RECORD representation (string keys travel as their keccak digests), consumed by `@keys!`, `@values!` and `@lookup!`.
+**`iotaWords(n)`** is the index generator: the payload `0, 1, ..., n-1`. Its canonical pairing is `zipWords(iotaWords(n), payload)`, the enumeration that EVMcrispr's `@enumerate!` compiles with a live `n`.
 
 **`wordIndexOf(s, w)`** returns the index of the first word of `s` equal to `w`, with the word COUNT as the not-found sentinel. The sentinel composes: contains is `lt(wordIndexOf(s, w), div(byteLen(s), 32))`, and a word-index read past the sentinel reverts, which is how `@lookup!` turns a missing key into an assertion failure.
 
 **`reverseWords`** reverses the word order (`@reverse!`). **`zipWords(a, b)`** interleaves two payloads as `a0, b0, a1, b1, ...` for a fold or for `unzipWords` to split back; different word counts revert with `WordCountMismatch` (silent truncation would be a wrong-answer machine). **`unzipWords(s, which)`** is its inverse: every second word, lane 0 (words 0, 2, 4, ...) or lane 1 (words 1, 3, 5, ...); a lane past 1 reverts with `InvalidLane`, and an odd word count leaves the extra word in lane 0. EVMcrispr's `@zip!` and `@unzip!` compile to the pair.
 
-**`sortWords`** sorts ascending as UNSIGNED words (`@sort!`). Stable bottom-up merge sort uses O(n log n) comparisons and O(n) scratch memory. Signed sorting is a three-node recipe instead of an overload: flip the sign bit (`mapWords` with `bitXor(2^255, elem)`), sort, flip back. **`uniqueWords(s, ordered)`** removes duplicates while retaining first-occurrence order. With `ordered = true`, equal values must already be grouped: it compares adjacent words in O(n). With `false`, it checks all retained words in O(n squared). Sorted deduplication is `uniqueWords(sortWords(s), true)`; `@unique!` passes `false` for arbitrary inputs. Ordering is trusted, not validated.
+**`sortWords`** sorts ascending as UNSIGNED words (`@sort!`). Stable bottom-up merge sort uses O(n log n) comparisons and O(n) scratch memory. Signed sorting is a three-node recipe instead of an overload: flip the sign bit (`mapWords` with `bitXor(2^255, elem)`), sort, flip back. **`uniqueWords(s, ordered)`** removes duplicates while retaining first-occurrence order. With `ordered = true`, equal values must already be grouped: it compares adjacent words in O(n). With `false`, it checks all retained words in O(n squared). Ordering is trusted, not validated. Sorted deduplication is `uniqueWords(sortWords(s), true)`; EVMcrispr's `@unique!` passes `true`, so it removes adjacent duplicates only and `@unique!(@sort!(...))` is the set-uniqueness spelling.
 
 **`sumWords`** is the checked sum of the payload's words (overflow past 2^256 - 1 reverts with `Panic(0x11)`): the native, fixed-operation form of the `foldWords(add)` recipe, one on-chain loop instead of a call per element. EVMcrispr compiles `@sum!` to it; use `@reduce!(call add 0)` (or `foldWords` directly) for any other reduction (min, max, bitOr, bitAnd) or a nonzero initial accumulator.
 
+### On-chain records
+
+A zipped key/value word-pair payload, the interleaved words `zipWords` and `iotaWords` produce, is also EVMcrispr's on-chain RECORD representation. String keys travel as their keccak digests. The record faces are:
+
+| Helper | Compiles to | Description |
+|--------|-------------|-------------|
+| `@enumerate!(call)` | `zipWords(iotaWords(n), payload)` | Pair every element with its index, with `n` the live length; the result is a record |
+| `@zip!(a b)` / `@unzip!(record lane)` | `zipWords` / `unzipWords` | Interleave two word payloads into a record, or split a record back into a lane |
+| `@keys!(record)` / `@values!(record)` | `unzipWords(record, 0)` / `unzipWords(record, 1)` | The key lane and the value lane of a record |
+| `@lookup!(record name)` | `wordIndexOf` over the key lane, then a word read at that index of the value lane | The value stored under a key: literal string keys keccak-hash at composition time, live keys hash on-chain; a missing key REVERTS because the sentinel index lands past the value lane |
+
 ## Failure modes and gas
 
-A callback revert produces `CallbackFailed(operation,index,other,target,callData,reason)`, preserving both the attempted call and its revert data. Invalid windows revert with `LambdaOffsetOutOfBounds`; a target without bytecode (including a precompile) reverts with `InvalidCallbackTarget`. Word callbacks must return exactly 32 bytes; filters additionally require 0 or 1. Invalid results revert with `InvalidCallbackResult`. Early exits may avoid a later failing callback.
+A callback revert produces `CallbackFailed(operation, index, other, target, callData, reason)`, preserving both the attempted call and its revert data. Invalid windows revert with `LambdaOffsetOutOfBounds`; a target without bytecode (including a precompile) reverts with `InvalidCallbackTarget`. Word callbacks must return exactly 32 bytes; filters additionally require 0 or 1. Invalid results revert with `InvalidCallbackResult`. Early exits may avoid a later failing callback.
 
 Gas is the loop bound. Every application pays real staticcall overhead, so domain sizes are naturally limited by the block gas limit: fine for symbols, names and moderate arrays, wrong for megabyte scans. Prefer the `indexOf`/`byteLen` compositions where they express the same predicate, and let `Any`/`All` exit early.

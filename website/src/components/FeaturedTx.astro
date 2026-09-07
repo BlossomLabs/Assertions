@@ -248,7 +248,7 @@ const stats = [
     trigger.setAttribute('aria-expanded', String(open));
   };
 
-  trigger?.addEventListener('click', () => setOpen(menu?.hidden ?? true));
+  trigger?.addEventListener('click', () => setOpen(menu ? menu.hidden !== false : true));
 
   document.addEventListener('click', (e) => {
     if (wrap && !wrap.contains(e.target as Node)) setOpen(false);

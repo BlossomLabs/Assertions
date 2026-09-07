@@ -3,39 +3,50 @@ title: Deployments
 description: Canonical CREATE2 addresses, how they stay deterministic, and how to deploy to a new chain.
 ---
 
-import { ASSERTIONS_DEPLOY_GAS } from '../../../../lib/assertions-deployment';
-import { OPERATIONS_DEPLOY_GAS } from '../../../../lib/operations-deployment';
+import manifest from '../../../../lib/deployments.json';
 
 export const fmtGas = (gas) => `~${(gas / 1e6).toFixed(2)}M gas`;
+export const addressLine = (c) =>
+  `${c.name.padEnd(12)} v${c.version.padEnd(5)} ${c.address}   (${c.description}${c.released ? '' : ', unreleased'})`;
+export const gasList = manifest.contracts.map((c) => `${c.name} ${fmtGas(c.deployGas)}`).join(', ');
 
-Each contract has the same deterministic address on every supported chain where its artifact is deployed. Core behavior is unchanged, but the shared-codec refactor changes its artifact metadata and address. These are unreleased artifact candidates; listing their addresses does not imply public-chain deployment.
+Each contract has the same deterministic address on every supported chain where its artifact is deployed. This page renders `website/src/lib/deployments.json`, the manifest `pnpm sync:artifact` writes from a fresh compile (solc {manifest.compiler.solcLongVersion}, optimizer {manifest.compiler.optimizer.runs} runs, evmVersion <code>{manifest.compiler.evmVersion}</code>). Listing an address implies no public-chain deployment; a contract marked unreleased is an artifact candidate the SDK does not compile against yet.
 
-```
-Assertions v2.0  0x94b07F5364b54471b065Ee74150864628Df722d7   (frozen core: judge + primitives)
-Operations  v1.0  0x314e75BEFDb0f3e0621f68458f98Fce75246f7a7   (unreleased periphery)
-Collections v1.0 0xc6D85B72bdF8040f61f4CD7957c7aa8e5f30a47f   (unreleased generic collections)
-Expressions v1.0 0xc45C579021623712eE3f61D066a24218F6e01E22 (unreleased typed expression graphs)
-```
+<pre><code>{manifest.contracts.map(addressLine).join('\n')}</code></pre>
 
-Previous artifact candidates, including Operations `0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e` and `0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD`, use different bytecode. The interim zero-salt deployments (Assertions `0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F`, Operations `0x8e832Ace3f433943eb605c258bA37AF24a69dC53`) stay live wherever they were sent, but are no longer canonical.
+Deployed versions are immutable: earlier releases keep working forever at their own canonical addresses, and retired artifact candidates use different bytecode and were never canonical. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) is updated separately after deployment. Combinators is the periphery's pre-Operations name.
 
-Deployed versions are immutable: earlier releases keep working forever at their own canonical addresses. The ENS name [`assertions.eth`](https://etherscan.io/address/assertions.eth) is updated separately after deployment, and the original v1.0 core stays live at [`0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
+<table>
+  <thead>
+    <tr><th>Contract</th><th>Version</th><th>Address</th><th>Note</th></tr>
+  </thead>
+  <tbody>
+    {manifest.history.map((row) => (
+      <tr key={row.address}>
+        <td>{row.name}</td>
+        <td>{row.version}</td>
+        <td><code>{row.address}</code></td>
+        <td>{row.note}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
 
-Collections and Expressions are exported for manual deployment; the interactive page retains its existing core/Operations inventory. The [interactive deployments page](/deployments) shows per-chain status, lets you deploy with a connected wallet, and verifies contracts on explorers.
+The [interactive deployments page](/deployments) shows per-chain status, lets you deploy every exported contract with a connected wallet, and verifies contracts on explorers.
 
 ## How the addresses stay deterministic
 
-Deployment goes through [Arachnid's deterministic-deployment proxy](https://github.com/Arachnid/deterministic-deployment-proxy) (`0x4e59b44847b379578588920cA78FbF26c0B4956C`), which performs a CREATE2 with a fixed salt per contract:
+Deployment goes through [Arachnid's deterministic-deployment proxy](https://github.com/Arachnid/deterministic-deployment-proxy) (<code>{manifest.create2Proxy}</code>), which performs a CREATE2 with a fixed salt per contract:
 
 ```
 address = keccak256(0xff ++ 0x4e59b448...956C ++ salt ++ keccak256(initCode))[12:]
 ```
 
-Same proxy, same salt, same init code on every chain: same address. Mining a vanity salt is exactly this mechanism run in reverse, searching random salts (`cast create2`) until the derived address starts with the wanted prefix; only the salt changes, never the bytecode.
+Same proxy, same salt, same init code on every chain: same address. The salts are random 32-byte values that never change; an address moves only when the bytecode does, and an edit to an imported source moves the importer's address too (Collections imports Expressions).
 
 ## Deploying to a new chain
 
-The easiest way is the [deployments page](/deployments): connect a wallet, pick the network (or add a custom RPC), and send one transaction per contract (Assertions {fmtGas(ASSERTIONS_DEPLOY_GAS)}, Operations {fmtGas(OPERATIONS_DEPLOY_GAS)}, measured by replaying the canonical deployment at export time). If the Arachnid proxy is missing on the chain, the page walks you through installing it permissionlessly first.
+The easiest way is the [deployments page](/deployments): connect a wallet, pick the network (or add a custom RPC), and send one transaction per contract ({gasList}, measured by replaying the canonical deployment at export time). If the Arachnid proxy is missing on the chain, the page walks you through installing it permissionlessly first.
 
 Manually, each deployment is a single transaction to the proxy with `salt ++ initCode` as calldata:
 
@@ -44,12 +55,12 @@ cast send 0x4e59b44847b379578588920cA78FbF26c0B4956C \
   "$(cat salt_and_initcode.hex)" --rpc-url <rpc> --private-key <key>
 ```
 
-The canonical salts live in `website/scripts/export-deploy-artifact.mjs`; the script regenerates `website/src/lib/assertions-deployment.ts` and `website/src/lib/operations-deployment.ts`, `website/src/lib/collections-deployment.ts`, and `website/src/lib/expressions-deployment.ts` (salt, init code, measured deploy gas, and predicted address for each contract) from a fresh compile. It refuses to export if the compiled bytecode no longer reproduces the expected address. Pass `--contract Operations` to regenerate only Operations and preserve the other contracts' deployment and verification artifacts.
+The canonical salts live in `website/scripts/export-deploy-artifact.mjs`; `pnpm sync:artifact` regenerates {manifest.contracts.map((c, i) => <span key={c.key}><code>website/{c.deploymentModule}</code>{i < manifest.contracts.length - 1 ? ', ' : ''}</span>)} (salt, init code, measured deploy gas, and predicted address for each contract), the matching ABI modules, and `website/src/lib/deployments.json` from a fresh compile. It refuses to export if the compiled bytecode no longer reproduces the expected address. Pass `--contract Operations` to regenerate only Operations and merge it into the other contracts' deployment, verification and manifest entries.
 
 :::caution
 **Do not use `hardhat ignition deploy` for the canonical deployment.** Ignition's `create2` strategy goes through the CreateX factory, which re-hashes the salt and therefore produces a *different* address than the Arachnid proxy. The Ignition module is kept only for local testing.
 :::
 
 :::note[Chain requirements]
-The bytecode targets `cancun`. The deployment uses `PUSH0`, and blob-related Operations require Cancun opcode support; use Cancun-compatible chains for the full vocabulary. The exact compiler settings in `hardhat.config.ts` (solc 0.8.36, optimizer 200 runs, `evmVersion: cancun`) must not change, or the CREATE2 addresses change with the bytecode.
+The bytecode targets <code>{manifest.compiler.evmVersion}</code>. The deployment uses `PUSH0`, and blob-related Operations require Cancun opcode support; use Cancun-compatible chains for the full vocabulary. The exact compiler settings in `hardhat.config.ts` (solc {manifest.compiler.solcLongVersion}, optimizer {manifest.compiler.optimizer.runs} runs, evmVersion <code>{manifest.compiler.evmVersion}</code>) must not change, or the CREATE2 addresses change with the bytecode.
 :::

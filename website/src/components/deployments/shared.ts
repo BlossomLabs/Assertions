@@ -5,32 +5,27 @@ import { polygon } from "viem/chains";
 import {
   ASSERTIONS_ADDRESS,
   ASSERTIONS_CREATION_BYTECODE,
-  ASSERTIONS_DEPLOY_GAS,
-  ASSERTIONS_SALT,
 } from "../../lib/assertions-deployment";
-import {
-  OPERATIONS_ADDRESS,
-  OPERATIONS_CREATION_BYTECODE,
-  OPERATIONS_DEPLOY_GAS,
-  OPERATIONS_SALT,
-} from "../../lib/operations-deployment";
-
-import {
-  COLLECTIONS_ADDRESS,
-  COLLECTIONS_CREATION_BYTECODE,
-  COLLECTIONS_DEPLOY_GAS,
-  COLLECTIONS_SALT,
-} from "../../lib/collections-deployment";
+import { COLLECTIONS_CREATION_BYTECODE } from "../../lib/collections-deployment";
+import manifest from "../../lib/deployments.json";
+import { EXPRESSIONS_CREATION_BYTECODE } from "../../lib/expressions-deployment";
+import { OPERATIONS_CREATION_BYTECODE } from "../../lib/operations-deployment";
+import { rpcUrl } from "./rpc";
 
 /** "1245095" -> "~1.2M", for UI copy. */
 export function formatDeployGas(gas: number): string {
   return `~${(gas / 1e6).toFixed(1)}M`;
 }
 
+export type ContractKey = "core" | "operators" | "collections" | "expressions";
+
 /** The contracts that make up a canonical deployment on a chain. */
 export interface DeployableContract {
-  key: "core" | "operators" | "collections";
+  key: ContractKey;
   name: string;
+  version: string;
+  /** False for an artifact candidate the SDK does not compile against yet. */
+  released: boolean;
   address: `0x${string}`;
   salt: `0x${string}`;
   bytecode: `0x${string}`;
@@ -38,32 +33,39 @@ export interface DeployableContract {
   gasLabel: string;
 }
 
-export const DEPLOYED_CONTRACTS: DeployableContract[] = [
-  {
-    key: "core",
-    name: "Assertions",
-    address: ASSERTIONS_ADDRESS,
-    salt: ASSERTIONS_SALT,
-    bytecode: ASSERTIONS_CREATION_BYTECODE,
-    gasLabel: formatDeployGas(ASSERTIONS_DEPLOY_GAS),
+// The manifest carries no bytecode (the generated deployment modules keep
+// it); this map is the one place the two are joined, keyed like the manifest.
+const CREATION_BYTECODE: Record<ContractKey, `0x${string}`> = {
+  core: ASSERTIONS_CREATION_BYTECODE,
+  operators: OPERATIONS_CREATION_BYTECODE,
+  collections: COLLECTIONS_CREATION_BYTECODE,
+  expressions: EXPRESSIONS_CREATION_BYTECODE,
+};
+
+/**
+ * Every exported contract in manifest order, released or not. Derived from
+ * src/lib/deployments.json, which `pnpm sync:artifact` writes; nothing here
+ * is typed by hand.
+ */
+export const DEPLOYED_CONTRACTS: DeployableContract[] = manifest.contracts.map(
+  (contract) => {
+    const key = contract.key as ContractKey;
+    return {
+      key,
+      name: contract.name,
+      version: contract.version,
+      released: contract.released,
+      address: contract.address as `0x${string}`,
+      salt: contract.salt as `0x${string}`,
+      bytecode: CREATION_BYTECODE[key],
+      gasLabel: formatDeployGas(contract.deployGas),
+    };
   },
-  {
-    key: "operators",
-    name: "Operations",
-    address: OPERATIONS_ADDRESS,
-    salt: OPERATIONS_SALT,
-    bytecode: OPERATIONS_CREATION_BYTECODE,
-    gasLabel: formatDeployGas(OPERATIONS_DEPLOY_GAS),
-  },
-  {
-    key: "collections",
-    name: "Collections",
-    address: COLLECTIONS_ADDRESS,
-    salt: COLLECTIONS_SALT,
-    bytecode: COLLECTIONS_CREATION_BYTECODE,
-    gasLabel: formatDeployGas(COLLECTIONS_DEPLOY_GAS),
-  },
-];
+);
+
+/** The contracts the SDK compiles against: what the builder needs on a chain. */
+export const RELEASED_CONTRACTS: DeployableContract[] =
+  DEPLOYED_CONTRACTS.filter((contract) => contract.released);
 
 // Chains whose viem default RPC is dead or unreliable.
 // polygon-rpc.com (viem's default) rejects requests with "tenant disabled".
@@ -74,7 +76,7 @@ const RPC_OVERRIDES: Record<number, string> = {
 export function makePublicClient(chain: Chain): PublicClient {
   return createPublicClient({
     chain,
-    transport: http(RPC_OVERRIDES[chain.id]),
+    transport: http(rpcUrl(chain.id) ?? RPC_OVERRIDES[chain.id]),
   });
 }
 

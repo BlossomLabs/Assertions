@@ -62,7 +62,23 @@ function within(uint256 lo, uint256 hi) pure returns (Constraint[] memory cs) {
 }
 ```
 
-Constraints compare the value's **first 32-byte word**, unsigned, which covers `uint256`, `address`, `bool` and `bytes32` returns directly. Multi-value selections use the core's own [`pick` and `nav`](/docs/core/reads); signed comparisons and `!=` route through a read-spliced [Operations](/docs/operators) comparison that returns 0/1, judged `EQ 1`.
+How a constraint judges the resolved value (first 32-byte word, unsigned) and what routes through a read-spliced Operations comparison instead is described once under [constraints](/docs/core/reads#constraints). Multi-value selections use the core's own [`pick` and `nav`](/docs/core/reads).
+
+## Selector constants
+
+Operations ships its word functions in `uint256`/`int256` pairs, and `abi.encodeCall` cannot disambiguate overloads, so overloaded operations take explicit selectors. The examples across these pages share this set:
+
+```solidity
+bytes4 constant ADD_U = bytes4(keccak256("add(uint256,uint256)"));
+bytes4 constant MUL_U = bytes4(keccak256("mul(uint256,uint256)"));
+bytes4 constant EXP_U = bytes4(keccak256("exp(uint256,uint256)"));
+bytes4 constant GT_U  = bytes4(keccak256("gt(uint256,uint256)"));
+bytes4 constant GE_U  = bytes4(keccak256("ge(uint256,uint256)"));
+bytes4 constant GT_S  = bytes4(keccak256("gt(int256,int256)"));
+bytes4 constant ABS_S = bytes4(keccak256("absDiff(int256,int256)"));
+```
+
+Non-overloaded functions work with plain member access (`Operations.bitAnd.selector`, `Operations.hash.selector`); [the Operations overview](/docs/operators#signedness-rides-on-overloads) lists which names are overloaded.
 
 ## DAO proposal with safety checks
 
@@ -135,7 +151,7 @@ proxyAdmin.upgrade(proxy, newImplementation);
 // as the fetched value (EXTCODEHASH semantics)
 assertions.assertParam(
     callParam(
-        address(operators),
+        address(operations),
         abi.encodeCall(Operations.codeHash, (newImplementation)),
         eq(keccak256(newImplementationCode))
     ),
@@ -167,12 +183,12 @@ assertions.assertParam(
 
 // Assert we're on mainnet
 assertions.assertParam(
-    callParam(address(operators), abi.encodeCall(Operations.chainId, ()), eq(bytes32(uint256(1))))
+    callParam(address(operations), abi.encodeCall(Operations.chainId, ()), eq(bytes32(uint256(1))))
 );
 
 // Assert block timestamp is past the unlock time
 assertions.assertParam(
-    callParam(address(operators), abi.encodeCall(Operations.timestamp, ()), gte(unlockTime + 1))
+    callParam(address(operations), abi.encodeCall(Operations.timestamp, ()), gte(unlockTime + 1))
 );
 ```
 
@@ -215,7 +231,7 @@ assertions.assertParam(
 
 ## Caveats
 
-- **Constraints are unsigned word comparisons.** `GTE`/`LTE`/`IN` compare the first 32-byte word as a `uint256`. For `int256` returns use the [Operations int256 overloads](/docs/operators/words) (`gt(int256,int256)`, `le(int256,int256)`, ...) read-spliced and judged `EQ 1`, and the signed `absDiff` overload for tolerance. Overloads need explicit selectors in Solidity: `bytes4(keccak256("gt(int256,int256)"))`.
+- **Constraints are unsigned word comparisons.** For `int256` returns use the [Operations int256 overloads](/docs/operators/words#signed-comparisons) read-spliced and judged `EQ 1`, and the signed `absDiff` overload for tolerance (see [constraints](/docs/core/reads#constraints)).
 - **EIP-7702 delegated EOAs carry code.** A delegated EOA has a 23-byte delegation designator as its code, so a "has no code" check (`Operations.codeHash` equal to `bytes32(0)` or `keccak256("")`) is not a strict "is an EOA" check on chains with EIP-7702.
 - **`block.number` semantics differ across chains.** On OP-stack and most L2s, `Operations.blockNumber()` sees the L2 block number (on Arbitrum, `block.number` returns the approximate L1 block). Block times also vary per chain, so avoid porting block-number thresholds between networks.
 - **Calls to code-less addresses revert with `CallFailed`.** A `staticcall` to an address without code would otherwise "succeed" with empty returndata; the fetcher detects this and reverts descriptively. To *tolerate* a missing or reverting target instead, wrap the operand in the core's [`orElse`](/docs/core/control).

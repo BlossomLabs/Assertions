@@ -1,14 +1,17 @@
 #!/usr/bin/env node
 // Exports the compiled creation bytecode (plus the CREATE2 deployment
-// constants) of the Assertions core and its plain-value periphery contracts — into committed modules so the website can deploy
-// them to their canonical addresses on any chain without needing the
-// gitignored Hardhat artifacts at build time.
+// constants) of the Assertions core and its periphery contracts into
+// committed modules, so the website can deploy them to their canonical
+// addresses on any chain without needing the gitignored Hardhat artifacts at
+// build time, and writes src/lib/deployments.json: the one manifest (names,
+// versions, release status, addresses, salts, hashes, sizes, measured gas and
+// prior releases) that every website consumer and check:integration read.
 //
 // Usage: pnpm hardhat compile (from the repo root), then from website/:
 //   node scripts/export-deploy-artifact.mjs [--contract Operations]
 
 import { execSync } from "node:child_process";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -46,22 +49,22 @@ export const CREATE2_PROXY_DEPLOY_TX =
 export const CREATE2_PROXY_DEPLOY_COST = 10_000_000_000_000_000n;
 `;
 
+// Salts are random 32-byte values (the vanity convention is retired). A
+// contract is `released` when the SDK targets it: `sdkAddressExport` names the
+// constant in packages/sdk/src/onchain/addresses.ts that must equal its
+// address (check:integration asserts it). An unreleased contract is exported
+// and deployable but has no SDK consumer yet.
 const CONTRACTS = [
   {
     name: "Assertions",
     key: "core",
+    version: "2.0",
+    released: true,
+    sdkAddressExport: "CORE_ADDRESS",
     artifact: "artifacts/contracts/Assertions.sol/Assertions.json",
     output: "src/lib/assertions-deployment.ts",
-    // Retained CREATE2 salt for the corrected 2.0 core
-    // (random 32-byte salt; the old shared-base convention is retired).
-    // Prior releases:
-    // interim v2.0 (zero salt) remains at 0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F;
-    // v2.0-rc remains at 0xa55E47F37088b6D0212BdfD56b175ec08744DB19
-    // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f601469a3b);
-    // v1.1 remains at 0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0
-    // (salt 0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6012c7cd0);
-    // v1.0 remains at 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
-    // (salt 0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb).
+    // Retained CREATE2 salt for the corrected 2.0 core; earlier candidates
+    // under the same salt are listed in HISTORY.
     salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
     expectedAddress: "0x94b07F5364b54471b065Ee74150864628Df722d7",
     prefix: "ASSERTIONS",
@@ -71,10 +74,12 @@ const CONTRACTS = [
   {
     name: "Operations",
     key: "operators",
+    version: "1.0",
+    released: true,
+    sdkAddressExport: "OPERATIONS_ADDRESS",
     artifact: "artifacts/contracts/Operations.sol/Operations.json",
     output: "src/lib/operations-deployment.ts",
-    // Retained salt; the cleanup changes the unreleased artifact candidate.
-    // Previous artifact: 0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e.
+    // Retained salt; the previous candidate under it is listed in HISTORY.
     salt: "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
     expectedAddress: "0x314e75BEFDb0f3e0621f68458f98Fce75246f7a7",
     prefix: "OPERATIONS",
@@ -84,11 +89,15 @@ const CONTRACTS = [
   {
     name: "Collections",
     key: "collections",
+    version: "1.0",
+    released: true,
+    sdkAddressExport: "COLLECTIONS_ADDRESS",
     artifact: "artifacts/contracts/Collections.sol/Collections.json",
     output: "src/lib/collections-deployment.ts",
-    // Retained salt from the previous c011ec7 artifact candidate.
+    // Retained salt from the previous c011ec7 artifact candidate. Collections
+    // imports Expressions, so an edit there moves this address too.
     salt: "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
-    expectedAddress: "0xc6D85B72bdF8040f61f4CD7957c7aa8e5f30a47f",
+    expectedAddress: "0x830a490449eC148CE4404e398eC7FA9903Ce5Bc2",
     prefix: "COLLECTIONS",
     description: "generic ABI collection vocabulary contract",
     includeProxyConstants: false,
@@ -96,13 +105,116 @@ const CONTRACTS = [
   {
     name: "Expressions",
     key: "expressions",
+    version: "1.0",
+    released: false,
+    sdkAddressExport: null,
     artifact: "artifacts/contracts/Expressions.sol/Expressions.json",
     output: "src/lib/expressions-deployment.ts",
     salt: "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
-    expectedAddress: "0xc45C579021623712eE3f61D066a24218F6e01E22",
+    expectedAddress: "0x03B82019Ed1802172606922e8F8c8d43d0cd6d12",
     prefix: "EXPRESSIONS",
     description: "typed expression graphs contract",
     includeProxyConstants: false,
+  },
+];
+
+// Prior releases and retired artifact candidates, hand-maintained here and
+// nowhere else: the docs render them from the manifest, and check:integration
+// rejects any address in the docs that is neither current nor listed here.
+// "Combinators" is the periphery's pre-Operations name. Released rows stay
+// live forever at their addresses; retired candidates were never canonical.
+const ZERO_SALT = `0x${"00".repeat(32)}`;
+const HISTORY = [
+  {
+    name: "Assertions",
+    version: "1.0",
+    address: "0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F",
+    salt: "0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb",
+    note: "original v1.0 core, reachable as assertions.eth",
+  },
+  {
+    name: "Assertions",
+    version: "1.1",
+    address: "0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0",
+    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6012c7cd0",
+    note: "typed-assert core (140 assertEq*/assertGte* functions)",
+  },
+  {
+    name: "Combinators",
+    version: "1.0",
+    address: "0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC",
+    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f60027fbe3",
+    note: "periphery of the v1.1 core",
+  },
+  {
+    name: "Assertions",
+    version: "2.0-rc",
+    address: "0xa55E47F37088b6D0212BdfD56b175ec08744DB19",
+    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f601469a3b",
+    note: "ERC-8211 release candidate core",
+  },
+  {
+    name: "Combinators",
+    version: "2.0-rc",
+    address: "0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9",
+    salt: "0x0b11b1becbd8e5f2ff0c192633404d5a6774818e9ba8b5c2cfdce9f6031de88b",
+    note: "periphery of the 2.0-rc core",
+  },
+  {
+    name: "Assertions",
+    version: "2.0",
+    address: "0xA01bC220Efc4c730BBcBC9ee52EE570D33EA956F",
+    salt: ZERO_SALT,
+    note: "interim zero-salt deployment; live wherever it was sent, no longer canonical",
+  },
+  {
+    name: "Operations",
+    version: "1.0",
+    address: "0x8e832Ace3f433943eb605c258bA37AF24a69dC53",
+    salt: ZERO_SALT,
+    note: "interim zero-salt deployment (then named Operators); live wherever it was sent, no longer canonical",
+  },
+  {
+    name: "Assertions",
+    version: "2.0",
+    address: "0x67DBB438FdC614466984Dc8F68dAB812d785a2aE",
+    salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
+    note: "retired artifact candidate under the current salt (the SDK pin 6513da6c still targets it)",
+  },
+  {
+    name: "Assertions",
+    version: "2.0",
+    address: "0x4D710b5AaBcd7f8753307c71779904A562422A15",
+    salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
+    note: "retired artifact candidate under the current salt",
+  },
+  {
+    name: "Operations",
+    version: "1.0",
+    address: "0x7AD80f224A8473A4206ad486e5b6b4e4367D17AD",
+    salt: "0x92d34082f305b501d427bef474df394f826a347b55dba79ecfe2bfe14b998cf9",
+    note: "retired artifact candidate (then named Operators; the SDK pin 6513da6c still targets it)",
+  },
+  {
+    name: "Operations",
+    version: "1.0",
+    address: "0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e",
+    salt: "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
+    note: "retired artifact candidate under the current salt",
+  },
+  {
+    name: "Collections",
+    version: "1.0",
+    address: "0xc6D85B72bdF8040f61f4CD7957c7aa8e5f30a47f",
+    salt: "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
+    note: "retired artifact candidate under the current salt (moved by the Expressions Select fix it imports)",
+  },
+  {
+    name: "Expressions",
+    version: "1.0",
+    address: "0xc45C579021623712eE3f61D066a24218F6e01E22",
+    salt: "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
+    note: "retired artifact candidate under the current salt (Select judged an exact 0/1 word)",
   },
 ];
 
@@ -117,12 +229,49 @@ if (
 const selectedContracts = args.length
   ? CONTRACTS.filter((c) => c.name === args[1])
   : CONTRACTS;
+const manifestPath = join(__dirname, "..", "src", "lib", "deployments.json");
 let previousVerificationInputs = {};
+let previousManifest = null;
 if (args.length) {
   const previous = readFileSync(join(__dirname, "..", "src/lib/verification-inputs.ts"), "utf8");
   const match = previous.match(/>\s*=\s*(\{[\s\S]*\});\s*$/);
   if (!match) throw new Error("Cannot preserve existing verification inputs; run a full export first");
   previousVerificationInputs = JSON.parse(match[1]);
+  if (!existsSync(manifestPath)) {
+    throw new Error("Cannot merge into src/lib/deployments.json; run a full export first");
+  }
+  previousManifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+}
+
+// Predict every selected address before measuring anything: the CREATE2 math
+// must reproduce the canonical address, or the compiled bytecode no longer
+// matches the deployed contract. A refusal lists every predicted address so a
+// deliberate re-export can copy them into CONTRACTS (and move the retired
+// ones into HISTORY) in one step.
+const loaded = selectedContracts.map((c) => {
+  const artifactPath = join(repoRoot, c.artifact);
+  const artifact = JSON.parse(readFileSync(artifactPath, "utf8"));
+  const creationBytecode = artifact.bytecode;
+  if (typeof creationBytecode !== "string" || !creationBytecode.startsWith("0x")) {
+    throw new Error(`Invalid bytecode in artifact at ${artifactPath}`);
+  }
+  const runtimeBytes = (artifact.deployedBytecode.length - 2) / 2;
+  if (runtimeBytes > 24_576) throw new Error(`${c.name} exceeds the EVM runtime size limit: ${runtimeBytes}`);
+  const initCodeHash = keccak256(creationBytecode);
+  const predicted = getAddress(
+    `0x${keccak256(concat(["0xff", CREATE2_PROXY, c.salt, initCodeHash])).slice(26)}`,
+  );
+  return { ...c, artifact, creationBytecode, runtimeBytes, initCodeHash, predicted };
+});
+const mismatches = loaded.filter((c) => c.predicted !== c.expectedAddress);
+if (mismatches.length) {
+  throw new Error(
+    "CREATE2 address mismatch: the local artifact differs from the deployed contract, do not export it.\n" +
+      mismatches
+        .map((c) => `  ${c.name}: compiled bytecode predicts ${c.predicted}, expected ${c.expectedAddress}`)
+        .join("\n") +
+      "\nIf the change is deliberate, copy the predicted addresses into CONTRACTS and move the retired ones into HISTORY.",
+  );
 }
 
 // Measure the real deploy gas of each contract by replaying the canonical
@@ -187,36 +336,13 @@ function importClosure(sources, entry) {
 }
 
 const verificationInputs = [];
+const manifestContracts = [];
+let compiler = null;
 
-for (const c of selectedContracts) {
-  const artifactPath = join(repoRoot, c.artifact);
-  const artifact = JSON.parse(readFileSync(artifactPath, "utf8"));
-  const creationBytecode = artifact.bytecode;
-  const runtimeBytes = (artifact.deployedBytecode.length - 2) / 2;
-  if (runtimeBytes > 24_576) throw new Error(`${c.name} exceeds the EVM runtime size limit: ${runtimeBytes}`);
+for (const c of loaded) {
+  const { artifact, creationBytecode, runtimeBytes, initCodeHash, predicted } = c;
 
-  if (
-    typeof creationBytecode !== "string" ||
-    !creationBytecode.startsWith("0x")
-  ) {
-    throw new Error(`Invalid bytecode in artifact at ${artifactPath}`);
-  }
-
-  // Sanity check: the CREATE2 math must reproduce the canonical address, or
-  // the compiled bytecode no longer matches the deployed contract.
-  const initCodeHash = keccak256(creationBytecode);
-  const predicted = getAddress(
-    `0x${keccak256(concat(["0xff", CREATE2_PROXY, c.salt, initCodeHash])).slice(26)}`,
-  );
-  if (predicted !== c.expectedAddress) {
-    throw new Error(
-      `CREATE2 address mismatch for ${c.name}: compiled bytecode predicts ` +
-        `${predicted}, expected ${c.expectedAddress}. The local artifact ` +
-        `differs from the deployed contract — do not export it.`,
-    );
-  }
-
-  const output = `// Generated by scripts/export-deploy-artifact.mjs — do not edit by hand.
+  const output = `// Generated by scripts/export-deploy-artifact.mjs, do not edit by hand.
 // Contains everything needed to deploy the ${c.description} to its
 // canonical address on any EVM chain via the Arachnid CREATE2 proxy.
 
@@ -247,7 +373,7 @@ export const ${c.prefix}_CREATION_BYTECODE =
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, output);
   const abiPath = outputPath.replace("-deployment.ts", "-abi.ts");
-  writeFileSync(abiPath, `// Generated by scripts/export-deploy-artifact.mjs — do not edit by hand.\nexport const ${c.prefix}_ABI = ${JSON.stringify(artifact.abi, null, 2)} as const;\n`);
+  writeFileSync(abiPath, `// Generated by scripts/export-deploy-artifact.mjs, do not edit by hand.\nexport const ${c.prefix}_ABI = ${JSON.stringify(artifact.abi, null, 2)} as const;\n`);
   console.log(
     `Exported ${((creationBytecode.length - 2) / 2 / 1024).toFixed(1)} KiB of ` +
       `${c.name} creation bytecode to ${c.output} ` +
@@ -282,9 +408,41 @@ export const ${c.prefix}_CREATION_BYTECODE =
       settings: buildInfo.input.settings,
     },
   });
+
+  // The manifest's compiler block comes from the build info, never from
+  // hardhat.config.ts by hand; every exported contract must share it.
+  const settings = buildInfo.input.settings;
+  const contractCompiler = {
+    solcLongVersion: buildInfo.solcLongVersion,
+    evmVersion: settings.evmVersion,
+    optimizer: { enabled: settings.optimizer.enabled, runs: settings.optimizer.runs },
+    // solc's default when the settings carry no metadata block.
+    bytecodeHash: settings.metadata?.bytecodeHash ?? "ipfs",
+  };
+  if (compiler && JSON.stringify(compiler) !== JSON.stringify(contractCompiler)) {
+    throw new Error(`${c.name} was compiled with different settings than the other exported contracts`);
+  }
+  compiler = contractCompiler;
+  manifestContracts.push({
+    name: c.name,
+    key: c.key,
+    version: c.version,
+    released: c.released,
+    address: c.expectedAddress,
+    salt: c.salt,
+    initCodeHash,
+    runtimeHash: keccak256(artifact.deployedBytecode),
+    runtimeBytes,
+    deployGas: deployGas[c.name],
+    prefix: c.prefix,
+    sdkAddressExport: c.sdkAddressExport,
+    deploymentModule: c.output,
+    abiModule: c.output.replace("-deployment.ts", "-abi.ts"),
+    description: c.description,
+  });
 }
 
-const verificationModule = `// Generated by scripts/export-deploy-artifact.mjs — do not edit by hand.
+const verificationModule = `// Generated by scripts/export-deploy-artifact.mjs, do not edit by hand.
 // The exact solc standard-JSON inputs that produced the canonical bytecode of
 // each deployed contract, for explorer source verification on any chain.
 // Import lazily (dynamic import): the embedded sources are large.
@@ -324,4 +482,30 @@ console.log(
     `(${verificationInputs
       .map((v) => `${v.name}: ${Object.keys(v.input.sources).join(", ")}`)
       .join("; ")}).`,
+);
+
+// The manifest: one row per CONTRACTS entry in that order. A --contract run
+// merges its fresh row into the previous manifest, the way the verification
+// inputs merge above; HISTORY is always rewritten from this script.
+const contracts = CONTRACTS.map((c) => {
+  const fresh = manifestContracts.find((m) => m.name === c.name);
+  if (fresh) return fresh;
+  const previous = previousManifest?.contracts.find((m) => m.name === c.name);
+  if (!previous) throw new Error(`No previous manifest entry for ${c.name}; run a full export first`);
+  return previous;
+});
+if (previousManifest && JSON.stringify(previousManifest.compiler) !== JSON.stringify(compiler)) {
+  throw new Error("Compiler settings changed since the previous manifest; run a full export");
+}
+const manifest = {
+  generatedBy: "scripts/export-deploy-artifact.mjs",
+  create2Proxy: CREATE2_PROXY,
+  compiler,
+  contracts,
+  history: HISTORY,
+};
+writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+console.log(
+  `Wrote src/lib/deployments.json (${contracts.length} contracts, ${HISTORY.length} history rows; ` +
+    `${contracts.map((c) => `${c.name} ${c.address}${c.released ? "" : " unreleased"}`).join(", ")}).`,
 );

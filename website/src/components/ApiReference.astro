@@ -1,57 +1,204 @@
 ---
-const sections = [
+type Fn = { name: string; desc: string };
+type Group = { group?: string; fns: Fn[] };
+type Section = { title: string; groups: Group[] };
+
+const sections: Section[] = [
   {
     title: 'The judge (Assertions core)',
-    fns: [
-      { name: 'assertParam', desc: 'Assert one ERC-8211 input parameter: resolve its value (raw bytes, staticcall, or balance read) and validate its inline constraints — the 90% case, no batch scaffolding' },
-      { name: 'assertBatch', desc: 'Assert an ERC-8211 composable batch under view semantics: entries construct calls by splicing resolved parameters, constraints validate along the way' },
+    groups: [
+      {
+        fns: [
+          { name: 'assertParam', desc: 'Assert one ERC-8211 input parameter: resolve its value (raw bytes, staticcall, or balance read) and validate its inline constraints — the 90% case, no batch scaffolding' },
+          { name: 'assertBatch', desc: 'Assert an ERC-8211 composable batch under view semantics: entries construct calls by splicing resolved parameters, constraints validate along the way' },
+        ],
+      },
     ],
   },
   {
     title: 'Core reads (Assertions core)',
-    fns: [
-      { name: 'resolve', desc: 'Resolve one operand and return its bytes — with constraint validation, any expression node becomes an inline assert' },
-      { name: 'pick', desc: 'Select a raw 32-byte word from a resolved operand (signed index, negative from the end)' },
-      { name: 'nav', desc: 'Typed navigation: interpret a resolved operand as a declared return tuple and walk a path through tuples and dynamic arrays — single words, canonical dynamic envelopes, and decoded lengths (LEN sentinel)' },
-      { name: 'chain', desc: 'Follow runtime-resolved addresses: each hop staticcalls the address the previous hop returned' },
-      { name: 'read', desc: 'Construct a staticcall at judge time: selector plus runtime-resolved calldata segments against a runtime-resolved target — the composition socket every Operations call (and any view contract) is reached through' },
-      { name: 'cond', desc: 'Lazy conditional: resolve the condition, then resolve and return ONLY the winning branch — the losing branch’s calls never happen' },
-      { name: 'orElse', desc: 'Composable try/catch: resolve the attempt; on ANY revert (constraints double as guards) resolve the fallback instead' },
-      { name: 'isValid', desc: '1 if an operand resolves and passes its constraints, else 0 — assert that a call succeeds, fails, or branch on resolvability' },
-      { name: 'revertData', desc: 'The revert data of a call that MUST fail: match an expected error selector, strip it, and navigate the error’s arguments like a return value' },
+    groups: [
+      {
+        fns: [
+          { name: 'resolve', desc: 'Resolve one operand and return its bytes — with constraint validation, any expression node becomes an inline assert' },
+          { name: 'pick', desc: 'Select a raw 32-byte word from a resolved operand (signed index, negative from the end)' },
+          { name: 'nav', desc: 'Typed navigation: interpret a resolved operand as a declared return tuple and walk a path through tuples and dynamic arrays — single words, canonical dynamic envelopes, and decoded lengths (LEN sentinel)' },
+          { name: 'chain', desc: 'Follow runtime-resolved addresses: each hop staticcalls the address the previous hop returned' },
+          { name: 'read', desc: 'Construct a staticcall at judge time: selector plus runtime-resolved calldata segments against a runtime-resolved target — the composition socket every Operations call (and any view contract) is reached through' },
+          { name: 'cond', desc: 'Lazy conditional: resolve the condition, then resolve and return ONLY the winning branch — the losing branch’s calls never happen' },
+          { name: 'orElse', desc: 'Composable try/catch: resolve the attempt; on ANY revert (constraints double as guards) resolve the fallback instead' },
+          { name: 'isValid', desc: '1 if an operand resolves and passes its constraints, else 0 — assert that a call succeeds, fails, or branch on resolvability' },
+          { name: 'revertData', desc: 'The revert data of a call that MUST fail: match an expected error selector, strip it, and navigate the error’s arguments like a return value' },
+        ],
+      },
     ],
   },
   {
     title: 'ERC-8211 wire format (what the judge consumes)',
-    fns: [
-      { name: 'InputParam', desc: 'One runtime-resolved value: a fetcher (RAW_BYTES literal, STATIC_CALL, or BALANCE — native or ERC-20), inline constraints, and a routing type' },
-      { name: 'Constraint', desc: 'An inline predicate on a resolved value: EQ, GTE, LTE, or IN (inclusive bounds) over its first 32-byte word' },
-      { name: 'ComposableExecution', desc: 'One batch entry: a function selector plus input parameters whose resolved values are spliced into the constructed call' },
+    groups: [
+      {
+        fns: [
+          { name: 'InputParam', desc: 'One runtime-resolved value: a fetcher (RAW_BYTES literal, STATIC_CALL, or BALANCE — native or ERC-20), inline constraints, and a routing type' },
+          { name: 'Constraint', desc: 'An inline predicate on a resolved value: EQ, GTE, LTE, or IN (inclusive bounds) over its first 32-byte word' },
+          { name: 'ComposableExecution', desc: 'One batch entry: a function selector plus input parameters whose resolved values are spliced into the constructed call' },
+        ],
+      },
     ],
   },
   {
     title: 'Operations (plain-value vocabulary)',
-    fns: [
-      { name: 'add … max, exp', desc: 'Checked word arithmetic as named functions — add, sub, mul, div, mod, min, max with int256 overloads for signed semantics, exp unsigned; decoded calldata reads on any explorer' },
-      { name: 'absDiff', desc: 'The magnitude |a − b|, unsigned or signed, total even across the widest int256 span — the approximate-equality workhorse' },
-      { name: 'eq, ne, lt, gt, le, ge', desc: 'Comparisons returning bool (int256 overloads order negatives correctly); judged EQ 1 through the core' },
-      { name: 'bitAnd, bitOr, bitXor, shl, shr, bitSet', desc: 'Bitwise ops and shifts (EVM semantics), plus a one-call bit test for bitmap character classes' },
-      { name: 'balance, codehash, timestamp, blockNumber, chainId', desc: 'Environment reads at judge time, as plain argument-free or address-taking calls' },
-      { name: 'concat, slice, byteLen, hash', desc: 'Bytes assembly and keccak256 of the decoded payload — an EQ constraint over hash pins any string or bytes value' },
-      { name: 'indexOf', desc: 'Substring search by signed occurrence ordinal (-1 is the last match)' },
-      { name: 'encode', desc: 'Runtime abi.encode from pre-resolved component values (nav’s inverse) — its raw output is a calldata segment for read splicing' },
+    groups: [
+      {
+        group: 'Arithmetic',
+        fns: [
+          { name: 'add, sub, mul, div, mod, min, max', desc: 'Checked word arithmetic as named functions, with int256 overloads for signed semantics; decoded calldata reads on any explorer' },
+          { name: 'exp, sqrt, log2', desc: 'Checked power (uint or int base, uint exponent), floor square root, and floor log2 (reverts on 0)' },
+          { name: 'absDiff', desc: 'The magnitude |a − b|, unsigned or signed, total even across the widest int256 span: the approximate-equality workhorse' },
+          { name: 'mulDiv, addMod, mulMod, powMod', desc: '512-bit mul-then-div with explicit Trunc/Floor/Ceil rounding, full-width modular sums and products, and modular powers and inverses; signed and unsigned overloads' },
+        ],
+      },
+      {
+        group: 'Fixed point',
+        fns: [
+          { name: 'rpow, expWad, lnWad', desc: 'Compounding in ray or wad (base is one unit), and e^x and ln x in 1e18 fixed point' },
+        ],
+      },
+      {
+        group: 'Comparisons',
+        fns: [
+          { name: 'eq, ne, lt, gt, le, ge', desc: 'Comparisons returning bool (int256 overloads order negatives correctly); judged EQ 1 through the core, and combined with the bitwise ops since constraints cannot be OR-ed' },
+        ],
+      },
+      {
+        group: 'Bitwise',
+        fns: [
+          { name: 'bitAnd, bitOr, bitXor, shl, shr', desc: 'Bitwise ops and shifts with EVM semantics; the int256 shr overload is the arithmetic shift (SAR)' },
+          { name: 'bitSet', desc: 'A one-call bit test on a mask, the character-class lambda of the folds' },
+        ],
+      },
+      {
+        group: 'Environment',
+        fns: [
+          { name: 'balance, codeHash', desc: 'Native balance and code hash of an address at judge time' },
+          { name: 'timestamp, blockNumber, chainId, baseFee, prevRandao, coinbase, gasLimit, blobBaseFee, blockHash, origin, gasPrice, blobHash', desc: 'Block and transaction context as plain argument-free or index-taking calls' },
+        ],
+      },
+      {
+        group: 'Calls',
+        fns: [
+          { name: 'rawCall, code', desc: 'A raw staticcall (the precompile reach-through) and the full runtime code of an address as bytes' },
+        ],
+      },
+      {
+        group: 'Bytes',
+        fns: [
+          { name: 'concat, slice, sliceRange, byteAt, byteLen', desc: 'Bytes assembly with a delimiter, fixed and clamped signed-range slicing, single-byte access, and length' },
+          { name: 'hash, hashPairSorted', desc: 'keccak256 of the decoded payload (an EQ constraint over hash pins any string or bytes value) and the sorted Merkle node combiner' },
+        ],
+      },
+      {
+        group: 'Search',
+        fns: [
+          { name: 'indexOf, contains', desc: 'Substring search by signed occurrence ordinal (-1 is the last match), and a plain membership test' },
+        ],
+      },
+      {
+        group: 'Strings',
+        fns: [
+          { name: 'split, replace, toLower, toUpper', desc: 'Delimiter split, substring replacement, and ASCII-only case folds' },
+          { name: 'charset, stringSlice, stringAt', desc: 'Every byte in a 256-bit character class, and UTF-8 aware slicing and indexing' },
+        ],
+      },
+      {
+        group: 'Parse',
+        fns: [
+          { name: 'parseUint, parseInt, toString', desc: 'Decimal text to word and back, signed and unsigned' },
+          { name: 'parseUnits, parseUnitsUnsigned, formatUnits', desc: 'Decimal strings to fixed-point units with explicit rounding, and back to text' },
+        ],
+      },
+      {
+        group: 'Encode',
+        fns: [
+          { name: 'encode, encodeBytes', desc: 'Runtime abi.encode from pre-resolved component values (nav’s inverse): raw output is a calldata segment for read splicing, encodeBytes wraps it in a bytes envelope' },
+        ],
+      },
     ],
   },
   {
     title: 'Collections (iteration and arrays)',
-    fns: [
-      { name: 'mapWords, filterWords, mapValues, filterValues', desc: 'Transform and select word or ABI-valued elements through callbacks' },
-      { name: 'sortWords, sortValues', desc: 'Stable bottom-up merge sorting, with direct unsigned word comparisons or a generic comparator' },
-      { name: 'wordIndexOf, uniqueWords, uniqueValues', desc: 'Membership and stable deduplication' },
-      { name: 'foldRange, foldBytes, foldWords', desc: 'Bounded folds over an index range, a byte string, or 32-byte words: a single-staticcall template lambda per element, with Any/All short-circuit — iteration without Turing completeness' },
+    groups: [
+      {
+        group: 'Folds',
+        fns: [
+          { name: 'foldRange, foldBytes, foldWords', desc: 'Bounded folds over an index range, a byte string, or 32-byte words: a single-staticcall template lambda per element, with Any/All short-circuit; iteration without Turing completeness' },
+        ],
+      },
+      {
+        group: 'Word arrays',
+        fns: [
+          { name: 'mapWords, filterWords', desc: 'Transform and select the words of a payload through a template lambda' },
+          { name: 'iotaWords, wordIndexOf, reverseWords, sumWords', desc: 'The index generator, membership (word-count sentinel), reversal, and a checked native sum' },
+          { name: 'zipWords, unzipWords', desc: 'Interleave two payloads into pairs and pull one lane back out' },
+          { name: 'sortWords, uniqueWords', desc: 'Stable bottom-up merge sort on unsigned words, and stable deduplication (ordered or full)' },
+        ],
+      },
+      {
+        group: 'Generic values',
+        fns: [
+          { name: 'mapValues, filterValues, foldValues', desc: 'Map, stable filter, and left fold over arrays of canonical ABI values through typed callbacks (direct, or an expression graph)' },
+          { name: 'sortValues, uniqueValues', desc: 'Stable merge sort with a comparator callback, and deduplication by a callback-defined equality' },
+          { name: 'anyValues, allValues, findValues, indexOfValues', desc: 'Predicate queries that stop at the first decisive element: any, all, first match, and index of an equal element' },
+          { name: 'flattenValues, reverseValues, sliceValues', desc: 'Flatten one level, reverse, and clamped signed-range slicing, all validating every element' },
+          { name: 'zipValues, unzipValues', desc: 'Pair two equally sized arrays into tuple envelopes and extract a lane back' },
+        ],
+      },
+      {
+        group: 'Envelope adapters',
+        fns: [
+          { name: 'validateValue, packArray, unpackArray', desc: 'Check a value against a type descriptor, and convert between an array of element envelopes and a single abi.encode(T[])' },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Expressions (typed expression graphs)',
+    groups: [
+      {
+        group: 'Evaluate',
+        fns: [
+          { name: 'evaluate', desc: 'Evaluate a graph and return the result node’s raw value: nodes reference earlier nodes by index, so a subterm used twice is encoded and computed once, and every node’s value is validated against its declared type' },
+          { name: 'evaluateEncoded', desc: 'The same over an abi-encoded Expression held as opaque bytes: the Collections callback socket, with the substituted element slots arriving as parameters' },
+          { name: 'evaluateGuarded', desc: 'Self-call only (NotSelf otherwise): the call boundary TryOrElse and IsValid run their attempt through, so any failure inside rolls back cleanly' },
+        ],
+      },
+      {
+        group: 'Value nodes',
+        fns: [
+          { name: 'Literal, Parameter', desc: 'A constant value, or one of the values handed to the evaluation (a Collections element slot)' },
+          { name: 'Resolve', desc: 'An ERC-8211 InputParam resolved through the expression’s core: the bridge from unresolved operands into the graph' },
+          { name: 'Call', desc: 'A staticcall with a runtime-resolved target and typed arguments drawn from earlier nodes; reverts carry the target’s reason (NodeCallFailed)' },
+        ],
+      },
+      {
+        group: 'Shape nodes',
+        fns: [
+          { name: 'Wrap, Array, Tuple', desc: 'Assemble earlier values into a bytes envelope, a typed dynamic array, or a tuple, ready to feed a Call or to be returned' },
+        ],
+      },
+      {
+        group: 'Control nodes',
+        fns: [
+          { name: 'Select', desc: 'Lazy conditional over nodes: only the chosen branch evaluates, judged like the core’s cond' },
+          { name: 'TryOrElse, IsValid', desc: 'Guarded evaluation mirroring the core’s orElse and isValid: the attempt runs in a subframe, and any failure selects the fallback or yields false' },
+          { name: 'ProbeCall', desc: 'The core’s revertData over graph nodes: the reason of a call that must fail, optionally matched against an expected error selector' },
+        ],
+      },
     ],
   },
 ];
+
+const rowCount = (section: Section) => section.groups.reduce((n, g) => n + g.fns.length, 0);
+const hasGroups = (section: Section) => section.groups.some((g) => g.group);
 ---
 
 <section class="py-24 px-6" id="api">
@@ -67,8 +214,9 @@ const sections = [
       message if you provide one. The core also owns every read primitive
       (selection, chained lookups, constructed calls, lazy conditionals);
       when a value needs computing, its read splices live operands into the
-      plain-typed Operations contract and judges the result. The core reads
-      and judges. Operations compute.
+      plain-typed Operations contract and judges the result. Expressions
+      evaluates typed graphs where a shared subterm resolves once. The core
+      reads and judges. Operations compute.
     </p>
     <div class="flex flex-col gap-3">
       {sections.map((section) => (
@@ -76,19 +224,29 @@ const sections = [
           <summary class="flex items-center justify-between px-6 py-4 cursor-pointer select-none hover:bg-[var(--color-bp-500)]/5 transition-colors">
             <span class="font-mono font-semibold">{section.title}</span>
             <span class="flex items-center gap-2">
-              <span class="text-xs text-[var(--color-ink-3)] font-mono">{section.fns.length}</span>
+              <span class="text-xs text-[var(--color-ink-3)] font-mono">{rowCount(section)}</span>
               <svg class="size-4 text-[var(--color-ink-3)] transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </span>
           </summary>
-          <div class="border-t border-[var(--color-ink-3)]/10">
+          <div class="border-t border-[var(--color-ink-3)]/10 overflow-x-auto">
             <table class="w-full text-sm">
               <tbody>
-                {section.fns.map((fn, i) => (
-                  <tr class={i > 0 ? 'border-t border-[var(--color-ink-3)]/5' : ''}>
-                    <td class="px-6 py-3 font-mono text-[var(--color-bp-400)] whitespace-nowrap">{fn.name}</td>
-                    <td class="px-6 py-3 text-[var(--color-ink-2)]">{fn.desc}</td>
-                  </tr>
-                ))}
+                {section.groups.map((group, gi) =>
+                  group.fns.map((fn, i) => (
+                    <tr class={gi > 0 || i > 0 ? 'border-t border-[var(--color-ink-3)]/5' : ''}>
+                      {hasGroups(section) && i === 0 && (
+                        <td
+                          rowspan={group.fns.length}
+                          class="px-6 py-3 align-top text-xs uppercase tracking-wider text-[var(--color-ink-3)] whitespace-nowrap border-r border-[var(--color-ink-3)]/10"
+                        >
+                          {group.group}
+                        </td>
+                      )}
+                      <td class="px-6 py-3 align-top font-mono text-[var(--color-bp-400)]">{fn.name}</td>
+                      <td class="px-6 py-3 align-top text-[var(--color-ink-2)]">{fn.desc}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

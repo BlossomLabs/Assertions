@@ -2,26 +2,25 @@
 
 On-chain assertion contracts for verifying blockchain state in Solidity, built around a static call to [ERC-8211 (Smart Batching)](https://www.erc8211.com/). An assertion is an ERC-8211 predicate: an `InputParam` that declares how to fetch a live value (`RAW_BYTES` literal, arbitrary `STATIC_CALL`, or `BALANCE` query) and the inline `Constraint`s (`EQ` / `GTE` / `LTE` / `IN`) it must satisfy. Batch assertion calls alongside the transactions they guard (DAO proposals, Safe batches, upgrades): if any constraint fails, the entire transaction reverts, atomically.
 
-**The core reads and judges, Operations compute.**
+**The core reads and judges; the periphery computes.**
 
 - **`Assertions` (the core)** owns everything that speaks ERC-8211. It judges batches in view mode: `assertParam` resolves one input parameter and validates its constraints; `assertComposable(executions)` evaluates a full `ComposableExecution[]` batch with every fetcher and every constructed call executed via `staticcall`. And it carries the read primitives whose operands arrive unresolved: `resolve`, `pick`, `nav`, `chain`, `read` (construct a staticcall from runtime-resolved segments) and the lazy control primitives `cond`, `orElse`, `isValid`, `revertData`.
 - **`Operations`** provides scalar arithmetic, comparisons, bitwise operations, environment reads, bytes/string processing, and ABI encoding.
-- **`Collections`** owns word and generic ABI-valued mapping, filtering, folding, sorting, deduplication and array packing. Both sorting paths use stable bottom-up merge sort.
+- **`Collections`** owns iteration: the bounded folds, the word-array family (map, filter, sort, deduplicate, zip, sum) and the generic ABI-valued traversals with typed callbacks. Both sorting paths use stable bottom-up merge sort.
+- **`Expressions`** (unreleased) adds typed expression graphs and resolve-once call construction, so a repeated subterm is evaluated once instead of being duplicated in calldata; `Collections.Callback.expression` is its only in-tree consumer.
 
-- **`ERC8211.sol`** carries the standard's wire format (`ComposableExecution`, `InputParam`, `Constraint`) and the `IComposableExecution` interface — batches produced by any ERC-8211 SDK decode here unchanged. **`AbiCodec.sol`** shares descriptor parsing, canonical value validation, and ABI assembly across the core and both periphery contracts. Navigation remains selective; public encoding validates complete values.
+- **`ERC8211.sol`** carries the standard's wire format (`ComposableExecution`, `InputParam`, `Constraint`) and the `IComposableExecution` interface, so batches produced by any ERC-8211 SDK decode here unchanged. **`AbiCodec.sol`** shares descriptor parsing, canonical value validation, and ABI assembly across the core and the periphery contracts. Navigation remains selective; public encoding validates complete values.
 
 ## Canonical addresses (same on every chain)
 
 ```
 Assertions          v2.0  0x94b07F5364b54471b065Ee74150864628Df722d7   (frozen core: judge + primitives)
-Operations          v1.0  0x314e75BEFDb0f3e0621f68458f98Fce75246f7a7   (unreleased periphery)
-Collections         v1.0  0xc6D85B72bdF8040f61f4CD7957c7aa8e5f30a47f   (unreleased generic collections)
-Expressions         v1.0  0xc45C579021623712eE3f61D066a24218F6e01E22   (unreleased typed expression graphs)
+Operations          v1.0  0x314e75BEFDb0f3e0621f68458f98Fce75246f7a7   (versionable periphery)
+Collections         v1.0  0x830a490449eC148CE4404e398eC7FA9903Ce5Bc2   (generic collections)
+Expressions         v1.0  0x03B82019Ed1802172606922e8F8c8d43d0cd6d12   (unreleased typed expression graphs)
 ```
 
-These are the CREATE2 addresses of the current artifact set: the shared-codec core, the split Operations/Collections periphery, and Expressions. They are unreleased artifact candidates: no public-chain deployment is implied by listing an address; check the website's deployments page for availability. Previous candidates (the core at `0x67DBB438FdC614466984Dc8F68dAB812d785a2aE` under the same salt, among others) use different bytecode.
-
-Deployed versions are immutable and keep working forever at their own canonical addresses: the v2.0-rc core lives at `0xa55E47F37088b6D0212BdfD56b175ec08744DB19` with Combinators v2.0-rc at `0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9`, the v1.1 typed-assert core at `0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0` with Combinators v1.0 at `0xA55Ec0AA973C18Cb7D7874d4c52B663FFFf6b1dC`, and the original v1.0 core at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F).
+These are the CREATE2 addresses of the current artifact set: the shared-codec core, the split Operations/Collections periphery, and Expressions. Listing an address implies no public-chain deployment; check the website's Deployments page for per-chain availability. Expressions is unreleased: the SDK does not compile against it. Earlier releases and retired artifact candidates (which use different bytecode) are listed on the Deployments page, rendered from `website/src/lib/deployments.json`.
 
 ## Quick example
 
@@ -44,20 +43,20 @@ assertions.assertParam(
 );
 ```
 
-The same check encoded as an ERC-8211 predicate entry (a `ComposableExecution` with no `TARGET`) passes through `assertComposable` unchanged — and any predicate batch an ERC-8211 SDK produces can be judged on-chain the same way.
+The same check encoded as an ERC-8211 predicate entry (a `ComposableExecution` with no `TARGET`) passes through `assertComposable` unchanged, and any predicate batch an ERC-8211 SDK produces can be judged on-chain the same way.
 
 ## Documentation
 
 The full documentation lives on the website under `/docs`:
 
-- **Overview & architecture** — the three-contract design and why it stays frozen
-- **Using assertions from Solidity** — complete patterns for proposals, Safe batches and upgrades
-- **Core primitives** — the reads (`resolve`, `pick`, `nav`, `chain`, `read`) and resolution control (`cond`, `orElse`, `isValid`, `revertData`)
-- **Operations** — the plain-value vocabulary: word ops, comparisons, bytes and search operations, and runtime encoding
-- **EVMcrispr integration** — the `assertions` module, lenses and on-chain `@helper!`s
-- **Reference** — every assertion function, every custom error, and deployment to new chains
+- **Overview & architecture**: the four contracts, the admission test that splits them, and why the core stays frozen
+- **Using assertions from Solidity**: complete patterns for proposals, Safe batches and upgrades
+- **Core primitives**: the reads (`resolve`, `pick`, `nav`, `chain`, `read`) and resolution control (`cond`, `orElse`, `isValid`, `revertData`)
+- **Operations, Collections and Expressions**: the plain-value vocabulary (word ops, comparisons, bytes and search operations, runtime encoding), the folds and collection traversals, and the expression graphs
+- **EVMcrispr integration**: the `assert` command, lenses and on-chain `@helper!`s
+- **Reference**: every judge function, every custom error, and deployment to new chains
 
-Run it locally with `pnpm --dir website dev` and open `http://localhost:3000/docs`, or use the hosted site. The website also ships an interactive **Assertion Builder** (`/builder`) and a **Deployments** page (`/deployments`) for deploying all three contracts to new chains at their canonical CREATE2 addresses.
+Run it locally with `pnpm --dir website dev` and open `http://localhost:3000/docs`, or use the hosted site. The website also ships an interactive **Assertion Builder** (`/builder`) and a **Deployments** page (`/deployments`) for deploying every exported contract to new chains at its canonical CREATE2 address.
 
 ## Development
 
@@ -69,13 +68,8 @@ pnpm test             # run the test suite
 
 The contracts target solc 0.8.36 with `evmVersion: cancun`; compiler settings in `hardhat.config.ts` must not change or the canonical CREATE2 addresses change with the bytecode.
 
+The website vendors an EVMcrispr checkout at `website/.evmcrispr`, pinned by `evmcrispr.commit` in `website/package.json`. The pinned revision's SDK compiles against the Assertions, Operations and Collections addresses above; Expressions has no SDK face. `pnpm --dir website check:integration` verifies that the pin, the compiled artifacts and the deployment manifest agree.
+
 ## License
 
 MIT
-
-
-### Unreleased operator extensions
-
-Operations now takes `Rounding { Trunc, Floor, Ceil }` in both signed and unsigned `mulDiv`; the old three-argument call and `mulDivUp` were removed before official release. Signed powers and integer/decimal conversions are included. `Collections` supplies canonical ABI-valued map/filter/fold, stable comparator sort and distinct, and array packing/unpacking. See [the contract integration handoff](docs/operators-extension-handoff.md).
-
-The expanded combined vocabulary exceeds the 24,576-byte EVM runtime limit, so generic collections remain a separate periphery. No rational contract or core/ERC-8211 change is needed. The vendored EVMcrispr SDK and helper vocabulary have not been migrated to this ABI; update them separately before consuming the new artifacts. No public-chain deployment is implied.

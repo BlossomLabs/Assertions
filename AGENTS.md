@@ -6,7 +6,7 @@ fix it in the same change that falsified it.
 
 ## The two trees
 
-- **Main repo**: `contracts/` (the frozen `Assertions` core, the versionable
+- **Main repo**: `contracts/` (the `Assertions` core, frozen once released, the versionable
   `Operations` periphery, `Collections`, `Expressions`, `AbiCodec`, `ERC8211`), Solidity tests under
   `contracts/tests/*.t.sol` run by `pnpm test` (hardhat 3), and the Astro site in
   `website/` with hand-written docs at `website/src/content/docs/docs/`.
@@ -23,7 +23,7 @@ fix it in the same change that falsified it.
 ## Design doctrine
 
 - **The core's admission test**: only what needs operands to arrive UNRESOLVED
-  (ERC-8211 `InputParam`s) lives on the frozen core. Scalar computation over resolved
+  (ERC-8211 `InputParam`s) lives on the core. Scalar computation over resolved
   values belongs to Operations; iteration and collection processing belong to Collections; expression graphs belong to Expressions. All three version by deploying at new addresses. When
   a capability is requested, first check whether composition already expresses it:
   `hash(rawCall(target, data))` made both a `hashOf` primitive and a `HASH_EQ`
@@ -41,14 +41,48 @@ fix it in the same change that falsified it.
   redefine. Portability breaks are one-way doors; refuse them.
 - **Raw `InputParam` is a tree; `Expressions` adds a graph alternative.**
   Raw operands cannot name subterms: repeated expressions duplicate calldata and
-  resolution. Prefer resolver `resolveArguments` / `resolveValues` for dynamic ABI
-  construction: each supplied input resolves once, with no four-live-input cap.
-  Repeated input entries are still independent; graph references share evaluated
-  nodes. Graphs bind whole canonical ABI values, support lazy branches and guarded
-  evaluation, and memoize per evaluation (per callback invocation in Collections),
-  not across collection iterations. Keep word-window folds for efficient word-only
+  resolution. Resolve-once ABI construction lives on the core since 2026-09-07:
+  `Assertions.readArgs(target, selector, argumentTypes, args)` resolves each
+  argument in-frame and encodes the tuple through `AbiCodec.tuple`, passing the
+  admission test the way `read` does. Measured through `Assertions.resolve`
+  (`contracts/tests/ExpressionsGas.t.sol`): two live string arguments cost 32,440
+  gas through `readArgs`, 40,440 through `Expressions.resolveCall`, 41,011 through
+  `read` over `resolveArguments` and 51,474 through the SDK's offset splice; at
+  three, 43,887 against 126,757 for the splice. `readArgs` also keeps the core as
+  the destination's `msg.sender`, which `resolveCall` does not (`MockTarget.caller`
+  pins it). One live argument stays on `read` (19,000 vs 20,217) and word-only
+  calls too (14,718 vs 21,219). Expressions keeps `resolveCall` / `resolveArguments`
+  for callers that want Expressions as the caller and `resolveValues` for
+  assembling a `bytes[]` from N operands. Repeated input entries are still
+  independent; graph references share evaluated nodes. Graphs bind whole
+  canonical ABI values, support lazy branches and guarded evaluation, and memoize
+  per evaluation (per callback invocation in Collections), not across collection
+  iterations. `Select` judges truth like the core's `cond`: the first word of a
+  condition of at least 32 bytes, nonzero selects `refs[1]`, zero `refs[2]`, and a
+  shorter condition reverts `InvalidNode`; `Collections._predicate` still demands a
+  canonical 0/1 word from callback RESULTS, a different concern. Status: an
+  unreleased artifact with zero SDK adoption; `Collections.Callback.expression` is
+  the only in-tree consumer. Keep word-window folds for efficient word-only
   workloads; a 32-byte overwrite changes no dynamic ABI offsets. Specialized math
   such as `rpow` still avoids an impractically large composed expression.
+- **Descriptor parsing is the periphery's hot path.** Before 2026-09-07
+  `AbiCodec.typeShape` cost about 400 gas per character (bounds-checked `t[i]`
+  calldata indexing, four reads per character), `tupleLayout` parsed a descriptor
+  three times and `Expressions` re-parsed every node's `valueType` on each visit:
+  a `Call` node with two word arguments cost 80,682 gas through `Assertions.resolve`
+  against 9,859 for the same call as a core `read`. Assembly scanners, a one-parse
+  `tupleLayout` and a per-node shape cache (`Expressions.Cache.dynamic/words`) cut
+  `shape("(uint256,uint256)")` from 6.9k to 1.9k net, a two-word `Tuple` node from
+  96k to 42k and that `Call` node to 44,498 (`AbiCodecGas.t.sol`,
+  `ExpressionsGas.t.sol`). A graph still costs about 10k fixed plus 3.5k per node
+  plus 20k per `Call`, so it wins only when the resolutions it saves cost more than
+  that: `add(x, x)` over a 75k leaf, 115,230 as a graph vs 144,374 as a tree; over a
+  3.6k leaf, 50,531 vs 14,976.
+- **`nav` re-encodes every dynamic terminal.** Since 2026-09-07 arrays of dynamic
+  elements and dynamic tuples come back as `abi.encode(value)` (their extent from
+  `AbiCodec.body`'s canonical-form walk, malformed data reverting `InvalidValue`);
+  the earlier `InvalidNavigation` for them is gone. `PAYLOAD` is still string/bytes
+  only, and `LEN` still refuses fixed arrays and tuples.
 - **Sentinels ride the path**: `LEN` (`type(int256).min`) and `PAYLOAD` (min + 1)
   are nav path entries because no real index bound can ever admit them, and the
   path is where selection intent lives. This kept the descriptor grammar pure ABI
@@ -71,11 +105,18 @@ fix it in the same change that falsified it.
   standard: anything richer (signedness, `!=`, string equality, tolerance) lowers
   to an Operations expression judged `EQ 1`, and tests must assert that op-judge
   shape.
-- **Operations admission**: a new function must not be expressible as a few-node
-  recipe at practical cost. Signed `sortWords` was refused (flip the sign bit,
-  sort, flip back); generic comparator sorting lives in Collections (sorting is not a reduction);
-  `join` is composition over `concat`. What earns a slot: hot loops (one call per
-  element otherwise) and calldata-exponential compositions (`rpow`, `log2`).
+- **Operations admission is a demand test**: a function earns a slot only when
+  BOTH (i) it is not expressible as a few-node recipe at practical cost AND (ii) a
+  concrete assertion workload needs it (a script in `docs/` or the tests, or an SDK
+  helper face that would call it). Signed `sortWords` was refused (flip the sign
+  bit, sort, flip back); generic comparator sorting lives in Collections (sorting
+  is not a reduction); `join` is composition over `concat`. What passes (i): hot
+  loops (one call per element otherwise) and calldata-exponential compositions
+  (`rpow`, `log2`). Specialist families go to optional contracts. What the rule
+  prevents: Collections' `*Values` family (`Collections.sol:396-660` plus its
+  helpers `:710-990`) has zero SDK consumers and leaves Collections 272 bytes
+  under EIP-170. Documented next step when Collections needs bytes: split
+  `*Values` into a third periphery contract.
 - **Signedness is a dimension in every word-level design.** Unsigned order and
   signed order disagree about which value absorbs, which element is minimal, and
   how a two's-complement word reads. One SDK path returning `elemType: "uint256"`
@@ -166,13 +207,19 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
 
 ## Release
 
-- Canonical vanity salts live in `website/scripts/export-deploy-artifact.mjs`.
-  The zero salt in Ignition is not the canonical deployment path. Contract source
-  changes (including comments in compiler metadata) may change CREATE2 addresses;
-  regenerate and verify deployment artifacts, fixtures and SDK addresses together.
-- Bytecode size: `(len(deployedBytecode) - 2) / 2` against 24,576, per artifact.
-  Operations must stay byte-identical through core-only changes; any drift there is
-  a red flag.
+- Canonical salts are random 32-byte values (the vanity convention is retired) and
+  live in `website/scripts/export-deploy-artifact.mjs`. The zero salt in Ignition
+  is not the canonical deployment path. `pnpm sync:artifact` (from `website/`)
+  regenerates the per-contract `src/lib/*-deployment.ts` and `*-abi.ts` modules AND
+  `website/src/lib/deployments.json`, the one manifest every website consumer and
+  `check:integration` read. Contract source changes (including comments in compiler
+  metadata) may change CREATE2 addresses, and an edit to an IMPORTED source moves
+  the importer's address too (Collections imports Expressions); regenerate and
+  verify deployment artifacts, fixtures and SDK addresses together.
+- Bytecode size: `test/bytecode-size.test.ts` checks `(len(deployedBytecode) - 2) / 2`
+  against 24,576 for every production artifact under `pnpm test` and pins the
+  artifact set. Operations must stay byte-identical through core-only changes; any
+  drift there is a red flag.
 
 - When running tests in a restricted sandbox, verify the nodejs test count: a
   sandboxed run has reported success with zero fuzz tests. Run outside that

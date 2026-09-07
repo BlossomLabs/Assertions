@@ -8,9 +8,9 @@ import "../lib/AbiCodec.sol";
 import "./Mocks.sol";
 
 /**
- * @notice The 2026-09-07 core additions: `readArgs` (resolve-once call
+ * @notice The 2026-09-07 core additions: `get` (resolve-once call
  *         construction over whole ABI values, the core staying the caller),
- *         `resolveValues` (N operands resolved once each into a canonical
+ *         `gather` (N operands resolved once each into a canonical
  *         `bytes[]`) and `nav` returning arrays of dynamic elements and
  *         dynamic tuples as canonical values, with the caller rule pinned:
  *         the core stays the destination's msg.sender.
@@ -26,7 +26,7 @@ contract CoreExtensionsTest is Test {
         token = new MockToken(address(0), "WETH");
     }
 
-    /// A `bytes[]` consumer for the resolveValues-into-readArgs shape.
+    /// A `bytes[]` consumer for the gather-into-get shape.
     function totalLength(bytes[] calldata parts) external pure returns (uint256 total) {
         for (uint256 i; i < parts.length; i++) {
             total += parts[i].length;
@@ -49,20 +49,20 @@ contract CoreExtensionsTest is Test {
         return _call(address(target), abi.encodeCall(MockTarget.getString, ()));
     }
 
-    function _readArgsData(address to, bytes4 sel, string memory types, InputParam[] memory args)
+    function _getData(address to, bytes4 sel, string memory types, InputParam[] memory args)
         internal
         pure
         returns (bytes memory)
     {
-        return abi.encodeCall(Assertions.readArgs, (_raw(abi.encode(to)), sel, types, args));
+        return abi.encodeCall(Assertions.get, (_raw(abi.encode(to)), sel, types, args));
     }
 
-    function _readArgs(address to, bytes4 sel, string memory types, InputParam[] memory args)
+    function _get(address to, bytes4 sel, string memory types, InputParam[] memory args)
         internal
         view
         returns (bool ok, bytes memory ret)
     {
-        (ok, ret) = address(assertions).staticcall(_readArgsData(to, sel, types, args));
+        (ok, ret) = address(assertions).staticcall(_getData(to, sel, types, args));
     }
 
     function _nav(InputParam memory p, string memory t, int256[] memory path)
@@ -84,9 +84,9 @@ contract CoreExtensionsTest is Test {
         p[1] = b;
     }
 
-    // ============ readArgs ============
+    // ============ get ============
 
-    function test_readArgs_wordThenTwoStrings_callerIsCore() public view {
+    function test_get_wordThenTwoStrings_callerIsCore() public view {
         // callerGated(address expected, string a, string b): a literal word, a
         // live string and a literal string; the mixed head/tail layout the
         // splice could only build with runtime offsets, and the caller check
@@ -96,53 +96,53 @@ contract CoreExtensionsTest is Test {
         args[1] = _string();
         args[2] = _raw(abi.encode("literal"));
         (bool ok, bytes memory ret) =
-            _readArgs(address(target), MockTarget.callerGated.selector, "(address,string,string)", args);
+            _get(address(target), MockTarget.callerGated.selector, "(address,string,string)", args);
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), bytes("hello").length + bytes("literal").length);
     }
 
-    function test_readArgs_sixLiveStrings_resolveEachOnce() public {
+    function test_get_sixLiveStrings_resolveEachOnce() public {
         InputParam[] memory args = new InputParam[](6);
         for (uint256 i; i < 6; i++) {
             args[i] = _string();
         }
         vm.expectCall(address(target), abi.encodeCall(MockTarget.getString, ()), uint64(6));
-        (bool ok, bytes memory ret) = _readArgs(
+        (bool ok, bytes memory ret) = _get(
             address(target), MockTarget.join6.selector, "(string,string,string,string,string,string)", args
         );
         assertTrue(ok);
         assertEq(abi.decode(ret, (string)), "hellohellohellohellohellohello");
     }
 
-    function test_readArgs_emptyDescriptor() public view {
+    function test_get_emptyDescriptor() public view {
         (bool ok, bytes memory ret) =
-            _readArgs(address(target), MockTarget.getValue.selector, "()", new InputParam[](0));
+            _get(address(target), MockTarget.getValue.selector, "()", new InputParam[](0));
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), 42);
     }
 
-    function test_readArgs_nestsAsOperand() public view {
+    function test_get_nestsAsOperand() public view {
         // The constructed call's returndata is a canonical string, so a nav
-        // over the readArgs operand reads its length like any other value.
+        // over the get operand reads its length like any other value.
         InputParam[] memory args = new InputParam[](3);
         args[0] = _string();
         args[1] = _raw(abi.encode("-"));
         args[2] = _string();
         InputParam memory joined =
-            _call(address(assertions), _readArgsData(address(target), MockTarget.join3.selector, "(string,string,string)", args));
+            _call(address(assertions), _getData(address(target), MockTarget.join3.selector, "(string,string,string)", args));
         (bool ok, bytes memory ret) = _nav(joined, "(string)", _path2(0, assertions.LEN()));
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), 11);
     }
 
-    function test_readArgs_constraintNamesTheArgument() public view {
+    function test_get_constraintNamesTheArgument() public view {
         Constraint[] memory cs = new Constraint[](1);
         cs[0] = Constraint(ConstraintType.EQ, abi.encode(uint256(1)));
         InputParam[] memory args = new InputParam[](2);
         args[0] = _raw(abi.encode("a"));
         // A string envelope's first word is its 0x20 offset, so EQ 1 fails on arg 1 (operand index 2).
         args[1] = InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, abi.encode("b"), cs);
-        (bool ok, bytes memory ret) = _readArgs(address(target), MockTarget.join3.selector, "(string,string)", args);
+        (bool ok, bytes memory ret) = _get(address(target), MockTarget.join3.selector, "(string,string)", args);
         assertFalse(ok);
         assertEq(bytes4(ret), ConstraintFailed.selector);
         (, uint256 entryIndex, uint256 paramIndex,,) = abi.decode(_body(ret), (string, uint256, uint256, uint256, uint256));
@@ -150,36 +150,36 @@ contract CoreExtensionsTest is Test {
         assertEq(paramIndex, 2);
     }
 
-    function test_readArgs_componentCountMismatch() public {
+    function test_get_componentCountMismatch() public {
         InputParam[] memory args = new InputParam[](1);
         args[0] = _raw(abi.encode("a"));
         vm.expectRevert(abi.encodeWithSelector(AbiCodec.ComponentCountMismatch.selector, 2, 1));
-        this.readArgsExternal(address(target), MockTarget.join3.selector, "(string,string)", args);
+        this.getExternal(address(target), MockTarget.join3.selector, "(string,string)", args);
     }
 
-    function test_readArgs_valueMustFitItsType() public {
+    function test_get_valueMustFitItsType() public {
         InputParam[] memory args = new InputParam[](2);
         args[0] = _raw(abi.encode("a"));
         args[1] = _raw(abi.encode(uint256(5))); // a word where a string is declared
         vm.expectRevert(
             abi.encodeWithSelector(AbiCodec.InvalidComponentEnvelope.selector, 1, 32, bytes32(uint256(5)))
         );
-        this.readArgsExternal(address(target), MockTarget.join3.selector, "(string,string)", args);
+        this.getExternal(address(target), MockTarget.join3.selector, "(string,string)", args);
     }
 
-    function test_readArgs_codelessTargetAndDirtyWord() public {
+    function test_get_codelessTargetAndDirtyWord() public {
         InputParam[] memory none = new InputParam[](0);
-        (bool ok, bytes memory ret) = _readArgs(address(0xdead), MockTarget.getValue.selector, "()", none);
+        (bool ok, bytes memory ret) = _get(address(0xdead), MockTarget.getValue.selector, "()", none);
         assertFalse(ok);
         assertEq(bytes4(ret), CallFailed.selector);
 
         bytes32 dirty = bytes32(uint256(1) << 200 | uint256(uint160(address(target))));
         vm.expectRevert(abi.encodeWithSelector(InvalidAddressWord.selector, 0, dirty));
-        assertions.readArgs(_raw(abi.encode(dirty)), MockTarget.getValue.selector, "()", none);
+        assertions.get(_raw(abi.encode(dirty)), MockTarget.getValue.selector, "()", none);
     }
 
-    function readArgsExternal(address to, bytes4 sel, string memory types, InputParam[] memory args) external view {
-        assertions.readArgs(_raw(abi.encode(to)), sel, types, args);
+    function getExternal(address to, bytes4 sel, string memory types, InputParam[] memory args) external view {
+        assertions.get(_raw(abi.encode(to)), sel, types, args);
     }
 
     function _body(bytes memory ret) internal pure returns (bytes memory out) {
@@ -189,45 +189,45 @@ contract CoreExtensionsTest is Test {
         }
     }
 
-    // ============ resolveValues ============
+    // ============ gather ============
 
-    function test_resolveValues_resolvesEachOperandOnce() public {
+    function test_gather_resolvesEachOperandOnce() public {
         InputParam[] memory args = new InputParam[](6);
         for (uint256 i; i < 6; i++) {
             args[i] = _string();
         }
         bytes memory expected = abi.encode(target.getString());
         vm.expectCall(address(target), abi.encodeCall(MockTarget.getString, ()), uint64(6));
-        bytes[] memory values = assertions.resolveValues(args);
+        bytes[] memory values = assertions.gather(args);
         assertEq(values.length, 6);
         for (uint256 i; i < 6; i++) {
             assertEq(values[i], expected);
         }
     }
 
-    function test_resolveValues_empty() public view {
-        bytes[] memory values = assertions.resolveValues(new InputParam[](0));
+    function test_gather_empty() public view {
+        bytes[] memory values = assertions.gather(new InputParam[](0));
         assertEq(values.length, 0);
     }
 
-    function test_resolveValues_isCanonicalBytesArrayForReadArgs() public {
+    function test_gather_isCanonicalBytesArrayForGet() public {
         // The operand's resolved bytes are abi.encode(bytes[]), so it feeds a
-        // `bytes[]` position of readArgs as one whole argument: the Phase 1b
+        // `bytes[]` position of get as one whole argument: the Phase 1b
         // shape for concat and join over N live parts.
         InputParam[] memory parts = new InputParam[](3);
         parts[0] = _string();
         parts[1] = _raw(hex"aabb");
         parts[2] = _string();
         InputParam[] memory args = new InputParam[](1);
-        args[0] = _call(address(assertions), abi.encodeCall(Assertions.resolveValues, (parts)));
+        args[0] = _call(address(assertions), abi.encodeCall(Assertions.gather, (parts)));
         uint256 envelope = abi.encode(target.getString()).length;
         vm.expectCall(address(target), abi.encodeCall(MockTarget.getString, ()), uint64(2));
-        (bool ok, bytes memory ret) = _readArgs(address(this), this.totalLength.selector, "(bytes[])", args);
+        (bool ok, bytes memory ret) = _get(address(this), this.totalLength.selector, "(bytes[])", args);
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), 2 * envelope + 2);
     }
 
-    function test_resolveValues_constraintNamesOperand() public {
+    function test_gather_constraintNamesOperand() public {
         Constraint[] memory c = new Constraint[](1);
         c[0] = Constraint(ConstraintType.EQ, abi.encode(uint256(1)));
         InputParam[] memory args = new InputParam[](2);
@@ -238,12 +238,12 @@ contract CoreExtensionsTest is Test {
                 ConstraintFailed.selector, "", 0, 1, 0, ConstraintType.EQ, bytes32(uint256(2)), abi.encode(uint256(1))
             )
         );
-        assertions.resolveValues(args);
+        assertions.gather(args);
     }
 
     // ============ Caller ============
 
-    function test_caller_coreForReadAndReadArgs() public {
+    function test_caller_coreForReadAndGet() public {
         InputParam[] memory none = new InputParam[](0);
         (bool ok, bytes memory ret) = address(assertions).staticcall(
             abi.encodeCall(Assertions.read, (_raw(abi.encode(address(target))), MockTarget.caller.selector, none))
@@ -251,16 +251,16 @@ contract CoreExtensionsTest is Test {
         assertTrue(ok);
         assertEq(abi.decode(ret, (address)), address(assertions));
 
-        (ok, ret) = _readArgs(address(target), MockTarget.caller.selector, "()", none);
+        (ok, ret) = _get(address(target), MockTarget.caller.selector, "()", none);
         assertTrue(ok);
         assertEq(abi.decode(ret, (address)), address(assertions));
 
-        // A call gated on the core being the caller passes through readArgs.
+        // A call gated on the core being the caller passes through get.
         InputParam[] memory args = new InputParam[](3);
         args[0] = _raw(abi.encode(address(assertions)));
         args[1] = _raw(abi.encode("a"));
         args[2] = _raw(abi.encode("b"));
-        (ok,) = _readArgs(address(target), MockTarget.callerGated.selector, "(address,string,string)", args);
+        (ok,) = _get(address(target), MockTarget.callerGated.selector, "(address,string,string)", args);
         assertTrue(ok);
     }
 

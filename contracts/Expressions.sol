@@ -24,7 +24,7 @@ import {InputParam} from "./lib/ERC8211.sol";
  *      `valueType`. A graph costs about 10k gas fixed plus 3.5k per node
  *      plus 20k per Call (measured 2026-09-07, ExpressionsGas.t.sol), so
  *      it wins only when the resolutions it saves cost more than that;
- *      `Assertions.readArgs` is the cheaper host for a single call with
+ *      `Assertions.get` is the cheaper host for a single call with
  *      several dynamic arguments. Errors identify the node: InvalidNode for
  *      a structural fault, InvalidReference for a reference that is not
  *      strictly backwards (or a parameter index out of range),

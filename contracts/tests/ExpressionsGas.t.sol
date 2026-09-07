@@ -49,7 +49,7 @@ contract Sink {
  * @notice The measurements behind the SDK's call-host and graph-admission
  *         rules (docs/superpowers/plans/2026-09-07-expressions-sdk-adoption.md):
  *         L live dynamic arguments through the splice and the core's
- *         readArgs; a shared leaf as a tree and as a graph; the graph's
+ *         get; a shared leaf as a tree and as a graph; the graph's
  *         fixed and per-node cost; and the wrap a bytes-typed parameter
  *         needs to receive an array envelope.
  *         Costs are gasleft() around one staticcall to Assertions.resolve, so
@@ -120,8 +120,8 @@ contract ExpressionsGasTest is Test {
         return _read(target, sel, segs);
     }
     /// The core's own resolve-once construction.
-    function _readArgs(address to, bytes4 sel, string memory types, InputParam[] memory args) internal view returns (InputParam memory) {
-        return _sc(address(core), abi.encodeCall(Assertions.readArgs, (_addr(to), sel, types, args)));
+    function _get(address to, bytes4 sel, string memory types, InputParam[] memory args) internal view returns (InputParam memory) {
+        return _sc(address(core), abi.encodeCall(Assertions.get, (_addr(to), sel, types, args)));
     }
 
     function _resolve(InputParam memory p) internal view returns (uint256 gas, bytes memory out) {
@@ -217,14 +217,14 @@ contract ExpressionsGasTest is Test {
         for (uint256 L = 1; L <= 3; L++) {
             InputParam[] memory lives = _lives(s, L);
             (uint256 gs, bytes memory a) = _resolve(_splice(_addr(address(sink)), sels[L - 1], lives));
-            (uint256 gc, bytes memory b) = _resolve(_readArgs(address(sink), sels[L - 1], types[L - 1], lives));
+            (uint256 gc, bytes memory b) = _resolve(_get(address(sink), sels[L - 1], types[L - 1], lives));
             assertEq(a, b);
             assertEq(abi.decode(a, (uint256)), 40 * L);
             emit log_named_uint(string.concat(label, " L=", vm.toString(L), " read+splice      "), gs);
-            emit log_named_uint(string.concat(label, " L=", vm.toString(L), " core readArgs    "), gc);
+            emit log_named_uint(string.concat(label, " L=", vm.toString(L), " core get         "), gc);
             if (L == 1) {
                 // One live argument stays on `read` (byte-identical calldata to
-                // today); readArgs is within a frame of it either way.
+                // today); get is within a frame of it either way.
                 assertLt(gc, gs * 12 / 10);
             } else {
                 // Two or more live dynamic arguments: the core's resolve-once
@@ -242,9 +242,9 @@ contract ExpressionsGasTest is Test {
         InputParam[] memory lits = new InputParam[](2);
         lits[0] = _w(7); lits[1] = _w(8);
         (uint256 gRead,) = _resolve(_read(_addr(address(ops)), ADD, lits));
-        (uint256 gArgs,) = _resolve(_readArgs(address(ops), ADD, "(uint256,uint256)", lits));
+        (uint256 gArgs,) = _resolve(_get(address(ops), ADD, "(uint256,uint256)", lits));
         emit log_named_uint("word-only read(ops, add, [lit, lit])     ", gRead);
-        emit log_named_uint("word-only readArgs(ops, add, (u256,u256))", gArgs);
+        emit log_named_uint("word-only get(ops, add, (u256,u256))     ", gArgs);
         assertLt(gRead, gArgs);
     }
 
@@ -252,7 +252,7 @@ contract ExpressionsGasTest is Test {
     function test_caller() public {
         InputParam[] memory none = new InputParam[](0);
         (, bytes memory a) = _resolve(_read(_addr(address(sink)), Sink.who.selector, none));
-        (, bytes memory d) = _resolve(_readArgs(address(sink), Sink.who.selector, "()", none));
+        (, bytes memory d) = _resolve(_get(address(sink), Sink.who.selector, "()", none));
         assertEq(abi.decode(a, (address)), address(core));
         assertEq(abi.decode(d, (address)), address(core));
     }

@@ -35,7 +35,7 @@ contract CodecHarness {
 /**
  * @notice The cost of descriptor parsing, the shared hot path of every
  *         Collections callback bind, every Expressions node and the core's
- *         `readArgs`. Measured 2026-09-07 before the assembly scanners:
+ *         `get`. Measured 2026-09-07 before the assembly scanners:
  *         shape("(uint256,uint256)") 6.9k net, tupleLayout 25.2k, tuple over
  *         two words 30.0k, an Expressions Literal node 5 to 7k. The bounds
  *         below hold the post-rewrite figures with slack; a regression past

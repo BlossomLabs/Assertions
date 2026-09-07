@@ -44,8 +44,8 @@ interface IERC20Balance {
  *         proposals, Safe batches, upgrades): if any constraint fails, the
  *         entire transaction reverts, atomically. Beyond the judge, this
  *         contract owns every primitive that speaks the ERC-8211 wire
- *         format: selection (`resolve`, `resolveValues`, `pick`, `nav`),
- *         call construction (`chain`, `read`, `readArgs`) and resolution
+ *         format: selection (`resolve`, `gather`, `pick`, `nav`),
+ *         call construction (`chain`, `read`, `get`) and resolution
  *         control (`cond`, `orElse`, `isValid`, `revertData`).
  * @dev The judge is view-only: assertComposable(executions) evaluates the
  *      ERC-8211 execution algorithm directly, restricted to what a view
@@ -67,7 +67,7 @@ interface IERC20Balance {
  *      resolve them; a STATIC_CALL operand may target this contract
  *      itself, so the primitives nest into arbitrary operand trees.
  *      Computation over resolved values belongs to the versionable
- *      periphery: `read` and `readArgs` resolve their operands and splice
+ *      periphery: `read` and `get` resolve their operands and splice
  *      the values into plain calldata for any deployed view or pure
  *      contract, canonically Operations for arithmetic, comparisons,
  *      bytes and runtime encoding, Collections for folds and collection
@@ -238,7 +238,7 @@ contract Assertions {
      *      `concat` or `encode`, or a Collections values array, from
      *      operands that are only known at judge time. Results are taken
      *      as-is and not validated against any type; the consumer's
-     *      declared type (a `bytes[]` in a `readArgs` descriptor) does that.
+     *      declared type (a `bytes[]` in a `get` descriptor) does that.
      *      Constraints on each operand are validated as in `resolve`, with
      *      ConstraintFailed naming the operand by its index. Returned as an
      *      ordinary ABI value, which is exactly the canonical single-value
@@ -247,7 +247,7 @@ contract Assertions {
      * @param args The operands, in output order
      * @return values One raw result per operand
      */
-    function resolveValues(InputParam[] calldata args) external view returns (bytes[] memory values) {
+    function gather(InputParam[] calldata args) external view returns (bytes[] memory values) {
         values = new bytes[](args.length);
         for (uint256 i = 0; i < args.length; i++) {
             values[i] = _resolve(args[i], "", 0, i);
@@ -455,7 +455,7 @@ contract Assertions {
      *      segment computes a span at judge time (word-returning
      *      operands contribute exactly 32 bytes; a segment resolving
      *      to any other length shifts everything after it, so the encoder
-     *      owns the layout, and `readArgs` is the primitive that computes
+     *      owns the layout, and `get` is the primitive that computes
      *      the layout here instead). Segment constraints are validated on
      *      the resolved values, turning any argument into an inline
      *      assert. The returndata is returned via a raw assembly return,
@@ -520,7 +520,7 @@ contract Assertions {
      * @param args One input parameter per argument, each resolving to the
      *        canonical single-value encoding of its declared type
      */
-    function readArgs(
+    function get(
         InputParam calldata target,
         bytes4 selector,
         string calldata argumentTypes,

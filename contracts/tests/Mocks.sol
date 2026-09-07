@@ -186,7 +186,7 @@ contract MockTarget {
 
     /**
      * @notice The caller a constructed call arrives from: the core for
-     *         `read` / `readArgs`, Expressions for a graph `Call` node. For
+     *         `read` / `get`, Expressions for a graph `Call` node. For
      *         the caller-preservation tests.
      */
     function caller() external view returns (address) {

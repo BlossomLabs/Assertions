@@ -14,7 +14,7 @@ error InvalidTypeDescriptor(uint256 position);
  *         built on it: shape parsing (dynamic or static, head footprint),
  *         canonical-form validation of encoded values, tuple and array
  *         assembly from pre-encoded components, and the inverse unpacking.
- *         The core's `nav` and `readArgs`, Operations' `encode`, every
+ *         The core's `nav` and `get`, Operations' `encode`, every
  *         Expressions node and the Collections `*Values` family all read
  *         descriptors through this one grammar.
  * @dev A descriptor is plain ABI type syntax: a name matching [a-z0-9]+ or

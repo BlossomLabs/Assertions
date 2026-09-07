@@ -3,7 +3,7 @@ title: The Operations vocabulary
 description: The plain-ABI operations contracts, their whole surface, and how the core's read splices live operands into them.
 ---
 
-Assertion constraints revert or pass: they judge. Plain-value computation lives in the periphery: `Operations` for scalars, `Collections` for iteration and, unreleased, [`Expressions`](/docs/operators/expressions) for typed expression graphs. Every function takes and returns plain ABI types, without ERC-8211 coupling. The core reads and judges; the periphery computes. The contracts' addresses are on the [Deployments](/docs/reference/deployments) page.
+Assertion constraints revert or pass: they judge. Plain-value computation lives in the periphery: `Operations` for scalars, `Collections` for iteration and [`Expressions`](/docs/operators/expressions) for typed expression graphs. Every function takes and returns plain ABI types, without ERC-8211 coupling. The core reads and judges; the periphery computes. The contracts' addresses are on the [Deployments](/docs/reference/deployments) page.
 
 Composition happens in the core. Its [`read` primitive](/docs/core/reads) resolves `InputParam` operand expressions and splices the resolved values into plain calldata, so an operation call IS the composed expression: `ge(token.balanceOf(treasury), 100e18)` with a live first argument is one `read` whose segments are the balance call and the literal. Any deployed view or pure contract extends the vocabulary through the same socket; Operations is just the canonical first extension. And because it is plain periphery, it stays versionable: old deployments never break, new versions ship at new addresses as pure opt-ins, without touching the frozen core.
 

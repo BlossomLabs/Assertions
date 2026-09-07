@@ -1,11 +1,11 @@
 ---
 title: "Expressions: typed expression graphs"
-description: The unreleased Expressions contract, backwards-referencing typed graphs with a lazy Select, guarded evaluation and per-evaluation memoisation.
+description: The Expressions contract, backwards-referencing typed graphs with a lazy Select, guarded evaluation and per-evaluation memoisation.
 ---
 
 `Expressions` is a stateless periphery contract that addresses one structural limit of raw operands: an ERC-8211 `InputParam` is a tree with no way to name a subterm, so a repeated expression is duplicated in calldata and resolved again at every occurrence. Expressions adds **typed expression graphs**: node lists whose nodes reference earlier nodes, so a shared value is evaluated once per evaluation, branches can be lazy, and a whole canonical ABI value (a string, an array, a tuple) binds to one node. It imports the core (for `Assertions.resolve`) and the shared `AbiCodec`; it adds nothing to the frozen core and changes no wire format. Resolving N operands once each for a single call is the core's job, through [`get`](/docs/core/reads) for a whole call and `gather` for a `bytes[]`; a graph is for values shared across several places.
 
-**Status: unreleased.** The deployment manifest lists it with `released: false` (see [Deployments](/docs/reference/deployments)): it is an artifact candidate the EVMcrispr SDK does not compile against, and its only in-tree consumer is `Collections.Callback.expression` ([below](#collections-callbacks-through-an-expression)). Because `Collections` imports it, an edit to `Expressions.sol` moves the Collections address too.
+**Status: released** (2026-09-07). The deployment manifest lists it with `released: true` (see [Deployments](/docs/reference/deployments)) and the EVMcrispr SDK compiles against it: generic collection callbacks (`@map!`, `@filter!`, `@find!` and friends over ABI-typed elements) are emitted as graphs, as are the recipes that share one resolved envelope between two uses (the word payload of an array, the argument tuple of a calldata value, `@unzip!` lanes) and the probe behind `@reverts!` on a call with live arguments. On-chain, `Collections.Callback.expression` runs those graphs per element ([below](#collections-callbacks-through-an-expression)). Because `Collections` imports it, an edit to `Expressions.sol` moves the Collections address too.
 
 ## Resolve once lives on the core
 

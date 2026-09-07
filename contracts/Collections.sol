@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 import {Expressions} from "./Expressions.sol";
-import {AbiCodec} from "./AbiCodec.sol";
+import {AbiCodec} from "./lib/AbiCodec.sol";
 
 /// @notice Word and ABI-valued collection operations, including folds and stable merge sorting.
 /// Callbacks must be consistent and side-effect free.

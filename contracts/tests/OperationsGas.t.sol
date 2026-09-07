@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 import "../Assertions.sol";
 import "../Operations.sol";
 import "../Collections.sol";
-import "../ERC8211.sol";
+import "../lib/ERC8211.sol";
 
 /**
  * @notice The measurements behind the admission doctrine in

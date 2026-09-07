@@ -13,7 +13,7 @@ The wire format is three structs (import them from `ERC8211.sol`). A few one-lin
 import {
     InputParam, InputParamType, InputParamFetcherType,
     Constraint, ConstraintType
-} from "assertions/ERC8211.sol";
+} from "assertions/lib/ERC8211.sol";
 
 /// A staticcall fetcher: the raw returndata of target.data is the value.
 function callParam(address target, bytes memory data, Constraint[] memory cs)

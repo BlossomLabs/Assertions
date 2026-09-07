@@ -14,8 +14,8 @@ import {
     InvalidBalanceData,
     InvalidConstraintData,
     ReturnDataOutOfBounds
-} from "./ERC8211.sol";
-import {AbiCodec, InvalidTypeDescriptor} from "./AbiCodec.sol";
+} from "./lib/ERC8211.sol";
+import {AbiCodec, InvalidTypeDescriptor} from "./lib/AbiCodec.sol";
 
 error ElementIndexOutOfBounds(int256 index, uint256 count);
 

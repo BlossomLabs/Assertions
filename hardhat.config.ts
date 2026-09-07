@@ -16,7 +16,7 @@ export default defineConfig({
         // website/scripts/export-deploy-artifact.mjs, mined with
         // `cast create2` as random 32-byte salts (the old shared-base
         // convention is retired):
-        // core v2.0 salt 0xd4f532eb...faeae45b → 0x384722d90F35dE2121478cba640a8600C0B29B77
+        // core v2.0 salt 0xd4f532eb...faeae45b → 0x94b07F5364b54471b065Ee74150864628Df722d7
         // (the same salt derived 0x67DBB438FdC614466984Dc8F68dAB812d785a2aE and then
         // 0x4D710b5AaBcd7f8753307c71779904A562422A15 for previous artifact candidates),
         // Operations, Collections and Expressions salts → see export-deploy-artifact.mjs.

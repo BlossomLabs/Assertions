@@ -19,10 +19,10 @@ Because Operations is a stateless view target reached only through `read`, the p
 Every contract has the same CREATE2 address on every chain. These are unreleased artifact candidates; listing an address implies no public-chain deployment (see [Deployments](/docs/reference/deployments)):
 
 ```
-Assertions          v2.0  0x384722d90F35dE2121478cba640a8600C0B29B77   (frozen core: judge + primitives)
-Operations          v1.0  0xC31bac59fCf60c7212b474fCE6B0c4B92eC73c5E   (versionable periphery)
-Collections         v1.0  0xd4A153af77bEc446112523F96801733eE8c932D2   (generic collections)
-Expressions         v1.0  0x4787489ED7310f84b65C910BC32A15f641B06515   (typed expression graphs)
+Assertions          v2.0  0x94b07F5364b54471b065Ee74150864628Df722d7   (frozen core: judge + primitives)
+Operations          v1.0  0x314e75BEFDb0f3e0621f68458f98Fce75246f7a7   (versionable periphery)
+Collections         v1.0  0xc6D85B72bdF8040f61f4CD7957c7aa8e5f30a47f   (generic collections)
+Expressions         v1.0  0xc45C579021623712eE3f61D066a24218F6e01E22   (typed expression graphs)
 ```
 
 Earlier versions remain deployed and working forever at their own canonical addresses: the v2.0-rc core at [`0xa55E47F37088b6D0212BdfD56b175ec08744DB19`](https://etherscan.io/address/0xa55E47F37088b6D0212BdfD56b175ec08744DB19) with Combinators v2.0-rc at [`0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9`](https://etherscan.io/address/0xA55Ec0935FB5aaf95CAC1F48DD822005d91b64b9), the v1.1 typed-assert core at [`0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0`](https://etherscan.io/address/0xA55E47bFD3d20A76e8E63a173387A5e3d4bEe3e0), and the original v1.0 core at [`assertions.eth`](https://etherscan.io/address/0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F). V2 replaces v1.1's 140 typed assertion functions (`assertEqCallUint`, ...) with the ERC-8211 model: `assertEqCallUint(target, data, expected)` is now `assertParam` over a `STATIC_CALL` fetcher with an `EQ` constraint.

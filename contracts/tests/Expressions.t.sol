@@ -4,7 +4,7 @@ import "forge-std/Test.sol";
 import "../Expressions.sol";
 import "../Collections.sol";
 import "../Operations.sol";
-import "../ERC8211.sol";
+import "../lib/ERC8211.sol";
 
 contract ExpressionsTest is Test {
     Expressions expressions;

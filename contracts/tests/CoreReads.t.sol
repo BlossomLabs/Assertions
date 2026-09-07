@@ -4,8 +4,8 @@ pragma solidity ^0.8.28;
 import "forge-std/Test.sol";
 import "../Assertions.sol";
 import "../Operations.sol";
-import "../ERC8211.sol";
-import "../AbiCodec.sol";
+import "../lib/ERC8211.sol";
+import "../lib/AbiCodec.sol";
 import "./Mocks.sol";
 
 /**

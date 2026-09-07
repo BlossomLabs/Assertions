@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {AbiCodec} from "./AbiCodec.sol";
+import {AbiCodec} from "./lib/AbiCodec.sol";
 import {Assertions} from "./Assertions.sol";
-import {InputParam} from "./ERC8211.sol";
+import {InputParam} from "./lib/ERC8211.sol";
 
 /// @notice Stateless typed expression graphs and resolve-once ABI call construction.
 contract Expressions {

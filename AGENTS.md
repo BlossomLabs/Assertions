@@ -178,4 +178,4 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   sandboxed run has reported success with zero fuzz tests. Run outside that
   environment before treating the fuzz suites as passed.
 
-- Format production Solidity consistently with `forge fmt contracts/AbiCodec.sol contracts/Assertions.sol contracts/Collections.sol contracts/ERC8211.sol contracts/Expressions.sol contracts/Operations.sol`; use `--check` to verify. Public NatSpec describes rounding and rejection behavior; implementation helpers document caller preconditions.
+- Format production Solidity consistently with `forge fmt contracts/Assertions.sol contracts/Collections.sol contracts/Expressions.sol contracts/Operations.sol contracts/lib/AbiCodec.sol contracts/lib/ERC8211.sol`; use `--check` to verify. Public NatSpec describes rounding and rejection behavior; implementation helpers document caller preconditions.

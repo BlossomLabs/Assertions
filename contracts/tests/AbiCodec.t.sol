@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 import "forge-std/Test.sol";
 import "../Operations.sol";
 import "../Collections.sol";
-import "../AbiCodec.sol";
+import "../lib/AbiCodec.sol";
 
 contract AbiCodecTest is Test {
     Operations ops;

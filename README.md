@@ -13,10 +13,10 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 ## Canonical addresses (same on every chain)
 
 ```
-Assertions          v2.0  0x384722d90F35dE2121478cba640a8600C0B29B77   (frozen core: judge + primitives)
-Operations          v1.0  0xC31bac59fCf60c7212b474fCE6B0c4B92eC73c5E   (unreleased periphery)
-Collections         v1.0  0xd4A153af77bEc446112523F96801733eE8c932D2   (unreleased generic collections)
-Expressions         v1.0  0x4787489ED7310f84b65C910BC32A15f641B06515   (unreleased typed expression graphs)
+Assertions          v2.0  0x94b07F5364b54471b065Ee74150864628Df722d7   (frozen core: judge + primitives)
+Operations          v1.0  0x314e75BEFDb0f3e0621f68458f98Fce75246f7a7   (unreleased periphery)
+Collections         v1.0  0xc6D85B72bdF8040f61f4CD7957c7aa8e5f30a47f   (unreleased generic collections)
+Expressions         v1.0  0xc45C579021623712eE3f61D066a24218F6e01E22   (unreleased typed expression graphs)
 ```
 
 These are the CREATE2 addresses of the current artifact set: the shared-codec core, the split Operations/Collections periphery, and Expressions. They are unreleased artifact candidates: no public-chain deployment is implied by listing an address; check the website's deployments page for availability. Previous candidates (the core at `0x67DBB438FdC614466984Dc8F68dAB812d785a2aE` under the same salt, among others) use different bytecode.

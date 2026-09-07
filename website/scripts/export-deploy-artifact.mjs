@@ -63,7 +63,7 @@ const CONTRACTS = [
     // v1.0 remains at 0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F
     // (salt 0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb).
     salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
-    expectedAddress: "0x384722d90F35dE2121478cba640a8600C0B29B77",
+    expectedAddress: "0x94b07F5364b54471b065Ee74150864628Df722d7",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -76,7 +76,7 @@ const CONTRACTS = [
     // Retained salt; the cleanup changes the unreleased artifact candidate.
     // Previous artifact: 0x09E4A7E3072F075C2786BE9FA0B7c4BA6591AE9e.
     salt: "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
-    expectedAddress: "0xC31bac59fCf60c7212b474fCE6B0c4B92eC73c5E",
+    expectedAddress: "0x314e75BEFDb0f3e0621f68458f98Fce75246f7a7",
     prefix: "OPERATIONS",
     description: "Operations plain-value vocabulary contract",
     includeProxyConstants: false,
@@ -88,7 +88,7 @@ const CONTRACTS = [
     output: "src/lib/collections-deployment.ts",
     // Retained salt from the previous c011ec7 artifact candidate.
     salt: "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
-    expectedAddress: "0xd4A153af77bEc446112523F96801733eE8c932D2",
+    expectedAddress: "0xc6D85B72bdF8040f61f4CD7957c7aa8e5f30a47f",
     prefix: "COLLECTIONS",
     description: "generic ABI collection vocabulary contract",
     includeProxyConstants: false,
@@ -99,7 +99,7 @@ const CONTRACTS = [
     artifact: "artifacts/contracts/Expressions.sol/Expressions.json",
     output: "src/lib/expressions-deployment.ts",
     salt: "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
-    expectedAddress: "0x4787489ED7310f84b65C910BC32A15f641B06515",
+    expectedAddress: "0xc45C579021623712eE3f61D066a24218F6e01E22",
     prefix: "EXPRESSIONS",
     description: "typed expression graphs contract",
     includeProxyConstants: false,

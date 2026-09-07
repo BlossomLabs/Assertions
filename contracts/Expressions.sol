@@ -5,8 +5,56 @@ import {AbiCodec} from "./lib/AbiCodec.sol";
 import {Assertions} from "./Assertions.sol";
 import {InputParam} from "./lib/ERC8211.sol";
 
-/// @notice Stateless typed expression graphs and resolve-once ABI call construction.
+/**
+ * @title Expressions
+ * @author Sembrestels
+ * @notice Typed expression graphs for the Assertions core, and resolve-once
+ *         call construction with Expressions as the caller. A raw ERC-8211
+ *         operand is a tree: it cannot name a subterm, so a value used
+ *         twice is encoded and resolved twice. An `Expression` is a graph:
+ *         nodes reference earlier nodes by index, every node evaluates at
+ *         most once per evaluation, and every node's value is validated
+ *         against its declared type. Lazy branches (`Select`) and guarded
+ *         evaluation (`TryOrElse`, `IsValid`, `ProbeCall`) mirror the
+ *         core's `cond`, `orElse`, `isValid` and `revertData` over graph
+ *         nodes instead of unresolved operands.
+ * @dev Stateless and view-only, like the core. Values are canonical
+ *      single-value ABI encodings throughout (see AbiCodec): a Call node's
+ *      arguments, a Tuple node's components and an Array node's elements
+ *      all arrive that way, and each node's result must be one for its
+ *      `valueType`. A graph costs about 10k gas fixed plus 3.5k per node
+ *      plus 20k per Call (measured 2026-09-07, ExpressionsGas.t.sol), so
+ *      it wins only when the resolutions it saves cost more than that;
+ *      `Assertions.readArgs` is the cheaper host for a single call with
+ *      several dynamic arguments. Errors identify the node: InvalidNode for
+ *      a structural fault, InvalidReference for a reference that is not
+ *      strictly backwards (or a parameter index out of range),
+ *      InvalidTarget for a code-less call target and CallFailed carrying
+ *      the target's revert reason, which the core's own CallFailed does not.
+ * @custom:version 1.0
+ */
 contract Expressions {
+    // ============ Types ============
+
+    /**
+     * @notice The node kinds of an expression graph
+     * @dev ABI-encoded as uint8. What each kind reads from its Node:
+     *      Literal (`data` is the value); Parameter (`data` is
+     *      abi.encode(uint256 index) into the evaluation's parameters);
+     *      Resolve (`data` is abi.encode(InputParam), resolved through the
+     *      expression's core); Call (`refs[0]` is the target address word,
+     *      `refs[1..]` the arguments encoded as the tuple `arguments`
+     *      describes, prefixed by `selector`); Select (`refs` are condition,
+     *      then-branch, else-branch); Wrap (`refs[0]`'s value wrapped as a
+     *      bytes envelope, abi.encode(bytes)); Array (`refs` are the
+     *      elements, `arguments` the element type, the value
+     *      abi.encode(T[])); Tuple (`refs` are the components, `arguments`
+     *      the tuple descriptor); TryOrElse (`refs` are attempt and
+     *      fallback); IsValid (`refs[0]` is the attempt, the value
+     *      abi.encode(bool)); ProbeCall (`refs` are the target address word
+     *      and the calldata as a bytes envelope, `selector` the required
+     *      error selector or zero, the value abi.encode(bytes reason))
+     */
     enum Kind {
         Literal,
         Parameter,
@@ -21,6 +69,12 @@ contract Expressions {
         ProbeCall
     }
 
+    /**
+     * @notice One node of an expression graph
+     * @dev `valueType` is the descriptor every evaluated value is validated
+     *      against. `refs` index earlier nodes only; the fields a kind does
+     *      not read (see Kind) are ignored and may be left empty.
+     */
     struct Node {
         Kind kind;
         string valueType;
@@ -30,27 +84,100 @@ contract Expressions {
         string arguments;
     }
 
+    /**
+     * @notice An expression graph: the core that resolves its Resolve
+     *         nodes, the nodes in evaluation order and the index of the
+     *         node whose value is the expression's result
+     */
     struct Expression {
         address core;
         Node[] nodes;
         uint256 result;
     }
 
-    /// @dev Per-evaluation memo: values and readiness per node, plus each node's
-    ///      parsed `valueType` shape so a descriptor is parsed once, not per visit.
+    /**
+     * @dev Per-evaluation memo: each node's value and whether it is ready,
+     *      plus each node's parsed `valueType` shape so a descriptor is
+     *      parsed once per evaluation rather than once per visit. Public
+     *      only because guarded evaluation hands it across an external
+     *      self-call; nothing outside this contract can inject one.
+     */
     struct Cache {
         bytes[] values;
         bool[] ready;
         bool[] dynamic;
         uint256[] words;
     }
+
+    // ============ Custom Errors ============
+
+    /**
+     * @notice Thrown when a node is structurally invalid: the wrong number
+     *         of refs for its kind, a result index past the last node, a
+     *         Parameter whose data is not one word, a Select condition
+     *         shorter than a word, or an address word with dirty upper bytes
+     * @param node The offending node's index (the result index when it is
+     *        out of range)
+     */
     error InvalidNode(uint256 node);
+
+    /**
+     * @notice Thrown when a node references a node at or after itself, or
+     *         a Parameter node names an index past the supplied parameters
+     * @param node The referencing node's index
+     * @param ref The offending reference
+     */
     error InvalidReference(uint256 node, uint256 ref);
+
+    /**
+     * @notice Thrown when a call target has no code (a staticcall there
+     *         would succeed with empty returndata and surface as a silent
+     *         wrong value)
+     * @param node The node making the call (the operand index for the
+     *        resolve-once entry points)
+     * @param target The code-less address
+     */
     error InvalidTarget(uint256 node, address target);
+
+    /**
+     * @notice Thrown when a staticcall reverts, carrying the target's revert
+     *         data so the inner reason is not lost
+     * @param node The node making the call (the operand index for the
+     *        resolve-once entry points)
+     * @param target The called address
+     * @param callData The calldata that was sent
+     * @param reason The raw revert data
+     */
     error CallFailed(uint256 node, address target, bytes callData, bytes reason);
 
-    /// @notice Resolve each supplied operand once, ABI-encode all arguments, and return raw returndata.
-    /// @dev Sources must resolve to single-value canonical ABI envelopes matching argumentTypes.
+    // ============ Resolve-Once Calls ============
+
+    /**
+     * @notice Resolves the target and each argument exactly once through
+     *         the core, ABI-encodes the arguments as the tuple
+     *         `argumentTypes` describes, prefixes `selector`, executes the
+     *         call and returns its raw returndata
+     * @dev The same construction as `Assertions.readArgs`, with this
+     *      contract as the destination's msg.sender instead of the core
+     *      (the reason to prefer it, and the only one: it costs one extra
+     *      hop per operand). Each operand resolves through the core's
+     *      `resolve`, so its constraints are validated there, and must
+     *      yield the canonical single-value encoding of its declared type.
+     *      Returned via a raw assembly return, so the call nests inside any
+     *      operand. Reverts with InvalidNode(0) when the target is not a
+     *      clean address word, InvalidTarget / CallFailed identifying the
+     *      operand (target 0, args at index + 1, the destination at
+     *      args.length + 1), AbiCodec's component errors naming the
+     *      argument index, and InvalidTypeDescriptor on a malformed
+     *      descriptor.
+     * @param core The Assertions core that resolves the operands
+     * @param target The input parameter resolving to the call's target
+     *        address
+     * @param selector The 4-byte function selector
+     * @param argumentTypes The argument tuple descriptor, e.g.
+     *        "(string,string)"
+     * @param args One input parameter per argument
+     */
     function resolveCall(
         address core,
         InputParam calldata target,
@@ -69,7 +196,18 @@ contract Expressions {
         assembly ("memory-safe") { return(add(result, 32), mload(result)) }
     }
 
-    /// @notice Resolve each argument once and return the canonical argument tuple without a bytes envelope.
+    /**
+     * @notice Resolves each argument exactly once through the core and
+     *         returns the canonical argument tuple `argumentTypes`
+     *         describes, without a bytes envelope
+     * @dev The encoding half of `resolveCall`, for an encoder that wants
+     *      the tuple as a calldata SEGMENT for the core's `read` to splice
+     *      (the same raw-return convention as Operations' `encode`).
+     *      Operand errors identify the argument by its index.
+     * @param core The Assertions core that resolves the operands
+     * @param argumentTypes The argument tuple descriptor
+     * @param args One input parameter per argument
+     */
     function resolveArguments(address core, string calldata argumentTypes, InputParam[] calldata args) external view {
         bytes[] memory values = new bytes[](args.length);
         for (uint256 i; i < args.length; i++) {
@@ -79,7 +217,18 @@ contract Expressions {
         assembly ("memory-safe") { return(add(result, 32), mload(result)) }
     }
 
-    /// @notice Resolve each source once and wrap its raw result as a bytes-array element.
+    /**
+     * @notice Resolves each operand exactly once through the core and
+     *         returns the raw results as a bytes[] value
+     * @dev The way to assemble a `bytes[]` argument (a Collections values
+     *      array, an `encode` values list) from N live operands without
+     *      an encoder computing offsets on-chain. Results are taken as-is,
+     *      not validated against any type. Operand errors identify the
+     *      operand by its index.
+     * @param core The Assertions core that resolves the operands
+     * @param args The operands, in output order
+     * @return values One raw result per operand
+     */
     function resolveValues(address core, InputParam[] calldata args) external view returns (bytes[] memory values) {
         values = new bytes[](args.length);
         for (uint256 i; i < args.length; i++) {
@@ -87,12 +236,33 @@ contract Expressions {
         }
     }
 
-    /// @notice Evaluate a backwards-referencing graph, resolving shared nodes only once.
-    /// @dev Select judges truth like the core's `cond`: the first 32-byte word of a condition of at least
-    ///      32 bytes, nonzero evaluates refs[1] and zero evaluates refs[2]; a shorter condition reverts
-    ///      InvalidNode. Only the chosen branch executes. `Collections._predicate` still requires a
-    ///      canonical 0/1 word from callback results, a different concern. Only reachable nodes execute.
-    ///      Parameters are canonical single-value envelopes.
+    // ============ Evaluate ============
+
+    /**
+     * @notice Evaluates an expression graph and returns the result node's
+     *         value
+     * @dev Every node is checked up front (reference direction, ref count
+     *      per kind, descriptor shape); then evaluation proceeds from the
+     *      result node on demand, so only reachable nodes execute and a
+     *      node shared by several references evaluates once. Select judges
+     *      truth like the core's `cond`: the first word of a condition of
+     *      at least 32 bytes, nonzero evaluates refs[1] and zero refs[2],
+     *      and only the chosen branch executes (a shorter condition reverts
+     *      with InvalidNode). TryOrElse and IsValid run their attempt in an
+     *      external self-call so that ANY failure inside it, a reverting
+     *      target, a type mismatch or an out-of-gas in the subframe, rolls
+     *      back and selects the fallback (the same 63/64 caveat as the
+     *      core's `orElse` applies: do not use them to distinguish failure
+     *      causes). Values memoized inside a successful attempt are kept.
+     *      Every node's value is validated against its `valueType` and a
+     *      mismatch reverts with AbiCodec's InvalidValue at the offending
+     *      offset. The result is returned via a
+     *      raw assembly return, so an expression nests inside any operand
+     *      like the value it computes.
+     * @param expression The graph to evaluate
+     * @param parameters The values Parameter nodes read, as canonical
+     *        single-value encodings
+     */
     function evaluate(Expression calldata expression, bytes[] calldata parameters) external view {
         uint256 count = expression.nodes.length;
         if (expression.result >= count) revert InvalidNode(expression.result);
@@ -119,6 +289,11 @@ contract Expressions {
         assembly ("memory-safe") { return(add(result, 32), mload(result)) }
     }
 
+    /**
+     * @dev Evaluates node `index`, memoizing into `cache`. The caller has
+     *      run `evaluate`'s structural checks, so refs are in range and
+     *      backwards; kinds dispatch as documented on Kind.
+     */
     function _evaluate(Expression calldata p, bytes[] calldata parameters, Cache memory cache, uint256 index)
         private
         view
@@ -176,7 +351,22 @@ contract Expressions {
         cache.ready[index] = true;
     }
 
-    /// @dev External self-frame gives guarded evaluation EVM rollback; callers cannot inject caches.
+    /**
+     * @notice Internal entry point for guarded evaluation; reverts for any
+     *         caller other than this contract
+     * @dev External only because the EVM's sole catch primitive is a call
+     *      boundary: TryOrElse and IsValid evaluate their attempt through
+     *      it so a failure rolls back cleanly. The msg.sender check keeps
+     *      outside callers from injecting a cache. Returns the node's value
+     *      and the cache as extended by the attempt, which the caller
+     *      adopts on success.
+     * @param expression The graph being evaluated
+     * @param parameters The evaluation's parameters
+     * @param index The node to evaluate
+     * @param initial The cache as it stood when the attempt began
+     * @return result The evaluated node's value
+     * @return updated The cache after the attempt
+     */
     function evaluateGuarded(
         Expression calldata expression,
         bytes[] calldata parameters,
@@ -188,6 +378,12 @@ contract Expressions {
         result = _evaluate(expression, parameters, updated, index);
     }
 
+    /**
+     * @dev Evaluates node `index` behind the `evaluateGuarded` boundary:
+     *      on success adopts the attempt's memoized values into `cache`
+     *      and returns them, on any failure leaves `cache` untouched and
+     *      returns (false, "").
+     */
     function _tryEvaluate(
         Expression calldata expression,
         bytes[] calldata parameters,
@@ -205,15 +401,33 @@ contract Expressions {
         }
     }
 
-    /// @notice Encoded-expression entry for collection callbacks; returns the same raw value as evaluate.
+    /**
+     * @notice `evaluate` over an abi-encoded Expression, for callers that
+     *         hold the graph as opaque bytes
+     * @dev The Collections callback socket: a `Callback` whose `expression`
+     *      is non-empty is applied by calling this with the substituted
+     *      slots as `parameters`. Evaluation happens through an external
+     *      self-call, so a failure inside the graph surfaces as
+     *      CallFailed(0, this, callData, reason) with the inner error as
+     *      the reason. Returns the same raw value as `evaluate`.
+     * @param expression abi.encode(Expression)
+     * @param parameters The values Parameter nodes read
+     */
     function evaluateEncoded(bytes calldata expression, bytes[] calldata parameters) external view {
         Expression memory decoded = abi.decode(expression, (Expression));
         bytes memory result = _call(address(this), abi.encodeCall(this.evaluate, (decoded, parameters)), 0);
         assembly ("memory-safe") { return(add(result, 32), mload(result)) }
     }
 
-    /// @dev The canonical argument tuple for `types`, and whether that tuple is dynamic (a
-    ///      `Tuple` node then prefixes the 0x20 word). The descriptor is parsed once here.
+    // ============ Internal Helpers ============
+
+    /**
+     * @dev The canonical argument tuple for `types` over resolved values,
+     *      and whether that tuple is dynamic (a Tuple node then prefixes
+     *      the 0x20 word). "()" with no values is the empty tuple; the
+     *      grammar has no empty-tuple production, so it is special-cased
+     *      here exactly as the core does. The descriptor is parsed once.
+     */
     function _arguments(string calldata types, bytes[] memory values)
         private
         pure
@@ -227,6 +441,15 @@ contract Expressions {
         dynamic = AbiCodec.isDynamic(plan);
     }
 
+    /**
+     * @dev The ProbeCall engine, with the core's `revertData` semantics: the
+     *      call must revert (DidNotRevert otherwise), a code-less target
+     *      counts as a reason-less failure, and a non-zero `expected`
+     *      selector must match the revert's first four bytes and is
+     *      stripped from the returned reason (UnexpectedRevertData on a
+     *      mismatch). The core's errors are reused so both probes decode
+     *      alike.
+     */
     function _probe(address target, bytes memory callData, bytes4 expected) private view returns (bytes memory reason) {
         if (target.code.length == 0) {
             if (expected != bytes4(0)) revert Assertions.UnexpectedRevertData(expected, bytes4(0));
@@ -244,11 +467,20 @@ contract Expressions {
         return AbiCodec.slice(reason, 4, reason.length - 4);
     }
 
+    /**
+     * @dev Interprets a value as an address: exactly one word with clean
+     *      upper bytes, or InvalidNode(index)
+     */
     function _address(bytes memory value, uint256 index) private pure returns (address) {
         if (value.length != 32 || AbiCodec.word(value, 0) > type(uint160).max) revert InvalidNode(index);
         return address(uint160(AbiCodec.word(value, 0)));
     }
 
+    /**
+     * @dev Executes a staticcall and returns the raw result bytes. A
+     *      code-less target reverts with InvalidTarget(index) and a revert
+     *      with CallFailed(index, ...) carrying the reason.
+     */
     function _call(address target, bytes memory data, uint256 index) private view returns (bytes memory result) {
         if (target.code.length == 0) revert InvalidTarget(index, target);
         bool ok;

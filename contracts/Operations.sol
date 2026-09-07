@@ -8,16 +8,16 @@ import {AbiCodec} from "./lib/AbiCodec.sol";
  * @author Sembrestels
  * @notice Plain-Solidity operator vocabulary for the Assertions core: word
  *         arithmetic and comparisons (with int256 overloads for signed
- *         semantics, and 512-bit mulDiv for overflow-free mul-then-div),
- *         bitwise operations, environment reads, bytes and string
- *         operations including decimal parsing and runtime ABI encoding.
- *         Every function takes and returns plain ABI types — no ERC-8211
- *         anywhere. Composition happens in the core: its `read` primitive
- *         resolves its operands and splices the resolved values
- *         into this contract's calldata, so an operator call IS the
- *         composition. Any deployed view or pure contract extends
- *         the vocabulary through the same socket; Operations is just the
- *         canonical first extension.
+ *         semantics, 512-bit mulDiv for overflow-free mul-then-div and a
+ *         modular family), bitwise operations, environment reads, bytes
+ *         and string operations including decimal parsing and formatting,
+ *         and runtime ABI encoding. Every function takes and returns plain
+ *         ABI types: no ERC-8211 anywhere. Composition happens in the
+ *         core, whose `read` primitive resolves its operands and splices
+ *         the resolved values into this contract's calldata, so an
+ *         operator call IS the composition. Any deployed view or pure
+ *         contract extends the vocabulary through the same socket;
+ *         Operations is just the canonical first extension.
  * @dev Named functions instead of op-code enums so decoded calldata reads
  *      on explorers: `ge(balance, 100e18)` needs no docs open. Signedness
  *      rides on the int256 overloads (decoders display negative operands
@@ -25,17 +25,33 @@ import {AbiCodec} from "./lib/AbiCodec.sol";
  *      through unchanged). Arithmetic uses Solidity 0.8 checked semantics
  *      (overflow reverts with Panic(0x11), division by zero with
  *      Panic(0x12)); shifts follow EVM semantics (256 or more yields 0).
+ *      Admission is a demand test: a function earns a slot only when it
+ *      is not a few-node recipe at practical cost AND a concrete assertion
+ *      workload needs it; hot loops and calldata-exponential compositions
+ *      (`rpow`, `log2`) pass, and iteration lives in Collections.
  *      Operations is the versionable periphery to the frozen core: old
  *      versions never break, new versions deploy at new addresses.
  * @custom:version 1.0
  */
 contract Operations {
-    /// @notice Trunc rounds toward zero; Floor toward negative infinity; Ceil toward positive infinity.
+    /**
+     * @notice Rounding modes for the division and parsing families
+     * @dev ABI-encoded as uint8: Trunc = 0 rounds toward zero, Floor = 1
+     *      toward negative infinity, Ceil = 2 toward positive infinity. For
+     *      non-negative results Trunc and Floor agree. An out-of-range
+     *      value reverts with Panic(0x21).
+     */
     enum Rounding {
         Trunc,
         Floor,
         Ceil
     }
+
+    /**
+     * @notice Thrown when a decimals argument exceeds 77 (10^78 does not
+     *         fit a word, so no scale beyond that is representable)
+     * @param decimals The requested number of decimals
+     */
     error InvalidPrecision(uint256 decimals);
 
     // ============ Custom Errors ============
@@ -48,16 +64,18 @@ contract Operations {
      */
     error SliceOutOfBounds(uint256 start, uint256 len, uint256 dataLength);
 
-    // Canonical encoding errors are defined once in AbiCodec.
+    // The runtime encoder's errors are declared once in AbiCodec.
 
     /**
-     * @notice Thrown when parseUint receives empty input — there is no
+     * @notice Thrown when a parse function receives no digits: there is no
      *         number there, and 0 would be a silent wrong answer
      */
     error EmptyNumber();
 
     /**
-     * @notice Thrown when parseUint meets a byte outside 0-9
+     * @notice Thrown when a parse function meets a byte it does not accept
+     *         (outside 0-9, a sign where none is allowed, a second decimal
+     *         point)
      * @param position The byte position of the offending character
      * @param char The offending byte
      */
@@ -71,13 +89,19 @@ contract Operations {
     error RawCallFailed(address target, bytes data);
 
     /**
-     * @notice Thrown when replace receives an empty needle — it would
-     *         match everywhere, and inserting the replacement between
-     *         every byte is certainly a mistake
+     * @notice Thrown when replace or split receives an empty needle: it
+     *         would match everywhere, and inserting the replacement (or a
+     *         segment boundary) between every byte is certainly a mistake
      */
     error EmptyNeedle();
 
-    /// @notice The base magnitude and modulus are not coprime, so no inverse exists.
+    /**
+     * @notice Thrown when a negative modular exponent needs an inverse that
+     *         does not exist: the base and modulus magnitudes are not
+     *         coprime
+     * @param base The base magnitude, as reduced
+     * @param modulus The modulus magnitude
+     */
     error ModularInverseDoesNotExist(uint256 base, uint256 modulus);
 
     // ============ Arithmetic ============
@@ -154,14 +178,18 @@ contract Operations {
     }
 
     /**
-     * @notice a ** b, checked (0 ** 0 == 1) — canonical use is live
-     *         decimals scaling, e.g. mul(5, exp(10, token.decimals())).
+     * @notice a ** b, checked (0 ** 0 == 1): canonical use is live
+     *         decimals scaling, e.g. mul(5, exp(10, token.decimals()))
      */
     function exp(uint256 a, uint256 b) external pure returns (uint256) {
         return a ** b;
     }
 
-    /// @notice Checked signed-base power; 0 ** 0 is one.
+    /**
+     * @notice a ** b, signed base, checked (0 ** 0 == 1)
+     * @dev Binary exponentiation with checked multiplies, so any
+     *      intermediate leaving int256 reverts with Panic(0x11)
+     */
     function exp(int256 a, uint256 b) external pure returns (int256 result) {
         result = 1;
         while (b != 0) {
@@ -200,7 +228,7 @@ contract Operations {
     }
 
     /**
-     * @notice The magnitude |a - b|; total — never reverts
+     * @notice The magnitude |a - b|; total, never reverts
      */
     function absDiff(uint256 a, uint256 b) external pure returns (uint256) {
         return a > b ? a - b : b - a;
@@ -208,7 +236,7 @@ contract Operations {
 
     /**
      * @notice The magnitude |a - b| of two signed values as a uint256;
-     *         total — a signed compare and a two's-complement wrapping
+     *         total: a signed compare and a two's-complement wrapping
      *         subtract mean even the widest span (int256 min to max)
      *         yields its exact distance instead of reverting. Consume the
      *         result with unsigned comparisons
@@ -219,8 +247,13 @@ contract Operations {
         }
     }
 
-    /// @notice Full-width product followed by one explicitly rounded division.
-    /// @dev Zero denominator panics 0x12; an unrepresentable rounded result panics 0x11.
+    /**
+     * @notice a * b / denominator over the full 512-bit product, rounded
+     *         once as `rounding` says (Trunc and Floor agree here): the
+     *         overflow-free mul-then-div for token math
+     * @dev A zero denominator reverts with Panic(0x12); a rounded result
+     *      that does not fit uint256 with Panic(0x11)
+     */
     function mulDiv(uint256 a, uint256 b, uint256 denominator, Rounding rounding)
         external
         pure
@@ -230,7 +263,15 @@ contract Operations {
         if (rounding == Rounding.Ceil && mulmod(a, b, denominator) != 0) result += 1;
     }
 
-    /// @notice Signed full-width multiplication/division, including negative denominators.
+    /**
+     * @notice a * b / denominator, signed, over the full 512-bit product of
+     *         the magnitudes, rounded once as `rounding` says: Trunc toward
+     *         zero, Floor toward negative infinity, Ceil toward positive
+     *         infinity. Negative denominators are allowed
+     * @dev All int256.min operands are supported. A zero denominator
+     *      reverts with Panic(0x12); a rounded result outside int256 with
+     *      Panic(0x11).
+     */
     function mulDiv(int256 a, int256 b, int256 denominator, Rounding rounding) external pure returns (int256) {
         bool negative = (a < 0) != (b < 0) != (denominator < 0);
         uint256 x = _magnitude(a);
@@ -246,12 +287,19 @@ contract Operations {
         return _signedMagnitude(result, negative);
     }
 
+    /**
+     * @dev |value| as a uint256; total, int256.min yields 2^255
+     */
     function _magnitude(int256 value) private pure returns (uint256) {
         unchecked {
             return value < 0 ? uint256(-(value + 1)) + 1 : uint256(value);
         }
     }
 
+    /**
+     * @dev The int256 with magnitude `value` and the given sign, reverting
+     *      with Panic(0x11) when it does not fit (2^255 fits only negative)
+     */
     function _signedMagnitude(uint256 value, bool negative) private pure returns (int256) {
         if (value > (negative ? uint256(1) << 255 : uint256(type(int256).max))) _panic(0x11);
         unchecked {
@@ -260,8 +308,8 @@ contract Operations {
     }
 
     /**
-     * @notice (a + b) % m over the full 512-bit sum (EVM ADDMOD —
-     *         the addition does not wrap at 2^256)
+     * @notice (a + b) % m over the full 512-bit sum (EVM ADDMOD: the
+     *         addition does not wrap at 2^256)
      * @dev Modulo by zero reverts with Panic(0x12)
      */
     function addMod(uint256 a, uint256 b, uint256 m) external pure returns (uint256) {
@@ -269,8 +317,8 @@ contract Operations {
     }
 
     /**
-     * @notice (a * b) % m over the full 512-bit product (EVM MULMOD —
-     *         the multiplication does not wrap at 2^256)
+     * @notice (a * b) % m over the full 512-bit product (EVM MULMOD: the
+     *         multiplication does not wrap at 2^256)
      * @dev Modulo by zero reverts with Panic(0x12)
      */
     function mulMod(uint256 a, uint256 b, uint256 m) external pure returns (uint256) {
@@ -278,9 +326,10 @@ contract Operations {
     }
 
     /**
-     * @notice (a + b) % m with an overflow-free intermediate sum.
-     * @dev The remainder has the sum's sign, independent of m's sign.
-     *      Handles int256.min; modulo by zero reverts with Panic(0x12).
+     * @notice (a + b) % m, signed, with an overflow-free intermediate sum
+     * @dev The remainder takes the sum's sign, independent of m's sign
+     *      (Solidity's own convention for signed %). All int256.min operands
+     *      are supported; modulo by zero reverts with Panic(0x12).
      */
     function addMod(int256 a, int256 b, int256 m) external pure returns (int256) {
         uint256 x = _magnitude(a);
@@ -294,36 +343,57 @@ contract Operations {
     }
 
     /**
-     * @notice (a * b) % m with an overflow-free intermediate product.
-     * @dev The remainder has the product's sign, independent of m's sign.
-     *      Handles int256.min; modulo by zero reverts with Panic(0x12).
+     * @notice (a * b) % m, signed, with an overflow-free intermediate
+     *         product
+     * @dev The remainder takes the product's sign, independent of m's sign.
+     *      All int256.min operands are supported; modulo by zero reverts
+     *      with Panic(0x12).
      */
     function mulMod(int256 a, int256 b, int256 m) external pure returns (int256) {
         return _signedMagnitude(mulmod(_magnitude(a), _magnitude(b), _magnitude(m)), (a < 0) != (b < 0));
     }
 
-    /// @notice a ** exponent % m, without overflowing the intermediate power.
-    /// @dev 0 ** 0 is 1; a zero modulus reverts with Panic(0x12).
+    /**
+     * @notice a ** exponent % m without overflowing the intermediate power
+     *         (0 ** 0 == 1, and a modulus of 1 yields 0)
+     * @dev Square-and-multiply over MULMOD, at most 256 rounds. A zero
+     *      modulus reverts with Panic(0x12).
+     */
     function powMod(uint256 a, uint256 exponent, uint256 m) external pure returns (uint256) {
         return _powMod(a, exponent, m);
     }
 
-    /// @notice Signed-base modular power; odd powers retain the base's sign.
-    /// @dev The modulus's sign is ignored. All int256.min operands are supported.
+    /**
+     * @notice a ** exponent % m, signed base: the power of |a| modulo |m|,
+     *         negative when a is negative and the exponent odd
+     * @dev The modulus's sign is ignored. All int256.min operands are
+     *      supported; a zero modulus reverts with Panic(0x12).
+     */
     function powMod(int256 a, uint256 exponent, int256 m) external pure returns (int256) {
         return _signedMagnitude(_powMod(_magnitude(a), exponent, _magnitude(m)), a < 0 && exponent & 1 != 0);
     }
 
-    /// @notice Negative exponents raise the modular inverse to |exponent|.
-    /// @dev Reverts with ModularInverseDoesNotExist unless gcd(a, m) == 1.
-    ///      Modulus 1 returns 0; modulus 0 reverts with Panic(0x12).
+    /**
+     * @notice a ** exponent % m with a signed exponent: a negative exponent
+     *         raises the modular inverse of a to |exponent|
+     * @dev Reverts with ModularInverseDoesNotExist unless gcd(a, m) == 1
+     *      when the exponent is negative. A modulus of 1 yields 0; a zero
+     *      modulus reverts with Panic(0x12).
+     */
     function powMod(uint256 a, int256 exponent, uint256 m) external pure returns (uint256) {
         return _powMod(exponent < 0 ? _inverseMod(a, m) : a, _magnitude(exponent), m);
     }
 
-    /// @notice Signed modular powers, including negative exponents via inversion.
-    /// @dev Odd exponents (positive or negative) retain the base's sign.
-    ///      Negative exponents require coprime base/modulus magnitudes.
+    /**
+     * @notice a ** exponent % m, signed base and signed exponent: the
+     *         magnitude rules of the unsigned overload over |a| and |m|,
+     *         negative when a is negative and the exponent odd (in either
+     *         direction)
+     * @dev A negative exponent requires coprime base and modulus
+     *      magnitudes (ModularInverseDoesNotExist otherwise). All
+     *      int256.min operands are supported; a zero modulus reverts with
+     *      Panic(0x12).
+     */
     function powMod(int256 a, int256 exponent, int256 m) external pure returns (int256) {
         uint256 base = _magnitude(a);
         uint256 modulus = _magnitude(m);
@@ -331,10 +401,14 @@ contract Operations {
         return _signedMagnitude(_powMod(base, _magnitude(exponent), modulus), a < 0 && exponent & 1 != 0);
     }
 
+    /**
+     * @dev base ** exponent % modulus by square-and-multiply over MULMOD
+     *      (at most 256 rounds for any uint256 exponent). Reverts with
+     *      Panic(0x12) when the modulus is zero.
+     */
     function _powMod(uint256 base, uint256 exponent, uint256 modulus) private pure returns (uint256 result) {
         result = 1 % modulus;
         base %= modulus;
-        // At most 256 iterations for any uint256 exponent.
         while (exponent != 0) {
             if (exponent & 1 != 0) result = mulmod(result, base, modulus);
             exponent >>= 1;
@@ -342,13 +416,18 @@ contract Operations {
         }
     }
 
+    /**
+     * @dev The inverse of `base` modulo `modulus` by the extended Euclidean
+     *      algorithm with coefficients kept reduced modulo `modulus`
+     *      (MULMOD keeps q * t from overflowing even for a full-word
+     *      modulus). Reverts with ModularInverseDoesNotExist unless the two
+     *      are coprime, and with Panic(0x12) when the modulus is zero.
+     */
     function _inverseMod(uint256 base, uint256 modulus) private pure returns (uint256) {
         uint256 r = modulus;
         uint256 nextR = base % modulus;
         uint256 t;
         uint256 nextT = 1 % modulus;
-        // Extended Euclid with coefficients reduced modulo m. mulmod avoids
-        // overflowing q * nextT even when the modulus uses the full word.
         while (nextR != 0) {
             uint256 q = r / nextR;
             (r, nextR) = (nextR, r % nextR);
@@ -361,8 +440,8 @@ contract Operations {
     }
 
     /**
-     * @notice floor(sqrt(x)) — canonical use is AMM invariant checks,
-     *         e.g. sqrt(mulDiv(x, y, 1e18))
+     * @notice floor(sqrt(x)): canonical use is AMM invariant checks, e.g.
+     *         sqrt(mulDiv(x, y, 1e18, Trunc))
      * @dev Babylonian method seeded by a bit scan: seven Newton
      *      iterations are exact for the full uint256 range
      */
@@ -384,7 +463,7 @@ contract Operations {
 
     /**
      * @notice x raised to the n-th power in fixed point, where `base` is
-     *         one unit (1e27 for a ray, 1e18 for a wad) — the compounding
+     *         one unit (1e27 for a ray, 1e18 for a wad): the compounding
      *         primitive, e.g. an APY from a per-second rate is
      *         rpow(1e27 + ratePerSecond, 31536000, 1e27)
      * @dev Binary exponentiation with the scale divided out after every
@@ -392,12 +471,13 @@ contract Operations {
      *      cannot be composed from the rest of the vocabulary at any
      *      practical cost: a raw operand tree has no way to name a
      *      subterm, so squaring duplicates its operand's whole calldata
-     *      subtree and the composed form is 2^k copies (~33M for the
+     *      subtree and the composed form is 2^k copies (about 33M for the
      *      exponent above). Rounds down at each step; earlier rounding
      *      losses can be amplified by later squarings, so the final error
      *      is not bounded by the number of multiplies. Choose the scale
      *      and tolerance for the input range and exponent. Reverts with
-     *      Panic(0x11) if a scaled intermediate does not fit uint256
+     *      Panic(0x11) if a scaled intermediate does not fit uint256, and
+     *      without a reason when `base` is zero.
      */
     function rpow(uint256 x, uint256 n, uint256 base) external pure returns (uint256) {
         if (base == 0) revert();
@@ -420,9 +500,10 @@ contract Operations {
      * @notice e^x in wad fixed point (1e18), for continuous compounding
      *         and the inverse of lnWad
      * @dev Remco Bloemen's algorithm: range-reduce by ln(2), evaluate a
-     *      rational approximation, then scale by 2^k. Reverts above
-     *      135305999368893231589 (where the result leaves int256) and
-     *      returns 0 below -42139678854452767551 (where it underflows wad)
+     *      rational approximation, then scale by 2^k. Reverts without a
+     *      reason above 135305999368893231589 (where the result leaves
+     *      int256) and returns 0 below -42139678854452767551 (where it
+     *      underflows wad).
      */
     function expWad(int256 x) external pure returns (int256 r) {
         unchecked {
@@ -459,10 +540,10 @@ contract Operations {
     }
 
     /**
-     * @notice The natural log of x in wad fixed point (1e18) — the
-     *         inverse of expWad, and how a growth factor becomes a rate
-     * @dev Remco Bloemen's algorithm. Reverts for x <= 0, where the log
-     *      is undefined
+     * @notice The natural log of x in wad fixed point (1e18): the inverse
+     *         of expWad, and how a growth factor becomes a rate
+     * @dev Remco Bloemen's algorithm. Reverts without a reason for x <= 0,
+     *      where the log is undefined.
      */
     function lnWad(int256 x) external pure returns (int256 r) {
         unchecked {
@@ -498,11 +579,12 @@ contract Operations {
     }
 
     /**
-     * @notice floor(log2(x)) — the position of the highest set bit, and
-     *         so the bit length of x minus one. Reverts for x = 0, where
-     *         the logarithm is undefined
-     * @dev The composed form is eight nested conds that each duplicate their operand's
-     *      calldata subtree
+     * @notice floor(log2(x)): the position of the highest set bit, and so
+     *         the bit length of x minus one
+     * @dev Earns its slot as a calldata-exponential composition: the
+     *      composed form is eight nested conds that each duplicate their
+     *      operand's calldata subtree. Reverts without a reason for x = 0,
+     *      where the logarithm is undefined.
      */
     function log2(uint256 x) external pure returns (uint256) {
         if (x == 0) revert();
@@ -510,7 +592,8 @@ contract Operations {
     }
 
     /**
-     * Floor of log2(x) via a bit scan.
+     * @dev floor(log2(x)) by a binary bit scan; returns 0 for x = 0 (the
+     *      public entry rejects that input)
      */
     function _log2(uint256 x) private pure returns (uint256 r) {
         unchecked {
@@ -613,7 +696,7 @@ contract Operations {
     // ============ Bitwise ============
 
     /**
-     * @notice a & b — also conjoins comparison results, which splice as
+     * @notice a & b: also conjoins comparison results, which splice as
      *         0/1 words
      */
     function bitAnd(uint256 a, uint256 b) external pure returns (uint256) {
@@ -621,14 +704,14 @@ contract Operations {
     }
 
     /**
-     * @notice a | b — also disjoins comparison results
+     * @notice a | b: also disjoins comparison results
      */
     function bitOr(uint256 a, uint256 b) external pure returns (uint256) {
         return a | b;
     }
 
     /**
-     * @notice a ^ b — bitXor(x, ~0) is bitwise NOT
+     * @notice a ^ b: bitXor(x, ~0) is bitwise NOT
      */
     function bitXor(uint256 a, uint256 b) external pure returns (uint256) {
         return a ^ b;
@@ -663,8 +746,8 @@ contract Operations {
 
     /**
      * @notice Whether bit `index` of `mask` is set (indices past 255 are
-     *         never set) — the character-class test: with a charset bitmap
-     *         mask, bitSet(mask, byteValue) is a one-call fold lambda
+     *         never set): the character-class test, since with a charset
+     *         bitmap mask, bitSet(mask, byteValue) is a one-call fold lambda
      */
     function bitSet(uint256 mask, uint256 index) external pure returns (bool) {
         return (mask >> index) & 1 == 1;
@@ -689,8 +772,8 @@ contract Operations {
     }
 
     /**
-     * @notice The block timestamp at judge time — how an ERC-8211
-     *         predicate gates on time
+     * @notice The block timestamp at judge time: how an ERC-8211 predicate
+     *         gates on time
      */
     function timestamp() external view returns (uint256) {
         return block.timestamp;
@@ -711,7 +794,7 @@ contract Operations {
     }
 
     /**
-     * @notice The block base fee in wei at judge time — how a predicate
+     * @notice The block base fee in wei at judge time: how a predicate
      *         gates on fee conditions
      */
     function baseFee() external view returns (uint256) {
@@ -755,7 +838,7 @@ contract Operations {
     }
 
     /**
-     * @notice The transaction origin — lets an assertion gate on who is
+     * @notice The transaction origin: lets an assertion gate on who is
      *         executing the batch it guards
      */
     function origin() external view returns (address) {
@@ -764,8 +847,8 @@ contract Operations {
 
     /**
      * @notice The gas price of the transaction executing the batch, in wei
-     *         (tx.gasprice) — gate a batch on the fee it is actually
-     *         paying, e.g. le(gasPrice(), maxWei)
+     *         (tx.gasprice): gate a batch on the fee it is actually paying,
+     *         e.g. le(gasPrice(), maxWei)
      */
     function gasPrice() external view returns (uint256) {
         return tx.gasprice;
@@ -773,10 +856,10 @@ contract Operations {
 
     /**
      * @notice The versioned hash of the executing transaction's index-th
-     *         blob (BLOBHASH), or zero when the transaction carries no
-     *         blob at that index — pin blob-carrying batches to the data
-     *         they were built for (ne(blobHash(0), 0) asserts a blob is
-     *         present at all)
+     *         blob (BLOBHASH), or zero when the transaction carries no blob
+     *         at that index: pins blob-carrying batches to the data they
+     *         were built for (ne(blobHash(0), 0) asserts a blob is present
+     *         at all)
      */
     function blobHash(uint256 index) external view returns (bytes32) {
         return blobhash(index);
@@ -793,9 +876,10 @@ contract Operations {
      *      0x01, modexp at 0x05, ...) have no code and raw calldata is
      *      their entire input. The caveat is the flip side: a staticcall
      *      to a code-less non-precompile address "succeeds" with empty
-     *      returndata — pin the result with byteLen or a constraint when
-     *      that matters. A revert is wrapped as RawCallFailed carrying
-     *      the calldata. Collection callbacks additionally preserve the revert reason.
+     *      returndata, so pin the result with byteLen or a constraint when
+     *      that matters. A revert is wrapped as RawCallFailed carrying the
+     *      calldata (the target's reason is lost; Expressions' ProbeCall
+     *      and the core's revertData are the reason-carrying probes).
      * @param target The address to staticcall (precompiles included)
      * @param data The raw calldata
      * @return The raw returndata as a bytes value
@@ -807,8 +891,8 @@ contract Operations {
     }
 
     /**
-     * @notice The full runtime code of `account` as a bytes value —
-     *         codeHash's sibling for prefix/suffix/segment assertions
+     * @notice The full runtime code of `account` as a bytes value:
+     *         codeHash's sibling for prefix, suffix and segment assertions
      *         (a code-less account yields empty bytes)
      */
     function code(address account) external view returns (bytes memory) {
@@ -818,7 +902,8 @@ contract Operations {
     // ============ Bytes ============
 
     /**
-     * @notice Concatenates the parts in order, inserting delimiter between parts
+     * @notice The parts concatenated in order, with `delimiter` inserted
+     *         between consecutive parts (join is this over a split)
      * @dev Returned as a normal bytes value (ABI envelope): the canonical
      *      form every consumer of a single bytes argument expects,
      *      including encode's values[]
@@ -852,23 +937,54 @@ contract Operations {
         return data[start:start + len];
     }
 
+    /**
+     * @notice Thrown when a strict signed index lies outside
+     *         -length .. length-1
+     * @param index The requested index as given
+     * @param length The data's byte length
+     */
     error InvalidByteIndex(int256 index, uint256 length);
+
+    /**
+     * @notice Thrown when a string operation meets malformed UTF-8, or a
+     *         slice boundary that would split a multi-byte code point
+     * @param index The byte position of the offending byte
+     */
     error InvalidUtf8(uint256 index);
 
-    /// @notice Byte slice with clamped signed start/end indexes; end is exclusive.
+    /**
+     * @notice data[start .. end) with JavaScript Array.slice semantics:
+     *         signed indices, negative counting from the end, both clamped
+     *         to the data bounds, end exclusive, and empty bytes when end
+     *         does not exceed start. Never reverts
+     */
     function sliceRange(bytes calldata data, int256 start, int256 end) external pure returns (bytes memory) {
         uint256 a = _rangeIndex(start, data.length);
         uint256 b = _rangeIndex(end, data.length);
         return b > a ? data[a:b] : data[0:0];
     }
 
-    /// @notice One byte at a signed index; negative indexes count from the end; out of range reverts.
+    /**
+     * @notice The single byte at a signed index (negative from the end,
+     *         -1 = last) as a one-byte bytes value
+     * @dev Strict: an index outside -length .. length-1 reverts with
+     *      InvalidByteIndex, where sliceRange would clamp
+     */
     function byteAt(bytes calldata data, int256 index) external pure returns (bytes memory) {
         uint256 position = _strictIndex(index, data.length);
         return data[position:position + 1];
     }
 
-    /// @notice UTF-8 byte slice; rejects malformed input and nonempty ranges splitting a code point.
+    /**
+     * @notice sliceRange over a UTF-8 string: the same clamped signed
+     *         range over BYTE positions, refusing to cut a code point in
+     *         half
+     * @dev The whole input is validated as UTF-8 first (InvalidUtf8 at the
+     *      offending byte); a non-empty range whose start or end lands on
+     *      a continuation byte reverts with InvalidUtf8 at that boundary.
+     *      Indices are still bytes, not characters: a character-level slice
+     *      is a composition over indexOf.
+     */
     function stringSlice(bytes calldata data, int256 start, int256 end) external pure returns (bytes memory) {
         _checkUtf8(data);
         uint256 a = _rangeIndex(start, data.length);
@@ -879,7 +995,14 @@ contract Operations {
         return data[a:b];
     }
 
-    /// @notice One UTF-8 byte as a string; a byte belonging to a multibyte code point is rejected.
+    /**
+     * @notice byteAt over a UTF-8 string: the single ASCII character at a
+     *         signed byte index, as a one-character string
+     * @dev The whole input is validated as UTF-8 first; an index outside
+     *      the data reverts with InvalidByteIndex, and a position holding
+     *      any byte of a multi-byte code point with InvalidUtf8, since one
+     *      byte of it is not a character
+     */
     function stringAt(bytes calldata data, int256 index) external pure returns (bytes memory) {
         _checkUtf8(data);
         uint256 position = _strictIndex(index, data.length);
@@ -887,16 +1010,31 @@ contract Operations {
         return data[position:position + 1];
     }
 
+    /**
+     * @dev Clamps a signed slice index into 0 .. length (negative counts
+     *      from the end; out-of-range indices clamp to the nearest bound)
+     */
     function _rangeIndex(int256 index, uint256 length) private pure returns (uint256) {
         if (index < 0) return index < -int256(length) ? 0 : uint256(int256(length) + index);
         return uint256(index) > length ? length : uint256(index);
     }
 
+    /**
+     * @dev Normalizes a signed element index into 0 .. length-1, reverting
+     *      with InvalidByteIndex outside -length .. length-1
+     */
     function _strictIndex(int256 index, uint256 length) private pure returns (uint256) {
         if (index >= int256(length) || index < -int256(length)) revert InvalidByteIndex(index, length);
         return index < 0 ? uint256(int256(length) + index) : uint256(index);
     }
 
+    /**
+     * @dev Requires `data` to be well-formed UTF-8 per the Unicode table of
+     *      valid byte sequences: lead bytes C2-F4 with the right number of
+     *      continuation bytes, the second-byte ranges that exclude overlong
+     *      forms, surrogates and code points past U+10FFFF. Reverts with
+     *      InvalidUtf8 at the first offending byte.
+     */
     function _checkUtf8(bytes calldata data) private pure {
         for (uint256 i; i < data.length;) {
             uint8 first = uint8(data[i]);
@@ -930,7 +1068,7 @@ contract Operations {
     }
 
     /**
-     * @notice keccak256 of `data` — lets an EQ constraint pin complex or
+     * @notice keccak256 of `data`: lets an EQ constraint pin complex or
      *         hard-to-decode values (keccak is an opcode, not a precompile,
      *         so it must be a function here)
      */
@@ -939,10 +1077,10 @@ contract Operations {
     }
 
     /**
-     * @notice keccak256 of the two words concatenated in ascending order —
-     *         byte-identical to OpenZeppelin MerkleProof's node combiner,
-     *         so a foldWords over a proof payload with this as the lambda
-     *         and the leaf as the initial accumulator reproduces the root
+     * @notice keccak256 of the two words concatenated in ascending order,
+     *         byte-identical to OpenZeppelin MerkleProof's node combiner:
+     *         a foldWords over a proof payload with this as the lambda and
+     *         the leaf as the initial accumulator reproduces the root
      *         (order-preserving pair hashing composes as hash over concat)
      */
     function hashPairSorted(bytes32 a, bytes32 b) external pure returns (bytes32) {
@@ -952,7 +1090,10 @@ contract Operations {
 
     // ============ Search ============
 
-    /// @notice Whether needle occurs in s; an empty needle always matches, including an empty s.
+    /**
+     * @notice Whether `needle` occurs in `s`; an empty needle always
+     *         matches, even in an empty `s`
+     */
     function contains(bytes calldata s, bytes calldata needle) external pure returns (bool) {
         if (needle.length == 0) return true;
         if (needle.length > s.length) return false;
@@ -964,13 +1105,13 @@ contract Operations {
 
     /**
      * @notice Position of the occurrence-th occurrence of `needle` in `s`,
-     *         counted from the start (0, 1, 2, …) or from the end
-     *         (-1 = last, -2 = second-last, …)
+     *         counted from the start (0, 1, 2, ...) or from the end
+     *         (-1 = last, -2 = second-last, ...)
      * @dev The signed occurrence ordinal matches the repo-wide
      *      negative-index idiom (pick, nav). Occurrences are enumerated
-     *      left to right and NON-overlapping — after a match the scan
+     *      left to right and NON-overlapping: after a match the scan
      *      resumes past it, so in `aaaa` the needle `aa` occurs at 0 and
-     *      2 — which is delimiter semantics: splitting and occurrence
+     *      2. That is delimiter semantics, so splitting and occurrence
      *      counting agree. Requesting an occurrence that does not exist
      *      (in either direction) returns the sentinel `s.length` (it
      *      composes: includes = lt(indexOf(s, n, 0), byteLen(s))).
@@ -979,7 +1120,7 @@ contract Operations {
      *      (0 for k == 0; the sentinel ends the trailing segment for
      *      free), and segment -k spans
      *      [indexOf(s, d, -k) + dlen, indexOf(s, d, -k+1))
-     *      (byteLen(s) for k == 1). Total by design — an empty needle
+     *      (byteLen(s) for k == 1). Total by design: an empty needle
      *      vacuously matches at every position 0 .. s.length, and nothing
      *      here ever reverts.
      * @param s The haystack
@@ -1023,7 +1164,16 @@ contract Operations {
         return s.length;
     }
 
-    /// @notice Split on non-overlapping delimiter matches, preserving all empty segments.
+    /**
+     * @notice `data` split on every non-overlapping occurrence of
+     *         `delimiter`, as a bytes[] of segments: the same enumeration
+     *         indexOf uses, so there are always count + 1 segments and
+     *         empty segments (leading, trailing, between adjacent
+     *         delimiters) are preserved
+     * @dev An empty delimiter reverts with EmptyNeedle (it would match
+     *      everywhere). No delimiter in the data yields the data as its
+     *      single segment.
+     */
     function split(bytes calldata data, bytes calldata delimiter) external pure returns (bytes[] memory parts) {
         if (delimiter.length == 0) revert EmptyNeedle();
         parts = new bytes[](_countOccurrences(data, delimiter) + 1);
@@ -1088,7 +1238,7 @@ contract Operations {
     /**
      * @notice `s` with ASCII A-Z folded to a-z; every other byte passes
      *         through verbatim (multi-byte UTF-8 units have the high bit
-     *         set, so they are untouched — the fold is ASCII-only)
+     *         set, so they are untouched: the fold is ASCII-only)
      */
     function toLower(bytes calldata s) external pure returns (bytes memory) {
         return _foldCase(s, "A", "Z");
@@ -1102,7 +1252,10 @@ contract Operations {
         return _foldCase(s, "a", "z");
     }
 
-    /// @dev Flip the ASCII case bit only within the requested letter range.
+    /**
+     * @dev Flips the ASCII case bit of every byte in the letter range
+     *      `low` .. `high`, leaving the rest untouched
+     */
     function _foldCase(bytes calldata s, bytes1 low, bytes1 high) private pure returns (bytes memory out) {
         out = s;
         for (uint256 i = 0; i < out.length; i++) {
@@ -1114,7 +1267,7 @@ contract Operations {
     /**
      * @notice Whether every byte of `s` is a member of the 256-bit
      *         character-class `mask` (bit i set means byte value i is
-     *         allowed) — a native single-call loop, the fixed-operation
+     *         allowed): a native single-call loop, the fixed-operation
      *         form of the foldBytes(bitSet, All) recipe. An empty string
      *         is vacuously in every set
      */
@@ -1128,21 +1281,24 @@ contract Operations {
     // ============ Parse ============
 
     /**
-     * @notice The uint256 a decimal ASCII string encodes — the bridge
-     *         from string returns into arithmetic, e.g. comparing a
-     *         version segment numerically:
-     *         gt(parseUint(split-segment), 2)
+     * @notice The uint256 a decimal ASCII string encodes: the bridge from
+     *         string returns into arithmetic, e.g. comparing a version
+     *         segment numerically, gt(parseUint(split-segment), 2)
      * @dev Strict by design: reverts with EmptyNumber on empty input and
      *      InvalidDecimalDigit on any byte outside 0-9 (no signs, no
      *      whitespace, no decimal points); a value past 2^256 - 1
      *      reverts with Panic(0x11) via the checked accumulator.
-     *      Leading zeros are accepted ("007" is 7)
+     *      Leading zeros are accepted ("007" is 7).
      */
     function parseUint(bytes calldata s) external pure returns (uint256) {
         return _parseDigits(s, 0);
     }
 
-    /// @dev Parse at least one decimal digit; the signed entry point handles the sign.
+    /**
+     * @dev The digits s[start ..] as a checked uint256: at least one digit
+     *      (EmptyNumber), all in 0-9 (InvalidDecimalDigit at the offending
+     *      position). The signed entry point consumes the sign first.
+     */
     function _parseDigits(bytes calldata s, uint256 start) private pure returns (uint256 result) {
         if (start == s.length) revert EmptyNumber();
         for (uint256 i = start; i < s.length; i++) {
@@ -1153,8 +1309,8 @@ contract Operations {
     }
 
     /**
-     * @notice The decimal ASCII rendering of `v` — parseUint's inverse
-     *         (no leading zeros, so toString(parseUint(s)) normalizes)
+     * @notice The decimal ASCII rendering of `v`: parseUint's inverse (no
+     *         leading zeros, so toString(parseUint(s)) normalizes)
      */
     function toString(uint256 v) public pure returns (string memory) {
         if (v == 0) return "0";
@@ -1170,30 +1326,56 @@ contract Operations {
         return string(buf);
     }
 
-    /// @notice Decimal ASCII rendering, including a minus sign for negative values.
+    /**
+     * @notice The decimal ASCII rendering of `value`, signed: a leading
+     *         minus for negative values, no plus, no leading zeros
+     * @dev int256.min renders correctly (its magnitude is computed
+     *      unchecked)
+     */
     function toString(int256 value) external pure returns (string memory) {
         return string.concat(value < 0 ? "-" : "", toString(_magnitude(value)));
     }
 
-    /// @notice Parse decimal digits with an optional leading + or - sign.
-    /// @dev Empty digits, invalid characters and int256 overflow revert. Leading zeros are accepted.
+    /**
+     * @notice The int256 a decimal ASCII string encodes, with an optional
+     *         leading + or - sign: parseUint's signed sibling
+     * @dev Strict like parseUint: EmptyNumber on empty input or a bare
+     *      sign, InvalidDecimalDigit on any other byte outside 0-9, and
+     *      Panic(0x11) when the value leaves int256 ("-" followed by 2^255
+     *      is the most negative accepted input). Leading zeros are
+     *      accepted.
+     */
     function parseInt(bytes calldata value) external pure returns (int256) {
         if (value.length == 0) revert EmptyNumber();
         bool negative = value[0] == "-";
         return _signedMagnitude(_parseDigits(value, negative || value[0] == "+" ? 1 : 0), negative);
     }
 
-    /// @notice Parse a signed decimal into integer units with the requested rounding.
-    /// @dev Accepts an optional sign and one decimal point; at least one digit is required.
-    ///      Precision above 77, invalid characters and int256 overflow revert.
+    /**
+     * @notice The signed integer units a decimal ASCII string denotes at
+     *         `decimals` places: viem's parseUnits, e.g. "1.5" at 18
+     *         decimals is 1500000000000000000
+     * @dev Accepts an optional leading + or -, digits with at most one
+     *      decimal point anywhere (".5" and "5." are fine) and at least
+     *      one digit in total (EmptyNumber otherwise). Fractional digits
+     *      beyond `decimals` are dropped as `rounding` says: Trunc toward
+     *      zero, Floor toward negative infinity, Ceil toward positive
+     *      infinity. Reverts with InvalidPrecision above 77 decimals,
+     *      InvalidDecimalDigit on any other byte, and Panic(0x11) when the
+     *      result leaves int256.
+     */
     function parseUnits(bytes calldata value, uint256 decimals, Rounding rounding) external pure returns (int256) {
         (uint256 magnitude, bool negative) = _parseUnits(value, decimals, rounding, true);
         return _signedMagnitude(magnitude, negative);
     }
 
-    /// @notice Parse a nonnegative decimal into integer units with the requested rounding.
-    /// @dev A leading + is accepted; - is rejected, including negative zero.
-    ///      Precision above 77, missing digits, invalid characters and uint256 overflow revert.
+    /**
+     * @notice parseUnits for a non-negative decimal, returning uint256
+     * @dev Same grammar and rounding as parseUnits (Trunc and Floor agree
+     *      here); a leading + is accepted and a leading - rejected with
+     *      InvalidDecimalDigit at position 0, negative zero included.
+     *      Reverts with Panic(0x11) when the result leaves uint256.
+     */
     function parseUnitsUnsigned(bytes calldata value, uint256 decimals, Rounding rounding)
         external
         pure
@@ -1203,6 +1385,13 @@ contract Operations {
         return magnitude;
     }
 
+    /**
+     * @dev The shared parseUnits engine: the magnitude scaled to
+     *      `decimals` places and the sign, with the dropped fraction folded
+     *      in per `rounding` (a non-zero remainder rounds away from zero
+     *      for Ceil on a positive value and Floor on a negative one). With
+     *      `signed` false a minus sign is an InvalidDecimalDigit.
+     */
     function _parseUnits(bytes calldata value, uint256 decimals, Rounding rounding, bool signed)
         private
         pure
@@ -1239,8 +1428,14 @@ contract Operations {
         }
     }
 
-    /// @notice Format integer units as decimal ASCII, trimming trailing fractional zeros.
-    /// @dev Precision above 77 reverts; zero precision returns the integer without a decimal point.
+    /**
+     * @notice The decimal ASCII rendering of integer units at `decimals`
+     *         places, trailing fractional zeros trimmed: viem's
+     *         formatUnits, and parseUnitsUnsigned's inverse (1500000 at 6
+     *         decimals is "1.5", 1000000 is "1")
+     * @dev Zero decimals renders the integer without a decimal point.
+     *      Reverts with InvalidPrecision above 77 decimals.
+     */
     function formatUnits(uint256 value, uint256 decimals) public pure returns (string memory) {
         if (decimals > 77) revert InvalidPrecision(decimals);
         if (decimals == 0) return toString(value);
@@ -1261,8 +1456,12 @@ contract Operations {
         return string.concat(integer, ".", string(fraction));
     }
 
-    /// @notice Format signed integer units, preserving the sign and trimming fractional zeros.
-    /// @dev Supports int256.min; precision above 77 reverts.
+    /**
+     * @notice formatUnits for signed integer units: a leading minus for
+     *         negative values, parseUnits' inverse
+     * @dev int256.min renders correctly. Reverts with InvalidPrecision
+     *      above 77 decimals.
+     */
     function formatUnits(int256 value, uint256 decimals) external pure returns (string memory) {
         return string.concat(value < 0 ? "-" : "", formatUnits(_magnitude(value), decimals));
     }
@@ -1271,7 +1470,7 @@ contract Operations {
 
     /**
      * @notice Runtime abi.encode: assembles the canonical ABI encoding of
-     *         a tuple from pre-encoded component values — nav's inverse
+     *         a tuple from pre-encoded component values, nav's inverse
      * @dev `types` is the tuple's type as a parenthesized descriptor
      *      (nav's grammar, only the SHAPE is parsed). `values[i]` is the
      *      canonical single-value encoding of component i:
@@ -1280,7 +1479,7 @@ contract Operations {
      *        flattened words for static tuples and fixed arrays), copied
      *        verbatim into the head;
      *      - dynamic component (bytes, string, T[], dynamic tuples): the
-     *        canonical envelope [0x20][tail...] — exactly what a
+     *        canonical envelope [0x20][tail...], exactly what a
      *        bytes-returning call, nav's dynamic terminal, or abi.encode
      *        of the single value produces. The leading offset word is
      *        stripped, the true top-level offset written into the head,
@@ -1289,27 +1488,34 @@ contract Operations {
      *        nesting depth, so nested dynamics (string[], (uint,bytes)[])
      *        need no special handling.
      *      The output is returned via a raw assembly return with NO bytes
-     *      envelope — deliberately the one raw-returning function here,
+     *      envelope, deliberately the one raw-returning function here,
      *      because the output is a calldata SEGMENT for the core's read
-     *      to splice, not a value to decode. Nested offsets, bounds,
-     *      padding and complete consumption are validated by AbiCodec.
-     *      Reverts with InvalidTypeDescriptor on a malformed descriptor,
-     *      ComponentCountMismatch when values.length differs from the
-     *      component count, InvalidComponentLength for a static component
-     *      of the wrong size, and InvalidComponentEnvelope for a dynamic
-     *      component that is not an envelope. InvalidComponentValue identifies
-     *      the component and byte offset of a malformed nested value.
+     *      to splice, not a value to decode (encodeBytes is the enveloped
+     *      form). Nested offsets, bounds, padding and complete consumption
+     *      are validated by AbiCodec. Reverts with InvalidTypeDescriptor
+     *      on a malformed descriptor, ComponentCountMismatch when
+     *      values.length differs from the component count,
+     *      InvalidComponentLength for a static component of the wrong
+     *      size, InvalidComponentEnvelope for a dynamic component that is
+     *      not an envelope, and InvalidComponentValue identifying the
+     *      component and byte offset of a malformed nested value.
      * @param types The tuple type descriptor, e.g. "(address,uint256[])"
      * @param values One canonical single-value encoding per component
      */
     function encode(string calldata types, bytes[] calldata values) external pure {
         bytes memory out = AbiCodec.tuple(bytes(types), values);
-        assembly {
+        assembly ("memory-safe") {
             return(add(out, 32), mload(out))
         }
     }
 
-    /// @notice The runtime tuple encoder returned inside a normal bytes envelope.
+    /**
+     * @notice encode's output inside a normal bytes envelope: a VALUE
+     *         rather than a segment, for consumers that decode a single
+     *         bytes argument (hash, byteLen, a Collections values array)
+     * @param types The tuple type descriptor
+     * @param values One canonical single-value encoding per component
+     */
     function encodeBytes(string calldata types, bytes[] calldata values) external pure returns (bytes memory) {
         return AbiCodec.tuple(bytes(types), values);
     }
@@ -1327,7 +1533,7 @@ contract Operations {
         unchecked {
             uint256 prod0;
             uint256 prod1;
-            assembly {
+            assembly ("memory-safe") {
                 let mm := mulmod(a, b, not(0))
                 prod0 := mul(a, b)
                 prod1 := sub(sub(mm, prod0), lt(mm, prod0))
@@ -1340,13 +1546,13 @@ contract Operations {
                 _panic(denominator == 0 ? 0x12 : 0x11);
             }
             uint256 remainder;
-            assembly {
+            assembly ("memory-safe") {
                 remainder := mulmod(a, b, denominator)
                 prod1 := sub(prod1, gt(remainder, prod0))
                 prod0 := sub(prod0, remainder)
             }
             uint256 twos = denominator & (0 - denominator);
-            assembly {
+            assembly ("memory-safe") {
                 denominator := div(denominator, twos)
                 prod0 := div(prod0, twos)
                 // 2^256 / twos: flip the divided-out factor to the high side
@@ -1370,7 +1576,7 @@ contract Operations {
      *      compiler's own checked-arithmetic reverts
      */
     function _panic(uint256 panicCode) private pure {
-        assembly {
+        assembly ("memory-safe") {
             mstore(0, 0x4e487b7100000000000000000000000000000000000000000000000000000000)
             mstore(4, panicCode)
             revert(0, 36)
@@ -1379,7 +1585,7 @@ contract Operations {
 
     /**
      * @dev Number of non-overlapping occurrences of `needle` in `s`, left
-     *      to right — the same scan the selection loop uses (caller
+     *      to right: the same scan the selection loop uses (caller
      *      guarantees a non-empty needle)
      */
     function _countOccurrences(bytes calldata s, bytes calldata needle) private pure returns (uint256 count) {
@@ -1406,11 +1612,12 @@ contract Operations {
     }
 
     /**
-     * @dev Copies `src` into `dst` starting at byte `at` (caller sizes dst)
+     * @dev Copies `src` into `dst` starting at byte `dstOffset` (caller
+     *      sizes dst)
      */
     function _copy(bytes memory dst, uint256 dstOffset, bytes calldata src) private pure {
         uint256 len = src.length;
-        assembly {
+        assembly ("memory-safe") {
             calldatacopy(add(add(dst, 32), dstOffset), src.offset, len)
         }
     }

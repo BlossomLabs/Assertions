@@ -7,10 +7,10 @@ pragma solidity ^0.8.28;
  * @notice The ERC-8211 (Smart Batching) wire format: the canonical batch
  *         encoding (`ComposableExecution`, `InputParam`, `Constraint`), the
  *         standard `IComposableExecution` interface, and the shared errors
- *         of the standard's resolution semantics. Pure vocabulary — no
- *         code; the Assertions core implements resolution and constraint
- *         validation internally, and the Operations periphery speaks plain
- *         ABI types and needs none of this.
+ *         of the standard's resolution semantics. Pure vocabulary, no code:
+ *         the Assertions core implements resolution and constraint
+ *         validation internally, and the periphery contracts speak plain
+ *         ABI types and need none of this.
  * @dev The structs and enums mirror the ERC-8211 wire format byte-for-byte,
  *      so batches produced by any ERC-8211 SDK decode here unchanged, and
  *      predicate entries encoded for this repo's contracts are valid
@@ -50,7 +50,7 @@ enum InputParamFetcherType {
  * @notice Where an output parameter's captured data comes from
  * @dev ABI-encoded as uint8: EXEC_RESULT = 0, STATIC_CALL = 1. Output
  *      parameters write to the ERC-8211 Storage contract and therefore
- *      cannot appear in view-mode assertion batches — the Assertions judge
+ *      cannot appear in view-mode assertion batches: the Assertions judge
  *      rejects entries that carry them.
  */
 enum OutputParamFetcherType {
@@ -116,7 +116,9 @@ struct ComposableExecution {
 }
 
 /**
- * @notice The single normative ERC-8211 interface
+ * @notice The single normative ERC-8211 interface. Assertions does not
+ *         implement it: the judge is a view function over the same batch
+ *         encoding, not a payable executor
  */
 interface IComposableExecution {
     /**
@@ -138,8 +140,8 @@ error CallFailed(address target, bytes data);
 
 /**
  * @notice Thrown when a resolved value violates one of its inline
- *         constraints — THE assertion failure
- * @param assertion The assertion message ("" when the constraint sits on an
+ *         constraints: THE assertion failure
+ * @param assertion The assertion message ("" when the constraint sits on a
  *        primitive's operand rather than a judged batch)
  * @param entryIndex The batch entry the parameter belongs to (0 outside a
  *        batch context)

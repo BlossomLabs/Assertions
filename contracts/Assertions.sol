@@ -17,6 +17,12 @@ import {
 } from "./lib/ERC8211.sol";
 import {AbiCodec, InvalidTypeDescriptor} from "./lib/AbiCodec.sol";
 
+/**
+ * @notice Thrown when a nav path index lies outside its tuple or array
+ * @param index The path index as given (may be negative for from-the-end
+ *        indexing)
+ * @param count The number of components or elements available
+ */
 error ElementIndexOutOfBounds(int256 index, uint256 count);
 
 /**
@@ -45,7 +51,7 @@ interface IERC20Balance {
  *      ERC-8211 execution algorithm directly, restricted to what a view
  *      context can express: every fetcher resolution is a staticcall,
  *      entries with a TARGET parameter execute the constructed call via
- *      STATICCALL (the call itself becomes an assertion — it must not
+ *      STATICCALL (the call itself becomes an assertion: it must not
  *      revert), VALUE parameters and outputParams are rejected (no ETH
  *      forwarding, no Storage writes in view). Entries without a TARGET
  *      parameter are standard ERC-8211 predicate entries. The encoding is
@@ -61,12 +67,13 @@ interface IERC20Balance {
  *      resolve them; a STATIC_CALL operand may target this contract
  *      itself, so the primitives nest into arbitrary operand trees.
  *      Computation over resolved values belongs to the versionable
- *      periphery: `read` resolves its operands and splices the
- *      values into plain calldata for any deployed view or pure contract
- *      — canonically Operations for arithmetic, comparisons, bytes and runtime
- *      encoding, and Collections for folds and collection processing.
- *      These extend the vocabulary without touching this frozen core.
- *      The core reads and judges; the periphery computes.
+ *      periphery: `read` and `readArgs` resolve their operands and splice
+ *      the values into plain calldata for any deployed view or pure
+ *      contract, canonically Operations for arithmetic, comparisons,
+ *      bytes and runtime encoding, Collections for folds and collection
+ *      processing, and Expressions for graphs that share subterms. These
+ *      extend the vocabulary without touching this frozen core. The core
+ *      reads and judges; the periphery computes.
  * @custom:version 2.0
  */
 contract Assertions {
@@ -78,14 +85,14 @@ contract Assertions {
     // above; InvalidTypeDescriptor comes from the shared AbiCodec grammar.
 
     /**
-     * @notice Thrown when an entry carries output parameters — Storage
+     * @notice Thrown when an entry carries output parameters: Storage
      *         writes are impossible in a view-mode judge
      * @param entryIndex The offending entry's position in the batch
      */
     error OutputParamsNotSupported(uint256 entryIndex);
 
     /**
-     * @notice Thrown when an entry carries a VALUE input parameter — ETH
+     * @notice Thrown when an entry carries a VALUE input parameter: ETH
      *         cannot be forwarded through a STATICCALL judge
      * @param entryIndex The offending entry's position in the batch
      * @param paramIndex The VALUE parameter's position within the entry
@@ -124,7 +131,7 @@ contract Assertions {
 
     /**
      * @notice Thrown when revertData's operand is not a STATIC_CALL
-     *         parameter — only a call has a target whose revert reason
+     *         parameter: only a call has a target whose revert reason
      *         could be reported
      * @param fetcherType The operand's fetcher type
      */
@@ -182,7 +189,7 @@ contract Assertions {
 
     /**
      * @notice Assert one ERC-8211 input parameter: resolve its value via
-     *         the fetcher and validate its inline constraints — the
+     *         the fetcher and validate its inline constraints, the
      *         single-check shorthand for a one-parameter predicate entry
      * @param param The input parameter (paramType is ignored; nothing is routed)
      */
@@ -204,7 +211,7 @@ contract Assertions {
     /**
      * @notice Resolves an ERC-8211 input parameter and returns the
      *         resolved bytes unchanged
-     * @dev THE primitive — the ERC-8211 static call, exposed as a read.
+     * @dev THE primitive: the ERC-8211 static call, exposed as a read.
      *      The value is returned via a raw assembly return,
      *      indistinguishable from a contract returning it directly, so
      *      nesting a resolve inside any operand behaves exactly like
@@ -217,7 +224,7 @@ contract Assertions {
      */
     function resolve(InputParam calldata param) external view {
         bytes memory value = _resolve(param, "", 0, 0);
-        assembly {
+        assembly ("memory-safe") {
             return(add(value, 32), mload(value))
         }
     }
@@ -260,7 +267,7 @@ contract Assertions {
     /**
      * @notice Sentinel path entry for nav: as the LAST entry of a path it
      *         selects the raw PAYLOAD of the string or bytes value the
-     *         preceding steps navigate to — exactly its byte length, no
+     *         preceding steps navigate to, exactly its byte length, no
      *         envelope, no padding. The typed-bytes re-entry point: a nav
      *         over THIS result claims the payload's encoding with an
      *         ordinary descriptor, so an encoded blob's content is
@@ -271,21 +278,22 @@ contract Assertions {
 
     /**
      * @notice Resolves an input parameter, interprets the resolved bytes as
-     *         ABI-encoded `retTypes`, and navigates `path` to an element —
+     *         ABI-encoded `retTypes`, and navigates `path` to an element,
      *         following runtime offsets and lengths through tuples and
      *         dynamic arrays, which raw word positions cannot express
      * @dev The typed selector: `retTypes` is the value's type written as a
      *      parenthesized tuple, e.g. "(uint112,uint112,address)" or
      *      "(address,address[][])" (structs as parenthesized tuples), and
-     *      `path` walks it — the first step selects a tuple component
+     *      `path` walks it: the first step selects a tuple component
      *      (non-negative), each further step indexes the current tuple or
      *      array (array steps accept negative indices, resolved against the
      *      live length, -1 = last). Only the SHAPE of the descriptor is
-     *      parsed (dynamic vs static, head footprints); base type names
-     *      beyond bytes/string are not interpreted. The declared type is
-     *      the author's claim about the encoder, like an inline ABI: a
-     *      wrong claim reverts loudly in almost all cases, but a
-     *      shape-compatible wrong type can read the wrong value.
+     *      parsed (dynamic vs static, head footprints; the shared AbiCodec
+     *      grammar); base type names beyond bytes/string are not
+     *      interpreted. The declared type is the author's claim about the
+     *      encoder, like an inline ABI: a wrong claim reverts loudly in
+     *      almost all cases, but a shape-compatible wrong type can read
+     *      the wrong value.
      *
      *      The selection is returned via a raw assembly return,
      *      indistinguishable from a contract returning that value directly,
@@ -304,10 +312,10 @@ contract Assertions {
      *        the offending offset;
      *      - a path ending in the LEN sentinel: the decoded length of the
      *        dynamic value the preceding steps navigate to, as a uint256
-     *        word (element count for arrays, byte length for string/bytes
-     *        — UTF-8 characters may span multiple bytes);
+     *        word (element count for arrays, byte length for string/bytes,
+     *        where UTF-8 characters may span multiple bytes);
      *      - a path ending in the PAYLOAD sentinel: the raw payload of the
-     *        string or bytes value the preceding steps navigate to —
+     *        string or bytes value the preceding steps navigate to,
      *        exactly its byte length, unpadded, no envelope. This is the
      *        typed-bytes re-entry point: a blob's content is opaque to
      *        THIS descriptor (bytes is a sealed leaf, and the grammar
@@ -336,27 +344,27 @@ contract Assertions {
         if (path.length == 0) {
             // Passthrough: any consumer decodes the resolved bytes as if it
             // had resolved the operand directly.
-            assembly {
+            assembly ("memory-safe") {
                 return(add(result, 32), mload(result))
             }
         }
         if (path[path.length - 1] == LEN) {
             uint256 length = _navLength(result, t, path[:path.length - 1]);
-            assembly {
+            assembly ("memory-safe") {
                 mstore(0, length)
                 return(0, 32)
             }
         }
         if (path[path.length - 1] == PAYLOAD) {
             (uint256 start, uint256 length) = _navPayload(result, t, path[:path.length - 1]);
-            assembly {
+            assembly ("memory-safe") {
                 return(add(add(result, 32), start), length)
             }
         }
         (uint256 pos, bool isWord, uint256 ts, uint256 te) = _navigate(result, t, path);
         if (isWord) {
             uint256 word = _navWord(result, pos);
-            assembly {
+            assembly ("memory-safe") {
                 mstore(0, word)
                 return(0, 32)
             }
@@ -371,7 +379,7 @@ contract Assertions {
      *         execution time, and returns the final call's raw returndata
      * @dev The runtime-target primitive ERC-8211 fetchers cannot express
      *      (a STATIC_CALL fetcher's target is fixed at encoding time).
-     *      `start` must resolve to a clean address word — the first hop's
+     *      `start` must resolve to a clean address word, the first hop's
      *      target. Each hop is a plain abi.encodeCall entry; every hop
      *      except the last must return an address as its first word, which
      *      becomes the next hop's target. The final hop's returndata is
@@ -397,7 +405,7 @@ contract Assertions {
             current = _asAddress(_firstWord(hopResult), i + 1);
         }
         bytes memory result = _staticCall(current, calls[last]);
-        assembly {
+        assembly ("memory-safe") {
             return(add(result, 32), mload(result))
         }
     }
@@ -406,7 +414,7 @@ contract Assertions {
 
     /**
      * @notice Constructs a staticcall from runtime-resolved calldata
-     *         segments — selector ++ each resolved arg in order — executes
+     *         segments (selector ++ each resolved arg in order), executes
      *         it against a runtime-resolved target, and returns the call's
      *         raw returndata
      * @dev The runtime-argument primitive ERC-8211 fetchers cannot express
@@ -417,15 +425,16 @@ contract Assertions {
      *      resolve to a clean address word. `args` are calldata SEGMENTS,
      *      not necessarily one per Solidity argument: each resolved
      *      value's FULL bytes are appended in order, exactly the
-     *      standard's CALL_DATA routing — a RAW_BYTES segment carries any
+     *      standard's CALL_DATA routing: a RAW_BYTES segment carries any
      *      literal span (head words, pre-encoded tails), a STATIC_CALL
      *      segment computes a span at judge time (word-returning
      *      operands contribute exactly 32 bytes; a segment resolving
      *      to any other length shifts everything after it, so the encoder
-     *      owns the layout). Segment constraints are validated on the
-     *      resolved values, turning any argument into an inline assert.
-     *      The returndata is returned via a raw assembly return, so a
-     *      read nests inside any operand exactly like the call it
+     *      owns the layout, and `readArgs` is the primitive that computes
+     *      the layout here instead). Segment constraints are validated on
+     *      the resolved values, turning any argument into an inline
+     *      assert. The returndata is returned via a raw assembly return,
+     *      so a read nests inside any operand exactly like the call it
      *      constructed. Reverts with InvalidAddressWord (index 0) when
      *      the target word has dirty upper bytes, CallFailed when the
      *      target has no code or the constructed call reverts, and
@@ -444,7 +453,7 @@ contract Assertions {
             callData = bytes.concat(callData, _resolve(args[i], "", 0, i + 1));
         }
         bytes memory result = _staticCall(callTarget, callData);
-        assembly {
+        assembly ("memory-safe") {
             return(add(result, 32), mload(result))
         }
     }
@@ -498,7 +507,7 @@ contract Assertions {
             values[i] = _resolve(args[i], "", 0, i + 1);
         }
         bytes memory result = _staticCall(callTarget, bytes.concat(selector, _encodeArguments(argumentTypes, values)));
-        assembly {
+        assembly ("memory-safe") {
             return(add(result, 32), mload(result))
         }
     }
@@ -507,12 +516,12 @@ contract Assertions {
 
     /**
      * @notice Resolves the condition, then resolves and returns ONLY the
-     *         winning branch — the losing branch is never resolved, so its
+     *         winning branch: the losing branch is never resolved, so its
      *         calls never happen
      * @dev The lazy conditional, and the reason it must live in the core:
      *      branches arrive as unresolved InputParams, which only
      *      ERC-8211-speaking code can hold without evaluating. The
-     *      condition resolves normally — fetcher plus full constraint
+     *      condition resolves normally, fetcher plus full constraint
      *      validation; a violated condition constraint reverts the whole
      *      cond (branching on FAILURE is orElse's job, branching on a
      *      VALUE is cond's). Truth is EVM truthiness: the first 32-byte
@@ -530,7 +539,7 @@ contract Assertions {
     function cond(InputParam calldata c, InputParam calldata then_, InputParam calldata else_) external view {
         bytes memory cValue = _resolve(c, "", 0, 0);
         bytes memory value = _firstWord(cValue) != bytes32(0) ? _resolve(then_, "", 0, 1) : _resolve(else_, "", 0, 2);
-        assembly {
+        assembly ("memory-safe") {
             return(add(value, 32), mload(value))
         }
     }
@@ -547,7 +556,7 @@ contract Assertions {
      *      double as guards here), malformed data, even out-of-gas inside
      *      the subframe. The 63/64 rule makes a genuine OOG usually
      *      re-revert in the outer frame, but with a large gas limit and a
-     *      cheap `b` an OOG deep inside `a` can masquerade as "a failed" —
+     *      cheap `b` an OOG deep inside `a` can masquerade as "a failed":
      *      do not use orElse to distinguish failure causes. On success the
      *      attempt's bytes pass through byte-identically. `b` resolves
      *      in-frame: its failures propagate; chain further orElse operands
@@ -560,7 +569,7 @@ contract Assertions {
         if (!success) {
             value = _resolve(b, "", 0, 1);
         }
-        assembly {
+        assembly ("memory-safe") {
             return(add(value, 32), mload(value))
         }
     }
@@ -569,7 +578,7 @@ contract Assertions {
      * @notice Returns 1 when `a` resolves AND passes its constraints, 0
      *         otherwise
      * @dev The failure probe, collapsed to a word: validity covers the
-     *      WHOLE resolution — the fetch succeeding (a reverting or
+     *      WHOLE resolution, the fetch succeeding (a reverting or
      *      code-less target, malformed data all count as invalid) and any
      *      inline constraints passing (they double as guards here). The
      *      attempt runs behind the same external self-staticcall boundary
@@ -594,15 +603,15 @@ contract Assertions {
      *      target's revert into this contract's own CallFailed and the
      *      reason is lost; this performs the operand's staticcall IN-FRAME
      *      so the target's revert data survives. That is what restricts it
-     *      to a STATIC_CALL operand — a literal or a balance read has no
+     *      to a STATIC_CALL operand: a literal or a balance read has no
      *      call whose reason could be reported, and is rejected. A nested
      *      core primitive IS a staticcall (back into this contract), so
-     *      it is accepted — but the reason observed is then the core's own
+     *      it is accepted, but the reason observed is then the core's own
      *      error, not the inner target's, which is why reason MATCHING
      *      only makes sense on a direct target call; composers must keep
      *      the operand direct when expectedSelector is non-zero. An OOG
      *      inside the probed frame counts as a revert here too (63/64
-     *      caveat, as with orElse) — with no reason to match.
+     *      caveat, as with orElse), with no reason to match.
      *
      *      With `expectedSelector` non-zero the first four bytes of the
      *      revert data must match, and THE SELECTOR IS STRIPPED from the
@@ -619,10 +628,11 @@ contract Assertions {
      *      expected one. Same for a call that succeeds.
      *
      *      A code-less target counts as a failure, as it does for
-     *      `isValid` — but it carries no reason. A staticcall into an
-     *      empty account
-     *      succeeds with empty returndata, so there is nothing for an
-     *      expectation to match and one fails here.
+     *      `isValid`, but it carries no reason. A staticcall into an
+     *      empty account succeeds with empty returndata, so there is
+     *      nothing for an expectation to match and one fails here.
+     *      Expressions' ProbeCall node applies these same rules to graph
+     *      values.
      * @param a The call operand, which must revert (STATIC_CALL fetcher,
      *        no constraints)
      * @param expectedSelector Required error selector, or 0x00000000 to
@@ -644,7 +654,7 @@ contract Assertions {
             if (expectedSelector != bytes4(0)) {
                 revert UnexpectedRevertData(expectedSelector, bytes4(0));
             }
-            assembly {
+            assembly ("memory-safe") {
                 return(0, 0)
             }
         }
@@ -653,7 +663,7 @@ contract Assertions {
         if (success) revert DidNotRevert(target, callData);
 
         if (expectedSelector == bytes4(0)) {
-            assembly {
+            assembly ("memory-safe") {
                 return(add(ret, 32), mload(ret))
             }
         }
@@ -663,12 +673,12 @@ contract Assertions {
         // non-zero expectation.
         bytes4 got;
         if (ret.length >= 4) {
-            assembly {
+            assembly ("memory-safe") {
                 got := mload(add(ret, 32))
             }
         }
         if (got != expectedSelector) revert UnexpectedRevertData(expectedSelector, got);
-        assembly {
+        assembly ("memory-safe") {
             return(add(ret, 36), sub(mload(ret), 4))
         }
     }
@@ -679,8 +689,8 @@ contract Assertions {
      * @dev The ERC-8211 execution algorithm, view-restricted. Per entry:
      *      resolve each input parameter (fetcher), validate its
      *      constraints, route it (TARGET or CALL_DATA; VALUE and
-     *      outputParams revert), then — when a TARGET resolved to a
-     *      non-zero address — STATICCALL the constructed call and require
+     *      outputParams revert), then, when a TARGET resolved to a
+     *      non-zero address, STATICCALL the constructed call and require
      *      success. Entries without a TARGET parameter are predicate
      *      entries: resolve and validate only, no call.
      */
@@ -769,7 +779,8 @@ contract Assertions {
      * @dev The canonical argument tuple for `types` over resolved values,
      *      through the shared AbiCodec encoder. "()" with no values is the
      *      empty tuple; the grammar has no empty-tuple production, so it is
-     *      special-cased here exactly as Expressions does.
+     *      special-cased here exactly as Expressions does. Returned without
+     *      an envelope: it is the calldata that follows the selector.
      */
     function _encodeArguments(string calldata types, bytes[] memory values) internal pure returns (bytes memory) {
         bytes calldata t = bytes(types);
@@ -778,13 +789,13 @@ contract Assertions {
     }
 
     /**
-     * @dev The first 32-byte word of `value` — the word constraints compare
-     *      and words are routed from. Reverts with ReturnDataOutOfBounds
+     * @dev The first 32-byte word of `value`: the word constraints compare
+     *      and addresses are routed from. Reverts with ReturnDataOutOfBounds
      *      when fewer than 32 bytes are available.
      */
     function _firstWord(bytes memory value) internal pure returns (bytes32 word) {
         if (value.length < 32) revert ReturnDataOutOfBounds(0, value.length);
-        assembly {
+        assembly ("memory-safe") {
             word := mload(add(value, 32))
         }
     }
@@ -860,7 +871,7 @@ contract Assertions {
             if (uint256(wordIndex) >= words) revert ReturnDataOutOfBounds(wordIndex, result.length);
             wanted = uint256(wordIndex);
         }
-        assembly {
+        assembly ("memory-safe") {
             word := mload(add(add(result, 32), mul(wanted, 32)))
         }
     }
@@ -879,8 +890,8 @@ contract Assertions {
         if (isWord) revert InvalidNavigation(ts);
         uint256 length = _navWord(result, pos);
         uint256 available = result.length - pos - 32;
-        // Dynamic arrays and bytes/string sit on their length word; a
-        // dynamic tuple's position is its first head word — no length
+        // Dynamic arrays and bytes/string sit on their length word. A
+        // dynamic tuple's position is its first head word, no length
         // there, and a FIXED array's position is its first element (its
         // length is known at composition time, so it has no length word
         // to read either).
@@ -908,8 +919,8 @@ contract Assertions {
     /**
      * @dev Resolves a PAYLOAD-terminated path: navigates the non-sentinel
      *      steps to a string or bytes value and returns the span of its raw
-     *      payload — start offset into `result` and exact byte length, no
-     *      envelope, no padding. Static values, arrays, dynamic tuples and
+     *      payload (start offset into `result` and exact byte length, no
+     *      envelope, no padding). Static values, arrays, dynamic tuples and
      *      empty paths revert with InvalidNavigation: only string/bytes
      *      carry a byte-counted payload (a plain path returns an array or
      *      tuple as its canonical value). A length word overrunning the data
@@ -979,7 +990,7 @@ contract Assertions {
             }
             size = 32 + payloadBytes;
         }
-        assembly {
+        assembly ("memory-safe") {
             let out := mload(0x40)
             mstore(out, 0x20)
             let src := add(add(result, 32), pos)
@@ -1012,15 +1023,15 @@ contract Assertions {
         if (pos > result.length || result.length - pos < 32) {
             revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
         }
-        assembly {
+        assembly ("memory-safe") {
             word := mload(add(add(result, 32), pos))
         }
     }
 
     /**
      * @dev Navigation cursor: the current value's type bounds [ts, te) in
-     *      the descriptor, its byte position in the data, and — after
-     *      a step — whether the value just selected is dynamic and its head
+     *      the descriptor, its byte position in the data, and, after a
+     *      step, whether the value just selected is dynamic and its head
      *      footprint. Position semantics: a tuple's position is its first
      *      head word; a dynamic array's is its length word; a fixed array's
      *      is its first element or offset word.
@@ -1036,11 +1047,13 @@ contract Assertions {
     /**
      * @dev Walks `path` through `result` as described by the type descriptor
      *      `t` (which must be a parenthesized tuple). Returns the byte
-     *      position of the terminal — the value word itself when `isWord`,
-     *      otherwise the length word / head of the selected dynamic value —
+     *      position of the terminal (the value word itself when `isWord`,
+     *      otherwise the length word or head of the selected dynamic value)
      *      plus the terminal's type bounds [ts, te) for the callers' checks.
      *      Offsets are followed relative to their enclosing frame per ABI
-     *      encoding rules.
+     *      encoding rules. A static multi-word terminal (static tuple,
+     *      fixed array) has no single word to return and reverts with
+     *      InvalidNavigation.
      */
     function _navigate(bytes memory result, bytes calldata t, int256[] calldata path)
         internal
@@ -1155,7 +1168,11 @@ contract Assertions {
         }
     }
 
-    /// @dev Normalize a signed array index, rejecting indices outside -count .. count-1.
+    /**
+     * @dev Normalizes a signed array index into 0 .. count-1 (negative
+     *      counts from the end), reverting with ElementIndexOutOfBounds
+     *      outside -count .. count-1
+     */
     function _normalizeIndex(int256 index, uint256 count) internal pure returns (uint256) {
         if (index < 0) {
             // index == type(int256).min is caught here before -index could overflow.

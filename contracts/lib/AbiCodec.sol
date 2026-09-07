@@ -1,27 +1,118 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
+/**
+ * @notice Thrown when a type descriptor does not parse
+ * @param position The byte position in the descriptor where parsing failed
+ */
 error InvalidTypeDescriptor(uint256 position);
 
-/// @notice Shared ABI shape grammar, canonical validation, and encoding.
-/// @dev Base names other than bytes/string are single words; scalar semantics
-/// remain the caller's claim. All functions are internal and ERC-8211 independent.
+/**
+ * @title AbiCodec
+ * @author Sembrestels
+ * @notice The shared type-descriptor grammar and the canonical ABI codec
+ *         built on it: shape parsing (dynamic or static, head footprint),
+ *         canonical-form validation of encoded values, tuple and array
+ *         assembly from pre-encoded components, and the inverse unpacking.
+ *         The core's `nav` and `readArgs`, Operations' `encode`, every
+ *         Expressions node and the Collections `*Values` family all read
+ *         descriptors through this one grammar.
+ * @dev A descriptor is plain ABI type syntax: a name matching [a-z0-9]+ or
+ *      a parenthesized, comma-separated tuple, followed by any number of
+ *      `[]` or `[k]` suffixes. Only the SHAPE is interpreted: `bytes` and
+ *      `string` are the dynamic base names, every other name is one
+ *      32-byte word whose meaning stays the caller's claim (a `uint8`
+ *      and an `address` parse identically). A "canonical single-value
+ *      encoding" throughout this repo means abi.encode(value) of exactly
+ *      one value: the bare word for a static type, [0x20][tail] for a
+ *      dynamic one, with tight offsets and zero padding. Every function
+ *      is internal and knows nothing of ERC-8211.
+ */
 library AbiCodec {
+    // ============ Errors ============
+
+    /**
+     * @notice Thrown when an encoded value is not in canonical form at the
+     *         given byte offset (a short buffer, a non-tight offset, a
+     *         length overrunning the data, nonzero padding, or trailing
+     *         bytes after the last tail)
+     * @param offset The byte offset of the offending word within the value
+     */
     error InvalidValue(uint256 offset);
+
+    /**
+     * @notice Thrown when a static tuple component does not have exactly
+     *         the byte length its head footprint requires
+     * @param index The component's position in the tuple
+     * @param expectedBytes The footprint the descriptor requires
+     * @param actualBytes The length of the value that was supplied
+     */
     error InvalidComponentLength(uint256 index, uint256 expectedBytes, uint256 actualBytes);
+
+    /**
+     * @notice Thrown when a dynamic tuple component is not a canonical
+     *         envelope: shorter than two words, not word-aligned, or not
+     *         starting with the 0x20 offset word
+     * @param index The component's position in the tuple
+     * @param length The length of the value that was supplied
+     * @param head The value's first word (zero when it had none)
+     */
     error InvalidComponentEnvelope(uint256 index, uint256 length, bytes32 head);
+
+    /**
+     * @notice Thrown when a dynamic tuple component has a well-formed
+     *         envelope but a non-canonical body
+     * @param index The component's position in the tuple
+     * @param offset The byte offset of the offending word within the value
+     */
     error InvalidComponentValue(uint256 index, uint256 offset);
+
+    /**
+     * @notice Thrown when the number of values supplied to a tuple encoder
+     *         differs from the descriptor's component count
+     * @param expected The component count the descriptor declares
+     * @param actual The number of values that were supplied
+     */
     error ComponentCountMismatch(uint256 expected, uint256 actual);
+
+    /**
+     * @notice Thrown by the Collections operations when a callback returns
+     *         a value that does not fit the declared result type (or, for
+     *         word callbacks and predicates, is not exactly one word or a
+     *         canonical 0/1)
+     * @param operation The selector of the Collections operation running
+     *        the callback
+     * @param index The element the callback was applied to
+     * @param other The second element for binary callbacks (0 otherwise)
+     * @param target The callback contract
+     */
     error InvalidCallbackResult(bytes4 operation, uint256 index, uint256 other, address target);
 
+    // ============ Types ============
+
+    /**
+     * @dev Error-reporting context threaded through validation so the
+     *      caller's error, not the codec's, reaches the user. `kind` picks
+     *      the error: 0 reverts InvalidValue(offset), 1 reverts
+     *      InvalidCallbackResult(operation, index, other, target), 2 reverts
+     *      InvalidComponentValue(index, offset). A zero-initialized context
+     *      is the plain value case.
+     */
     struct Context {
-        uint8 kind; // 0: value, 1: callback result, 2: tuple component
+        uint8 kind;
         bytes4 operation;
         uint256 index;
         uint256 other;
         address target;
     }
 
+    /**
+     * @dev A parsed tuple descriptor: per component, its byte span
+     *      [starts[i], ends[i]) in the descriptor, whether it is dynamic
+     *      and its head footprint in words, plus the tuple's total head
+     *      size in bytes. Computed once by `tupleLayout` and reused across
+     *      values by the callers that encode the same tuple repeatedly.
+     */
     struct TupleLayout {
         uint256[] starts;
         uint256[] ends;
@@ -30,10 +121,13 @@ library AbiCodec {
         uint256 headSize;
     }
 
-    // ASCII bytes the grammar recognises, compared as numbers. The scanners read
-    // calldata bytes through `byteAt` because bounds-checked `t[i]` indexing was
-    // the parse cost: four checked reads per character in the name scan made a
-    // 17-character descriptor cost about 7k gas to parse (measured 2026-09-07).
+    // ============ Grammar ============
+
+    // ASCII bytes the grammar recognises, compared as numbers. The scanners
+    // read calldata bytes through `byteAt` because bounds-checked `t[i]`
+    // indexing was the parse cost: four checked reads per character in the
+    // name scan made a 17-character descriptor cost about 7k gas to parse
+    // (measured 2026-09-07).
     uint8 private constant LPAREN = 0x28;
     uint8 private constant RPAREN = 0x29;
     uint8 private constant COMMA = 0x2c;
@@ -42,15 +136,20 @@ library AbiCodec {
     uint256 private constant NAME_BYTES = 0x6279746573; // "bytes"
     uint256 private constant NAME_STRING = 0x737472696e67; // "string"
 
-    /// @dev Byte `i` of a descriptor. Every caller bounds `i` by a `limit` that
-    ///      `typeShape` has checked against `t.length`, so no bounds check here.
+    /**
+     * @dev Byte `i` of a descriptor, unchecked. Every caller bounds `i` by a
+     *      `limit` that `typeShape` has checked against `t.length`.
+     */
     function byteAt(bytes calldata t, uint256 i) private pure returns (uint8 c) {
         assembly ("memory-safe") {
             c := byte(0, calldataload(add(t.offset, i)))
         }
     }
 
-    /// @dev The end of the `[a-z0-9]*` run starting at `p`, bounded by `limit`.
+    /**
+     * @dev The end of the [a-z0-9]* run starting at `p`, bounded by `limit`
+     *      (returns `p` itself when no name byte is there)
+     */
     function scanName(bytes calldata t, uint256 p, uint256 limit) private pure returns (uint256 q) {
         assembly ("memory-safe") {
             q := p
@@ -64,9 +163,11 @@ library AbiCodec {
 
     /**
      * @dev Parses one type starting at `p` and ending before `limit`: returns
-     *      where it ends, whether it is dynamic and its head footprint in words.
-     *      Reverts InvalidTypeDescriptor at the offending byte. `limit` must not
-     *      exceed `t.length`; the scanners rely on it for bounds.
+     *      the position just past it, whether it is dynamic and its head
+     *      footprint in words (1 for any dynamic type, the component sum for
+     *      a static tuple, k times the element footprint for a static T[k]).
+     *      Reverts with InvalidTypeDescriptor at the offending byte. `limit`
+     *      must not exceed `t.length`; the scanners rely on it for bounds.
      */
     function typeShape(bytes calldata t, uint256 p, uint256 limit)
         internal
@@ -133,8 +234,9 @@ library AbiCodec {
     }
 
     /**
-     * @dev Position of the `[` opening the LAST suffix of the array type position
-     *      [ts, te) — the outermost constructor (te - 1 must be `]`)
+     * @dev Position of the `[` opening the LAST suffix of the array type at
+     *      [ts, te), which is the outermost constructor. The caller has
+     *      established that t[te - 1] is `]`.
      */
     function suffixStart(bytes calldata t, uint256 ts, uint256 te) internal pure returns (uint256 j) {
         j = te - 2;
@@ -144,12 +246,23 @@ library AbiCodec {
         if (t[j] != "[") revert InvalidTypeDescriptor(j);
     }
 
+    /**
+     * @dev The shape of a whole descriptor: `typeShape` over all of `t`,
+     *      reverting with InvalidTypeDescriptor when anything follows the
+     *      parsed type
+     */
     function shape(bytes calldata t) internal pure returns (bool dynamic, uint256 words) {
         uint256 end;
         (end, dynamic, words) = typeShape(t, 0, t.length);
         if (end != t.length) revert InvalidTypeDescriptor(end);
     }
 
+    // ============ Values ============
+
+    /**
+     * @dev Reverts with the error `context` selects when `valid` is false
+     *      (see Context); `offset` is reported by the value-shaped errors
+     */
     function requireValue(bool valid, uint256 offset, Context memory context) private pure {
         if (valid) return;
         if (context.kind == 1) {
@@ -159,35 +272,67 @@ library AbiCodec {
         revert InvalidValue(offset);
     }
 
+    /**
+     * @dev The 32-byte word at byte offset `p` of `data`, reverting with
+     *      InvalidValue(p) when it lies outside the data
+     */
     function word(bytes memory data, uint256 p) internal pure returns (uint256) {
         Context memory context;
         return word(data, p, context);
     }
 
+    /**
+     * @dev `word` reporting through `context` instead of InvalidValue
+     */
     function word(bytes memory data, uint256 p, Context memory context) private pure returns (uint256 v) {
         requireValue(p <= data.length && data.length - p >= 32, p, context);
         assembly ("memory-safe") { v := mload(add(add(data, 32), p)) }
     }
 
+    /**
+     * @dev Copies `n` bytes of `data` from `start` into `out` at `dest`
+     *      (caller sizes `out` and bounds both spans)
+     */
     function copy(bytes memory out, uint256 dest, bytes memory data, uint256 start, uint256 n) private pure {
         assembly ("memory-safe") { mcopy(add(add(out, 32), dest), add(add(data, 32), start), n) }
     }
 
+    /**
+     * @dev Writes the word `v` at byte offset `p` of `out` (caller sizes
+     *      `out`)
+     */
     function store(bytes memory out, uint256 p, uint256 v) private pure {
         assembly ("memory-safe") { mstore(add(add(out, 32), p), v) }
     }
 
+    /**
+     * @dev A fresh copy of data[p .. p + n), reverting with InvalidValue(p)
+     *      when the span leaves the data
+     */
     function slice(bytes memory data, uint256 p, uint256 n) internal pure returns (bytes memory out) {
         if (p > data.length || n > data.length - p) revert InvalidValue(p);
         out = new bytes(n);
         copy(out, 0, data, p, n);
     }
 
+    // ============ Validation ============
+
+    /**
+     * @dev Requires `v` to be the canonical single-value encoding of type
+     *      `t`: exactly the head footprint for a static type, or the 0x20
+     *      envelope around a canonical body for a dynamic one. Reverts with
+     *      InvalidTypeDescriptor on a malformed descriptor and InvalidValue
+     *      at the offending offset otherwise. Returns whether `t` is dynamic
+     *      for callers that need the shape anyway.
+     */
     function validate(bytes calldata t, bytes memory v) internal pure returns (bool dynamic) {
         Context memory context;
         return validate(t, v, context);
     }
 
+    /**
+     * @dev `validate` reporting through `context` (see Context)
+     */
     function validate(bytes calldata t, bytes memory v, Context memory context) internal pure returns (bool dynamic) {
         uint256 words;
         (dynamic, words) = shape(t);
@@ -195,19 +340,33 @@ library AbiCodec {
         else requireValue(v.length % 32 == 0 && words == v.length / 32, 0, context);
     }
 
-    /// @dev `validate` for a caller that already parsed `t` into `(dynamic, words)`
-    ///      and keeps it across values instead of re-parsing per value.
+    /**
+     * @dev `validate` for a caller that already parsed `t` into
+     *      (dynamic, words) and keeps that shape across values instead of
+     *      re-parsing per value
+     */
     function validate(bytes calldata t, bytes memory v, bool dynamic, uint256 words) internal pure {
         Context memory context;
         if (dynamic) validateDynamic(t, v, context);
         else requireValue(v.length % 32 == 0 && words == v.length / 32, 0, context);
     }
 
+    /**
+     * @dev The dynamic half of `validate`: the envelope word must be 0x20
+     *      and the body walk must consume the value exactly
+     */
     function validateDynamic(bytes calldata t, bytes memory v, Context memory context) private pure {
         requireValue(word(v, 0, context) == 32, 0, context);
         requireValue(body(t, 0, t.length, v, 32, context) == v.length - 32, 32, context);
     }
 
+    /**
+     * @dev Cursor for the array and tuple walks in `body` and `unpack`: the
+     *      descriptor position of the outermost suffix, the element count,
+     *      the byte position where element heads begin, the element head
+     *      footprint in words, the running tail size and whether elements
+     *      are dynamic. A memory struct keeps the walk under the stack limit.
+     */
     struct ArrayState {
         uint256 j;
         uint256 count;
@@ -217,8 +376,16 @@ library AbiCodec {
         bool dynamic;
     }
 
-    /// @dev Byte extent of the value of type `t[s:e]` encoded in place at `p`,
-    ///      validating canonical form on the way (tight offsets, zero padding).
+    /**
+     * @dev Byte extent of the value of type t[s:e] encoded in place at `p`
+     *      of `v`, validating canonical form on the way: every offset points
+     *      exactly where the previous tail ended, every length fits the
+     *      data, and bytes/string padding is zero. Only dynamic types reach
+     *      the base-name branch (static children are covered by their
+     *      parent's head footprint). Element counts are bounded against the
+     *      remaining data before any multiplication, so a hostile length
+     *      word cannot overflow the arithmetic.
+     */
     function body(bytes calldata t, uint256 s, uint256 e, bytes memory v, uint256 p, Context memory context)
         internal
         pure
@@ -287,6 +454,17 @@ library AbiCodec {
         return 32 + padded;
     }
 
+    // ============ Tuples and Arrays ============
+
+    /**
+     * @dev Parses a parenthesized tuple descriptor into a TupleLayout in a
+     *      single pass: one byte scan counts the depth-0 components (and
+     *      catches a stray `)`), then `typeShape` runs once per component.
+     *      Reverts with InvalidTypeDescriptor when `t` is not a
+     *      parenthesized tuple (a well-formed non-tuple at position 0, a
+     *      malformed one at its own byte) or when a component is malformed.
+     *      "()" yields an empty layout.
+     */
     function tupleLayout(bytes calldata t) internal pure returns (TupleLayout memory plan) {
         if (t.length < 2 || byteAt(t, 0) != LPAREN || byteAt(t, t.length - 1) != RPAREN) {
             // Not a parenthesized tuple. `shape` reports a malformed descriptor at
@@ -337,7 +515,16 @@ library AbiCodec {
         }
     }
 
-    /// @dev Reuse a validated descriptor's shape; every value still receives full body validation.
+    /**
+     * @dev Requires `value` to be the canonical single-value encoding of
+     *      tuple component `index`, whose descriptor is `t` and whose shape
+     *      the caller already parsed into (dynamic, words). A static
+     *      component must be exactly words * 32 bytes
+     *      (InvalidComponentLength); a dynamic one must be a word-aligned
+     *      envelope of at least two words starting with 0x20
+     *      (InvalidComponentEnvelope) with a canonical body
+     *      (InvalidComponentValue at the offending offset).
+     */
     function validateComponent(bytes calldata t, bytes memory value, uint256 index, bool dynamic, uint256 words)
         internal
         pure
@@ -355,11 +542,27 @@ library AbiCodec {
         if (dynamic) validateDynamic(t, value, Context(2, bytes4(0), index, 0, address(0)));
     }
 
+    /**
+     * @dev The canonical ABI encoding of the tuple `t` over one canonical
+     *      single-value encoding per component: static components are
+     *      copied into the head verbatim, dynamic ones have their 0x20
+     *      envelope word stripped, the true offset written into the head
+     *      and the tail appended. Because ABI offsets are frame-relative,
+     *      verbatim tail splicing is correct at any nesting depth. Reverts
+     *      with ComponentCountMismatch when args.length differs from the
+     *      component count, and with validateComponent's errors when a
+     *      value does not fit its declared type. The result has no
+     *      envelope of its own: it is a calldata segment, or a tuple body
+     *      the caller wraps.
+     */
     function tuple(bytes calldata t, bytes[] memory args) internal pure returns (bytes memory) {
         return tuple(tupleLayout(t), t, args);
     }
 
-    /// @dev `tuple` over a layout the caller computed for `t` (and may reuse).
+    /**
+     * @dev `tuple` over a layout the caller computed for `t` and may reuse
+     *      across values
+     */
     function tuple(TupleLayout memory plan, bytes calldata t, bytes[] memory args)
         internal
         pure
@@ -374,7 +577,10 @@ library AbiCodec {
         return assemble(plan.dynamic, plan.headSize, args, false);
     }
 
-    /// @dev Whether a tuple with this layout is itself dynamic (any dynamic component).
+    /**
+     * @dev Whether a tuple with this layout is itself dynamic, which is the
+     *      case as soon as one component is
+     */
     function isDynamic(TupleLayout memory plan) internal pure returns (bool) {
         for (uint256 i; i < plan.dynamic.length; i++) {
             if (plan.dynamic[i]) return true;
@@ -382,8 +588,16 @@ library AbiCodec {
         return false;
     }
 
-    /// @dev Caller has validated every value against the prepared plan.
-    /// Array encodings prepend offset/length; offsets remain relative to their element head.
+    /**
+     * @dev Lays out already-validated values as one head-and-tail frame:
+     *      `dynamic[i]` says whether values[i] is an envelope to splice or
+     *      words to copy, and `headSize` is the head's byte length. With
+     *      `array` set, every value shares dynamic[0] and the frame is
+     *      prefixed by the 0x20 envelope word and the element count, which
+     *      makes it abi.encode(T[]). Offsets inside the frame stay relative
+     *      to the head start, as the ABI requires. The caller has validated
+     *      every value against the plan; nothing is checked here.
+     */
     function assemble(bool[] memory dynamic, uint256 headSize, bytes[] memory values, bool array)
         internal
         pure
@@ -415,6 +629,12 @@ library AbiCodec {
         }
     }
 
+    /**
+     * @dev The canonical abi.encode(T[]) of `values`, each of which must be
+     *      the canonical single-value encoding of element type `t`
+     *      (InvalidValue otherwise, InvalidTypeDescriptor for a malformed
+     *      `t`). `unpack`'s inverse.
+     */
     function pack(bytes calldata t, bytes[] memory values) internal pure returns (bytes memory) {
         (bool dynamic, uint256 words) = shape(t);
         for (uint256 i; i < values.length; i++) {
@@ -425,6 +645,14 @@ library AbiCodec {
         return assemble(dynamics, values.length * words * 32, values, true);
     }
 
+    /**
+     * @dev Splits a canonical abi.encode(T[]) into one canonical
+     *      single-value encoding per element, re-wrapping dynamic elements
+     *      in their own 0x20 envelope. The whole input is validated on the
+     *      way: the envelope word, the element count against the remaining
+     *      data, every element offset and body, and exact consumption
+     *      (InvalidValue at the offending offset). `pack`'s inverse.
+     */
     function unpack(bytes calldata t, bytes memory encoded) internal pure returns (bytes[] memory values) {
         ArrayState memory x;
         (x.dynamic, x.words) = shape(t);

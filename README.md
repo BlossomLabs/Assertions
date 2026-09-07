@@ -4,7 +4,7 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 
 **The core reads and judges; the periphery computes.**
 
-- **`Assertions` (the core)** owns everything that speaks ERC-8211. It judges batches in view mode: `assertParam` resolves one input parameter and validates its constraints; `assertComposable(executions)` evaluates a full `ComposableExecution[]` batch with every fetcher and every constructed call executed via `staticcall`. And it carries the read primitives whose operands arrive unresolved: `resolve`, `pick`, `nav`, `chain`, `read` (construct a staticcall from runtime-resolved segments) and the lazy control primitives `cond`, `orElse`, `isValid`, `revertData`.
+- **`Assertions` (the core)** owns everything that speaks ERC-8211. It judges batches in view mode: `assertParam` resolves one input parameter and validates its constraints; `assertBatch(executions)` evaluates a full `ComposableExecution[]` batch with every fetcher and every constructed call executed via `staticcall`. And it carries the read primitives whose operands arrive unresolved: `resolve`, `pick`, `nav`, `chain`, `read` (construct a staticcall from runtime-resolved segments) and the lazy control primitives `cond`, `orElse`, `isValid`, `revertData`.
 - **`Operations`** provides scalar arithmetic, comparisons, bitwise operations, environment reads, bytes/string processing, and ABI encoding.
 - **`Collections`** owns iteration: the bounded folds, the word-array family (map, filter, sort, deduplicate, zip, sum) and the generic ABI-valued traversals with typed callbacks. Both sorting paths use stable bottom-up merge sort.
 - **`Expressions`** (unreleased) adds typed expression graphs and resolve-once call construction, so a repeated subterm is evaluated once instead of being duplicated in calldata; `Collections.Callback.expression` is its only in-tree consumer.
@@ -43,7 +43,7 @@ assertions.assertParam(
 );
 ```
 
-The same check encoded as an ERC-8211 predicate entry (a `ComposableExecution` with no `TARGET`) passes through `assertComposable` unchanged, and any predicate batch an ERC-8211 SDK produces can be judged on-chain the same way.
+The same check encoded as an ERC-8211 predicate entry (a `ComposableExecution` with no `TARGET`) passes through `assertBatch` unchanged, and any predicate batch an ERC-8211 SDK produces can be judged on-chain the same way.
 
 ## Documentation
 

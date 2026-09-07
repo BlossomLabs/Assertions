@@ -47,7 +47,7 @@ interface IERC20Balance {
  *         format: selection (`resolve`, `gather`, `pick`, `nav`),
  *         call construction (`chain`, `read`, `get`) and resolution
  *         control (`cond`, `orElse`, `isValid`, `revertData`).
- * @dev The judge is view-only: assertComposable(executions) evaluates the
+ * @dev The judge is view-only: assertBatch(executions) evaluates the
  *      ERC-8211 execution algorithm directly, restricted to what a view
  *      context can express: every fetcher resolution is a staticcall,
  *      entries with a TARGET parameter execute the constructed call via
@@ -171,7 +171,7 @@ contract Assertions {
      *         staticcall
      * @param executions The ERC-8211 batch entries (standard wire format)
      */
-    function assertComposable(ComposableExecution[] calldata executions) external view {
+    function assertBatch(ComposableExecution[] calldata executions) external view {
         _judge(executions, "COMPOSABLE");
     }
 
@@ -181,7 +181,7 @@ contract Assertions {
      * @param executions The ERC-8211 batch entries (standard wire format)
      * @param message Custom error message on constraint failure
      */
-    function assertComposable(ComposableExecution[] calldata executions, string calldata message) external view {
+    function assertBatch(ComposableExecution[] calldata executions, string calldata message) external view {
         _judge(executions, message);
     }
 

@@ -1,6 +1,6 @@
 // Differential fuzzer for the core's COMPOSITION surface: random expression
 // trees over resolve / pick / nav / cond / orElse / isValid / chain / read /
-// revertData / assertParam / assertComposable, with operands nested back into
+// revertData / assertParam / assertBatch, with operands nested back into
 // the core as STATIC_CALL fetchers — the self-referencing shapes the flat
 // per-function fuzzers cannot reach. The oracle is a TypeScript interpreter
 // of the documented resolution semantics; the load-bearing rule it mirrors
@@ -919,7 +919,7 @@ describe("composed expression fuzz", () => {
   });
 });
 
-// ============ assertComposable: the judge over composed entries ============
+// ============ assertBatch: the judge over composed entries ============
 
 interface OutputParamStruct {
   fetcherType: number;
@@ -1028,7 +1028,7 @@ function genEntry(rng: Rng): { struct: EntryStruct; fail: string | null; desc: s
   };
 }
 
-describe("assertComposable judge fuzz", () => {
+describe("assertBatch judge fuzz", () => {
   it("random batches match the judge oracle", async () => {
     for (let i = 0; i < RUNS; i++) {
       const rng = mulberry32((SEED + (0x40000000 + i) * 0x9e3779b9) >>> 0);
@@ -1036,7 +1036,7 @@ describe("assertComposable judge fuzz", () => {
       const entries = Array.from({ length: n }, () => genEntry(rng));
       const failing = entries.find((e) => e.fail !== null);
       const expect: Expect = failing ? REV(failing.fail!) : { ok: "0x" };
-      const data = coreCalldata("assertComposable", [entries.map((e) => e.struct)]);
+      const data = coreCalldata("assertBatch", [entries.map((e) => e.struct)]);
       await checkExpr("judge", i, entries.map((e) => e.desc).join(" "), CORE, data, expect);
     }
   });

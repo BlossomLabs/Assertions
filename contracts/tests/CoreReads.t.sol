@@ -10,11 +10,11 @@ import "./Mocks.sol";
 
 /**
  * @notice The single-batch judge surface by itself: abi.encodeCall cannot
- *         disambiguate the assertComposable overloads, so the batch-as-
+ *         disambiguate the assertBatch overloads, so the batch-as-
  *         operand helpers name it through this one-function interface
  */
 interface IAssertBatch {
-    function assertComposable(ComposableExecution[] calldata executions) external view;
+    function assertBatch(ComposableExecution[] calldata executions) external view;
 }
 
 /**
@@ -1335,7 +1335,7 @@ contract CoreReadsTest is Test {
      *      view judge
      */
     function _batchProbe(ComposableExecution[] memory ex) internal view returns (InputParam memory) {
-        return _nested(abi.encodeCall(IAssertBatch.assertComposable, (ex)));
+        return _nested(abi.encodeCall(IAssertBatch.assertBatch, (ex)));
     }
 
     function test_isValid_batchAsOperand() public view {

@@ -93,7 +93,7 @@ const stats = [
           set. Had any single check failed, all nineteen calls would have
           reverted together: no partial transfer, nothing to clean up,
           try again tomorrow. On v2.0 the same nine guards fit in a single
-          <span class="font-mono text-sm">assertComposable</span> call; flip
+          <span class="font-mono text-sm">assertBatch</span> call; flip
           the trace to compare.
         </p>
 
@@ -149,7 +149,7 @@ const stats = [
           </div>
           <div data-ftx-panel="v2" class="mt-3" hidden>
             <div class="whitespace-nowrap text-[var(--color-ink-3)]">// post-conditions: one ERC-8211 batch, one call</div>
-            <div class="whitespace-nowrap"><span class="text-[var(--color-bp-400)]">assertComposable</span><span class="text-[var(--color-ink-2)]">([</span></div>
+            <div class="whitespace-nowrap"><span class="text-[var(--color-bp-400)]">assertBatch</span><span class="text-[var(--color-ink-2)]">([</span></div>
             {assertsV2.map((a) => (
               <div class="whitespace-pre"><span class="text-[var(--color-ok)]">&nbsp;&nbsp;&#10003; </span><span class="text-[var(--color-bp-400)]">{a.fn}</span><span class="text-[var(--color-ink-2)]">({a.args}){a.pad}</span><span class="text-[var(--color-ok)]">{a.op}</span><span class="text-[var(--color-ink-2)]">{a.opPad}{a.val}</span></div>
             ))}

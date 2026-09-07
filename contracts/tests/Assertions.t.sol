@@ -375,15 +375,15 @@ contract AssertionsTest is Test {
         );
     }
 
-    // ============ assertComposable (native judge): predicate entries ============
+    // ============ assertBatch (native judge): predicate entries ============
 
-    function test_assertComposable_predicate_success() public view {
-        assertions.assertComposable(
+    function test_assertBatch_predicate_success() public view {
+        assertions.assertBatch(
             _predicate(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.GTE, abi.encode(uint256(1)))))
         );
     }
 
-    function test_assertComposable_predicate_reverts() public {
+    function test_assertBatch_predicate_reverts() public {
         vm.expectRevert(
             abi.encodeWithSelector(
                 ConstraintFailed.selector,
@@ -396,12 +396,12 @@ contract AssertionsTest is Test {
                 abi.encode(uint256(1000))
             )
         );
-        assertions.assertComposable(
+        assertions.assertBatch(
             _predicate(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.GTE, abi.encode(uint256(1000)))))
         );
     }
 
-    function test_assertComposable_secondEntry_reverts_withEntryIndex() public {
+    function test_assertBatch_secondEntry_reverts_withEntryIndex() public {
         ComposableExecution[] memory ex = _batch2(
             _entry(bytes4(0), _params1(_call(address(target), abi.encodeCall(MockTarget.getValue, ()), _c1(ConstraintType.EQ, abi.encode(uint256(42)))))),
             _entry(bytes4(0), _params1(_call(address(target), abi.encodeCall(MockTarget.getBool, ()), _c1(ConstraintType.EQ, abi.encode(false)))))
@@ -418,10 +418,10 @@ contract AssertionsTest is Test {
                 abi.encode(false)
             )
         );
-        assertions.assertComposable(ex);
+        assertions.assertBatch(ex);
     }
 
-    function test_assertComposable_multiParam_and_composition() public {
+    function test_assertBatch_multiParam_and_composition() public {
         // both parameters on one predicate entry must pass; second fails
         ComposableExecution[] memory ex = _batch1(
             _entry(
@@ -444,10 +444,10 @@ contract AssertionsTest is Test {
                 abi.encode(uint256(1001))
             )
         );
-        assertions.assertComposable(ex);
+        assertions.assertBatch(ex);
     }
 
-    function test_assertComposable_withMessage() public {
+    function test_assertBatch_withMessage() public {
         vm.expectRevert(
             abi.encodeWithSelector(
                 ConstraintFailed.selector,
@@ -460,21 +460,21 @@ contract AssertionsTest is Test {
                 abi.encode(uint256(2500))
             )
         );
-        assertions.assertComposable(
+        assertions.assertBatch(
             _predicate(_bal(address(token), TEST_EOA, _c1(ConstraintType.GTE, abi.encode(uint256(2500))))),
             "swap output too low"
         );
     }
 
-    function test_assertComposable_emptyBatch_passes() public view {
-        assertions.assertComposable(new ComposableExecution[](0));
+    function test_assertBatch_emptyBatch_passes() public view {
+        assertions.assertBatch(new ComposableExecution[](0));
     }
 
-    // ============ assertComposable (native judge): constructed calls ============
+    // ============ assertBatch (native judge): constructed calls ============
 
-    function test_assertComposable_constructedCall_success() public view {
+    function test_assertBatch_constructedCall_success() public view {
         // calldata is built as functionSig ++ resolved CALL_DATA params
-        assertions.assertComposable(
+        assertions.assertBatch(
             _batch1(
                 _entry(
                     MockTarget.checkValue.selector,
@@ -484,8 +484,8 @@ contract AssertionsTest is Test {
         );
     }
 
-    function test_assertComposable_constructedCall_multiParam_success() public view {
-        assertions.assertComposable(
+    function test_assertBatch_constructedCall_multiParam_success() public view {
+        assertions.assertBatch(
             _batch1(
                 _entry(
                     MockTarget.checkPair.selector,
@@ -500,10 +500,10 @@ contract AssertionsTest is Test {
         );
     }
 
-    function test_assertComposable_constructedCall_reverts_withBuiltCalldata() public {
+    function test_assertBatch_constructedCall_reverts_withBuiltCalldata() public {
         bytes memory builtCalldata = abi.encodePacked(MockTarget.checkValue.selector, abi.encode(uint256(41)));
         vm.expectRevert(abi.encodeWithSelector(CallFailed.selector, address(target), builtCalldata));
-        assertions.assertComposable(
+        assertions.assertBatch(
             _batch1(
                 _entry(
                     MockTarget.checkValue.selector,
@@ -513,7 +513,7 @@ contract AssertionsTest is Test {
         );
     }
 
-    function test_assertComposable_runtimeResolvedTarget() public view {
+    function test_assertBatch_runtimeResolvedTarget() public view {
         // TARGET fetched via STATIC_CALL: target.token() resolves the token address
         InputParam memory runtimeTarget = InputParam(
             InputParamType.TARGET,
@@ -521,10 +521,10 @@ contract AssertionsTest is Test {
             abi.encode(address(target), abi.encodeCall(MockTarget.token, ())),
             _none()
         );
-        assertions.assertComposable(_batch1(_entry(MockToken.decimals.selector, _params1(runtimeTarget))));
+        assertions.assertBatch(_batch1(_entry(MockToken.decimals.selector, _params1(runtimeTarget))));
     }
 
-    function test_assertComposable_zeroTarget_skipsCall() public view {
+    function test_assertBatch_zeroTarget_skipsCall() public view {
         // per the standard, target == address(0) skips the call (even with a garbage selector)
         InputParam memory zeroTarget = InputParam(
             InputParamType.TARGET,
@@ -532,26 +532,26 @@ contract AssertionsTest is Test {
             abi.encode(address(0)),
             _none()
         );
-        assertions.assertComposable(_batch1(_entry(0xdeadbeef, _params1(zeroTarget))));
+        assertions.assertBatch(_batch1(_entry(0xdeadbeef, _params1(zeroTarget))));
     }
 
-    // ============ assertComposable (native judge): malformed batches ============
+    // ============ assertBatch (native judge): malformed batches ============
 
-    function test_assertComposable_dirtyTargetWord() public {
+    function test_assertBatch_dirtyTargetWord() public {
         bytes32 dirty = bytes32(uint256(1) << 200 | uint256(uint160(address(target))));
         InputParam memory p = InputParam(InputParamType.TARGET, InputParamFetcherType.RAW_BYTES, abi.encode(dirty), _none());
         vm.expectRevert(abi.encodeWithSelector(InvalidAddressWord.selector, 0, dirty));
-        assertions.assertComposable(_batch1(_entry(MockTarget.getValue.selector, _params1(p))));
+        assertions.assertBatch(_batch1(_entry(MockTarget.getValue.selector, _params1(p))));
     }
 
-    function test_assertComposable_duplicateTarget() public {
+    function test_assertBatch_duplicateTarget() public {
         vm.expectRevert(abi.encodeWithSelector(Assertions.DuplicateTargetParam.selector, 0));
-        assertions.assertComposable(
+        assertions.assertBatch(
             _batch1(_entry(MockTarget.getValue.selector, _params2(_target(address(target)), _target(address(target)))))
         );
     }
 
-    function test_assertComposable_valueParam() public {
+    function test_assertBatch_valueParam() public {
         InputParam memory valueParam = InputParam(
             InputParamType.VALUE,
             InputParamFetcherType.RAW_BYTES,
@@ -559,21 +559,21 @@ contract AssertionsTest is Test {
             _none()
         );
         vm.expectRevert(abi.encodeWithSelector(Assertions.ValueParamNotSupported.selector, 0, 1));
-        assertions.assertComposable(
+        assertions.assertBatch(
             _batch1(_entry(MockTarget.getValue.selector, _params2(_target(address(target)), valueParam)))
         );
     }
 
-    function test_assertComposable_outputParams() public {
+    function test_assertBatch_outputParams() public {
         OutputParam[] memory outs = new OutputParam[](1);
         outs[0] = OutputParam(OutputParamFetcherType.EXEC_RESULT, "");
         ComposableExecution[] memory ex = new ComposableExecution[](1);
         ex[0] = ComposableExecution(bytes4(0), _params1(_raw(abi.encode(uint256(1)), _none())), outs);
         vm.expectRevert(abi.encodeWithSelector(Assertions.OutputParamsNotSupported.selector, 0));
-        assertions.assertComposable(ex);
+        assertions.assertBatch(ex);
     }
 
-    function test_assertComposable_balanceAsTarget() public {
+    function test_assertBatch_balanceAsTarget() public {
         InputParam memory p = InputParam(
             InputParamType.TARGET,
             InputParamFetcherType.BALANCE,
@@ -581,7 +581,7 @@ contract AssertionsTest is Test {
             _none()
         );
         vm.expectRevert(abi.encodeWithSelector(Assertions.BalanceCannotBeTarget.selector, 0, 0));
-        assertions.assertComposable(_batch1(_entry(bytes4(0), _params1(p))));
+        assertions.assertBatch(_batch1(_entry(bytes4(0), _params1(p))));
     }
 
     // ════════════ V1 use-case parity ════════════
@@ -1117,7 +1117,7 @@ contract AssertionsTest is Test {
             abi.encode(address(target), abi.encodeCall(MockTarget.token, ())),
             _c1(ConstraintType.GTE, abi.encode(uint256(1)))
         );
-        assertions.assertComposable(
+        assertions.assertBatch(
             _batch1(_entry(MockToken.balanceOf.selector, _params2(_target(address(token)), runtimeArg)))
         );
     }
@@ -1158,7 +1158,7 @@ contract AssertionsTest is Test {
             )
         );
         // balanceOf(token()) = 1000, inner GTE(1000) holds
-        assertions.assertComposable(ex);
+        assertions.assertBatch(ex);
 
         // raise the inner bound: the spliced assertion fails, so the
         // constructed entry call fails with the fully reassembled calldata
@@ -1173,6 +1173,6 @@ contract AssertionsTest is Test {
             _sliceBytes(failBody, pos + 32, failBody.length)
         );
         vm.expectRevert(abi.encodeWithSelector(CallFailed.selector, address(assertions), rebuilt));
-        assertions.assertComposable(ex);
+        assertions.assertBatch(ex);
     }
 }

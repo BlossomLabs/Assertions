@@ -115,14 +115,14 @@ The [batch judge](/docs/solidity#judging-whole-batches) is itself a view functio
 
 ```solidity
 // The whole batch, as one operand. abi.encodeCall cannot disambiguate the
-// assertComposable overloads, so name the single-batch surface through a
+// assertBatch overloads, so name the single-batch surface through a
 // one-function interface:
 interface IAssertBatch {
-    function assertComposable(ComposableExecution[] calldata executions) external view;
+    function assertBatch(ComposableExecution[] calldata executions) external view;
 }
 
 InputParam memory batchProbe = callParam(
-    address(assertions), abi.encodeCall(IAssertBatch.assertComposable, (executions)), noConstraints()
+    address(assertions), abi.encodeCall(IAssertBatch.assertBatch, (executions)), noConstraints()
 );
 ```
 

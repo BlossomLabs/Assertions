@@ -1,7 +1,5 @@
 import { isAddress } from "viem";
 
-import { chainById } from "../deployments/wagmi";
-
 import {
   type Assertion,
   type ValueExpr,
@@ -17,7 +15,7 @@ import { ensVarName, evmlArg } from "./useContractFunctions";
  *
  * Formatting rules that matter to the compiler all funnel through here:
  * space-separated helper arguments, spaces around every infix operator,
- * one outer `@num!`/`@bool!` around arithmetic/logic, bare nullary helpers.
+ * one outer `@calc!`/`@bool!` around arithmetic/logic, bare nullary helpers.
  */
 
 export interface CodegenOptions {
@@ -38,7 +36,7 @@ interface RenderCtx {
   /** Collects hoisted `set` lines, deduplicated in first-seen order. */
   registerSet: (line: string) => void;
   chainId: number;
-  /** Inside a @num!/@bool! wrapper already. */
+  /** Inside a @calc!/@bool! wrapper already. */
   num?: boolean;
   bool?: boolean;
 }
@@ -51,8 +49,8 @@ function ensSetLine(name: string, address: string, chainId: number): string {
     : `set ${varName} ${address}`;
 }
 
-/** Address/ENS target → EVML token (`0x…` or a registered `$var`), or null
- *  while the target is empty or an unresolved ENS name. */
+/** Address/ENS target to an EVML token (`0x…` or a registered `$var`), or
+ *  null while the target is empty or an unresolved ENS name. */
 function renderTarget(
   input: string,
   resolved: string | null | undefined,
@@ -96,7 +94,7 @@ async function renderCall(
     // A lens narrows the hop's return: `[_ $ _]` selects one output of a
     // multi-value return (mid-chain: the address the chain continues on),
     // and nested levels (`[_ [_ [$ _]]]`) select through array elements
-    // and struct values — negative array indices anchor from the end via
+    // and struct values; negative array indices anchor from the end via
     // the `...` rest marker (`[[... $]]` = last element, resolved live
     // for dynamic arrays).
     const lens = resolveLens(hop);
@@ -121,7 +119,7 @@ async function renderCall(
 }
 
 /** Wrap a rendered boolean operand in parens when it is itself a
- *  cmp/logic/not node — corpus style: `($a::q() > 0) or (not $a::paused())`. */
+ *  cmp/logic/not node, corpus style: `($a::q() > 0) or (not $a::paused())`. */
 function boolOperand(rendered: string, node: ValueExpr): string {
   return node.kind === "cmp" || node.kind === "logic" || node.kind === "not"
     ? `(${rendered})`
@@ -130,7 +128,7 @@ function boolOperand(rendered: string, node: ValueExpr): string {
 
 /**
  * Render one side of an assertion (or a nested operand). Returns null while
- * the expression is incomplete — an empty literal, an unresolved target, an
+ * the expression is incomplete: an empty literal, an unresolved target, an
  * unchosen function or a missing argument.
  *
  * `stringSide` marks a top-level side whose counterpart is a string call, so
@@ -180,6 +178,17 @@ export async function renderExpr(
       return `@absDiff!(${a} ${b})`;
     }
     case "arith": {
+      if (expr.op === "/") {
+        // Rounded division is its own helper (`@calcFloor!`/`@calcCeil!`)
+        // whose root operator must be the `/`; the operands render with a
+        // fresh context so nested arithmetic wraps itself in `@calc!`.
+        const clean = { ...ctx, num: false, bool: false };
+        const left = await renderExpr(expr.left, clean);
+        const right = await renderExpr(expr.right, clean);
+        if (!left || !right) return null;
+        const helper = expr.rounding === "ceil" ? "calcCeil" : "calcFloor";
+        return `@${helper}!(${left} / ${right})`;
+      }
       const inner = { ...ctx, num: true };
       const left = await renderExpr(expr.left, inner);
       const right = await renderExpr(expr.right, inner);
@@ -187,7 +196,7 @@ export async function renderExpr(
       const l = expr.left.kind === "arith" ? `(${left})` : left;
       const r = expr.right.kind === "arith" ? `(${right})` : right;
       const body = `${l} ${expr.op} ${r}`;
-      return ctx.num ? body : `@num!(${body})`;
+      return ctx.num ? body : `@calc!(${body})`;
     }
     case "cmp": {
       const inner = { ...ctx, bool: true };
@@ -219,7 +228,7 @@ export async function renderExpr(
     }
     case "bytes": {
       // Helper arguments are self-delimiting: children render with a fresh
-      // context so arithmetic/logic re-wrap themselves in @num!/@bool!.
+      // context so arithmetic/logic re-wrap themselves in @calc!/@bool!.
       const clean = { ...ctx, num: false, bool: false };
       const left = await renderExpr(expr.left, clean);
       const right = await renderExpr(expr.right, clean);
@@ -244,6 +253,26 @@ export async function renderExpr(
       if (!call || !expr.arg) return null;
       return `@str.${expr.helper}!(${call} ${JSON.stringify(expr.arg)})`;
     }
+    case "numformat": {
+      const clean = { ...ctx, num: false, bool: false };
+      const value = await renderExpr(expr.value, clean);
+      if (!value || !isDecimals(expr.decimals)) return null;
+      return `@num.format!(${value} ${expr.decimals.trim()})`;
+    }
+    case "numparse": {
+      const clean = { ...ctx, num: false, bool: false };
+      const value = await renderExpr(expr.value, clean);
+      if (!value || !isDecimals(expr.decimals)) return null;
+      // Rounding and signedness are positional: an unsigned parse needs
+      // its rounding spelled out, a default parse needs neither.
+      const opts =
+        expr.signedness === "unsigned"
+          ? ` ${expr.rounding} unsigned`
+          : expr.rounding === "trunc"
+            ? ""
+            : ` ${expr.rounding}`;
+      return `@num.parse!(${value} ${expr.decimals.trim()}${opts})`;
+    }
     case "clock":
       return expr.which === "timestamp" ? "@block.timestamp!" : "@block.number!";
     case "chainId":
@@ -253,7 +282,18 @@ export async function renderExpr(
       if (!addr) return null;
       return `@codeHash!(${addr})`;
     }
+    case "codeAt": {
+      const addr = await renderExpr(expr.address, ctx);
+      if (!addr) return null;
+      return `@codeAt!(${addr})`;
+    }
   }
+}
+
+/** A decimal precision the helpers accept: an integer from 0 to 77. */
+function isDecimals(text: string): boolean {
+  const t = text.trim();
+  return /^\d{1,2}$/.test(t) && Number(t) <= 77;
 }
 
 export interface BuiltLine {
@@ -273,7 +313,7 @@ function makeCtx(options: CodegenOptions) {
     // line. When resolution succeeds it is chain-aware (live @ens on
     // mainnet, the per-chain address frozen elsewhere); when it is
     // unavailable (the preview's no-op resolver, or a failed lookup) the
-    // name stays live via `set $var @ens(name)` — same mainnet-registry
+    // name stays live via `set $var @ens(name)`, the same mainnet-registry
     // semantics the resolver falls back to anyway.
     ensToVar: async (name) => {
       const varName = ensVarName(name);
@@ -287,6 +327,19 @@ function makeCtx(options: CodegenOptions) {
     },
   };
   return { ctx, sets };
+}
+
+/**
+ * Render one expression on its own (+ hoisted set lines), or null while it
+ * is incomplete. The value preview compiles this inside a probe assertion.
+ */
+export async function buildExprText(
+  expr: ValueExpr,
+  options: CodegenOptions,
+): Promise<BuiltLine | null> {
+  const { ctx, sets } = makeCtx(options);
+  const text = await renderExpr(expr, ctx);
+  return text ? { line: text, sets } : null;
 }
 
 /**
@@ -331,102 +384,4 @@ export async function buildAssertionLine(
     cmp += ` --delta ${assertion.delta.trim()}`;
   }
   return { line: `assert ${lhs}${cmp}${msg}`, sets };
-}
-
-// ---------------------------------------------------------------------------
-// The simple form's chain-state assertions.
-// ---------------------------------------------------------------------------
-
-export type CodeVariant = "has-code" | "no-code" | "codeHash";
-export type BlockField = "number" | "timestamp";
-
-export interface FlatAssertion {
-  kind: "balance" | "code" | "block" | "chainId";
-  account: string;
-  targetInput: string;
-  /** Resolved address when targetInput is an ENS name. */
-  targetResolved: string | null;
-  codeVariant: CodeVariant;
-  blockField: BlockField;
-  operator: string;
-  expected: string;
-  delta: string;
-  message: string;
-}
-
-/**
- * Build the line for the simple form's chain-state kinds (balance, code,
- * block, chainId). Each is an `assert` over the on-chain face that reads
- * that piece of state — the dedicated `assert-*` commands these once
- * emitted were retired once every one of them had a helper face.
- *
- * The `load` lines those faces need are not this function's business:
- * `useScriptState` derives them from the helpers the line mentions.
- */
-export async function buildFlatLine(
-  flat: FlatAssertion,
-  options: CodegenOptions,
-): Promise<BuiltLine | null> {
-  const { ctx, sets } = makeCtx(options);
-  const msg = flat.message.trim()
-    ? ` ${JSON.stringify(flat.message.trim())}`
-    : "";
-  const comparison = (allowDelta: boolean): string | null => {
-    if (!flat.expected.trim()) return null;
-    let out = ` ${flat.operator} ${flat.expected.trim()}`;
-    if (flat.operator === "~=") {
-      if (!allowDelta || !flat.delta.trim()) return null;
-      out += ` --delta ${flat.delta.trim()}`;
-    }
-    return out;
-  };
-
-  switch (flat.kind) {
-    case "balance": {
-      if (!flat.account.trim()) return null;
-      const acct =
-        flat.account.trim() === "@me"
-          ? "@me"
-          : await evmlArg("address", flat.account, ctx.ensToVar);
-      const cmp = comparison(true);
-      if (!cmp) return null;
-      // @balance! reads a NATIVE balance only for the chain's own currency
-      // symbol (ETH on mainnet, XDAI on Gnosis) — anything else resolves
-      // through the token list as an ERC-20, which is a different question
-      // and the expression editor's job.
-      const native = chainById(ctx.chainId)?.nativeCurrency.symbol ?? "ETH";
-      return { line: `assert @balance!(${native} ${acct})${cmp}${msg}`, sets };
-    }
-    case "code": {
-      const t = renderTarget(flat.targetInput, flat.targetResolved, ctx);
-      if (!t) return null;
-      if (flat.codeVariant === "codeHash") {
-        const exp = flat.expected.trim();
-        if (!exp) return null;
-        return { line: `assert @codeHash!(${t}) == ${exp}${msg}`, sets };
-      }
-      // Code exists exactly when the deployed payload is non-empty — the
-      // same predicate the retired assert-code spelled out as
-      // `codehash != 0 && codehash != keccak256("")`.
-      const op = flat.codeVariant === "has-code" ? ">" : "==";
-      return {
-        line: `assert @bytes.len!(@codeAt!(${t})) ${op} 0${msg}`,
-        sets,
-      };
-    }
-    case "block": {
-      const cmp = comparison(false);
-      if (!cmp) return null;
-      const face =
-        flat.blockField === "number" ? "@block.number!" : "@block.timestamp!";
-      return { line: `assert ${face}${cmp}${msg}`, sets };
-    }
-    case "chainId": {
-      if (!flat.expected.trim()) return null;
-      return {
-        line: `assert @chainId! == ${flat.expected.trim()}${msg}`,
-        sets,
-      };
-    }
-  }
 }

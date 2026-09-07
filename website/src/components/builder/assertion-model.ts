@@ -1,19 +1,23 @@
 import type { Category as ModCategory, OpFamily } from "@evmcrispr/sdk/onchain";
-import { allowedInfixOps, checkInfix, INFIX_OPS } from "@evmcrispr/sdk/onchain";
+import {
+  allowedInfixOps,
+  categoryFromAbiType as sdkCategoryFromAbiType,
+} from "@evmcrispr/sdk/onchain";
 import { isAddress } from "viem";
 
 /**
  * The assertion expression model. An assertion compares two value
  * expressions; each side is a tree of contract calls, literals and
- * Operations v1 helpers (`@min!`, `@absDiff!`, `@num!`, …) that the
- * codegen renders into an `assert` line.
+ * on-chain helpers (`@min!`, `@absDiff!`, `@calc!`, …) that the codegen
+ * renders into an `assert` line.
  *
- * Nodes hold only serializable strings — ABI fetching and ENS resolution
+ * Nodes hold only serializable strings: ABI fetching and ENS resolution
  * stay in the editor components (one `useContractFunctions` per call node).
  *
- * Which operators compose with which value categories comes from the
- * assertions module's own composition table (the same one its compiler
- * consults), so the UI can never offer a combination that won't compile.
+ * The model reasons about SHAPES only (which category a node produces,
+ * which combinators the menus may offer). Whether a tree compiles is the
+ * compiler's call: the form compiles the rendered line and shows its
+ * diagnostics (see compile-adapter.ts).
  */
 
 /** Comparison category, derived from ABI return types and literal shapes. */
@@ -25,14 +29,14 @@ export type Category =
   | "bytes32"
   | "string"
   | "bytes"
-  /** Dynamic/array return — only legal inside len (or as
-   *  the single operand of min/max). */
+  /** Dynamic/array return: only legal inside len (or as the single
+   *  operand of min/max). */
   | "array"
   /** Multi-output call without a return-value selection yet. */
   | "tuple"
   | "unknown";
 
-/** A call node — the `kind: "call"` member of ValueExpr, also usable as a
+/** A call node, the `kind: "call"` member of ValueExpr, also usable as a
  *  nested live argument of another call. */
 export type CallNode = Extract<ValueExpr, { kind: "call" }>;
 
@@ -52,7 +56,7 @@ export interface CallHop {
   inline: boolean;
   /** Canonical argument types. */
   argTypes: string[];
-  /** Canonical output types (multiple allowed — one is selected via
+  /** Canonical output types (multiple allowed; one is selected via
    *  `lensIndex`, mid-chain or on the final hop). */
   returnTypes: string[];
   /** Positional arguments: raw form strings, or nested live calls. */
@@ -66,7 +70,7 @@ export interface CallHop {
   /** Selection path below the selected output, one entry per composite
    *  level (array element or tuple value index), rendered as nested lens
    *  levels (`[_ [_ [$ _]]]`). Raw form strings; negative array indices
-   *  count from the end (rendered with the `...` rest marker — dynamic
+   *  count from the end (rendered with the `...` rest marker, dynamic
    *  arrays resolve them live on-chain). Only meaningful on the final
    *  hop: the module can't chain through an array element. */
   lensPath?: string[];
@@ -79,7 +83,7 @@ export type ValueExpr =
       /** Address or ENS name as typed. */
       target: string;
       /** Resolved address when `target` is an ENS name (set by the editor);
-       *  null/undefined while unresolved — the call is incomplete then. */
+       *  null/undefined while unresolved, the call is incomplete then. */
       resolved?: string | null;
       hops: CallHop[];
     }
@@ -91,6 +95,10 @@ export type ValueExpr =
       op: "+" | "-" | "*" | "/" | "//" | "%" | "^";
       left: ValueExpr;
       right: ValueExpr;
+      /** `/` is the rounded division of `@calcFloor!`/`@calcCeil!` (the
+       *  checked `@calc!` surface spells integer division `//`); which
+       *  way it rounds. Absent means floor. */
+      rounding?: Rounding;
     }
   | {
       kind: "cmp";
@@ -114,19 +122,37 @@ export type ValueExpr =
   | { kind: "not"; operand: ValueExpr }
   | { kind: "callwrap"; helper: "len" | "bytelen" | "hash"; call: ValueExpr }
   // (the `bytelen` node key predates the helper unification; it renders as
-  // the lang module's @bytes.len! — see callwrapHelperName)
+  // the lang module's @bytes.len!, see callwrapHelperName)
   | { kind: "split"; call: ValueExpr; delimiter: string; index: string }
   | { kind: "clock"; which: "timestamp" | "blocknumber" }
   | { kind: "chainId" }
   /** EXTCODEHASH of an address (literal or address-returning call). */
   | { kind: "codeHash"; address: ValueExpr }
+  /** The deployed code of an address (literal or address-returning call),
+   *  a bytes value: the source `@bytes.len!` and `@hash!` wrap. */
+  | { kind: "codeAt"; address: ValueExpr }
   /** String predicates over a call's string return (@str.includes!/@str.charset!). */
   | {
       kind: "strtest";
       helper: "includes" | "charset";
       call: ValueExpr;
       arg: string;
+    }
+  /** `@num.format!(value decimals)`: a raw integer as a decimal string. */
+  | { kind: "numformat"; value: ValueExpr; decimals: string }
+  /** `@num.parse!(value decimals rounding signedness)`: a decimal string
+   *  as a raw integer in base units. */
+  | {
+      kind: "numparse";
+      value: ValueExpr;
+      decimals: string;
+      rounding: ParseRounding;
+      signedness: Signedness;
     };
+
+export type Rounding = "floor" | "ceil";
+export type ParseRounding = "trunc" | "floor" | "ceil";
+export type Signedness = "signed" | "unsigned";
 
 /** EVML/display name of a callwrap helper node: the internal `bytelen`
  *  key predates the helper unification and renders as lang's @bytes.len!
@@ -164,29 +190,34 @@ export const emptyAssertion = (): Assertion => ({
 });
 
 /** True for values frozen into calldata at build time (drives `~=`
- *  availability and the both-sides-constant error). */
+ *  availability and the "use current value" gate). */
 export function isBuildTimeConst(expr: ValueExpr): boolean {
   return expr.kind === "literal";
 }
 
 const ENS_RE = /^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/;
 
-function categoryFromAbiType(t: string): Category {
-  if (/\[\d*\]$/.test(t) || t === "bytes" || t === "string") {
-    if (t === "string") return "string";
-    if (t === "bytes") return "bytes";
-    return "array";
-  }
-  // Canonical struct type "(address,uint256)" — same "pick a value"
-  // guidance as a multi-output return.
+const CAT_FROM_MOD: Record<ModCategory, Category> = {
+  Uint: "uint",
+  Int: "int",
+  Address: "address",
+  Bool: "bool",
+  Bytes32: "bytes32",
+  String: "string",
+  Bytes: "bytes",
+};
+
+/** The compiler's category for a canonical ABI type, plus the shapes its
+ *  table does not reason about: arrays, structs (`(address,uint256)`) and
+ *  anything the compiler rejects. */
+export function categoryFromAbiType(t: string): Category {
+  if (/\[\d*\]$/.test(t)) return "array";
   if (t.startsWith("(")) return "tuple";
-  if (/^uint\d*$/.test(t)) return "uint";
-  if (/^int\d*$/.test(t)) return "int";
-  if (t === "address") return "address";
-  if (t === "bool") return "bool";
-  if (t === "bytes32") return "bytes32";
-  if (/^bytes\d+$/.test(t)) return "bytes32";
-  return "unknown";
+  try {
+    return CAT_FROM_MOD[sdkCategoryFromAbiType(t)];
+  } catch {
+    return "unknown";
+  }
 }
 
 const ARRAY_RETURN_RE = /\[(\d*)\]$/;
@@ -243,14 +274,12 @@ export function lensLevelOf(type: string): LensLevel | null {
 export interface LensSelection {
   /** Type reached after applying every parsed entry. */
   terminal: string;
-  /** Parsed entries — shorter than `lensPath` when one is malformed. */
+  /** Parsed entries, shorter than `lensPath` when one is malformed. */
   entries: number[];
   /** Every entry parsed and in range where the arity is known. The
-   *  terminal may still be composite — whether that fits depends on the
+   *  terminal may still be composite; whether that fits depends on the
    *  context (a comparison needs a single word; @len! wants an array). */
   valid: boolean;
-  /** First problem found, phrased for the validator. */
-  issue?: string;
 }
 
 /** Resolve a hop's selection: walk `lensPath` from the selected output
@@ -261,14 +290,13 @@ export function resolveLens(hop: CallHop): LensSelection | null {
   if (sel === undefined) return null;
   let terminal = sel;
   const entries: number[] = [];
-  let issue: string | undefined;
+  let malformed = false;
   for (const raw of hop.lensPath ?? []) {
     const level = lensLevelOf(terminal);
-    if (!level) break; // stale path beyond a scalar — ignore the rest
+    if (!level) break; // stale path beyond a scalar: ignore the rest
     const t = raw.trim();
     if (!/^-?\d+$/.test(t)) {
-      issue =
-        "The element index must be an integer (negative counts from the end, -1 = last).";
+      malformed = true;
       break;
     }
     const idx = Number(t);
@@ -277,24 +305,24 @@ export function resolveLens(hop: CallHop): LensSelection | null {
         level.length !== undefined &&
         (idx >= level.length || idx < -level.length)
       ) {
-        issue = `Element ${t} is out of range for ${terminal}.`;
+        malformed = true;
         break;
       }
       terminal = level.base;
     } else {
       if (idx < 0 || idx >= level.components.length) {
-        issue = `Value ${t} is out of range for ${terminal}.`;
+        malformed = true;
         break;
       }
       terminal = level.components[idx];
     }
     entries.push(idx);
   }
-  const valid = !issue && entries.length === (hop.lensPath ?? []).length;
-  return { terminal, entries, valid, issue };
+  const valid = !malformed && entries.length === (hop.lensPath ?? []).length;
+  return { terminal, entries, valid };
 }
 
-function literalCategory(value: string): Category {
+export function literalCategory(value: string): Category {
   const v = value.trim();
   if (!v) return "unknown";
   if (/^-\d/.test(v) && /^-?\d+(\.\d+)?(e\+?\d+)?$/i.test(v)) return "int";
@@ -329,6 +357,8 @@ export function inferCategory(expr: ValueExpr): Category {
       return "uint";
     case "codeHash":
       return "bytes32";
+    case "codeAt":
+      return "bytes";
     case "strtest":
       return "bool";
     case "minmax":
@@ -350,7 +380,10 @@ export function inferCategory(expr: ValueExpr): Category {
     case "callwrap":
       return expr.helper === "hash" ? "bytes32" : "uint";
     case "split":
+    case "numformat":
       return "string";
+    case "numparse":
+      return expr.signedness === "unsigned" ? "uint" : "int";
   }
 }
 
@@ -368,8 +401,8 @@ const MOD_CAT: Partial<Record<Category, ModCategory>> = {
   bytes: "Bytes",
 };
 
-/** UI category → module category; null for array/tuple/unknown, which have
- *  no word representation the table reasons about. */
+/** UI category to module category; null for array/tuple/unknown, which
+ *  have no word representation the table reasons about. */
 export function toModCat(cat: Category): ModCategory | null {
   return MOD_CAT[cat] ?? null;
 }
@@ -386,7 +419,7 @@ function tablePair(
     const known = lm ?? rm ?? "Uint";
     return [lm ?? known, rm ?? known];
   }
-  if (!lm || !rm) return null; // array/tuple — not word-composable
+  if (!lm || !rm) return null; // array/tuple: not word-composable
   return [lm, rm];
 }
 
@@ -404,30 +437,15 @@ export function familyOpsFor(
     .map((op) => op.symbol);
 }
 
-/** The table's rejection reason for one operator over an operand pair, or
- *  null when it composes (or when a side is still unknown). */
-export function infixIssue(
-  family: OpFamily,
-  symbol: string,
-  left: Category,
-  right: Category,
-): string | null {
-  if (left === "unknown" || right === "unknown") return null;
-  const pair = tablePair(left, right);
-  if (!pair) return null; // array/tuple issues are reported elsewhere
-  const check = checkInfix({ symbol, family }, pair[0], pair[1]);
-  return check.ok ? null : check.reason;
-}
-
 /** Operator value for the bare boolean form (`assert target::fn()`). */
 export const BARE_OP = "is true";
 
 /**
- * Operations available for a subject/expected pair, from the composition
+ * Operators offered for a subject/expected pair, from the composition
  * table's cmp family. `~=` needs exactly one build-time-constant side; two
  * live numeric sides suggest `@absDiff!(a b) <= d` instead (the editor
  * offers that transform). Dynamic values (string/bytes/array/tuple) keep
- * == / != — the top-level judge compares them where nested expressions
+ * == / !=: the top-level judge compares them where nested expressions
  * can't.
  */
 export function opsFor(
@@ -449,7 +467,7 @@ export function opsFor(
 }
 
 // ---------------------------------------------------------------------------
-// Tree plumbing: paths fall out of recursive rendering — a path is the list
+// Tree plumbing: paths fall out of recursive rendering; a path is the list
 // of keys/indices from the assertion root, e.g. ["subject","items",0].
 // ---------------------------------------------------------------------------
 
@@ -485,383 +503,10 @@ export function unwrapNode(node: ValueExpr): ValueExpr | null {
     case "split":
     case "strtest":
       return node.call;
+    case "numformat":
+    case "numparse":
+      return node.value;
     default:
       return null;
   }
-}
-
-// ---------------------------------------------------------------------------
-// Eager validation — cheaper, better-located messages than the compiler's.
-// The evml validator remains the final authority.
-// ---------------------------------------------------------------------------
-
-export interface Issue {
-  path: Path;
-  message: string;
-}
-
-const WORD_CATS: Category[] = ["uint", "int", "address", "bool", "bytes32"];
-
-/** The type a nested-arg call supplies: its selected output narrowed by the
- *  lens path. Null while the call is incomplete (no function, no return
- *  selection yet, or a malformed lens — reported elsewhere). */
-function nestedArgTerminal(arg: CallNode): string | null {
-  const last = arg.hops[arg.hops.length - 1];
-  if (!last?.fnName || last.returnTypes.length === 0) return null;
-  const lens = resolveLens(last);
-  if (!lens || !lens.valid) return null;
-  return lens.terminal;
-}
-
-/** Mirror of the module compiler's nested live-argument rules
- *  (`compileLiveCallArg` + the construct-time dynamic-hole restrictions):
- *  single-word selections must category-match the declared type; dynamic
- *  selections must match it exactly, sit in the last argument slot and only
- *  in the outermost (top-level) judged call. */
-function nestedArgIssue(
-  arg: CallNode,
-  declared: string,
-  isLastArg: boolean,
-  topLevel: boolean,
-): string | null {
-  const terminal = nestedArgTerminal(arg);
-  if (terminal === null) return null;
-  const cat = categoryFromAbiType(terminal);
-  const declaredCat = categoryFromAbiType(declared);
-  if (WORD_CATS.includes(cat)) {
-    return cat === declaredCat
-      ? null
-      : `The nested call resolves a ${terminal} value, but this argument is ${declared}.`;
-  }
-  if (terminal !== declared)
-    return `The nested call resolves a ${terminal} value, but this argument is ${declared} — adjust the selection to a matching value.`;
-  if (!topLevel)
-    return "A dynamic-typed (array/string/bytes) live argument only works in the outermost judged call — not inside a composed expression.";
-  if (!isLastArg)
-    return "A dynamic-typed (array/string/bytes) live argument must be the last argument — the judge appends its runtime-sized value.";
-  return null;
-}
-
-/** Count dynamic-typed nested live arguments across the whole tree — the
- *  judge supports at most one per assertion. */
-function countDynCallArgs(expr: ValueExpr): number {
-  let count = 0;
-  const visitCall = (call: CallNode): void => {
-    for (const hop of call.hops) {
-      for (const a of hop.args) {
-        if (!isCallArgNode(a)) continue;
-        const terminal = nestedArgTerminal(a);
-        if (
-          terminal !== null &&
-          !WORD_CATS.includes(categoryFromAbiType(terminal))
-        )
-          count++;
-        visitCall(a);
-      }
-    }
-  };
-  const visit = (node: ValueExpr): void => {
-    if (node.kind === "call") {
-      visitCall(node);
-      return;
-    }
-    for (const value of Object.values(node)) {
-      if (Array.isArray(value)) value.forEach((v) => v?.kind && visit(v));
-      else if (value && typeof value === "object" && "kind" in value)
-        visit(value as ValueExpr);
-    }
-  };
-  visit(expr);
-  return count;
-}
-
-function walk(
-  expr: ValueExpr,
-  path: Path,
-  depth: number,
-  issues: Issue[],
-  /** Direct child of a call-consuming helper (@len!, @str.split!, …), which
-   *  accepts string/bytes/array selections a comparison can't judge. */
-  inCallHelper = false,
-  /** Nested live argument of another call: its selection splices into
-   *  calldata (word or dynamic hole), so the word-machine operand
-   *  restrictions don't apply — arg typing is checked by the caller. */
-  asCallArg = false,
-): void {
-  switch (expr.kind) {
-    case "literal": {
-      const v = expr.value.trim();
-      if (/^-?\d+\.\d+$/.test(v))
-        issues.push({
-          path,
-          message:
-            "On-chain values are integers. Scale fractional amounts to base units (e.g. wei) first.",
-        });
-      break;
-    }
-    case "call": {
-      for (const hop of expr.hops.slice(0, -1)) {
-        if (!hop.fnName) continue;
-        // A mid-chain selection may reach through array elements and
-        // struct values, as long as it lands on an address.
-        const hopLens = resolveLens(hop);
-        if (!hopLens?.valid || hopLens.terminal !== "address")
-          issues.push({
-            path,
-            message:
-              "Every :: hop except the last must continue on an address. Pick an address (or address element) to chain on.",
-          });
-      }
-      const last = expr.hops[expr.hops.length - 1];
-      const lens = last ? resolveLens(last) : null;
-      if (lens?.issue) issues.push({ path, message: lens.issue });
-      // A nested (path) selection compiles to a typed read whose terminal
-      // must be a single word — except inside the call-consuming helpers
-      // (@len!, @str.split!, …), which accept string/bytes/array selections,
-      // and nested live arguments, whose dynamic selections splice as
-      // envelope holes (checked against the declared type by the caller).
-      if (
-        lens?.valid &&
-        lens.entries.length > 0 &&
-        !inCallHelper &&
-        !asCallArg &&
-        ["string", "bytes"].includes(categoryFromAbiType(lens.terminal))
-      )
-        issues.push({
-          path,
-          message:
-            "A nested selection must land on a single-word value (number, address, bool or bytes32). Compare the string through @len!, @hash! or @str.split! instead.",
-        });
-      // The module compiles a nested flat selection to a raw-word read,
-      // which it only accepts for numbers. Path selections compile to a
-      // typed read instead and may be any single-word value.
-      if (
-        depth > 0 &&
-        !asCallArg &&
-        last &&
-        last.returnTypes.length > 1 &&
-        last.lensIndex !== undefined &&
-        (last.lensPath ?? []).length === 0
-      ) {
-        const cat = categoryFromAbiType(
-          last.returnTypes[last.lensIndex] ?? "",
-        );
-        if (cat !== "uint" && cat !== "int")
-          issues.push({
-            path,
-            message:
-              "Inside a composed expression, a return-value selection must be a number (uint/int). Compare this call at the top level instead.",
-          });
-      }
-      // Nested live call arguments: mirror the compiler's typing and
-      // placement rules and recurse (issues attach to this node's path —
-      // the closest one the editor renders).
-      for (const hop of expr.hops) {
-        hop.args.forEach((a, i) => {
-          if (!isCallArgNode(a)) return;
-          const msg = nestedArgIssue(
-            a,
-            hop.argTypes[i] ?? "",
-            i === hop.argTypes.length - 1,
-            depth === 0,
-          );
-          if (msg) issues.push({ path, message: msg });
-          walk(a, path, depth + 1, issues, false, true);
-        });
-      }
-      break;
-    }
-    case "balance":
-      walk(expr.account, [...path, "account"], depth + 1, issues);
-      break;
-    case "minmax": {
-      const single =
-        expr.items.length === 1 && inferCategory(expr.items[0]) === "array";
-      if (expr.items.length < 2 && !single)
-        issues.push({
-          path,
-          message: `@${expr.op}! needs at least two operands (or one array).`,
-        });
-      expr.items.forEach((item, i) =>
-        walk(item, [...path, "items", i], depth + 1, issues),
-      );
-      break;
-    }
-    case "absDiff":
-      walk(expr.a, [...path, "a"], depth + 1, issues);
-      walk(expr.b, [...path, "b"], depth + 1, issues);
-      break;
-    case "arith":
-    case "cmp":
-    case "logic":
-    case "bytes": {
-      // The composition table judges the operator over the operand pair —
-      // the same check the compiler runs, surfaced eagerly.
-      const family =
-        expr.kind === "arith"
-          ? "arith"
-          : expr.kind === "cmp"
-            ? "cmp"
-            : expr.kind === "logic"
-              ? "logic"
-              : "bytes";
-      const reason = infixIssue(
-        family,
-        expr.op,
-        inferCategory(expr.left),
-        inferCategory(expr.right),
-      );
-      if (reason) issues.push({ path, message: reason });
-      walk(expr.left, [...path, "left"], depth + 1, issues);
-      walk(expr.right, [...path, "right"], depth + 1, issues);
-      break;
-    }
-    case "not":
-      walk(expr.operand, [...path, "operand"], depth + 1, issues);
-      break;
-    case "callwrap":
-      if (expr.helper === "hash" && depth > 0)
-        issues.push({
-          path,
-          message: "@hash! results can only be compared at the top level.",
-        });
-      if (expr.helper === "hash" || expr.helper === "bytelen") {
-        const cat = inferCategory(expr.call);
-        if (cat !== "string" && cat !== "bytes" && cat !== "unknown")
-          issues.push({
-            path,
-            message: `@${callwrapHelperName(expr.helper)}! needs a string or bytes return value. Use @len! for an array's element count.`,
-          });
-      }
-      if (expr.call.kind !== "call")
-        issues.push({
-          path,
-          message: `@${callwrapHelperName(expr.helper)}! expects a :: call expression.`,
-        });
-      walk(expr.call, [...path, "call"], depth + 1, issues, true);
-      break;
-    case "split":
-      if (depth > 0)
-        issues.push({
-          path,
-          message: "@str.split! results can only be compared at the top level.",
-        });
-      if (!expr.delimiter)
-        issues.push({ path, message: "@str.split! needs a non-empty delimiter." });
-      if (!/^-?\d+$/.test(expr.index.trim()))
-        issues.push({
-          path,
-          message:
-            "@str.split! needs an integer segment index (negative counts from the end, -1 = last).",
-        });
-      if (expr.call.kind !== "call")
-        issues.push({ path, message: "@str.split! expects a :: call expression." });
-      walk(expr.call, [...path, "call"], depth + 1, issues, true);
-      break;
-    case "strtest": {
-      if (!expr.arg)
-        issues.push({
-          path,
-          message:
-            expr.helper === "includes"
-              ? "@str.includes! needs a non-empty substring."
-              : "@str.charset! needs a character class (e.g. a-z0-9-).",
-        });
-      if (expr.call.kind !== "call")
-        issues.push({
-          path,
-          message: `@str.${expr.helper}! expects a :: call expression.`,
-        });
-      else {
-        const cat = inferCategory(expr.call);
-        if (cat !== "string" && cat !== "unknown")
-          issues.push({
-            path,
-            message: `@str.${expr.helper}! expects a call returning a string.`,
-          });
-      }
-      walk(expr.call, [...path, "call"], depth + 1, issues, true);
-      break;
-    }
-    case "codeHash": {
-      const addr = expr.address;
-      if (addr.kind === "literal") {
-        if (addr.value.trim() && literalCategory(addr.value) !== "address")
-          issues.push({
-            path,
-            message: "@codeHash! needs an address (or a call returning one).",
-          });
-      } else if (addr.kind === "call") {
-        const cat = inferCategory(addr);
-        if (cat !== "address" && cat !== "unknown")
-          issues.push({
-            path,
-            message: "@codeHash! account call must return a single address.",
-          });
-      } else {
-        issues.push({
-          path,
-          message: "@codeHash! needs an address (or a call returning one).",
-        });
-      }
-      walk(addr, [...path, "address"], depth + 1, issues);
-      break;
-    }
-    case "clock":
-    case "chainId":
-      break;
-  }
-
-  // A bare tuple/array side needs a transform to become comparable. Calls
-  // guide the user inline, next to their return-value/element pickers.
-  if (depth === 0 && expr.kind !== "call") {
-    const cat = inferCategory(expr);
-    if (cat === "tuple" || cat === "array")
-      issues.push({
-        path,
-        message:
-          "This value is dynamic. Compare its @len!, @bytes.len! or @hash! instead.",
-      });
-  }
-}
-
-export function validateAssertion(assertion: Assertion): Issue[] {
-  const issues: Issue[] = [];
-  walk(assertion.subject, ["subject"], 0, issues);
-  if (assertion.expected)
-    walk(assertion.expected, ["expected"], 0, issues);
-
-  const dynArgs =
-    countDynCallArgs(assertion.subject) +
-    (assertion.expected ? countDynCallArgs(assertion.expected) : 0);
-  if (dynArgs > 1)
-    issues.push({
-      path: [],
-      message:
-        "At most one dynamic-typed (array/string/bytes) live argument per assertion — the judge splices a single runtime-sized value.",
-    });
-
-  const subjConst = isBuildTimeConst(assertion.subject);
-  const expConst = assertion.expected
-    ? isBuildTimeConst(assertion.expected)
-    : false;
-  if (assertion.operator !== null && assertion.expected) {
-    if (subjConst && expConst)
-      issues.push({
-        path: [],
-        message:
-          "Nothing to assert on-chain: both sides are build-time constants.",
-      });
-    if (assertion.operator === "~=") {
-      if (!assertion.delta.trim())
-        issues.push({ path: [], message: "~= needs an allowed delta." });
-      if (subjConst === expConst)
-        issues.push({
-          path: [],
-          message:
-            "~= needs one constant side. For two live values use @absDiff!(a b) <= delta.",
-        });
-    }
-  }
-  return issues;
 }

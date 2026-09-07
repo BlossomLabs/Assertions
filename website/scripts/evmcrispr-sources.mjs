@@ -75,17 +75,22 @@ if (!existsSync(evmcrisprSrc)) {
 const local = evmcrisprSourceAliases(evmcrisprSrc);
 
 // The modules' generated helper registries (name/returnType/argDefs per
-// helper) drive the builder's combinator catalog; they have no package
-// export of their own, so alias them explicitly. The catalog merges the
-// receipts, math and contracts registries with the on-chain faces lang and
-// std contribute (std owns `assert` and @ok! since the assertions module
-// dissolved; the type-composition table it consults lives in
-// @evmcrispr/sdk/onchain, which resolves through the generic alias above).
-for (const mod of ['contracts', 'lang', 'math', 'receipts', 'std']) {
-  local.alias.push({
-    find: exact(`@evmcrispr/module-${mod}/registry`),
-    replacement: path.resolve(evmcrisprSrc, `modules/${mod}/src/_generated.ts`),
-  });
+// helper, with `onchain: true` on every `!` face) drive the builder's
+// combinator catalog and its helper-ownership map; they have no package
+// export of their own, so alias each registered module's `_generated.ts`
+// explicitly. Every module directory that carries one is aliased, so a
+// newly registered module needs no edit here.
+{
+  const modulesDir = path.resolve(evmcrisprSrc, 'modules');
+  const moduleDirs = existsSync(modulesDir) ? readdirSync(modulesDir).sort() : [];
+  for (const mod of moduleDirs) {
+    const registry = path.resolve(modulesDir, mod, 'src/_generated.ts');
+    if (!existsSync(registry)) continue;
+    local.alias.push({
+      find: exact(`@evmcrispr/module-${mod}/registry`),
+      replacement: registry,
+    });
+  }
 }
 
 if (!local.ids.length) {
@@ -105,6 +110,7 @@ console.log(`[evmcrispr] using sources from ${evmcrisprSrc} (${local.ids.length}
 // the package directory for bare ids, so Vite's normal module/exports field
 // resolution still picks the right build, and the exact file for subpaths --
 // which also makes the optimizeDeps.include entries below resolvable.
+/** @type {string[]} */
 const vendoredDepIds = [];
 {
   const importers = /** @type {const} */ ([

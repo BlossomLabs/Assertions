@@ -19,6 +19,7 @@ export type NodeKey =
   | "blocknumber"
   | "chainId"
   | "codeHash"
+  | "codeAt"
   | "min"
   | "max"
   | "absDiff"
@@ -32,10 +33,17 @@ export type NodeKey =
   | "hash"
   | "split"
   | "includes"
-  | "charset";
+  | "charset"
+  | "divFloor"
+  | "divCeil"
+  | "numformat"
+  | "numparse";
 
 export function nodeKey(node: ValueExpr): NodeKey {
   switch (node.kind) {
+    case "arith":
+      if (node.op !== "/") return "arith";
+      return node.rounding === "ceil" ? "divCeil" : "divFloor";
     case "minmax":
       return node.op;
     case "clock":
@@ -57,6 +65,7 @@ const SOURCE_KINDS = new Set<ValueExpr["kind"]>([
   "clock",
   "chainId",
   "codeHash",
+  "codeAt",
 ]);
 
 export const isSourceNode = (node: ValueExpr): boolean =>
@@ -104,6 +113,8 @@ export function convertNode(node: ValueExpr, key: NodeKey): ValueExpr {
       return { kind: "chainId" };
     case "codeHash":
       return { kind: "codeHash", address: seedAddress(node) };
+    case "codeAt":
+      return { kind: "codeAt", address: seedAddress(node) };
     case "min":
     case "max":
       return node.kind === "minmax"
@@ -117,6 +128,29 @@ export function convertNode(node: ValueExpr, key: NodeKey): ValueExpr {
         op: "+",
         left: seedValue(node),
         right: emptyLiteral(),
+      };
+    case "divFloor":
+    case "divCeil": {
+      const rounding = key === "divCeil" ? "ceil" : "floor";
+      return node.kind === "arith" && node.op === "/"
+        ? { ...node, rounding }
+        : {
+            kind: "arith",
+            op: "/",
+            rounding,
+            left: seedValue(node),
+            right: emptyLiteral(),
+          };
+    }
+    case "numformat":
+      return { kind: "numformat", value: seedValue(node), decimals: "18" };
+    case "numparse":
+      return {
+        kind: "numparse",
+        value: seedValue(node),
+        decimals: "18",
+        rounding: "trunc",
+        signedness: "signed",
       };
     case "cmp":
       return {
@@ -168,12 +202,13 @@ const SOURCE_ICONS: Partial<Record<NodeKey, IconName>> = {
   blocknumber: "block",
   chainId: "chainId",
   codeHash: "code",
+  codeAt: "code",
 };
 
 /**
  * The value-source select, shown on source nodes (literal, call, balance,
- * clock, chain id, code hash): what this value *is*. Operations are not
- * listed here — they wrap a value via the WrapMenu instead.
+ * clock, chain id, code hash, deployed code): what this value *is*.
+ * Combinators are not listed here: they wrap a value via the WrapMenu.
  */
 export function SourcePicker({
   node,
@@ -206,7 +241,7 @@ export function SourcePicker({
 /**
  * The contextual (+) menu: operators that can wrap the current node,
  * filtered to what makes sense for its category. Picking one converts the
- * node in place, seeding it as the combinator's first operand — the
+ * node in place, seeding it as the combinator's first operand: the
  * progressive-disclosure path from a simple value to a composed expression.
  */
 export function WrapMenu({

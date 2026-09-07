@@ -5,7 +5,8 @@ import { Suspense, useRef, useState } from "react";
 import { AbiForm } from "./AbiForm";
 import { BatchList } from "./BatchList";
 import { isTxBuilderBatch, txBuilderToEvml } from "./safe-tx-builder";
-import { isHelperLoad, type useScriptState } from "./useScriptState";
+import { isAssertSpan } from "./script-ops";
+import type { useScriptState } from "./useScriptState";
 
 type Mode = "form" | "editor" | "txbuilder";
 
@@ -17,7 +18,7 @@ export function Composer({
 }: {
   scriptState: ReturnType<typeof useScriptState>;
   chainId: number;
-  /** The batch executes through a Safe — offers the Transaction Builder
+  /** The batch executes through a Safe: offers the Transaction Builder
    *  JSON import tab. */
   safeContext?: boolean;
   onDroppedChainId?: (chainId: number) => void;
@@ -92,18 +93,17 @@ export function Composer({
       {mode === "form" && (
         <div className="space-y-5">
           <AbiForm chainId={chainId} onAdd={scriptState.appendWithSets} />
-          {script && (
+          {script.trim() !== "" && (
             <div>
               <p className="text-xs text-[var(--color-ink-3)] mb-1.5">
                 Batch so far
               </p>
               <BatchList
                 script={script}
-                onRemoveLine={scriptState.removeLine}
-                // Assertions are added and removed in step 4; here they
+                onRemove={scriptState.removeCommand}
+                // Assertions are added and removed in step 2; here they
                 // render dimmed, without a delete button.
-                canRemove={(line) => !/^assert\b/.test(line)}
-                hideLine={isHelperLoad}
+                canRemove={(span) => !isAssertSpan(span)}
               />
             </div>
           )}

@@ -3,7 +3,6 @@ import { type ReactNode, useState } from "react";
 
 import {
   type Category,
-  type Issue,
   type Path,
   type ValueExpr,
   callwrapHelperName,
@@ -18,8 +17,8 @@ import { LiteralEditor } from "./LiteralEditor";
 import { SourcePicker, WrapMenu, isSourceNode } from "./NodePicker";
 
 /** The operators the composition table allows for this node's operand
- *  categories. An op invalidated by an edit stays listed (the eager
- *  validation issue explains why) instead of blanking the select. */
+ *  categories. An op invalidated by an edit stays listed (the compiler's
+ *  diagnostic explains why) instead of blanking the select. */
 function infixOptions(
   family: OpFamily,
   node: Extract<ValueExpr, { left: ValueExpr; right: ValueExpr; op: string }>,
@@ -41,6 +40,8 @@ function kindLabel(node: ValueExpr): string {
     case "absDiff":
       return "@absDiff!";
     case "arith":
+      if (node.op === "/")
+        return node.rounding === "ceil" ? "@calcCeil!" : "@calcFloor!";
       return "arithmetic";
     case "cmp":
       return "comparison";
@@ -56,6 +57,10 @@ function kindLabel(node: ValueExpr): string {
       return "@str.split!";
     case "strtest":
       return `@str.${node.helper}!`;
+    case "numformat":
+      return "@num.format!";
+    case "numparse":
+      return "@num.parse!";
     default:
       return "";
   }
@@ -121,7 +126,9 @@ function summarize(node: ValueExpr): string {
     case "absDiff":
       return "|a − b|";
     case "arith":
-      return `arithmetic (${node.op})`;
+      return node.op === "/"
+        ? `division, rounding ${node.rounding === "ceil" ? "up" : "down"}`
+        : `arithmetic (${node.op})`;
     case "cmp":
       return `comparison (${node.op})`;
     case "logic":
@@ -136,29 +143,37 @@ function summarize(node: ValueExpr): string {
       return `@str.split!(… ${node.index})`;
     case "strtest":
       return `@str.${node.helper}!(… ${node.arg ? JSON.stringify(node.arg) : "…"})`;
+    case "numformat":
+      return `@num.format!(… ${node.decimals})`;
+    case "numparse":
+      return `@num.parse!(… ${node.decimals})`;
     case "clock":
       return `@${node.which}!`;
     case "chainId":
       return "@chainId!";
     case "codeHash":
       return "@codeHash!(…)";
+    case "codeAt":
+      return "@codeAt!(…)";
   }
 }
 
-/** A call slot inside a transform (@len!, @str.split!, …) — rendered as a
- *  bare CallEditor since only :: calls are legal there. */
+/** A call slot inside a transform (@len!, @str.split!, …): a bare
+ *  CallEditor for a `::` call, the deployed-code source one level down
+ *  for @bytes.len!/@hash! over @codeAt!, and a deep (collapsed) editor for
+ *  anything else the user converted the slot into. */
 function CallSlot({
   node,
   path,
   update,
   chainId,
-  issues,
+  depth,
 }: {
   node: ValueExpr;
   path: Path;
   update: TreeUpdate;
   chainId: number;
-  issues?: Issue[];
+  depth: number;
 }) {
   if (node.kind !== "call")
     return (
@@ -166,9 +181,8 @@ function CallSlot({
         node={node}
         path={path}
         update={update}
-        depth={99}
+        depth={node.kind === "codeAt" ? depth + 1 : 99}
         chainId={chainId}
-        issues={issues}
       />
     );
   return (
@@ -184,7 +198,9 @@ function CallSlot({
 /**
  * The recursive expression editor. Each node renders a small header (kind
  * picker + unwrap/remove) and a kind-specific body; children indent one
- * step with a left border.
+ * step with a left border. Whether the tree compiles is the compiler's
+ * verdict, shown by the form under the generated line; the category badge
+ * is the eager hint.
  */
 export function ValueEditor({
   node,
@@ -194,7 +210,6 @@ export function ValueEditor({
   chainId,
   counterpart,
   timestampHint = false,
-  issues,
   onRemove,
 }: {
   node: ValueExpr;
@@ -206,18 +221,12 @@ export function ValueEditor({
   counterpart?: Category;
   /** Offer the date picker on a top-level literal (timestamp subjects). */
   timestampHint?: boolean;
-  /** Eager validation issues for the whole tree; each node renders its own. */
-  issues?: Issue[];
   onRemove?: () => void;
 }) {
   const replace = (next: ValueExpr) => update(path, () => next);
   const unwrapped = unwrapNode(node);
   const badge = categoryBadge(inferCategory(node));
   const [collapsed, setCollapsed] = useState(depth >= 3);
-  const pathKey = JSON.stringify(path);
-  const ownIssues = (issues ?? []).filter(
-    (i) => JSON.stringify(i.path) === pathKey,
-  );
 
   const child = (
     key: string | number,
@@ -230,7 +239,6 @@ export function ValueEditor({
       update={update}
       depth={depth + 1}
       chainId={chainId}
-      issues={issues}
       onRemove={extra?.onRemove}
     />
   );
@@ -279,8 +287,8 @@ export function ValueEditor({
             </div>
           </div>
           <p className="text-xs text-[var(--color-ink-3)]">
-            Read at assertion time: ETH (native) balance, or an ERC-20
-            balanceOf for a token symbol or address.
+            Read at assertion time: the native balance for the chain's own
+            symbol, or an ERC-20 balanceOf for a token symbol or address.
           </p>
         </div>
       );
@@ -332,14 +340,31 @@ export function ValueEditor({
     case "logic":
     case "bytes": {
       const family: OpFamily = node.kind === "arith" ? "arith" : node.kind;
+      const rounded = node.kind === "arith" && node.op === "/";
       body = (
         <div className="space-y-2">
           {child("left", node.left)}
-          <OpSelect
-            value={node.op}
-            options={infixOptions(family, node)}
-            onChange={(op) => update([...path, "op"], () => op)}
-          />
+          <div className="flex items-center gap-2 flex-wrap">
+            <OpSelect
+              value={node.op}
+              options={infixOptions(family, node)}
+              onChange={(op) => update([...path, "op"], () => op)}
+            />
+            {rounded && (
+              <>
+                <OpSelect
+                  value={node.rounding ?? "floor"}
+                  options={["floor", "ceil"] as const}
+                  onChange={(rounding) =>
+                    update([...path, "rounding"], () => rounding)
+                  }
+                />
+                <span className="text-xs text-[var(--color-ink-3)]">
+                  rounded division; `//` truncates
+                </span>
+              </>
+            )}
+          </div>
           {child("right", node.right)}
         </div>
       );
@@ -362,7 +387,7 @@ export function ValueEditor({
           path={[...path, "call"]}
           update={update}
           chainId={chainId}
-          issues={issues}
+          depth={depth}
         />
       );
       break;
@@ -374,7 +399,7 @@ export function ValueEditor({
             path={[...path, "call"]}
             update={update}
             chainId={chainId}
-            issues={issues}
+            depth={depth}
           />
           <div className="flex gap-2">
             <div className="w-28">
@@ -411,7 +436,7 @@ export function ValueEditor({
             path={[...path, "call"]}
             update={update}
             chainId={chainId}
-            issues={issues}
+            depth={depth}
           />
           <div className="w-40">
             <label className={smallLabelCls}>
@@ -429,6 +454,72 @@ export function ValueEditor({
             {node.helper === "includes"
               ? "True when the call's string return contains the substring."
               : "True when every character of the string return is in the class."}
+          </p>
+        </div>
+      );
+      break;
+    case "numformat":
+      body = (
+        <div className="space-y-2">
+          {child("value", node.value)}
+          <div className="w-28">
+            <label className={smallLabelCls}>decimals</label>
+            <input
+              className={inputCls}
+              value={node.decimals}
+              onChange={(e) =>
+                update([...path, "decimals"], () => e.target.value)
+              }
+              spellCheck={false}
+            />
+          </div>
+          <p className="text-xs text-[var(--color-ink-3)]">
+            The integer in base units as a decimal string (0 to 77 decimals),
+            trailing fractional zeros trimmed.
+          </p>
+        </div>
+      );
+      break;
+    case "numparse":
+      body = (
+        <div className="space-y-2">
+          {child("value", node.value)}
+          <div className="flex gap-2 flex-wrap">
+            <div className="w-28">
+              <label className={smallLabelCls}>decimals</label>
+              <input
+                className={inputCls}
+                value={node.decimals}
+                onChange={(e) =>
+                  update([...path, "decimals"], () => e.target.value)
+                }
+                spellCheck={false}
+              />
+            </div>
+            <div>
+              <label className={smallLabelCls}>rounding</label>
+              <OpSelect
+                value={node.rounding}
+                options={["trunc", "floor", "ceil"] as const}
+                onChange={(rounding) =>
+                  update([...path, "rounding"], () => rounding)
+                }
+              />
+            </div>
+            <div>
+              <label className={smallLabelCls}>signedness</label>
+              <OpSelect
+                value={node.signedness}
+                options={["signed", "unsigned"] as const}
+                onChange={(signedness) =>
+                  update([...path, "signedness"], () => signedness)
+                }
+              />
+            </div>
+          </div>
+          <p className="text-xs text-[var(--color-ink-3)]">
+            The decimal string as an integer in base units (0 to 77
+            decimals).
           </p>
         </div>
       );
@@ -462,6 +553,20 @@ export function ValueEditor({
         </div>
       );
       break;
+    case "codeAt":
+      body = (
+        <div className="space-y-2">
+          <div>
+            <label className={smallLabelCls}>account</label>
+            {child("address", node.address)}
+          </div>
+          <p className="text-xs text-[var(--color-ink-3)]">
+            The deployed code at assertion time, as bytes: empty when the
+            address holds no code. Compare its byte length or hash.
+          </p>
+        </div>
+      );
+      break;
   }
 
   return (
@@ -483,7 +588,7 @@ export function ValueEditor({
         {badge && (
           <span
             className="text-[10px] font-mono px-1 py-0.5 rounded border border-[var(--color-ink-3)]/25 text-[var(--color-ink-3)]"
-            title="Inferred value category — decides which operators and combinators the menus offer"
+            title="Inferred value category: decides which operators and combinators the menus offer"
           >
             {badge}
           </span>
@@ -520,13 +625,6 @@ export function ValueEditor({
           </button>
         )}
       </div>
-      {ownIssues.length > 0 && (
-        <div className="text-xs text-[var(--color-err)] space-y-0.5">
-          {ownIssues.map((issue, i) => (
-            <p key={i}>{issue.message}</p>
-          ))}
-        </div>
-      )}
       {collapsed ? (
         <p className="text-xs font-mono text-[var(--color-ink-3)] truncate">
           {summarize(node)}

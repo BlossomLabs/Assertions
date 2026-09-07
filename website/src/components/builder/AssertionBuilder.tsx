@@ -1,26 +1,23 @@
 import "../../styles/evmcrispr-editor.css";
 
-import { EvmcrisprProvider } from "@evmcrispr/editor";
+import { EvmcrisprProvider, useEvmlTag } from "@evmcrispr/editor";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import type { Address } from "viem";
 import { useAccount, WagmiProvider } from "wagmi";
 
-import { AssertionForm } from "./AssertionForm";
-import { Composer } from "./Composer";
+import { AssertionsStage } from "./AssertionsStage";
 import { ChatPanel } from "./ChatPanel";
+import { ComposeStage } from "./ComposeStage";
 import { contextReady, executorAddress, type ExecutionContext } from "./context";
-import { ContextSelector } from "./ContextSelector";
-import { evml } from "./evml";
-import { ExecuteStep } from "./ExecuteStep";
-import { SimulationResults, useSimulation } from "./SimulateBar";
+import { createLiveTag, evml } from "./evml";
+import { isFresh } from "./simulation";
+import { simKeyFor, useSimulation } from "./SimulationPanel";
+import { SubmitStage } from "./SubmitStage";
 import { useBuilderChatAgent } from "./useBuilderChatAgent";
-import { useChainSupport } from "./useChainSupport";
-import { useContextAddress } from "./useContextAddressCheck";
-import {
-  hasAssertions,
-  stripAssertions,
-  useScriptState,
-} from "./useScriptState";
+import { type ChainSupport, useChainSupport } from "./useChainSupport";
+import { type AddressCheck, useContextAddress } from "./useContextAddressCheck";
+import { useScriptState } from "./useScriptState";
 import { transports, wagmiConfig } from "./wagmi";
 
 const queryClient = new QueryClient();
@@ -54,170 +51,105 @@ function Section({
   );
 }
 
-function Builder() {
-  const { address, chain } = useAccount();
+interface BuilderState {
+  chainId: number;
+  onChainChange: (chainId: number) => void;
+  context: ExecutionContext;
+  onContextChange: (next: ExecutionContext) => void;
+  contextAddress: Address | null;
+  contextCheck: AddressCheck;
+  chainSupport: ChainSupport;
+  executor: Address | undefined;
+  ready: boolean;
+  scriptState: ReturnType<typeof useScriptState>;
+}
 
-  // The network the batch targets. Follows the connected wallet until the
-  // user picks one explicitly — the script's addresses, ABIs, simulations
-  // and ENS records are all per-chain, so the choice is made visible in
-  // step 1 instead of silently tracking the wallet.
-  const [selectedChainId, setSelectedChainId] = useState<number | null>(null);
-  const chainId = selectedChainId ?? chain?.id ?? 1;
+/** The three stages, under the configured tag (chain, executor,
+ *  transports): every simulation, compilation and execution goes through
+ *  `useEvmlTag()`, so @me/@sender and the RPC endpoints apply uniformly. */
+function BuilderBody({
+  chainId,
+  onChainChange,
+  context,
+  onContextChange,
+  contextAddress,
+  contextCheck,
+  chainSupport,
+  executor,
+  ready,
+  scriptState,
+}: BuilderState) {
+  const tag = useEvmlTag();
+  // The chat tool set is built once; it reaches the current tag through a
+  // live proxy so chain and executor changes apply without rebuilding it.
+  const tagRef = useRef(tag);
+  tagRef.current = tag;
+  const liveTag = useMemo(() => createLiveTag(() => tagRef.current), []);
+  const agent = useBuilderChatAgent({ scriptState, tag: liveTag });
 
-  const [context, setContext] = useState<ExecutionContext>({ kind: "eoa" });
-  const scriptState = useScriptState();
-  // Two simulations: the raw batch actions (assertions stripped) in step 3,
-  // the protected script in step 5 — so a failure is attributable to either
-  // the actions or the assertions guarding them.
-  const batchSimulation = useSimulation(chainId);
-  const fullSimulation = useSimulation(chainId);
+  // Two simulations, one per batch listing: the actions on their own in
+  // step 1 (a failure there is the batch's), the protected script in step
+  // 2 (what Submit requires).
+  const actionsSim = useSimulation();
+  const protectedSim = useSimulation();
   const [suggestPrompt, setSuggestPrompt] = useState<{
     text: string;
     nonce: number;
   } | null>(null);
 
-  const { resolved: contextAddress, check: contextCheck } = useContextAddress(
-    chainId,
-    context.kind,
-    context.address,
-  );
-  // Custom chains only work once the canonical contracts have code there.
-  const chainSupport = useChainSupport(chainId);
-  const chainReady =
-    chainSupport.state === "official" || chainSupport.state === "ok";
-  const executor = executorAddress(context, address, contextAddress);
-  const ready =
-    contextReady(context, address, contextAddress) && chainReady;
-  const hasScript = scriptState.script.trim().length > 0;
-  const protectedScript = hasAssertions(scriptState.script);
-  const batchScript = protectedScript
-    ? stripAssertions(scriptState.script)
-    : scriptState.script;
-  const batchSimulated = batchSimulation.status === "success";
+  const script = scriptState.script;
+  const hasScript = script.trim().length > 0;
+  // Suggest needs a fresh, passing run of the current script in either
+  // mode; Submit wants the protected one.
+  const passed = (sim: ReturnType<typeof useSimulation>, mode: "actions-only" | "protected") =>
+    sim.state.status === "success" &&
+    isFresh(sim.state, simKeyFor(mode, script, executor, chainId));
+  const verified = passed(protectedSim, "protected");
+  const freshPass = verified || passed(actionsSim, "actions-only");
 
-  const agent = useBuilderChatAgent({ scriptState, executor, chainId });
+  const suggest = {
+    ready: freshPass,
+    running: agent.isRunning,
+    loggedIn: agent.hasKey,
+    onSuggest: () => setSuggestPrompt({ text: SUGGEST_PROMPT, nonce: Date.now() }),
+  };
 
   return (
     <div className="grid lg:grid-cols-[1fr_minmax(20rem,24rem)] gap-6 items-start">
       <div className="space-y-6 min-w-0">
-        <Section step={1} title="Who executes it, and where?">
-          <ContextSelector
+        <Section step={1} title="Compose">
+          <ComposeStage
             context={context}
-            onChange={setContext}
-            resolved={contextAddress}
-            check={contextCheck}
+            onContextChange={onContextChange}
+            contextAddress={contextAddress}
+            contextCheck={contextCheck}
             chainId={chainId}
-            onChainChange={setSelectedChainId}
+            onChainChange={onChainChange}
             chainSupport={chainSupport}
+            ready={ready}
+            executor={executor}
+            scriptState={scriptState}
+            simulation={actionsSim}
           />
         </Section>
 
-        <Section step={2} title="Compose the batch" dimmed={!ready}>
-          <Composer
-            scriptState={scriptState}
-            chainId={chainId}
-            safeContext={context.kind === "safe"}
-          />
-        </Section>
-
-        <Section step={3} title="Simulate the batch" dimmed={!ready || !hasScript}>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 flex-wrap">
-              <button
-                type="button"
-                disabled={batchSimulation.status === "running" || !hasScript}
-                onClick={() =>
-                  void batchSimulation.simulate(batchScript, executor)
-                }
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 transition-colors"
-              >
-                {batchSimulation.status === "running"
-                  ? "Simulating…"
-                  : "Simulate batch"}
-              </button>
-              {executor && (
-                <span className="text-xs font-mono text-[var(--color-ink-3)]">
-                  as {executor.slice(0, 6)}…{executor.slice(-4)}
-                </span>
-              )}
-              {protectedScript && (
-                <span className="text-xs text-[var(--color-ink-3)]">
-                  assertions are ignored here; step 5 covers them
-                </span>
-              )}
-            </div>
-            <SimulationResults
-              state={batchSimulation}
-              stale={
-                batchSimulation.simulatedScript !== null &&
-                batchSimulation.simulatedScript !== batchScript
-              }
-            />
-          </div>
-        </Section>
-
-        <Section step={4} title="Add assertions" dimmed={!ready || !hasScript}>
-          <AssertionForm
-            scriptState={scriptState}
+        <Section step={2} title="Assertions" dimmed={!ready || !hasScript}>
+          <AssertionsStage
             chainId={chainId}
             executor={executor}
-            suggest={{
-              ready: batchSimulated,
-              running: agent.isRunning,
-              loggedIn: agent.hasKey,
-              onSuggest: () =>
-                setSuggestPrompt({ text: SUGGEST_PROMPT, nonce: Date.now() }),
-            }}
+            scriptState={scriptState}
+            suggest={suggest}
+            simulation={protectedSim}
           />
         </Section>
 
-        <Section
-          step={5}
-          title="Simulate with assertions"
-          dimmed={!ready || !hasScript || !protectedScript}
-        >
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 flex-wrap">
-              <button
-                type="button"
-                disabled={
-                  fullSimulation.status === "running" || !protectedScript
-                }
-                onClick={() =>
-                  void fullSimulation.simulate(scriptState.script, executor)
-                }
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 transition-colors"
-              >
-                {fullSimulation.status === "running"
-                  ? "Simulating…"
-                  : "Simulate with assertions"}
-              </button>
-              {executor && (
-                <span className="text-xs font-mono text-[var(--color-ink-3)]">
-                  as {executor.slice(0, 6)}…{executor.slice(-4)}
-                </span>
-              )}
-            </div>
-            <SimulationResults
-              state={fullSimulation}
-              stale={
-                fullSimulation.simulatedScript !== null &&
-                fullSimulation.simulatedScript !== scriptState.script
-              }
-            />
-          </div>
-        </Section>
-
-        <Section
-          step={6}
-          title="Review & execute"
-          dimmed={!ready || !hasScript}
-        >
-          <ExecuteStep
-            block={scriptState.script}
+        <Section step={3} title="Submit" dimmed={!ready || !hasScript}>
+          <SubmitStage
+            block={script}
             context={context}
             contextAddress={contextAddress}
             chainId={chainId}
+            verified={verified}
           />
         </Section>
       </div>
@@ -235,14 +167,62 @@ function Builder() {
   );
 }
 
+/** Chain, context, script and executor state; the EvmcrisprProvider below
+ *  it configures the tag every stage uses. */
+function Builder() {
+  const { address, chain } = useAccount();
+
+  // The network the batch targets. Follows the connected wallet until the
+  // user picks one explicitly: the script's addresses, ABIs, simulations
+  // and ENS records are all per-chain, so the choice is made visible in
+  // Compose instead of silently tracking the wallet.
+  const [selectedChainId, setSelectedChainId] = useState<number | null>(null);
+  const chainId = selectedChainId ?? chain?.id ?? 1;
+
+  const [context, setContext] = useState<ExecutionContext>({ kind: "eoa" });
+  const scriptState = useScriptState();
+
+  const { resolved: contextAddress, check: contextCheck } = useContextAddress(
+    chainId,
+    context.kind,
+    context.address,
+  );
+  // Custom chains only work once the canonical contracts have code there.
+  const chainSupport = useChainSupport(chainId);
+  const chainReady =
+    chainSupport.state === "official" || chainSupport.state === "ok";
+  const executor = executorAddress(context, address, contextAddress);
+  const ready = contextReady(context, address, contextAddress) && chainReady;
+
+  return (
+    <EvmcrisprProvider
+      evml={evml}
+      transports={transports}
+      chainId={chainId}
+      account={executor}
+    >
+      <BuilderBody
+        chainId={chainId}
+        onChainChange={setSelectedChainId}
+        context={context}
+        onContextChange={setContext}
+        contextAddress={contextAddress}
+        contextCheck={contextCheck}
+        chainSupport={chainSupport}
+        executor={executor}
+        ready={ready}
+        scriptState={scriptState}
+      />
+    </EvmcrisprProvider>
+  );
+}
+
 export default function AssertionBuilder() {
   // Providers live inside the island (Astro pages have no React root above).
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <EvmcrisprProvider evml={evml} transports={transports}>
-          <Builder />
-        </EvmcrisprProvider>
+        <Builder />
       </QueryClientProvider>
     </WagmiProvider>
   );

@@ -1,9 +1,11 @@
-import { createEvml, type ModuleLoader } from "@evmcrispr/core";
+import { createEvml, type EvmlTag, type ModuleLoader } from "@evmcrispr/core";
 
 /**
  * The builder's EVML tag: an isolated registry (not the global singleton)
  * with exactly the modules the Assertion Builder uses. `std` is always
- * available; the rest lazy-load on first `load <module>`.
+ * available; the rest lazy-load on first `load <module>`. The chain,
+ * executor and transports are applied by the EvmcrisprProvider around the
+ * builder; components read the configured tag with `useEvmlTag()`.
  */
 
 /** Modules resolved from the vendored checkout only (no npm release): the
@@ -70,3 +72,22 @@ export const evml = createEvml().use(
     description: "Aragon OSx DAO proposals",
   },
 );
+
+/**
+ * A tag that forwards every call to whatever `current()` returns at call
+ * time. The chat agent's tool set is built once and must stay stable, yet
+ * the configured tag changes with the chain and the executor; the tools
+ * hold this proxy and always see the latest one.
+ */
+export function createLiveTag(current: () => EvmlTag): EvmlTag {
+  const call = (...args: unknown[]) =>
+    (current() as unknown as (...a: unknown[]) => unknown)(...args);
+  return new Proxy(call as unknown as EvmlTag, {
+    apply: (_target, _thisArg, args) => call(...args),
+    get: (_target, prop) => {
+      const tag = current();
+      const value = (tag as unknown as Record<PropertyKey, unknown>)[prop];
+      return typeof value === "function" ? value.bind(tag) : value;
+    },
+  });
+}

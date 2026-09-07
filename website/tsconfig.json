@@ -4,18 +4,36 @@
     ".astro/types.d.ts",
     "**/*"
   ],
-  "exclude": [
-    "dist"
-  ],
+  "exclude": ["dist", ".evmcrispr", "node_modules", "public"],
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    // @evmcrispr/ai is not published to npm; it resolves to the vendored
-    // EVMcrispr checkout (see scripts/vendor-evmcrispr.mjs).
+    // Every @evmcrispr/* import resolves to the vendored EVMcrispr checkout
+    // (see scripts/vendor-evmcrispr.mjs), matching the Vite aliases the
+    // site bundles with: the npm releases lag the pinned commit and lack
+    // the sdk/onchain subpath, and the checkout is excluded above so its
+    // own tests and tooling never enter this program.
     "paths": {
       "@evmcrispr/ai": ["./.evmcrispr/packages/ai/src/index.ts"],
-      "@evmcrispr/module-assertions/registry": [
-        "./.evmcrispr/modules/assertions/src/_generated.ts"
+      "@evmcrispr/core": ["./.evmcrispr/packages/core/src/index.ts"],
+      "@evmcrispr/editor": ["./.evmcrispr/packages/editor/src/index.ts"],
+      "@evmcrispr/sdk": ["./.evmcrispr/packages/sdk/src/index.ts"],
+      "@evmcrispr/sdk/onchain": [
+        "./.evmcrispr/packages/sdk/src/onchain/index.ts"
+      ],
+      // The modules' generated helper registries (no package export of
+      // their own): one entry per module the builder registers.
+      "@evmcrispr/module-acl/registry": [
+        "./.evmcrispr/modules/acl/src/_generated.ts"
+      ],
+      "@evmcrispr/module-aragonosx/registry": [
+        "./.evmcrispr/modules/aragonosx/src/_generated.ts"
+      ],
+      "@evmcrispr/module-contracts/registry": [
+        "./.evmcrispr/modules/contracts/src/_generated.ts"
+      ],
+      "@evmcrispr/module-governor/registry": [
+        "./.evmcrispr/modules/governor/src/_generated.ts"
       ],
       "@evmcrispr/module-lang/registry": [
         "./.evmcrispr/modules/lang/src/_generated.ts"
@@ -26,22 +44,23 @@
       "@evmcrispr/module-receipts/registry": [
         "./.evmcrispr/modules/receipts/src/_generated.ts"
       ],
+      "@evmcrispr/module-safe/registry": [
+        "./.evmcrispr/modules/safe/src/_generated.ts"
+      ],
+      "@evmcrispr/module-sim/registry": [
+        "./.evmcrispr/modules/sim/src/_generated.ts"
+      ],
       "@evmcrispr/module-std/registry": [
         "./.evmcrispr/modules/std/src/_generated.ts"
       ],
-      // Modules the builder registers but does not depend on via npm; they
-      // resolve to the vendored checkout (matching the Vite aliases).
-      "@evmcrispr/module-lang": ["./.evmcrispr/modules/lang/src/index.ts"],
-      "@evmcrispr/module-math": ["./.evmcrispr/modules/math/src/index.ts"],
-      "@evmcrispr/module-receipts": [
-        "./.evmcrispr/modules/receipts/src/index.ts"
+      "@evmcrispr/module-token/registry": [
+        "./.evmcrispr/modules/token/src/_generated.ts"
       ],
-      "@evmcrispr/module-token": ["./.evmcrispr/modules/token/src/index.ts"],
-      "@evmcrispr/module-vault": ["./.evmcrispr/modules/vault/src/index.ts"],
-      "@evmcrispr/module-acl": ["./.evmcrispr/modules/acl/src/index.ts"],
-      "@evmcrispr/module-assertions/composition": [
-        "./.evmcrispr/modules/assertions/src/lib/composition.ts"
-      ]
+      "@evmcrispr/module-vault/registry": [
+        "./.evmcrispr/modules/vault/src/_generated.ts"
+      ],
+      // The modules themselves (evml.ts registers them by lazy import).
+      "@evmcrispr/module-*": ["./.evmcrispr/modules/*/src/index.ts"]
     }
   }
 }

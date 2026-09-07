@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { PublicClient } from "viem";
 import { usePublicClient } from "wagmi";
 
-import { DEPLOYED_CONTRACTS, makePublicClient } from "../deployments/shared";
+import { RELEASED_CONTRACTS, makePublicClient } from "../deployments/shared";
 import { chainById } from "../deployments/wagmi";
 import { CHAINS } from "./wagmi";
 
@@ -24,7 +24,7 @@ export function useChainClient(chainId: number): PublicClient | undefined {
 }
 
 export type ChainSupport =
-  /** One of the officially supported chains — no check needed. */
+  /** One of the officially supported chains: no check needed. */
   | { state: "official" }
   | { state: "unknown-chain" }
   | { state: "checking"; chainName: string }
@@ -35,9 +35,10 @@ export type ChainSupport =
 
 /**
  * Whether the builder can work on `chainId`: official chains always can;
- * any other chain can when the canonical Assertions core, Operations and Collections
- * deployments have code there (they live at the same CREATE2 address on
- * every chain — the deployments page can put them on a missing one).
+ * any other chain can when every released contract (the ones the SDK
+ * compiles against; unreleased artifact candidates are not probed) has code
+ * there. They live at the same CREATE2 address on every chain, and the
+ * deployments page can put them on a missing one.
  */
 export function useChainSupport(chainId: number): ChainSupport {
   const [support, setSupport] = useState<ChainSupport>({ state: "official" });
@@ -59,10 +60,10 @@ export function useChainSupport(chainId: number): ChainSupport {
       try {
         const client = makePublicClient(chain);
         const codes = await Promise.all(
-          DEPLOYED_CONTRACTS.map((c) => client.getCode({ address: c.address })),
+          RELEASED_CONTRACTS.map((c) => client.getCode({ address: c.address })),
         );
         if (cancelled) return;
-        const missing = DEPLOYED_CONTRACTS.filter(
+        const missing = RELEASED_CONTRACTS.filter(
           (_, i) => !codes[i] || codes[i] === "0x",
         ).map((c) => c.name);
         setSupport(

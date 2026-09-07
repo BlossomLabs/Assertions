@@ -7,14 +7,16 @@
   },
   "evmcrispr": {
     "repo": "https://github.com/EVMcrispr/evmcrispr.git",
-    "commit": "6513da6c4407f912d41a6490995afb6ff204b498"
+    "commit": "a3da6cbc9b290daac80ff3d943d2ef058f066813"
   },
   "scripts": {
     "prepare:evmcrispr": "node scripts/vendor-evmcrispr.mjs && node scripts/copy-monaco.mjs",
     "dev": "pnpm prepare:evmcrispr && astro dev",
     "build": "pnpm prepare:evmcrispr && astro build",
     "check:integration": "pnpm prepare:evmcrispr && node scripts/check-integration.mjs",
+    "test": "vitest run",
     "test:vendor": "node --test scripts/vendor-evmcrispr.test.mjs",
+    "check": "astro check",
     "preview": "astro preview",
     "deploy:ipfs": "pnpm build && node scripts/deploy-ipfs.js",
     "sync:artifact": "node scripts/export-deploy-artifact.mjs",
@@ -26,7 +28,6 @@
     "@evmcrispr/core": "^0.11.0",
     "@evmcrispr/editor": "^0.11.0",
     "@evmcrispr/module-aragonosx": "^0.11.0",
-    "@evmcrispr/module-assertions": "^0.11.0",
     "@evmcrispr/module-governor": "^0.11.0",
     "@evmcrispr/module-safe": "^0.11.0",
     "@evmcrispr/module-sim": "^0.11.0",
@@ -45,8 +46,11 @@
     "wagmi": "^3.6.21"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
     "dotenv": "^17.4.1",
     "monaco-editor": "0.56.0",
-    "pinata": "^2.5.5"
+    "pinata": "^2.5.5",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.0"
   }
 }

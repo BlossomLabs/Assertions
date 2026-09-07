@@ -1,9 +1,6 @@
+import { useEvmlTag } from "@evmcrispr/editor";
 import { useEffect, useMemo, useState } from "react";
-import type { Address } from "viem";
 
-import { isEvaluable, readSubjectValue } from "./assertion-eval";
-import { Callout } from "./Callout";
-import { useChainClient } from "./useChainSupport";
 import {
   type Assertion,
   type Path,
@@ -13,27 +10,32 @@ import {
   isBuildTimeConst,
   opsFor,
   updateAt,
-  validateAssertion,
 } from "./assertion-model";
+import { previewSubjectValue } from "./compile-adapter";
 import { ValueEditor } from "./expr/ValueEditor";
+import { useChainClient } from "./useChainSupport";
 import { inputCls } from "./useContractFunctions";
 import { btnSmallCls, labelCls } from "./ui";
 
 /**
- * The expression-kind assertion body: a subject expression, an operator and
- * an expected expression — both sides recursive combinator trees.
+ * The assertion body: a subject expression, an operator and an expected
+ * expression, both sides recursive combinator trees. "Use current value"
+ * reads the subject the way the assertion will (compiled, then resolved
+ * through the core) and freezes the answer into the expected literal.
  */
 export function ExpressionAssertionEditor({
   assertion,
   setAssertion,
   chainId,
-  executor,
+  script,
 }: {
   assertion: Assertion;
   setAssertion: (updater: (a: Assertion) => Assertion) => void;
   chainId: number;
-  executor: Address | undefined;
+  /** The batch the assertion joins (its set/def lines are in scope). */
+  script: string;
 }) {
+  const tag = useEvmlTag();
   const chainClient = useChainClient(chainId);
   const [fetchStatus, setFetchStatus] = useState<string | null>(null);
 
@@ -80,7 +82,7 @@ export function ExpressionAssertionEditor({
         : { ...a, operator: op, expected: a.expected ?? emptyLiteral() },
     );
 
-  // Two live numeric sides can't use ~= — offer the |a − b| ≤ d transform.
+  // Two live numeric sides can't use ~=: offer the |a - b| <= d transform.
   const liveApprox =
     assertion.expected !== null &&
     !subjectConst &&
@@ -96,31 +98,40 @@ export function ExpressionAssertionEditor({
       delta: "",
     }));
 
-  // "Use current value": evaluate the subject expression client-side and
-  // freeze the result into the expected literal.
   const canFetch =
-    isEvaluable(assertion.subject) &&
+    !subjectConst &&
     assertion.operator !== null &&
     (assertion.expected === null || assertion.expected.kind === "literal");
   const fetchCurrentValue = async () => {
-    if (!chainClient) return;
+    if (!chainClient) {
+      setFetchStatus("No RPC is known for this chain.");
+      return;
+    }
     setFetchStatus("Fetching current value…");
-    try {
-      const value = await readSubjectValue(
-        chainClient,
-        assertion.subject,
-        executor,
-      );
-      setAssertion((a) => ({ ...a, expected: { kind: "literal", value } }));
-      setFetchStatus(null);
-    } catch {
-      setFetchStatus("Could not fetch the current value. Enter it manually.");
+    const preview = await previewSubjectValue(
+      tag,
+      chainClient,
+      script,
+      assertion.subject,
+      chainId,
+    );
+    switch (preview.kind) {
+      case "value":
+      case "const":
+        setAssertion((a) => ({
+          ...a,
+          expected: { kind: "literal", value: preview.text },
+        }));
+        setFetchStatus(null);
+        break;
+      case "not-previewable":
+        setFetchStatus(`Cannot read this value now: ${preview.reason}`);
+        break;
+      case "error":
+        setFetchStatus(`Could not fetch the current value: ${preview.message}`);
+        break;
     }
   };
-
-  const issues = useMemo(() => validateAssertion(assertion), [assertion]);
-  // Node-level issues render inline at their node; whole-assertion ones here.
-  const rootIssues = issues.filter((i) => i.path.length === 0);
 
   const timestampSubject =
     assertion.subject.kind === "clock" &&
@@ -137,7 +148,6 @@ export function ExpressionAssertionEditor({
           depth={0}
           chainId={chainId}
           counterpart={expectedCat}
-          issues={issues}
         />
       </div>
 
@@ -182,7 +192,6 @@ export function ExpressionAssertionEditor({
             chainId={chainId}
             counterpart={subjectCat}
             timestampHint={timestampSubject}
-            issues={issues}
           />
         </div>
       )}
@@ -223,14 +232,6 @@ export function ExpressionAssertionEditor({
             spellCheck={false}
           />
         </div>
-      )}
-
-      {rootIssues.length > 0 && (
-        <Callout tone="error">
-          {rootIssues.map((issue, i) => (
-            <p key={i}>{issue.message}</p>
-          ))}
-        </Callout>
       )}
     </div>
   );

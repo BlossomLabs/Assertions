@@ -1,40 +1,38 @@
+import { type CommandSpan, commandSpans, isHelperLoad } from "./script-ops";
+
 /**
- * The "Batch so far" listing shared by the composer and the assertion form:
- * the script rendered line by line, each removable command with a delete
- * button. Auto-managed scaffolding (`set` and `load` lines, cleaned up by
- * `removeLine` when the commands referencing them go away) is shown
- * without one.
+ * The "Batch so far" listing: the script's commands, one row each (a
+ * command spanning several lines is one row), each removable command with
+ * a delete button. Auto-managed scaffolding (`set` and `load` lines,
+ * garbage-collected when the commands referencing them go away) is shown
+ * without one, and helper-module load lines are hidden altogether.
  */
 export function BatchList({
   script,
-  onRemoveLine,
+  onRemove,
   canRemove,
-  hideLine,
 }: {
   script: string;
-  onRemoveLine: (index: number) => void;
-  /** Extra restriction on which lines offer a delete button (scaffolding
-   *  `set`/`load` lines are always excluded). Non-removable lines render
+  /** Remove the command starting at this 1-based line. */
+  onRemove: (line: number) => void;
+  /** Extra restriction on which commands offer a delete button (scaffolding
+   *  `set`/`load` lines are always excluded). Non-removable rows render
    *  dimmed. Defaults to all commands. */
-  canRemove?: (line: string) => boolean;
-  /** Lines to omit from the listing entirely (indices passed to
-   *  `onRemoveLine` still refer to the full script). */
-  hideLine?: (line: string) => boolean;
+  canRemove?: (span: CommandSpan) => boolean;
 }) {
-  const lines = script.split("\n");
+  const spans = commandSpans(script);
   return (
     <div className="rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/20 font-mono text-xs overflow-x-auto">
-      {lines.map((line, i) => {
-        const t = line.trim();
-        if (hideLine?.(t)) return null;
-        const removable =
-          t !== "" &&
-          !t.startsWith("set ") &&
-          !t.startsWith("load ") &&
-          (canRemove?.(t) ?? true);
+      {spans.map((span) => {
+        const t = span.text.trim();
+        if (isHelperLoad(t)) return null;
+        const scaffolding =
+          (span.module ?? "std") === "std" &&
+          (span.name === "set" || span.name === "load");
+        const removable = !scaffolding && (canRemove?.(span) ?? true);
         return (
           <div
-            key={`${i}-${line}`}
+            key={`${span.start}-${t}`}
             className="group flex items-start gap-2 px-3 py-1 first:pt-2.5 last:pb-2.5 hover:bg-[var(--color-ink-3)]/10"
           >
             <pre
@@ -42,14 +40,14 @@ export function BatchList({
                 removable ? "" : "text-[var(--color-ink-3)]"
               }`}
             >
-              {line}
+              {span.text}
             </pre>
             {removable && (
               <button
                 type="button"
-                onClick={() => onRemoveLine(i)}
-                title="Remove this line from the batch"
-                aria-label={`Remove line: ${line.trim()}`}
+                onClick={() => onRemove(span.start)}
+                title="Remove this command from the batch"
+                aria-label={`Remove command: ${t.split("\n")[0]}`}
                 className="shrink-0 w-5 h-5 -my-0.5 flex items-center justify-center rounded-full text-[var(--color-err)] opacity-50 group-hover:opacity-100 hover:bg-[var(--color-err)]/10 transition-opacity"
               >
                 <svg

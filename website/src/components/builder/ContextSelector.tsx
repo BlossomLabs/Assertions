@@ -9,6 +9,7 @@ import {
   type ContextKind,
   type ExecutionContext,
 } from "./context";
+import { RELEASED_CONTRACTS } from "../deployments/shared";
 import { type ChainSupport, OFFICIAL_CHAIN_IDS } from "./useChainSupport";
 import type { AddressCheck } from "./useContextAddressCheck";
 import { CHAINS } from "./wagmi";
@@ -16,6 +17,12 @@ import { CHAINS } from "./wagmi";
 const inputCls =
   "w-full px-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/30 " +
   "focus:border-[var(--color-bp-400)] focus:outline-none font-mono text-sm placeholder:text-[var(--color-ink-3)]";
+
+/** "A, B and C" */
+function listNames(names: string[]): string {
+  if (names.length <= 1) return names.join("");
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+}
 
 const CONTEXT_HELP: Record<ContextKind, string> = {
   eoa: "Execute the whole block as one atomic batch from your connected wallet (EIP-5792 wallet_sendCalls; uses your wallet's EIP-7702 delegation when available).",
@@ -159,15 +166,16 @@ export function ContextSelector({
             )}
             {chainSupport.state === "ok" && (
               <p className="text-xs text-[var(--color-ok)]">
-                Assertions core &amp; Operations found on{" "}
+                {listNames(RELEASED_CONTRACTS.map((c) => c.name))} found on{" "}
                 {chainSupport.chainName}. The builder works here.
               </p>
             )}
             {chainSupport.state === "missing" && (
               <Callout tone="error">
                 <p>
-                  {chainSupport.missing.join(" and ")} not deployed on{" "}
-                  <strong>{chainSupport.chainName}</strong>.{" "}
+                  {listNames(chainSupport.missing)}{" "}
+                  {chainSupport.missing.length === 1 ? "is" : "are"} not
+                  deployed on <strong>{chainSupport.chainName}</strong>.{" "}
                   <a
                     href="/deployments"
                     className="font-medium underline hover:text-red-900 dark:hover:text-red-200"

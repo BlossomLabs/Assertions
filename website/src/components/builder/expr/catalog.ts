@@ -1,8 +1,3 @@
-import { helpers as contractsHelpers } from "@evmcrispr/module-contracts/registry";
-import { helpers as langHelpers } from "@evmcrispr/module-lang/registry";
-import { helpers as mathHelpers } from "@evmcrispr/module-math/registry";
-import { helpers as receiptsHelpers } from "@evmcrispr/module-receipts/registry";
-import { helpers as stdHelpers } from "@evmcrispr/module-std/registry";
 import { INFIX_OPS } from "@evmcrispr/sdk/onchain";
 import type { OpFamily } from "@evmcrispr/sdk/onchain";
 
@@ -12,6 +7,7 @@ import {
   familyOpsFor,
   inferCategory,
 } from "../assertion-model";
+import { REGISTRIES } from "../helper-owners";
 // Circular with NodePicker (it renders the entries this module computes);
 // safe because both sides only use the other's exports inside functions.
 import { type NodeKey, nodeKey } from "./NodePicker";
@@ -23,7 +19,7 @@ import { type NodeKey, nodeKey } from "./NodePicker";
  * registry, and any mismatch between the two is reported at dev time.
  *
  * The on-chain (`!`) helper surface spans five modules since the unified
- * helper rework: std owns the composition engines (@num!/@bool!/@bytes!/
+ * helper rework: std owns the composition engines (@calc!/@bool!/@bytes!/
  * @hash!/@balance!) plus the revert probe @reverts! and the `assert` command
  * itself, lang owns the array/string faces (@len!, @str.split!,
  * @bytes.len!, ...), receipts owns the block/tx context reads and the chain
@@ -34,34 +30,39 @@ import { type NodeKey, nodeKey } from "./NodePicker";
  * plain faces are ordinary build-time helpers the builder never offers as
  * nodes).
  *
- * What stays local is the UI *role* of each helper — whether it is a value
+ * What stays local is the UI *role* of each helper: whether it is a value
  * source, a wrap around an existing node, or an infix engine reached
  * through dedicated node kinds. Which categories each role accepts comes
  * from the module's composition table (the same rules its compiler
  * enforces), so the menus only offer combinations that compile.
  */
 
-type HelperInfo = { description?: string };
+/** A registry helper with its provenance (the module that registers it). */
+type HelperInfo = { description?: string; module: string };
 
-const onchainFaces = (
-  registry: Record<string, HelperInfo>,
+const faces = (
+  module: string,
+  keep: (name: string) => boolean = () => true,
 ): Record<string, HelperInfo> =>
   Object.fromEntries(
-    Object.entries(registry).filter(([name]) => name.endsWith("!")),
+    Object.entries(REGISTRIES[module] ?? {})
+      .filter(([name]) => keep(name))
+      .map(([name, entry]) => [name, { description: entry.description, module }]),
   );
+const onchainFaces = (module: string) => faces(module, (name) => name.endsWith("!"));
 
 const helpers: Record<string, HelperInfo> = {
-  ...onchainFaces(langHelpers),
-  ...onchainFaces(stdHelpers),
-  ...onchainFaces(contractsHelpers),
-  ...receiptsHelpers,
-  ...mathHelpers,
+  ...onchainFaces("lang"),
+  ...onchainFaces("std"),
+  ...onchainFaces("contracts"),
+  ...faces("receipts"),
+  ...faces("math"),
 };
 
 type Accepts = (node: ValueExpr, cat: Category) => boolean;
 
 /** Accepts when the composition table allows this family over the node's
- *  category (checked against itself — the other operand doesn't exist
+ *  category (checked against itself, the other operand doesn't exist
  *  yet). Pass a symbol to require one specific operator (e.g. `and` keeps
  *  the logic role bool-only, excluding numeric bitwise xor). Unknown stays
  *  permissive while the tree is incomplete. */
@@ -75,10 +76,12 @@ const familyAccepts =
 
 const stringCall: Accepts = (node, cat) =>
   node.kind === "call" && (cat === "string" || cat === "unknown");
-const bytesCall: Accepts = (node, cat) =>
-  node.kind === "call" && (cat === "string" || cat === "bytes" || cat === "unknown");
 const addressCall: Accepts = (node, cat) =>
   node.kind === "call" && cat === "address";
+/** A bytes-like source: a call, or the deployed code of an address. */
+const bytesSource: Accepts = (node, cat) =>
+  (node.kind === "call" || node.kind === "codeAt") &&
+  (cat === "string" || cat === "bytes" || cat === "unknown");
 
 interface InfixEntry {
   key: NodeKey;
@@ -116,8 +119,6 @@ type HelperRole =
 const COMPOSITION_TIME = [
   // receipts: plain build-time face of the chain id
   "chainId",
-  // contracts: the code read with no builder node (@codeHash! has one)
-  "codeAt!",
   // contracts: slot derivations over live keys/indices, chat/EVML only
   "slot.mapping!",
   "slot.array!",
@@ -246,6 +247,12 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     label: "code hash",
     wrapAccepts: addressCall,
   },
+  "codeAt!": {
+    role: "source",
+    key: "codeAt",
+    label: "deployed code",
+    wrapAccepts: addressCall,
+  },
   "min!": {
     role: "wrap",
     key: "min",
@@ -279,15 +286,13 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     role: "wrap",
     key: "bytelen",
     label: "byte length of…",
-    accepts: (node, cat) =>
-      node.kind === "call" &&
-      (cat === "string" || cat === "bytes" || cat === "unknown"),
+    accepts: bytesSource,
   },
   "hash!": {
     role: "wrap",
     key: "hash",
     label: "hash of…",
-    accepts: bytesCall,
+    accepts: bytesSource,
     topLevelOnly: true,
   },
   "str.split!": {
@@ -309,11 +314,47 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     label: "characters in class…",
     accepts: stringCall,
   },
-  "num!": {
+  "calc!": {
     role: "infix",
     entries: [
       { key: "arith", label: "arithmetic…", accepts: familyAccepts("arith") },
     ],
+  },
+  // Rounded division: the arithmetic node with `/` as its root operator,
+  // rendered as the helper that names the rounding.
+  "calcFloor!": {
+    role: "infix",
+    entries: [
+      {
+        key: "divFloor",
+        label: "divide, rounding down…",
+        accepts: familyAccepts("arith", "/"),
+      },
+    ],
+  },
+  "calcCeil!": {
+    role: "infix",
+    entries: [
+      {
+        key: "divCeil",
+        label: "divide, rounding up…",
+        accepts: familyAccepts("arith", "/"),
+      },
+    ],
+  },
+  "num.format!": {
+    role: "wrap",
+    key: "numformat",
+    label: "format as decimal…",
+    accepts: familyAccepts("arith"),
+  },
+  "num.parse!": {
+    role: "wrap",
+    key: "numparse",
+    label: "parse decimal…",
+    accepts: (node, cat) =>
+      (node.kind === "call" || node.kind === "literal") &&
+      (cat === "string" || cat === "unknown"),
   },
   "bool!": {
     role: "infix",
@@ -350,9 +391,13 @@ const HELPER_ROLES: Record<string, HelperRole> = {
 /** WrapMenu grouping (option groups), keyed by node kind. */
 const NODE_GROUP: Partial<Record<NodeKey, string>> = {
   arith: "arithmetic",
+  divFloor: "arithmetic",
+  divCeil: "arithmetic",
   min: "arithmetic",
   max: "arithmetic",
   absDiff: "arithmetic",
+  numformat: "decimals",
+  numparse: "decimals",
   cmp: "comparison & logic",
   logic: "comparison & logic",
   not: "comparison & logic",
@@ -365,6 +410,7 @@ const NODE_GROUP: Partial<Record<NodeKey, string>> = {
   charset: "strings",
   balance: "environment",
   codeHash: "environment",
+  codeAt: "environment",
 };
 
 if (import.meta.env.DEV) {
@@ -372,7 +418,7 @@ if (import.meta.env.DEV) {
   const stale = Object.keys(HELPER_ROLES).filter((h) => !(h in helpers));
   if (unmapped.length || stale.length)
     console.warn(
-      "[assertion-builder] operator catalog drift vs the module registry —",
+      "[assertion-builder] operator catalog drift vs the module registry:",
       unmapped.length ? `unmapped helpers: ${unmapped.join(", ")};` : "",
       stale.length ? `mapped but missing from registry: ${stale.join(", ")}` : "",
     );

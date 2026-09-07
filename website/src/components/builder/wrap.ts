@@ -2,9 +2,10 @@ import { isAddress } from "viem";
 import * as viemChains from "viem/chains";
 
 import type { ExecutionContext } from "./context";
+import { hoistLoads } from "./script-ops";
 import { ensVarName } from "./useContractFunctions";
 
-/** viem's camelCase export name per chain id — the names `switch` accepts
+/** viem's camelCase export name per chain id, the names `switch` accepts
  *  (e.g. `mainnet`, `gnosis`, `baseSepolia`). */
 const CHAIN_EXPORT_NAMES: Record<number, string> = (() => {
   const byId: Record<number, string> = {};
@@ -25,19 +26,6 @@ const CHAIN_EXPORT_NAMES: Record<number, string> = (() => {
 function switchLine(chainId: number): string | null {
   if (chainId === 1) return null;
   return `switch ${CHAIN_EXPORT_NAMES[chainId] ?? chainId}`;
-}
-
-/** `load` must sit at the top level, so pull the block's load lines (e.g.
- *  the AI-inserted `load lang`) out and above the wrapper. */
-function hoistLoads(block: string): { loads: string[]; body: string } {
-  const loads = new Set<string>();
-  const body: string[] = [];
-  for (const line of block.split("\n")) {
-    const match = line.trim().match(/^load\s+(.+)$/);
-    if (match) loads.add(`load ${match[1]}`);
-    else body.push(line);
-  }
-  return { loads: [...loads], body: body.join("\n").trim() };
 }
 
 /** Context address as a script reference: plain addresses pass through, an
@@ -65,10 +53,10 @@ function indent(text: string, depth = 1): string {
  * Wrap the composed action block into its final executable script for the
  * selected execution context:
  *
- * - `eoa`       -> `batch ( ... )` — one atomic transaction from the wallet
+ * - `eoa`       -> `batch ( ... )`: one atomic transaction from the wallet
  *                  (EIP-5792 `wallet_sendCalls`, which uses the wallet's
  *                  EIP-7702 delegation when available).
- * - `safe`      -> `safe:propose <safe> ( ... )` — queued on the Safe
+ * - `safe`      -> `safe:propose <safe> ( ... )`: queued on the Safe
  *                  Transaction Service for the other owners.
  * - `governor`  -> `governor:propose <governor> "<description>" ( ... )`.
  * - `aragonosx` -> `aragonosx:connect <dao> ( aragonosx:propose <plugin> ... )`.

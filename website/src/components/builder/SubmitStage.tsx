@@ -1,9 +1,10 @@
+import { useEvmlTag } from "@evmcrispr/editor";
 import { useState } from "react";
 import type { Address } from "viem";
 import { useWalletClient } from "wagmi";
 
+import { Callout } from "./Callout";
 import { CONTEXT_LABELS, type ExecutionContext } from "./context";
-import { evml } from "./evml";
 import { actionsToTxBuilderBatch } from "./safe-tx-builder";
 import { buildFinalScript } from "./wrap";
 
@@ -26,18 +27,22 @@ function downloadJson(value: unknown, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-export function ExecuteStep({
+export function SubmitStage({
   block,
   context,
   contextAddress,
   chainId,
+  verified,
 }: {
   block: string;
   context: ExecutionContext;
   /** Context address after ENS resolution. */
   contextAddress: Address | null;
-  chainId: number | undefined;
+  chainId: number;
+  /** The protected batch passed a simulation in its current form. */
+  verified: boolean;
 }) {
+  const tag = useEvmlTag();
   const { data: walletClient } = useWalletClient();
   const [status, setStatus] = useState<
     | { phase: "idle" }
@@ -55,7 +60,6 @@ export function ExecuteStep({
     if (!walletClient) return;
     setStatus({ phase: "running" });
     try {
-      const tag = chainId ? evml.with({ chainId }) : evml;
       await tag.script(finalScript).execute(walletClient);
       setStatus({ phase: "done" });
     } catch (e) {
@@ -71,13 +75,12 @@ export function ExecuteStep({
   const downloadBatch = async () => {
     setStatus({ phase: "downloading" });
     try {
-      const tag = chainId ? evml.with({ chainId }) : evml;
       const actions = await tag.script(block).interpret();
       const batch = actionsToTxBuilderBatch(actions, {
-        chainId: chainId ?? 1,
+        chainId,
         safeAddress: contextAddress ?? undefined,
       });
-      downloadJson(batch, `safe-batch-${chainId ?? 1}.json`);
+      downloadJson(batch, `safe-batch-${chainId}.json`);
       setStatus({ phase: "downloaded" });
     } catch (e) {
       setStatus({
@@ -89,6 +92,15 @@ export function ExecuteStep({
 
   return (
     <div className="space-y-4">
+      {!verified && (
+        <Callout tone="warn">
+          <p>
+            The protected batch has not passed a simulation in its current
+            form. Simulate it in step 2 before submitting.
+          </p>
+        </Callout>
+      )}
+
       <div>
         <p className="text-xs text-[var(--color-ink-3)] mb-1.5">
           Final script ({CONTEXT_LABELS[context.kind]})

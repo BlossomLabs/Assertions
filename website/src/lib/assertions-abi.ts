@@ -35,6 +35,22 @@ export const ASSERTIONS_ABI = [
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "expected",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "actual",
+        "type": "uint256"
+      }
+    ],
+    "name": "ComponentCountMismatch",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string",
         "name": "assertion",
         "type": "string"
@@ -161,6 +177,90 @@ export const ASSERTIONS_ABI = [
   {
     "inputs": [
       {
+        "internalType": "bytes4",
+        "name": "operation",
+        "type": "bytes4"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "other",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "target",
+        "type": "address"
+      }
+    ],
+    "name": "InvalidCallbackResult",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "length",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "head",
+        "type": "bytes32"
+      }
+    ],
+    "name": "InvalidComponentEnvelope",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "expectedBytes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "actualBytes",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidComponentLength",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "offset",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidComponentValue",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "entryIndex",
         "type": "uint256"
@@ -204,6 +304,17 @@ export const ASSERTIONS_ABI = [
       }
     ],
     "name": "InvalidTypeDescriptor",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "offset",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidValue",
     "type": "error"
   },
   {
@@ -1087,6 +1198,102 @@ export const ASSERTIONS_ABI = [
       }
     ],
     "name": "read",
+    "outputs": [],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "enum InputParamType",
+            "name": "paramType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum InputParamFetcherType",
+            "name": "fetcherType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes",
+            "name": "paramData",
+            "type": "bytes"
+          },
+          {
+            "components": [
+              {
+                "internalType": "enum ConstraintType",
+                "name": "constraintType",
+                "type": "uint8"
+              },
+              {
+                "internalType": "bytes",
+                "name": "referenceData",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct Constraint[]",
+            "name": "constraints",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct InputParam",
+        "name": "target",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes4",
+        "name": "selector",
+        "type": "bytes4"
+      },
+      {
+        "internalType": "string",
+        "name": "argumentTypes",
+        "type": "string"
+      },
+      {
+        "components": [
+          {
+            "internalType": "enum InputParamType",
+            "name": "paramType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum InputParamFetcherType",
+            "name": "fetcherType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes",
+            "name": "paramData",
+            "type": "bytes"
+          },
+          {
+            "components": [
+              {
+                "internalType": "enum ConstraintType",
+                "name": "constraintType",
+                "type": "uint8"
+              },
+              {
+                "internalType": "bytes",
+                "name": "referenceData",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct Constraint[]",
+            "name": "constraints",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct InputParam[]",
+        "name": "args",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "readArgs",
     "outputs": [],
     "stateMutability": "view",
     "type": "function"

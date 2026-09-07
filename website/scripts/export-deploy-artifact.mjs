@@ -66,7 +66,7 @@ const CONTRACTS = [
     // Retained CREATE2 salt for the corrected 2.0 core; earlier candidates
     // under the same salt are listed in HISTORY.
     salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
-    expectedAddress: "0x94b07F5364b54471b065Ee74150864628Df722d7",
+    expectedAddress: "0xf601f42D6752dB5423efE6e5c16044d275F06aC2",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -81,7 +81,7 @@ const CONTRACTS = [
     output: "src/lib/operations-deployment.ts",
     // Retained salt; the previous candidate under it is listed in HISTORY.
     salt: "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
-    expectedAddress: "0x314e75BEFDb0f3e0621f68458f98Fce75246f7a7",
+    expectedAddress: "0xe3F9CCD4f6A11a044533055B9581765EB845AbB3",
     prefix: "OPERATIONS",
     description: "Operations plain-value vocabulary contract",
     includeProxyConstants: false,
@@ -97,7 +97,7 @@ const CONTRACTS = [
     // Retained salt from the previous c011ec7 artifact candidate. Collections
     // imports Expressions, so an edit there moves this address too.
     salt: "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
-    expectedAddress: "0x830a490449eC148CE4404e398eC7FA9903Ce5Bc2",
+    expectedAddress: "0x9647762c87a5Ff7a378c4a4752D23b88E5302e3B",
     prefix: "COLLECTIONS",
     description: "generic ABI collection vocabulary contract",
     includeProxyConstants: false,
@@ -111,7 +111,7 @@ const CONTRACTS = [
     artifact: "artifacts/contracts/Expressions.sol/Expressions.json",
     output: "src/lib/expressions-deployment.ts",
     salt: "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
-    expectedAddress: "0x03B82019Ed1802172606922e8F8c8d43d0cd6d12",
+    expectedAddress: "0xb3cC9B9821b990B7c7EAe4934555d04c273Ce487",
     prefix: "EXPRESSIONS",
     description: "typed expression graphs contract",
     includeProxyConstants: false,
@@ -215,6 +215,34 @@ const HISTORY = [
     address: "0xc45C579021623712eE3f61D066a24218F6e01E22",
     salt: "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
     note: "retired artifact candidate under the current salt (Select judged an exact 0/1 word)",
+  },
+  {
+    name: "Assertions",
+    version: "2.0",
+    address: "0x94b07F5364b54471b065Ee74150864628Df722d7",
+    salt: "0xd4f532eb8a77374d9696a5bcdc01f6c4f4fa29c20ee87346ef21bab6faeae45b",
+    note: "retired artifact candidate under the current salt (moved by readArgs and the dynamic-terminal re-encoding; the SDK pin 3f02b3aa targets it)",
+  },
+  {
+    name: "Operations",
+    version: "1.0",
+    address: "0x314e75BEFDb0f3e0621f68458f98Fce75246f7a7",
+    salt: "0x9ce558a766c6d9bb00fbc5b8d2d832c52994462655f328c0caf5f60f5f977f08",
+    note: "retired artifact candidate under the current salt (moved by the shared AbiCodec changes it imports)",
+  },
+  {
+    name: "Collections",
+    version: "1.0",
+    address: "0x830a490449eC148CE4404e398eC7FA9903Ce5Bc2",
+    salt: "0x4e34588f9111fbc67be34b0750e14b151b4657e6f4391c414ed7268bba4d214a",
+    note: "retired artifact candidate under the current salt (moved by the Expressions and AbiCodec changes it imports)",
+  },
+  {
+    name: "Expressions",
+    version: "1.0",
+    address: "0x03B82019Ed1802172606922e8F8c8d43d0cd6d12",
+    salt: "0xc13ea26db51cabdbbd8c2a00c76d722f95b02034f61f5481dfcb487658f14939",
+    note: "retired artifact candidate under the current salt (Select now judges truth like the core's cond)",
   },
 ];
 

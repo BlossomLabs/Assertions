@@ -14,10 +14,10 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 ## Canonical addresses (same on every chain)
 
 ```
-Assertions          v2.0  0x94b07F5364b54471b065Ee74150864628Df722d7   (frozen core: judge + primitives)
-Operations          v1.0  0x314e75BEFDb0f3e0621f68458f98Fce75246f7a7   (versionable periphery)
-Collections         v1.0  0x830a490449eC148CE4404e398eC7FA9903Ce5Bc2   (generic collections)
-Expressions         v1.0  0x03B82019Ed1802172606922e8F8c8d43d0cd6d12   (unreleased typed expression graphs)
+Assertions          v2.0  0xf601f42D6752dB5423efE6e5c16044d275F06aC2   (frozen core: judge + primitives)
+Operations          v1.0  0xe3F9CCD4f6A11a044533055B9581765EB845AbB3   (versionable periphery)
+Collections         v1.0  0x9647762c87a5Ff7a378c4a4752D23b88E5302e3B   (generic collections)
+Expressions         v1.0  0xb3cC9B9821b990B7c7EAe4934555d04c273Ce487   (unreleased typed expression graphs)
 ```
 
 These are the CREATE2 addresses of the current artifact set: the shared-codec core, the split Operations/Collections periphery, and Expressions. Listing an address implies no public-chain deployment; check the website's Deployments page for per-chain availability. Expressions is unreleased: the SDK does not compile against it. Earlier releases and retired artifact candidates (which use different bytecode) are listed on the Deployments page, rendered from `website/src/lib/deployments.json`.

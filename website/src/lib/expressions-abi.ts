@@ -385,6 +385,16 @@ export const EXPRESSIONS_ABI = [
             "internalType": "bool[]",
             "name": "ready",
             "type": "bool[]"
+          },
+          {
+            "internalType": "bool[]",
+            "name": "dynamic",
+            "type": "bool[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "words",
+            "type": "uint256[]"
           }
         ],
         "internalType": "struct Expressions.Cache",
@@ -410,6 +420,16 @@ export const EXPRESSIONS_ABI = [
             "internalType": "bool[]",
             "name": "ready",
             "type": "bool[]"
+          },
+          {
+            "internalType": "bool[]",
+            "name": "dynamic",
+            "type": "bool[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "words",
+            "type": "uint256[]"
           }
         ],
         "internalType": "struct Expressions.Cache",

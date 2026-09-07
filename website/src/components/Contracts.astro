@@ -1,0 +1,134 @@
+---
+import deployments from '../lib/deployments.json';
+
+const descriptions: Record<string, { role: string; title: string; description: string; docs: string }> = {
+  core: {
+    role: 'Read & enforce',
+    title: 'Make every condition count.',
+    description: 'Read live state, follow nested data, and build calls from resolved arguments. The frozen core checks ERC-8211 constraints and reverts when they fail.',
+    docs: '/docs/reference/core/',
+  },
+  operators: {
+    role: 'Compute',
+    title: 'Put numbers to your rules.',
+    description: 'Turn live values into precise checks with arithmetic, comparisons, fixed-point math, bytes, strings, and ABI encoding.',
+    docs: '/docs/operators/',
+  },
+  collections: {
+    role: 'Iterate',
+    title: 'Check the whole set.',
+    description: 'Map, filter, sort, and fold arrays. Work with packed words or typed ABI values, and stop early when an any/all check is decided.',
+    docs: '/docs/operators/collections/',
+  },
+  expressions: {
+    role: 'Compose & reuse',
+    title: 'Compute once. Reuse it.',
+    description: 'Build typed expression graphs that share results across checks. Each node runs at most once per evaluation, with lazy branches and guarded fallbacks.',
+    docs: '/docs/operators/expressions/',
+  },
+};
+---
+
+<section class="px-6 pb-16 scroll-mt-24" id="contracts" aria-labelledby="contracts-heading">
+  <div class="max-w-6xl mx-auto">
+    <div class="border-t border-[var(--color-ink-3)]/20 pt-12 mb-10 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-bp-400)] mb-3">The Assertions toolkit</p>
+        <h2 id="contracts-heading" class="font-mono font-bold text-2xl sm:text-3xl">Four contracts. Your rules.</h2>
+      </div>
+      <p class="max-w-md text-[var(--color-ink-2)] leading-relaxed">
+        One frozen core. Three versionable extensions.
+        Compose the checks your transaction needs, from a single balance to a whole portfolio.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      {deployments.contracts.map((contract, index) => {
+        const copy = descriptions[contract.key];
+        return (
+          <article class="contract-card min-w-0 flex flex-col p-5 sm:p-7 rounded-2xl bg-[var(--color-surface-2)] border border-[var(--color-ink-3)]/20">
+            <div class="flex items-center justify-between gap-3 mb-6">
+              <span class="font-mono text-xs text-[var(--color-bp-400)]">0{index + 1} / {copy.role}</span>
+              <span class="font-mono text-xs text-[var(--color-ink-2)]">v{contract.version}</span>
+            </div>
+            <h3 class="font-mono font-semibold text-2xl mb-2">
+              <a class="contract-link" href={copy.docs}>{contract.name}<span class="text-[var(--color-bp-400)] ml-2 text-lg" aria-hidden="true">↗</span></a>
+            </h3>
+            <p class="font-medium text-lg mb-2">{copy.title}</p>
+            <p class="text-[var(--color-ink-2)] leading-relaxed mb-6">{copy.description}</p>
+            <div class="mt-auto pt-4 border-t border-[var(--color-ink-3)]/15">
+              <div class="flex items-center justify-between gap-3 mb-2">
+                <span class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-ink-2)]">Canonical address</span>
+                <button
+                  type="button"
+                  data-copy-address={contract.address}
+                  aria-label={`Copy ${contract.name} address`}
+                  class="contract-link inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs text-[var(--color-bp-400)] cursor-pointer"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4"/></svg>
+                  <span data-copy-label>Copy</span>
+                </button>
+              </div>
+              <a
+                href={`https://etherscan.io/address/${contract.address}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${contract.name} address on Etherscan: ${contract.address}`}
+                class="contract-link block rounded text-[var(--color-ink-2)]"
+              >
+                <code class="font-mono text-xs break-all select-all">{contract.address}</code>
+              </a>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    <div class="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm">
+      <p class="text-[var(--color-ink-2)]">Same CREATE2 addresses across chains. Availability varies by network.</p>
+      <a class="contract-link shrink-0 text-[var(--color-bp-400)] font-medium" href="/deployments">Check deployments <span aria-hidden="true">→</span></a>
+    </div>
+    <p id="address-copy-status" class="sr-only" role="status" aria-live="polite"></p>
+  </div>
+</section>
+
+<style>
+  .contract-card {
+    transition: border-color 180ms ease;
+  }
+  .contract-card:hover {
+    border-color: var(--color-bp-400);
+  }
+  .contract-link:hover {
+    color: var(--color-bp-400);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .contract-link:focus-visible {
+    outline: 2px solid var(--color-bp-400);
+    outline-offset: 4px;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-address]').forEach((button) => {
+    let reset: ReturnType<typeof setTimeout>;
+    button.addEventListener('click', async () => {
+      const address = button.dataset.copyAddress;
+      const label = button.querySelector<HTMLElement>('[data-copy-label]');
+      const status = document.getElementById('address-copy-status');
+      if (!address || !label) return;
+
+      clearTimeout(reset);
+      try {
+        await navigator.clipboard.writeText(address);
+        label.textContent = 'Copied!';
+        if (status) status.textContent = `${button.getAttribute('aria-label')?.replace('Copy ', '')} copied to clipboard.`;
+      } catch {
+        label.textContent = 'Select to copy';
+        if (status) status.textContent = 'Clipboard unavailable. Select the full address to copy it manually.';
+      }
+      reset = setTimeout(() => { label.textContent = 'Copy'; }, 2500);
+    });
+  });
+</script>

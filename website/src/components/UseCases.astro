@@ -1,40 +1,40 @@
 ---
 const cases = [
   {
-    title: 'Treasury Protection',
-    description: 'Assert treasury balance doesn\'t drop below threshold',
+    title: 'Keep a treasury floor',
+    description: 'Require enough native currency or tokens to remain after a payout.',
   },
   {
-    title: 'Permission Safety',
-    description: 'Assert admin roles haven\'t been changed unexpectedly',
+    title: 'Keep control where it belongs',
+    description: 'Check that owners, admins, and role holders still match your policy.',
   },
   {
-    title: 'Price Manipulation Guards',
-    description: 'Assert oracle price is within expected bounds',
+    title: 'Put prices in bounds',
+    description: 'Compare live oracle values against your limits or an allowed deviation.',
   },
   {
-    title: 'Upgrade Verification',
-    description: 'Assert proxy implementation matches expected code hash',
+    title: 'Verify the upgrade',
+    description: 'Read the exposed implementation address and check its runtime code hash.',
   },
   {
-    title: 'Timelock Validation',
-    description: 'Assert current timestamp is after unlock period',
+    title: 'Set the window',
+    description: 'Require a block timestamp inside the execution window you choose.',
   },
   {
-    title: 'Liquidity Checks',
-    description: 'Assert pool reserves meet minimum requirements',
+    title: 'Watch the whole portfolio',
+    description: 'Map balances, fold totals, or require every position to pass a check.',
   },
   {
-    title: 'Ownership Verification',
-    description: 'Assert critical contracts still owned by DAO',
+    title: 'Reuse the expensive read',
+    description: 'Reference one resolved value across multiple checks in an expression graph.',
   },
   {
-    title: 'Deep Reads',
-    description: 'Assert a struct field inside a returned array, decoded on-chain at any nesting depth',
+    title: 'Go deeper than a balance',
+    description: 'Navigate returned structs, tuples, and arrays to check the field that matters.',
   },
   {
-    title: 'String Guards',
-    description: 'Assert a name ends with "LP", contains a substring, or stays within a charset',
+    title: 'Read between the bytes',
+    description: 'Check names, match substrings, or pin a bytes payload by its hash.',
   },
 ];
 ---
@@ -42,10 +42,10 @@ const cases = [
 <section class="py-24 px-6" id="use-cases">
   <div class="max-w-6xl mx-auto">
     <h2 class="font-mono font-bold text-3xl sm:text-4xl text-center mb-4">
-      Use Cases
+      What has to be true?
     </h2>
     <p class="text-center text-[var(--color-ink-2)] text-lg mb-16 max-w-2xl mx-auto">
-      Guard every critical scenario in your protocol.
+      Start with a simple condition. Compose your way to richer checks.
     </p>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {cases.map((c) => (

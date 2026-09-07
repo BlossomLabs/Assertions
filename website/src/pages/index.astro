@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
+import Contracts from '../components/Contracts.astro';
 import WhyCards from '../components/WhyCards.astro';
 import FeaturedTx from '../components/FeaturedTx.astro';
 import UseCases from '../components/UseCases.astro';
@@ -9,10 +10,14 @@ import ApiReference from '../components/ApiReference.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<Layout>
+<Layout
+  title="Assertions — Set the conditions. Then send it."
+  description="Make your transaction answer to you. Compose on-chain checks with Assertions, Operations, Collections, and Expressions. If a check fails, the whole transaction reverts."
+>
   <Nav />
   <main>
     <Hero />
+    <Contracts />
     <WhyCards />
     <FeaturedTx />
     <UseCases />

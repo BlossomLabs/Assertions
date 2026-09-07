@@ -27,7 +27,14 @@ fix it in the same change that falsified it.
   values belongs to Operations; iteration and collection processing belong to Collections. Both version by deploying at new addresses. When
   a capability is requested, first check whether composition already expresses it:
   `hash(rawCall(target, data))` made both a `hashOf` primitive and a `HASH_EQ`
-  constraint type unnecessary.
+  constraint type unnecessary. Moving the primitives off the core was measured on
+  2026-09-07 and refused: a branch put `pick`, `nav`, `chain`, `read`, `cond`,
+  `orElse`, `isValid` and `revertData` on a separate contract bound to the core by an
+  immutable, so every operand resolution became an extra staticcall hop into the
+  core. The `OperationsGas` tables roughly doubled per element (the `bitSet` composed
+  fold went from 16,572 to 35,708 gas per byte, `hashPairSorted` from 10,486 to
+  22,510 gas per level, and even native-lambda folds rose about a third, `charset`
+  from 30,080 to 41,830), so the primitives stay on the core.
 - **Wire-format purity**: the judge consumes unmodified ERC-8211. Extending the
   constraint enum was refused because a batch carrying an extension value reverts
   on every other executor and squats on wire space a future revision could

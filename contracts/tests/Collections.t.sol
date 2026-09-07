@@ -82,7 +82,7 @@ contract CollectionsTest is Test {
         }
     }
 
-    function fail(string memory) external pure {
+    function failingCallback(string memory) external pure {
         revert("callback failed");
     }
 
@@ -209,7 +209,7 @@ contract CollectionsTest is Test {
             )
         );
         ops.mapValues("string", "string", strings(), c);
-        c.selector = this.fail.selector;
+        c.selector = this.failingCallback.selector;
         vm.expectRevert(
             abi.encodeWithSelector(
                 Collections.CallbackFailed.selector,
@@ -217,7 +217,7 @@ contract CollectionsTest is Test {
                 uint256(0),
                 uint256(0),
                 address(this),
-                abi.encodeCall(this.fail, ("a")),
+                abi.encodeCall(this.failingCallback, ("a")),
                 abi.encodeWithSignature("Error(string)", "callback failed")
             )
         );

@@ -383,9 +383,9 @@ contract CoreReadsTest is Test {
         InputParam memory p = _lit(0);
         for (uint256 length = 31; length <= 33; length++) {
             p.paramData = abi.encode(new bytes(length));
-            (bool ok, bytes memory ret) = _nav(p, "(bytes)", path);
-            assertTrue(ok);
-            assertEq(abi.decode(ret, (uint256)), length);
+            (bool hopOk, bytes memory hopRet) = _nav(p, "(bytes)", path);
+            assertTrue(hopOk);
+            assertEq(abi.decode(hopRet, (uint256)), length);
         }
         p.paramData = bytes.concat(abi.encode(uint256(32), uint256(33)), new bytes(33));
         (bool ok, bytes memory ret) = _nav(p, "(bytes)", path);
@@ -838,7 +838,7 @@ contract CoreReadsTest is Test {
         assertEq(abi.decode(ret, (uint256)), 1000);
     }
 
-    function test_selfNesting_judgedResolveOverRead() public {
+    function test_selfNesting_judgedResolveOverRead() public view {
         // assertParam judges a read whose result routes through resolve —
         // three self-frames deep, constraints validated at the leaf
         InputParam memory tokenAddr = _call(address(target), abi.encodeCall(MockTarget.token, ()));

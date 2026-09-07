@@ -227,7 +227,7 @@ contract CoreExtensionsTest is Test {
             )
         );
         assertFalse(ok);
-        assertEq(bytes4(ret), Expressions.CallFailed.selector);
+        assertEq(bytes4(ret), Expressions.NodeCallFailed.selector);
     }
 
     // ============ nav re-encoding ============

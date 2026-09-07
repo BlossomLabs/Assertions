@@ -53,7 +53,7 @@ Every function validates each visited element against `inputType` and reverts wi
 | `anyValues(inputType, values, cb)` | Whether any element satisfies the predicate; empty input is false; calls stop at the first true. |
 | `allValues(inputType, values, cb)` | Whether every element satisfies the predicate; empty input is true; calls stop at the first false. |
 | `findValues(inputType, values, cb)` | The index of the first element satisfying the predicate, or `uint256.max`. |
-| `zipValues(leftType, rightType, left, right)` | Pair equally sized arrays into canonical `(leftType, rightType)` tuple envelopes, preserving order; different lengths revert with `WordCountMismatch`. |
+| `zipValues(leftType, rightType, left, right)` | Pair equally sized arrays into canonical `(leftType, rightType)` tuple envelopes, preserving order; different lengths revert with `LengthMismatch`. |
 | `unzipValues(leftType, rightType, pairs, lane)` | Extract lane 0 or 1 from canonical pair tuples (`InvalidLane` otherwise), validating both components of every pair. |
 
 These routines perform finite loops over supplied inputs; transaction gas bounds practical sizes. Unordered distinct performs quadratic comparisons in the worst case; sorting uses O(n log n) comparisons. Generic encoding and callback validation carry more overhead than the word-specialized family; use the [word arrays](/docs/operators/fold#word-arrays) when values really are single words. The EVMcrispr compiler emits the word family only; the generic family is reachable from Solidity encoders.

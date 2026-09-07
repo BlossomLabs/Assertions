@@ -25,8 +25,9 @@ import {AbiCodec} from "./lib/AbiCodec.sol";
  *      orderings, never a revert). Gas is the loop bound: every application
  *      pays real call overhead, so domain sizes are naturally limited by
  *      the block gas limit. Silent truncation is always a bug here:
- *      UnalignedWords and WordCountMismatch exist so a partial word or a
- *      length mismatch reverts instead of producing a plausible answer.
+ *      UnalignedWords, WordCountMismatch and LengthMismatch exist so a
+ *      partial word or a length mismatch reverts instead of producing a
+ *      plausible answer.
  * @custom:version 1.0
  */
 contract Collections {
@@ -52,12 +53,19 @@ contract Collections {
 
     /**
      * @notice Thrown when zipWords receives payloads of different word
-     *         counts, or zipValues arrays of different lengths (silent
-     *         truncation would be a wrong-answer machine)
-     * @param aWords The first payload's word count (or array's length)
-     * @param bWords The second payload's word count (or array's length)
+     *         counts (silent truncation would be a wrong-answer machine)
+     * @param aWords The first payload's word count
+     * @param bWords The second payload's word count
      */
     error WordCountMismatch(uint256 aWords, uint256 bWords);
+
+    /**
+     * @notice Thrown when zipValues receives arrays of different lengths
+     *         (silent truncation would be a wrong-answer machine)
+     * @param left The left array's length
+     * @param right The right array's length
+     */
+    error LengthMismatch(uint256 left, uint256 right);
 
     /**
      * @notice Thrown when unzipWords or unzipValues receives a lane other
@@ -859,7 +867,7 @@ contract Collections {
      * @notice The two arrays paired element-wise into canonical values of
      *         the tuple type (leftType, rightType): the values-family
      *         zipWords
-     * @dev Different lengths revert with WordCountMismatch; every element
+     * @dev Different lengths revert with LengthMismatch; every element
      *      is validated as a canonical value of its side's type. A pair
      *      with a dynamic side is a dynamic tuple and carries the 0x20
      *      envelope, a static pair is its bare words.
@@ -874,7 +882,7 @@ contract Collections {
         bytes[] calldata left,
         bytes[] calldata right
     ) external pure returns (bytes[] memory out) {
-        if (left.length != right.length) revert WordCountMismatch(left.length, right.length);
+        if (left.length != right.length) revert LengthMismatch(left.length, right.length);
         AbiCodec.TupleLayout memory plan = _zipPlan(leftType, rightType);
         out = new bytes[](left.length);
         bytes[] memory pair = new bytes[](2);
@@ -1206,7 +1214,9 @@ contract Collections {
         private
         pure
     {
-        AbiCodec.validate(bytes(valueType), value, AbiCodec.Context(1, msg.sig, i, 0, cb.target));
+        AbiCodec.validate(
+            bytes(valueType), value, AbiCodec.Context(AbiCodec.ContextKind.CallbackResult, msg.sig, i, 0, cb.target)
+        );
     }
 
     /**

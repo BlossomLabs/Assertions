@@ -248,6 +248,26 @@ contract OperationsTest is Test {
         ops.rpow(type(uint256).max, 2, 1);
     }
 
+    function test_rpow_zeroBaseIsDivisionByZero() public {
+        vm.expectRevert(stdError.divisionError);
+        ops.rpow(2, 0, 0);
+        vm.expectRevert(stdError.divisionError);
+        ops.rpow(0, 3, 0);
+    }
+
+    function test_expWad_overflowPanics() public {
+        vm.expectRevert(stdError.arithmeticError);
+        ops.expWad(135305999368893231589);
+        assertEq(ops.expWad(-42139678854452767551), 0);
+    }
+
+    function test_lnWad_rejectsNonPositive() public {
+        vm.expectRevert(abi.encodeWithSelector(Operations.LogarithmUndefined.selector, int256(0)));
+        ops.lnWad(0);
+        vm.expectRevert(abi.encodeWithSelector(Operations.LogarithmUndefined.selector, int256(-1)));
+        ops.lnWad(-1);
+    }
+
     function test_log2() public view {
         assertEq(ops.log2(1), 0);
         assertEq(ops.log2(2), 1);
@@ -259,7 +279,7 @@ contract OperationsTest is Test {
     }
 
     function test_log2_rejectsZero() public {
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(Operations.LogarithmUndefined.selector, int256(0)));
         ops.log2(0);
     }
 

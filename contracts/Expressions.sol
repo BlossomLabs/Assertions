@@ -29,7 +29,7 @@ import {InputParam} from "./lib/ERC8211.sol";
  *      several dynamic arguments. Errors identify the node: InvalidNode for
  *      a structural fault, InvalidReference for a reference that is not
  *      strictly backwards (or a parameter index out of range),
- *      InvalidTarget for a code-less call target and CallFailed carrying
+ *      InvalidTarget for a code-less call target and NodeCallFailed carrying
  *      the target's revert reason, which the core's own CallFailed does not.
  * @custom:version 1.0
  */
@@ -141,14 +141,22 @@ contract Expressions {
 
     /**
      * @notice Thrown when a staticcall reverts, carrying the target's revert
-     *         data so the inner reason is not lost
+     *         data so the inner reason is not lost (a different error from
+     *         the core's two-argument CallFailed)
      * @param node The node making the call (the operand index for the
      *        resolve-once entry points)
      * @param target The called address
      * @param callData The calldata that was sent
      * @param reason The raw revert data
      */
-    error CallFailed(uint256 node, address target, bytes callData, bytes reason);
+    error NodeCallFailed(uint256 node, address target, bytes callData, bytes reason);
+
+    /**
+     * @notice Thrown when evaluateGuarded is called by anyone other than
+     *         this contract
+     * @param caller The offending msg.sender
+     */
+    error NotSelf(address caller);
 
     // ============ Resolve-Once Calls ============
 
@@ -165,7 +173,7 @@ contract Expressions {
      *      yield the canonical single-value encoding of its declared type.
      *      Returned via a raw assembly return, so the call nests inside any
      *      operand. Reverts with InvalidNode(0) when the target is not a
-     *      clean address word, InvalidTarget / CallFailed identifying the
+     *      clean address word, InvalidTarget / NodeCallFailed identifying the
      *      operand (target 0, args at index + 1, the destination at
      *      args.length + 1), AbiCodec's component errors naming the
      *      argument index, and InvalidTypeDescriptor on a malformed
@@ -290,8 +298,8 @@ contract Expressions {
     }
 
     /**
-     * @notice Internal entry point for guarded evaluation; reverts for any
-     *         caller other than this contract
+     * @notice Internal entry point for guarded evaluation; reverts with
+     *         NotSelf for any caller other than this contract
      * @dev External only because the EVM's sole catch primitive is a call
      *      boundary: TryOrElse and IsValid evaluate their attempt through
      *      it so a failure rolls back cleanly. The msg.sender check keeps
@@ -311,7 +319,7 @@ contract Expressions {
         uint256 index,
         Cache calldata initial
     ) external view returns (bytes memory result, Cache memory updated) {
-        if (msg.sender != address(this)) revert InvalidNode(index);
+        if (msg.sender != address(this)) revert NotSelf(msg.sender);
         updated = initial;
         result = _evaluate(expression, parameters, updated, index);
     }
@@ -323,7 +331,7 @@ contract Expressions {
      *      is non-empty is applied by calling this with the substituted
      *      slots as `parameters`. Evaluation happens through an external
      *      self-call, so a failure inside the graph surfaces as
-     *      CallFailed(0, this, callData, reason) with the inner error as
+     *      NodeCallFailed(0, this, callData, reason) with the inner error as
      *      the reason. Returns the same raw value as `evaluate`.
      * @param expression abi.encode(Expression)
      * @param parameters The values Parameter nodes read
@@ -479,12 +487,12 @@ contract Expressions {
     /**
      * @dev Executes a staticcall and returns the raw result bytes. A
      *      code-less target reverts with InvalidTarget(index) and a revert
-     *      with CallFailed(index, ...) carrying the reason.
+     *      with NodeCallFailed(index, ...) carrying the reason.
      */
     function _call(address target, bytes memory data, uint256 index) private view returns (bytes memory result) {
         if (target.code.length == 0) revert InvalidTarget(index, target);
         bool ok;
         (ok, result) = target.staticcall(data);
-        if (!ok) revert CallFailed(index, target, data, result);
+        if (!ok) revert NodeCallFailed(index, target, data, result);
     }
 }

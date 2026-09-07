@@ -70,7 +70,7 @@ function evaluateEncoded(bytes expression, bytes[] parameters) external view;   
 
 ### Guarded evaluation
 
-`TryOrElse` and `IsValid` evaluate their attempt through `evaluateGuarded`, an external self-call that only the contract itself may make (any other caller reverts with `InvalidNode`), because a call frame is the EVM's only catch primitive. The frame takes a copy of the memo cache in; on success its cache comes back and replaces the caller's, so values evaluated inside the attempt stay memoised, and on failure the frame's cache changes are discarded with the frame. Every failure counts, including out-of-gas in the subframe: the same edge the core's [`orElse` and `isValid`](/docs/core/control#the-staticcall-boundary-and-the-oog-caveat) document.
+`TryOrElse` and `IsValid` evaluate their attempt through `evaluateGuarded`, an external self-call that only the contract itself may make (any other caller reverts with `NotSelf`), because a call frame is the EVM's only catch primitive. The frame takes a copy of the memo cache in; on success its cache comes back and replaces the caller's, so values evaluated inside the attempt stay memoised, and on failure the frame's cache changes are discarded with the frame. Every failure counts, including out-of-gas in the subframe: the same edge the core's [`orElse` and `isValid`](/docs/core/control#the-staticcall-boundary-and-the-oog-caveat) document.
 
 ### ProbeCall details
 
@@ -102,15 +102,16 @@ Node 1 is referenced twice by node 3, and node 3 once by node 4; each is evaluat
 
 [`Collections.Callback`](/docs/operators/collections#callback-specification) carries a trailing `bytes expression` field. Empty, the callback is a direct call: `target`, `selector`, and the argument tuple with the element slots substituted. Non-empty, it is `abi.encode(Expression)`: Collections binds the element slots (`first`, and `second` for binary operations) into the constants exactly as before, then staticcalls `target` with `evaluateEncoded(expression, substitutedArguments)`; `selector` is ignored and `target` is the Expressions contract. Inside the graph, `Parameter` nodes read those substituted slots, so an element can be referenced any number of times, arguments may be dynamic and multi-word, and live reads compose without byte-offset substitution. The result is validated exactly like a direct callback's: mapped values against `outputType`, predicate results as a canonical 0/1 word. That last rule is Collections' own (`_predicate` demands a canonical bool from every callback result); `Select`'s first-word truth rule is a different concern and does not relax it.
 
-`evaluateEncoded` decodes the expression and self-calls `evaluate`, returning the same raw value. A failure inside surfaces as `CallFailed(0, expressions, data, reason)` wrapping the inner error, which Collections in turn reports through `CallbackFailed`.
+`evaluateEncoded` decodes the expression and self-calls `evaluate`, returning the same raw value. A failure inside surfaces as `NodeCallFailed(0, expressions, data, reason)` wrapping the inner error, which Collections in turn reports through `CallbackFailed`.
 
 ## Errors
 
 | Error | Description |
 |---|---|
-| `InvalidNode(uint256 node)` | the node is malformed: `result` out of range, the wrong reference count for its kind, a `Parameter` whose data is not one word, a `Select` condition shorter than 32 bytes, an address word that is not a clean address (a `Call` or `ProbeCall` target, or `resolveCall`'s resolved target at index 0), or `evaluateGuarded` called from outside the contract |
+| `InvalidNode(uint256 node)` | the node is malformed: `result` out of range, the wrong reference count for its kind, a `Parameter` whose data is not one word, a `Select` condition shorter than 32 bytes, an address word that is not a clean address (a `Call` or `ProbeCall` target, or `resolveCall`'s resolved target at index 0) |
+| `NotSelf(address caller)` | `evaluateGuarded` was called by anyone other than the contract itself |
 | `InvalidReference(uint256 node, uint256 ref)` | a reference does not point strictly backward, or a `Parameter` index is past the supplied parameters |
 | `InvalidTarget(uint256 node, address target)` | a `Call`, a `Resolve`, a resolve-once operand or the `evaluateEncoded` self-call targets an address without code (the index is the node, or the operand position in the resolve-once entry points) |
-| `CallFailed(uint256 node, address target, bytes callData, bytes reason)` | the staticcall a node or a resolve-once entry point made reverted; calldata and reason are preserved. Note the four-argument signature: the core's `CallFailed(address, bytes)` is a different error |
+| `NodeCallFailed(uint256 node, address target, bytes callData, bytes reason)` | the staticcall a node or a resolve-once entry point made reverted; calldata and reason are preserved. Note the four-argument signature: the core's `CallFailed(address, bytes)` is a different error |
 
 Descriptor and value validation raise the shared [`AbiCodec` errors](/docs/reference/errors#abicodec-shared-abi-machinery) (`InvalidTypeDescriptor`, `InvalidValue`, the component errors), and `ProbeCall` raises the core's `DidNotRevert` and `UnexpectedRevertData`.

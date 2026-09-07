@@ -222,6 +222,24 @@ contract ExpressionsTest is Test {
         this.externalRun(p);
     }
 
+    function testGuardedEvaluationRejectsOutsideCallers() public {
+        Expressions.Expression memory p = selectGraph("uint256", abi.encode(uint256(1)), false);
+        uint256 n = p.nodes.length;
+        Expressions.Cache memory cache = Expressions.Cache(new bytes[](n), new bool[](n), new bool[](n), new uint256[](n));
+        vm.expectRevert(abi.encodeWithSelector(Expressions.NotSelf.selector, address(this)));
+        expressions.evaluateGuarded(p, new bytes[](0), p.result, cache);
+    }
+
+    function testZipValuesRejectsLengthMismatch() public {
+        bytes[] memory one = new bytes[](1);
+        one[0] = abi.encode(uint256(1));
+        bytes[] memory two = new bytes[](2);
+        two[0] = abi.encode(uint256(1));
+        two[1] = abi.encode(uint256(2));
+        vm.expectRevert(abi.encodeWithSelector(Collections.LengthMismatch.selector, 1, 2));
+        collections.zipValues("uint256", "uint256", one, two);
+    }
+
     function testComposedDynamicCallbackRepeatsParameter() public view {
         Expressions.Expression memory p;
         p.nodes = new Expressions.Node[](5);

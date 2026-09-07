@@ -76,7 +76,7 @@ type Expect = { ok: bigint } | { revert: string };
 
 const P11: Expect = { revert: "Panic11" }; // arithmetic overflow
 const P12: Expect = { revert: "Panic12" }; // division / modulo by zero
-const BARE: Expect = { revert: "<empty>" }; // revert() with no data
+const LOG_UNDEFINED: Expect = { revert: "LogarithmUndefined" };
 
 const okU = (v: bigint): Expect => (v < 0n || v > MAXU ? P11 : { ok: v });
 const okI = (v: bigint): Expect => (v < I_MIN || v > I_MAX ? P11 : { ok: v });
@@ -121,7 +121,7 @@ function isqrt(x: bigint): bigint {
 // step — bit-identical by construction, so any divergence is a Solidity-
 // level bug (overflow handling, checked arithmetic), not rounding noise.
 function rpowRef(x: bigint, n: bigint, base: bigint): Expect {
-  if (base === 0n) return BARE;
+  if (base === 0n) return P12;
   if (x === 0n) return { ok: n === 0n ? base : 0n };
   let result = base;
   while (n > 0n) {
@@ -143,6 +143,7 @@ function rpowRef(x: bigint, n: bigint, base: bigint): Expect {
 // ============ Revert decoding ============
 
 const ERROR_ABI = [
+  { type: "error", name: "LogarithmUndefined", inputs: [{ type: "int256" }] },
   { type: "error", name: "Panic", inputs: [{ type: "uint256" }] },
   { type: "error", name: "Error", inputs: [{ type: "string" }] },
 ] as const;
@@ -281,7 +282,7 @@ const SPECS: OpSpec[] = [
     },
     ref: (x) => ({ ok: isqrt(x) }),
   },
-  { label: "log2", name: "log2", inTypes: ["uint256"], gen: (rng) => [genU(rng)], ref: (x) => (x === 0n ? BARE : { ok: BigInt(x.toString(2).length - 1) }) },
+  { label: "log2", name: "log2", inTypes: ["uint256"], gen: (rng) => [genU(rng)], ref: (x) => (x === 0n ? LOG_UNDEFINED : { ok: BigInt(x.toString(2).length - 1) }) },
   // ---- signed arithmetic ----
   { label: "add(i)", name: "add", inTypes: ["int256", "int256"], signedOut: true, gen: ii, ref: (a, b) => okI(a + b) },
   { label: "sub(i)", name: "sub", inTypes: ["int256", "int256"], signedOut: true, gen: ii, ref: (a, b) => okI(a - b) },

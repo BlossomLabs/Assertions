@@ -91,15 +91,25 @@ library AbiCodec {
     // ============ Types ============
 
     /**
+     * @dev Which error a validation failure raises (see Context): Value
+     *      reverts InvalidValue(offset), CallbackResult reverts
+     *      InvalidCallbackResult(operation, index, other, target),
+     *      TupleComponent reverts InvalidComponentValue(index, offset)
+     */
+    enum ContextKind {
+        Value,
+        CallbackResult,
+        TupleComponent
+    }
+
+    /**
      * @dev Error-reporting context threaded through validation so the
-     *      caller's error, not the codec's, reaches the user. `kind` picks
-     *      the error: 0 reverts InvalidValue(offset), 1 reverts
-     *      InvalidCallbackResult(operation, index, other, target), 2 reverts
-     *      InvalidComponentValue(index, offset). A zero-initialized context
-     *      is the plain value case.
+     *      caller's error, not the codec's, reaches the user. A
+     *      zero-initialized context is the plain Value case; the other
+     *      fields feed the error the kind selects.
      */
     struct Context {
-        uint8 kind;
+        ContextKind kind;
         bytes4 operation;
         uint256 index;
         uint256 other;
@@ -265,10 +275,10 @@ library AbiCodec {
      */
     function requireValue(bool valid, uint256 offset, Context memory context) private pure {
         if (valid) return;
-        if (context.kind == 1) {
+        if (context.kind == ContextKind.CallbackResult) {
             revert InvalidCallbackResult(context.operation, context.index, context.other, context.target);
         }
-        if (context.kind == 2) revert InvalidComponentValue(context.index, offset);
+        if (context.kind == ContextKind.TupleComponent) revert InvalidComponentValue(context.index, offset);
         revert InvalidValue(offset);
     }
 
@@ -539,7 +549,7 @@ library AbiCodec {
             if (words > type(uint256).max / 32) revert InvalidTypeDescriptor(0);
             revert InvalidComponentLength(index, words * 32, value.length);
         }
-        if (dynamic) validateDynamic(t, value, Context(2, bytes4(0), index, 0, address(0)));
+        if (dynamic) validateDynamic(t, value, Context(ContextKind.TupleComponent, bytes4(0), index, 0, address(0)));
     }
 
     /**

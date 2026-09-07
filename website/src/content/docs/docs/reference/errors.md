@@ -63,8 +63,9 @@ View-mode batch restrictions from the judge, plus the primitives' own errors:
 | `RawCallFailed(address, bytes)` | a `rawCall` staticcall reverted (arguments: the called address and the calldata that was sent) |
 | `EmptyNeedle()` | `replace` or `split` received an empty needle or delimiter (it would match everywhere) |
 | `ModularInverseDoesNotExist(uint256, uint256)` | a negative `powMod` exponent has no inverse because the base and modulus magnitudes are not coprime (arguments: base magnitude, modulus magnitude) |
+| `LogarithmUndefined(int256)` | `log2(0)`, or `lnWad` of zero or a negative value: the logarithm is undefined there (argument: the input, zero for `log2`) |
 
-Arithmetic failures in Operations surface as Solidity panics: overflow/underflow (including `exp`, `mulDiv`, `rpow`, the parsers' accumulators and `type(int256).min / -1`) as `Panic(0x11)`, and division or modulo by zero (including `mulDiv`, `addMod`, `mulMod` and `powMod`) as `Panic(0x12)`. Four functions revert with empty data on their domain edges: `rpow` with a zero `base`, `expWad` above its input bound, `lnWad` for `x <= 0` and `log2(0)`.
+Arithmetic failures in Operations surface as Solidity panics: overflow/underflow (including `exp`, `mulDiv`, `rpow`, the parsers' accumulators and `type(int256).min / -1`) as `Panic(0x11)`, and division or modulo by zero (including `mulDiv`, `addMod`, `mulMod` and `powMod`) as `Panic(0x12)`. A zero `rpow` base is a zero divisor (`Panic(0x12)`) and an `expWad` result that leaves `int256` an overflow (`Panic(0x11)`); only the logarithms carry a named domain error, `LogarithmUndefined`.
 
 ## Collections
 
@@ -72,7 +73,8 @@ Arithmetic failures in Operations surface as Solidity panics: overflow/underflow
 |-------|-------------|
 | `LambdaOffsetOutOfBounds(uint256, uint256)` | a fold, `mapWords` or `filterWords` window offset does not leave room for a 32-byte word inside the template (arguments: the offending offset, the template length) |
 | `UnalignedWords(uint256)` | `foldWords` or a word-array function received data that is not a whole number of 32-byte words |
-| `WordCountMismatch(uint256, uint256)` | `zipWords` or `zipValues` received payloads of different lengths (silent truncation would be a wrong-answer machine) |
+| `WordCountMismatch(uint256, uint256)` | `zipWords` received payloads of different word counts (silent truncation would be a wrong-answer machine) |
+| `LengthMismatch(uint256, uint256)` | `zipValues` received arrays of different lengths (silent truncation would be a wrong-answer machine) |
 | `InvalidLane(uint256)` | `unzipWords` or `unzipValues` received a lane other than 0 or 1 |
 | `InvalidCallback()` | a `Callback` is malformed: `first` (or `second` for binary operations) is not a slot of `constants`, the two slots coincide, `arguments` is not a parenthesized tuple, or `constants` has a different length than the descriptor's component count |
 | `InvalidCallbackTarget(address)` | a callback or lambda target has no bytecode; precompiles are excluded |
@@ -84,10 +86,11 @@ A malformed callback result reverts with `AbiCodec.InvalidCallbackResult` (above
 
 | Error | Description |
 |-------|-------------|
-| `InvalidNode(uint256)` | a malformed node: the `result` index out of range, the wrong reference count for the node's kind, a `Parameter` whose data is not one word, a `Select` condition shorter than 32 bytes, a target word that is not a clean address, or `evaluateGuarded` called from outside the contract |
+| `InvalidNode(uint256)` | a malformed node: the `result` index out of range, the wrong reference count for the node's kind, a `Parameter` whose data is not one word, a `Select` condition shorter than 32 bytes, a target word that is not a clean address |
+| `NotSelf(address)` | `evaluateGuarded` was called by anyone other than the Expressions contract itself |
 | `InvalidReference(uint256, uint256)` | a node references itself or a later node, or a `Parameter` index is past the supplied parameters |
 | `InvalidTarget(uint256, address)` | a `Call`, a `Resolve`, a resolve-once operand or the `evaluateEncoded` self-call targets an address without code |
-| `CallFailed(uint256, address, bytes, bytes)` | the staticcall a node or a resolve-once entry point made reverted; carries the node (or operand) index, the target, the calldata and the reason. A different error from the core's two-argument `CallFailed` |
+| `NodeCallFailed(uint256, address, bytes, bytes)` | the staticcall a node or a resolve-once entry point made reverted; carries the node (or operand) index, the target, the calldata and the reason. A different error from the core's two-argument `CallFailed` |
 
 `ProbeCall` reuses the core's `DidNotRevert` and `UnexpectedRevertData`; descriptor and value validation raise the `AbiCodec` errors. See [Expressions](/docs/operators/expressions).
 

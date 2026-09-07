@@ -113,9 +113,9 @@ fix it in the same change that falsified it.
   is not a reduction); `join` is composition over `concat`. What passes (i): hot
   loops (one call per element otherwise) and calldata-exponential compositions
   (`rpow`, `log2`). Specialist families go to optional contracts. What the rule
-  prevents: Collections' `*Values` family (`Collections.sol:396-660` plus its
-  helpers `:710-990`) has zero SDK consumers and leaves Collections 272 bytes
-  under EIP-170. Documented next step when Collections needs bytes: split
+  prevents: Collections' `*Values` family (`Collections.sol:505-926` plus its
+  helpers `:1133-1335`) has zero SDK consumers and leaves Collections 1,098 bytes
+  under EIP-170 (measured 2026-09-07 by `test/bytecode-size.test.ts`). Documented next step when Collections needs bytes: split
   `*Values` into a third periphery contract.
 - **Signedness is a dimension in every word-level design.** Unsigned order and
   signed order disagree about which value absorbs, which element is minimal, and

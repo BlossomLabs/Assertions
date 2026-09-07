@@ -115,6 +115,13 @@ contract Operations {
     error ModularInverseDoesNotExist(uint256 base, uint256 modulus);
 
     /**
+     * @notice Thrown when a logarithm is taken outside its domain: log2 of
+     *         zero, or lnWad of zero or a negative value
+     * @param x The argument as given (zero for log2)
+     */
+    error LogarithmUndefined(int256 x);
+
+    /**
      * @notice Thrown when a rawCall staticcall reverts
      * @param target The called address
      * @param data The calldata that was sent
@@ -436,10 +443,10 @@ contract Operations {
      *      is not bounded by the number of multiplies. Choose the scale
      *      and tolerance for the input range and exponent. Reverts with
      *      Panic(0x11) if a scaled intermediate does not fit uint256, and
-     *      without a reason when `base` is zero.
+     *      with Panic(0x12) when `base` is zero: the scale is the divisor.
      */
     function rpow(uint256 x, uint256 n, uint256 base) external pure returns (uint256) {
-        if (base == 0) revert();
+        if (base == 0) _panic(0x12);
         // 0^0 is one unit, matching exp(0, 0) == 1 in the integer family.
         if (x == 0) return n == 0 ? base : 0;
         uint256 result = base;
@@ -459,15 +466,15 @@ contract Operations {
      * @notice e^x in wad fixed point (1e18), for continuous compounding
      *         and the inverse of lnWad
      * @dev Remco Bloemen's algorithm: range-reduce by ln(2), evaluate a
-     *      rational approximation, then scale by 2^k. Reverts without a
-     *      reason above 135305999368893231589 (where the result leaves
-     *      int256) and returns 0 below -42139678854452767551 (where it
-     *      underflows wad).
+     *      rational approximation, then scale by 2^k. Reverts with
+     *      Panic(0x11) at or above 135305999368893231589 (where the result
+     *      leaves int256) and returns 0 at or below -42139678854452767551
+     *      (where it underflows wad).
      */
     function expWad(int256 x) external pure returns (int256 r) {
         unchecked {
             if (x <= -42139678854452767551) return 0;
-            if (x >= 135305999368893231589) revert();
+            if (x >= 135305999368893231589) _panic(0x11);
 
             // Convert to a 2^96 base for the polynomial's precision.
             x = (x << 78) / 5 ** 18;
@@ -501,12 +508,12 @@ contract Operations {
     /**
      * @notice The natural log of x in wad fixed point (1e18): the inverse
      *         of expWad, and how a growth factor becomes a rate
-     * @dev Remco Bloemen's algorithm. Reverts without a reason for x <= 0,
-     *      where the log is undefined.
+     * @dev Remco Bloemen's algorithm. Reverts with LogarithmUndefined for
+     *      x <= 0, where the log is undefined.
      */
     function lnWad(int256 x) external pure returns (int256 r) {
         unchecked {
-            if (x <= 0) revert();
+            if (x <= 0) revert LogarithmUndefined(x);
 
             // Normalize to [1, 2) in a 2^96 base, remembering the shift.
             int256 k = int256(_log2(uint256(x))) - 96;
@@ -542,11 +549,11 @@ contract Operations {
      *         the bit length of x minus one
      * @dev Earns its slot as a calldata-exponential composition: the
      *      composed form is eight nested conds that each duplicate their
-     *      operand's calldata subtree. Reverts without a reason for x = 0,
-     *      where the logarithm is undefined.
+     *      operand's calldata subtree. Reverts with LogarithmUndefined for
+     *      x = 0, where the logarithm is undefined.
      */
     function log2(uint256 x) external pure returns (uint256) {
-        if (x == 0) revert();
+        if (x == 0) revert LogarithmUndefined(0);
         return _log2(x);
     }
 

@@ -99,6 +99,7 @@ type Expect = { ok: Hex } | { revert: string };
 const REV = (name: string): Expect => ({ revert: name });
 
 const ERROR_ABI = [
+  { type: "error", name: "LogarithmUndefined", inputs: [{ type: "int256" }] },
   { type: "error", name: "CallFailed", inputs: [{ type: "address" }, { type: "bytes" }] },
   {
     type: "error",
@@ -812,7 +813,7 @@ function genRevertData(rng: Rng): Expr {
     };
   }
   if (r < 0.5) {
-    // Bare revert: log2 at zero reverts with no data.
+    // Named error from Operations: log2 at zero reverts LogarithmUndefined(0).
     const abi = [
       {
         type: "function",
@@ -824,11 +825,12 @@ function genRevertData(rng: Rng): Expr {
     ] as const;
     const data = encodeFunctionData({ abi, functionName: "log2", args: [0n] });
     const p: ParamStruct = { paramType: 2, fetcherType: 1, paramData: scData(OPS, data), constraints: [] };
-    const expectSel = rng() < 0.5;
+    const full = encodeErrorResult({ abi: ERROR_ABI, errorName: "LogarithmUndefined", args: [0n] });
+    const strip = rng() < 0.5;
     return {
-      data: coreCalldata("revertData", [p, expectSel ? PANIC_SELECTOR : "0x00000000"]),
-      expect: expectSel ? REV("UnexpectedRevertData") : { ok: "0x" },
-      desc: `revertData(bare,${expectSel ? "sel" : "0"})`,
+      data: coreCalldata("revertData", [p, strip ? (full.slice(0, 10) as Hex) : "0x00000000"]),
+      expect: { ok: strip ? (("0x" + full.slice(10)) as Hex) : full },
+      desc: `revertData(named,${strip ? "strip" : "0"})`,
     };
   }
   if (r < 0.75) {

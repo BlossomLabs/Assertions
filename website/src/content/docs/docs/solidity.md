@@ -62,7 +62,7 @@ function within(uint256 lo, uint256 hi) pure returns (Constraint[] memory cs) {
 }
 ```
 
-How a constraint judges the resolved value (first 32-byte word, unsigned) and what routes through a read-spliced Operations comparison instead is described once under [constraints](/docs/core/reads#constraints). Multi-value selections use the core's own [`pick` and `nav`](/docs/core/reads).
+How each constraint judges its corresponding resolved word (unsigned or signed) and what routes through a read-spliced Operations comparison instead is described once under [constraints](/docs/core/reads#constraints). Multi-value selections use the core's own [`pick` and `nav`](/docs/core/reads).
 
 ## Selector constants
 
@@ -231,7 +231,7 @@ assertions.assertParam(
 
 ## Caveats
 
-- **Constraints are unsigned word comparisons.** For `int256` returns use the [Operations int256 overloads](/docs/operators/words#signed-comparisons) read-spliced and judged `EQ 1`, and the signed `absDiff` overload for tolerance (see [constraints](/docs/core/reads#constraints)).
+- **Choose the constraint's signedness.** For `int256` returns use `GTE_SIGNED`, `LTE_SIGNED` or `IN_SIGNED`, or the [Operations int256 overloads](/docs/operators/words#signed-comparisons) read-spliced and judged `EQ 1`. Signed tolerance still uses the signed `absDiff` overload (see [constraints](/docs/core/reads#constraints)).
 - **EIP-7702 delegated EOAs carry code.** A delegated EOA has a 23-byte delegation designator as its code, so a "has no code" check (`Operations.codeHash` equal to `bytes32(0)` or `keccak256("")`) is not a strict "is an EOA" check on chains with EIP-7702.
 - **`block.number` semantics differ across chains.** On OP-stack and most L2s, `Operations.blockNumber()` sees the L2 block number (on Arbitrum, `block.number` returns the approximate L1 block). Block times also vary per chain, so avoid porting block-number thresholds between networks.
 - **Calls to code-less addresses revert with `CallFailed`.** A `staticcall` to an address without code would otherwise "succeed" with empty returndata; the fetcher detects this and reverts descriptively. To *tolerate* a missing or reverting target instead, wrap the operand in the core's [`orElse`](/docs/core/control).

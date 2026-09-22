@@ -66,8 +66,8 @@ const CONTRACTS = [
     artifact: "artifacts/contracts/Assertions.sol/Assertions.json",
     output: "src/lib/assertions-deployment.ts",
     // Vanity salt for the 2.0 release.
-    salt: "0x815b54312580b32036bde3218abe63b49e46ba9773ae5b4bdd089288679c811c",
-    expectedAddress: "0xA55e47F41968c49e084955524fA77c1B2ef2B638",
+    salt: "0x701300821f7dc4d9511874c56dfffa4b84d33eccc191ca5840daeb002c7ec439",
+    expectedAddress: "0xA55e479Cfb10A70BA33560ecAf5dd29C3fDE8531",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -113,8 +113,8 @@ const CONTRACTS = [
     output: "src/lib/expressions-deployment.ts",
     // Vanity salt for the 2.0 release. The core interface is local, so core
     // source edits do not move this address.
-    salt: "0xae9e0eb2baca8771e7389dc50d7111b19293e3e0470e559a8f9438abf5af37d7",
-    expectedAddress: "0xE5594e551FA2209A28386418AAb971983A874029",
+    salt: "0x4852b74e55f554c8614e24a7024785d16d3bf4e39787841c1ebbe88396dee43d",
+    expectedAddress: "0xe5594E555dF45DbF1a5622ED73e282EDb42e7930",
     prefix: "EXPRESSIONS",
     description: "typed expression graphs contract",
     includeProxyConstants: false,

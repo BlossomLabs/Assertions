@@ -27,7 +27,15 @@ function get(InputParam target, bytes4 selector, string argumentTypes, InputPara
 
 ## Constraints
 
-Every operand carries inline constraints, and `resolve` (like the judge) validates them against the resolved value's **first 32-byte word, unsigned**: `EQ` equal to the 32-byte reference, `GTE` and `LTE` against it, `IN` within `abi.encode(lo, hi)` inclusive (the wire format is on the [core reference](/docs/reference/core#constraint-types)). That covers `uint256`, `address`, `bool` and `bytes32` values directly; for anything else the first word is whatever the encoding puts there (a dynamic return's offset word, the first component of a tuple), so select first with `pick` or `nav`. A violation reverts with `ConstraintFailed`, which names the operand (entry, parameter and constraint index) and echoes the word as compared. Everything richer (`!=`, signed comparisons, string equality, live-vs-live tolerance) is a read-spliced [Operations](/docs/operators) expression whose 0/1 word or hash is judged `EQ`: `gt(int256,int256)` judged `EQ 1`, `hash(name)` judged `EQ keccak256("...")`, `absDiff(a, b)` judged `LTE d`.
+Every operand carries inline constraints. `resolve` and the judge check **constraint i against resolved 32-byte word i**, matching Biconomy's ERC-8211 reference implementation. All constrained words must exist before any predicate runs; even `SKIP` requires a complete word. A violation reverts with `ConstraintFailed`, identifying the entry, operand and constraint/word index and echoing the actual word.
+
+`EQ` compares raw words. `GTE`, `LTE` and `IN` compare unsigned values; `GTE_SIGNED`, `LTE_SIGNED` and `IN_SIGNED` interpret words as signed `int256`. `OR` checks non-OR alternatives against the same word, and `SKIP` leaves that word unconstrained so later positions can be checked. The [core reference](/docs/reference/core#constraint-types) lists encoding IDs and payloads. These positions are raw ABI words: a dynamic return can start with an offset, not its contents. Use `pick` or `nav` to select a value before constraining it.
+
+For a scalar range, use one `IN(lo, hi)` constraint (or `IN_SIGNED`). `[GTE(lo), LTE(hi)]` checks two different words; on a one-word balance it reverts. To check several other conditions on one scalar, compose an Operations/Expressions boolean and judge it with `EQ 1`, or emit separate predicate entries.
+
+For example, resolved words `(42, 999)` pass `[EQ(42), EQ(999)]` and fail `[EQ(42), EQ(42)]`. Earlier v2 development artifacts incorrectly applied both constraints to word 0. This correction changes the core's bytecode and CREATE2 address; existing deployments retain their behavior. Single-constraint scalar predicates keep their meaning. Update the encoder and contract address together.
+
+Canonical predicate encodings match the pinned Biconomy reference in differential tests. Assertions remains stricter about range payloads: `IN` and `IN_SIGNED` require exactly 64 bytes, whereas the reference decoder permits trailing bytes. Assertions is a view-only judge: it does not execute writes or output captures.
 
 ## Chained lookups
 

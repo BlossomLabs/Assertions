@@ -247,19 +247,20 @@ interface P {
 function genConstraints(rng: Rng, value: Hex): { list: ConsStruct[]; verdict: string | null; desc: string } {
   if (rng() < 0.55) return { list: [], verdict: null, desc: "" };
   if (byteLen(value) < 32) {
-    // _validateConstraints reads the first word before anything else.
+    // All constrained word bounds are checked before any predicate.
     return {
       list: [{ constraintType: 0, referenceData: word(0n) }],
       verdict: "ReturnDataOutOfBounds",
       desc: "{EQ on short}",
     };
   }
-  const w = wordAt(value, 0)!;
   const n = rng() < 0.75 ? 1 : 2;
+  const short = byteLen(value) < n * 32;
   const list: ConsStruct[] = [];
   const tags: string[] = [];
-  let verdict: string | null = null;
+  let verdict: string | null = short ? "ReturnDataOutOfBounds" : null;
   for (let k = 0; k < n; k++) {
+    const w = wordAt(value, k * 32) ?? 0n;
     const r = rng();
     if (r < 0.07) {
       list.push({ constraintType: 0, referenceData: ("0x" + hexBytes(rng, 16)) as Hex });

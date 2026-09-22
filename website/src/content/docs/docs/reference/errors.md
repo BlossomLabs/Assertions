@@ -16,7 +16,9 @@ Defined once in `ERC8211.sol`, the standard's shared vocabulary, thrown by the c
 | `ReturnDataOutOfBounds(int256, uint256)` | resolved data is too short for the requested read: an operand returned fewer than 32 bytes, data doesn't match a declared shape, or a raw word index (possibly negative) lies outside the data |
 | `InvalidAddressWord(uint256, bytes32)` | a word that must hold an address has dirty upper bytes (arguments: position, a parameter or hop index, and the offending word) |
 | `InvalidBalanceData(uint256, uint256, uint256)` | a `BALANCE` fetcher's `paramData` is not exactly 40 bytes (two packed addresses) |
-| `InvalidConstraintData(uint256, uint256, uint256, uint256)` | a constraint's `referenceData` has the wrong length (32 bytes for EQ/GTE/LTE, 64 for IN) |
+| `InvalidConstraintData(uint256, uint256, uint256, uint256)` | a constraint's `referenceData` has the wrong length (32 bytes for equality/order, 64 for either range, zero for SKIP) |
+| `InvalidOrConstraint(uint256, uint256, uint256)` | empty OR or nested OR; identifies entry, operand and outer constraint/word index |
+| `InvalidConstraintRange(uint256, uint256, uint256)` | range lower bound exceeds upper bound under its signedness; identifies entry, operand and outer constraint/word index |
 
 ## AbiCodec (shared ABI machinery)
 

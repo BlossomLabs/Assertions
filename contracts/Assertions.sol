@@ -13,6 +13,8 @@ import {
     InvalidAddressWord,
     InvalidBalanceData,
     InvalidConstraintData,
+    InvalidConstraintRange,
+    InvalidOrConstraint,
     ReturnDataOutOfBounds
 } from "./lib/ERC8211.sol";
 import {AbiCodec, InvalidTypeDescriptor} from "./lib/AbiCodec.sol";
@@ -55,8 +57,9 @@ interface IERC20Balance {
  *      revert), VALUE parameters and outputParams are rejected (no ETH
  *      forwarding, no Storage writes in view). Entries without a TARGET
  *      parameter are standard ERC-8211 predicate entries. The encoding is
- *      the unmodified ERC-8211 wire format, so batches built by any
- *      ERC-8211 SDK judge here unchanged.
+ *      the ERC-8211 wire format. Canonical predicate constraints follow
+ *      the Biconomy reference implementation; range payload lengths are
+ *      checked more strictly (exactly 64 bytes).
  *
  *      assertParam(param) is sugar for the 90% case: resolve one input
  *      parameter and validate its constraints, no batch scaffolding.
@@ -821,8 +824,8 @@ contract Assertions {
     }
 
     /**
-     * @dev The first 32-byte word of `value`: the word constraints compare
-     *      and addresses are routed from. Reverts with ReturnDataOutOfBounds
+     * @dev The first 32-byte word of `value`, used for scalar reads and
+     *      address routing. Reverts with ReturnDataOutOfBounds
      *      when fewer than 32 bytes are available.
      */
     function _firstWord(bytes memory value) internal pure returns (bytes32 word) {
@@ -842,10 +845,10 @@ contract Assertions {
     }
 
     /**
-     * @dev Validates every constraint against the resolved value's first
-     *      32-byte word (unsigned comparisons, per the standard). Reverts
-     *      with InvalidConstraintData on malformed referenceData and
-     *      ConstraintFailed on the first violated constraint.
+     * @dev Constraint i checks complete resolved word i, including SKIP.
+     *      Check all word bounds before evaluating any predicate. OR checks
+     *      its leaves against one word and rejects nested OR structurally,
+     *      before short-circuiting. Reference lengths stay canonical.
      */
     function _validateConstraints(
         Constraint[] calldata constraints,
@@ -854,35 +857,79 @@ contract Assertions {
         uint256 entryIndex,
         uint256 paramIndex
     ) internal pure {
-        if (constraints.length == 0) return;
-        bytes32 actual = _firstWord(value);
-        for (uint256 i = 0; i < constraints.length; i++) {
-            Constraint calldata c = constraints[i];
+        uint256 length = constraints.length;
+        if (length == 0) return;
+        uint256 words = value.length / 32;
+        if (words < length) revert ReturnDataOutOfBounds(int256(words), value.length);
+        for (uint256 i = 0; i < length; i++) {
+            bytes32 actual;
+            assembly ("memory-safe") {
+                actual := mload(add(add(value, 32), mul(i, 32)))
+            }
+            Constraint memory c = constraints[i];
             bool ok_;
-            if (c.constraintType == ConstraintType.IN) {
-                if (c.referenceData.length != 64) {
-                    revert InvalidConstraintData(entryIndex, paramIndex, i, c.referenceData.length);
+            if (c.constraintType == ConstraintType.OR) {
+                Constraint[] memory alternatives = abi.decode(c.referenceData, (Constraint[]));
+                if (alternatives.length == 0) revert InvalidOrConstraint(entryIndex, paramIndex, i);
+                for (uint256 j = 0; j < alternatives.length; j++) {
+                    if (alternatives[j].constraintType == ConstraintType.OR) {
+                        revert InvalidOrConstraint(entryIndex, paramIndex, i);
+                    }
                 }
-                (bytes32 lower, bytes32 upper) = abi.decode(c.referenceData, (bytes32, bytes32));
-                ok_ = uint256(actual) >= uint256(lower) && uint256(actual) <= uint256(upper);
+                for (uint256 j = 0; j < alternatives.length; j++) {
+                    if (_checkConstraint(actual, alternatives[j], entryIndex, paramIndex, i)) {
+                        ok_ = true;
+                        break;
+                    }
+                }
             } else {
-                if (c.referenceData.length != 32) {
-                    revert InvalidConstraintData(entryIndex, paramIndex, i, c.referenceData.length);
-                }
-                bytes32 bound = bytes32(c.referenceData);
-                if (c.constraintType == ConstraintType.EQ) {
-                    ok_ = actual == bound;
-                } else if (c.constraintType == ConstraintType.GTE) {
-                    ok_ = uint256(actual) >= uint256(bound);
-                } else {
-                    // LTE
-                    ok_ = uint256(actual) <= uint256(bound);
-                }
+                ok_ = _checkConstraint(actual, c, entryIndex, paramIndex, i);
             }
             if (!ok_) {
                 revert ConstraintFailed(assertion, entryIndex, paramIndex, i, c.constraintType, actual, c.referenceData);
             }
         }
+    }
+
+    /**
+     * @dev Evaluate one non-OR constraint against one word. Scalar lengths
+     *      are exact; range bounds use the comparison's signedness. The
+     *      caller validates OR structure before passing its leaves here.
+     */
+    function _checkConstraint(
+        bytes32 actual,
+        Constraint memory c,
+        uint256 entryIndex,
+        uint256 paramIndex,
+        uint256 index
+    ) private pure returns (bool) {
+        ConstraintType kind = c.constraintType;
+        uint256 length = c.referenceData.length;
+        if (kind == ConstraintType.SKIP) {
+            if (length != 0) revert InvalidConstraintData(entryIndex, paramIndex, index, length);
+            return true;
+        }
+        if (kind == ConstraintType.IN || kind == ConstraintType.IN_SIGNED) {
+            if (length != 64) revert InvalidConstraintData(entryIndex, paramIndex, index, length);
+            (bytes32 lower, bytes32 upper) = abi.decode(c.referenceData, (bytes32, bytes32));
+            if (kind == ConstraintType.IN_SIGNED) {
+                if (int256(uint256(lower)) > int256(uint256(upper))) {
+                    revert InvalidConstraintRange(entryIndex, paramIndex, index);
+                }
+                int256 signed = int256(uint256(actual));
+                return int256(uint256(lower)) <= signed && signed <= int256(uint256(upper));
+            }
+            if (lower > upper) revert InvalidConstraintRange(entryIndex, paramIndex, index);
+            return lower <= actual && actual <= upper;
+        }
+        if (length != 32) revert InvalidConstraintData(entryIndex, paramIndex, index, length);
+        bytes32 bound = bytes32(c.referenceData);
+        if (kind == ConstraintType.EQ) return actual == bound;
+        if (kind == ConstraintType.GTE) return actual >= bound;
+        if (kind == ConstraintType.LTE) return actual <= bound;
+        if (kind == ConstraintType.GTE_SIGNED) return int256(uint256(actual)) >= int256(uint256(bound));
+        if (kind == ConstraintType.LTE_SIGNED) return int256(uint256(actual)) <= int256(uint256(bound));
+        revert InvalidOrConstraint(entryIndex, paramIndex, index);
     }
 
     // ============ Internal Read Helpers ============

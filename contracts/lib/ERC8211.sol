@@ -63,15 +63,22 @@ enum OutputParamFetcherType {
  * @dev ABI-encoded as uint8: EQ = 0, GTE = 1, LTE = 2 (referenceData is a
  *      single 32-byte word), IN = 3 (referenceData is
  *      abi.encode(bytes32 lowerBound, bytes32 upperBound), 64 bytes;
- *      bounds are inclusive). Comparisons are unsigned over the value's
- *      first 32-byte word, which covers uint256, address, bool and other
- *      left-padded 32-byte representations.
+ *      bounds are inclusive). Constraint i checks resolved word i. The
+ *      Biconomy reference IDs are preserved: signed comparisons 4/5,
+ *      OR 6 (abi.encode(Constraint[]) of non-OR leaves), SKIP 7 (empty
+ *      referenceData), and IN_SIGNED 8 (two signed bounds). Signed kinds
+ *      reinterpret complete words as int256; unsigned kinds use uint256.
  */
 enum ConstraintType {
     EQ,
     GTE,
     LTE,
-    IN
+    IN,
+    GTE_SIGNED,
+    LTE_SIGNED,
+    OR,
+    SKIP,
+    IN_SIGNED
 }
 
 /**
@@ -149,7 +156,7 @@ error CallFailed(address target, bytes data);
  *        the operand's position within a read primitive)
  * @param constraintIndex The failing constraint's position on the parameter
  * @param constraintType The constraint kind that failed (see ConstraintType)
- * @param actual The resolved value's first 32-byte word, as compared
+ * @param actual The resolved word at constraintIndex, as compared
  * @param referenceData The constraint's reference data, echoed as given
  */
 error ConstraintFailed(
@@ -173,13 +180,29 @@ error InvalidBalanceData(uint256 entryIndex, uint256 paramIndex, uint256 length)
 
 /**
  * @notice Thrown when a constraint's referenceData has the wrong length
- *         (32 bytes for EQ/GTE/LTE, 64 bytes for IN)
+ *         (32 bytes for equality/order, 64 bytes for ranges, empty for SKIP)
  * @param entryIndex The batch entry the parameter belongs to
  * @param paramIndex The input parameter's position within the entry
  * @param constraintIndex The malformed constraint's position on the parameter
  * @param length The length of the referenceData that was passed
  */
 error InvalidConstraintData(uint256 entryIndex, uint256 paramIndex, uint256 constraintIndex, uint256 length);
+
+/**
+ * @notice Thrown when OR has no alternatives or contains another OR
+ * @param entryIndex The batch entry
+ * @param paramIndex The operand
+ * @param constraintIndex The outer constraint (and resolved word) index
+ */
+error InvalidOrConstraint(uint256 entryIndex, uint256 paramIndex, uint256 constraintIndex);
+
+/**
+ * @notice Thrown when a range's lower bound exceeds its upper bound
+ * @param entryIndex The batch entry
+ * @param paramIndex The operand
+ * @param constraintIndex The outer constraint (and resolved word) index
+ */
+error InvalidConstraintRange(uint256 entryIndex, uint256 paramIndex, uint256 constraintIndex);
 
 /**
  * @notice Thrown when resolved data is too short (or a word index is

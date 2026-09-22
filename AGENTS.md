@@ -35,10 +35,14 @@ fix it in the same change that falsified it.
   fold went from 16,572 to 35,708 gas per byte, `hashPairSorted` from 10,486 to
   22,510 gas per level, and even native-lambda folds rose about a third, `charset`
   from 30,080 to 41,830), so the primitives stay on the core.
-- **Wire-format purity**: the judge consumes unmodified ERC-8211. Extending the
-  constraint enum was refused because a batch carrying an extension value reverts
-  on every other executor and squats on wire space a future revision could
-  redefine. Portability breaks are one-way doors; refuse them.
+- **Wire-format purity**: predicate constraints follow Biconomy's ERC-8211
+  reference encoding and positional semantics. Enum IDs 0..8 are EQ, GTE,
+  LTE, IN, GTE_SIGNED, LTE_SIGNED, OR, SKIP, IN_SIGNED; never add private
+  extension IDs or reorder these. Constraint i checks resolved word i;
+  SKIP still requires a complete word. OR leaves check the same word and
+  nested OR is rejected before short-circuiting. Canonical encodings are
+  tested against pinned deployed Biconomy bytecode offline; exact 64-byte
+  range references remain a deliberate stricter rejection in Assertions.
 - **Raw `InputParam` is a tree; `Expressions` adds a graph alternative.**
   Raw operands cannot name subterms: repeated expressions duplicate calldata and
   resolution. Resolve-once construction lives on the CORE, not on Expressions:
@@ -97,10 +101,11 @@ fix it in the same change that falsified it.
   non-string/non-bytes operands through `requireBytesLike`; the builder mirrors
   that guard. `hash(rawCall(...))` is the raw whole-returndata spelling.
 - **Errors identify the operand** (entry index, param index, hop index, binding
-  index). Constraints judge only the first 32-byte word, unsigned, per the
-  standard: anything richer (signedness, `!=`, string equality, tolerance) lowers
-  to an Operations expression judged `EQ 1`, and tests must assert that op-judge
-  shape.
+  index). Constraint i judges word i. Scalar ranges use IN/IN_SIGNED;
+  two constraints do not mean two tests on word 0. Signed constraints and
+  OR are supported at the wire boundary. The SDK may still lower signed
+  comparisons through Operations; `!=`, string equality and live-vs-live
+  tolerance also use expression composition, with tests pinning that shape.
 - **Operations admission is a demand test**: a function earns a slot only when
   BOTH (i) it is not expressible as a few-node recipe at practical cost AND (ii) a
   concrete assertion workload needs it (a script in `docs/` or the tests, or an SDK
@@ -213,7 +218,9 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   bytecode, so `@custom:version` and a typo fix cost the same re-mine. An edit to
   an IMPORTED source moves the importer's address too, which is why Collections
   and Expressions declare their callback/core interfaces locally: only `AbiCodec`
-  is still compiled into all four, so an edit there moves all four. Budget the
+  is still compiled into all four, so an edit there moves all four. `ERC8211`
+  is also imported by Expressions: changing its enums moves both Assertions and
+  Expressions, including the latter's `InputParam` ABI decoder. Budget the
   re-mine before editing a comment: a55e47/09e4a7e/c011ec7 take seconds to a
   minute, e5594e55 is 32 bits and takes minutes. Regenerate and verify deployment
   artifacts, fixtures and SDK addresses together; the SDK lives in the vendored

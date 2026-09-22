@@ -12,7 +12,7 @@ The core (judge + primitives) has the same CREATE2 address on every chain; the c
 | `assertParam(InputParam)` | Resolve one input parameter (raw bytes, staticcall, or balance read) and validate its inline constraints (the 90% case, no batch scaffolding) |
 | `assertBatch(ComposableExecution[])` | Evaluate an ERC-8211 composable batch under view semantics: predicate entries resolve and validate their parameters; entries with a `TARGET` parameter construct a call by splicing resolved values into calldata and execute it via `staticcall` (the call must not revert) |
 
-The judge consumes the **unmodified ERC-8211 wire format**, so batches built by any ERC-8211 SDK judge here unchanged. Being view, it is also itself an operand: a `STATIC_CALL` parameter encoding an `assertBatch` self-call makes a whole batch probeable with `isValid`, `orElse` and `revertData` ([a batch as an operand](/docs/core/control#a-batch-as-an-operand)). Being view-only, it rejects what a view context cannot express: output parameters (Storage writes) revert with `OutputParamsNotSupported`, `VALUE` parameters with `ValueParamNotSupported`, a second `TARGET` parameter with `DuplicateTargetParam`, and a `BALANCE`-fetched target with `BalanceCannotBeTarget`.
+The judge consumes the **unmodified ERC-8211 wire format**, so canonical predicate constraints follow Biconomy's reference semantics, subject to the view restrictions and canonical payload lengths documented below. Being view, it is also itself an operand: a `STATIC_CALL` parameter encoding an `assertBatch` self-call makes a whole batch probeable with `isValid`, `orElse` and `revertData` ([a batch as an operand](/docs/core/control#a-batch-as-an-operand)). Being view-only, it rejects what a view context cannot express: output parameters (Storage writes) revert with `OutputParamsNotSupported`, `VALUE` parameters with `ValueParamNotSupported`, a second `TARGET` parameter with `DuplicateTargetParam`, and a `BALANCE`-fetched target with `BalanceCannotBeTarget`.
 
 ## Wire format
 
@@ -25,8 +25,8 @@ struct InputParam {
 }
 
 struct Constraint {
-    ConstraintType constraintType;    // EQ | GTE | LTE | IN
-    bytes referenceData;              // 32 bytes (EQ/GTE/LTE) or 64 bytes lo,hi (IN)
+    ConstraintType constraintType;    // canonical IDs 0..8 (see below)
+    bytes referenceData;              // payload depends on the constraint kind
 }
 
 struct ComposableExecution {
@@ -46,12 +46,19 @@ struct ComposableExecution {
 
 ### Constraint types
 
-| Constraint | Reference data | Meaning |
-|------------|----------------|---------|
-| `EQ` | 32 bytes | word equals the reference |
-| `GTE` | 32 bytes | word >= reference |
-| `LTE` | 32 bytes | word <= reference |
-| `IN` | `abi.encode(lo, hi)` | lo <= word <= hi, inclusive |
+| ID | Constraint | Reference data | Meaning at word i |
+|----|------------|----------------|-------------------|
+| 0 | `EQ` | exactly 32 bytes | raw word equals reference |
+| 1 | `GTE` | exactly 32 bytes | unsigned word >= reference |
+| 2 | `LTE` | exactly 32 bytes | unsigned word <= reference |
+| 3 | `IN` | exactly 64 bytes: `abi.encode(lo, hi)` | inclusive unsigned range |
+| 4 | `GTE_SIGNED` | exactly 32 bytes | signed int256 word >= reference |
+| 5 | `LTE_SIGNED` | exactly 32 bytes | signed int256 word <= reference |
+| 6 | `OR` | `abi.encode(Constraint[])` | at least one leaf matches the same word; nonempty, no nested OR |
+| 7 | `SKIP` | empty bytes | ignore this complete word |
+| 8 | `IN_SIGNED` | exactly 64 bytes: `abi.encode(int256(lo), int256(hi))` | inclusive signed range |
+
+A range with lower > upper reverts. Signed comparisons reinterpret the high bit as the sign; select them only for signed values. Before evaluating OR leaves, all leaves are scanned for nested OR. Remaining leaves are evaluated in order and short-circuit on the first match.
 
 How the word is chosen and what routes elsewhere is described once, under [constraints on the core reads page](/docs/core/reads#constraints).
 

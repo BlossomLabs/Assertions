@@ -288,11 +288,53 @@ export const ASSERTIONS_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "entryIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "paramIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "constraintIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidConstraintRange",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "position",
         "type": "uint256"
       }
     ],
     "name": "InvalidNavigation",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "entryIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "paramIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "constraintIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidOrConstraint",
     "type": "error"
   },
   {

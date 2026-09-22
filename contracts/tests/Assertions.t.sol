@@ -261,9 +261,8 @@ contract AssertionsTest is Test {
             )
         );
         assertions.assertParam(
-            _call(
-                address(target),
-                abi.encodeCall(MockTarget.getValue, ()),
+            _raw(
+                abi.encode(uint256(7), uint256(42)),
                 _c2(ConstraintType.GTE, abi.encode(uint256(1)), ConstraintType.LTE, abi.encode(uint256(41)))
             )
         );

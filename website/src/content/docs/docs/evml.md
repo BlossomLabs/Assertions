@@ -31,7 +31,7 @@ assert <target>::{viewFn(argTypes)(returnType) <args>} <op> <expected>  # inline
 
 Comparison operators: `==` `!=` `>` `<` `>=` `<=` and `~=` (approximate equality, with `--delta`). Strings support `==` / `!=` anywhere (nested comparisons compile to on-chain keccak). A bare `assert <call>` with no operator requires a boolean call and compiles to an `EQ true` constraint.
 
-Every line compiles to the ERC-8211 judge: the live expression becomes an `InputParam` (a staticcall, balance read, or nested core expression) validated by inline constraints via `assertParam`. Comparisons the [constraints](/docs/core/reads#constraints) can't express directly (`!=`, signed and two-live-side comparisons) route through a read-spliced [Operations](/docs/operators) comparison judged `EQ 1`.
+Every line compiles to the ERC-8211 judge: the live expression becomes an `InputParam` (a staticcall, balance read, or nested core expression) validated by inline constraints via `assertParam`. Comparisons the [constraints](/docs/core/reads#constraints) can't express directly (`!=` and two-live-side comparisons) route through a read-spliced [Operations](/docs/operators) comparison judged `EQ 1`. The SDK also retains this lowering for signed comparisons, although the wire format now supports signed constraints directly.
 
 ### Chained calls
 

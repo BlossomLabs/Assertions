@@ -49,7 +49,7 @@ Neither the modular pair nor `powMod` has an EVMcrispr helper face; reach them f
 
 ## Signed comparisons
 
-Constraints compare unsigned words, so anything signed routes through the int256 overloads. "The rate is above -10" (where an unsigned comparison would see -10 as astronomically large):
+Signed constraints can compare a word directly with a constant. The int256 overloads also support strict and live-vs-live comparisons, and remain the SDK's lowering for signed predicates. "The rate is above -10" (where an unsigned comparison would see -10 as astronomically large):
 
 ```solidity
 bytes memory aboveFloor = read2(operations, GT_S,
@@ -63,7 +63,7 @@ Signed tolerance is the `absDiff(int256,int256)` overload judged `LTE`: the magn
 
 ## Logic
 
-Assertion constraints revert on failure, so they cannot be OR-ed; a comparison *returns* the outcome as a 0/1 word instead, and `bitAnd`/`bitOr`/`bitXor` combine outcomes (on 0/1 words the bitwise and logical ops coincide). Nested expressions become operands by pointing a `STATIC_CALL` at the core. "`addr1` has ETH OR holds more than 10 tokens":
+An inline `OR` constraint combines alternative checks on the same resolved word against encoded references. To combine predicates over different live values, comparisons *return* their outcomes as 0/1 words, and `bitAnd`/`bitOr`/`bitXor` combine those outcomes (on 0/1 words the bitwise and logical ops coincide). Nested expressions become operands by pointing a `STATIC_CALL` at the core. "`addr1` has ETH OR holds more than 10 tokens":
 
 ```solidity
 bytes memory hasEth = read2(operations, GT_U,

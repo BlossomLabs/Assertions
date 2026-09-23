@@ -23,6 +23,9 @@ export default defineConfig({
     },
   },
   solidity: {
+    // Compiling tests in the same solc job adds a forge-std remapping to the
+    // contracts' metadata, which moves every CREATE2 address.
+    splitTestsCompilation: true,
     // The two profiles are intentionally identical: the CREATE2 address
     // is derived from the exact bytecode, so test builds and production builds
     // must produce the same output. Do not let them drift.

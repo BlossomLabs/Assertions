@@ -60,7 +60,14 @@
         "./.evmcrispr/modules/vault/src/_generated.ts"
       ],
       // The modules themselves (evml.ts registers them by lazy import).
-      "@evmcrispr/module-*": ["./.evmcrispr/modules/*/src/index.ts"]
+      "@evmcrispr/module-*": ["./.evmcrispr/modules/*/src/index.ts"],
+      // The vendored sources would otherwise type against the checkout's own
+      // viem and React, a second copy whose nominally identical types (viem's
+      // Account, React's Ref) do not unify with the site's.
+      "viem": ["./node_modules/viem"],
+      "viem/*": ["./node_modules/viem/*"],
+      "react": ["./node_modules/@types/react"],
+      "react/*": ["./node_modules/@types/react/*"]
     }
   }
 }

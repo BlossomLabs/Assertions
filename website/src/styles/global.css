@@ -64,6 +64,23 @@
   --grid-opacity: 0.08;
 }
 
+/* Code shows the characters as typed: JetBrains Mono would otherwise join
+   operators such as ->, >= and == into single ligature glyphs. */
+.font-mono,
+code,
+pre,
+kbd,
+samp {
+  font-variant-ligatures: none;
+  font-feature-settings: "calt" 0, "liga" 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   background-color: var(--color-surface);
   background-image:

@@ -1,40 +1,28 @@
 ---
 const cases = [
   {
-    title: 'Keep a treasury floor',
-    description: 'Require enough native currency or tokens to remain after a payout.',
+    title: 'Treasury floor',
+    question: 'Is there still enough left after this pays out?',
   },
   {
-    title: 'Keep control where it belongs',
-    description: 'Check that owners, admins, and role holders still match your policy.',
+    title: 'Price bounds',
+    question: 'Is the oracle price still where it was when we voted?',
   },
   {
-    title: 'Put prices in bounds',
-    description: 'Compare live oracle values against your limits or an allowed deviation.',
+    title: 'Execution window',
+    question: 'Is this landing inside the window we agreed on?',
   },
   {
-    title: 'Verify the upgrade',
-    description: 'Read the exposed implementation address and check its runtime code hash.',
+    title: 'Total value',
+    question: 'Do all our balances, added together, still cover what we owe?',
   },
   {
-    title: 'Set the window',
-    description: 'Require a block timestamp inside the execution window you choose.',
+    title: 'Deep reads',
+    question: 'Is the field buried in that struct what we expect?',
   },
   {
-    title: 'Watch the whole portfolio',
-    description: 'Map balances, fold totals, or require every position to pass a check.',
-  },
-  {
-    title: 'Reuse the expensive read',
-    description: 'Reference one resolved value across multiple checks in an expression graph.',
-  },
-  {
-    title: 'Go deeper than a balance',
-    description: 'Navigate returned structs, tuples, and arrays to check the field that matters.',
-  },
-  {
-    title: 'Read between the bytes',
-    description: 'Check names, match substrings, or pin a bytes payload by its hash.',
+    title: 'Bytes and strings',
+    question: 'Is this the token we think it is, by name and not just by address?',
   },
 ];
 ---
@@ -42,19 +30,19 @@ const cases = [
 <section class="py-24 px-6" id="use-cases">
   <div class="max-w-6xl mx-auto">
     <h2 class="font-mono font-bold text-3xl sm:text-4xl text-center mb-4">
-      What has to be true?
+      What else has to be true?
     </h2>
     <p class="text-center text-[var(--color-ink-2)] text-lg mb-16 max-w-2xl mx-auto">
-      Start with a simple condition. Compose your way to richer checks.
+      Every proposal raises its own questions. Each one becomes a check.
     </p>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {cases.map((c) => (
         <div class="group relative p-6 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-ink-3)]/15 hover:border-[var(--color-ink-3)]/30 transition-all">
           <div class="flex items-start gap-4">
-            <div class="mt-0.5 size-2.5 rounded-full shrink-0 bg-[var(--color-bp-400)]"></div>
+            <div class="mt-1 size-2.5 rounded-full shrink-0 bg-[var(--color-bp-400)]"></div>
             <div>
-              <h3 class="font-mono font-semibold text-sm mb-1.5">{c.title}</h3>
-              <p class="text-sm text-[var(--color-ink-2)] leading-relaxed">{c.description}</p>
+              <h3 class="font-mono font-semibold text-xs uppercase tracking-wider text-[var(--color-ink-3)] mb-2">{c.title}</h3>
+              <p class="text-[var(--color-ink)] leading-snug">{c.question}</p>
             </div>
           </div>
         </div>

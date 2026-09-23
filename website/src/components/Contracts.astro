@@ -29,17 +29,13 @@ const descriptions: Record<string, { role: string; title: string; description: s
 };
 ---
 
-<section class="px-6 pb-16 scroll-mt-24" id="contracts" aria-labelledby="contracts-heading">
+<section class="px-6 pt-8 pb-16 scroll-mt-24" id="contracts" aria-labelledby="contracts-heading">
   <div class="max-w-6xl mx-auto">
     <div class="border-t border-[var(--color-ink-3)]/20 pt-12 mb-10 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
       <div>
-        <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-bp-400)] mb-3">The Assertions toolkit</p>
+        <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-bp-400)] mb-3">The toolkit</p>
         <h2 id="contracts-heading" class="font-mono font-bold text-2xl sm:text-3xl">Four contracts. Your rules.</h2>
       </div>
-      <p class="max-w-md text-[var(--color-ink-2)] leading-relaxed">
-        One toolkit, split by what each contract does, not by rank.
-        Compose the checks your transaction needs, from a single balance to a whole portfolio.
-      </p>
     </div>
 
     <div class="grid md:grid-cols-2 gap-4">
@@ -84,8 +80,7 @@ const descriptions: Record<string, { role: string; title: string; description: s
       })}
     </div>
 
-    <div class="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm">
-      <p class="text-[var(--color-ink-2)]">Same CREATE2 addresses across chains. Check the network you will execute on before you rely on one.</p>
+    <div class="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 text-sm">
       <a class="contract-link shrink-0 text-[var(--color-bp-400)] font-medium" href="/deployments">Check deployments <span aria-hidden="true">→</span></a>
     </div>
     <p id="address-copy-status" class="sr-only" role="status" aria-live="polite"></p>

@@ -16,7 +16,7 @@ const compile = (script: string, line: string, sets: string[] = []) =>
 
 describe("compileAssertionLine", () => {
   it("compiles a valid line and hands back the subject operand", async () => {
-    const out = await compile(EXEC, `assert ${T}::{totalSupply()(uint256)} > 0`);
+    const out = await compile(EXEC, `assert ${T}::!{totalSupply()(uint256)} > 0`);
     expect(out.ok).toBe(true);
     expect(out.diagnostics).toEqual([]);
     expect(out.subject?.kind).toBe("call");
@@ -24,7 +24,7 @@ describe("compileAssertionLine", () => {
     expect(out.expected?.kind).toBe("const");
     expect(out.param).toBeDefined();
     expect(out.transact).toBe(false);
-    expect(out.candidate).toBe(`${EXEC}\nassert ${T}::{totalSupply()(uint256)} > 0`);
+    expect(out.candidate).toBe(`${EXEC}\nassert ${T}::!{totalSupply()(uint256)} > 0`);
     expect(out.insertedAt).toBe(2);
   });
 
@@ -38,14 +38,14 @@ describe("compileAssertionLine", () => {
   });
 
   it("attributes a bare non-boolean subject to the assertion", async () => {
-    const out = await compile(EXEC, `assert ${T}::{totalSupply()(uint256)}`);
+    const out = await compile(EXEC, `assert ${T}::!{totalSupply()(uint256)}`);
     expect(out.ok).toBe(false);
     expect(out.diagnostics[0].message).toMatch(/boolean/);
     expect(out.diagnostics[0].inAssertion).toBe(true);
   });
 
   it("locates a side that fails to compile inside the line", async () => {
-    const out = await compile(EXEC, `assert @hash!(${T}::{values()(uint256[])}) == 0x${"00".repeat(32)}`);
+    const out = await compile(EXEC, `assert @hash!(${T}::!{values()(uint256[])}) == 0x${"00".repeat(32)}`);
     expect(out.ok).toBe(false);
     const [d] = out.diagnostics;
     expect(d.message).toMatch(/string or bytes/);
@@ -75,13 +75,13 @@ describe("compileAssertionLine", () => {
       "set $other @ens(vitalik.eth)",
       `exec $tok transfer(address,uint256) @me @get(${T} "totalSupply()(uint256)")`,
     ].join("\n");
-    const out = await compile(script, "assert $tok::{totalSupply()(uint256)} > 0");
+    const out = await compile(script, "assert $tok::!{totalSupply()(uint256)} > 0");
     expect(out.ok).toBe(true);
     expect(out.subject?.cat).toBe("Uint");
   });
 
   it("reports a validation error with its location in the batch", async () => {
-    const out = await compile(`${EXEC}\nassert $missing::{f()(uint256)} > 0`, "assert @chainId! == 1");
+    const out = await compile(`${EXEC}\nassert $missing::!{f()(uint256)} > 0`, "assert @chainId! == 1");
     expect(out.ok).toBe(false);
     expect(out.diagnostics.some((d) => d.inAssertion === false && d.line === 3)).toBe(true);
   });

@@ -48,11 +48,12 @@ export function isCallArgNode(arg: CallArg | undefined): arg is CallNode {
   return arg !== undefined && typeof arg !== "string";
 }
 
-/** One segment of a `::` call chain. */
+/** One segment of a `::!` call chain. */
 export interface CallHop {
   /** "" until a function is chosen. */
   fnName: string;
-  /** Inline-ABI form `{fn(types)(ret) args}` vs an ABI-known `fn(args)`. */
+  /** Whether the ABI was typed inline rather than fetched. Either way the
+   *  hop renders as `::!{fn(types)(ret) args}`. */
   inline: boolean;
   /** Canonical argument types. */
   argTypes: string[];
@@ -165,7 +166,7 @@ export function callwrapHelperName(
 
 export interface Assertion {
   subject: ValueExpr;
-  /** null = bare boolean form (`assert $t::paused() "msg"`). */
+  /** null = bare boolean form (`assert $t::!{paused()(bool)} "msg"`). */
   operator: string | null;
   expected: ValueExpr | null;
   /** Tolerance, used when operator is "~=". */
@@ -437,7 +438,7 @@ export function familyOpsFor(
     .map((op) => op.symbol);
 }
 
-/** Operator value for the bare boolean form (`assert target::fn()`). */
+/** Operator value for the bare boolean form (`assert target::!{fn()(bool)}`). */
 export const BARE_OP = "is true";
 
 /**

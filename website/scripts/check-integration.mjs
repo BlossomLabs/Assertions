@@ -124,13 +124,13 @@ try {
   const snippets = [
     `load contracts\nassert @codeHash!(${target}) != 0x${"00".repeat(32)}`,
     "load receipts\nassert @chainId! == 1",
-    `load lang\nassert @len!(${target}::{values()(uint256[])}) > 0`,
-    `assert @hash!(${target}::{name()(string)}) == @hash("Assertions")`,
-    `load lang\nassert @bytes.len!(${target}::{data()(bytes)}) >= 32`,
-    `load math\nassert @sqrt!(${target}::{amount()(uint256)}) > 1`,
-    `assert ${target}::{balanceOf(address)(uint256) @sender} > 0`,
-    `load lang\nassert @str.concat!(${target}::{name()(string)} ${target}::{symbol()(string)}) == "Assertions"`,
-    `assert ${target}::{combine(string,string)(uint256) ${target}::{name()(string)} ${target}::{symbol()(string)}} > 0`,
+    `load lang\nassert @len!(${target}::!{values()(uint256[])}) > 0`,
+    `assert @hash!(${target}::!{name()(string)}) == @hash("Assertions")`,
+    `load lang\nassert @bytes.len!(${target}::!{data()(bytes)}) >= 32`,
+    `load math\nassert @sqrt!(${target}::!{amount()(uint256)}) > 1`,
+    `assert ${target}::!{balanceOf(address)(uint256) @sender} > 0`,
+    `load lang\nassert @str.concat!(${target}::!{name()(string)} ${target}::!{symbol()(string)}) == "Assertions"`,
+    `assert ${target}::!{combine(string,string)(uint256) ${target}::!{name()(string)} ${target}::!{symbol()(string)}} > 0`,
   ];
   for (const source of snippets) {
     const script = tag.script(source);
@@ -140,7 +140,7 @@ try {
     assert.equal(actions.length, 1, source);
     assert.equal(actions[0].to, sdk.CORE_ADDRESS, source);
   }
-  const invalidArrayHash = `assert @hash!(${target}::{values()(uint256[])}) == 0x${"00".repeat(32)}`;
+  const invalidArrayHash = `assert @hash!(${target}::!{values()(uint256[])}) == 0x${"00".repeat(32)}`;
   await assert.rejects(() => tag.script(invalidArrayHash).interpret(), /string or bytes/);
 
   // The builder's menus and the compiler agree on what @hash!/@bytes.len!

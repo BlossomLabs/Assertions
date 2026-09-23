@@ -38,7 +38,7 @@ describe("buildAssertionLine", () => {
       expected: literal("1e18"),
     });
     expect(await buildAssertionLine(a, noEns)).toEqual({
-      line: `assert ${T}::balanceOf(@me) >= 1e18`,
+      line: `assert ${T}::!{balanceOf(address)(uint256) @me} >= 1e18`,
       sets: [],
     });
   });
@@ -57,7 +57,7 @@ describe("buildAssertionLine", () => {
       expected: literal("@me"),
     });
     expect((await buildAssertionLine(a, noEns))?.line).toBe(
-      `assert ${T}::{pair()(uint112,uint112,address)}[_ _ $]::{owners()(address[])}[[... $]] == @me`,
+      `assert ${T}::!{pair()(uint112,uint112,address)}[_ _ $]::!{owners()(address[])}[[... $]] == @me`,
     );
   });
 
@@ -74,7 +74,7 @@ describe("buildAssertionLine", () => {
       expected: literal("true"),
     });
     expect((await buildAssertionLine(a, noEns))?.line).toBe(
-      `assert ${T}::{proposals()((address,uint256,bool)[])}[[_ [_ _ $]]] == true`,
+      `assert ${T}::!{proposals()((address,uint256,bool)[])}[[_ [_ _ $]]] == true`,
     );
   });
 
@@ -89,7 +89,7 @@ describe("buildAssertionLine", () => {
       expected: literal("LP"),
     });
     expect((await buildAssertionLine(a, noEns))?.line).toBe(
-      `assert @str.split!(${T}::name() " " -1) == "LP"`,
+      `assert @str.split!(${T}::!{name()(string)} " " -1) == "LP"`,
     );
   });
 
@@ -99,11 +99,11 @@ describe("buildAssertionLine", () => {
       expected: literal("@me"),
     });
     expect(await buildAssertionLine(a, noEns)).toEqual({
-      line: "assert $vitalik::owner() == @me",
+      line: "assert $vitalik::!{owner()(address)} == @me",
       sets: ["set $vitalik @ens(vitalik.eth)"],
     });
     expect(await buildAssertionLine(a, { ...noEns, chainId: 100 })).toEqual({
-      line: "assert $vitalik::owner() == @me",
+      line: "assert $vitalik::!{owner()(address)} == @me",
       sets: [`set $vitalik ${VITALIK}`],
     });
   });
@@ -117,13 +117,13 @@ describe("buildAssertionLine", () => {
       expected: literal("0"),
     });
     expect(await buildAssertionLine(a, { ...noEns, chainId: 100 })).toEqual({
-      line: `assert ${T}::balanceOf($vitalik) > 0`,
+      line: `assert ${T}::!{balanceOf(address)(uint256) $vitalik} > 0`,
       sets: ["set $vitalik @ens(vitalik.eth)"],
     });
     expect(
       await buildAssertionLine(a, { resolveEns: async () => VITALIK, chainId: 100 }),
     ).toEqual({
-      line: `assert ${T}::balanceOf($vitalik) > 0`,
+      line: `assert ${T}::!{balanceOf(address)(uint256) $vitalik} > 0`,
       sets: [`set $vitalik ${VITALIK}`],
     });
   });
@@ -136,7 +136,7 @@ describe("buildAssertionLine", () => {
       expected: literal("1e24"),
     });
     expect((await buildAssertionLine(arith, noEns))?.line).toBe(
-      `assert @calc!(${T}::totalSupply() * 2) <= 1e24`,
+      `assert @calc!(${T}::!{totalSupply()(uint256)} * 2) <= 1e24`,
     );
     // `@calc!` spells integer division `//`; `/` is the rounded division
     // of `@calcFloor!`/`@calcCeil!`, its own helper with `/` at the root and
@@ -147,7 +147,7 @@ describe("buildAssertionLine", () => {
       expected: literal("1e24"),
     });
     expect((await buildAssertionLine(trunc, noEns))?.line).toBe(
-      `assert @calc!(${T}::totalSupply() // 2) <= 1e24`,
+      `assert @calc!(${T}::!{totalSupply()(uint256)} // 2) <= 1e24`,
     );
     const floor = assertion({
       subject: { kind: "arith", op: "/", left: supply, right: literal("3") },
@@ -155,7 +155,7 @@ describe("buildAssertionLine", () => {
       expected: literal("1e24"),
     });
     expect((await buildAssertionLine(floor, noEns))?.line).toBe(
-      `assert @calcFloor!(${T}::totalSupply() / 3) <= 1e24`,
+      `assert @calcFloor!(${T}::!{totalSupply()(uint256)} / 3) <= 1e24`,
     );
     const ceil = assertion({
       subject: {
@@ -169,7 +169,7 @@ describe("buildAssertionLine", () => {
       expected: literal("1e24"),
     });
     expect((await buildAssertionLine(ceil, noEns))?.line).toBe(
-      `assert @calcCeil!(@calc!(${T}::totalSupply() + 1) / 3) <= 1e24`,
+      `assert @calcCeil!(@calc!(${T}::!{totalSupply()(uint256)} + 1) / 3) <= 1e24`,
     );
   });
 
@@ -181,7 +181,7 @@ describe("buildAssertionLine", () => {
       expected: literal("1.5"),
     });
     expect((await buildAssertionLine(format, noEns))?.line).toBe(
-      `assert @num.format!(${T}::totalSupply() 18) == "1.5"`,
+      `assert @num.format!(${T}::!{totalSupply()(uint256)} 18) == "1.5"`,
     );
     const name = call(T, [hop({ fnName: "name", returnTypes: ["string"] })]);
     const parse = (rounding: "trunc" | "floor" | "ceil", signedness: "signed" | "unsigned") =>
@@ -191,13 +191,13 @@ describe("buildAssertionLine", () => {
         expected: literal("0"),
       });
     expect((await buildAssertionLine(parse("trunc", "signed"), noEns))?.line).toBe(
-      `assert @num.parse!(${T}::name() 6) > 0`,
+      `assert @num.parse!(${T}::!{name()(string)} 6) > 0`,
     );
     expect((await buildAssertionLine(parse("floor", "signed"), noEns))?.line).toBe(
-      `assert @num.parse!(${T}::name() 6 floor) > 0`,
+      `assert @num.parse!(${T}::!{name()(string)} 6 floor) > 0`,
     );
     expect((await buildAssertionLine(parse("trunc", "unsigned"), noEns))?.line).toBe(
-      `assert @num.parse!(${T}::name() 6 trunc unsigned) > 0`,
+      `assert @num.parse!(${T}::!{name()(string)} 6 trunc unsigned) > 0`,
     );
     // An out-of-range precision leaves the line incomplete.
     const bad = assertion({
@@ -218,7 +218,7 @@ describe("buildAssertionLine", () => {
       message: "halted",
     });
     expect((await buildAssertionLine(bare, noEns))?.line).toBe(
-      `assert @bool!((${T}::totalSupply() > 0) or (not ${T}::paused())) "halted"`,
+      `assert @bool!((${T}::!{totalSupply()(uint256)} > 0) or (not ${T}::!{paused()(bool)})) "halted"`,
     );
   });
 
@@ -237,7 +237,7 @@ describe("buildAssertionLine", () => {
       delta: "50e8",
     });
     expect((await buildAssertionLine(approx, noEns))?.line).toBe(
-      `assert ${T}::price() ~= 100e8 --delta 50e8`,
+      `assert ${T}::!{price()(uint256)} ~= 100e8 --delta 50e8`,
     );
     expect(await buildAssertionLine({ ...approx, delta: "" }, noEns)).toBeNull();
   });

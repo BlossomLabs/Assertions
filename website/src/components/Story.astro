@@ -20,14 +20,14 @@ const beats: Beat[] = [
     answer: 'Once the actions run, the council Safe owns the vault.',
     detail: 'If it doesn’t, the whole proposal reverts.',
     contract: 'Assertions',
-    lines: ['assert $vault::owner() == $councilSafe "handover didn\'t land"'],
+    lines: ['assert $vault::!{owner()(address)} == $councilSafe "handover didn\'t land"'],
   },
   {
     ask: 'The owner’s right. But the vault is a proxy. What code is it actually running?',
     answer: 'The implementation behind the proxy, read at execution time, matches the audited build.',
     detail: 'One call’s answer feeds the next: read the address, then hash its code.',
     contract: 'Operations',
-    lines: ['assert @codeHash!($vault::implementation()) == 0xf517…7dc5 "unaudited code"'],
+    lines: ['assert @codeHash!($vault::!{implementation()(address)}) == 0xf517…7dc5 "unaudited code"'],
   },
   {
     ask: 'We’re handing the keys to a Safe. Who holds its keys?',
@@ -45,7 +45,7 @@ const beats: Beat[] = [
 // A display-only EVML tokenizer: enough classes to read like the builder's
 // highlighting, in the site's own palette so both themes follow the tokens.
 const TOKEN =
-  /(#.*$)|("[^"]*")|\b(assert|def|load|set)\b|(@[\w.:]+!?)|(\$\w+)|(0x[0-9a-fA-F…]+|\b\d+\b)|(::|==|>=|<=|!=|->)|(\s+|[^\s"@$#:=<>!-]+|.)/g;
+  /(#.*$)|("[^"]*")|\b(assert|def|load|set)\b|(@[\w.:]+!?)|(\$\w+)|(0x[0-9a-fA-F…]+|\b\d+\b)|(::!?|==|>=|<=|!=|->)|(\s+|[^\s"@$#:=<>!-]+|.)/g;
 const CLASS = [
   'text-[var(--color-ink-3)]',
   'text-[var(--color-ink-2)]',

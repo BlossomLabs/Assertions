@@ -88,9 +88,9 @@ async function renderCall(
         argVals.push(await evmlArg(hop.argTypes[i], arg, ctx.ensToVar));
       }
     }
-    out += hop.inline
-      ? `::{${hop.fnName}(${hop.argTypes.join(",")})(${hop.returnTypes.join(",")})${argVals.length ? ` ${argVals.join(" ")}` : ""}}`
-      : `::${hop.fnName}(${argVals.join(" ")})`;
+    // Every hop of an on-chain expression is a `::!` read, which always
+    // spells its ABI inline: an ABI-known hop renders its fetched types.
+    out += `::!{${hop.fnName}(${hop.argTypes.join(",")})(${hop.returnTypes.join(",")})${argVals.length ? ` ${argVals.join(" ")}` : ""}}`;
     // A lens narrows the hop's return: `[_ $ _]` selects one output of a
     // multi-value return (mid-chain: the address the chain continues on),
     // and nested levels (`[_ [_ [$ _]]]`) select through array elements
@@ -119,7 +119,7 @@ async function renderCall(
 }
 
 /** Wrap a rendered boolean operand in parens when it is itself a
- *  cmp/logic/not node, corpus style: `($a::q() > 0) or (not $a::paused())`. */
+ *  cmp/logic/not node, corpus style: `($a::!{q()(uint256)} > 0) or (not $a::!{paused()(bool)})`. */
 function boolOperand(rendered: string, node: ValueExpr): string {
   return node.kind === "cmp" || node.kind === "logic" || node.kind === "not"
     ? `(${rendered})`

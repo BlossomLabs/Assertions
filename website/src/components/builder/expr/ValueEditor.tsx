@@ -112,8 +112,8 @@ function summarize(node: ValueExpr): string {
     case "call": {
       const fns = node.hops
         .map((h) => (h.fnName ? `${h.fnName}()` : "…"))
-        .join("::");
-      return `${node.target.trim() || "…"}::${fns}`;
+        .join("::!");
+      return `${node.target.trim() || "…"}::!${fns}`;
     }
     case "balance":
       return `@balance!(${node.token} …)`;

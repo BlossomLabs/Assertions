@@ -61,7 +61,7 @@ describe("attributeFailure", () => {
     "load lang",
     "set $a 0x1234567890123456789012345678901234567890",
     "exec $a transfer(address,uint256) @me 1",
-    "assert @len!($a::{v()(uint256[])}) > 0",
+    "assert @len!($a::!{v()(uint256[])}) > 0",
   ].join("\n");
 
   it("shifts the location by the 2-line sim wrap and names the assertion", () => {
@@ -69,7 +69,7 @@ describe("attributeFailure", () => {
     expect(attributeFailure("assert(6:0,6:38): ConstraintFailed", script)).toEqual({
       kind: "assertion",
       line: 4,
-      text: "assert @len!($a::{v()(uint256[])}) > 0",
+      text: "assert @len!($a::!{v()(uint256[])}) > 0",
     });
   });
 

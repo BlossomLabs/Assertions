@@ -24,7 +24,7 @@ assertions.assertParam(callParam(address(assertions), sum, gte(1)));
 In EVMcrispr the same expression is written directly and compiles to the same read-spliced calldata:
 
 ```evml
-assert @calc!(@balance!(ETH $addr1) + $weth::balanceOf($addr1)) > 0
+assert @calc!(@balance!(ETH $addr1) + $weth::!{balanceOf(address)(uint256) $addr1}) > 0
 ```
 
 ## 512-bit math: mulDiv, the mod pair, powMod & sqrt
@@ -82,7 +82,7 @@ assertions.assertParam(callParam(address(assertions), either, eq(bytes32(uint256
 ```
 
 ```evml
-assert @bool!((@balance!(ETH $addr1) > 0) or ($token::balanceOf($addr1) > 10))
+assert @bool!((@balance!(ETH $addr1) > 0) or ($token::!{balanceOf(address)(uint256) $addr1} > 10))
 ```
 
 Boolean negation is `eq(x, 0)`; the bitwise complement is `bitXor(x, type(uint256).max)`.
@@ -166,7 +166,7 @@ assertions.assertParam(callParam(address(assertions), holds, eq(bytes32(uint256(
 ```
 
 ```evml
-assert $token::balanceOf($a) >= @calc!(5 * 10 ^ $token::decimals())
+assert $token::!{balanceOf(address)(uint256) $a} >= @calc!(5 * 10 ^ $token::!{decimals()(uint8)})
 ```
 
 **Conditional select.** The core's [`cond`](/docs/core/control) branches lazily on any 0/1 word a comparison produces, and never resolves the losing branch; prefer it to the arithmetic trick `c * a + (1 - c) * b`, which evaluates both.

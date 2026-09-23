@@ -307,7 +307,7 @@ export async function previewSubjectValue(
     // The subject folded to a constant: compile it against a live
     // placeholder of its category, so the compiler mirrors it into
     // `expected` and hands back its value.
-    const live = `${CORE_ADDRESS}::{LEN()(${LIVE_TYPE[cat] ?? "uint256"})}`;
+    const live = `${CORE_ADDRESS}::!{LEN()(${LIVE_TYPE[cat] ?? "uint256"})}`;
     compiled = await compile(live);
     if (compiled.ok && compiled.expected?.kind === "const")
       return { kind: "const", text: constText(compiled.expected) };

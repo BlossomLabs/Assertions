@@ -22,8 +22,8 @@ const MULTI_LINE = [
   `set $tok ${T}`,
   EXEC,
   "assert @min!(",
-  "  $tok::balanceOf(@me)",
-  "  $tok::totalSupply()",
+  "  $tok::!{balanceOf(address)(uint256) @me}",
+  "  $tok::!{totalSupply()(uint256)}",
   ') > 0 "msg"',
 ].join("\n");
 
@@ -61,7 +61,7 @@ describe("commandSpans", () => {
 
 describe("requiredLoads", () => {
   it("derives the owners of the ! faces a line uses", () => {
-    expect(requiredLoads(`assert @len!(@filter!(${T}::{v()(uint256[])} @pos!)) > 0`)).toEqual([
+    expect(requiredLoads(`assert @len!(@filter!(${T}::!{v()(uint256[])} @pos!)) > 0`)).toEqual([
       "lang",
     ]);
     expect(requiredLoads(`assert @contracts:codeAt!(${T}) != 0x`)).toEqual([
@@ -113,7 +113,7 @@ describe("stripAssertions", () => {
   });
 
   it("keeps a load another command still needs", () => {
-    const script = `load math\n${EXEC}\nexec $tok f(uint256) @math:min(1 2)\nassert @min!(1 $tok::totalSupply()) > 0`;
+    const script = `load math\n${EXEC}\nexec $tok f(uint256) @math:min(1 2)\nassert @min!(1 $tok::!{totalSupply()(uint256)}) > 0`;
     expect(stripAssertions(script)).toBe(
       `load math\n${EXEC}\nexec $tok f(uint256) @math:min(1 2)`,
     );
@@ -140,7 +140,7 @@ describe("insertAssertionLines", () => {
   it("does not duplicate a load already present", () => {
     const { script } = insertAssertionLines(
       `load lang\n${EXEC}`,
-      `assert @len!(${T}::{v()(uint256[])}) > 0`,
+      `assert @len!(${T}::!{v()(uint256[])}) > 0`,
       "post",
     );
     expect(script.split("\n").filter((l) => l === "load lang")).toHaveLength(1);
@@ -150,25 +150,25 @@ describe("insertAssertionLines", () => {
     const base = [
       "load lang",
       `set $tok ${T}`,
-      "assert $tok::paused() == false",
+      "assert $tok::!{paused()(bool)} == false",
       EXEC,
     ].join("\n");
     const { script, insertedAt } = insertAssertionLines(
       base,
-      "assert $tok::owner() == @me",
+      "assert $tok::!{owner()(address)} == @me",
       "pre",
     );
-    expect(script.split("\n")[3]).toBe("assert $tok::owner() == @me");
+    expect(script.split("\n")[3]).toBe("assert $tok::!{owner()(address)} == @me");
     expect(insertedAt).toBe(4);
   });
 
   it("places a post-condition at the end", () => {
     const { script, insertedAt } = insertAssertionLines(
       `${EXEC}\n`,
-      "assert $tok::owner() == @me",
+      "assert $tok::!{owner()(address)} == @me",
       "post",
     );
-    expect(script).toBe(`${EXEC}\nassert $tok::owner() == @me`);
+    expect(script).toBe(`${EXEC}\nassert $tok::!{owner()(address)} == @me`);
     expect(insertedAt).toBe(2);
   });
 
@@ -176,7 +176,7 @@ describe("insertAssertionLines", () => {
     const set = "set $vitalik @ens(vitalik.eth)";
     const { script } = insertAssertionLines(
       `${set}\n${EXEC}`,
-      "assert $vitalik::owner() == $other",
+      "assert $vitalik::!{owner()(address)} == $other",
       "post",
       [set, "set $other @ens(other.eth)"],
     );
@@ -184,7 +184,7 @@ describe("insertAssertionLines", () => {
       set,
       "set $other @ens(other.eth)",
       EXEC,
-      "assert $vitalik::owner() == $other",
+      "assert $vitalik::!{owner()(address)} == $other",
     ]);
   });
 
@@ -205,7 +205,7 @@ describe("removeCommand and gcScaffolding", () => {
     `set $tok ${T}`,
     "set $cfg 5",
     EXEC,
-    `assert @len!($tok::{v()(uint256[])}) > $cfg`,
+    `assert @len!($tok::!{v()(uint256[])}) > $cfg`,
   ].join("\n");
 
   it("removes the command at a line and the scaffolding it orphaned", () => {
@@ -235,9 +235,9 @@ describe("removeCommand and gcScaffolding", () => {
 describe("hoistLoads", () => {
   it("pulls every load line out of the block, once", () => {
     const { loads, body } = hoistLoads(
-      `load lang\n${EXEC}\nload math\nload lang\nassert @min!(1 $tok::totalSupply()) > 0`,
+      `load lang\n${EXEC}\nload math\nload lang\nassert @min!(1 $tok::!{totalSupply()(uint256)}) > 0`,
     );
     expect(loads).toEqual(["load lang", "load math"]);
-    expect(body).toBe(`${EXEC}\nassert @min!(1 $tok::totalSupply()) > 0`);
+    expect(body).toBe(`${EXEC}\nassert @min!(1 $tok::!{totalSupply()(uint256)}) > 0`);
   });
 });

@@ -7,7 +7,7 @@ description: Writing assertions as one-line EVML scripts with the assert command
 
 ```evml
 
-assert $token::balanceOf(@me) >= 100e18 "not enough tokens"
+assert $token::!{balanceOf(address)(uint256) @me} >= 100e18 "not enough tokens"
 ```
 
 ## The assert command
@@ -25,9 +25,10 @@ Use `@sender` for the account sending the surrounding block's calls. Inside a Sa
 ### Syntax
 
 ```evml
-assert <target>::<viewFn(args)> <op> <expected> "revert msg"            # named method, ABI fetched automatically
-assert <target>::{viewFn(argTypes)(returnType) <args>} <op> <expected>  # inline ABI when needed
+assert <target>::!{viewFn(argTypes)(returnType) <args>} <op> <expected> "revert msg"
 ```
+
+Inside an assertion every call is a `::!` read, with its ABI written inline, and it is read when the assertion is judged. A plain `::` call (`$t::fn()` or `$t::{…}`) is a build-time call: it runs while the script builds, so it belongs in `set` or `print`, and inside an on-chain expression it is an error.
 
 Comparison operators: `==` `!=` `>` `<` `>=` `<=` and `~=` (approximate equality, with `--delta`). Strings support `==` / `!=` anywhere (nested comparisons compile to on-chain keccak). A bare `assert <call>` with no operator requires a boolean call and compiles to an `EQ true` constraint.
 
@@ -35,11 +36,11 @@ Every line compiles to the ERC-8211 judge: the live expression becomes an `Input
 
 ### Chained calls
 
-`::` chains hop through addresses and compile to the core's [`chain`](/docs/core/reads): every hop but the last must continue on an address, and a multi-value hop selects it with a lens.
+`::!` chains hop through addresses and compile to the core's [`chain`](/docs/core/reads): every hop but the last must continue on an address, and a multi-value hop selects it with a lens.
 
 ```evml
-assert $pool::{token()(address)}::{symbol()(string)} == "WETH"
-assert $t::{f()(uint112,uint112,address)}[_ _ $]::{b()(uint256)} > 0
+assert $pool::!{token()(address)}::!{symbol()(string)} == "WETH"
+assert $t::!{f()(uint112,uint112,address)}[_ _ $]::!{b()(uint256)} > 0
 ```
 
 ### Lenses
@@ -55,14 +56,14 @@ A destructure lens after a call selects which return value the assertion uses:
 A call's argument can itself be a call, resolved **at assertion time** and spliced into the enclosing calldata (any nesting depth):
 
 ```evml
-assert $vault::{sharesOf(address)(uint256) $registry::{owner()(address)}} > 0
-assert $a::{a(address)(uint256,uint256[]) $b::{b(uint256,uint256)(address) $c::{c(address)(uint256) @me} $d::{d()(uint256)}}}[_ [$]] == 7
+assert $vault::!{sharesOf(address)(uint256) $registry::!{owner()(address)}} > 0
+assert $a::!{a(address)(uint256,uint256[]) $b::!{b(uint256,uint256)(address) $c::!{c(address)(uint256) @me} $d::!{d()(uint256)}}}[_ [$]] == 7
 ```
 
 A lens on a nested call argument selects the value to splice, including dynamic values (arrays) navigated at runtime:
 
 ```evml
-assert $a::{a(address[])(uint256) $b::{b()(address,address[][])}[_ [_ $]]} == 5
+assert $a::!{a(address[])(uint256) $b::!{b()(address,address[][])}[_ [_ $]]} == 5
 ```
 
 These compile to the core's [`read`](/docs/core/reads): each nesting level becomes a `read` whose segments fetch the inner values and splice them into the enclosing calldata at judge time. Word-typed arguments (uint, int, address, bool, bytes32) splice anywhere. Up to four live dynamic values can share a call when the compiler can derive their runtime sizes. A live value whose size cannot be derived must be the last dynamic argument. Later offsets may re-resolve earlier values, so adding live parts increases execution cost.
@@ -87,7 +88,7 @@ Array faces (`@map!`, `@filter!`, `@all!`, `@any!`, `@find!`, `@reduce!`) apply 
 
 ```evml
 def @ge100! "$x: number -> bool" @bool!($x >= 100)
-assert @all!($vault::{caps()(uint256[])} @ge100!)
+assert @all!($vault::!{caps()(uint256[])} @ge100!)
 ```
 
 The definition is inlined where it is used, so naming a parameter more than once stamps the element at each place it appears: `@calc!($x * $x)` squares in one call. It compiles rather than runs, so it must be fully typed and cannot be called off-chain, and it is scoped like any other `def`.
@@ -115,7 +116,7 @@ The on-chain surface of the builder's modules:
 | `@bytes.len!(call)` / `@str.len!(call)` | lang | number | Decoded byte length of a bytes/string return (multi-byte UTF-8 characters count once per byte) |
 | `@bytes.slice!(call start end?)` | lang | bytes | A byte range of a bytes/string return, sliced on-chain; negative bounds resolve against the live byte length (inverted live ranges revert, there is no silent clamp) |
 | `@codeAt!(addr)` | contracts | bytes | The deployed bytecode at an address, read at assertion time through `Operations.code`; sees code a batch deployed in an earlier step |
-| `@codeHash!(addr-or-call)` | contracts | bytes32 | Live EXTCODEHASH; the argument may be a `::` call resolving to an address |
+| `@codeHash!(addr-or-call)` | contracts | bytes32 | Live EXTCODEHASH; the argument may be a `::!` call resolving to an address |
 | `@enumerate!(call)` | lang | array | Pair every element with its index on-chain (`zipWords(iotaWords(n), payload)` with the live length); the result is an on-chain record ([records](/docs/operators/fold#on-chain-records)) |
 | `@exp!(x)` / `@ln!(x)` | math | number | e^x and the natural log in wad (1e18) fixed point, via `expWad`/`lnWad`; the result carries its wad scale so surrounding arithmetic aligns to it |
 | `@filter!(call pred)` | lang | array | Keep the elements passing `pred`, a named `def @name!` of one parameter returning bool; the kept words payload composes with the other array faces |
@@ -133,14 +134,14 @@ The on-chain surface of the builder's modules:
 | `@sigValid!(signer data signature)` | std | bool | Whether a signature is valid on-chain: contract signers verify through ERC-1271, EOAs through the recovery precompile; the signer and message must be constants, and a delegated account verifies against its key |
 | `@slice!(call start end?)` | lang | array | Elements `[start, end)` of an array return as a live words payload (indices scale to byte offsets at composition time, negative bounds resolve against the live length); composes with the other array faces |
 | `@slot.array!(base index)` / `@slot.mapping!(base key)` | contracts | bytes32 | The storage slot of `array[index]` / `mapping[key]` declared at a constant base slot, with a live index or key; reading it on-chain needs a target with an extsload-style getter |
-| `@sqrt!(expr)` | math | number | Integer square root (floor) computed on-chain, e.g. `@sqrt!($pool::reserve0() * $pool::reserve1())` (plain `@sqrt` computes off-chain) |
+| `@sqrt!(expr)` | math | number | Integer square root (floor) computed on-chain, e.g. `@sqrt!($pool::!{reserve0()(uint256)} * $pool::!{reserve1()(uint256)})` (plain `@sqrt` computes off-chain) |
 | `@str.charset!(call "a-z0-9-")` | lang | bool | Whether every byte of a string return is in the character class (ranges + literals, byte-level ASCII) |
 | `@str.concat!("a" call ...)` | lang | string | Concatenate constant strings with up to four live call parts through a single on-chain `concat` |
 | `@str.includes!(call "part")` | lang | bool | Whether a string return contains a substring (exact bytes, case-sensitive) |
 | `@str.split!(call "delim" i)` | lang | string | Split a string return and select one segment; negative index counts from the end (`-1` = last, `-2` = second-last) |
 | `@sum!(call)` | lang | number | The checked sum of an array return's single-word elements, on-chain (Collections' native `sumWords`); the fixed-operation form of `@reduce!(call add 0)` |
 
-Beyond these, the lang module gives most of its array and string helpers an on-chain face too: `@str.slice!`, `@str.at!`, `@str.concat!`, `@str.replace!`, `@str.lower!`, `@str.upper!`, `@str.join!`, the bytes twins `@bytes.at!`/`@bytes.slice!`/`@bytes.concat!`/`@bytes.not!`, and over arrays `@at!`, `@slice!`, `@includes!`, `@all!`, `@any!`, `@map!`, `@filter!`, `@find!`, `@reduce!`, `@sum!`, `@sort!`, `@unique!`, `@reverse!`, `@zip!`, `@unzip!`, `@enumerate!`, `@flat!`, `@concat!`, plus the record faces `@keys!`/`@values!`/`@lookup!`. Protocol modules follow the same pattern with live read faces: token's `@token:decimals!`, `@token:allowance!`, `@token:totalSupply!`, `@token:amount!` (scaled against a live `decimals()`) and `@token:symbol!` (digest-judged); safe's `@safe:threshold!`, `@safe:nonce!`, `@safe:guard!`, `@safe:isOwner!` and the array operands `@safe:owners!`/`@safe:modules!` (composable with the lang array faces); governor's `@governor:proposalState!` and `@governor:timelockOperationState!` (OZ's numeric OperationState via nested conds), and the vault and acl reads.
+Beyond these, the lang module gives most of its array and string helpers an on-chain face too: `@str.slice!`, `@str.at!`, `@str.concat!`, `@str.replace!`, `@str.lower!`, `@str.upper!`, `@str.join!`, the bytes twins `@bytes.at!`/`@bytes.slice!`/`@bytes.concat!`/`@bytes.not!`, and over arrays `@at!`, `@slice!`, `@includes!`, `@all!`, `@any!`, `@map!`, `@filter!`, `@find!`, `@reduce!`, `@sum!`, `@sort!`, `@unique!`, `@reverse!`, `@zip!`, `@unzip!`, `@enumerate!`, `@flat!`, `@concat!`, plus the record faces `@keys!`/`@values!`/`@lookup!`. Protocol modules follow the same pattern with live read faces: token's `@token:decimals!`, `@token:allowance!`, `@token:totalSupply!`, `@token:amount!` (scaled against a live `decimals()`) and `@token:symbol!` (digest-judged); safe's `@safe:threshold!`, `@safe:nonce!`, `@safe:guard!` (with `module:true`, the v1.5.0 module guard), `@safe:isOwner!` and the array operands `@safe:owners!`/`@safe:modules!` (composable with the lang array faces); governor's `@governor:proposalState!` and `@governor:timelockOperationState!` (OZ's numeric OperationState via nested conds), and the vault and acl reads.
 
 The string helpers compile to compositions rather than dedicated ops: `@str.split!` compiles to `indexOf`/`slice`, `@str.includes!` to the `indexOf`/`byteLen` sentinel comparison, and `@str.join!` to a single `concat` with the delimiter interleaved at composition time. `@str.charset!` compiles to the native `charset` op with its class-spec mask baked in at composition time (the `foldBytes` + `bitSet` form stays the general pattern for other per-byte predicates), and `@sum!` to Collections' native `sumWords`; `@unique!` removes adjacent duplicates (`uniqueWords` with `ordered = true`), so nest `@sort!` for set-uniqueness. See [the fold page](/docs/operators/fold).
 
@@ -150,21 +151,21 @@ Examples:
 load lang
 load contracts
 
-assert @calc!(@balance!(ETH $addr) + $weth::balanceOf($addr)) > 0
-assert @bool!(($gov::quorum() > 0) or (not $gov::paused()))
-assert @str.split!($pool::name() " " -1) == "LP"
-assert @len!($registry::{holders()(address[])}) >= 3
-assert @codeHash!($proxy::{implementation()(address)}) == 0x1234...cdef
+assert @calc!(@balance!(ETH $addr) + $weth::!{balanceOf(address)(uint256) $addr}) > 0
+assert @bool!(($gov::!{quorum()(uint256)} > 0) or (not $gov::!{paused()(bool)}))
+assert @str.split!($pool::!{name()(string)} " " -1) == "LP"
+assert @len!($registry::!{holders()(address[])}) >= 3
+assert @codeHash!($proxy::!{implementation()(address)}) == 0x1234...cdef
 ```
 
-## Constructed calls: the `::!` operator
+## Computed heads: what `::!` reads from
 
-`<head>::!{sig(argTypes)(retTypes) args}` constructs a whole call **at assertion time** through the core's [`read`](/docs/core/reads). The head may be any expression: a `::` chain, an on-chain helper, or a computed word, as long as it resolves to a clean address word on-chain. The arguments splice like nested live calls, and the inline ABI form is mandatory (a `::!` hop has no composition-time address to fetch an ABI from).
+The head of `<head>::!{sig(argTypes)(retTypes) args}` may be any expression: an address, a `::!` chain, an on-chain helper, or a computed word, as long as it resolves to a clean address word on-chain. With a fixed head and constant arguments the hop compiles to a direct staticcall. A live head or a live argument constructs the whole call **at assertion time** through the core's [`read`](/docs/core/reads), splicing the live parts like nested live calls. The inline ABI form is mandatory either way, since a live head has no composition-time address to fetch an ABI from.
 
 The `!` trails the `::` rather than leading it, so it never sits against the head. Leading, it would be indistinguishable from the trailing `!` of an on-chain helper face: `@name!::{…}` splits as `@name!` before a plain hop or as `@name` before a read hop, and the text does not say which. After the operator there is nothing to collide with, so `@me::!{…}` and `@name!::!{…}` each read one way only.
 
 ```evml
-assert @bytes!($reg::packedPool() ">>" 96)::!{fee()(uint24)} <= 3000
+assert @bytes!($reg::!{packedPool()(uint256)} ">>" 96)::!{fee()(uint24)} <= 3000
 ```
 
 ## Composition-time captures
@@ -174,7 +175,7 @@ To assert a **change**, capture the pre-state at composition time and assert aga
 ```evml
 set $before @get($token "balanceOf(address)(uint256)" @me)
 # ... actions ...
-assert $token::balanceOf(@me) == @num($before + 100e18)
+assert $token::!{balanceOf(address)(uint256) @me} == @num($before + 100e18)
 ```
 
 Composition-time captures go stale, so for proposals executed later prefer absolute thresholds or live `@bool!` / `@calc!` forms.

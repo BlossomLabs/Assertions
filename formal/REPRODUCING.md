@@ -6,6 +6,9 @@ and instruction/source mapping JSON are recreated locally. Run output, logs, sna
 compiler caches and local evidence ledgers are intentionally ignored. A checkout
 contains the machinery to rerun proofs, not a retained record that they passed.
 Existing package READMEs describe their exact premises and verification commands.
+Documented development runners remain available for selected component checks;
+unreferenced standalone development-run wrappers are omitted. Retained verifiers,
+generators, independent checkers and their proof dependencies remain in the tree.
 
 Use Dafny 4.11.0 with its bundled Z3 4.12.1 and solc
 0.8.36+commit.8a079791. Install the repository's locked Node/Solidity dependencies
@@ -93,3 +96,18 @@ local records and cannot be inferred from committed theorem declarations.
 Source proofs retain their representation, resource and observation assumptions;
 exact bytecode verification remains a separate track. Neither track alone implies
 gas, deployment or performance claims.
+
+## Formatting review inputs
+
+Keep AST gates, inventories and specifications readable with short objects and
+arrays on one line and larger structures indented:
+
+```sh
+python scripts/format-formal-json.py
+python scripts/format-formal-json.py --check
+```
+
+The formatter processes tracked JSON under `formal/`, preserves object order and
+checks that parsing its output produces the original data. It changes formatting,
+never gate expectations. Native evidence still binds exact input-file hashes;
+use fresh receipts after formatting rather than reusing old input bindings.

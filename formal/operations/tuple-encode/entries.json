@@ -1,12 +1,4 @@
 [
-  {
-    "signature": "encode(string,bytes[])",
-    "selector": "ffe9205d",
-    "symbol": "Raw"
-  },
-  {
-    "signature": "encodeBytes(string,bytes[])",
-    "selector": "821f167b",
-    "symbol": "Bytes"
-  }
+  {"signature": "encode(string,bytes[])", "selector": "ffe9205d", "symbol": "Raw"},
+  {"signature": "encodeBytes(string,bytes[])", "selector": "821f167b", "symbol": "Bytes"}
 ]

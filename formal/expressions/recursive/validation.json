@@ -3,74 +3,36 @@
     "arguments": [
       {
         "arguments": [
-          {
-            "expression": {
-              "name": "node",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
-            "memberName": "valueType",
-            "nodeType": "MemberAccess"
-          }
+          {"expression": {"name": "node", "nodeType": "Identifier", "overloadedDeclarations": []}, "memberName": "valueType", "nodeType": "MemberAccess"}
         ],
-        "expression": {
-          "nodeType": "ElementaryTypeNameExpression",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          }
-        },
+        "expression": {"nodeType": "ElementaryTypeNameExpression", "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"}},
         "kind": "typeConversion",
         "names": [],
         "nodeType": "FunctionCall",
         "tryCall": false
       },
-      {
-        "name": "result",
-        "nodeType": "Identifier",
-        "overloadedDeclarations": []
-      },
+      {"name": "result", "nodeType": "Identifier", "overloadedDeclarations": []},
       {
         "baseExpression": {
-          "expression": {
-            "name": "cache",
-            "nodeType": "Identifier",
-            "overloadedDeclarations": []
-          },
+          "expression": {"name": "cache", "nodeType": "Identifier", "overloadedDeclarations": []},
           "memberName": "dynamic",
           "nodeType": "MemberAccess"
         },
-        "indexExpression": {
-          "name": "index",
-          "nodeType": "Identifier",
-          "overloadedDeclarations": []
-        },
+        "indexExpression": {"name": "index", "nodeType": "Identifier", "overloadedDeclarations": []},
         "nodeType": "IndexAccess"
       },
       {
         "baseExpression": {
-          "expression": {
-            "name": "cache",
-            "nodeType": "Identifier",
-            "overloadedDeclarations": []
-          },
+          "expression": {"name": "cache", "nodeType": "Identifier", "overloadedDeclarations": []},
           "memberName": "words",
           "nodeType": "MemberAccess"
         },
-        "indexExpression": {
-          "name": "index",
-          "nodeType": "Identifier",
-          "overloadedDeclarations": []
-        },
+        "indexExpression": {"name": "index", "nodeType": "Identifier", "overloadedDeclarations": []},
         "nodeType": "IndexAccess"
       }
     ],
     "expression": {
-      "expression": {
-        "name": "AbiCodec",
-        "nodeType": "Identifier",
-        "overloadedDeclarations": []
-      },
+      "expression": {"name": "AbiCodec", "nodeType": "Identifier", "overloadedDeclarations": []},
       "memberName": "validate",
       "nodeType": "MemberAccess"
     },

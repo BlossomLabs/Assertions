@@ -1,12 +1,4 @@
 [
-  {
-    "signature": "formatUnits(uint256,uint256)",
-    "selector": "aff33dd9",
-    "symbol": "formatUnits"
-  },
-  {
-    "signature": "formatUnits(int256,uint256)",
-    "selector": "6470c9a3",
-    "symbol": "formatUnits"
-  }
+  {"signature": "formatUnits(uint256,uint256)", "selector": "aff33dd9", "symbol": "formatUnits"},
+  {"signature": "formatUnits(int256,uint256)", "selector": "6470c9a3", "symbol": "formatUnits"}
 ]

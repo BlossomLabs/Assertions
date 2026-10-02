@@ -1,111 +1,29 @@
 {
-  "BalanceCannotBeTarget": [
-    "uint256",
-    "uint256"
-  ],
-  "CallFailed": [
-    "address",
-    "bytes"
-  ],
-  "ComponentCountMismatch": [
-    "uint256",
-    "uint256"
-  ],
-  "ConstraintFailed": [
-    "string",
-    "uint256",
-    "uint256",
-    "uint256",
-    "uint8",
-    "bytes32",
-    "bytes"
-  ],
-  "DidNotRevert": [
-    "address",
-    "bytes"
-  ],
-  "DuplicateTargetParam": [
-    "uint256"
-  ],
-  "ElementIndexOutOfBounds": [
-    "int256",
-    "uint256"
-  ],
+  "BalanceCannotBeTarget": ["uint256", "uint256"],
+  "CallFailed": ["address", "bytes"],
+  "ComponentCountMismatch": ["uint256", "uint256"],
+  "ConstraintFailed": ["string", "uint256", "uint256", "uint256", "uint8", "bytes32", "bytes"],
+  "DidNotRevert": ["address", "bytes"],
+  "DuplicateTargetParam": ["uint256"],
+  "ElementIndexOutOfBounds": ["int256", "uint256"],
   "EmptyCallChain": [],
-  "InvalidAddressWord": [
-    "uint256",
-    "bytes32"
-  ],
-  "InvalidBalanceData": [
-    "uint256",
-    "uint256",
-    "uint256"
-  ],
-  "InvalidCallbackResult": [
-    "bytes4",
-    "uint256",
-    "uint256",
-    "address"
-  ],
-  "InvalidComponentEnvelope": [
-    "uint256",
-    "uint256",
-    "bytes32"
-  ],
-  "InvalidComponentLength": [
-    "uint256",
-    "uint256",
-    "uint256"
-  ],
-  "InvalidComponentValue": [
-    "uint256",
-    "uint256"
-  ],
-  "InvalidConstraintData": [
-    "uint256",
-    "uint256",
-    "uint256",
-    "uint256"
-  ],
-  "InvalidConstraintRange": [
-    "uint256",
-    "uint256",
-    "uint256"
-  ],
-  "InvalidNavigation": [
-    "uint256"
-  ],
-  "InvalidOrConstraint": [
-    "uint256",
-    "uint256",
-    "uint256"
-  ],
-  "InvalidTypeDescriptor": [
-    "uint256"
-  ],
-  "InvalidValue": [
-    "uint256"
-  ],
-  "OutputParamsNotSupported": [
-    "uint256"
-  ],
-  "ReturnDataOutOfBounds": [
-    "int256",
-    "uint256"
-  ],
-  "RevertProbeConstrained": [
-    "uint256"
-  ],
-  "RevertProbeNotACall": [
-    "uint8"
-  ],
+  "InvalidAddressWord": ["uint256", "bytes32"],
+  "InvalidBalanceData": ["uint256", "uint256", "uint256"],
+  "InvalidCallbackResult": ["bytes4", "uint256", "uint256", "address"],
+  "InvalidComponentEnvelope": ["uint256", "uint256", "bytes32"],
+  "InvalidComponentLength": ["uint256", "uint256", "uint256"],
+  "InvalidComponentValue": ["uint256", "uint256"],
+  "InvalidConstraintData": ["uint256", "uint256", "uint256", "uint256"],
+  "InvalidConstraintRange": ["uint256", "uint256", "uint256"],
+  "InvalidNavigation": ["uint256"],
+  "InvalidOrConstraint": ["uint256", "uint256", "uint256"],
+  "InvalidTypeDescriptor": ["uint256"],
+  "InvalidValue": ["uint256"],
+  "OutputParamsNotSupported": ["uint256"],
+  "ReturnDataOutOfBounds": ["int256", "uint256"],
+  "RevertProbeConstrained": ["uint256"],
+  "RevertProbeNotACall": ["uint8"],
   "SubcallOutOfGas": [],
-  "UnexpectedRevertData": [
-    "bytes4",
-    "bytes4"
-  ],
-  "ValueParamNotSupported": [
-    "uint256",
-    "uint256"
-  ]
+  "UnexpectedRevertData": ["bytes4", "bytes4"],
+  "ValueParamNotSupported": ["uint256", "uint256"]
 }

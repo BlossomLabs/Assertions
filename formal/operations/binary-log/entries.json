@@ -1,7 +1,1 @@
-[
-  {
-    "signature": "log2(uint256)",
-    "selector": "5456bf13",
-    "symbol": "log2"
-  }
-]
+[{"signature": "log2(uint256)", "selector": "5456bf13", "symbol": "log2"}]

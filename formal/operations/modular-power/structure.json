@@ -6,25 +6,12 @@
     "nodeType": "VariableDeclaration",
     "stateVariable": true,
     "storageLocation": "default",
-    "typeName": {
-      "name": "uint256",
-      "nodeType": "ElementaryTypeName"
-    },
+    "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
     "value": {
-      "leftExpression": {
-        "hexValue": "31",
-        "kind": "number",
-        "nodeType": "Literal",
-        "value": "1"
-      },
+      "leftExpression": {"hexValue": "31", "kind": "number", "nodeType": "Literal", "value": "1"},
       "nodeType": "BinaryOperation",
       "operator": "<<",
-      "rightExpression": {
-        "hexValue": "3332",
-        "kind": "number",
-        "nodeType": "Literal",
-        "value": "32"
-      }
+      "rightExpression": {"hexValue": "3332", "kind": "number", "nodeType": "Literal", "value": "32"}
     },
     "visibility": "private"
   },
@@ -42,10 +29,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -55,10 +39,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -71,27 +52,11 @@
         {
           "expression": {
             "arguments": [
-              {
-                "name": "a",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
-              {
-                "name": "exponent",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
-              {
-                "name": "m",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              }
+              {"name": "a", "nodeType": "Identifier", "overloadedDeclarations": []},
+              {"name": "exponent", "nodeType": "Identifier", "overloadedDeclarations": []},
+              {"name": "m", "nodeType": "Identifier", "overloadedDeclarations": []}
             ],
-            "expression": {
-              "name": "_powMod",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "expression": {"name": "_powMod", "nodeType": "Identifier", "overloadedDeclarations": []},
             "kind": "functionCall",
             "names": [],
             "nodeType": "FunctionCall",
@@ -117,10 +82,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -130,10 +92,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -143,10 +102,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -161,10 +117,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -183,52 +136,24 @@
               {
                 "arguments": [
                   {
-                    "arguments": [
-                      {
-                        "name": "a",
-                        "nodeType": "Identifier",
-                        "overloadedDeclarations": []
-                      }
-                    ],
-                    "expression": {
-                      "name": "_magnitude",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    },
+                    "arguments": [{"name": "a", "nodeType": "Identifier", "overloadedDeclarations": []}],
+                    "expression": {"name": "_magnitude", "nodeType": "Identifier", "overloadedDeclarations": []},
                     "kind": "functionCall",
                     "names": [],
                     "nodeType": "FunctionCall",
                     "tryCall": false
                   },
+                  {"name": "exponent", "nodeType": "Identifier", "overloadedDeclarations": []},
                   {
-                    "name": "exponent",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
-                  {
-                    "arguments": [
-                      {
-                        "name": "m",
-                        "nodeType": "Identifier",
-                        "overloadedDeclarations": []
-                      }
-                    ],
-                    "expression": {
-                      "name": "_magnitude",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    },
+                    "arguments": [{"name": "m", "nodeType": "Identifier", "overloadedDeclarations": []}],
+                    "expression": {"name": "_magnitude", "nodeType": "Identifier", "overloadedDeclarations": []},
                     "kind": "functionCall",
                     "names": [],
                     "nodeType": "FunctionCall",
                     "tryCall": false
                   }
                 ],
-                "expression": {
-                  "name": "_powMod",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
+                "expression": {"name": "_powMod", "nodeType": "Identifier", "overloadedDeclarations": []},
                 "kind": "functionCall",
                 "names": [],
                 "nodeType": "FunctionCall",
@@ -236,54 +161,27 @@
               },
               {
                 "leftExpression": {
-                  "leftExpression": {
-                    "name": "a",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
+                  "leftExpression": {"name": "a", "nodeType": "Identifier", "overloadedDeclarations": []},
                   "nodeType": "BinaryOperation",
                   "operator": "<",
-                  "rightExpression": {
-                    "hexValue": "30",
-                    "kind": "number",
-                    "nodeType": "Literal",
-                    "value": "0"
-                  }
+                  "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
                 },
                 "nodeType": "BinaryOperation",
                 "operator": "&&",
                 "rightExpression": {
                   "leftExpression": {
-                    "leftExpression": {
-                      "name": "exponent",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    },
+                    "leftExpression": {"name": "exponent", "nodeType": "Identifier", "overloadedDeclarations": []},
                     "nodeType": "BinaryOperation",
                     "operator": "&",
-                    "rightExpression": {
-                      "hexValue": "31",
-                      "kind": "number",
-                      "nodeType": "Literal",
-                      "value": "1"
-                    }
+                    "rightExpression": {"hexValue": "31", "kind": "number", "nodeType": "Literal", "value": "1"}
                   },
                   "nodeType": "BinaryOperation",
                   "operator": "!=",
-                  "rightExpression": {
-                    "hexValue": "30",
-                    "kind": "number",
-                    "nodeType": "Literal",
-                    "value": "0"
-                  }
+                  "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
                 }
               }
             ],
-            "expression": {
-              "name": "_signedMagnitude",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "expression": {"name": "_signedMagnitude", "nodeType": "Identifier", "overloadedDeclarations": []},
             "kind": "functionCall",
             "names": [],
             "nodeType": "FunctionCall",
@@ -309,10 +207,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -322,10 +217,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -335,10 +227,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -353,10 +242,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -374,44 +260,19 @@
             "arguments": [
               {
                 "condition": {
-                  "leftExpression": {
-                    "name": "exponent",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
+                  "leftExpression": {"name": "exponent", "nodeType": "Identifier", "overloadedDeclarations": []},
                   "nodeType": "BinaryOperation",
                   "operator": "<",
-                  "rightExpression": {
-                    "hexValue": "30",
-                    "kind": "number",
-                    "nodeType": "Literal",
-                    "value": "0"
-                  }
+                  "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
                 },
-                "falseExpression": {
-                  "name": "a",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
+                "falseExpression": {"name": "a", "nodeType": "Identifier", "overloadedDeclarations": []},
                 "nodeType": "Conditional",
                 "trueExpression": {
                   "arguments": [
-                    {
-                      "name": "a",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    },
-                    {
-                      "name": "m",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    }
+                    {"name": "a", "nodeType": "Identifier", "overloadedDeclarations": []},
+                    {"name": "m", "nodeType": "Identifier", "overloadedDeclarations": []}
                   ],
-                  "expression": {
-                    "name": "_inverseMod",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
+                  "expression": {"name": "_inverseMod", "nodeType": "Identifier", "overloadedDeclarations": []},
                   "kind": "functionCall",
                   "names": [],
                   "nodeType": "FunctionCall",
@@ -419,34 +280,16 @@
                 }
               },
               {
-                "arguments": [
-                  {
-                    "name": "exponent",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  }
-                ],
-                "expression": {
-                  "name": "_magnitude",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
+                "arguments": [{"name": "exponent", "nodeType": "Identifier", "overloadedDeclarations": []}],
+                "expression": {"name": "_magnitude", "nodeType": "Identifier", "overloadedDeclarations": []},
                 "kind": "functionCall",
                 "names": [],
                 "nodeType": "FunctionCall",
                 "tryCall": false
               },
-              {
-                "name": "m",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              }
+              {"name": "m", "nodeType": "Identifier", "overloadedDeclarations": []}
             ],
-            "expression": {
-              "name": "_powMod",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "expression": {"name": "_powMod", "nodeType": "Identifier", "overloadedDeclarations": []},
             "kind": "functionCall",
             "names": [],
             "nodeType": "FunctionCall",
@@ -472,10 +315,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -485,10 +325,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -498,10 +335,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -516,10 +350,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -541,26 +372,13 @@
               "nodeType": "VariableDeclaration",
               "stateVariable": false,
               "storageLocation": "default",
-              "typeName": {
-                "name": "uint256",
-                "nodeType": "ElementaryTypeName"
-              },
+              "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
               "visibility": "internal"
             }
           ],
           "initialValue": {
-            "arguments": [
-              {
-                "name": "a",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              }
-            ],
-            "expression": {
-              "name": "_magnitude",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "arguments": [{"name": "a", "nodeType": "Identifier", "overloadedDeclarations": []}],
+            "expression": {"name": "_magnitude", "nodeType": "Identifier", "overloadedDeclarations": []},
             "kind": "functionCall",
             "names": [],
             "nodeType": "FunctionCall",
@@ -577,26 +395,13 @@
               "nodeType": "VariableDeclaration",
               "stateVariable": false,
               "storageLocation": "default",
-              "typeName": {
-                "name": "uint256",
-                "nodeType": "ElementaryTypeName"
-              },
+              "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
               "visibility": "internal"
             }
           ],
           "initialValue": {
-            "arguments": [
-              {
-                "name": "m",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              }
-            ],
-            "expression": {
-              "name": "_magnitude",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "arguments": [{"name": "m", "nodeType": "Identifier", "overloadedDeclarations": []}],
+            "expression": {"name": "_magnitude", "nodeType": "Identifier", "overloadedDeclarations": []},
             "kind": "functionCall",
             "names": [],
             "nodeType": "FunctionCall",
@@ -606,48 +411,23 @@
         },
         {
           "condition": {
-            "leftExpression": {
-              "name": "exponent",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "leftExpression": {"name": "exponent", "nodeType": "Identifier", "overloadedDeclarations": []},
             "nodeType": "BinaryOperation",
             "operator": "<",
-            "rightExpression": {
-              "hexValue": "30",
-              "kind": "number",
-              "nodeType": "Literal",
-              "value": "0"
-            }
+            "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
           },
           "nodeType": "IfStatement",
           "trueBody": {
             "expression": {
-              "leftHandSide": {
-                "name": "base",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
+              "leftHandSide": {"name": "base", "nodeType": "Identifier", "overloadedDeclarations": []},
               "nodeType": "Assignment",
               "operator": "=",
               "rightHandSide": {
                 "arguments": [
-                  {
-                    "name": "base",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
-                  {
-                    "name": "modulus",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  }
+                  {"name": "base", "nodeType": "Identifier", "overloadedDeclarations": []},
+                  {"name": "modulus", "nodeType": "Identifier", "overloadedDeclarations": []}
                 ],
-                "expression": {
-                  "name": "_inverseMod",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
+                "expression": {"name": "_inverseMod", "nodeType": "Identifier", "overloadedDeclarations": []},
                 "kind": "functionCall",
                 "names": [],
                 "nodeType": "FunctionCall",
@@ -662,40 +442,18 @@
             "arguments": [
               {
                 "arguments": [
+                  {"name": "base", "nodeType": "Identifier", "overloadedDeclarations": []},
                   {
-                    "name": "base",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
-                  {
-                    "arguments": [
-                      {
-                        "name": "exponent",
-                        "nodeType": "Identifier",
-                        "overloadedDeclarations": []
-                      }
-                    ],
-                    "expression": {
-                      "name": "_magnitude",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    },
+                    "arguments": [{"name": "exponent", "nodeType": "Identifier", "overloadedDeclarations": []}],
+                    "expression": {"name": "_magnitude", "nodeType": "Identifier", "overloadedDeclarations": []},
                     "kind": "functionCall",
                     "names": [],
                     "nodeType": "FunctionCall",
                     "tryCall": false
                   },
-                  {
-                    "name": "modulus",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  }
+                  {"name": "modulus", "nodeType": "Identifier", "overloadedDeclarations": []}
                 ],
-                "expression": {
-                  "name": "_powMod",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
+                "expression": {"name": "_powMod", "nodeType": "Identifier", "overloadedDeclarations": []},
                 "kind": "functionCall",
                 "names": [],
                 "nodeType": "FunctionCall",
@@ -703,54 +461,27 @@
               },
               {
                 "leftExpression": {
-                  "leftExpression": {
-                    "name": "a",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
+                  "leftExpression": {"name": "a", "nodeType": "Identifier", "overloadedDeclarations": []},
                   "nodeType": "BinaryOperation",
                   "operator": "<",
-                  "rightExpression": {
-                    "hexValue": "30",
-                    "kind": "number",
-                    "nodeType": "Literal",
-                    "value": "0"
-                  }
+                  "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
                 },
                 "nodeType": "BinaryOperation",
                 "operator": "&&",
                 "rightExpression": {
                   "leftExpression": {
-                    "leftExpression": {
-                      "name": "exponent",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    },
+                    "leftExpression": {"name": "exponent", "nodeType": "Identifier", "overloadedDeclarations": []},
                     "nodeType": "BinaryOperation",
                     "operator": "&",
-                    "rightExpression": {
-                      "hexValue": "31",
-                      "kind": "number",
-                      "nodeType": "Literal",
-                      "value": "1"
-                    }
+                    "rightExpression": {"hexValue": "31", "kind": "number", "nodeType": "Literal", "value": "1"}
                   },
                   "nodeType": "BinaryOperation",
                   "operator": "!=",
-                  "rightExpression": {
-                    "hexValue": "30",
-                    "kind": "number",
-                    "nodeType": "Literal",
-                    "value": "0"
-                  }
+                  "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
                 }
               }
             ],
-            "expression": {
-              "name": "_signedMagnitude",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "expression": {"name": "_signedMagnitude", "nodeType": "Identifier", "overloadedDeclarations": []},
             "kind": "functionCall",
             "names": [],
             "nodeType": "FunctionCall",
@@ -776,10 +507,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -789,10 +517,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -802,10 +527,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -820,10 +542,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -838,62 +557,33 @@
       "statements": [
         {
           "expression": {
-            "leftHandSide": {
-              "name": "result",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "leftHandSide": {"name": "result", "nodeType": "Identifier", "overloadedDeclarations": []},
             "nodeType": "Assignment",
             "operator": "=",
             "rightHandSide": {
-              "leftExpression": {
-                "hexValue": "31",
-                "kind": "number",
-                "nodeType": "Literal",
-                "value": "1"
-              },
+              "leftExpression": {"hexValue": "31", "kind": "number", "nodeType": "Literal", "value": "1"},
               "nodeType": "BinaryOperation",
               "operator": "%",
-              "rightExpression": {
-                "name": "modulus",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              }
+              "rightExpression": {"name": "modulus", "nodeType": "Identifier", "overloadedDeclarations": []}
             }
           },
           "nodeType": "ExpressionStatement"
         },
         {
           "expression": {
-            "leftHandSide": {
-              "name": "base",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "leftHandSide": {"name": "base", "nodeType": "Identifier", "overloadedDeclarations": []},
             "nodeType": "Assignment",
             "operator": "%=",
-            "rightHandSide": {
-              "name": "modulus",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            }
+            "rightHandSide": {"name": "modulus", "nodeType": "Identifier", "overloadedDeclarations": []}
           },
           "nodeType": "ExpressionStatement"
         },
         {
           "condition": {
-            "leftExpression": {
-              "name": "exponent",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "leftExpression": {"name": "exponent", "nodeType": "Identifier", "overloadedDeclarations": []},
             "nodeType": "BinaryOperation",
             "operator": ">=",
-            "rightExpression": {
-              "name": "POW_MOD_PRECOMPILE_THRESHOLD",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            }
+            "rightExpression": {"name": "POW_MOD_PRECOMPILE_THRESHOLD", "nodeType": "Identifier", "overloadedDeclarations": []}
           },
           "nodeType": "IfStatement",
           "trueBody": {
@@ -908,10 +598,7 @@
                     "nodeType": "VariableDeclaration",
                     "stateVariable": false,
                     "storageLocation": "default",
-                    "typeName": {
-                      "name": "bool",
-                      "nodeType": "ElementaryTypeName"
-                    },
+                    "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
                     "visibility": "internal"
                   }
                 ],
@@ -924,46 +611,16 @@
                     {
                       "nodeType": "YulVariableDeclaration",
                       "value": {
-                        "arguments": [
-                          {
-                            "kind": "number",
-                            "nodeType": "YulLiteral",
-                            "type": "",
-                            "value": "0x40"
-                          }
-                        ],
-                        "functionName": {
-                          "name": "mload",
-                          "nodeType": "YulIdentifier"
-                        },
+                        "arguments": [{"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "0x40"}],
+                        "functionName": {"name": "mload", "nodeType": "YulIdentifier"},
                         "nodeType": "YulFunctionCall"
                       },
-                      "variables": [
-                        {
-                          "name": "p",
-                          "nodeType": "YulTypedName",
-                          "type": ""
-                        }
-                      ]
+                      "variables": [{"name": "p", "nodeType": "YulTypedName", "type": ""}]
                     },
                     {
                       "expression": {
-                        "arguments": [
-                          {
-                            "name": "p",
-                            "nodeType": "YulIdentifier"
-                          },
-                          {
-                            "kind": "number",
-                            "nodeType": "YulLiteral",
-                            "type": "",
-                            "value": "32"
-                          }
-                        ],
-                        "functionName": {
-                          "name": "mstore",
-                          "nodeType": "YulIdentifier"
-                        },
+                        "arguments": [{"name": "p", "nodeType": "YulIdentifier"}, {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "32"}],
+                        "functionName": {"name": "mstore", "nodeType": "YulIdentifier"},
                         "nodeType": "YulFunctionCall"
                       },
                       "nodeType": "YulExpressionStatement"
@@ -972,35 +629,13 @@
                       "expression": {
                         "arguments": [
                           {
-                            "arguments": [
-                              {
-                                "name": "p",
-                                "nodeType": "YulIdentifier"
-                              },
-                              {
-                                "kind": "number",
-                                "nodeType": "YulLiteral",
-                                "type": "",
-                                "value": "0x20"
-                              }
-                            ],
-                            "functionName": {
-                              "name": "add",
-                              "nodeType": "YulIdentifier"
-                            },
+                            "arguments": [{"name": "p", "nodeType": "YulIdentifier"}, {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "0x20"}],
+                            "functionName": {"name": "add", "nodeType": "YulIdentifier"},
                             "nodeType": "YulFunctionCall"
                           },
-                          {
-                            "kind": "number",
-                            "nodeType": "YulLiteral",
-                            "type": "",
-                            "value": "32"
-                          }
+                          {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "32"}
                         ],
-                        "functionName": {
-                          "name": "mstore",
-                          "nodeType": "YulIdentifier"
-                        },
+                        "functionName": {"name": "mstore", "nodeType": "YulIdentifier"},
                         "nodeType": "YulFunctionCall"
                       },
                       "nodeType": "YulExpressionStatement"
@@ -1009,35 +644,13 @@
                       "expression": {
                         "arguments": [
                           {
-                            "arguments": [
-                              {
-                                "name": "p",
-                                "nodeType": "YulIdentifier"
-                              },
-                              {
-                                "kind": "number",
-                                "nodeType": "YulLiteral",
-                                "type": "",
-                                "value": "0x40"
-                              }
-                            ],
-                            "functionName": {
-                              "name": "add",
-                              "nodeType": "YulIdentifier"
-                            },
+                            "arguments": [{"name": "p", "nodeType": "YulIdentifier"}, {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "0x40"}],
+                            "functionName": {"name": "add", "nodeType": "YulIdentifier"},
                             "nodeType": "YulFunctionCall"
                           },
-                          {
-                            "kind": "number",
-                            "nodeType": "YulLiteral",
-                            "type": "",
-                            "value": "32"
-                          }
+                          {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "32"}
                         ],
-                        "functionName": {
-                          "name": "mstore",
-                          "nodeType": "YulIdentifier"
-                        },
+                        "functionName": {"name": "mstore", "nodeType": "YulIdentifier"},
                         "nodeType": "YulFunctionCall"
                       },
                       "nodeType": "YulExpressionStatement"
@@ -1046,33 +659,13 @@
                       "expression": {
                         "arguments": [
                           {
-                            "arguments": [
-                              {
-                                "name": "p",
-                                "nodeType": "YulIdentifier"
-                              },
-                              {
-                                "kind": "number",
-                                "nodeType": "YulLiteral",
-                                "type": "",
-                                "value": "0x60"
-                              }
-                            ],
-                            "functionName": {
-                              "name": "add",
-                              "nodeType": "YulIdentifier"
-                            },
+                            "arguments": [{"name": "p", "nodeType": "YulIdentifier"}, {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "0x60"}],
+                            "functionName": {"name": "add", "nodeType": "YulIdentifier"},
                             "nodeType": "YulFunctionCall"
                           },
-                          {
-                            "name": "base",
-                            "nodeType": "YulIdentifier"
-                          }
+                          {"name": "base", "nodeType": "YulIdentifier"}
                         ],
-                        "functionName": {
-                          "name": "mstore",
-                          "nodeType": "YulIdentifier"
-                        },
+                        "functionName": {"name": "mstore", "nodeType": "YulIdentifier"},
                         "nodeType": "YulFunctionCall"
                       },
                       "nodeType": "YulExpressionStatement"
@@ -1081,33 +674,13 @@
                       "expression": {
                         "arguments": [
                           {
-                            "arguments": [
-                              {
-                                "name": "p",
-                                "nodeType": "YulIdentifier"
-                              },
-                              {
-                                "kind": "number",
-                                "nodeType": "YulLiteral",
-                                "type": "",
-                                "value": "0x80"
-                              }
-                            ],
-                            "functionName": {
-                              "name": "add",
-                              "nodeType": "YulIdentifier"
-                            },
+                            "arguments": [{"name": "p", "nodeType": "YulIdentifier"}, {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "0x80"}],
+                            "functionName": {"name": "add", "nodeType": "YulIdentifier"},
                             "nodeType": "YulFunctionCall"
                           },
-                          {
-                            "name": "exponent",
-                            "nodeType": "YulIdentifier"
-                          }
+                          {"name": "exponent", "nodeType": "YulIdentifier"}
                         ],
-                        "functionName": {
-                          "name": "mstore",
-                          "nodeType": "YulIdentifier"
-                        },
+                        "functionName": {"name": "mstore", "nodeType": "YulIdentifier"},
                         "nodeType": "YulFunctionCall"
                       },
                       "nodeType": "YulExpressionStatement"
@@ -1116,33 +689,13 @@
                       "expression": {
                         "arguments": [
                           {
-                            "arguments": [
-                              {
-                                "name": "p",
-                                "nodeType": "YulIdentifier"
-                              },
-                              {
-                                "kind": "number",
-                                "nodeType": "YulLiteral",
-                                "type": "",
-                                "value": "0xa0"
-                              }
-                            ],
-                            "functionName": {
-                              "name": "add",
-                              "nodeType": "YulIdentifier"
-                            },
+                            "arguments": [{"name": "p", "nodeType": "YulIdentifier"}, {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "0xa0"}],
+                            "functionName": {"name": "add", "nodeType": "YulIdentifier"},
                             "nodeType": "YulFunctionCall"
                           },
-                          {
-                            "name": "modulus",
-                            "nodeType": "YulIdentifier"
-                          }
+                          {"name": "modulus", "nodeType": "YulIdentifier"}
                         ],
-                        "functionName": {
-                          "name": "mstore",
-                          "nodeType": "YulIdentifier"
-                        },
+                        "functionName": {"name": "mstore", "nodeType": "YulIdentifier"},
                         "nodeType": "YulFunctionCall"
                       },
                       "nodeType": "YulExpressionStatement"
@@ -1151,54 +704,17 @@
                       "nodeType": "YulVariableDeclaration",
                       "value": {
                         "arguments": [
-                          {
-                            "arguments": [],
-                            "functionName": {
-                              "name": "gas",
-                              "nodeType": "YulIdentifier"
-                            },
-                            "nodeType": "YulFunctionCall"
-                          },
-                          {
-                            "kind": "number",
-                            "nodeType": "YulLiteral",
-                            "type": "",
-                            "value": "0x05"
-                          },
-                          {
-                            "name": "p",
-                            "nodeType": "YulIdentifier"
-                          },
-                          {
-                            "kind": "number",
-                            "nodeType": "YulLiteral",
-                            "type": "",
-                            "value": "0xc0"
-                          },
-                          {
-                            "name": "p",
-                            "nodeType": "YulIdentifier"
-                          },
-                          {
-                            "kind": "number",
-                            "nodeType": "YulLiteral",
-                            "type": "",
-                            "value": "0x20"
-                          }
+                          {"arguments": [], "functionName": {"name": "gas", "nodeType": "YulIdentifier"}, "nodeType": "YulFunctionCall"},
+                          {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "0x05"},
+                          {"name": "p", "nodeType": "YulIdentifier"},
+                          {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "0xc0"},
+                          {"name": "p", "nodeType": "YulIdentifier"},
+                          {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "0x20"}
                         ],
-                        "functionName": {
-                          "name": "staticcall",
-                          "nodeType": "YulIdentifier"
-                        },
+                        "functionName": {"name": "staticcall", "nodeType": "YulIdentifier"},
                         "nodeType": "YulFunctionCall"
                       },
-                      "variables": [
-                        {
-                          "name": "success",
-                          "nodeType": "YulTypedName",
-                          "type": ""
-                        }
-                      ]
+                      "variables": [{"name": "success", "nodeType": "YulTypedName", "type": ""}]
                     },
                     {
                       "body": {
@@ -1207,76 +723,32 @@
                           {
                             "nodeType": "YulAssignment",
                             "value": {
-                              "arguments": [
-                                {
-                                  "name": "p",
-                                  "nodeType": "YulIdentifier"
-                                }
-                              ],
-                              "functionName": {
-                                "name": "mload",
-                                "nodeType": "YulIdentifier"
-                              },
+                              "arguments": [{"name": "p", "nodeType": "YulIdentifier"}],
+                              "functionName": {"name": "mload", "nodeType": "YulIdentifier"},
                               "nodeType": "YulFunctionCall"
                             },
-                            "variableNames": [
-                              {
-                                "name": "result",
-                                "nodeType": "YulIdentifier"
-                              }
-                            ]
+                            "variableNames": [{"name": "result", "nodeType": "YulIdentifier"}]
                           },
                           {
                             "nodeType": "YulAssignment",
-                            "value": {
-                              "kind": "number",
-                              "nodeType": "YulLiteral",
-                              "type": "",
-                              "value": "1"
-                            },
-                            "variableNames": [
-                              {
-                                "name": "done",
-                                "nodeType": "YulIdentifier"
-                              }
-                            ]
+                            "value": {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "1"},
+                            "variableNames": [{"name": "done", "nodeType": "YulIdentifier"}]
                           }
                         ]
                       },
                       "condition": {
                         "arguments": [
-                          {
-                            "name": "success",
-                            "nodeType": "YulIdentifier"
-                          },
+                          {"name": "success", "nodeType": "YulIdentifier"},
                           {
                             "arguments": [
-                              {
-                                "arguments": [],
-                                "functionName": {
-                                  "name": "returndatasize",
-                                  "nodeType": "YulIdentifier"
-                                },
-                                "nodeType": "YulFunctionCall"
-                              },
-                              {
-                                "kind": "number",
-                                "nodeType": "YulLiteral",
-                                "type": "",
-                                "value": "32"
-                              }
+                              {"arguments": [], "functionName": {"name": "returndatasize", "nodeType": "YulIdentifier"}, "nodeType": "YulFunctionCall"},
+                              {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "32"}
                             ],
-                            "functionName": {
-                              "name": "eq",
-                              "nodeType": "YulIdentifier"
-                            },
+                            "functionName": {"name": "eq", "nodeType": "YulIdentifier"},
                             "nodeType": "YulFunctionCall"
                           }
                         ],
-                        "functionName": {
-                          "name": "and",
-                          "nodeType": "YulIdentifier"
-                        },
+                        "functionName": {"name": "and", "nodeType": "YulIdentifier"},
                         "nodeType": "YulFunctionCall"
                       },
                       "nodeType": "YulIf"
@@ -1284,26 +756,13 @@
                   ]
                 },
                 "evmVersion": "cancun",
-                "flags": [
-                  "memory-safe"
-                ],
+                "flags": ["memory-safe"],
                 "nodeType": "InlineAssembly"
               },
               {
-                "condition": {
-                  "name": "done",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
+                "condition": {"name": "done", "nodeType": "Identifier", "overloadedDeclarations": []},
                 "nodeType": "IfStatement",
-                "trueBody": {
-                  "expression": {
-                    "name": "result",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
-                  "nodeType": "Return"
-                }
+                "trueBody": {"expression": {"name": "result", "nodeType": "Identifier", "overloadedDeclarations": []}, "nodeType": "Return"}
               }
             ]
           }
@@ -1315,62 +774,28 @@
               {
                 "condition": {
                   "leftExpression": {
-                    "leftExpression": {
-                      "name": "exponent",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    },
+                    "leftExpression": {"name": "exponent", "nodeType": "Identifier", "overloadedDeclarations": []},
                     "nodeType": "BinaryOperation",
                     "operator": "&",
-                    "rightExpression": {
-                      "hexValue": "31",
-                      "kind": "number",
-                      "nodeType": "Literal",
-                      "value": "1"
-                    }
+                    "rightExpression": {"hexValue": "31", "kind": "number", "nodeType": "Literal", "value": "1"}
                   },
                   "nodeType": "BinaryOperation",
                   "operator": "!=",
-                  "rightExpression": {
-                    "hexValue": "30",
-                    "kind": "number",
-                    "nodeType": "Literal",
-                    "value": "0"
-                  }
+                  "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
                 },
                 "nodeType": "IfStatement",
                 "trueBody": {
                   "expression": {
-                    "leftHandSide": {
-                      "name": "result",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    },
+                    "leftHandSide": {"name": "result", "nodeType": "Identifier", "overloadedDeclarations": []},
                     "nodeType": "Assignment",
                     "operator": "=",
                     "rightHandSide": {
                       "arguments": [
-                        {
-                          "name": "result",
-                          "nodeType": "Identifier",
-                          "overloadedDeclarations": []
-                        },
-                        {
-                          "name": "base",
-                          "nodeType": "Identifier",
-                          "overloadedDeclarations": []
-                        },
-                        {
-                          "name": "modulus",
-                          "nodeType": "Identifier",
-                          "overloadedDeclarations": []
-                        }
+                        {"name": "result", "nodeType": "Identifier", "overloadedDeclarations": []},
+                        {"name": "base", "nodeType": "Identifier", "overloadedDeclarations": []},
+                        {"name": "modulus", "nodeType": "Identifier", "overloadedDeclarations": []}
                       ],
-                      "expression": {
-                        "name": "mulmod",
-                        "nodeType": "Identifier",
-                        "overloadedDeclarations": []
-                      },
+                      "expression": {"name": "mulmod", "nodeType": "Identifier", "overloadedDeclarations": []},
                       "kind": "functionCall",
                       "names": [],
                       "nodeType": "FunctionCall",
@@ -1382,57 +807,29 @@
               },
               {
                 "expression": {
-                  "leftHandSide": {
-                    "name": "exponent",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
+                  "leftHandSide": {"name": "exponent", "nodeType": "Identifier", "overloadedDeclarations": []},
                   "nodeType": "Assignment",
                   "operator": ">>=",
-                  "rightHandSide": {
-                    "hexValue": "31",
-                    "kind": "number",
-                    "nodeType": "Literal",
-                    "value": "1"
-                  }
+                  "rightHandSide": {"hexValue": "31", "kind": "number", "nodeType": "Literal", "value": "1"}
                 },
                 "nodeType": "ExpressionStatement"
               },
               {
                 "condition": {
-                  "leftExpression": {
-                    "name": "exponent",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
+                  "leftExpression": {"name": "exponent", "nodeType": "Identifier", "overloadedDeclarations": []},
                   "nodeType": "BinaryOperation",
                   "operator": "!=",
-                  "rightExpression": {
-                    "hexValue": "30",
-                    "kind": "number",
-                    "nodeType": "Literal",
-                    "value": "0"
-                  }
+                  "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
                 },
                 "nodeType": "IfStatement",
                 "trueBody": {
                   "expression": {
-                    "leftHandSide": {
-                      "name": "base",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    },
+                    "leftHandSide": {"name": "base", "nodeType": "Identifier", "overloadedDeclarations": []},
                     "nodeType": "Assignment",
                     "operator": "=",
                     "rightHandSide": {
-                      "arguments": {
-                        "translated-slot": "SQUARE_VALUE"
-                      },
-                      "expression": {
-                        "name": "mulmod",
-                        "nodeType": "Identifier",
-                        "overloadedDeclarations": []
-                      },
+                      "arguments": {"translated-slot": "SQUARE_VALUE"},
+                      "expression": {"name": "mulmod", "nodeType": "Identifier", "overloadedDeclarations": []},
                       "kind": "functionCall",
                       "names": [],
                       "nodeType": "FunctionCall",
@@ -1445,19 +842,10 @@
             ]
           },
           "condition": {
-            "leftExpression": {
-              "name": "exponent",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "leftExpression": {"name": "exponent", "nodeType": "Identifier", "overloadedDeclarations": []},
             "nodeType": "BinaryOperation",
             "operator": "!=",
-            "rightExpression": {
-              "hexValue": "30",
-              "kind": "number",
-              "nodeType": "Literal",
-              "value": "0"
-            }
+            "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
           },
           "nodeType": "WhileStatement"
         }
@@ -1478,10 +866,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1491,10 +876,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1504,10 +886,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1522,10 +901,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1540,32 +916,16 @@
       "statements": [
         {
           "expression": {
-            "leftHandSide": {
-              "name": "inverse",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "leftHandSide": {"name": "inverse", "nodeType": "Identifier", "overloadedDeclarations": []},
             "nodeType": "Assignment",
             "operator": "=",
             "rightHandSide": {
               "arguments": [
-                {
-                  "name": "base",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
-                {
-                  "name": "modulus",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                }
+                {"name": "base", "nodeType": "Identifier", "overloadedDeclarations": []},
+                {"name": "modulus", "nodeType": "Identifier", "overloadedDeclarations": []}
               ],
               "expression": {
-                "expression": {
-                  "name": "Math",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
+                "expression": {"name": "Math", "nodeType": "Identifier", "overloadedDeclarations": []},
                 "memberName": "invMod",
                 "nodeType": "MemberAccess"
               },
@@ -1580,68 +940,33 @@
         {
           "condition": {
             "leftExpression": {
-              "leftExpression": {
-                "name": "inverse",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
+              "leftExpression": {"name": "inverse", "nodeType": "Identifier", "overloadedDeclarations": []},
               "nodeType": "BinaryOperation",
               "operator": "==",
-              "rightExpression": {
-                "hexValue": "30",
-                "kind": "number",
-                "nodeType": "Literal",
-                "value": "0"
-              }
+              "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
             },
             "nodeType": "BinaryOperation",
             "operator": "&&",
             "rightExpression": {
               "leftExpression": {
-                "leftExpression": {
-                  "hexValue": "31",
-                  "kind": "number",
-                  "nodeType": "Literal",
-                  "value": "1"
-                },
+                "leftExpression": {"hexValue": "31", "kind": "number", "nodeType": "Literal", "value": "1"},
                 "nodeType": "BinaryOperation",
                 "operator": "%",
-                "rightExpression": {
-                  "name": "modulus",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                }
+                "rightExpression": {"name": "modulus", "nodeType": "Identifier", "overloadedDeclarations": []}
               },
               "nodeType": "BinaryOperation",
               "operator": "!=",
-              "rightExpression": {
-                "hexValue": "30",
-                "kind": "number",
-                "nodeType": "Literal",
-                "value": "0"
-              }
+              "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
             }
           },
           "nodeType": "IfStatement",
           "trueBody": {
             "errorCall": {
               "arguments": [
-                {
-                  "name": "base",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
-                {
-                  "name": "modulus",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                }
+                {"name": "base", "nodeType": "Identifier", "overloadedDeclarations": []},
+                {"name": "modulus", "nodeType": "Identifier", "overloadedDeclarations": []}
               ],
-              "expression": {
-                "name": "ModularInverseDoesNotExist",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
+              "expression": {"name": "ModularInverseDoesNotExist", "nodeType": "Identifier", "overloadedDeclarations": []},
               "kind": "functionCall",
               "names": [],
               "nodeType": "FunctionCall",
@@ -1667,10 +992,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1680,10 +1002,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1698,10 +1017,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]

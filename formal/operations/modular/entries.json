@@ -1,22 +1,6 @@
 [
-  {
-    "signature": "addMod(uint256,uint256,uint256)",
-    "selector": "b12fe826",
-    "symbol": "AddU"
-  },
-  {
-    "signature": "mulMod(uint256,uint256,uint256)",
-    "selector": "a4ad2ee9",
-    "symbol": "MulU"
-  },
-  {
-    "signature": "addMod(int256,int256,int256)",
-    "selector": "289b860c",
-    "symbol": "AddS"
-  },
-  {
-    "signature": "mulMod(int256,int256,int256)",
-    "selector": "3daa08a5",
-    "symbol": "MulS"
-  }
+  {"signature": "addMod(uint256,uint256,uint256)", "selector": "b12fe826", "symbol": "AddU"},
+  {"signature": "mulMod(uint256,uint256,uint256)", "selector": "a4ad2ee9", "symbol": "MulU"},
+  {"signature": "addMod(int256,int256,int256)", "selector": "289b860c", "symbol": "AddS"},
+  {"signature": "mulMod(int256,int256,int256)", "selector": "3daa08a5", "symbol": "MulS"}
 ]

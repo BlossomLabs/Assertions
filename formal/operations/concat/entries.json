@@ -1,7 +1,1 @@
-[
-  {
-    "signature": "concat(bytes[],bytes)",
-    "selector": "db38e786",
-    "symbol": "concat"
-  }
-]
+[{"signature": "concat(bytes[],bytes)", "selector": "db38e786", "symbol": "concat"}]

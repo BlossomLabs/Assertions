@@ -1,32 +1,8 @@
 [
-  {
-    "signature": "slice(bytes,uint256,uint256)",
-    "selector": "e0041396",
-    "symbol": "slice"
-  },
-  {
-    "signature": "sliceRange(bytes,int256,int256)",
-    "selector": "305dda92",
-    "symbol": "sliceRange"
-  },
-  {
-    "signature": "byteAt(bytes,int256)",
-    "selector": "9ae8e8ea",
-    "symbol": "byteAt"
-  },
-  {
-    "signature": "byteLen(bytes)",
-    "selector": "248d6c38",
-    "symbol": "byteLen"
-  },
-  {
-    "signature": "hash(bytes)",
-    "selector": "aa1e84de",
-    "symbol": "hash"
-  },
-  {
-    "signature": "hashPairSorted(bytes32,bytes32)",
-    "selector": "c203edb3",
-    "symbol": "hashPairSorted"
-  }
+  {"signature": "slice(bytes,uint256,uint256)", "selector": "e0041396", "symbol": "slice"},
+  {"signature": "sliceRange(bytes,int256,int256)", "selector": "305dda92", "symbol": "sliceRange"},
+  {"signature": "byteAt(bytes,int256)", "selector": "9ae8e8ea", "symbol": "byteAt"},
+  {"signature": "byteLen(bytes)", "selector": "248d6c38", "symbol": "byteLen"},
+  {"signature": "hash(bytes)", "selector": "aa1e84de", "symbol": "hash"},
+  {"signature": "hashPairSorted(bytes32,bytes32)", "selector": "c203edb3", "symbol": "hashPairSorted"}
 ]

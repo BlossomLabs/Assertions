@@ -10,30 +10,16 @@
               {
                 "nodeType": "YulAssignment",
                 "value": {
-                  "arguments": [
-                    {
-                      "address-slot": "_wordAt"
-                    }
-                  ],
-                  "functionName": {
-                    "name": "mload",
-                    "nodeType": "YulIdentifier"
-                  },
+                  "arguments": [{"address-slot": "_wordAt"}],
+                  "functionName": {"name": "mload", "nodeType": "YulIdentifier"},
                   "nodeType": "YulFunctionCall"
                 },
-                "variableNames": [
-                  {
-                    "name": "w",
-                    "nodeType": "YulIdentifier"
-                  }
-                ]
+                "variableNames": [{"name": "w", "nodeType": "YulIdentifier"}]
               }
             ]
           },
           "evmVersion": "cancun",
-          "flags": [
-            "memory-safe"
-          ],
+          "flags": ["memory-safe"],
           "nodeType": "InlineAssembly"
         }
       ]
@@ -53,10 +39,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "memory",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -66,10 +49,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -84,10 +64,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -106,19 +83,8 @@
             "statements": [
               {
                 "expression": {
-                  "arguments": [
-                    {
-                      "address-slot": "_setWord"
-                    },
-                    {
-                      "name": "w",
-                      "nodeType": "YulIdentifier"
-                    }
-                  ],
-                  "functionName": {
-                    "name": "mstore",
-                    "nodeType": "YulIdentifier"
-                  },
+                  "arguments": [{"address-slot": "_setWord"}, {"name": "w", "nodeType": "YulIdentifier"}],
+                  "functionName": {"name": "mstore", "nodeType": "YulIdentifier"},
                   "nodeType": "YulFunctionCall"
                 },
                 "nodeType": "YulExpressionStatement"
@@ -126,9 +92,7 @@
             ]
           },
           "evmVersion": "cancun",
-          "flags": [
-            "memory-safe"
-          ],
+          "flags": ["memory-safe"],
           "nodeType": "InlineAssembly"
         }
       ]
@@ -148,10 +112,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "memory",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -161,10 +122,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -174,18 +132,12 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
     },
-    "returnParameters": {
-      "nodeType": "ParameterList",
-      "parameters": []
-    },
+    "returnParameters": {"nodeType": "ParameterList", "parameters": []},
     "stateMutability": "pure",
     "virtual": false,
     "visibility": "private"

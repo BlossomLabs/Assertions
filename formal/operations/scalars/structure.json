@@ -1,16 +1,6 @@
 {
   "add(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "addU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "addU"}, "nodeType": "Return"}]},
     "functionSelector": "771602f7",
     "implemented": true,
     "kind": "function",
@@ -27,10 +17,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -40,10 +27,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -58,10 +42,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -71,17 +52,7 @@
     "visibility": "external"
   },
   "add(int256,int256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "addS"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "addS"}, "nodeType": "Return"}]},
     "functionSelector": "a5f3c23b",
     "implemented": true,
     "kind": "function",
@@ -98,10 +69,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -111,10 +79,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -129,10 +94,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -142,17 +104,7 @@
     "visibility": "external"
   },
   "sub(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "subU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "subU"}, "nodeType": "Return"}]},
     "functionSelector": "b67d77c5",
     "implemented": true,
     "kind": "function",
@@ -169,10 +121,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -182,10 +131,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -200,10 +146,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -213,17 +156,7 @@
     "visibility": "external"
   },
   "sub(int256,int256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "subS"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "subS"}, "nodeType": "Return"}]},
     "functionSelector": "adefc37b",
     "implemented": true,
     "kind": "function",
@@ -240,10 +173,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -253,10 +183,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -271,10 +198,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -284,17 +208,7 @@
     "visibility": "external"
   },
   "mul(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "mulU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "mulU"}, "nodeType": "Return"}]},
     "functionSelector": "c8a4ac9c",
     "implemented": true,
     "kind": "function",
@@ -311,10 +225,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -324,10 +235,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -342,10 +250,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -355,17 +260,7 @@
     "visibility": "external"
   },
   "mul(int256,int256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "mulS"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "mulS"}, "nodeType": "Return"}]},
     "functionSelector": "bbe93d91",
     "implemented": true,
     "kind": "function",
@@ -382,10 +277,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -395,10 +287,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -413,10 +302,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -426,17 +312,7 @@
     "visibility": "external"
   },
   "div(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "divU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "divU"}, "nodeType": "Return"}]},
     "functionSelector": "a391c15b",
     "implemented": true,
     "kind": "function",
@@ -453,10 +329,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -466,10 +339,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -484,10 +354,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -497,17 +364,7 @@
     "visibility": "external"
   },
   "div(int256,int256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "divS"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "divS"}, "nodeType": "Return"}]},
     "functionSelector": "43509138",
     "implemented": true,
     "kind": "function",
@@ -524,10 +381,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -537,10 +391,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -555,10 +406,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -568,17 +416,7 @@
     "visibility": "external"
   },
   "mod(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "modU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "modU"}, "nodeType": "Return"}]},
     "functionSelector": "f43f523a",
     "implemented": true,
     "kind": "function",
@@ -595,10 +433,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -608,10 +443,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -626,10 +458,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -639,17 +468,7 @@
     "visibility": "external"
   },
   "mod(int256,int256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "modS"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "modS"}, "nodeType": "Return"}]},
     "functionSelector": "24e28928",
     "implemented": true,
     "kind": "function",
@@ -666,10 +485,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -679,10 +495,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -697,10 +510,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -710,17 +520,7 @@
     "visibility": "external"
   },
   "min(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "minU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "minU"}, "nodeType": "Return"}]},
     "functionSelector": "7ae2b5c7",
     "implemented": true,
     "kind": "function",
@@ -737,10 +537,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -750,10 +547,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -768,10 +562,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -781,17 +572,7 @@
     "visibility": "external"
   },
   "min(int256,int256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "minS"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "minS"}, "nodeType": "Return"}]},
     "functionSelector": "29aa9cbe",
     "implemented": true,
     "kind": "function",
@@ -808,10 +589,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -821,10 +599,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -839,10 +614,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -852,17 +624,7 @@
     "visibility": "external"
   },
   "max(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "maxU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "maxU"}, "nodeType": "Return"}]},
     "functionSelector": "6d5433e6",
     "implemented": true,
     "kind": "function",
@@ -879,10 +641,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -892,10 +651,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -910,10 +666,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -923,17 +676,7 @@
     "visibility": "external"
   },
   "max(int256,int256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "maxS"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "maxS"}, "nodeType": "Return"}]},
     "functionSelector": "81fe5786",
     "implemented": true,
     "kind": "function",
@@ -950,10 +693,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -963,10 +703,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -981,10 +718,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -994,17 +728,7 @@
     "visibility": "external"
   },
   "absDiff(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "absDiffU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "absDiffU"}, "nodeType": "Return"}]},
     "functionSelector": "a09ae0aa",
     "implemented": true,
     "kind": "function",
@@ -1021,10 +745,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1034,10 +755,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1052,10 +770,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1067,19 +782,7 @@
   "absDiff(int256,int256)": {
     "body": {
       "nodeType": "Block",
-      "statements": [
-        {
-          "nodeType": "UncheckedBlock",
-          "statements": [
-            {
-              "expression": {
-                "translated-expression": "absDiffS"
-              },
-              "nodeType": "Return"
-            }
-          ]
-        }
-      ]
+      "statements": [{"nodeType": "UncheckedBlock", "statements": [{"expression": {"translated-expression": "absDiffS"}, "nodeType": "Return"}]}]
     },
     "functionSelector": "1e4812c8",
     "implemented": true,
@@ -1097,10 +800,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1110,10 +810,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1128,10 +825,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1141,17 +835,7 @@
     "visibility": "external"
   },
   "eq(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "eqU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "eqU"}, "nodeType": "Return"}]},
     "functionSelector": "32148d73",
     "implemented": true,
     "kind": "function",
@@ -1168,10 +852,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1181,10 +862,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1199,10 +877,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1212,17 +887,7 @@
     "visibility": "external"
   },
   "ne(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "neU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "neU"}, "nodeType": "Return"}]},
     "functionSelector": "33151e4c",
     "implemented": true,
     "kind": "function",
@@ -1239,10 +904,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1252,10 +914,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1270,10 +929,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1283,17 +939,7 @@
     "visibility": "external"
   },
   "lt(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "ltU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "ltU"}, "nodeType": "Return"}]},
     "functionSelector": "118fc88c",
     "implemented": true,
     "kind": "function",
@@ -1310,10 +956,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1323,10 +966,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1341,10 +981,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1354,17 +991,7 @@
     "visibility": "external"
   },
   "lt(int256,int256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "ltS"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "ltS"}, "nodeType": "Return"}]},
     "functionSelector": "30880038",
     "implemented": true,
     "kind": "function",
@@ -1381,10 +1008,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1394,10 +1018,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1412,10 +1033,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1425,17 +1043,7 @@
     "visibility": "external"
   },
   "gt(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "gtU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "gtU"}, "nodeType": "Return"}]},
     "functionSelector": "21e5749b",
     "implemented": true,
     "kind": "function",
@@ -1452,10 +1060,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1465,10 +1070,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1483,10 +1085,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1496,17 +1095,7 @@
     "visibility": "external"
   },
   "gt(int256,int256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "gtS"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "gtS"}, "nodeType": "Return"}]},
     "functionSelector": "ac08973d",
     "implemented": true,
     "kind": "function",
@@ -1523,10 +1112,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1536,10 +1122,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1554,10 +1137,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1567,17 +1147,7 @@
     "visibility": "external"
   },
   "le(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "leU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "leU"}, "nodeType": "Return"}]},
     "functionSelector": "d3662cfd",
     "implemented": true,
     "kind": "function",
@@ -1594,10 +1164,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1607,10 +1174,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1625,10 +1189,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1638,17 +1199,7 @@
     "visibility": "external"
   },
   "le(int256,int256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "leS"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "leS"}, "nodeType": "Return"}]},
     "functionSelector": "00136bb8",
     "implemented": true,
     "kind": "function",
@@ -1665,10 +1216,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1678,10 +1226,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1696,10 +1241,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1709,17 +1251,7 @@
     "visibility": "external"
   },
   "ge(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "geU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "geU"}, "nodeType": "Return"}]},
     "functionSelector": "85e1f66c",
     "implemented": true,
     "kind": "function",
@@ -1736,10 +1268,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1749,10 +1278,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1767,10 +1293,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1780,17 +1303,7 @@
     "visibility": "external"
   },
   "ge(int256,int256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "geS"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "geS"}, "nodeType": "Return"}]},
     "functionSelector": "6552f187",
     "implemented": true,
     "kind": "function",
@@ -1807,10 +1320,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1820,10 +1330,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1838,10 +1345,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1851,17 +1355,7 @@
     "visibility": "external"
   },
   "bitAnd(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "bitAndU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "bitAndU"}, "nodeType": "Return"}]},
     "functionSelector": "7598b508",
     "implemented": true,
     "kind": "function",
@@ -1878,10 +1372,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1891,10 +1382,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1909,10 +1397,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1922,17 +1407,7 @@
     "visibility": "external"
   },
   "bitOr(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "bitOrU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "bitOrU"}, "nodeType": "Return"}]},
     "functionSelector": "b0229c96",
     "implemented": true,
     "kind": "function",
@@ -1949,10 +1424,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -1962,10 +1434,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1980,10 +1449,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -1993,17 +1459,7 @@
     "visibility": "external"
   },
   "bitXor(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "bitXorU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "bitXorU"}, "nodeType": "Return"}]},
     "functionSelector": "496e22b8",
     "implemented": true,
     "kind": "function",
@@ -2020,10 +1476,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -2033,10 +1486,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -2051,10 +1501,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -2064,17 +1511,7 @@
     "visibility": "external"
   },
   "shl(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "shlU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "shlU"}, "nodeType": "Return"}]},
     "functionSelector": "9da760ef",
     "implemented": true,
     "kind": "function",
@@ -2091,10 +1528,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -2104,10 +1538,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -2122,10 +1553,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -2135,17 +1563,7 @@
     "visibility": "external"
   },
   "shr(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "shrU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "shrU"}, "nodeType": "Return"}]},
     "functionSelector": "75f4479a",
     "implemented": true,
     "kind": "function",
@@ -2162,10 +1580,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -2175,10 +1590,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -2193,10 +1605,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -2206,17 +1615,7 @@
     "visibility": "external"
   },
   "shr(int256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "shrS"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "shrS"}, "nodeType": "Return"}]},
     "functionSelector": "1b7d7318",
     "implemented": true,
     "kind": "function",
@@ -2233,10 +1632,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -2246,10 +1642,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -2264,10 +1657,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -2277,17 +1667,7 @@
     "visibility": "external"
   },
   "bitSet(uint256,uint256)": {
-    "body": {
-      "nodeType": "Block",
-      "statements": [
-        {
-          "expression": {
-            "translated-expression": "bitSetU"
-          },
-          "nodeType": "Return"
-        }
-      ]
-    },
+    "body": {"nodeType": "Block", "statements": [{"expression": {"translated-expression": "bitSetU"}, "nodeType": "Return"}]},
     "functionSelector": "b280615c",
     "implemented": true,
     "kind": "function",
@@ -2304,10 +1684,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -2317,10 +1694,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -2335,10 +1709,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]

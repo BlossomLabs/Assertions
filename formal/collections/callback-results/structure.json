@@ -12,19 +12,14 @@
               "nodeType": "VariableDeclaration",
               "stateVariable": false,
               "storageLocation": "default",
-              "typeName": {
-                "name": "bytes4",
-                "nodeType": "ElementaryTypeName"
-              },
+              "typeName": {"name": "bytes4", "nodeType": "ElementaryTypeName"},
               "visibility": "internal"
             }
           ],
           "nodeType": "VariableDeclarationStatement"
         },
         {
-          "condition": {
-            "slot": "SIGNAL_LENGTH"
-          },
+          "condition": {"slot": "SIGNAL_LENGTH"},
           "nodeType": "IfStatement",
           "trueBody": {
             "nodeType": "Block",
@@ -38,62 +33,32 @@
                       "value": {
                         "arguments": [
                           {
-                            "arguments": [
-                              {
-                                "name": "ret",
-                                "nodeType": "YulIdentifier"
-                              },
-                              {
-                                "kind": "number",
-                                "nodeType": "YulLiteral",
-                                "type": "",
-                                "value": "32"
-                              }
-                            ],
-                            "functionName": {
-                              "name": "add",
-                              "nodeType": "YulIdentifier"
-                            },
+                            "arguments": [{"name": "ret", "nodeType": "YulIdentifier"}, {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "32"}],
+                            "functionName": {"name": "add", "nodeType": "YulIdentifier"},
                             "nodeType": "YulFunctionCall"
                           }
                         ],
-                        "functionName": {
-                          "name": "mload",
-                          "nodeType": "YulIdentifier"
-                        },
+                        "functionName": {"name": "mload", "nodeType": "YulIdentifier"},
                         "nodeType": "YulFunctionCall"
                       },
-                      "variableNames": [
-                        {
-                          "name": "head",
-                          "nodeType": "YulIdentifier"
-                        }
-                      ]
+                      "variableNames": [{"name": "head", "nodeType": "YulIdentifier"}]
                     }
                   ]
                 },
                 "evmVersion": "cancun",
-                "flags": [
-                  "memory-safe"
-                ],
+                "flags": ["memory-safe"],
                 "nodeType": "InlineAssembly"
               }
             ]
           }
         },
         {
-          "condition": {
-            "slot": "EXHAUSTED"
-          },
+          "condition": {"slot": "EXHAUSTED"},
           "nodeType": "IfStatement",
           "trueBody": {
             "errorCall": {
               "arguments": [],
-              "expression": {
-                "name": "SubcallOutOfGas",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
+              "expression": {"name": "SubcallOutOfGas", "nodeType": "Identifier", "overloadedDeclarations": []},
               "kind": "functionCall",
               "names": [],
               "nodeType": "FunctionCall",
@@ -119,10 +84,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -132,18 +94,12 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "memory",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
     },
-    "returnParameters": {
-      "nodeType": "ParameterList",
-      "parameters": []
-    },
+    "returnParameters": {"nodeType": "ParameterList", "parameters": []},
     "stateMutability": "view",
     "virtual": false,
     "visibility": "private"
@@ -161,56 +117,21 @@
               "nodeType": "VariableDeclaration",
               "stateVariable": false,
               "storageLocation": "memory",
-              "typeName": {
-                "name": "bytes",
-                "nodeType": "ElementaryTypeName"
-              },
+              "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
               "visibility": "internal"
             }
           ],
           "initialValue": {
             "arguments": [
-              {
-                "name": "cb",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
-              {
-                "name": "prepared",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
-              {
-                "name": "a",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
-              {
-                "name": "b",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
-              {
-                "name": "binary",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
-              {
-                "name": "i",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
-              {
-                "name": "j",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              }
+              {"name": "cb", "nodeType": "Identifier", "overloadedDeclarations": []},
+              {"name": "prepared", "nodeType": "Identifier", "overloadedDeclarations": []},
+              {"name": "a", "nodeType": "Identifier", "overloadedDeclarations": []},
+              {"name": "b", "nodeType": "Identifier", "overloadedDeclarations": []},
+              {"name": "binary", "nodeType": "Identifier", "overloadedDeclarations": []},
+              {"name": "i", "nodeType": "Identifier", "overloadedDeclarations": []},
+              {"name": "j", "nodeType": "Identifier", "overloadedDeclarations": []}
             ],
-            "expression": {
-              "name": "_callValue",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "expression": {"name": "_callValue", "nodeType": "Identifier", "overloadedDeclarations": []},
             "kind": "functionCall",
             "names": [],
             "nodeType": "FunctionCall",
@@ -219,48 +140,18 @@
           "nodeType": "VariableDeclarationStatement"
         },
         {
-          "condition": {
-            "slot": "LENGTH"
-          },
+          "condition": {"slot": "LENGTH"},
           "nodeType": "IfStatement",
           "trueBody": {
             "errorCall": {
               "arguments": [
-                {
-                  "expression": {
-                    "name": "msg",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
-                  "memberName": "sig",
-                  "nodeType": "MemberAccess"
-                },
-                {
-                  "name": "i",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
-                {
-                  "name": "j",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
-                {
-                  "expression": {
-                    "name": "cb",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
-                  "memberName": "target",
-                  "nodeType": "MemberAccess"
-                }
+                {"expression": {"name": "msg", "nodeType": "Identifier", "overloadedDeclarations": []}, "memberName": "sig", "nodeType": "MemberAccess"},
+                {"name": "i", "nodeType": "Identifier", "overloadedDeclarations": []},
+                {"name": "j", "nodeType": "Identifier", "overloadedDeclarations": []},
+                {"expression": {"name": "cb", "nodeType": "Identifier", "overloadedDeclarations": []}, "memberName": "target", "nodeType": "MemberAccess"}
               ],
               "expression": {
-                "expression": {
-                  "name": "AbiCodec",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
+                "expression": {"name": "AbiCodec", "nodeType": "Identifier", "overloadedDeclarations": []},
                 "memberName": "InvalidCallbackResult",
                 "nodeType": "MemberAccess"
               },
@@ -281,30 +172,14 @@
               "nodeType": "VariableDeclaration",
               "stateVariable": false,
               "storageLocation": "default",
-              "typeName": {
-                "name": "uint256",
-                "nodeType": "ElementaryTypeName"
-              },
+              "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
               "visibility": "internal"
             }
           ],
           "initialValue": {
-            "arguments": [
-              {
-                "name": "out",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
-              {
-                "slot": "OFFSET"
-              }
-            ],
+            "arguments": [{"name": "out", "nodeType": "Identifier", "overloadedDeclarations": []}, {"slot": "OFFSET"}],
             "expression": {
-              "expression": {
-                "name": "AbiCodec",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
+              "expression": {"name": "AbiCodec", "nodeType": "Identifier", "overloadedDeclarations": []},
               "memberName": "word",
               "nodeType": "MemberAccess"
             },
@@ -316,48 +191,18 @@
           "nodeType": "VariableDeclarationStatement"
         },
         {
-          "condition": {
-            "slot": "BOUND"
-          },
+          "condition": {"slot": "BOUND"},
           "nodeType": "IfStatement",
           "trueBody": {
             "errorCall": {
               "arguments": [
-                {
-                  "expression": {
-                    "name": "msg",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
-                  "memberName": "sig",
-                  "nodeType": "MemberAccess"
-                },
-                {
-                  "name": "i",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
-                {
-                  "name": "j",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
-                {
-                  "expression": {
-                    "name": "cb",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
-                  "memberName": "target",
-                  "nodeType": "MemberAccess"
-                }
+                {"expression": {"name": "msg", "nodeType": "Identifier", "overloadedDeclarations": []}, "memberName": "sig", "nodeType": "MemberAccess"},
+                {"name": "i", "nodeType": "Identifier", "overloadedDeclarations": []},
+                {"name": "j", "nodeType": "Identifier", "overloadedDeclarations": []},
+                {"expression": {"name": "cb", "nodeType": "Identifier", "overloadedDeclarations": []}, "memberName": "target", "nodeType": "MemberAccess"}
               ],
               "expression": {
-                "expression": {
-                  "name": "AbiCodec",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
+                "expression": {"name": "AbiCodec", "nodeType": "Identifier", "overloadedDeclarations": []},
                 "memberName": "InvalidCallbackResult",
                 "nodeType": "MemberAccess"
               },
@@ -369,12 +214,7 @@
             "nodeType": "RevertStatement"
           }
         },
-        {
-          "expression": {
-            "slot": "TRUTH"
-          },
-          "nodeType": "Return"
-        }
+        {"expression": {"slot": "TRUTH"}, "nodeType": "Return"}
       ]
     },
     "implemented": true,
@@ -392,13 +232,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "calldata",
-          "typeName": {
-            "nodeType": "UserDefinedTypeName",
-            "pathNode": {
-              "name": "Callback",
-              "nodeType": "IdentifierPath"
-            }
-          },
+          "typeName": {"nodeType": "UserDefinedTypeName", "pathNode": {"name": "Callback", "nodeType": "IdentifierPath"}},
           "visibility": "internal"
         },
         {
@@ -408,13 +242,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "memory",
-          "typeName": {
-            "nodeType": "UserDefinedTypeName",
-            "pathNode": {
-              "name": "PreparedCallback",
-              "nodeType": "IdentifierPath"
-            }
-          },
+          "typeName": {"nodeType": "UserDefinedTypeName", "pathNode": {"name": "PreparedCallback", "nodeType": "IdentifierPath"}},
           "visibility": "internal"
         },
         {
@@ -424,10 +252,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "memory",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -437,10 +262,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "memory",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -450,10 +272,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -463,10 +282,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -476,10 +292,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -494,10 +307,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -520,10 +330,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bytes4",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes4", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -533,10 +340,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -546,10 +350,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -559,11 +360,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "address",
-            "nodeType": "ElementaryTypeName",
-            "stateMutability": "nonpayable"
-          },
+          "typeName": {"name": "address", "nodeType": "ElementaryTypeName", "stateMutability": "nonpayable"},
           "visibility": "internal"
         }
       ]

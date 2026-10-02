@@ -556,11 +556,7 @@
       "ledger": "docs/verification/operations-ascii-source.json"
     }
   ],
-  "sourceCoverage": {
-    "completed": 92,
-    "total": 92,
-    "remaining": 0
-  },
+  "sourceCoverage": {"completed": 92, "total": 92, "remaining": 0},
   "currentPackage": null,
   "premises": [
     "Restricted compiler AST translation and primitive checked/wrapping integer/bitvector semantics must be explicit.",
@@ -791,17 +787,8 @@
       "scope": "Exact finite-word quantized rational/Horner kernels; real exp/log accuracy and inverse approximation bounds remain open."
     }
   ],
-  "historicalSourceCoverage": {
-    "completed": 84,
-    "total": 92,
-    "remaining": 8
-  },
-  "currentSourceCoverage": {
-    "completed": 92,
-    "total": 92,
-    "remaining": 0,
-    "sourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
-  },
+  "historicalSourceCoverage": {"completed": 84, "total": 92, "remaining": 8},
+  "currentSourceCoverage": {"completed": 92, "total": 92, "remaining": 0, "sourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"},
   "currentSourceRevalidation": {
     "status": "passed",
     "sourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce",

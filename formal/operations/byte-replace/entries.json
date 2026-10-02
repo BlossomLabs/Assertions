@@ -1,7 +1,1 @@
-[
-  {
-    "signature": "replace(bytes,bytes,bytes)",
-    "selector": "801cc257",
-    "symbol": "replace"
-  }
-]
+[{"signature": "replace(bytes,bytes,bytes)", "selector": "801cc257", "symbol": "replace"}]

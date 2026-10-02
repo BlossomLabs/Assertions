@@ -4,36 +4,16 @@
     "statements": [
       {
         "condition": {
-          "leftExpression": {
-            "name": "base",
-            "nodeType": "Identifier",
-            "overloadedDeclarations": []
-          },
+          "leftExpression": {"name": "base", "nodeType": "Identifier", "overloadedDeclarations": []},
           "nodeType": "BinaryOperation",
           "operator": "==",
-          "rightExpression": {
-            "hexValue": "30",
-            "kind": "number",
-            "nodeType": "Literal",
-            "value": "0"
-          }
+          "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
         },
         "nodeType": "IfStatement",
         "trueBody": {
           "expression": {
-            "arguments": [
-              {
-                "hexValue": "30783132",
-                "kind": "number",
-                "nodeType": "Literal",
-                "value": "0x12"
-              }
-            ],
-            "expression": {
-              "name": "_panic",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "arguments": [{"hexValue": "30783132", "kind": "number", "nodeType": "Literal", "value": "0x12"}],
+            "expression": {"name": "_panic", "nodeType": "Identifier", "overloadedDeclarations": []},
             "kind": "functionCall",
             "names": [],
             "nodeType": "FunctionCall",
@@ -44,50 +24,23 @@
       },
       {
         "condition": {
-          "leftExpression": {
-            "name": "x",
-            "nodeType": "Identifier",
-            "overloadedDeclarations": []
-          },
+          "leftExpression": {"name": "x", "nodeType": "Identifier", "overloadedDeclarations": []},
           "nodeType": "BinaryOperation",
           "operator": "==",
-          "rightExpression": {
-            "hexValue": "30",
-            "kind": "number",
-            "nodeType": "Literal",
-            "value": "0"
-          }
+          "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
         },
         "nodeType": "IfStatement",
         "trueBody": {
           "expression": {
             "condition": {
-              "leftExpression": {
-                "name": "n",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
+              "leftExpression": {"name": "n", "nodeType": "Identifier", "overloadedDeclarations": []},
               "nodeType": "BinaryOperation",
               "operator": "==",
-              "rightExpression": {
-                "hexValue": "30",
-                "kind": "number",
-                "nodeType": "Literal",
-                "value": "0"
-              }
+              "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
             },
-            "falseExpression": {
-              "hexValue": "30",
-              "kind": "number",
-              "nodeType": "Literal",
-              "value": "0"
-            },
+            "falseExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"},
             "nodeType": "Conditional",
-            "trueExpression": {
-              "name": "base",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            }
+            "trueExpression": {"name": "base", "nodeType": "Identifier", "overloadedDeclarations": []}
           },
           "nodeType": "Return"
         }
@@ -101,18 +54,11 @@
             "nodeType": "VariableDeclaration",
             "stateVariable": false,
             "storageLocation": "default",
-            "typeName": {
-              "name": "uint256",
-              "nodeType": "ElementaryTypeName"
-            },
+            "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
             "visibility": "internal"
           }
         ],
-        "initialValue": {
-          "name": "base",
-          "nodeType": "Identifier",
-          "overloadedDeclarations": []
-        },
+        "initialValue": {"name": "base", "nodeType": "Identifier", "overloadedDeclarations": []},
         "nodeType": "VariableDeclarationStatement"
       },
       {
@@ -122,28 +68,14 @@
             {
               "condition": {
                 "leftExpression": {
-                  "leftExpression": {
-                    "name": "n",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
+                  "leftExpression": {"name": "n", "nodeType": "Identifier", "overloadedDeclarations": []},
                   "nodeType": "BinaryOperation",
                   "operator": "&",
-                  "rightExpression": {
-                    "hexValue": "31",
-                    "kind": "number",
-                    "nodeType": "Literal",
-                    "value": "1"
-                  }
+                  "rightExpression": {"hexValue": "31", "kind": "number", "nodeType": "Literal", "value": "1"}
                 },
                 "nodeType": "BinaryOperation",
                 "operator": "==",
-                "rightExpression": {
-                  "hexValue": "31",
-                  "kind": "number",
-                  "nodeType": "Literal",
-                  "value": "1"
-                }
+                "rightExpression": {"hexValue": "31", "kind": "number", "nodeType": "Literal", "value": "1"}
               },
               "nodeType": "IfStatement",
               "trueBody": {
@@ -151,23 +83,13 @@
                 "statements": [
                   {
                     "expression": {
-                      "leftHandSide": {
-                        "name": "result",
-                        "nodeType": "Identifier",
-                        "overloadedDeclarations": []
-                      },
+                      "leftHandSide": {"name": "result", "nodeType": "Identifier", "overloadedDeclarations": []},
                       "nodeType": "Assignment",
                       "operator": "=",
                       "rightHandSide": {
-                        "arguments": {
-                          "translated-slot": "SELECT_ARGUMENTS"
-                        },
+                        "arguments": {"translated-slot": "SELECT_ARGUMENTS"},
                         "expression": {
-                          "expression": {
-                            "name": "Math",
-                            "nodeType": "Identifier",
-                            "overloadedDeclarations": []
-                          },
+                          "expression": {"name": "Math", "nodeType": "Identifier", "overloadedDeclarations": []},
                           "memberName": "mulDiv",
                           "nodeType": "MemberAccess"
                         },
@@ -184,34 +106,19 @@
             },
             {
               "expression": {
-                "leftHandSide": {
-                  "name": "n",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
+                "leftHandSide": {"name": "n", "nodeType": "Identifier", "overloadedDeclarations": []},
                 "nodeType": "Assignment",
                 "operator": ">>=",
-                "rightHandSide": {
-                  "translated-slot": "SHIFT"
-                }
+                "rightHandSide": {"translated-slot": "SHIFT"}
               },
               "nodeType": "ExpressionStatement"
             },
             {
               "condition": {
-                "leftExpression": {
-                  "name": "n",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": []
-                },
+                "leftExpression": {"name": "n", "nodeType": "Identifier", "overloadedDeclarations": []},
                 "nodeType": "BinaryOperation",
                 "operator": ">",
-                "rightExpression": {
-                  "hexValue": "30",
-                  "kind": "number",
-                  "nodeType": "Literal",
-                  "value": "0"
-                }
+                "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
               },
               "nodeType": "IfStatement",
               "trueBody": {
@@ -219,23 +126,13 @@
                 "statements": [
                   {
                     "expression": {
-                      "leftHandSide": {
-                        "name": "x",
-                        "nodeType": "Identifier",
-                        "overloadedDeclarations": []
-                      },
+                      "leftHandSide": {"name": "x", "nodeType": "Identifier", "overloadedDeclarations": []},
                       "nodeType": "Assignment",
                       "operator": "=",
                       "rightHandSide": {
-                        "arguments": {
-                          "translated-slot": "SQUARE_ARGUMENTS"
-                        },
+                        "arguments": {"translated-slot": "SQUARE_ARGUMENTS"},
                         "expression": {
-                          "expression": {
-                            "name": "Math",
-                            "nodeType": "Identifier",
-                            "overloadedDeclarations": []
-                          },
+                          "expression": {"name": "Math", "nodeType": "Identifier", "overloadedDeclarations": []},
                           "memberName": "mulDiv",
                           "nodeType": "MemberAccess"
                         },
@@ -253,30 +150,14 @@
           ]
         },
         "condition": {
-          "leftExpression": {
-            "name": "n",
-            "nodeType": "Identifier",
-            "overloadedDeclarations": []
-          },
+          "leftExpression": {"name": "n", "nodeType": "Identifier", "overloadedDeclarations": []},
           "nodeType": "BinaryOperation",
           "operator": ">",
-          "rightExpression": {
-            "hexValue": "30",
-            "kind": "number",
-            "nodeType": "Literal",
-            "value": "0"
-          }
+          "rightExpression": {"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}
         },
         "nodeType": "WhileStatement"
       },
-      {
-        "expression": {
-          "name": "result",
-          "nodeType": "Identifier",
-          "overloadedDeclarations": []
-        },
-        "nodeType": "Return"
-      }
+      {"expression": {"name": "result", "nodeType": "Identifier", "overloadedDeclarations": []}, "nodeType": "Return"}
     ]
   },
   "functionSelector": "67b870af",
@@ -295,10 +176,7 @@
         "nodeType": "VariableDeclaration",
         "stateVariable": false,
         "storageLocation": "default",
-        "typeName": {
-          "name": "uint256",
-          "nodeType": "ElementaryTypeName"
-        },
+        "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
         "visibility": "internal"
       },
       {
@@ -308,10 +186,7 @@
         "nodeType": "VariableDeclaration",
         "stateVariable": false,
         "storageLocation": "default",
-        "typeName": {
-          "name": "uint256",
-          "nodeType": "ElementaryTypeName"
-        },
+        "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
         "visibility": "internal"
       },
       {
@@ -321,10 +196,7 @@
         "nodeType": "VariableDeclaration",
         "stateVariable": false,
         "storageLocation": "default",
-        "typeName": {
-          "name": "uint256",
-          "nodeType": "ElementaryTypeName"
-        },
+        "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
         "visibility": "internal"
       }
     ]
@@ -339,10 +211,7 @@
         "nodeType": "VariableDeclaration",
         "stateVariable": false,
         "storageLocation": "default",
-        "typeName": {
-          "name": "uint256",
-          "nodeType": "ElementaryTypeName"
-        },
+        "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
         "visibility": "internal"
       }
     ]

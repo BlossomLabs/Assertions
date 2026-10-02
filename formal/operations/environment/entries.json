@@ -1,77 +1,17 @@
 [
-  {
-    "signature": "balance(address)",
-    "selector": "e3d670d7",
-    "symbol": "balance"
-  },
-  {
-    "signature": "codeHash(address)",
-    "selector": "3dc44827",
-    "symbol": "codeHash"
-  },
-  {
-    "signature": "timestamp()",
-    "selector": "b80777ea",
-    "symbol": "timestamp"
-  },
-  {
-    "signature": "blockNumber()",
-    "selector": "57e871e7",
-    "symbol": "blockNumber"
-  },
-  {
-    "signature": "chainId()",
-    "selector": "9a8a0592",
-    "symbol": "chainId"
-  },
-  {
-    "signature": "baseFee()",
-    "selector": "6ef25c3a",
-    "symbol": "baseFee"
-  },
-  {
-    "signature": "prevRandao()",
-    "selector": "fd6e98c4",
-    "symbol": "prevRandao"
-  },
-  {
-    "signature": "coinbase()",
-    "selector": "a6ae0aac",
-    "symbol": "coinbase"
-  },
-  {
-    "signature": "gasLimit()",
-    "selector": "f68016b7",
-    "symbol": "gasLimit"
-  },
-  {
-    "signature": "blobBaseFee()",
-    "selector": "f8206140",
-    "symbol": "blobBaseFee"
-  },
-  {
-    "signature": "blockHash(uint256)",
-    "selector": "85df51fd",
-    "symbol": "blockHash"
-  },
-  {
-    "signature": "origin()",
-    "selector": "938b5f32",
-    "symbol": "origin"
-  },
-  {
-    "signature": "gasPrice()",
-    "selector": "fe173b97",
-    "symbol": "gasPrice"
-  },
-  {
-    "signature": "blobHash(uint256)",
-    "selector": "0ba54e32",
-    "symbol": "blobHash"
-  },
-  {
-    "signature": "code(address)",
-    "selector": "5b90b752",
-    "symbol": "code"
-  }
+  {"signature": "balance(address)", "selector": "e3d670d7", "symbol": "balance"},
+  {"signature": "codeHash(address)", "selector": "3dc44827", "symbol": "codeHash"},
+  {"signature": "timestamp()", "selector": "b80777ea", "symbol": "timestamp"},
+  {"signature": "blockNumber()", "selector": "57e871e7", "symbol": "blockNumber"},
+  {"signature": "chainId()", "selector": "9a8a0592", "symbol": "chainId"},
+  {"signature": "baseFee()", "selector": "6ef25c3a", "symbol": "baseFee"},
+  {"signature": "prevRandao()", "selector": "fd6e98c4", "symbol": "prevRandao"},
+  {"signature": "coinbase()", "selector": "a6ae0aac", "symbol": "coinbase"},
+  {"signature": "gasLimit()", "selector": "f68016b7", "symbol": "gasLimit"},
+  {"signature": "blobBaseFee()", "selector": "f8206140", "symbol": "blobBaseFee"},
+  {"signature": "blockHash(uint256)", "selector": "85df51fd", "symbol": "blockHash"},
+  {"signature": "origin()", "selector": "938b5f32", "symbol": "origin"},
+  {"signature": "gasPrice()", "selector": "fe173b97", "symbol": "gasPrice"},
+  {"signature": "blobHash(uint256)", "selector": "0ba54e32", "symbol": "blobHash"},
+  {"signature": "code(address)", "selector": "5b90b752", "symbol": "code"}
 ]

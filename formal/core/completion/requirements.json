@@ -2,10 +2,7 @@
   {
     "requirement": "Arbitrary finite positional constraints, signed comparisons, ranges, SKIP, OR structural rejection, short circuit and exact first failure",
     "evidence": "formal/constraints/evidence/constraint-engine/manifest.json",
-    "sourceFunctions": [
-      "_checkConstraint",
-      "_validateConstraints"
-    ],
+    "sourceFunctions": ["_checkConstraint", "_validateConstraints"],
     "theorems": [
       "ConstraintEngine.Check",
       "ConstraintEngine.Or",
@@ -19,16 +16,7 @@
   {
     "requirement": "RAW_BYTES/STATIC_CALL/BALANCE resolution, contexts, routing, ordered judges, both default messages and first-failure propagation",
     "evidence": "formal/resolution/evidence/resolution-judge/manifest.json",
-    "sourceFunctions": [
-      "_resolve",
-      "_staticCall",
-      "_rejectOutOfGas",
-      "_firstWord",
-      "_asAddress",
-      "_judge",
-      "assertParam",
-      "assertBatch"
-    ],
+    "sourceFunctions": ["_resolve", "_staticCall", "_rejectOutOfGas", "_firstWord", "_asAddress", "_judge", "assertParam", "assertBatch"],
     "theorems": [
       "ResolutionSource.ResolveSource",
       "ResolutionSource.StaticCall",
@@ -45,16 +33,7 @@
   {
     "requirement": "Raw values, gather, signed pick, read, chain and lazy cond",
     "evidence": "formal/core/evidence/core-raw-primitives/manifest.json",
-    "sourceFunctions": [
-      "resolve",
-      "gather",
-      "pick",
-      "chain",
-      "read",
-      "cond",
-      "_rawWord",
-      "_asAddress"
-    ],
+    "sourceFunctions": ["resolve", "gather", "pick", "chain", "read", "cond", "_rawWord", "_asAddress"],
     "theorems": [
       "CoreSource.ResolveRaw",
       "CoreSource.Gather",
@@ -68,19 +47,8 @@
   {
     "requirement": "Guarded fallback, validity, exact probe behavior and source exhaustion classification",
     "evidence": "formal/control/evidence/guarded-control/manifest.json",
-    "sourceFunctions": [
-      "orElse",
-      "isValid",
-      "revertData",
-      "_rejectOutOfGas",
-      "resolve"
-    ],
-    "theorems": [
-      "GuardSource.OrElseSource",
-      "GuardSource.IsValidSource",
-      "ProbeSource.InspectSource",
-      "ProbeSource.RevertDataSource"
-    ]
+    "sourceFunctions": ["orElse", "isValid", "revertData", "_rejectOutOfGas", "resolve"],
+    "theorems": ["GuardSource.OrElseSource", "GuardSource.IsValidSource", "ProbeSource.InspectSource", "ProbeSource.RevertDataSource"]
   },
   {
     "requirement": "Navigation traversal, modes, validated values and return-memory correspondence",
@@ -111,34 +79,19 @@
     "requirement": "Resolver failures precede navigation; actual resolved bytes reach the navigation theorem",
     "evidence": "formal/composition/evidence/resolved-navigation/manifest.json",
     "sourceFunctions": [],
-    "theorems": [
-      "CompositionSource.Nav"
-    ]
+    "theorems": ["CompositionSource.Nav"]
   },
   {
     "requirement": "Target-first and ordered arguments, canonical get tuple construction, first invalid component and actual codec receipts",
     "evidence": "formal/arguments/evidence/get-arguments/manifest.json",
-    "sourceFunctions": [
-      "get",
-      "_encodeArguments"
-    ],
-    "theorems": [
-      "ArgumentsSource.PrepareSource",
-      "ArgumentsSource.EncodeSource",
-      "ArgumentsSource.Get",
-      "ArgumentsTuple.TupleChecked"
-    ]
+    "sourceFunctions": ["get", "_encodeArguments"],
+    "theorems": ["ArgumentsSource.PrepareSource", "ArgumentsSource.EncodeSource", "ArgumentsSource.Get", "ArgumentsTuple.TupleChecked"]
   },
   {
     "requirement": "All seventeen public entries, generated getters, accepted and rejected raw calldata, root and reached-child postconditions",
     "evidence": "formal/core/public-boundary/evidence/seventeen-entrypoints/manifest.json",
     "sourceFunctions": [],
-    "theorems": [
-      "CorePublicGetters.Source",
-      "CorePublicConnection.GetterResult",
-      "CorePublicConnection.Compose",
-      "CorePublicConnection.ReachedChild"
-    ]
+    "theorems": ["CorePublicGetters.Source", "CorePublicConnection.GetterResult", "CorePublicConnection.Compose", "CorePublicConnection.ReachedChild"]
   },
   {
     "requirement": "Finite recursive source receipts, exact self-call coverage and unmodified unrelated observations",

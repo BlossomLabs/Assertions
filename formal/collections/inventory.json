@@ -7,363 +7,72 @@
   "solcSha256": "c8d35afdddc3cd2743ee88b8f25e0fecd16e2bdd5f2120f37e52cd9cc45ae0e6",
   "solcVersion": "solc, the solidity compiler commandline interface\nVersion: 0.8.36+commit.8a079791.Linux.g++",
   "functionDefinitions": [
-    {
-      "name": "foldRange",
-      "visibility": "external",
-      "inputs": 7,
-      "mutability": "view"
-    },
-    {
-      "name": "foldBytes",
-      "visibility": "external",
-      "inputs": 7,
-      "mutability": "view"
-    },
-    {
-      "name": "foldWords",
-      "visibility": "external",
-      "inputs": 7,
-      "mutability": "view"
-    },
-    {
-      "name": "mapWords",
-      "visibility": "external",
-      "inputs": 4,
-      "mutability": "view"
-    },
-    {
-      "name": "filterWords",
-      "visibility": "external",
-      "inputs": 4,
-      "mutability": "view"
-    },
-    {
-      "name": "iotaWords",
-      "visibility": "external",
-      "inputs": 1,
-      "mutability": "pure"
-    },
-    {
-      "name": "wordIndexOf",
-      "visibility": "external",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "reverseWords",
-      "visibility": "external",
-      "inputs": 1,
-      "mutability": "pure"
-    },
-    {
-      "name": "zipWords",
-      "visibility": "external",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "unzipWords",
-      "visibility": "external",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "sortWords",
-      "visibility": "external",
-      "inputs": 1,
-      "mutability": "pure"
-    },
-    {
-      "name": "sumWords",
-      "visibility": "external",
-      "inputs": 1,
-      "mutability": "pure"
-    },
-    {
-      "name": "uniqueWords",
-      "visibility": "external",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "packArray",
-      "visibility": "external",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "unpackArray",
-      "visibility": "external",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "mapValues",
-      "visibility": "external",
-      "inputs": 4,
-      "mutability": "view"
-    },
-    {
-      "name": "filterValues",
-      "visibility": "external",
-      "inputs": 3,
-      "mutability": "view"
-    },
-    {
-      "name": "foldValues",
-      "visibility": "external",
-      "inputs": 5,
-      "mutability": "view"
-    },
-    {
-      "name": "sortValues",
-      "visibility": "external",
-      "inputs": 3,
-      "mutability": "view"
-    },
-    {
-      "name": "uniqueValues",
-      "visibility": "external",
-      "inputs": 4,
-      "mutability": "view"
-    },
-    {
-      "name": "flattenValues",
-      "visibility": "external",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "reverseValues",
-      "visibility": "external",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "sliceValues",
-      "visibility": "external",
-      "inputs": 4,
-      "mutability": "pure"
-    },
-    {
-      "name": "indexOfValues",
-      "visibility": "external",
-      "inputs": 4,
-      "mutability": "view"
-    },
-    {
-      "name": "anyValues",
-      "visibility": "external",
-      "inputs": 3,
-      "mutability": "view"
-    },
-    {
-      "name": "allValues",
-      "visibility": "external",
-      "inputs": 3,
-      "mutability": "view"
-    },
-    {
-      "name": "findValues",
-      "visibility": "external",
-      "inputs": 3,
-      "mutability": "view"
-    },
-    {
-      "name": "zipValues",
-      "visibility": "external",
-      "inputs": 4,
-      "mutability": "pure"
-    },
-    {
-      "name": "unzipValues",
-      "visibility": "external",
-      "inputs": 4,
-      "mutability": "pure"
-    },
-    {
-      "name": "_applyWords",
-      "visibility": "private",
-      "inputs": 5,
-      "mutability": "view"
-    },
-    {
-      "name": "_wordAt",
-      "visibility": "private",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "_setWord",
-      "visibility": "private",
-      "inputs": 3,
-      "mutability": "pure"
-    },
-    {
-      "name": "_checkWindows",
-      "visibility": "private",
-      "inputs": 3,
-      "mutability": "pure"
-    },
-    {
-      "name": "_checkElementWindows",
-      "visibility": "private",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "_domainElem",
-      "visibility": "private",
-      "inputs": 3,
-      "mutability": "pure"
-    },
-    {
-      "name": "_stampWindows",
-      "visibility": "private",
-      "inputs": 5,
-      "mutability": "pure"
-    },
-    {
-      "name": "_stampElements",
-      "visibility": "private",
-      "inputs": 3,
-      "mutability": "pure"
-    },
-    {
-      "name": "_fold",
-      "visibility": "private",
-      "inputs": 9,
-      "mutability": "view"
-    },
-    {
-      "name": "_checkTarget",
-      "visibility": "private",
-      "inputs": 1,
-      "mutability": "view"
-    },
-    {
-      "name": "_callWord",
-      "visibility": "private",
-      "inputs": 3,
-      "mutability": "view"
-    },
-    {
-      "name": "_foldLoop",
-      "visibility": "private",
-      "inputs": 4,
-      "mutability": "view"
-    },
-    {
-      "name": "_sliceIndex",
-      "visibility": "private",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "_findValue",
-      "visibility": "private",
-      "inputs": 4,
-      "mutability": "view"
-    },
-    {
-      "name": "_unzipPair",
-      "visibility": "private",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "_zipPlan",
-      "visibility": "private",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "_validateResult",
-      "visibility": "private",
-      "inputs": 4,
-      "mutability": "pure"
-    },
-    {
-      "name": "_prepareCallback",
-      "visibility": "private",
-      "inputs": 2,
-      "mutability": "pure"
-    },
-    {
-      "name": "_bindValue",
-      "visibility": "private",
-      "inputs": 4,
-      "mutability": "pure"
-    },
-    {
-      "name": "_callValue",
-      "visibility": "private",
-      "inputs": 7,
-      "mutability": "view"
-    },
-    {
-      "name": "_rejectOutOfGas",
-      "visibility": "private",
-      "inputs": 2,
-      "mutability": "view"
-    },
-    {
-      "name": "_predicate",
-      "visibility": "private",
-      "inputs": 7,
-      "mutability": "view"
-    }
+    {"name": "foldRange", "visibility": "external", "inputs": 7, "mutability": "view"},
+    {"name": "foldBytes", "visibility": "external", "inputs": 7, "mutability": "view"},
+    {"name": "foldWords", "visibility": "external", "inputs": 7, "mutability": "view"},
+    {"name": "mapWords", "visibility": "external", "inputs": 4, "mutability": "view"},
+    {"name": "filterWords", "visibility": "external", "inputs": 4, "mutability": "view"},
+    {"name": "iotaWords", "visibility": "external", "inputs": 1, "mutability": "pure"},
+    {"name": "wordIndexOf", "visibility": "external", "inputs": 2, "mutability": "pure"},
+    {"name": "reverseWords", "visibility": "external", "inputs": 1, "mutability": "pure"},
+    {"name": "zipWords", "visibility": "external", "inputs": 2, "mutability": "pure"},
+    {"name": "unzipWords", "visibility": "external", "inputs": 2, "mutability": "pure"},
+    {"name": "sortWords", "visibility": "external", "inputs": 1, "mutability": "pure"},
+    {"name": "sumWords", "visibility": "external", "inputs": 1, "mutability": "pure"},
+    {"name": "uniqueWords", "visibility": "external", "inputs": 2, "mutability": "pure"},
+    {"name": "packArray", "visibility": "external", "inputs": 2, "mutability": "pure"},
+    {"name": "unpackArray", "visibility": "external", "inputs": 2, "mutability": "pure"},
+    {"name": "mapValues", "visibility": "external", "inputs": 4, "mutability": "view"},
+    {"name": "filterValues", "visibility": "external", "inputs": 3, "mutability": "view"},
+    {"name": "foldValues", "visibility": "external", "inputs": 5, "mutability": "view"},
+    {"name": "sortValues", "visibility": "external", "inputs": 3, "mutability": "view"},
+    {"name": "uniqueValues", "visibility": "external", "inputs": 4, "mutability": "view"},
+    {"name": "flattenValues", "visibility": "external", "inputs": 2, "mutability": "pure"},
+    {"name": "reverseValues", "visibility": "external", "inputs": 2, "mutability": "pure"},
+    {"name": "sliceValues", "visibility": "external", "inputs": 4, "mutability": "pure"},
+    {"name": "indexOfValues", "visibility": "external", "inputs": 4, "mutability": "view"},
+    {"name": "anyValues", "visibility": "external", "inputs": 3, "mutability": "view"},
+    {"name": "allValues", "visibility": "external", "inputs": 3, "mutability": "view"},
+    {"name": "findValues", "visibility": "external", "inputs": 3, "mutability": "view"},
+    {"name": "zipValues", "visibility": "external", "inputs": 4, "mutability": "pure"},
+    {"name": "unzipValues", "visibility": "external", "inputs": 4, "mutability": "pure"},
+    {"name": "_applyWords", "visibility": "private", "inputs": 5, "mutability": "view"},
+    {"name": "_wordAt", "visibility": "private", "inputs": 2, "mutability": "pure"},
+    {"name": "_setWord", "visibility": "private", "inputs": 3, "mutability": "pure"},
+    {"name": "_checkWindows", "visibility": "private", "inputs": 3, "mutability": "pure"},
+    {"name": "_checkElementWindows", "visibility": "private", "inputs": 2, "mutability": "pure"},
+    {"name": "_domainElem", "visibility": "private", "inputs": 3, "mutability": "pure"},
+    {"name": "_stampWindows", "visibility": "private", "inputs": 5, "mutability": "pure"},
+    {"name": "_stampElements", "visibility": "private", "inputs": 3, "mutability": "pure"},
+    {"name": "_fold", "visibility": "private", "inputs": 9, "mutability": "view"},
+    {"name": "_checkTarget", "visibility": "private", "inputs": 1, "mutability": "view"},
+    {"name": "_callWord", "visibility": "private", "inputs": 3, "mutability": "view"},
+    {"name": "_foldLoop", "visibility": "private", "inputs": 4, "mutability": "view"},
+    {"name": "_sliceIndex", "visibility": "private", "inputs": 2, "mutability": "pure"},
+    {"name": "_findValue", "visibility": "private", "inputs": 4, "mutability": "view"},
+    {"name": "_unzipPair", "visibility": "private", "inputs": 2, "mutability": "pure"},
+    {"name": "_zipPlan", "visibility": "private", "inputs": 2, "mutability": "pure"},
+    {"name": "_validateResult", "visibility": "private", "inputs": 4, "mutability": "pure"},
+    {"name": "_prepareCallback", "visibility": "private", "inputs": 2, "mutability": "pure"},
+    {"name": "_bindValue", "visibility": "private", "inputs": 4, "mutability": "pure"},
+    {"name": "_callValue", "visibility": "private", "inputs": 7, "mutability": "view"},
+    {"name": "_rejectOutOfGas", "visibility": "private", "inputs": 2, "mutability": "view"},
+    {"name": "_predicate", "visibility": "private", "inputs": 7, "mutability": "view"}
   ],
   "publicAbi": [
     {
       "inputs": [
-        {
-          "internalType": "string",
-          "name": "inputType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "values",
-          "type": "bytes[]"
-        },
+        {"internalType": "string", "name": "inputType", "type": "string"},
+        {"internalType": "bytes[]", "name": "values", "type": "bytes[]"},
         {
           "components": [
-            {
-              "internalType": "address",
-              "name": "target",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes4",
-              "name": "selector",
-              "type": "bytes4"
-            },
-            {
-              "internalType": "string",
-              "name": "arguments",
-              "type": "string"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "constants",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "first",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "second",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "expression",
-              "type": "bytes"
-            }
+            {"internalType": "address", "name": "target", "type": "address"},
+            {"internalType": "bytes4", "name": "selector", "type": "bytes4"},
+            {"internalType": "string", "name": "arguments", "type": "string"},
+            {"internalType": "bytes[]", "name": "constants", "type": "bytes[]"},
+            {"internalType": "uint256", "name": "first", "type": "uint256"},
+            {"internalType": "uint256", "name": "second", "type": "uint256"},
+            {"internalType": "bytes", "name": "expression", "type": "bytes"}
           ],
           "internalType": "struct Collections.Callback",
           "name": "cb",
@@ -371,65 +80,23 @@
         }
       ],
       "name": "allValues",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "string",
-          "name": "inputType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "values",
-          "type": "bytes[]"
-        },
+        {"internalType": "string", "name": "inputType", "type": "string"},
+        {"internalType": "bytes[]", "name": "values", "type": "bytes[]"},
         {
           "components": [
-            {
-              "internalType": "address",
-              "name": "target",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes4",
-              "name": "selector",
-              "type": "bytes4"
-            },
-            {
-              "internalType": "string",
-              "name": "arguments",
-              "type": "string"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "constants",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "first",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "second",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "expression",
-              "type": "bytes"
-            }
+            {"internalType": "address", "name": "target", "type": "address"},
+            {"internalType": "bytes4", "name": "selector", "type": "bytes4"},
+            {"internalType": "string", "name": "arguments", "type": "string"},
+            {"internalType": "bytes[]", "name": "constants", "type": "bytes[]"},
+            {"internalType": "uint256", "name": "first", "type": "uint256"},
+            {"internalType": "uint256", "name": "second", "type": "uint256"},
+            {"internalType": "bytes", "name": "expression", "type": "bytes"}
           ],
           "internalType": "struct Collections.Callback",
           "name": "cb",
@@ -437,65 +104,23 @@
         }
       ],
       "name": "anyValues",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "string",
-          "name": "inputType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "values",
-          "type": "bytes[]"
-        },
+        {"internalType": "string", "name": "inputType", "type": "string"},
+        {"internalType": "bytes[]", "name": "values", "type": "bytes[]"},
         {
           "components": [
-            {
-              "internalType": "address",
-              "name": "target",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes4",
-              "name": "selector",
-              "type": "bytes4"
-            },
-            {
-              "internalType": "string",
-              "name": "arguments",
-              "type": "string"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "constants",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "first",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "second",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "expression",
-              "type": "bytes"
-            }
+            {"internalType": "address", "name": "target", "type": "address"},
+            {"internalType": "bytes4", "name": "selector", "type": "bytes4"},
+            {"internalType": "string", "name": "arguments", "type": "string"},
+            {"internalType": "bytes[]", "name": "constants", "type": "bytes[]"},
+            {"internalType": "uint256", "name": "first", "type": "uint256"},
+            {"internalType": "uint256", "name": "second", "type": "uint256"},
+            {"internalType": "bytes", "name": "expression", "type": "bytes"}
           ],
           "internalType": "struct Collections.Callback",
           "name": "cb",
@@ -503,99 +128,35 @@
         }
       ],
       "name": "filterValues",
-      "outputs": [
-        {
-          "internalType": "bytes[]",
-          "name": "out",
-          "type": "bytes[]"
-        }
-      ],
+      "outputs": [{"internalType": "bytes[]", "name": "out", "type": "bytes[]"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "s",
-          "type": "bytes"
-        },
-        {
-          "internalType": "address",
-          "name": "target",
-          "type": "address"
-        },
-        {
-          "internalType": "bytes",
-          "name": "template",
-          "type": "bytes"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "elemOffsets",
-          "type": "uint256[]"
-        }
+        {"internalType": "bytes", "name": "s", "type": "bytes"},
+        {"internalType": "address", "name": "target", "type": "address"},
+        {"internalType": "bytes", "name": "template", "type": "bytes"},
+        {"internalType": "uint256[]", "name": "elemOffsets", "type": "uint256[]"}
       ],
       "name": "filterWords",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
+      "outputs": [{"internalType": "bytes", "name": "", "type": "bytes"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "string",
-          "name": "inputType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "values",
-          "type": "bytes[]"
-        },
+        {"internalType": "string", "name": "inputType", "type": "string"},
+        {"internalType": "bytes[]", "name": "values", "type": "bytes[]"},
         {
           "components": [
-            {
-              "internalType": "address",
-              "name": "target",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes4",
-              "name": "selector",
-              "type": "bytes4"
-            },
-            {
-              "internalType": "string",
-              "name": "arguments",
-              "type": "string"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "constants",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "first",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "second",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "expression",
-              "type": "bytes"
-            }
+            {"internalType": "address", "name": "target", "type": "address"},
+            {"internalType": "bytes4", "name": "selector", "type": "bytes4"},
+            {"internalType": "string", "name": "arguments", "type": "string"},
+            {"internalType": "bytes[]", "name": "constants", "type": "bytes[]"},
+            {"internalType": "uint256", "name": "first", "type": "uint256"},
+            {"internalType": "uint256", "name": "second", "type": "uint256"},
+            {"internalType": "bytes", "name": "expression", "type": "bytes"}
           ],
           "internalType": "struct Collections.Callback",
           "name": "cb",
@@ -603,197 +164,62 @@
         }
       ],
       "name": "findValues",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
+      "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "inputType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[][]",
-          "name": "values",
-          "type": "bytes[][]"
-        }
-      ],
+      "inputs": [{"internalType": "string", "name": "inputType", "type": "string"}, {"internalType": "bytes[][]", "name": "values", "type": "bytes[][]"}],
       "name": "flattenValues",
-      "outputs": [
-        {
-          "internalType": "bytes[]",
-          "name": "out",
-          "type": "bytes[]"
-        }
-      ],
+      "outputs": [{"internalType": "bytes[]", "name": "out", "type": "bytes[]"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "s",
-          "type": "bytes"
-        },
-        {
-          "internalType": "address",
-          "name": "target",
-          "type": "address"
-        },
-        {
-          "internalType": "bytes",
-          "name": "template",
-          "type": "bytes"
-        },
-        {
-          "internalType": "uint256",
-          "name": "accOffset",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "elemOffsets",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "init",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "enum Collections.FoldExit",
-          "name": "exit",
-          "type": "uint8"
-        }
+        {"internalType": "bytes", "name": "s", "type": "bytes"},
+        {"internalType": "address", "name": "target", "type": "address"},
+        {"internalType": "bytes", "name": "template", "type": "bytes"},
+        {"internalType": "uint256", "name": "accOffset", "type": "uint256"},
+        {"internalType": "uint256[]", "name": "elemOffsets", "type": "uint256[]"},
+        {"internalType": "bytes32", "name": "init", "type": "bytes32"},
+        {"internalType": "enum Collections.FoldExit", "name": "exit", "type": "uint8"}
       ],
       "name": "foldBytes",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
+      "outputs": [{"internalType": "bytes32", "name": "", "type": "bytes32"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "n",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "target",
-          "type": "address"
-        },
-        {
-          "internalType": "bytes",
-          "name": "template",
-          "type": "bytes"
-        },
-        {
-          "internalType": "uint256",
-          "name": "accOffset",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "elemOffsets",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "init",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "enum Collections.FoldExit",
-          "name": "exit",
-          "type": "uint8"
-        }
+        {"internalType": "uint256", "name": "n", "type": "uint256"},
+        {"internalType": "address", "name": "target", "type": "address"},
+        {"internalType": "bytes", "name": "template", "type": "bytes"},
+        {"internalType": "uint256", "name": "accOffset", "type": "uint256"},
+        {"internalType": "uint256[]", "name": "elemOffsets", "type": "uint256[]"},
+        {"internalType": "bytes32", "name": "init", "type": "bytes32"},
+        {"internalType": "enum Collections.FoldExit", "name": "exit", "type": "uint8"}
       ],
       "name": "foldRange",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
+      "outputs": [{"internalType": "bytes32", "name": "", "type": "bytes32"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "string",
-          "name": "inputType",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "accumulatorType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "values",
-          "type": "bytes[]"
-        },
-        {
-          "internalType": "bytes",
-          "name": "initial",
-          "type": "bytes"
-        },
+        {"internalType": "string", "name": "inputType", "type": "string"},
+        {"internalType": "string", "name": "accumulatorType", "type": "string"},
+        {"internalType": "bytes[]", "name": "values", "type": "bytes[]"},
+        {"internalType": "bytes", "name": "initial", "type": "bytes"},
         {
           "components": [
-            {
-              "internalType": "address",
-              "name": "target",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes4",
-              "name": "selector",
-              "type": "bytes4"
-            },
-            {
-              "internalType": "string",
-              "name": "arguments",
-              "type": "string"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "constants",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "first",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "second",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "expression",
-              "type": "bytes"
-            }
+            {"internalType": "address", "name": "target", "type": "address"},
+            {"internalType": "bytes4", "name": "selector", "type": "bytes4"},
+            {"internalType": "string", "name": "arguments", "type": "string"},
+            {"internalType": "bytes[]", "name": "constants", "type": "bytes[]"},
+            {"internalType": "uint256", "name": "first", "type": "uint256"},
+            {"internalType": "uint256", "name": "second", "type": "uint256"},
+            {"internalType": "bytes", "name": "expression", "type": "bytes"}
           ],
           "internalType": "struct Collections.Callback",
           "name": "cb",
@@ -801,119 +227,39 @@
         }
       ],
       "name": "foldValues",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "result",
-          "type": "bytes"
-        }
-      ],
+      "outputs": [{"internalType": "bytes", "name": "result", "type": "bytes"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "s",
-          "type": "bytes"
-        },
-        {
-          "internalType": "address",
-          "name": "target",
-          "type": "address"
-        },
-        {
-          "internalType": "bytes",
-          "name": "template",
-          "type": "bytes"
-        },
-        {
-          "internalType": "uint256",
-          "name": "accOffset",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "elemOffsets",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "init",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "enum Collections.FoldExit",
-          "name": "exit",
-          "type": "uint8"
-        }
+        {"internalType": "bytes", "name": "s", "type": "bytes"},
+        {"internalType": "address", "name": "target", "type": "address"},
+        {"internalType": "bytes", "name": "template", "type": "bytes"},
+        {"internalType": "uint256", "name": "accOffset", "type": "uint256"},
+        {"internalType": "uint256[]", "name": "elemOffsets", "type": "uint256[]"},
+        {"internalType": "bytes32", "name": "init", "type": "bytes32"},
+        {"internalType": "enum Collections.FoldExit", "name": "exit", "type": "uint8"}
       ],
       "name": "foldWords",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
+      "outputs": [{"internalType": "bytes32", "name": "", "type": "bytes32"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "string",
-          "name": "inputType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "values",
-          "type": "bytes[]"
-        },
-        {
-          "internalType": "bytes",
-          "name": "needle",
-          "type": "bytes"
-        },
+        {"internalType": "string", "name": "inputType", "type": "string"},
+        {"internalType": "bytes[]", "name": "values", "type": "bytes[]"},
+        {"internalType": "bytes", "name": "needle", "type": "bytes"},
         {
           "components": [
-            {
-              "internalType": "address",
-              "name": "target",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes4",
-              "name": "selector",
-              "type": "bytes4"
-            },
-            {
-              "internalType": "string",
-              "name": "arguments",
-              "type": "string"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "constants",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "first",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "second",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "expression",
-              "type": "bytes"
-            }
+            {"internalType": "address", "name": "target", "type": "address"},
+            {"internalType": "bytes4", "name": "selector", "type": "bytes4"},
+            {"internalType": "string", "name": "arguments", "type": "string"},
+            {"internalType": "bytes[]", "name": "constants", "type": "bytes[]"},
+            {"internalType": "uint256", "name": "first", "type": "uint256"},
+            {"internalType": "uint256", "name": "second", "type": "uint256"},
+            {"internalType": "bytes", "name": "expression", "type": "bytes"}
           ],
           "internalType": "struct Collections.Callback",
           "name": "cb",
@@ -921,89 +267,31 @@
         }
       ],
       "name": "indexOfValues",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
+      "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "n",
-          "type": "uint256"
-        }
-      ],
+      "inputs": [{"internalType": "uint256", "name": "n", "type": "uint256"}],
       "name": "iotaWords",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "out",
-          "type": "bytes"
-        }
-      ],
+      "outputs": [{"internalType": "bytes", "name": "out", "type": "bytes"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "string",
-          "name": "inputType",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "outputType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "values",
-          "type": "bytes[]"
-        },
+        {"internalType": "string", "name": "inputType", "type": "string"},
+        {"internalType": "string", "name": "outputType", "type": "string"},
+        {"internalType": "bytes[]", "name": "values", "type": "bytes[]"},
         {
           "components": [
-            {
-              "internalType": "address",
-              "name": "target",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes4",
-              "name": "selector",
-              "type": "bytes4"
-            },
-            {
-              "internalType": "string",
-              "name": "arguments",
-              "type": "string"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "constants",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "first",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "second",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "expression",
-              "type": "bytes"
-            }
+            {"internalType": "address", "name": "target", "type": "address"},
+            {"internalType": "bytes4", "name": "selector", "type": "bytes4"},
+            {"internalType": "string", "name": "arguments", "type": "string"},
+            {"internalType": "bytes[]", "name": "constants", "type": "bytes[]"},
+            {"internalType": "uint256", "name": "first", "type": "uint256"},
+            {"internalType": "uint256", "name": "second", "type": "uint256"},
+            {"internalType": "bytes", "name": "expression", "type": "bytes"}
           ],
           "internalType": "struct Collections.Callback",
           "name": "cb",
@@ -1011,200 +299,68 @@
         }
       ],
       "name": "mapValues",
-      "outputs": [
-        {
-          "internalType": "bytes[]",
-          "name": "out",
-          "type": "bytes[]"
-        }
-      ],
+      "outputs": [{"internalType": "bytes[]", "name": "out", "type": "bytes[]"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "s",
-          "type": "bytes"
-        },
-        {
-          "internalType": "address",
-          "name": "target",
-          "type": "address"
-        },
-        {
-          "internalType": "bytes",
-          "name": "template",
-          "type": "bytes"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "elemOffsets",
-          "type": "uint256[]"
-        }
+        {"internalType": "bytes", "name": "s", "type": "bytes"},
+        {"internalType": "address", "name": "target", "type": "address"},
+        {"internalType": "bytes", "name": "template", "type": "bytes"},
+        {"internalType": "uint256[]", "name": "elemOffsets", "type": "uint256[]"}
       ],
       "name": "mapWords",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
+      "outputs": [{"internalType": "bytes", "name": "", "type": "bytes"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "elementType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "values",
-          "type": "bytes[]"
-        }
-      ],
+      "inputs": [{"internalType": "string", "name": "elementType", "type": "string"}, {"internalType": "bytes[]", "name": "values", "type": "bytes[]"}],
       "name": "packArray",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
-        }
-      ],
+      "outputs": [{"internalType": "bytes", "name": "", "type": "bytes"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "inputType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "values",
-          "type": "bytes[]"
-        }
-      ],
+      "inputs": [{"internalType": "string", "name": "inputType", "type": "string"}, {"internalType": "bytes[]", "name": "values", "type": "bytes[]"}],
       "name": "reverseValues",
-      "outputs": [
-        {
-          "internalType": "bytes[]",
-          "name": "out",
-          "type": "bytes[]"
-        }
-      ],
+      "outputs": [{"internalType": "bytes[]", "name": "out", "type": "bytes[]"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "s",
-          "type": "bytes"
-        }
-      ],
+      "inputs": [{"internalType": "bytes", "name": "s", "type": "bytes"}],
       "name": "reverseWords",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "out",
-          "type": "bytes"
-        }
-      ],
+      "outputs": [{"internalType": "bytes", "name": "out", "type": "bytes"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "string",
-          "name": "inputType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "values",
-          "type": "bytes[]"
-        },
-        {
-          "internalType": "int256",
-          "name": "start",
-          "type": "int256"
-        },
-        {
-          "internalType": "int256",
-          "name": "end",
-          "type": "int256"
-        }
+        {"internalType": "string", "name": "inputType", "type": "string"},
+        {"internalType": "bytes[]", "name": "values", "type": "bytes[]"},
+        {"internalType": "int256", "name": "start", "type": "int256"},
+        {"internalType": "int256", "name": "end", "type": "int256"}
       ],
       "name": "sliceValues",
-      "outputs": [
-        {
-          "internalType": "bytes[]",
-          "name": "out",
-          "type": "bytes[]"
-        }
-      ],
+      "outputs": [{"internalType": "bytes[]", "name": "out", "type": "bytes[]"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "string",
-          "name": "inputType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "values",
-          "type": "bytes[]"
-        },
+        {"internalType": "string", "name": "inputType", "type": "string"},
+        {"internalType": "bytes[]", "name": "values", "type": "bytes[]"},
         {
           "components": [
-            {
-              "internalType": "address",
-              "name": "target",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes4",
-              "name": "selector",
-              "type": "bytes4"
-            },
-            {
-              "internalType": "string",
-              "name": "arguments",
-              "type": "string"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "constants",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "first",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "second",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "expression",
-              "type": "bytes"
-            }
+            {"internalType": "address", "name": "target", "type": "address"},
+            {"internalType": "bytes4", "name": "selector", "type": "bytes4"},
+            {"internalType": "string", "name": "arguments", "type": "string"},
+            {"internalType": "bytes[]", "name": "constants", "type": "bytes[]"},
+            {"internalType": "uint256", "name": "first", "type": "uint256"},
+            {"internalType": "uint256", "name": "second", "type": "uint256"},
+            {"internalType": "bytes", "name": "expression", "type": "bytes"}
           ],
           "internalType": "struct Collections.Callback",
           "name": "cb",
@@ -1212,310 +368,105 @@
         }
       ],
       "name": "sortValues",
-      "outputs": [
-        {
-          "internalType": "bytes[]",
-          "name": "out",
-          "type": "bytes[]"
-        }
-      ],
+      "outputs": [{"internalType": "bytes[]", "name": "out", "type": "bytes[]"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "s",
-          "type": "bytes"
-        }
-      ],
+      "inputs": [{"internalType": "bytes", "name": "s", "type": "bytes"}],
       "name": "sortWords",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "out",
-          "type": "bytes"
-        }
-      ],
+      "outputs": [{"internalType": "bytes", "name": "out", "type": "bytes"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "s",
-          "type": "bytes"
-        }
-      ],
+      "inputs": [{"internalType": "bytes", "name": "s", "type": "bytes"}],
       "name": "sumWords",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "total",
-          "type": "uint256"
-        }
-      ],
+      "outputs": [{"internalType": "uint256", "name": "total", "type": "uint256"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "string",
-          "name": "inputType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "values",
-          "type": "bytes[]"
-        },
+        {"internalType": "string", "name": "inputType", "type": "string"},
+        {"internalType": "bytes[]", "name": "values", "type": "bytes[]"},
         {
           "components": [
-            {
-              "internalType": "address",
-              "name": "target",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes4",
-              "name": "selector",
-              "type": "bytes4"
-            },
-            {
-              "internalType": "string",
-              "name": "arguments",
-              "type": "string"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "constants",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "first",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "second",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "expression",
-              "type": "bytes"
-            }
+            {"internalType": "address", "name": "target", "type": "address"},
+            {"internalType": "bytes4", "name": "selector", "type": "bytes4"},
+            {"internalType": "string", "name": "arguments", "type": "string"},
+            {"internalType": "bytes[]", "name": "constants", "type": "bytes[]"},
+            {"internalType": "uint256", "name": "first", "type": "uint256"},
+            {"internalType": "uint256", "name": "second", "type": "uint256"},
+            {"internalType": "bytes", "name": "expression", "type": "bytes"}
           ],
           "internalType": "struct Collections.Callback",
           "name": "cb",
           "type": "tuple"
         },
-        {
-          "internalType": "bool",
-          "name": "ordered",
-          "type": "bool"
-        }
+        {"internalType": "bool", "name": "ordered", "type": "bool"}
       ],
       "name": "uniqueValues",
-      "outputs": [
-        {
-          "internalType": "bytes[]",
-          "name": "out",
-          "type": "bytes[]"
-        }
-      ],
+      "outputs": [{"internalType": "bytes[]", "name": "out", "type": "bytes[]"}],
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "s",
-          "type": "bytes"
-        },
-        {
-          "internalType": "bool",
-          "name": "ordered",
-          "type": "bool"
-        }
-      ],
+      "inputs": [{"internalType": "bytes", "name": "s", "type": "bytes"}, {"internalType": "bool", "name": "ordered", "type": "bool"}],
       "name": "uniqueWords",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "out",
-          "type": "bytes"
-        }
-      ],
+      "outputs": [{"internalType": "bytes", "name": "out", "type": "bytes"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "elementType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes",
-          "name": "encoded",
-          "type": "bytes"
-        }
-      ],
+      "inputs": [{"internalType": "string", "name": "elementType", "type": "string"}, {"internalType": "bytes", "name": "encoded", "type": "bytes"}],
       "name": "unpackArray",
-      "outputs": [
-        {
-          "internalType": "bytes[]",
-          "name": "",
-          "type": "bytes[]"
-        }
-      ],
+      "outputs": [{"internalType": "bytes[]", "name": "", "type": "bytes[]"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "string",
-          "name": "leftType",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "rightType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "pairs",
-          "type": "bytes[]"
-        },
-        {
-          "internalType": "uint256",
-          "name": "lane",
-          "type": "uint256"
-        }
+        {"internalType": "string", "name": "leftType", "type": "string"},
+        {"internalType": "string", "name": "rightType", "type": "string"},
+        {"internalType": "bytes[]", "name": "pairs", "type": "bytes[]"},
+        {"internalType": "uint256", "name": "lane", "type": "uint256"}
       ],
       "name": "unzipValues",
-      "outputs": [
-        {
-          "internalType": "bytes[]",
-          "name": "out",
-          "type": "bytes[]"
-        }
-      ],
+      "outputs": [{"internalType": "bytes[]", "name": "out", "type": "bytes[]"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "s",
-          "type": "bytes"
-        },
-        {
-          "internalType": "uint256",
-          "name": "which",
-          "type": "uint256"
-        }
-      ],
+      "inputs": [{"internalType": "bytes", "name": "s", "type": "bytes"}, {"internalType": "uint256", "name": "which", "type": "uint256"}],
       "name": "unzipWords",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "out",
-          "type": "bytes"
-        }
-      ],
+      "outputs": [{"internalType": "bytes", "name": "out", "type": "bytes"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "s",
-          "type": "bytes"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "w",
-          "type": "bytes32"
-        }
-      ],
+      "inputs": [{"internalType": "bytes", "name": "s", "type": "bytes"}, {"internalType": "bytes32", "name": "w", "type": "bytes32"}],
       "name": "wordIndexOf",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
+      "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "string",
-          "name": "leftType",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "rightType",
-          "type": "string"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "left",
-          "type": "bytes[]"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "right",
-          "type": "bytes[]"
-        }
+        {"internalType": "string", "name": "leftType", "type": "string"},
+        {"internalType": "string", "name": "rightType", "type": "string"},
+        {"internalType": "bytes[]", "name": "left", "type": "bytes[]"},
+        {"internalType": "bytes[]", "name": "right", "type": "bytes[]"}
       ],
       "name": "zipValues",
-      "outputs": [
-        {
-          "internalType": "bytes[]",
-          "name": "out",
-          "type": "bytes[]"
-        }
-      ],
+      "outputs": [{"internalType": "bytes[]", "name": "out", "type": "bytes[]"}],
       "stateMutability": "pure",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "a",
-          "type": "bytes"
-        },
-        {
-          "internalType": "bytes",
-          "name": "b",
-          "type": "bytes"
-        }
-      ],
+      "inputs": [{"internalType": "bytes", "name": "a", "type": "bytes"}, {"internalType": "bytes", "name": "b", "type": "bytes"}],
       "name": "zipWords",
-      "outputs": [
-        {
-          "internalType": "bytes",
-          "name": "out",
-          "type": "bytes"
-        }
-      ],
+      "outputs": [{"internalType": "bytes", "name": "out", "type": "bytes"}],
       "stateMutability": "pure",
       "type": "function"
     }

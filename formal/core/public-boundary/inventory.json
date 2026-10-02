@@ -1,97 +1,31 @@
 {
-  "LEN()": {
-    "mutability": "view",
-    "outputs": [
-      "int256"
-    ],
-    "proofCase": "Getter.LEN"
-  },
-  "PAYLOAD()": {
-    "mutability": "view",
-    "outputs": [
-      "int256"
-    ],
-    "proofCase": "Getter.PAYLOAD"
-  },
-  "assertBatch((bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[],(uint8,bytes)[])[])": {
-    "mutability": "view",
-    "outputs": [],
-    "proofCase": "Explicit.DefaultBatch"
-  },
+  "LEN()": {"mutability": "view", "outputs": ["int256"], "proofCase": "Getter.LEN"},
+  "PAYLOAD()": {"mutability": "view", "outputs": ["int256"], "proofCase": "Getter.PAYLOAD"},
+  "assertBatch((bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[],(uint8,bytes)[])[])": {"mutability": "view", "outputs": [], "proofCase": "Explicit.DefaultBatch"},
   "assertBatch((bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[],(uint8,bytes)[])[],string)": {
     "mutability": "view",
     "outputs": [],
     "proofCase": "Explicit.AssertBatch"
   },
-  "assertParam((uint8,uint8,bytes,(uint8,bytes)[]))": {
-    "mutability": "view",
-    "outputs": [],
-    "proofCase": "Explicit.DefaultOne"
-  },
-  "assertParam((uint8,uint8,bytes,(uint8,bytes)[]),string)": {
-    "mutability": "view",
-    "outputs": [],
-    "proofCase": "Explicit.AssertOne"
-  },
-  "chain((uint8,uint8,bytes,(uint8,bytes)[]),bytes[])": {
-    "mutability": "view",
-    "outputs": [],
-    "proofCase": "Explicit.Chain"
-  },
+  "assertParam((uint8,uint8,bytes,(uint8,bytes)[]))": {"mutability": "view", "outputs": [], "proofCase": "Explicit.DefaultOne"},
+  "assertParam((uint8,uint8,bytes,(uint8,bytes)[]),string)": {"mutability": "view", "outputs": [], "proofCase": "Explicit.AssertOne"},
+  "chain((uint8,uint8,bytes,(uint8,bytes)[]),bytes[])": {"mutability": "view", "outputs": [], "proofCase": "Explicit.Chain"},
   "cond((uint8,uint8,bytes,(uint8,bytes)[]),(uint8,uint8,bytes,(uint8,bytes)[]),(uint8,uint8,bytes,(uint8,bytes)[]))": {
     "mutability": "view",
     "outputs": [],
     "proofCase": "Explicit.Cond"
   },
-  "gather((uint8,uint8,bytes,(uint8,bytes)[])[])": {
-    "mutability": "view",
-    "outputs": [
-      "bytes[]"
-    ],
-    "proofCase": "Explicit.Gather"
-  },
+  "gather((uint8,uint8,bytes,(uint8,bytes)[])[])": {"mutability": "view", "outputs": ["bytes[]"], "proofCase": "Explicit.Gather"},
   "get((uint8,uint8,bytes,(uint8,bytes)[]),bytes4,string,(uint8,uint8,bytes,(uint8,bytes)[])[])": {
     "mutability": "view",
     "outputs": [],
     "proofCase": "Explicit.Get"
   },
-  "isValid((uint8,uint8,bytes,(uint8,bytes)[]))": {
-    "mutability": "view",
-    "outputs": [
-      "uint256"
-    ],
-    "proofCase": "Explicit.IsValid"
-  },
-  "nav((uint8,uint8,bytes,(uint8,bytes)[]),string,int256[])": {
-    "mutability": "view",
-    "outputs": [],
-    "proofCase": "Explicit.Nav"
-  },
-  "orElse((uint8,uint8,bytes,(uint8,bytes)[]),(uint8,uint8,bytes,(uint8,bytes)[]))": {
-    "mutability": "view",
-    "outputs": [],
-    "proofCase": "Explicit.OrElse"
-  },
-  "pick((uint8,uint8,bytes,(uint8,bytes)[]),int256)": {
-    "mutability": "view",
-    "outputs": [
-      "bytes32"
-    ],
-    "proofCase": "Explicit.Pick"
-  },
-  "read((uint8,uint8,bytes,(uint8,bytes)[]),bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[])": {
-    "mutability": "view",
-    "outputs": [],
-    "proofCase": "Explicit.Read"
-  },
-  "resolve((uint8,uint8,bytes,(uint8,bytes)[]))": {
-    "mutability": "view",
-    "outputs": [],
-    "proofCase": "Explicit.Resolve"
-  },
-  "revertData((uint8,uint8,bytes,(uint8,bytes)[]),bytes4)": {
-    "mutability": "view",
-    "outputs": [],
-    "proofCase": "Explicit.Probe"
-  }
+  "isValid((uint8,uint8,bytes,(uint8,bytes)[]))": {"mutability": "view", "outputs": ["uint256"], "proofCase": "Explicit.IsValid"},
+  "nav((uint8,uint8,bytes,(uint8,bytes)[]),string,int256[])": {"mutability": "view", "outputs": [], "proofCase": "Explicit.Nav"},
+  "orElse((uint8,uint8,bytes,(uint8,bytes)[]),(uint8,uint8,bytes,(uint8,bytes)[]))": {"mutability": "view", "outputs": [], "proofCase": "Explicit.OrElse"},
+  "pick((uint8,uint8,bytes,(uint8,bytes)[]),int256)": {"mutability": "view", "outputs": ["bytes32"], "proofCase": "Explicit.Pick"},
+  "read((uint8,uint8,bytes,(uint8,bytes)[]),bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[])": {"mutability": "view", "outputs": [], "proofCase": "Explicit.Read"},
+  "resolve((uint8,uint8,bytes,(uint8,bytes)[]))": {"mutability": "view", "outputs": [], "proofCase": "Explicit.Resolve"},
+  "revertData((uint8,uint8,bytes,(uint8,bytes)[]),bytes4)": {"mutability": "view", "outputs": [], "proofCase": "Explicit.Probe"}
 }

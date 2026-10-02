@@ -4,9 +4,7 @@
       "nodeType": "Block",
       "statements": [
         {
-          "condition": {
-            "translated-slot": "EMPTY"
-          },
+          "condition": {"translated-slot": "EMPTY"},
           "nodeType": "IfStatement",
           "trueBody": {
             "nodeType": "Block",
@@ -20,59 +18,31 @@
                     "nodeType": "VariableDeclaration",
                     "stateVariable": false,
                     "storageLocation": "default",
-                    "typeName": {
-                      "name": "uint256",
-                      "nodeType": "ElementaryTypeName"
-                    },
+                    "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
                     "visibility": "internal"
                   }
                 ],
-                "initialValue": {
-                  "translated-slot": "EMPTY_COUNT"
-                },
+                "initialValue": {"translated-slot": "EMPTY_COUNT"},
                 "nodeType": "VariableDeclarationStatement"
               },
               {
-                "condition": {
-                  "translated-slot": "POSITIVE"
-                },
+                "condition": {"translated-slot": "POSITIVE"},
                 "nodeType": "IfStatement",
-                "trueBody": {
-                  "nodeType": "Block",
-                  "statements": [
-                    {
-                      "expression": {
-                        "translated-slot": "EMPTY_RESULT"
-                      },
-                      "nodeType": "Return"
-                    }
-                  ]
-                }
+                "trueBody": {"nodeType": "Block", "statements": [{"expression": {"translated-slot": "EMPTY_RESULT"}, "nodeType": "Return"}]}
               },
               {
-                "condition": {
-                  "translated-slot": "EMPTY_TOO_NEGATIVE"
-                },
+                "condition": {"translated-slot": "EMPTY_TOO_NEGATIVE"},
                 "nodeType": "IfStatement",
                 "trueBody": {
                   "expression": {
-                    "expression": {
-                      "name": "s",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    },
+                    "expression": {"name": "s", "nodeType": "Identifier", "overloadedDeclarations": []},
                     "memberName": "length",
                     "nodeType": "MemberAccess"
                   },
                   "nodeType": "Return"
                 }
               },
-              {
-                "expression": {
-                  "translated-slot": "EMPTY_NEGATIVE_RESULT"
-                },
-                "nodeType": "Return"
-              }
+              {"expression": {"translated-slot": "EMPTY_NEGATIVE_RESULT"}, "nodeType": "Return"}
             ]
           }
         },
@@ -85,34 +55,23 @@
               "nodeType": "VariableDeclaration",
               "stateVariable": false,
               "storageLocation": "default",
-              "typeName": {
-                "name": "uint256",
-                "nodeType": "ElementaryTypeName"
-              },
+              "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
               "visibility": "internal"
             }
           ],
           "nodeType": "VariableDeclarationStatement"
         },
         {
-          "condition": {
-            "translated-slot": "NEGATIVE"
-          },
+          "condition": {"translated-slot": "NEGATIVE"},
           "falseBody": {
             "nodeType": "Block",
             "statements": [
               {
                 "expression": {
-                  "leftHandSide": {
-                    "name": "wanted",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
+                  "leftHandSide": {"name": "wanted", "nodeType": "Identifier", "overloadedDeclarations": []},
                   "nodeType": "Assignment",
                   "operator": "=",
-                  "rightHandSide": {
-                    "translated-slot": "POSITIVE_RESULT"
-                  }
+                  "rightHandSide": {"translated-slot": "POSITIVE_RESULT"}
                 },
                 "nodeType": "ExpressionStatement"
               }
@@ -131,31 +90,16 @@
                     "nodeType": "VariableDeclaration",
                     "stateVariable": false,
                     "storageLocation": "default",
-                    "typeName": {
-                      "name": "uint256",
-                      "nodeType": "ElementaryTypeName"
-                    },
+                    "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
                     "visibility": "internal"
                   }
                 ],
                 "initialValue": {
                   "arguments": [
-                    {
-                      "name": "s",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    },
-                    {
-                      "name": "needle",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    }
+                    {"name": "s", "nodeType": "Identifier", "overloadedDeclarations": []},
+                    {"name": "needle", "nodeType": "Identifier", "overloadedDeclarations": []}
                   ],
-                  "expression": {
-                    "name": "_countOccurrences",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
+                  "expression": {"name": "_countOccurrences", "nodeType": "Identifier", "overloadedDeclarations": []},
                   "kind": "functionCall",
                   "names": [],
                   "nodeType": "FunctionCall",
@@ -164,17 +108,11 @@
                 "nodeType": "VariableDeclarationStatement"
               },
               {
-                "condition": {
-                  "translated-slot": "TOO_NEGATIVE"
-                },
+                "condition": {"translated-slot": "TOO_NEGATIVE"},
                 "nodeType": "IfStatement",
                 "trueBody": {
                   "expression": {
-                    "expression": {
-                      "name": "s",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": []
-                    },
+                    "expression": {"name": "s", "nodeType": "Identifier", "overloadedDeclarations": []},
                     "memberName": "length",
                     "nodeType": "MemberAccess"
                   },
@@ -183,16 +121,10 @@
               },
               {
                 "expression": {
-                  "leftHandSide": {
-                    "name": "wanted",
-                    "nodeType": "Identifier",
-                    "overloadedDeclarations": []
-                  },
+                  "leftHandSide": {"name": "wanted", "nodeType": "Identifier", "overloadedDeclarations": []},
                   "nodeType": "Assignment",
                   "operator": "=",
-                  "rightHandSide": {
-                    "translated-slot": "NEGATIVE_RESULT"
-                  }
+                  "rightHandSide": {"translated-slot": "NEGATIVE_RESULT"}
                 },
                 "nodeType": "ExpressionStatement"
               }
@@ -208,10 +140,7 @@
               "nodeType": "VariableDeclaration",
               "stateVariable": false,
               "storageLocation": "default",
-              "typeName": {
-                "name": "uint256",
-                "nodeType": "ElementaryTypeName"
-              },
+              "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
               "visibility": "internal"
             }
           ],
@@ -226,10 +155,7 @@
               "nodeType": "VariableDeclaration",
               "stateVariable": false,
               "storageLocation": "default",
-              "typeName": {
-                "name": "uint256",
-                "nodeType": "ElementaryTypeName"
-              },
+              "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
               "visibility": "internal"
             }
           ],
@@ -240,9 +166,7 @@
             "nodeType": "Block",
             "statements": [
               {
-                "condition": {
-                  "translated-slot": "INDEX_FOUND"
-                },
+                "condition": {"translated-slot": "INDEX_FOUND"},
                 "falseBody": {
                   "nodeType": "Block",
                   "statements": [
@@ -251,11 +175,7 @@
                         "nodeType": "UnaryOperation",
                         "operator": "++",
                         "prefix": false,
-                        "subExpression": {
-                          "name": "p",
-                          "nodeType": "Identifier",
-                          "overloadedDeclarations": []
-                        }
+                        "subExpression": {"name": "p", "nodeType": "Identifier", "overloadedDeclarations": []}
                       },
                       "nodeType": "ExpressionStatement"
                     }
@@ -266,44 +186,25 @@
                   "nodeType": "Block",
                   "statements": [
                     {
-                      "condition": {
-                        "translated-slot": "WANTED"
-                      },
+                      "condition": {"translated-slot": "WANTED"},
                       "nodeType": "IfStatement",
-                      "trueBody": {
-                        "expression": {
-                          "name": "p",
-                          "nodeType": "Identifier",
-                          "overloadedDeclarations": []
-                        },
-                        "nodeType": "Return"
-                      }
+                      "trueBody": {"expression": {"name": "p", "nodeType": "Identifier", "overloadedDeclarations": []}, "nodeType": "Return"}
                     },
                     {
                       "expression": {
                         "nodeType": "UnaryOperation",
                         "operator": "++",
                         "prefix": false,
-                        "subExpression": {
-                          "name": "seen",
-                          "nodeType": "Identifier",
-                          "overloadedDeclarations": []
-                        }
+                        "subExpression": {"name": "seen", "nodeType": "Identifier", "overloadedDeclarations": []}
                       },
                       "nodeType": "ExpressionStatement"
                     },
                     {
                       "expression": {
-                        "leftHandSide": {
-                          "name": "p",
-                          "nodeType": "Identifier",
-                          "overloadedDeclarations": []
-                        },
+                        "leftHandSide": {"name": "p", "nodeType": "Identifier", "overloadedDeclarations": []},
                         "nodeType": "Assignment",
                         "operator": "+=",
-                        "rightHandSide": {
-                          "translated-slot": "INDEX_NEXT"
-                        }
+                        "rightHandSide": {"translated-slot": "INDEX_NEXT"}
                       },
                       "nodeType": "ExpressionStatement"
                     }
@@ -312,18 +213,12 @@
               }
             ]
           },
-          "condition": {
-            "translated-slot": "INDEX_LOOP"
-          },
+          "condition": {"translated-slot": "INDEX_LOOP"},
           "nodeType": "WhileStatement"
         },
         {
           "expression": {
-            "expression": {
-              "name": "s",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "expression": {"name": "s", "nodeType": "Identifier", "overloadedDeclarations": []},
             "memberName": "length",
             "nodeType": "MemberAccess"
           },
@@ -347,10 +242,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "calldata",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -360,10 +252,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "calldata",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -373,10 +262,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "int256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "int256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -391,10 +277,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -416,10 +299,7 @@
               "nodeType": "VariableDeclaration",
               "stateVariable": false,
               "storageLocation": "default",
-              "typeName": {
-                "name": "uint256",
-                "nodeType": "ElementaryTypeName"
-              },
+              "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
               "visibility": "internal"
             }
           ],
@@ -430,9 +310,7 @@
             "nodeType": "Block",
             "statements": [
               {
-                "condition": {
-                  "translated-slot": "COUNT_FOUND"
-                },
+                "condition": {"translated-slot": "COUNT_FOUND"},
                 "falseBody": {
                   "nodeType": "Block",
                   "statements": [
@@ -441,11 +319,7 @@
                         "nodeType": "UnaryOperation",
                         "operator": "++",
                         "prefix": false,
-                        "subExpression": {
-                          "name": "p",
-                          "nodeType": "Identifier",
-                          "overloadedDeclarations": []
-                        }
+                        "subExpression": {"name": "p", "nodeType": "Identifier", "overloadedDeclarations": []}
                       },
                       "nodeType": "ExpressionStatement"
                     }
@@ -460,26 +334,16 @@
                         "nodeType": "UnaryOperation",
                         "operator": "++",
                         "prefix": false,
-                        "subExpression": {
-                          "name": "count",
-                          "nodeType": "Identifier",
-                          "overloadedDeclarations": []
-                        }
+                        "subExpression": {"name": "count", "nodeType": "Identifier", "overloadedDeclarations": []}
                       },
                       "nodeType": "ExpressionStatement"
                     },
                     {
                       "expression": {
-                        "leftHandSide": {
-                          "name": "p",
-                          "nodeType": "Identifier",
-                          "overloadedDeclarations": []
-                        },
+                        "leftHandSide": {"name": "p", "nodeType": "Identifier", "overloadedDeclarations": []},
                         "nodeType": "Assignment",
                         "operator": "+=",
-                        "rightHandSide": {
-                          "translated-slot": "COUNT_NEXT"
-                        }
+                        "rightHandSide": {"translated-slot": "COUNT_NEXT"}
                       },
                       "nodeType": "ExpressionStatement"
                     }
@@ -488,9 +352,7 @@
               }
             ]
           },
-          "condition": {
-            "translated-slot": "COUNT_LOOP"
-          },
+          "condition": {"translated-slot": "COUNT_LOOP"},
           "nodeType": "WhileStatement"
         }
       ]
@@ -510,10 +372,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "calldata",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -523,10 +382,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "calldata",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -541,10 +397,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]

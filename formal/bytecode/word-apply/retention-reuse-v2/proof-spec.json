@@ -1,14 +1,8 @@
 {
   "schemaVersion": 1,
   "status": "prepared-not-retained",
-  "publicEntries": [
-    "Collections.mapWords(bytes,address,bytes,uint256[])",
-    "Collections.filterWords(bytes,address,bytes,uint256[])"
-  ],
-  "selectors": {
-    "mapWords": "ed6dc3be",
-    "filterWords": "7787eb48"
-  },
+  "publicEntries": ["Collections.mapWords(bytes,address,bytes,uint256[])", "Collections.filterWords(bytes,address,bytes,uint256[])"],
+  "selectors": {"mapWords": "ed6dc3be", "filterWords": "7787eb48"},
   "scope": "Exact current compiled runtime PC-zero accepted and rejected raw calls, complete finite successful loop/output and first reached error packet, under explicit finite representation, fitting resources and truthful external observations. No public coverage before complete retained native/physical/semantic/independent gates pass.",
   "rootProofs": [
     "formal/bytecode/word-apply/raw-success/Connection.dfy",

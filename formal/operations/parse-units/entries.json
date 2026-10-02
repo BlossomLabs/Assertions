@@ -1,12 +1,4 @@
 [
-  {
-    "signature": "parseUnits(bytes,uint256,uint8)",
-    "selector": "47417024",
-    "symbol": "parseUnits"
-  },
-  {
-    "signature": "parseUnitsUnsigned(bytes,uint256,uint8)",
-    "selector": "a7334963",
-    "symbol": "parseUnitsUnsigned"
-  }
+  {"signature": "parseUnits(bytes,uint256,uint8)", "selector": "47417024", "symbol": "parseUnits"},
+  {"signature": "parseUnitsUnsigned(bytes,uint256,uint8)", "selector": "a7334963", "symbol": "parseUnitsUnsigned"}
 ]

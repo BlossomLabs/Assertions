@@ -50,11 +50,7 @@
       "evaluateEncoded(bytes,bytes[])": "8f1ea4ef",
       "evaluateGuarded((address,(uint8,string,bytes,uint256[],bytes4,string)[],uint256),bytes[],uint256,(bytes[],bool[],bool[],uint256[]))": "fdf54763"
     },
-    "selectorToDeclaredEntryPc": {
-      "227786474": 67,
-      "2401150191": 88,
-      "4260710243": 107
-    },
+    "selectorToDeclaredEntryPc": {"227786474": 67, "2401150191": 88, "4260710243": 107},
     "entryBindingScope": "These addresses are the frozen destinations declared by the baseline dispatcher equality branches. The proof ends before their argument decoder/body. It does not establish that a wrapper implements the source function or that ABI decoding/serialization is correct."
   },
   "Collections": {

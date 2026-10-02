@@ -1,7 +1,1 @@
-[
-  {
-    "signature": "sqrt(uint256)",
-    "selector": "677342ce",
-    "symbol": "Public"
-  }
-]
+[{"signature": "sqrt(uint256)", "selector": "677342ce", "symbol": "Public"}]

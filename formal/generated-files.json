@@ -1,160 +1,53 @@
 [
   {
     "package": "formal/abi/source",
-    "commands": [
-      [
-        "formal/abi/source/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/abi/source"
-      ]
-    ],
-    "outputs": {
-      "formal/abi/source/BytesBody.generated.dfy": "37e17ff062dc2b32e6be99d262f84593baeda3a9604a62ae947b3160d8c29666"
-    },
+    "commands": [["formal/abi/source/generate.py", "--solc", "{solc}", "--output", "formal/abi/source"]],
+    "outputs": {"formal/abi/source/BytesBody.generated.dfy": "37e17ff062dc2b32e6be99d262f84593baeda3a9604a62ae947b3160d8c29666"},
     "requires": []
   },
   {
     "package": "formal/abi/aggregate",
-    "commands": [
-      [
-        "formal/abi/aggregate/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/abi/aggregate"
-      ]
-    ],
-    "outputs": {
-      "formal/abi/aggregate/Cursors.generated.dfy": "d65257b9377425de6e0472363c13a8fd1e898d50b69a82e63b80a5cc4d854f36"
-    },
-    "requires": [
-      "formal/abi/source"
-    ]
+    "commands": [["formal/abi/aggregate/generate.py", "--solc", "{solc}", "--output", "formal/abi/aggregate"]],
+    "outputs": {"formal/abi/aggregate/Cursors.generated.dfy": "d65257b9377425de6e0472363c13a8fd1e898d50b69a82e63b80a5cc4d854f36"},
+    "requires": ["formal/abi/source"]
   },
   {
     "package": "formal/abi/words",
-    "commands": [
-      [
-        "formal/abi/words/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/abi/words"
-      ]
-    ],
-    "outputs": {
-      "formal/abi/words/Scanners.generated.dfy": "a57834c59f65a2a84cfe61bb81d95f466eabfdc50dbd6fdebfeb9bd1dd98d619"
-    },
-    "requires": [
-      "formal/abi/source"
-    ]
+    "commands": [["formal/abi/words/generate.py", "--solc", "{solc}", "--output", "formal/abi/words"]],
+    "outputs": {"formal/abi/words/Scanners.generated.dfy": "a57834c59f65a2a84cfe61bb81d95f466eabfdc50dbd6fdebfeb9bd1dd98d619"},
+    "requires": ["formal/abi/source"]
   },
   {
     "package": "formal/abi/descriptor",
-    "commands": [
-      [
-        "formal/abi/descriptor/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/abi/descriptor"
-      ]
-    ],
-    "outputs": {
-      "formal/abi/descriptor/Suffixes.generated.dfy": "9ac9c0c05886870f6b9960400969f70eccb7af9759d1d00a9430d20dafcbff61"
-    },
-    "requires": [
-      "formal/abi/aggregate",
-      "formal/abi/source",
-      "formal/abi/words"
-    ]
+    "commands": [["formal/abi/descriptor/generate.py", "--solc", "{solc}", "--output", "formal/abi/descriptor"]],
+    "outputs": {"formal/abi/descriptor/Suffixes.generated.dfy": "9ac9c0c05886870f6b9960400969f70eccb7af9759d1d00a9430d20dafcbff61"},
+    "requires": ["formal/abi/aggregate", "formal/abi/source", "formal/abi/words"]
   },
   {
     "package": "formal/abi/shape",
-    "commands": [
-      [
-        "formal/abi/shape/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/abi/shape"
-      ]
-    ],
-    "outputs": {
-      "formal/abi/shape/TypeShape.generated.dfy": "1f271ea6c76ad648814bb5dc9907bd3c06e28481887680ec55c0e452c5e81e58"
-    },
-    "requires": [
-      "formal/abi/aggregate",
-      "formal/abi/descriptor",
-      "formal/abi/source",
-      "formal/abi/words"
-    ]
+    "commands": [["formal/abi/shape/generate.py", "--solc", "{solc}", "--output", "formal/abi/shape"]],
+    "outputs": {"formal/abi/shape/TypeShape.generated.dfy": "1f271ea6c76ad648814bb5dc9907bd3c06e28481887680ec55c0e452c5e81e58"},
+    "requires": ["formal/abi/aggregate", "formal/abi/descriptor", "formal/abi/source", "formal/abi/words"]
   },
   {
     "package": "formal/abi/parser",
-    "commands": [
-      [
-        "formal/abi/parser/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/abi/parser"
-      ]
-    ],
-    "outputs": {
-      "formal/abi/parser/Parser.generated.dfy": "935c894ac952270156cb86c71f830b9999c487de043b4343241b438e35e419db"
-    },
-    "requires": [
-      "formal/abi/aggregate",
-      "formal/abi/descriptor",
-      "formal/abi/shape",
-      "formal/abi/source",
-      "formal/abi/words"
-    ]
+    "commands": [["formal/abi/parser/generate.py", "--solc", "{solc}", "--output", "formal/abi/parser"]],
+    "outputs": {"formal/abi/parser/Parser.generated.dfy": "935c894ac952270156cb86c71f830b9999c487de043b4343241b438e35e419db"},
+    "requires": ["formal/abi/aggregate", "formal/abi/descriptor", "formal/abi/shape", "formal/abi/source", "formal/abi/words"]
   },
   {
     "package": "formal/abi/tuples",
-    "commands": [
-      [
-        "formal/abi/tuples/names.py"
-      ],
-      [
-        "formal/abi/tuples/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/abi/tuples"
-      ]
-    ],
+    "commands": [["formal/abi/tuples/names.py"], ["formal/abi/tuples/generate.py", "--solc", "{solc}", "--output", "formal/abi/tuples"]],
     "outputs": {
       "formal/abi/tuples/CheckWords.generated.dfy": "9c7cb2e118c3dd43cc6c37e5227e6b54c0e0d0ec21ac63fd21830e3a06364d41",
       "formal/abi/tuples/Names.generated.dfy": "04335f3177becc1bf1788410c6d58d799ca9cf0ed9e44cc94179395181b9afb1"
     },
-    "requires": [
-      "formal/abi/aggregate",
-      "formal/abi/descriptor",
-      "formal/abi/parser",
-      "formal/abi/shape",
-      "formal/abi/source",
-      "formal/abi/words"
-    ]
+    "requires": ["formal/abi/aggregate", "formal/abi/descriptor", "formal/abi/parser", "formal/abi/shape", "formal/abi/source", "formal/abi/words"]
   },
   {
     "package": "formal/abi/connection",
-    "commands": [
-      [
-        "formal/abi/connection/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/abi/connection"
-      ]
-    ],
-    "outputs": {
-      "formal/abi/connection/Bridge.generated.dfy": "4675f0b35566e925f53d1dd0f21b8c225d9776a1179282acc7d2675b63ff6e70"
-    },
+    "commands": [["formal/abi/connection/generate.py", "--solc", "{solc}", "--output", "formal/abi/connection"]],
+    "outputs": {"formal/abi/connection/Bridge.generated.dfy": "4675f0b35566e925f53d1dd0f21b8c225d9776a1179282acc7d2675b63ff6e70"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/descriptor",
@@ -167,15 +60,7 @@
   },
   {
     "package": "formal/abi/dynamic",
-    "commands": [
-      [
-        "formal/abi/dynamic/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/abi/dynamic"
-      ]
-    ],
+    "commands": [["formal/abi/dynamic/generate.py", "--solc", "{solc}", "--output", "formal/abi/dynamic"]],
     "outputs": {
       "formal/abi/dynamic/Body.generated.dfy": "985e44ca8fac4bfa09e42ad02c4f39fd3da664ab63fcf382b2a917846251e075",
       "formal/abi/dynamic/Validation.generated.dfy": "c07a020fd88d838cb5973c3fe1c7e666b40cbb33f3064ab2f560dcd230c3229f"
@@ -193,15 +78,7 @@
   },
   {
     "package": "formal/abi/layout",
-    "commands": [
-      [
-        "formal/abi/layout/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/abi/layout"
-      ]
-    ],
+    "commands": [["formal/abi/layout/generate.py", "--solc", "{solc}", "--output", "formal/abi/layout"]],
     "outputs": {
       "formal/abi/layout/Count.generated.dfy": "696e3d2052cf4c74c424562074d988657c7fdc43979e2e8caf7ac9385f756964",
       "formal/abi/layout/Layout.generated.dfy": "3cc7239be1f94af3ea1832de5b966b3ddc223505aa5dc68d186e7fa7d09d4cde"
@@ -220,15 +97,7 @@
   },
   {
     "package": "formal/abi/construction",
-    "commands": [
-      [
-        "formal/abi/construction/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/abi/construction"
-      ]
-    ],
+    "commands": [["formal/abi/construction/generate.py", "--solc", "{solc}", "--output", "formal/abi/construction"]],
     "outputs": {
       "formal/abi/construction/Assembly.generated.dfy": "3f0fb63c273b2864b4c3a13fc18cd739355fa2c6c197775131b5d8e9109a8686",
       "formal/abi/construction/Component.generated.dfy": "d000140a6843ceeb12f369757cee0977abd9eab278e2d220bac9ee10c6cd0c8b",
@@ -252,68 +121,25 @@
   },
   {
     "package": "formal/constraints",
-    "commands": [
-      [
-        "formal/constraints/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/constraints"
-      ]
-    ],
-    "outputs": {
-      "formal/constraints/Engine.generated.dfy": "5b51517fa7f94e0a18ba40cba61c47d9fe41ef3a1e9a1f0fad31d67621fe20a0"
-    },
+    "commands": [["formal/constraints/generate.py", "--solc", "{solc}", "--output", "formal/constraints"]],
+    "outputs": {"formal/constraints/Engine.generated.dfy": "5b51517fa7f94e0a18ba40cba61c47d9fe41ef3a1e9a1f0fad31d67621fe20a0"},
     "requires": []
   },
   {
     "package": "formal/resolution",
-    "commands": [
-      [
-        "formal/resolution/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/resolution"
-      ]
-    ],
-    "outputs": {
-      "formal/resolution/Source.generated.dfy": "187e408ca567e5ad816590669841a1b31d4a00408789215e79cf3448bd767dfa"
-    },
-    "requires": [
-      "formal/constraints"
-    ]
+    "commands": [["formal/resolution/generate.py", "--solc", "{solc}", "--output", "formal/resolution"]],
+    "outputs": {"formal/resolution/Source.generated.dfy": "187e408ca567e5ad816590669841a1b31d4a00408789215e79cf3448bd767dfa"},
+    "requires": ["formal/constraints"]
   },
   {
     "package": "formal/core",
-    "commands": [
-      [
-        "formal/core/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/core"
-      ]
-    ],
-    "outputs": {
-      "formal/core/Source.generated.dfy": "32466606f732e3ec27d900729e8223d7869451d5e95f5341b043a6343537176e"
-    },
-    "requires": [
-      "formal/constraints",
-      "formal/resolution"
-    ]
+    "commands": [["formal/core/generate.py", "--solc", "{solc}", "--output", "formal/core"]],
+    "outputs": {"formal/core/Source.generated.dfy": "32466606f732e3ec27d900729e8223d7869451d5e95f5341b043a6343537176e"},
+    "requires": ["formal/constraints", "formal/resolution"]
   },
   {
     "package": "formal/arguments",
-    "commands": [
-      [
-        "formal/arguments/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/arguments"
-      ]
-    ],
+    "commands": [["formal/arguments/generate.py", "--solc", "{solc}", "--output", "formal/arguments"]],
     "outputs": {
       "formal/arguments/Source.generated.dfy": "5e5679166b2a828635d46cb12ea774cc61a89b04d29159a6688a8568640f7206",
       "formal/arguments/Tuple.generated.dfy": "f5fd678e158eb333cc5b761076cf36309ebe02e318b457b229be1c7cf712b86e"
@@ -337,18 +163,8 @@
   },
   {
     "package": "formal/expressions/compound",
-    "commands": [
-      [
-        "formal/expressions/compound/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/expressions/compound"
-      ]
-    ],
-    "outputs": {
-      "formal/expressions/compound/Source.generated.dfy": "e351c65c1144b1e2e4b1ee6e8ce204eec88e402905bea87cb550b3577304fbb1"
-    },
+    "commands": [["formal/expressions/compound/generate.py", "--solc", "{solc}", "--output", "formal/expressions/compound"]],
+    "outputs": {"formal/expressions/compound/Source.generated.dfy": "e351c65c1144b1e2e4b1ee6e8ce204eec88e402905bea87cb550b3577304fbb1"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -369,13 +185,7 @@
   },
   {
     "package": "formal/abi/outcomes",
-    "commands": [
-      [
-        "formal/abi/outcomes/generate.py",
-        "--output",
-        "formal/abi/outcomes"
-      ]
-    ],
+    "commands": [["formal/abi/outcomes/generate.py", "--output", "formal/abi/outcomes"]],
     "outputs": {
       "formal/abi/outcomes/Body.generated.dfy": "9ecd9bd75396391209afdbc17543e667ae7e26717c06a2344a5c9460a105bbcc",
       "formal/abi/outcomes/Cached.generated.dfy": "a4f988e44ef5aa26b960dd5245808dfe407a13a28051652385ca88073780b7c6",
@@ -405,18 +215,8 @@
   {
     "package": "formal/bytecode/bytes-return",
     "commands": [
-      [
-        "formal/bytecode/bytes-return/generate.py",
-        "--output",
-        "formal/bytecode/bytes-return"
-      ],
-      [
-        "formal/bytecode/bytes-return/format-generated.py",
-        "--output",
-        "formal/bytecode/bytes-return",
-        "--include-root",
-        "formal/bytecode/bytes-return"
-      ]
+      ["formal/bytecode/bytes-return/generate.py", "--output", "formal/bytecode/bytes-return"],
+      ["formal/bytecode/bytes-return/format-generated.py", "--output", "formal/bytecode/bytes-return", "--include-root", "formal/bytecode/bytes-return"]
     ],
     "outputs": {
       "formal/bytecode/bytes-return/Control.generated.dfy": "a7e24b105507206e32408dbb716d78ab975a68536fd7322ca217eb499f0ff5d2",
@@ -427,11 +227,7 @@
   {
     "package": "formal/bytecode/capacity-return",
     "commands": [
-      [
-        "formal/bytecode/capacity-return/generate.py",
-        "--output",
-        "formal/bytecode/capacity-return"
-      ],
+      ["formal/bytecode/capacity-return/generate.py", "--output", "formal/bytecode/capacity-return"],
       [
         "formal/bytecode/capacity-return/format-generated.py",
         "--output",
@@ -449,33 +245,9 @@
   {
     "package": "formal/bytecode/dispatch",
     "commands": [
-      [
-        "formal/bytecode/dispatch/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/bytecode/dispatch",
-        "--contract",
-        "Assertions"
-      ],
-      [
-        "formal/bytecode/dispatch/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/bytecode/dispatch",
-        "--contract",
-        "Expressions"
-      ],
-      [
-        "formal/bytecode/dispatch/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/bytecode/dispatch",
-        "--contract",
-        "Collections"
-      ]
+      ["formal/bytecode/dispatch/generate.py", "--solc", "{solc}", "--output", "formal/bytecode/dispatch", "--contract", "Assertions"],
+      ["formal/bytecode/dispatch/generate.py", "--solc", "{solc}", "--output", "formal/bytecode/dispatch", "--contract", "Expressions"],
+      ["formal/bytecode/dispatch/generate.py", "--solc", "{solc}", "--output", "formal/bytecode/dispatch", "--contract", "Collections"]
     ],
     "outputs": {
       "formal/bytecode/dispatch/Assertions.generated.dfy": "577809ed009b7c2f947a9c710440c110053e0984b8efbffe0c7661353df8fb31",
@@ -489,13 +261,7 @@
   },
   {
     "package": "formal/bytecode/getters",
-    "commands": [
-      [
-        "formal/bytecode/getters/generate.py",
-        "--output",
-        "formal/bytecode/getters"
-      ]
-    ],
+    "commands": [["formal/bytecode/getters/generate.py", "--output", "formal/bytecode/getters"]],
     "outputs": {
       "formal/bytecode/getters/LEN.generated.dfy": "e32da88f414454f592fcfddacf380abacc024a8dc3962d413d49adcd2fc0c328",
       "formal/bytecode/getters/LEN.mapping.json": "17dc7ad71a9b3d3d2920908344cad3184207e20e9a72e0b4e276b250ccdc7494",
@@ -507,43 +273,13 @@
   {
     "package": "formal/bytecode/iota",
     "commands": [
-      [
-        "formal/bytecode/iota/generate-allocate.py",
-        "--output",
-        "formal/bytecode/iota"
-      ],
-      [
-        "formal/bytecode/iota/generate-allocation-guard.py",
-        "--output",
-        "formal/bytecode/iota"
-      ],
-      [
-        "formal/bytecode/iota/generate-decoder.py",
-        "--output",
-        "formal/bytecode/iota"
-      ],
-      [
-        "formal/bytecode/iota/generate-multiply.py",
-        "--output",
-        "formal/bytecode/iota"
-      ],
-      [
-        "formal/bytecode/iota/generate-panics.py",
-        "--output",
-        "formal/bytecode/iota"
-      ],
-      [
-        "formal/bytecode/iota/generate-prefix.py",
-        "--output",
-        "formal/bytecode/iota"
-      ],
-      [
-        "formal/bytecode/iota/format-generated.py",
-        "--output",
-        "formal/bytecode/iota",
-        "--include-root",
-        "formal/bytecode/iota"
-      ]
+      ["formal/bytecode/iota/generate-allocate.py", "--output", "formal/bytecode/iota"],
+      ["formal/bytecode/iota/generate-allocation-guard.py", "--output", "formal/bytecode/iota"],
+      ["formal/bytecode/iota/generate-decoder.py", "--output", "formal/bytecode/iota"],
+      ["formal/bytecode/iota/generate-multiply.py", "--output", "formal/bytecode/iota"],
+      ["formal/bytecode/iota/generate-panics.py", "--output", "formal/bytecode/iota"],
+      ["formal/bytecode/iota/generate-prefix.py", "--output", "formal/bytecode/iota"],
+      ["formal/bytecode/iota/format-generated.py", "--output", "formal/bytecode/iota", "--include-root", "formal/bytecode/iota"]
     ],
     "outputs": {
       "formal/bytecode/iota/AllocateEmpty.generated.dfy": "2a5bacc84a83ad36bcc5335b5a48da33318da5bd9618d577b7edd8e8ab250c62",
@@ -574,11 +310,7 @@
   {
     "package": "formal/bytecode/iota-allocation",
     "commands": [
-      [
-        "formal/bytecode/iota-allocation/generate.py",
-        "--output",
-        "formal/bytecode/iota-allocation"
-      ],
+      ["formal/bytecode/iota-allocation/generate.py", "--output", "formal/bytecode/iota-allocation"],
       [
         "formal/bytecode/iota-allocation/format-generated.py",
         "--output",
@@ -596,18 +328,8 @@
   {
     "package": "formal/bytecode/iota-loop",
     "commands": [
-      [
-        "formal/bytecode/iota-loop/generate.py",
-        "--output",
-        "formal/bytecode/iota-loop"
-      ],
-      [
-        "formal/bytecode/iota-loop/format-generated.py",
-        "--output",
-        "formal/bytecode/iota-loop",
-        "--include-root",
-        "formal/bytecode/iota-loop"
-      ]
+      ["formal/bytecode/iota-loop/generate.py", "--output", "formal/bytecode/iota-loop"],
+      ["formal/bytecode/iota-loop/format-generated.py", "--output", "formal/bytecode/iota-loop", "--include-root", "formal/bytecode/iota-loop"]
     ],
     "outputs": {
       "formal/bytecode/iota-loop/Body.generated.dfy": "de96540ad5b2723a2a2eecd7e0e2f87605de7ddf44b87260559adde9dcd09a00",
@@ -620,18 +342,8 @@
   {
     "package": "formal/bytecode/iota-return",
     "commands": [
-      [
-        "formal/bytecode/iota-return/generate.py",
-        "--output",
-        "formal/bytecode/iota-return"
-      ],
-      [
-        "formal/bytecode/iota-return/format-generated.py",
-        "--output",
-        "formal/bytecode/iota-return",
-        "--include-root",
-        "formal/bytecode/iota-return"
-      ]
+      ["formal/bytecode/iota-return/generate.py", "--output", "formal/bytecode/iota-return"],
+      ["formal/bytecode/iota-return/format-generated.py", "--output", "formal/bytecode/iota-return", "--include-root", "formal/bytecode/iota-return"]
     ],
     "outputs": {
       "formal/bytecode/iota-return/Control.generated.dfy": "02a78e5dacde03f28afec417bf067edb113340edfffb588fa07b4b90088f551b",
@@ -642,11 +354,7 @@
   {
     "package": "formal/bytecode/operations/absolute-difference",
     "commands": [
-      [
-        "formal/bytecode/operations/absolute-difference/generate.py",
-        "--output",
-        "formal/bytecode/operations/absolute-difference"
-      ],
+      ["formal/bytecode/operations/absolute-difference/generate.py", "--output", "formal/bytecode/operations/absolute-difference"],
       [
         "formal/bytecode/operations/absolute-difference/format-generated.py",
         "--output",
@@ -670,11 +378,7 @@
   {
     "package": "formal/bytecode/operations/absolute-difference/rejections",
     "commands": [
-      [
-        "formal/bytecode/operations/absolute-difference/rejections/generate.py",
-        "--output",
-        "formal/bytecode/operations/absolute-difference/rejections"
-      ]
+      ["formal/bytecode/operations/absolute-difference/rejections/generate.py", "--output", "formal/bytecode/operations/absolute-difference/rejections"]
     ],
     "outputs": {
       "formal/bytecode/operations/absolute-difference/rejections/AbsSArgs.generated.dfy": "c657e778bf6b99535a636a9903428e32fd542302073c38596fe824141e3c92a2",
@@ -696,11 +400,7 @@
         "--output",
         "formal/bytecode/operations/account-environment-repair-v2"
       ],
-      [
-        "formal/bytecode/operations/account-environment-repair-v2/generate.py",
-        "--output",
-        "formal/bytecode/operations/account-environment-repair-v2"
-      ],
+      ["formal/bytecode/operations/account-environment-repair-v2/generate.py", "--output", "formal/bytecode/operations/account-environment-repair-v2"],
       [
         "formal/bytecode/operations/account-environment-repair-v2/format-generated.py",
         "--output",
@@ -741,23 +441,13 @@
       "formal/bytecode/operations/account-environment-repair-v2/rejections/Short.generated.dfy": "9633656442914e3b45e915d379a11a97ac3bbb5cc9499cb09c6b02c1ff5890e3",
       "formal/bytecode/operations/account-environment-repair-v2/rejections/Short.mapping.json": "651697cb9e8b601cead328643ec3589629e2752ea0c618a325cc2f92acd8c34c"
     },
-    "requires": [
-      "formal/bytecode/operations/account-environment-repair-v2"
-    ]
+    "requires": ["formal/bytecode/operations/account-environment-repair-v2"]
   },
   {
     "package": "formal/bytecode/operations/address-environment",
     "commands": [
-      [
-        "formal/bytecode/operations/address-environment/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/address-environment"
-      ],
-      [
-        "formal/bytecode/operations/address-environment/generate.py",
-        "--output",
-        "formal/bytecode/operations/address-environment"
-      ],
+      ["formal/bytecode/operations/address-environment/generate-conversion.py", "--output", "formal/bytecode/operations/address-environment"],
+      ["formal/bytecode/operations/address-environment/generate.py", "--output", "formal/bytecode/operations/address-environment"],
       [
         "formal/bytecode/operations/address-environment/format-generated.py",
         "--output",
@@ -778,11 +468,7 @@
   {
     "package": "formal/bytecode/operations/address-environment/rejections",
     "commands": [
-      [
-        "formal/bytecode/operations/address-environment/rejections/generate.py",
-        "--output",
-        "formal/bytecode/operations/address-environment/rejections"
-      ]
+      ["formal/bytecode/operations/address-environment/rejections/generate.py", "--output", "formal/bytecode/operations/address-environment/rejections"]
     ],
     "outputs": {
       "formal/bytecode/operations/address-environment/rejections/Nonzero.generated.dfy": "5261e2808dc5ff2551a123d9ab52feb6dffea6ba9652524fc439536f1813bf70",
@@ -790,23 +476,13 @@
       "formal/bytecode/operations/address-environment/rejections/Short.generated.dfy": "1017a458c3e412d12c0530d2cd57d33669b7bb0ad80cbdaded8bdde2d01ade58",
       "formal/bytecode/operations/address-environment/rejections/Short.mapping.json": "1fdad0b3371a3829cdc6c5e2eea4f7089fe38d899461f83fcdf7daf467e9e2c3"
     },
-    "requires": [
-      "formal/bytecode/operations/address-environment"
-    ]
+    "requires": ["formal/bytecode/operations/address-environment"]
   },
   {
     "package": "formal/bytecode/operations/bitwise-repair",
     "commands": [
-      [
-        "formal/bytecode/operations/bitwise-repair/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/bitwise-repair"
-      ],
-      [
-        "formal/bytecode/operations/bitwise-repair/generate.py",
-        "--output",
-        "formal/bytecode/operations/bitwise-repair"
-      ],
+      ["formal/bytecode/operations/bitwise-repair/generate-conversion.py", "--output", "formal/bytecode/operations/bitwise-repair"],
+      ["formal/bytecode/operations/bitwise-repair/generate.py", "--output", "formal/bytecode/operations/bitwise-repair"],
       [
         "formal/bytecode/operations/bitwise-repair/format-generated.py",
         "--output",
@@ -828,13 +504,7 @@
   },
   {
     "package": "formal/bytecode/operations/bitwise-repair/rejections",
-    "commands": [
-      [
-        "formal/bytecode/operations/bitwise-repair/rejections/generate.py",
-        "--output",
-        "formal/bytecode/operations/bitwise-repair/rejections"
-      ]
-    ],
+    "commands": [["formal/bytecode/operations/bitwise-repair/rejections/generate.py", "--output", "formal/bytecode/operations/bitwise-repair/rejections"]],
     "outputs": {
       "formal/bytecode/operations/bitwise-repair/rejections/AndArgs.generated.dfy": "712ed75b151fdaddb138128bd95b4903b6487ade4be4a4c19994e795e14da9ec",
       "formal/bytecode/operations/bitwise-repair/rejections/AndArgs.mapping.json": "7077a870c20b9d250b5039a6cd4fe852665684c029af158cb68ba757d86af060",
@@ -847,23 +517,13 @@
       "formal/bytecode/operations/bitwise-repair/rejections/XorArgs.generated.dfy": "294d1430fd31d55bc114af78cfe50686cbb29758d7d0b28eaf0aae6531ac1034",
       "formal/bytecode/operations/bitwise-repair/rejections/XorArgs.mapping.json": "5deaf460503e2438c8d6ace64c9427f5446601ccfde9c8c2712510c0e9d13ad4"
     },
-    "requires": [
-      "formal/bytecode/operations/bitwise-repair"
-    ]
+    "requires": ["formal/bytecode/operations/bitwise-repair"]
   },
   {
     "package": "formal/bytecode/operations/byte-length-repair-v2",
     "commands": [
-      [
-        "formal/bytecode/operations/byte-length-repair-v2/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/byte-length-repair-v2"
-      ],
-      [
-        "formal/bytecode/operations/byte-length-repair-v2/generate.py",
-        "--output",
-        "formal/bytecode/operations/byte-length-repair-v2"
-      ],
+      ["formal/bytecode/operations/byte-length-repair-v2/generate-conversion.py", "--output", "formal/bytecode/operations/byte-length-repair-v2"],
+      ["formal/bytecode/operations/byte-length-repair-v2/generate.py", "--output", "formal/bytecode/operations/byte-length-repair-v2"],
       [
         "formal/bytecode/operations/byte-length-repair-v2/format-generated.py",
         "--output",
@@ -896,11 +556,7 @@
   {
     "package": "formal/bytecode/operations/comparison-repair-v2",
     "commands": [
-      [
-        "formal/bytecode/operations/comparison-repair-v2/generate.py",
-        "--output",
-        "formal/bytecode/operations/comparison-repair-v2"
-      ],
+      ["formal/bytecode/operations/comparison-repair-v2/generate.py", "--output", "formal/bytecode/operations/comparison-repair-v2"],
       [
         "formal/bytecode/operations/comparison-repair-v2/format-generated.py",
         "--output",
@@ -936,11 +592,7 @@
   {
     "package": "formal/bytecode/operations/comparison-repair-v2/rejections",
     "commands": [
-      [
-        "formal/bytecode/operations/comparison-repair-v2/rejections/generate.py",
-        "--output",
-        "formal/bytecode/operations/comparison-repair-v2/rejections"
-      ]
+      ["formal/bytecode/operations/comparison-repair-v2/rejections/generate.py", "--output", "formal/bytecode/operations/comparison-repair-v2/rejections"]
     ],
     "outputs": {
       "formal/bytecode/operations/comparison-repair-v2/rejections/EqArgs.generated.dfy": "54b640faeac1df120b0ec3cdf308537db2717b8b37fafda4dc975fb66a63f981",
@@ -973,11 +625,7 @@
   {
     "package": "formal/bytecode/operations/environment",
     "commands": [
-      [
-        "formal/bytecode/operations/environment/generate.py",
-        "--output",
-        "formal/bytecode/operations/environment"
-      ],
+      ["formal/bytecode/operations/environment/generate.py", "--output", "formal/bytecode/operations/environment"],
       [
         "formal/bytecode/operations/environment/format-generated.py",
         "--output",
@@ -1008,13 +656,7 @@
   },
   {
     "package": "formal/bytecode/operations/environment/rejections",
-    "commands": [
-      [
-        "formal/bytecode/operations/environment/rejections/generate.py",
-        "--output",
-        "formal/bytecode/operations/environment/rejections"
-      ]
-    ],
+    "commands": [["formal/bytecode/operations/environment/rejections/generate.py", "--output", "formal/bytecode/operations/environment/rejections"]],
     "outputs": {
       "formal/bytecode/operations/environment/rejections/Nonzero.generated.dfy": "849ddcad469f97fbe7e986205c4a128cfbff531a65686335899d14dae82df0bf",
       "formal/bytecode/operations/environment/rejections/Nonzero.mapping.json": "b823e3843257065ec7e3893afc6ac9b11e28f429cb49aabef5adc1b210bdfe46",
@@ -1026,16 +668,8 @@
   {
     "package": "formal/bytecode/operations/hash-bytes-repair-v3",
     "commands": [
-      [
-        "formal/bytecode/operations/hash-bytes-repair-v3/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/hash-bytes-repair-v3"
-      ],
-      [
-        "formal/bytecode/operations/hash-bytes-repair-v3/generate-admission.py",
-        "--output",
-        "formal/bytecode/operations/hash-bytes-repair-v3"
-      ],
+      ["formal/bytecode/operations/hash-bytes-repair-v3/generate-conversion.py", "--output", "formal/bytecode/operations/hash-bytes-repair-v3"],
+      ["formal/bytecode/operations/hash-bytes-repair-v3/generate-admission.py", "--output", "formal/bytecode/operations/hash-bytes-repair-v3"],
       [
         "formal/bytecode/operations/hash-bytes-repair-v3/generate-raw-lift.py",
         "--output",
@@ -1110,16 +744,8 @@
   {
     "package": "formal/bytecode/operations/hash-bytes-success-repair-v4",
     "commands": [
-      [
-        "formal/bytecode/operations/hash-bytes-success-repair-v4/generate.py",
-        "--output",
-        "formal/bytecode/operations/hash-bytes-success-repair-v4"
-      ],
-      [
-        "formal/bytecode/operations/hash-bytes-success-repair-v4/generate-prefix.py",
-        "--output",
-        "formal/bytecode/operations/hash-bytes-success-repair-v4"
-      ],
+      ["formal/bytecode/operations/hash-bytes-success-repair-v4/generate.py", "--output", "formal/bytecode/operations/hash-bytes-success-repair-v4"],
+      ["formal/bytecode/operations/hash-bytes-success-repair-v4/generate-prefix.py", "--output", "formal/bytecode/operations/hash-bytes-success-repair-v4"],
       [
         "formal/bytecode/operations/hash-bytes-success-repair-v4/generate-prefix-lift.py",
         "--output",
@@ -1154,23 +780,13 @@
       "formal/bytecode/operations/hash-bytes-success-repair-v4/State.generated.dfy": "f7d01faadd7cd921848028386374713d4e1e7ecfb13ce87b2382fd1aa2b1f28a",
       "formal/bytecode/operations/hash-bytes-success-repair-v4/body.mapping.json": "3e22af22354055edd9364da50a47c1a1266161d1464caab9463a03543e654106"
     },
-    "requires": [
-      "formal/bytecode/operations/hash-bytes-repair-v3"
-    ]
+    "requires": ["formal/bytecode/operations/hash-bytes-repair-v3"]
   },
   {
     "package": "formal/bytecode/operations/hash-pair-sorted-repair-v2",
     "commands": [
-      [
-        "formal/bytecode/operations/hash-pair-sorted-repair-v2/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/hash-pair-sorted-repair-v2"
-      ],
-      [
-        "formal/bytecode/operations/hash-pair-sorted-repair-v2/generate.py",
-        "--output",
-        "formal/bytecode/operations/hash-pair-sorted-repair-v2"
-      ],
+      ["formal/bytecode/operations/hash-pair-sorted-repair-v2/generate-conversion.py", "--output", "formal/bytecode/operations/hash-pair-sorted-repair-v2"],
+      ["formal/bytecode/operations/hash-pair-sorted-repair-v2/generate.py", "--output", "formal/bytecode/operations/hash-pair-sorted-repair-v2"],
       [
         "formal/bytecode/operations/hash-pair-sorted-repair-v2/format-generated.py",
         "--output",
@@ -1205,18 +821,12 @@
       "formal/bytecode/operations/hash-pair-sorted-repair-v2/rejections/Short.generated.dfy": "346d8dc0f3223823b24a15aaf19520515a2258819b3d8c9346ba8a34d22983c9",
       "formal/bytecode/operations/hash-pair-sorted-repair-v2/rejections/Short.mapping.json": "7196ebc30cf9d0399d5cda22ff84d6b6a78ec49a0114cf0c6065f124a04d21db"
     },
-    "requires": [
-      "formal/bytecode/operations/hash-pair-sorted-repair-v2"
-    ]
+    "requires": ["formal/bytecode/operations/hash-pair-sorted-repair-v2"]
   },
   {
     "package": "formal/bytecode/operations/indexed-environment",
     "commands": [
-      [
-        "formal/bytecode/operations/indexed-environment/generate.py",
-        "--output",
-        "formal/bytecode/operations/indexed-environment"
-      ],
+      ["formal/bytecode/operations/indexed-environment/generate.py", "--output", "formal/bytecode/operations/indexed-environment"],
       [
         "formal/bytecode/operations/indexed-environment/format-generated.py",
         "--output",
@@ -1236,11 +846,7 @@
   {
     "package": "formal/bytecode/operations/indexed-environment/rejections",
     "commands": [
-      [
-        "formal/bytecode/operations/indexed-environment/rejections/generate.py",
-        "--output",
-        "formal/bytecode/operations/indexed-environment/rejections"
-      ]
+      ["formal/bytecode/operations/indexed-environment/rejections/generate.py", "--output", "formal/bytecode/operations/indexed-environment/rejections"]
     ],
     "outputs": {
       "formal/bytecode/operations/indexed-environment/rejections/BlobHashArgs.generated.dfy": "5693a487c27c75de52ce92a1efbc80f3037895f68469322b4f089ce871491325",
@@ -1257,16 +863,8 @@
   {
     "package": "formal/bytecode/operations/log2-repair-v7",
     "commands": [
-      [
-        "formal/bytecode/operations/log2-repair-v7/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/log2-repair-v7"
-      ],
-      [
-        "formal/bytecode/operations/log2-repair-v7/generate.py",
-        "--output",
-        "formal/bytecode/operations/log2-repair-v7"
-      ],
+      ["formal/bytecode/operations/log2-repair-v7/generate-conversion.py", "--output", "formal/bytecode/operations/log2-repair-v7"],
+      ["formal/bytecode/operations/log2-repair-v7/generate.py", "--output", "formal/bytecode/operations/log2-repair-v7"],
       [
         "formal/bytecode/operations/log2-repair-v7/format-generated.py",
         "--output",
@@ -1304,11 +902,7 @@
   {
     "package": "formal/bytecode/operations/minmax",
     "commands": [
-      [
-        "formal/bytecode/operations/minmax/generate.py",
-        "--output",
-        "formal/bytecode/operations/minmax"
-      ],
+      ["formal/bytecode/operations/minmax/generate.py", "--output", "formal/bytecode/operations/minmax"],
       [
         "formal/bytecode/operations/minmax/format-generated.py",
         "--output",
@@ -1339,13 +933,7 @@
   },
   {
     "package": "formal/bytecode/operations/minmax/rejections",
-    "commands": [
-      [
-        "formal/bytecode/operations/minmax/rejections/generate.py",
-        "--output",
-        "formal/bytecode/operations/minmax/rejections"
-      ]
-    ],
+    "commands": [["formal/bytecode/operations/minmax/rejections/generate.py", "--output", "formal/bytecode/operations/minmax/rejections"]],
     "outputs": {
       "formal/bytecode/operations/minmax/rejections/MaxSArgs.generated.dfy": "fc7127dcfaa51386815f84bc02108dc2e46d12520935f8fd283ab6fd2fa87942",
       "formal/bytecode/operations/minmax/rejections/MaxSArgs.mapping.json": "fc97b450c12d692b52547a22b3c3eaf1a393666efef95852189f75d401d79d01",
@@ -1365,16 +953,8 @@
   {
     "package": "formal/bytecode/operations/shifts",
     "commands": [
-      [
-        "formal/bytecode/operations/shifts/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/shifts"
-      ],
-      [
-        "formal/bytecode/operations/shifts/generate.py",
-        "--output",
-        "formal/bytecode/operations/shifts"
-      ],
+      ["formal/bytecode/operations/shifts/generate-conversion.py", "--output", "formal/bytecode/operations/shifts"],
+      ["formal/bytecode/operations/shifts/generate.py", "--output", "formal/bytecode/operations/shifts"],
       [
         "formal/bytecode/operations/shifts/format-generated.py",
         "--output",
@@ -1398,13 +978,7 @@
   },
   {
     "package": "formal/bytecode/operations/shifts/rejections",
-    "commands": [
-      [
-        "formal/bytecode/operations/shifts/rejections/generate.py",
-        "--output",
-        "formal/bytecode/operations/shifts/rejections"
-      ]
-    ],
+    "commands": [["formal/bytecode/operations/shifts/rejections/generate.py", "--output", "formal/bytecode/operations/shifts/rejections"]],
     "outputs": {
       "formal/bytecode/operations/shifts/rejections/BitSetArgs.generated.dfy": "787c31bea2726416ad4c353d5baf28fbe1a7bb5b2c44364c2333355c709c2276",
       "formal/bytecode/operations/shifts/rejections/BitSetArgs.mapping.json": "90a9f5cece0020744114aaef574541d51813b7b605e43efa87a525a0ec647011",
@@ -1419,23 +993,13 @@
       "formal/bytecode/operations/shifts/rejections/ShrUArgs.generated.dfy": "a165be7160ef4de3ceb73c863e8d7a5d677d777dd348b85070fa66dfbfd807a8",
       "formal/bytecode/operations/shifts/rejections/ShrUArgs.mapping.json": "5f273e0d68f811340821a92c294aea787a73eea381f224fd8da93c41111394e1"
     },
-    "requires": [
-      "formal/bytecode/operations/shifts"
-    ]
+    "requires": ["formal/bytecode/operations/shifts"]
   },
   {
     "package": "formal/bytecode/operations/signed-arithmetic",
     "commands": [
-      [
-        "formal/bytecode/operations/signed-arithmetic/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/signed-arithmetic"
-      ],
-      [
-        "formal/bytecode/operations/signed-arithmetic/generate.py",
-        "--output",
-        "formal/bytecode/operations/signed-arithmetic"
-      ],
+      ["formal/bytecode/operations/signed-arithmetic/generate-conversion.py", "--output", "formal/bytecode/operations/signed-arithmetic"],
+      ["formal/bytecode/operations/signed-arithmetic/generate.py", "--output", "formal/bytecode/operations/signed-arithmetic"],
       [
         "formal/bytecode/operations/signed-arithmetic/format-generated.py",
         "--output",
@@ -1459,13 +1023,7 @@
   },
   {
     "package": "formal/bytecode/operations/signed-arithmetic/rejections",
-    "commands": [
-      [
-        "formal/bytecode/operations/signed-arithmetic/rejections/generate.py",
-        "--output",
-        "formal/bytecode/operations/signed-arithmetic/rejections"
-      ]
-    ],
+    "commands": [["formal/bytecode/operations/signed-arithmetic/rejections/generate.py", "--output", "formal/bytecode/operations/signed-arithmetic/rejections"]],
     "outputs": {
       "formal/bytecode/operations/signed-arithmetic/rejections/AddSArgs.generated.dfy": "ccc278e49df5a2cdd79f36d0e33e4cc15d8af3bb07adce4da0acd1b92c0d641c",
       "formal/bytecode/operations/signed-arithmetic/rejections/AddSArgs.mapping.json": "13b98da0d9a1987590007442cce97da88d2dbdb93948122da587432725cd69b4",
@@ -1476,23 +1034,13 @@
       "formal/bytecode/operations/signed-arithmetic/rejections/SubSArgs.generated.dfy": "7162b2cabf0e7f636a5eb3fadd657e4a6f08f2974a8d5e315295105ec617344b",
       "formal/bytecode/operations/signed-arithmetic/rejections/SubSArgs.mapping.json": "0a83bfbfefc762a387dd238d95b0a56df91b2cc7c62c40d7569788621c2c69cc"
     },
-    "requires": [
-      "formal/bytecode/operations/signed-arithmetic"
-    ]
+    "requires": ["formal/bytecode/operations/signed-arithmetic"]
   },
   {
     "package": "formal/bytecode/operations/signed-division-repair-v2",
     "commands": [
-      [
-        "formal/bytecode/operations/signed-division-repair-v2/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/signed-division-repair-v2"
-      ],
-      [
-        "formal/bytecode/operations/signed-division-repair-v2/generate.py",
-        "--output",
-        "formal/bytecode/operations/signed-division-repair-v2"
-      ],
+      ["formal/bytecode/operations/signed-division-repair-v2/generate-conversion.py", "--output", "formal/bytecode/operations/signed-division-repair-v2"],
+      ["formal/bytecode/operations/signed-division-repair-v2/generate.py", "--output", "formal/bytecode/operations/signed-division-repair-v2"],
       [
         "formal/bytecode/operations/signed-division-repair-v2/format-generated.py",
         "--output",
@@ -1535,23 +1083,13 @@
       "formal/bytecode/operations/signed-division-repair-v2/rejections/Short.generated.dfy": "920ed112df7c3d6ee054d2c9f0f637da4cb3957f6a86fbf4e0be39cdde7acb54",
       "formal/bytecode/operations/signed-division-repair-v2/rejections/Short.mapping.json": "06529f8e432729b2b317bd9d82c107a6859175c5a44e50e89d3de85378f3e9c1"
     },
-    "requires": [
-      "formal/bytecode/operations/signed-division-repair-v2"
-    ]
+    "requires": ["formal/bytecode/operations/signed-division-repair-v2"]
   },
   {
     "package": "formal/bytecode/operations/signed-multiply-repair-v2",
     "commands": [
-      [
-        "formal/bytecode/operations/signed-multiply-repair-v2/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/signed-multiply-repair-v2"
-      ],
-      [
-        "formal/bytecode/operations/signed-multiply-repair-v2/generate.py",
-        "--output",
-        "formal/bytecode/operations/signed-multiply-repair-v2"
-      ],
+      ["formal/bytecode/operations/signed-multiply-repair-v2/generate-conversion.py", "--output", "formal/bytecode/operations/signed-multiply-repair-v2"],
+      ["formal/bytecode/operations/signed-multiply-repair-v2/generate.py", "--output", "formal/bytecode/operations/signed-multiply-repair-v2"],
       [
         "formal/bytecode/operations/signed-multiply-repair-v2/format-generated.py",
         "--output",
@@ -1588,23 +1126,13 @@
       "formal/bytecode/operations/signed-multiply-repair-v2/rejections/Short.generated.dfy": "619cc52d0ca0cb854850ff58966f465c3f6353580f946daf7e50e93bccd6fda2",
       "formal/bytecode/operations/signed-multiply-repair-v2/rejections/Short.mapping.json": "5393173206ae3e857ba8d3eb917316016bc4bce2eae5079e72d545001c9e5baa"
     },
-    "requires": [
-      "formal/bytecode/operations/signed-multiply-repair-v2"
-    ]
+    "requires": ["formal/bytecode/operations/signed-multiply-repair-v2"]
   },
   {
     "package": "formal/bytecode/operations/unsigned-arithmetic",
     "commands": [
-      [
-        "formal/bytecode/operations/unsigned-arithmetic/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/unsigned-arithmetic"
-      ],
-      [
-        "formal/bytecode/operations/unsigned-arithmetic/generate.py",
-        "--output",
-        "formal/bytecode/operations/unsigned-arithmetic"
-      ],
+      ["formal/bytecode/operations/unsigned-arithmetic/generate-conversion.py", "--output", "formal/bytecode/operations/unsigned-arithmetic"],
+      ["formal/bytecode/operations/unsigned-arithmetic/generate.py", "--output", "formal/bytecode/operations/unsigned-arithmetic"],
       [
         "formal/bytecode/operations/unsigned-arithmetic/format-generated.py",
         "--output",
@@ -1629,11 +1157,7 @@
   {
     "package": "formal/bytecode/operations/unsigned-arithmetic/rejections",
     "commands": [
-      [
-        "formal/bytecode/operations/unsigned-arithmetic/rejections/generate.py",
-        "--output",
-        "formal/bytecode/operations/unsigned-arithmetic/rejections"
-      ]
+      ["formal/bytecode/operations/unsigned-arithmetic/rejections/generate.py", "--output", "formal/bytecode/operations/unsigned-arithmetic/rejections"]
     ],
     "outputs": {
       "formal/bytecode/operations/unsigned-arithmetic/rejections/AddUArgs.generated.dfy": "2079a2383ff0c5f07ff64b4b1e31cba7ba253f2685aaef7438c63be0d35fe1a3",
@@ -1645,23 +1169,13 @@
       "formal/bytecode/operations/unsigned-arithmetic/rejections/SubUArgs.generated.dfy": "9e904c2f3fd81faa36cfed41d5e5911adbcdd4df2be805ab44c2fad6b75bd438",
       "formal/bytecode/operations/unsigned-arithmetic/rejections/SubUArgs.mapping.json": "e39fc9de06d6979e060907f7a1e44f4480caf407ab7f949e6038dca8a49b2af4"
     },
-    "requires": [
-      "formal/bytecode/operations/unsigned-arithmetic"
-    ]
+    "requires": ["formal/bytecode/operations/unsigned-arithmetic"]
   },
   {
     "package": "formal/bytecode/operations/unsigned-division",
     "commands": [
-      [
-        "formal/bytecode/operations/unsigned-division/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/unsigned-division"
-      ],
-      [
-        "formal/bytecode/operations/unsigned-division/generate.py",
-        "--output",
-        "formal/bytecode/operations/unsigned-division"
-      ],
+      ["formal/bytecode/operations/unsigned-division/generate-conversion.py", "--output", "formal/bytecode/operations/unsigned-division"],
+      ["formal/bytecode/operations/unsigned-division/generate.py", "--output", "formal/bytecode/operations/unsigned-division"],
       [
         "formal/bytecode/operations/unsigned-division/format-generated.py",
         "--output",
@@ -1685,13 +1199,7 @@
   },
   {
     "package": "formal/bytecode/operations/unsigned-division/rejections",
-    "commands": [
-      [
-        "formal/bytecode/operations/unsigned-division/rejections/generate.py",
-        "--output",
-        "formal/bytecode/operations/unsigned-division/rejections"
-      ]
-    ],
+    "commands": [["formal/bytecode/operations/unsigned-division/rejections/generate.py", "--output", "formal/bytecode/operations/unsigned-division/rejections"]],
     "outputs": {
       "formal/bytecode/operations/unsigned-division/rejections/DivUArgs.generated.dfy": "b6a83648aac0380b6fa464de9c1497c9cb01dc2bb4c10d62398a604e215a455b",
       "formal/bytecode/operations/unsigned-division/rejections/DivUArgs.mapping.json": "f4d1bc5d8baf80dd57cea7832f185392dfbca4e50146c34a7ed411bb746ac2f1",
@@ -1702,23 +1210,13 @@
       "formal/bytecode/operations/unsigned-division/rejections/Short.generated.dfy": "026323c9cbbcc6af742874f5b7813c0a64524024b8c76e4c7474bdaf9ff0e7bf",
       "formal/bytecode/operations/unsigned-division/rejections/Short.mapping.json": "f71766576e4068101bd51779278f62c1b8c39812323dabdebf0886abf2f997f5"
     },
-    "requires": [
-      "formal/bytecode/operations/unsigned-division"
-    ]
+    "requires": ["formal/bytecode/operations/unsigned-division"]
   },
   {
     "package": "formal/bytecode/operations/unsigned-modular",
     "commands": [
-      [
-        "formal/bytecode/operations/unsigned-modular/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/unsigned-modular"
-      ],
-      [
-        "formal/bytecode/operations/unsigned-modular/generate.py",
-        "--output",
-        "formal/bytecode/operations/unsigned-modular"
-      ],
+      ["formal/bytecode/operations/unsigned-modular/generate-conversion.py", "--output", "formal/bytecode/operations/unsigned-modular"],
+      ["formal/bytecode/operations/unsigned-modular/generate.py", "--output", "formal/bytecode/operations/unsigned-modular"],
       [
         "formal/bytecode/operations/unsigned-modular/format-generated.py",
         "--output",
@@ -1742,13 +1240,7 @@
   },
   {
     "package": "formal/bytecode/operations/unsigned-modular/rejections",
-    "commands": [
-      [
-        "formal/bytecode/operations/unsigned-modular/rejections/generate.py",
-        "--output",
-        "formal/bytecode/operations/unsigned-modular/rejections"
-      ]
-    ],
+    "commands": [["formal/bytecode/operations/unsigned-modular/rejections/generate.py", "--output", "formal/bytecode/operations/unsigned-modular/rejections"]],
     "outputs": {
       "formal/bytecode/operations/unsigned-modular/rejections/AddModUArgs.generated.dfy": "34bf0c7f95f786332ffd26e04920b780d8997e37223701a1309895b2839ac74f",
       "formal/bytecode/operations/unsigned-modular/rejections/AddModUArgs.mapping.json": "cab4e4f3ea22cc8f09952d73188dde14136dafb4b49f049417ed19d9fe8285d0",
@@ -1759,23 +1251,13 @@
       "formal/bytecode/operations/unsigned-modular/rejections/Short.generated.dfy": "ffd407023b43825939d8a7f2d942e7037b8a4c6ae9035598e600926af13b89a1",
       "formal/bytecode/operations/unsigned-modular/rejections/Short.mapping.json": "33d02044f3ed71d6a7bbb175d239f87e46541afc0280e5e91cb2f610885b5fb4"
     },
-    "requires": [
-      "formal/bytecode/operations/unsigned-modular"
-    ]
+    "requires": ["formal/bytecode/operations/unsigned-modular"]
   },
   {
     "package": "formal/bytecode/operations/unsigned-multiply-repair-v2",
     "commands": [
-      [
-        "formal/bytecode/operations/unsigned-multiply-repair-v2/generate-conversion.py",
-        "--output",
-        "formal/bytecode/operations/unsigned-multiply-repair-v2"
-      ],
-      [
-        "formal/bytecode/operations/unsigned-multiply-repair-v2/generate.py",
-        "--output",
-        "formal/bytecode/operations/unsigned-multiply-repair-v2"
-      ],
+      ["formal/bytecode/operations/unsigned-multiply-repair-v2/generate-conversion.py", "--output", "formal/bytecode/operations/unsigned-multiply-repair-v2"],
+      ["formal/bytecode/operations/unsigned-multiply-repair-v2/generate.py", "--output", "formal/bytecode/operations/unsigned-multiply-repair-v2"],
       [
         "formal/bytecode/operations/unsigned-multiply-repair-v2/format-generated.py",
         "--output",
@@ -1810,19 +1292,11 @@
       "formal/bytecode/operations/unsigned-multiply-repair-v2/rejections/Short.generated.dfy": "5c3d6ee583c75f59b7c81e843e3df34fc48f75eb0608712f5c50c4129a719fc3",
       "formal/bytecode/operations/unsigned-multiply-repair-v2/rejections/Short.mapping.json": "0ad80c1252e77ca5d8f0f19fdc813aa4b216b1a9306099a972b45b4a575f8351"
     },
-    "requires": [
-      "formal/bytecode/operations/unsigned-multiply-repair-v2"
-    ]
+    "requires": ["formal/bytecode/operations/unsigned-multiply-repair-v2"]
   },
   {
     "package": "formal/bytecode/rejections",
-    "commands": [
-      [
-        "formal/bytecode/rejections/generate.py",
-        "--output",
-        "formal/bytecode/rejections"
-      ]
-    ],
+    "commands": [["formal/bytecode/rejections/generate.py", "--output", "formal/bytecode/rejections"]],
     "outputs": {
       "formal/bytecode/rejections/AssertionsNonzero.generated.dfy": "ac531bddf06e014ee5d728c657a5c96ad59f119afd2e3941a42d948007e004d4",
       "formal/bytecode/rejections/AssertionsNonzero.mapping.json": "998a4278ccd58150bfca953d6a0a9aadb7cb07e34216559ddde76368cd4bcfc4",
@@ -1842,48 +1316,14 @@
   {
     "package": "formal/bytecode/scans",
     "commands": [
-      [
-        "formal/bytecode/scans/generate.py",
-        "--output",
-        "formal/bytecode/scans"
-      ],
-      [
-        "formal/bytecode/scans/generate-errors.py",
-        "--output",
-        "formal/bytecode/scans"
-      ],
-      [
-        "formal/bytecode/scans/generate-helpers.py",
-        "--output",
-        "formal/bytecode/scans"
-      ],
-      [
-        "formal/bytecode/scans/generate-kernels.py",
-        "--output",
-        "formal/bytecode/scans"
-      ],
-      [
-        "formal/bytecode/scans/generate-prefix.py",
-        "--output",
-        "formal/bytecode/scans"
-      ],
-      [
-        "formal/bytecode/scans/generate-return.py",
-        "--output",
-        "formal/bytecode/scans"
-      ],
-      [
-        "formal/bytecode/scans/generate-segments.py",
-        "--output",
-        "formal/bytecode/scans"
-      ],
-      [
-        "formal/bytecode/scans/format-generated.py",
-        "--output",
-        "formal/bytecode/scans",
-        "--include-root",
-        "formal/bytecode/scans"
-      ]
+      ["formal/bytecode/scans/generate.py", "--output", "formal/bytecode/scans"],
+      ["formal/bytecode/scans/generate-errors.py", "--output", "formal/bytecode/scans"],
+      ["formal/bytecode/scans/generate-helpers.py", "--output", "formal/bytecode/scans"],
+      ["formal/bytecode/scans/generate-kernels.py", "--output", "formal/bytecode/scans"],
+      ["formal/bytecode/scans/generate-prefix.py", "--output", "formal/bytecode/scans"],
+      ["formal/bytecode/scans/generate-return.py", "--output", "formal/bytecode/scans"],
+      ["formal/bytecode/scans/generate-segments.py", "--output", "formal/bytecode/scans"],
+      ["formal/bytecode/scans/format-generated.py", "--output", "formal/bytecode/scans", "--include-root", "formal/bytecode/scans"]
     ],
     "outputs": {
       "formal/bytecode/scans/Add.generated.dfy": "0cb845ec1e6332ba0cf3b60099fb5ff54ef256aee203dff64591f00dd82418bb",
@@ -1937,13 +1377,7 @@
   },
   {
     "package": "formal/bytecode/scans/raw-decoder",
-    "commands": [
-      [
-        "formal/bytecode/scans/raw-decoder/generate.py",
-        "--output",
-        "formal/bytecode/scans/raw-decoder"
-      ]
-    ],
+    "commands": [["formal/bytecode/scans/raw-decoder/generate.py", "--output", "formal/bytecode/scans/raw-decoder"]],
     "outputs": {
       "formal/bytecode/scans/raw-decoder/RawHeadShort.generated.dfy": "b4ac9e2c2060d3a723150e5fc407d422b1503e2b68cddb48483209ebaf17f8a7",
       "formal/bytecode/scans/raw-decoder/RawHeadShort.mapping.json": "9af73c4fb5dce6580241324465e146eb4f5d40521457a8cdea3456d7888ea7fd",
@@ -1961,23 +1395,9 @@
   {
     "package": "formal/bytecode/unknown",
     "commands": [
-      [
-        "formal/bytecode/unknown/generate.py",
-        "--output",
-        "formal/bytecode/unknown"
-      ],
-      [
-        "formal/bytecode/unknown/generate-terminal.py",
-        "--output",
-        "formal/bytecode/unknown"
-      ],
-      [
-        "formal/bytecode/unknown/format-generated.py",
-        "--output",
-        "formal/bytecode/unknown",
-        "--include-root",
-        "formal/bytecode/unknown"
-      ]
+      ["formal/bytecode/unknown/generate.py", "--output", "formal/bytecode/unknown"],
+      ["formal/bytecode/unknown/generate-terminal.py", "--output", "formal/bytecode/unknown"],
+      ["formal/bytecode/unknown/format-generated.py", "--output", "formal/bytecode/unknown", "--include-root", "formal/bytecode/unknown"]
     ],
     "outputs": {
       "formal/bytecode/unknown/Assertions.generated.dfy": "1e4142dcf2d90b383badabedc472be1445c20d1bedbef8a352bc7861dd7ff335",
@@ -1990,19 +1410,11 @@
       "formal/bytecode/unknown/Expressions.mapping.json": "2f590a0944e3e73c36b3f1a3edf20f1c17544befe644e446ea637a9812dc0ec7",
       "formal/bytecode/unknown/ExpressionsTerminal.generated.dfy": "2898b111d63a23f29ca7f4f1f180005c22475427b3f993ba5802af35b197cf3c"
     },
-    "requires": [
-      "formal/bytecode/dispatch"
-    ]
+    "requires": ["formal/bytecode/dispatch"]
   },
   {
     "package": "formal/bytecode/word-apply/alignment",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/alignment/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/alignment"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/alignment/generate.py", "--output", "formal/bytecode/word-apply/alignment"]],
     "outputs": {
       "formal/bytecode/word-apply/alignment/Aligned.generated.dfy": "2a9e1e8b58072165738b7932dc33de36af787ad8f3110777b93d4c43ab3d3aae",
       "formal/bytecode/word-apply/alignment/Aligned.mapping.json": "d5f3a9d5a6b44a7e00b74ff4c895334921c3f6cc19c7f255e14338a8a6fc6a2c"
@@ -2011,13 +1423,7 @@
   },
   {
     "package": "formal/bytecode/word-apply/alignment-error",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/alignment-error/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/alignment-error"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/alignment-error/generate.py", "--output", "formal/bytecode/word-apply/alignment-error"]],
     "outputs": {
       "formal/bytecode/word-apply/alignment-error/Unaligned.generated.dfy": "da87618585848ec91f4e0daad6d1d53a3d23f83ffaa0b82772abd6d5381f302a",
       "formal/bytecode/word-apply/alignment-error/Unaligned.mapping.json": "c798eb3e96fef5e182959f688362505afcd38bbfbf97de9e7c087db59acc394d"
@@ -2026,13 +1432,7 @@
   },
   {
     "package": "formal/bytecode/word-apply/allocation-count",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/allocation-count/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/allocation-count"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/allocation-count/generate.py", "--output", "formal/bytecode/word-apply/allocation-count"]],
     "outputs": {
       "formal/bytecode/word-apply/allocation-count/Count.generated.dfy": "08da17ee6f0e1b9b940814fbd5a2db19cd06bd71fdf7f00269c1e1bc6f831645",
       "formal/bytecode/word-apply/allocation-count/Count.mapping.json": "884d80b64f7fb24336ea457502fa0792912d33586aec47ef68bc04ad38131e1f"
@@ -2042,16 +1442,8 @@
   {
     "package": "formal/bytecode/word-apply/allocation-header",
     "commands": [
-      [
-        "formal/bytecode/word-apply/allocation-header/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/allocation-header"
-      ],
-      [
-        "formal/bytecode/word-apply/allocation-header/generate-tail.py",
-        "--output",
-        "formal/bytecode/word-apply/allocation-header"
-      ]
+      ["formal/bytecode/word-apply/allocation-header/generate.py", "--output", "formal/bytecode/word-apply/allocation-header"],
+      ["formal/bytecode/word-apply/allocation-header/generate-tail.py", "--output", "formal/bytecode/word-apply/allocation-header"]
     ],
     "outputs": {
       "formal/bytecode/word-apply/allocation-header/AllocateEmpty.generated.dfy": "91cd016698672bb5c529bfb3500e97e19daa661096eef2107fbc27eec929b0e7",
@@ -2065,13 +1457,7 @@
   },
   {
     "package": "formal/bytecode/word-apply/callback-empty-receipt",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/callback-empty-receipt/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/callback-empty-receipt"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/callback-empty-receipt/generate.py", "--output", "formal/bytecode/word-apply/callback-empty-receipt"]],
     "outputs": {
       "formal/bytecode/word-apply/callback-empty-receipt/Empty.generated.dfy": "4a8bd9addac38c9b9a5e06bb6924193b5ca509f4cecc47364fb17bb106d085c0",
       "formal/bytecode/word-apply/callback-empty-receipt/Empty.mapping.json": "a0b6e38e3d4ac3b29da895fae5fc36fbef3452fa80c5206ac1326bd13ac0b6d7"
@@ -2080,27 +1466,13 @@
   },
   {
     "package": "formal/bytecode/word-apply/word-conversion",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/word-conversion/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/word-conversion"
-      ]
-    ],
-    "outputs": {
-      "formal/bytecode/word-apply/word-conversion/Conversion.generated.dfy": "7e3af0226cfb345f8cc169a6c39ea559137dbaf6e6e6c40965c6b6330d7c2015"
-    },
+    "commands": [["formal/bytecode/word-apply/word-conversion/generate.py", "--output", "formal/bytecode/word-apply/word-conversion"]],
+    "outputs": {"formal/bytecode/word-apply/word-conversion/Conversion.generated.dfy": "7e3af0226cfb345f8cc169a6c39ea559137dbaf6e6e6c40965c6b6330d7c2015"},
     "requires": []
   },
   {
     "package": "formal/bytecode/word-apply/callback-exhaustion-controls",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/callback-exhaustion-controls/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/callback-exhaustion-controls"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/callback-exhaustion-controls/generate.py", "--output", "formal/bytecode/word-apply/callback-exhaustion-controls"]],
     "outputs": {
       "formal/bytecode/word-apply/callback-exhaustion-controls/FourLengthContinue.generated.dfy": "3ec0930894b23b3d35822093e251aaee018cac063330da8b2a6ba1b37e6ecf94",
       "formal/bytecode/word-apply/callback-exhaustion-controls/FourLengthContinue.mapping.json": "cba3fc9d15684e6d80ca2a8d162f42d4e5c367a268e23d056ca240c3f35b77a2",
@@ -2113,9 +1485,7 @@
       "formal/bytecode/word-apply/callback-exhaustion-controls/OtherLengthExhausted.generated.dfy": "fcdebff599febc8ae81a523e0164bd39230da4ad565a420f3c3d897f5da6e467",
       "formal/bytecode/word-apply/callback-exhaustion-controls/OtherLengthExhausted.mapping.json": "e70f068afc1c85ddb44a9b0187efe6cd9b57211e7d448cafc5eb02eace52657d"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/callback-exhaustion-controls-repair-v2",
@@ -2138,18 +1508,12 @@
       "formal/bytecode/word-apply/callback-exhaustion-controls-repair-v2/OtherLengthExhausted.generated.dfy": "14153e17b7ff506e4a95333dbb18ead41a57e401e278d01f1458e588feb0bf27",
       "formal/bytecode/word-apply/callback-exhaustion-controls-repair-v2/OtherLengthExhausted.mapping.json": "e70f068afc1c85ddb44a9b0187efe6cd9b57211e7d448cafc5eb02eace52657d"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/callback-failed-controls-repair-v8",
     "commands": [
-      [
-        "formal/bytecode/word-apply/callback-failed-controls-repair-v8/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/callback-failed-controls-repair-v8"
-      ]
+      ["formal/bytecode/word-apply/callback-failed-controls-repair-v8/generate.py", "--output", "formal/bytecode/word-apply/callback-failed-controls-repair-v8"]
     ],
     "outputs": {
       "formal/bytecode/word-apply/callback-failed-controls-repair-v8/After.generated.dfy": "954d84cba45d7737977fb02a4102d5712f11a66adf6b7a796c3432c74b583ac3",
@@ -2159,19 +1523,11 @@
       "formal/bytecode/word-apply/callback-failed-controls-repair-v8/Between.generated.dfy": "2b49e658094417fed1df106ef717bb0d5e14266f0c18df1954ca83fa18f8eab0",
       "formal/bytecode/word-apply/callback-failed-controls-repair-v8/Between.mapping.json": "a3841f251b809cbe3a73b153cfa7503ce0e21d845c58b3a3ba80f3d9cb0d9856"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/callback-invocation",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/callback-invocation/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/callback-invocation"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/callback-invocation/generate.py", "--output", "formal/bytecode/word-apply/callback-invocation"]],
     "outputs": {
       "formal/bytecode/word-apply/callback-invocation/Invoke.generated.dfy": "46b4ef4a8814d20fcbaee07530ea7193362c1d32166f7aae44165c4f52602f77",
       "formal/bytecode/word-apply/callback-invocation/Invoke.mapping.json": "3afebe23f9f2c145749c37fb7cea3c00398c8c5226401728efd895ba96ddd996"
@@ -2180,37 +1536,23 @@
   },
   {
     "package": "formal/bytecode/word-apply/callback-length-error",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/callback-length-error/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/callback-length-error"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/callback-length-error/generate.py", "--output", "formal/bytecode/word-apply/callback-length-error"]],
     "outputs": {
       "formal/bytecode/word-apply/callback-length-error/WrongSize.generated.dfy": "a8809c60b13fa4307660f47d831fed34262e891947e3e297207667d5a4959ce3",
       "formal/bytecode/word-apply/callback-length-error/WrongSize.mapping.json": "abe1d087f8c09d1b4da712cff80c2282d825218a4efde4141a05f617f1ba5c9c"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/callback-length-error-repair-v3",
     "commands": [
-      [
-        "formal/bytecode/word-apply/callback-length-error-repair-v3/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/callback-length-error-repair-v3"
-      ]
+      ["formal/bytecode/word-apply/callback-length-error-repair-v3/generate.py", "--output", "formal/bytecode/word-apply/callback-length-error-repair-v3"]
     ],
     "outputs": {
       "formal/bytecode/word-apply/callback-length-error-repair-v3/WrongSize.generated.dfy": "083bd7280394937c9f81922c8d63da223655dba01de0405fa4d7df1d2112bd01",
       "formal/bytecode/word-apply/callback-length-error-repair-v3/WrongSize.mapping.json": "abe1d087f8c09d1b4da712cff80c2282d825218a4efde4141a05f617f1ba5c9c"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/callback-out-of-gas-return-repair-v3",
@@ -2225,19 +1567,11 @@
       "formal/bytecode/word-apply/callback-out-of-gas-return-repair-v3/Control.generated.dfy": "269f2ad35984636e06340582c156ab87e6b638e120d5580b8f8d590c92d08134",
       "formal/bytecode/word-apply/callback-out-of-gas-return-repair-v3/Control.mapping.json": "eb326ede3a455dbf144cd454c4938ef527716fe2dac7d2c85118b27b47e03af4"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/callback-pack",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/callback-pack/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/callback-pack"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/callback-pack/generate.py", "--output", "formal/bytecode/word-apply/callback-pack"]],
     "outputs": {
       "formal/bytecode/word-apply/callback-pack/Pack.generated.dfy": "ca0d161fb947ad3b64975ad4a93e9142b1b431d24a550e6fc175e5d0f979c5f7",
       "formal/bytecode/word-apply/callback-pack/Pack.mapping.json": "8192f0ad0371f525e8cc4d7a45bae0ab17c53beb4bb82957506e90734894e5ca"
@@ -2246,49 +1580,27 @@
   },
   {
     "package": "formal/bytecode/word-apply/callback-pack-control",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/callback-pack-control/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/callback-pack-control"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/callback-pack-control/generate.py", "--output", "formal/bytecode/word-apply/callback-pack-control"]],
     "outputs": {
       "formal/bytecode/word-apply/callback-pack-control/After.generated.dfy": "d632bf40f6d0eb3646e56391fbcef014c5553867db84ca307c45334d93964351",
       "formal/bytecode/word-apply/callback-pack-control/After.mapping.json": "3a1c234f38c7a55db7082013bc23135f7058175d4f5432a83229d0775af8a343",
       "formal/bytecode/word-apply/callback-pack-control/Before.generated.dfy": "15892693cf64e8f70e5e696823b773f30f30dd9f362dbdd553c9762d57dedfe3",
       "formal/bytecode/word-apply/callback-pack-control/Before.mapping.json": "c93acc9ad3c0ed2c32e1098de572ec5723d3796805cda233c58282061859f021"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/callback-receipt-control",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/callback-receipt-control/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/callback-receipt-control"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/callback-receipt-control/generate.py", "--output", "formal/bytecode/word-apply/callback-receipt-control"]],
     "outputs": {
       "formal/bytecode/word-apply/callback-receipt-control/Nonempty.generated.dfy": "16b6fee591712c4c2f6804f1e7e8a40b0fa69175d393aa87eaf6957dd290cb59",
       "formal/bytecode/word-apply/callback-receipt-control/Nonempty.mapping.json": "85c03697457e369f0d9eff44ae5237efb85bfdaaae4777bbc9b236a9be466b02"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/callback-success",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/callback-success/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/callback-success"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/callback-success/generate.py", "--output", "formal/bytecode/word-apply/callback-success"]],
     "outputs": {
       "formal/bytecode/word-apply/callback-success/Success.generated.dfy": "1805add1a5d60bb69a83736afbf3032cc484e3a447d67d61c0be3ccc8bc66926",
       "formal/bytecode/word-apply/callback-success/Success.mapping.json": "e5d0ae4b180e1ec65d8c2483a1452fbe9cb492c45678eecd14c6e2eec5cd5835"
@@ -2297,13 +1609,7 @@
   },
   {
     "package": "formal/bytecode/word-apply/decoder-invocation",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/decoder-invocation/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/decoder-invocation"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/decoder-invocation/generate.py", "--output", "formal/bytecode/word-apply/decoder-invocation"]],
     "outputs": {
       "formal/bytecode/word-apply/decoder-invocation/Filter.generated.dfy": "c3903478cde233ced5894f5ee54f96d4b76a5f9e519daf81c63a15342b264acb",
       "formal/bytecode/word-apply/decoder-invocation/Filter.mapping.json": "dd4bda4d961cd59cf85ab67a8211247925d5160f53267f50335f09004cde83d7",
@@ -2314,30 +1620,16 @@
   },
   {
     "package": "formal/bytecode/word-apply/dynamic-bytes-copy-repair-v2",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/dynamic-bytes-copy-repair-v2/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/dynamic-bytes-copy-repair-v2"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/dynamic-bytes-copy-repair-v2/generate.py", "--output", "formal/bytecode/word-apply/dynamic-bytes-copy-repair-v2"]],
     "outputs": {
       "formal/bytecode/word-apply/dynamic-bytes-copy-repair-v2/Control.generated.dfy": "3516c0ac82d7adb423848db911fac04d298b7e2134e98d679db41f2e8672f7f4",
       "formal/bytecode/word-apply/dynamic-bytes-copy-repair-v2/Control.mapping.json": "1cb87b0433ef83d784c21727d1fc818adc10c28171b348caf7bd91c61b77efd7"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/element-read",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/element-read/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/element-read"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/element-read/generate.py", "--output", "formal/bytecode/word-apply/element-read"]],
     "outputs": {
       "formal/bytecode/word-apply/element-read/Read.generated.dfy": "1ed314f1bf66618a616fd60f2b236a3a33fc35f28bf9fb8b447eaa2c66078d2a",
       "formal/bytecode/word-apply/element-read/Read.mapping.json": "92cc0364365afa37aa93f059570d4249a05f9817a50b321f60e805e4382d23c7"
@@ -2346,13 +1638,7 @@
   },
   {
     "package": "formal/bytecode/word-apply/empty-return",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/empty-return/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/empty-return"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/empty-return/generate.py", "--output", "formal/bytecode/word-apply/empty-return"]],
     "outputs": {
       "formal/bytecode/word-apply/empty-return/EmptyFilter.generated.dfy": "2b9cc57570ff0dfab70e05cd1f1b9bbeca33ed75291b361629b2c2f12c73e6b0",
       "formal/bytecode/word-apply/empty-return/EmptyFilter.mapping.json": "1d2c3360d402dd17fb9d0304a3be67536367998ce5ff1feb68b499cc65d2c285",
@@ -2364,11 +1650,7 @@
   {
     "package": "formal/bytecode/word-apply/filter-prefix",
     "commands": [
-      [
-        "formal/bytecode/word-apply/filter-prefix/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/filter-prefix"
-      ],
+      ["formal/bytecode/word-apply/filter-prefix/generate.py", "--output", "formal/bytecode/word-apply/filter-prefix"],
       [
         "formal/bytecode/word-apply/filter-prefix/format-generated.py",
         "--output",
@@ -2385,13 +1667,7 @@
   },
   {
     "package": "formal/bytecode/word-apply/invocation",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/invocation/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/invocation"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/invocation/generate.py", "--output", "formal/bytecode/word-apply/invocation"]],
     "outputs": {
       "formal/bytecode/word-apply/invocation/Filter.generated.dfy": "d6b53af2abd3eb6572be73c57a44e689e19eb937d2719f57966636273024d453",
       "formal/bytecode/word-apply/invocation/Filter.mapping.json": "19c2ef48cb16f9215a931fca9836464bf77c1eddc90b158c73af2035134fe717",
@@ -2402,13 +1678,7 @@
   },
   {
     "package": "formal/bytecode/word-apply/loop-exit",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/loop-exit/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/loop-exit"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/loop-exit/generate.py", "--output", "formal/bytecode/word-apply/loop-exit"]],
     "outputs": {
       "formal/bytecode/word-apply/loop-exit/Filter.generated.dfy": "65d6cd0f1bb409489e7bf59ebbd148b733840112599b7051329b58513cafc41a",
       "formal/bytecode/word-apply/loop-exit/Filter.mapping.json": "a4f5f20855719cf4bebff8cecff9ef8d93f36bdc1917210962e0273fb4a528d7",
@@ -2420,11 +1690,7 @@
   {
     "package": "formal/bytecode/word-apply/map-prefix",
     "commands": [
-      [
-        "formal/bytecode/word-apply/map-prefix/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/map-prefix"
-      ],
+      ["formal/bytecode/word-apply/map-prefix/generate.py", "--output", "formal/bytecode/word-apply/map-prefix"],
       [
         "formal/bytecode/word-apply/map-prefix/format-generated.py",
         "--output",
@@ -2441,30 +1707,16 @@
   },
   {
     "package": "formal/bytecode/word-apply/predicate-error-repair-v3",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/predicate-error-repair-v3/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/predicate-error-repair-v3"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/predicate-error-repair-v3/generate.py", "--output", "formal/bytecode/word-apply/predicate-error-repair-v3"]],
     "outputs": {
       "formal/bytecode/word-apply/predicate-error-repair-v3/Predicate.generated.dfy": "629864fb45851715e386de5fa0bfc74ced41e325320fad8d901784ef538da8d2",
       "formal/bytecode/word-apply/predicate-error-repair-v3/Predicate.mapping.json": "2281ffb0959b0f2ff91cb8696ec492aeab0c1962cf42cde99f104bf8dcbba0ec"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/raw-decoder",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/raw-decoder/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/raw-decoder"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/raw-decoder/generate.py", "--output", "formal/bytecode/word-apply/raw-decoder"]],
     "outputs": {
       "formal/bytecode/word-apply/raw-decoder/Accepted.generated.dfy": "e902666ad96d38473e1deee64c516ddfa90f44a0fc2fa322bd156c112bb3d617",
       "formal/bytecode/word-apply/raw-decoder/Accepted.mapping.json": "dcbe58146865d75e25a89118b9f09af37a4b866b9fad6e2600b5e925c37798a9",
@@ -2487,19 +1739,11 @@
       "formal/bytecode/word-apply/raw-decoder/TemplateTailShort.generated.dfy": "03b39f1ed28f8875bdbef491ce60cbc4a07b33e2a33bb5f603fac52d128e49e7",
       "formal/bytecode/word-apply/raw-decoder/TemplateTailShort.mapping.json": "06f93a4e095c3963c09e00594efb03145b62d82ae280d789f79e06e0e8fa1b16"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/raw-source-rejections",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/raw-source-rejections/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/raw-source-rejections"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/raw-source-rejections/generate.py", "--output", "formal/bytecode/word-apply/raw-source-rejections"]],
     "outputs": {
       "formal/bytecode/word-apply/raw-source-rejections/HeadShort.generated.dfy": "89881c5e3dae916bc0e655520856bfd68aafe9d1d3862c282b33a7b56fe8bdae",
       "formal/bytecode/word-apply/raw-source-rejections/HeadShort.mapping.json": "6a995204d98242c4cfed414cc689abac9ef30f2439a93b683c044683858c550f",
@@ -2516,13 +1760,7 @@
   },
   {
     "package": "formal/bytecode/word-apply/result-iteration",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/result-iteration/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/result-iteration"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/result-iteration/generate.py", "--output", "formal/bytecode/word-apply/result-iteration"]],
     "outputs": {
       "formal/bytecode/word-apply/result-iteration/Keep.generated.dfy": "f18a914cdbd90982e999bb83fc2febb2f015b71466b6d0eaf22efd3aeeeb2579",
       "formal/bytecode/word-apply/result-iteration/Keep.mapping.json": "be82bd76a6a217b8a0ad001214345a83809369dba648ac45c26dd18084bc7de0",
@@ -2535,13 +1773,7 @@
   },
   {
     "package": "formal/bytecode/word-apply/return-kind",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/return-kind/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/return-kind"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/return-kind/generate.py", "--output", "formal/bytecode/word-apply/return-kind"]],
     "outputs": {
       "formal/bytecode/word-apply/return-kind/Control.generated.dfy": "4e1e3c124797d6b077f23746b66cdeaed1d8d5b95f19e52f18a2331df02fcab2",
       "formal/bytecode/word-apply/return-kind/Control.mapping.json": "955f181a1f5eaf7ad3b05a4501c434c7dc0d55a9dd5eda858bfa1baa2a5c0258"
@@ -2550,13 +1782,7 @@
   },
   {
     "package": "formal/bytecode/word-apply/serializer-repair-v2",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/serializer-repair-v2/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/serializer-repair-v2"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/serializer-repair-v2/generate.py", "--output", "formal/bytecode/word-apply/serializer-repair-v2"]],
     "outputs": {
       "formal/bytecode/word-apply/serializer-repair-v2/Control.generated.dfy": "113b08f5c2d577f93ffc55a47455fc7b71b5208b06f497202266078d2a561dc4",
       "formal/bytecode/word-apply/serializer-repair-v2/Control.mapping.json": "5599561ebe54e69e009a454d998cca572e05fa0f009223315c6963ee231e53a0"
@@ -2565,13 +1791,7 @@
   },
   {
     "package": "formal/bytecode/word-apply/stamp-invocation",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/stamp-invocation/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/stamp-invocation"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/stamp-invocation/generate.py", "--output", "formal/bytecode/word-apply/stamp-invocation"]],
     "outputs": {
       "formal/bytecode/word-apply/stamp-invocation/Invoke.generated.dfy": "9f8a86a51a49222b4279af6ed66696a31bbdfb0bee21fa976173c7de465215dc",
       "formal/bytecode/word-apply/stamp-invocation/Invoke.mapping.json": "4e1bd941f1843c31762e45e3b62b6e87fe26b72b2a55f0c05bd8ed47964772b5"
@@ -2580,49 +1800,27 @@
   },
   {
     "package": "formal/bytecode/word-apply/stamp-loop",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/stamp-loop/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/stamp-loop"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/stamp-loop/generate.py", "--output", "formal/bytecode/word-apply/stamp-loop"]],
     "outputs": {
       "formal/bytecode/word-apply/stamp-loop/Exit.generated.dfy": "d3ab165df369796e87231404545bf12931267fb97c2fc7878d8848391adbdcfa",
       "formal/bytecode/word-apply/stamp-loop/Exit.mapping.json": "141bb6298d150d78f662647902e05e0c21ca0f53221e667ae8f037931f5adf24",
       "formal/bytecode/word-apply/stamp-loop/Iteration.generated.dfy": "63663802db77b8d9e7cc43daf199dee9dce649c09e0cf60c4f5a9bd2ffd1b353",
       "formal/bytecode/word-apply/stamp-loop/Iteration.mapping.json": "eb888ba89a96d38740d2fe58f2004cf0ee13fc3f9fed04a7285d7fff73ea1f1b"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/target-check",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/target-check/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/target-check"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/target-check/generate.py", "--output", "formal/bytecode/word-apply/target-check"]],
     "outputs": {
       "formal/bytecode/word-apply/target-check/Code.generated.dfy": "b394c822c9abeb4c1169665cdd85890d18ba6993c77253d7522e73c700e49e1d",
       "formal/bytecode/word-apply/target-check/Code.mapping.json": "1bba87a8183ea2e7e64be6872657d1c86280c6fb43322ce27b6665ae253cb40b"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/target-invocation",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/target-invocation/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/target-invocation"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/target-invocation/generate.py", "--output", "formal/bytecode/word-apply/target-invocation"]],
     "outputs": {
       "formal/bytecode/word-apply/target-invocation/Invoke.generated.dfy": "3f1c13edf9f2f7eb4854e47e8a9f25c1950deff675793e37d51f8463d01c9873",
       "formal/bytecode/word-apply/target-invocation/Invoke.mapping.json": "66d97cfbade9f5756f6c8f24e8dae939bf50ae6515bb2d9f2f7e3cc45b72b6a8"
@@ -2631,30 +1829,16 @@
   },
   {
     "package": "formal/bytecode/word-apply/target-rejection",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/target-rejection/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/target-rejection"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/target-rejection/generate.py", "--output", "formal/bytecode/word-apply/target-rejection"]],
     "outputs": {
       "formal/bytecode/word-apply/target-rejection/Rejected.generated.dfy": "4fbad44b66f42c1266ce9976cc8a7bc7bb59c37c2c3d39c8d7eb2f67c53a2eea",
       "formal/bytecode/word-apply/target-rejection/Rejected.mapping.json": "10d32e605e2f0a119a8daac25eeeff78c3c313e4e591ec0b656bde91dac4c8ef"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/template-copy",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/template-copy/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/template-copy"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/template-copy/generate.py", "--output", "formal/bytecode/word-apply/template-copy"]],
     "outputs": {
       "formal/bytecode/word-apply/template-copy/Copy.generated.dfy": "9aae62243c4e954d5d19baffed0d963a8e977fbaf85e0b5834e3df22cb92ecb9",
       "formal/bytecode/word-apply/template-copy/Copy.mapping.json": "a38c71a4d67b387fa9c73da3861250756200627b5db362ece7336cda6d51d3be"
@@ -2663,32 +1847,18 @@
   },
   {
     "package": "formal/bytecode/word-apply/window-errors",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/window-errors/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/window-errors"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/window-errors/generate.py", "--output", "formal/bytecode/word-apply/window-errors"]],
     "outputs": {
       "formal/bytecode/word-apply/window-errors/Invalid.generated.dfy": "337fcb730709ff38c0113c64dbfe57af4a2fb9ca676a4f6f2203748d49846712",
       "formal/bytecode/word-apply/window-errors/Invalid.mapping.json": "e321badf534a8be2dddc6e5c2f0d17770a3f69a4504c1129824f15c4daefd212",
       "formal/bytecode/word-apply/window-errors/Short.generated.dfy": "45a3ed149ac7b0303abf7adddf03edeecb52844e0877af7d8910161b43ff03f8",
       "formal/bytecode/word-apply/window-errors/Short.mapping.json": "c515b92014727782889dfb906a18689ff35a144ce349546050874bfd2c3e4d47"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-apply/windows",
-    "commands": [
-      [
-        "formal/bytecode/word-apply/windows/generate.py",
-        "--output",
-        "formal/bytecode/word-apply/windows"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-apply/windows/generate.py", "--output", "formal/bytecode/word-apply/windows"]],
     "outputs": {
       "formal/bytecode/word-apply/windows/Entry.generated.dfy": "ea726129492b6316abb5a375c6431be8f0eb03ef6691485ac03a478d7d239071",
       "formal/bytecode/word-apply/windows/Entry.mapping.json": "0c311523948ab88636a9b82642f05aeed8d8cb53eab5a5b6fe3e4013eb0720fc",
@@ -2697,50 +1867,18 @@
       "formal/bytecode/word-apply/windows/Iteration.generated.dfy": "dc275ef753e052e2c407a26a60a31ddd22a8515edd2a9d12d957b6d64f70febd",
       "formal/bytecode/word-apply/windows/Iteration.mapping.json": "d57d33f55451b954a3483d725265346397a4bbb12ff605e30bd2e0fbc37b030f"
     },
-    "requires": [
-      "formal/bytecode/word-apply/word-conversion"
-    ]
+    "requires": ["formal/bytecode/word-apply/word-conversion"]
   },
   {
     "package": "formal/bytecode/word-index",
     "commands": [
-      [
-        "formal/bytecode/word-index/generate-decoder.py",
-        "--output",
-        "formal/bytecode/word-index"
-      ],
-      [
-        "formal/bytecode/word-index/generate-errors.py",
-        "--output",
-        "formal/bytecode/word-index"
-      ],
-      [
-        "formal/bytecode/word-index/generate-kernels.py",
-        "--output",
-        "formal/bytecode/word-index"
-      ],
-      [
-        "formal/bytecode/word-index/generate-prefix.py",
-        "--output",
-        "formal/bytecode/word-index"
-      ],
-      [
-        "formal/bytecode/word-index/generate-return.py",
-        "--output",
-        "formal/bytecode/word-index"
-      ],
-      [
-        "formal/bytecode/word-index/generate-segments.py",
-        "--output",
-        "formal/bytecode/word-index"
-      ],
-      [
-        "formal/bytecode/word-index/format-generated.py",
-        "--output",
-        "formal/bytecode/word-index",
-        "--include-root",
-        "formal/bytecode/word-index"
-      ]
+      ["formal/bytecode/word-index/generate-decoder.py", "--output", "formal/bytecode/word-index"],
+      ["formal/bytecode/word-index/generate-errors.py", "--output", "formal/bytecode/word-index"],
+      ["formal/bytecode/word-index/generate-kernels.py", "--output", "formal/bytecode/word-index"],
+      ["formal/bytecode/word-index/generate-prefix.py", "--output", "formal/bytecode/word-index"],
+      ["formal/bytecode/word-index/generate-return.py", "--output", "formal/bytecode/word-index"],
+      ["formal/bytecode/word-index/generate-segments.py", "--output", "formal/bytecode/word-index"],
+      ["formal/bytecode/word-index/format-generated.py", "--output", "formal/bytecode/word-index", "--include-root", "formal/bytecode/word-index"]
     ],
     "outputs": {
       "formal/bytecode/word-index/Add.generated.dfy": "162b058d628b2b54983172c5f15b4db80f75c1f3ae0a6b1d12062aab936025b1",
@@ -2790,13 +1928,7 @@
   },
   {
     "package": "formal/bytecode/word-index/raw-decoder",
-    "commands": [
-      [
-        "formal/bytecode/word-index/raw-decoder/generate.py",
-        "--output",
-        "formal/bytecode/word-index/raw-decoder"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-index/raw-decoder/generate.py", "--output", "formal/bytecode/word-index/raw-decoder"]],
     "outputs": {
       "formal/bytecode/word-index/raw-decoder/RawHeadShort.generated.dfy": "1a45c0674d791dd07c1d8d78dc9ff4ca6507a8cc3359fd13774a0118a8574e1b",
       "formal/bytecode/word-index/raw-decoder/RawHeadShort.mapping.json": "90c7c34c8a83e446e2e0d1bc54a0a0bc24e4271f5c61cf9a34c0a789ca6ce03d",
@@ -2814,23 +1946,9 @@
   {
     "package": "formal/bytecode/word-reverse",
     "commands": [
-      [
-        "formal/bytecode/word-reverse/generate-decoder.py",
-        "--output",
-        "formal/bytecode/word-reverse"
-      ],
-      [
-        "formal/bytecode/word-reverse/generate-prefix.py",
-        "--output",
-        "formal/bytecode/word-reverse"
-      ],
-      [
-        "formal/bytecode/word-reverse/format-generated.py",
-        "--output",
-        "formal/bytecode/word-reverse",
-        "--include-root",
-        "formal/bytecode/word-reverse"
-      ]
+      ["formal/bytecode/word-reverse/generate-decoder.py", "--output", "formal/bytecode/word-reverse"],
+      ["formal/bytecode/word-reverse/generate-prefix.py", "--output", "formal/bytecode/word-reverse"],
+      ["formal/bytecode/word-reverse/format-generated.py", "--output", "formal/bytecode/word-reverse", "--include-root", "formal/bytecode/word-reverse"]
     ],
     "outputs": {
       "formal/bytecode/word-reverse/Decoder.generated.dfy": "c5f0b0081ff654fedb1d4bdeacb15bbd082951cfb51c1c3276633677f4e8cc4a",
@@ -2843,16 +1961,8 @@
   {
     "package": "formal/bytecode/word-reverse/allocation",
     "commands": [
-      [
-        "formal/bytecode/word-reverse/allocation/generate-after-copy.py",
-        "--output",
-        "formal/bytecode/word-reverse/allocation"
-      ],
-      [
-        "formal/bytecode/word-reverse/allocation/generate-allocate.py",
-        "--output",
-        "formal/bytecode/word-reverse/allocation"
-      ],
+      ["formal/bytecode/word-reverse/allocation/generate-after-copy.py", "--output", "formal/bytecode/word-reverse/allocation"],
+      ["formal/bytecode/word-reverse/allocation/generate-allocate.py", "--output", "formal/bytecode/word-reverse/allocation"],
       [
         "formal/bytecode/word-reverse/allocation/format-generated.py",
         "--output",
@@ -2874,16 +1984,8 @@
   {
     "package": "formal/bytecode/word-reverse/entry",
     "commands": [
-      [
-        "formal/bytecode/word-reverse/entry/generate-admission.py",
-        "--output",
-        "formal/bytecode/word-reverse/entry"
-      ],
-      [
-        "formal/bytecode/word-reverse/entry/generate-errors.py",
-        "--output",
-        "formal/bytecode/word-reverse/entry"
-      ],
+      ["formal/bytecode/word-reverse/entry/generate-admission.py", "--output", "formal/bytecode/word-reverse/entry"],
+      ["formal/bytecode/word-reverse/entry/generate-errors.py", "--output", "formal/bytecode/word-reverse/entry"],
       [
         "formal/bytecode/word-reverse/entry/format-generated.py",
         "--output",
@@ -2907,16 +2009,8 @@
   {
     "package": "formal/bytecode/word-reverse/loop",
     "commands": [
-      [
-        "formal/bytecode/word-reverse/loop/generate-kernels.py",
-        "--output",
-        "formal/bytecode/word-reverse/loop"
-      ],
-      [
-        "formal/bytecode/word-reverse/loop/generate-segments.py",
-        "--output",
-        "formal/bytecode/word-reverse/loop"
-      ],
+      ["formal/bytecode/word-reverse/loop/generate-kernels.py", "--output", "formal/bytecode/word-reverse/loop"],
+      ["formal/bytecode/word-reverse/loop/generate-segments.py", "--output", "formal/bytecode/word-reverse/loop"],
       [
         "formal/bytecode/word-reverse/loop/format-generated.py",
         "--output",
@@ -2957,13 +2051,7 @@
   },
   {
     "package": "formal/bytecode/word-reverse/raw-decoder",
-    "commands": [
-      [
-        "formal/bytecode/word-reverse/raw-decoder/generate.py",
-        "--output",
-        "formal/bytecode/word-reverse/raw-decoder"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-reverse/raw-decoder/generate.py", "--output", "formal/bytecode/word-reverse/raw-decoder"]],
     "outputs": {
       "formal/bytecode/word-reverse/raw-decoder/RawHeadShort.generated.dfy": "635eb70a68b5e5f40003ecd5198b796538b9decedd9ef100e38e1b7ce7753142",
       "formal/bytecode/word-reverse/raw-decoder/RawHeadShort.mapping.json": "c1ebd2e8173cbb5def317ccb5224f043144181f43530ab5d6308e9d5adf4305a",
@@ -2981,11 +2069,7 @@
   {
     "package": "formal/bytecode/word-sort/copy-allocation",
     "commands": [
-      [
-        "formal/bytecode/word-sort/copy-allocation/generate-copy.py",
-        "--output",
-        "formal/bytecode/word-sort/copy-allocation"
-      ],
+      ["formal/bytecode/word-sort/copy-allocation/generate-copy.py", "--output", "formal/bytecode/word-sort/copy-allocation"],
       [
         "formal/bytecode/word-sort/copy-allocation/format-generated.py",
         "--output",
@@ -3005,11 +2089,7 @@
   {
     "package": "formal/bytecode/word-sort/decoder",
     "commands": [
-      [
-        "formal/bytecode/word-sort/decoder/generate.py",
-        "--output",
-        "formal/bytecode/word-sort/decoder"
-      ],
+      ["formal/bytecode/word-sort/decoder/generate.py", "--output", "formal/bytecode/word-sort/decoder"],
       [
         "formal/bytecode/word-sort/decoder/format-generated.py",
         "--output",
@@ -3027,16 +2107,8 @@
   {
     "package": "formal/bytecode/word-sort/entry",
     "commands": [
-      [
-        "formal/bytecode/word-sort/entry/generate-admission.py",
-        "--output",
-        "formal/bytecode/word-sort/entry"
-      ],
-      [
-        "formal/bytecode/word-sort/entry/generate-errors.py",
-        "--output",
-        "formal/bytecode/word-sort/entry"
-      ],
+      ["formal/bytecode/word-sort/entry/generate-admission.py", "--output", "formal/bytecode/word-sort/entry"],
+      ["formal/bytecode/word-sort/entry/generate-errors.py", "--output", "formal/bytecode/word-sort/entry"],
       [
         "formal/bytecode/word-sort/entry/format-generated.py",
         "--output",
@@ -3058,11 +2130,7 @@
   {
     "package": "formal/bytecode/word-sort/kernels",
     "commands": [
-      [
-        "formal/bytecode/word-sort/kernels/generate.py",
-        "--output",
-        "formal/bytecode/word-sort/kernels"
-      ],
+      ["formal/bytecode/word-sort/kernels/generate.py", "--output", "formal/bytecode/word-sort/kernels"],
       [
         "formal/bytecode/word-sort/kernels/format-generated.py",
         "--output",
@@ -3088,11 +2156,7 @@
   {
     "package": "formal/bytecode/word-sort/mul2-swap",
     "commands": [
-      [
-        "formal/bytecode/word-sort/mul2-swap/generate.py",
-        "--output",
-        "formal/bytecode/word-sort/mul2-swap"
-      ],
+      ["formal/bytecode/word-sort/mul2-swap/generate.py", "--output", "formal/bytecode/word-sort/mul2-swap"],
       [
         "formal/bytecode/word-sort/mul2-swap/format-generated.py",
         "--output",
@@ -3110,11 +2174,7 @@
   {
     "package": "formal/bytecode/word-sort/prefix",
     "commands": [
-      [
-        "formal/bytecode/word-sort/prefix/generate.py",
-        "--output",
-        "formal/bytecode/word-sort/prefix"
-      ],
+      ["formal/bytecode/word-sort/prefix/generate.py", "--output", "formal/bytecode/word-sort/prefix"],
       [
         "formal/bytecode/word-sort/prefix/format-generated.py",
         "--output",
@@ -3132,11 +2192,7 @@
   {
     "package": "formal/bytecode/word-sort/raw-decoder",
     "commands": [
-      [
-        "formal/bytecode/word-sort/raw-decoder/generate.py",
-        "--output",
-        "formal/bytecode/word-sort/raw-decoder"
-      ],
+      ["formal/bytecode/word-sort/raw-decoder/generate.py", "--output", "formal/bytecode/word-sort/raw-decoder"],
       [
         "formal/bytecode/word-sort/raw-decoder/format-generated.py",
         "--output",
@@ -3162,11 +2218,7 @@
   {
     "package": "formal/bytecode/word-sort/scratch-allocation-repair",
     "commands": [
-      [
-        "formal/bytecode/word-sort/scratch-allocation-repair/generate.py",
-        "--output",
-        "formal/bytecode/word-sort/scratch-allocation-repair"
-      ],
+      ["formal/bytecode/word-sort/scratch-allocation-repair/generate.py", "--output", "formal/bytecode/word-sort/scratch-allocation-repair"],
       [
         "formal/bytecode/word-sort/scratch-allocation-repair/format-generated.py",
         "--output",
@@ -3190,11 +2242,7 @@
   {
     "package": "formal/bytecode/word-sort/segments",
     "commands": [
-      [
-        "formal/bytecode/word-sort/segments/generate.py",
-        "--output",
-        "formal/bytecode/word-sort/segments"
-      ],
+      ["formal/bytecode/word-sort/segments/generate.py", "--output", "formal/bytecode/word-sort/segments"],
       [
         "formal/bytecode/word-sort/segments/format-generated.py",
         "--output",
@@ -3264,11 +2312,7 @@
   {
     "package": "formal/bytecode/word-sort/serializer",
     "commands": [
-      [
-        "formal/bytecode/word-sort/serializer/generate.py",
-        "--output",
-        "formal/bytecode/word-sort/serializer"
-      ],
+      ["formal/bytecode/word-sort/serializer/generate.py", "--output", "formal/bytecode/word-sort/serializer"],
       [
         "formal/bytecode/word-sort/serializer/format-generated.py",
         "--output",
@@ -3286,11 +2330,7 @@
   {
     "package": "formal/bytecode/word-sort/set-word",
     "commands": [
-      [
-        "formal/bytecode/word-sort/set-word/generate.py",
-        "--output",
-        "formal/bytecode/word-sort/set-word"
-      ],
+      ["formal/bytecode/word-sort/set-word/generate.py", "--output", "formal/bytecode/word-sort/set-word"],
       [
         "formal/bytecode/word-sort/set-word/format-generated.py",
         "--output",
@@ -3308,11 +2348,7 @@
   {
     "package": "formal/bytecode/word-sort/word-at",
     "commands": [
-      [
-        "formal/bytecode/word-sort/word-at/generate.py",
-        "--output",
-        "formal/bytecode/word-sort/word-at"
-      ],
+      ["formal/bytecode/word-sort/word-at/generate.py", "--output", "formal/bytecode/word-sort/word-at"],
       [
         "formal/bytecode/word-sort/word-at/format-generated.py",
         "--output",
@@ -3330,16 +2366,8 @@
   {
     "package": "formal/bytecode/word-unique/allocation",
     "commands": [
-      [
-        "formal/bytecode/word-unique/allocation/generate-after-copy.py",
-        "--output",
-        "formal/bytecode/word-unique/allocation"
-      ],
-      [
-        "formal/bytecode/word-unique/allocation/generate-allocate.py",
-        "--output",
-        "formal/bytecode/word-unique/allocation"
-      ],
+      ["formal/bytecode/word-unique/allocation/generate-after-copy.py", "--output", "formal/bytecode/word-unique/allocation"],
+      ["formal/bytecode/word-unique/allocation/generate-allocate.py", "--output", "formal/bytecode/word-unique/allocation"],
       [
         "formal/bytecode/word-unique/allocation/format-generated.py",
         "--output",
@@ -3361,11 +2389,7 @@
   {
     "package": "formal/bytecode/word-unique/decoder",
     "commands": [
-      [
-        "formal/bytecode/word-unique/decoder/generate.py",
-        "--output",
-        "formal/bytecode/word-unique/decoder"
-      ],
+      ["formal/bytecode/word-unique/decoder/generate.py", "--output", "formal/bytecode/word-unique/decoder"],
       [
         "formal/bytecode/word-unique/decoder/format-generated.py",
         "--output",
@@ -3383,16 +2407,8 @@
   {
     "package": "formal/bytecode/word-unique/entry",
     "commands": [
-      [
-        "formal/bytecode/word-unique/entry/generate-admission.py",
-        "--output",
-        "formal/bytecode/word-unique/entry"
-      ],
-      [
-        "formal/bytecode/word-unique/entry/generate-errors.py",
-        "--output",
-        "formal/bytecode/word-unique/entry"
-      ],
+      ["formal/bytecode/word-unique/entry/generate-admission.py", "--output", "formal/bytecode/word-unique/entry"],
+      ["formal/bytecode/word-unique/entry/generate-errors.py", "--output", "formal/bytecode/word-unique/entry"],
       [
         "formal/bytecode/word-unique/entry/format-generated.py",
         "--output",
@@ -3416,11 +2432,7 @@
   {
     "package": "formal/bytecode/word-unique/kernels",
     "commands": [
-      [
-        "formal/bytecode/word-unique/kernels/generate.py",
-        "--output",
-        "formal/bytecode/word-unique/kernels"
-      ],
+      ["formal/bytecode/word-unique/kernels/generate.py", "--output", "formal/bytecode/word-unique/kernels"],
       [
         "formal/bytecode/word-unique/kernels/format-generated.py",
         "--output",
@@ -3452,11 +2464,7 @@
   {
     "package": "formal/bytecode/word-unique/prefix",
     "commands": [
-      [
-        "formal/bytecode/word-unique/prefix/generate.py",
-        "--output",
-        "formal/bytecode/word-unique/prefix"
-      ],
+      ["formal/bytecode/word-unique/prefix/generate.py", "--output", "formal/bytecode/word-unique/prefix"],
       [
         "formal/bytecode/word-unique/prefix/format-generated.py",
         "--output",
@@ -3474,11 +2482,7 @@
   {
     "package": "formal/bytecode/word-unique/raw-decoder",
     "commands": [
-      [
-        "formal/bytecode/word-unique/raw-decoder/generate.py",
-        "--output",
-        "formal/bytecode/word-unique/raw-decoder"
-      ],
+      ["formal/bytecode/word-unique/raw-decoder/generate.py", "--output", "formal/bytecode/word-unique/raw-decoder"],
       [
         "formal/bytecode/word-unique/raw-decoder/format-generated.py",
         "--output",
@@ -3506,11 +2510,7 @@
   {
     "package": "formal/bytecode/word-unique/segments",
     "commands": [
-      [
-        "formal/bytecode/word-unique/segments/generate.py",
-        "--output",
-        "formal/bytecode/word-unique/segments"
-      ],
+      ["formal/bytecode/word-unique/segments/generate.py", "--output", "formal/bytecode/word-unique/segments"],
       [
         "formal/bytecode/word-unique/segments/format-generated.py",
         "--output",
@@ -3564,11 +2564,7 @@
   {
     "package": "formal/bytecode/word-unique/word-at",
     "commands": [
-      [
-        "formal/bytecode/word-unique/word-at/generate.py",
-        "--output",
-        "formal/bytecode/word-unique/word-at"
-      ],
+      ["formal/bytecode/word-unique/word-at/generate.py", "--output", "formal/bytecode/word-unique/word-at"],
       [
         "formal/bytecode/word-unique/word-at/format-generated.py",
         "--output",
@@ -3586,18 +2582,8 @@
   {
     "package": "formal/bytecode/word-unzip",
     "commands": [
-      [
-        "formal/bytecode/word-unzip/generate-prefix.py",
-        "--output",
-        "formal/bytecode/word-unzip"
-      ],
-      [
-        "formal/bytecode/word-unzip/format-generated.py",
-        "--output",
-        "formal/bytecode/word-unzip",
-        "--include-root",
-        "formal/bytecode/word-unzip"
-      ]
+      ["formal/bytecode/word-unzip/generate-prefix.py", "--output", "formal/bytecode/word-unzip"],
+      ["formal/bytecode/word-unzip/format-generated.py", "--output", "formal/bytecode/word-unzip", "--include-root", "formal/bytecode/word-unzip"]
     ],
     "outputs": {
       "formal/bytecode/word-unzip/Prefix.generated.dfy": "d3668f7d03f6f8425bfff33b67057cb6d65396dcf8dbe9c6cbb293351249e8ee",
@@ -3608,16 +2594,8 @@
   {
     "package": "formal/bytecode/word-unzip/allocation",
     "commands": [
-      [
-        "formal/bytecode/word-unzip/allocation/generate-after-copy.py",
-        "--output",
-        "formal/bytecode/word-unzip/allocation"
-      ],
-      [
-        "formal/bytecode/word-unzip/allocation/generate-allocate.py",
-        "--output",
-        "formal/bytecode/word-unzip/allocation"
-      ],
+      ["formal/bytecode/word-unzip/allocation/generate-after-copy.py", "--output", "formal/bytecode/word-unzip/allocation"],
+      ["formal/bytecode/word-unzip/allocation/generate-allocate.py", "--output", "formal/bytecode/word-unzip/allocation"],
       [
         "formal/bytecode/word-unzip/allocation/format-generated.py",
         "--output",
@@ -3639,11 +2617,7 @@
   {
     "package": "formal/bytecode/word-unzip/decoder",
     "commands": [
-      [
-        "formal/bytecode/word-unzip/decoder/generate.py",
-        "--output",
-        "formal/bytecode/word-unzip/decoder"
-      ],
+      ["formal/bytecode/word-unzip/decoder/generate.py", "--output", "formal/bytecode/word-unzip/decoder"],
       [
         "formal/bytecode/word-unzip/decoder/format-generated.py",
         "--output",
@@ -3661,16 +2635,8 @@
   {
     "package": "formal/bytecode/word-unzip/entry",
     "commands": [
-      [
-        "formal/bytecode/word-unzip/entry/generate-admission.py",
-        "--output",
-        "formal/bytecode/word-unzip/entry"
-      ],
-      [
-        "formal/bytecode/word-unzip/entry/generate-errors.py",
-        "--output",
-        "formal/bytecode/word-unzip/entry"
-      ],
+      ["formal/bytecode/word-unzip/entry/generate-admission.py", "--output", "formal/bytecode/word-unzip/entry"],
+      ["formal/bytecode/word-unzip/entry/generate-errors.py", "--output", "formal/bytecode/word-unzip/entry"],
       [
         "formal/bytecode/word-unzip/entry/format-generated.py",
         "--output",
@@ -3710,16 +2676,8 @@
   {
     "package": "formal/bytecode/word-unzip/loop",
     "commands": [
-      [
-        "formal/bytecode/word-unzip/loop/generate-kernels.py",
-        "--output",
-        "formal/bytecode/word-unzip/loop"
-      ],
-      [
-        "formal/bytecode/word-unzip/loop/generate-segments.py",
-        "--output",
-        "formal/bytecode/word-unzip/loop"
-      ],
+      ["formal/bytecode/word-unzip/loop/generate-kernels.py", "--output", "formal/bytecode/word-unzip/loop"],
+      ["formal/bytecode/word-unzip/loop/generate-segments.py", "--output", "formal/bytecode/word-unzip/loop"],
       [
         "formal/bytecode/word-unzip/loop/format-generated.py",
         "--output",
@@ -3772,13 +2730,7 @@
   },
   {
     "package": "formal/bytecode/word-unzip/raw-decoder",
-    "commands": [
-      [
-        "formal/bytecode/word-unzip/raw-decoder/generate.py",
-        "--output",
-        "formal/bytecode/word-unzip/raw-decoder"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-unzip/raw-decoder/generate.py", "--output", "formal/bytecode/word-unzip/raw-decoder"]],
     "outputs": {
       "formal/bytecode/word-unzip/raw-decoder/RawHeadShort.generated.dfy": "5d63fb904b31a698dd894ef67d7c21236a66fb90f693ceced67e6ba0f493f93d",
       "formal/bytecode/word-unzip/raw-decoder/RawHeadShort.mapping.json": "d0a6fb96da762fdaeb30d0b6bf17c59a12b645d25223e37c8bb1ee8f3ab5308f",
@@ -3796,18 +2748,8 @@
   {
     "package": "formal/bytecode/word-zip",
     "commands": [
-      [
-        "formal/bytecode/word-zip/generate-prefix.py",
-        "--output",
-        "formal/bytecode/word-zip"
-      ],
-      [
-        "formal/bytecode/word-zip/format-generated.py",
-        "--output",
-        "formal/bytecode/word-zip",
-        "--include-root",
-        "formal/bytecode/word-zip"
-      ]
+      ["formal/bytecode/word-zip/generate-prefix.py", "--output", "formal/bytecode/word-zip"],
+      ["formal/bytecode/word-zip/format-generated.py", "--output", "formal/bytecode/word-zip", "--include-root", "formal/bytecode/word-zip"]
     ],
     "outputs": {
       "formal/bytecode/word-zip/Prefix.generated.dfy": "28edfe4ddc14283f092b44132d96cc9cc0577f3ba7d62c013551150b9df461ba",
@@ -3818,11 +2760,7 @@
   {
     "package": "formal/bytecode/word-zip/alignment-b",
     "commands": [
-      [
-        "formal/bytecode/word-zip/alignment-b/generate.py",
-        "--output",
-        "formal/bytecode/word-zip/alignment-b"
-      ],
+      ["formal/bytecode/word-zip/alignment-b/generate.py", "--output", "formal/bytecode/word-zip/alignment-b"],
       [
         "formal/bytecode/word-zip/alignment-b/format-generated.py",
         "--output",
@@ -3840,16 +2778,8 @@
   {
     "package": "formal/bytecode/word-zip/allocation",
     "commands": [
-      [
-        "formal/bytecode/word-zip/allocation/generate-after-copy.py",
-        "--output",
-        "formal/bytecode/word-zip/allocation"
-      ],
-      [
-        "formal/bytecode/word-zip/allocation/generate-allocate.py",
-        "--output",
-        "formal/bytecode/word-zip/allocation"
-      ],
+      ["formal/bytecode/word-zip/allocation/generate-after-copy.py", "--output", "formal/bytecode/word-zip/allocation"],
+      ["formal/bytecode/word-zip/allocation/generate-allocate.py", "--output", "formal/bytecode/word-zip/allocation"],
       [
         "formal/bytecode/word-zip/allocation/format-generated.py",
         "--output",
@@ -3871,11 +2801,7 @@
   {
     "package": "formal/bytecode/word-zip/decoder",
     "commands": [
-      [
-        "formal/bytecode/word-zip/decoder/generate.py",
-        "--output",
-        "formal/bytecode/word-zip/decoder"
-      ],
+      ["formal/bytecode/word-zip/decoder/generate.py", "--output", "formal/bytecode/word-zip/decoder"],
       [
         "formal/bytecode/word-zip/decoder/format-generated.py",
         "--output",
@@ -3893,23 +2819,9 @@
   {
     "package": "formal/bytecode/word-zip/entry",
     "commands": [
-      [
-        "formal/bytecode/word-zip/entry/generate-admission.py",
-        "--output",
-        "formal/bytecode/word-zip/entry"
-      ],
-      [
-        "formal/bytecode/word-zip/entry/generate-errors.py",
-        "--output",
-        "formal/bytecode/word-zip/entry"
-      ],
-      [
-        "formal/bytecode/word-zip/entry/format-generated.py",
-        "--output",
-        "formal/bytecode/word-zip/entry",
-        "--include-root",
-        "formal/bytecode/word-zip/entry"
-      ]
+      ["formal/bytecode/word-zip/entry/generate-admission.py", "--output", "formal/bytecode/word-zip/entry"],
+      ["formal/bytecode/word-zip/entry/generate-errors.py", "--output", "formal/bytecode/word-zip/entry"],
+      ["formal/bytecode/word-zip/entry/format-generated.py", "--output", "formal/bytecode/word-zip/entry", "--include-root", "formal/bytecode/word-zip/entry"]
     ],
     "outputs": {
       "formal/bytecode/word-zip/entry/AllocationGuard.generated.dfy": "5dabde36f41e73db83f8f0839533b92cf2c6da909f53830bafbac6aba1e27f0d",
@@ -3944,23 +2856,9 @@
   {
     "package": "formal/bytecode/word-zip/loop",
     "commands": [
-      [
-        "formal/bytecode/word-zip/loop/generate-kernels.py",
-        "--output",
-        "formal/bytecode/word-zip/loop"
-      ],
-      [
-        "formal/bytecode/word-zip/loop/generate-segments.py",
-        "--output",
-        "formal/bytecode/word-zip/loop"
-      ],
-      [
-        "formal/bytecode/word-zip/loop/format-generated.py",
-        "--output",
-        "formal/bytecode/word-zip/loop",
-        "--include-root",
-        "formal/bytecode/word-zip/loop"
-      ]
+      ["formal/bytecode/word-zip/loop/generate-kernels.py", "--output", "formal/bytecode/word-zip/loop"],
+      ["formal/bytecode/word-zip/loop/generate-segments.py", "--output", "formal/bytecode/word-zip/loop"],
+      ["formal/bytecode/word-zip/loop/format-generated.py", "--output", "formal/bytecode/word-zip/loop", "--include-root", "formal/bytecode/word-zip/loop"]
     ],
     "outputs": {
       "formal/bytecode/word-zip/loop/Add.generated.dfy": "9f8c20078c4b818c90373d6140cd3c64e26a0a83da88f5d05791c6581cef4972",
@@ -4006,13 +2904,7 @@
   },
   {
     "package": "formal/bytecode/word-zip/raw-decoder",
-    "commands": [
-      [
-        "formal/bytecode/word-zip/raw-decoder/generate.py",
-        "--output",
-        "formal/bytecode/word-zip/raw-decoder"
-      ]
-    ],
+    "commands": [["formal/bytecode/word-zip/raw-decoder/generate.py", "--output", "formal/bytecode/word-zip/raw-decoder"]],
     "outputs": {
       "formal/bytecode/word-zip/raw-decoder/RawFirstHeaderShort.generated.dfy": "1199bbba554f90a955dacaeca68b39582268ad3ecab1021593ffb0a5a1ccee0c",
       "formal/bytecode/word-zip/raw-decoder/RawFirstHeaderShort.mapping.json": "a936f14925f3b68468c5f41c561bd08d88a291cd2d88f48552b20b97fa20ab1d",
@@ -4037,133 +2929,50 @@
   },
   {
     "package": "formal/collections/admission",
-    "commands": [
-      [
-        "formal/collections/admission/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/admission"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/admission/Signatures.generated.dfy": "09ec95fca33867fbec5b99a767f61419cf0ecbd882295848eafe0a26d594d945"
-    },
+    "commands": [["formal/collections/admission/generate.py", "--solc", "{solc}", "--output", "formal/collections/admission"]],
+    "outputs": {"formal/collections/admission/Signatures.generated.dfy": "09ec95fca33867fbec5b99a767f61419cf0ecbd882295848eafe0a26d594d945"},
     "requires": []
   },
   {
     "package": "formal/collections/callback-results",
-    "commands": [
-      [
-        "formal/collections/callback-results/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/callback-results"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/callback-results/Source.generated.dfy": "5ed18983bdd94c0c3864258a26cf448a0f1f4a82b51e31d9f12466b0127af966"
-    },
+    "commands": [["formal/collections/callback-results/generate.py", "--solc", "{solc}", "--output", "formal/collections/callback-results"]],
+    "outputs": {"formal/collections/callback-results/Source.generated.dfy": "5ed18983bdd94c0c3864258a26cf448a0f1f4a82b51e31d9f12466b0127af966"},
     "requires": []
   },
   {
     "package": "formal/collections/preparation",
-    "commands": [
-      [
-        "formal/collections/preparation/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/preparation"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/preparation/Source.generated.dfy": "0516fdc764b9b59b88475ad61cd0d2e2444d1899265045e6f6fa91861c91d133"
-    },
+    "commands": [["formal/collections/preparation/generate.py", "--solc", "{solc}", "--output", "formal/collections/preparation"]],
+    "outputs": {"formal/collections/preparation/Source.generated.dfy": "0516fdc764b9b59b88475ad61cd0d2e2444d1899265045e6f6fa91861c91d133"},
     "requires": []
   },
   {
     "package": "formal/collections/calls",
-    "commands": [
-      [
-        "formal/collections/calls/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/calls"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/calls/Source.generated.dfy": "876c0baeacc42637e0bc7b3716b2d80d95ce2d982a1fb6ea5a6b7794b0e2ef58"
-    },
-    "requires": [
-      "formal/collections/callback-results",
-      "formal/collections/preparation"
-    ]
+    "commands": [["formal/collections/calls/generate.py", "--solc", "{solc}", "--output", "formal/collections/calls"]],
+    "outputs": {"formal/collections/calls/Source.generated.dfy": "876c0baeacc42637e0bc7b3716b2d80d95ce2d982a1fb6ea5a6b7794b0e2ef58"},
+    "requires": ["formal/collections/callback-results", "formal/collections/preparation"]
   },
   {
     "package": "formal/collections/codec-errors",
-    "commands": [
-      [
-        "formal/collections/codec-errors/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/codec-errors"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/codec-errors/Signatures.generated.dfy": "108d093c1e03634af2200bc9e4adec3f4999aa0d828ba2556315d7a8e7b26f2f"
-    },
+    "commands": [["formal/collections/codec-errors/generate.py", "--solc", "{solc}", "--output", "formal/collections/codec-errors"]],
+    "outputs": {"formal/collections/codec-errors/Signatures.generated.dfy": "108d093c1e03634af2200bc9e4adec3f4999aa0d828ba2556315d7a8e7b26f2f"},
     "requires": []
   },
   {
     "package": "formal/collections/completion",
-    "commands": [
-      [
-        "formal/collections/completion/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/completion"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/completion/Boundary.generated.dfy": "93d175dc1b62994b9b31a290aca1448e8038e10382b8d94551b101a95b2f4d48"
-    },
+    "commands": [["formal/collections/completion/generate.py", "--solc", "{solc}", "--output", "formal/collections/completion"]],
+    "outputs": {"formal/collections/completion/Boundary.generated.dfy": "93d175dc1b62994b9b31a290aca1448e8038e10382b8d94551b101a95b2f4d48"},
     "requires": []
   },
   {
     "package": "formal/collections/wire",
-    "commands": [
-      [
-        "formal/collections/wire/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/wire"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/wire/Signatures.generated.dfy": "f2e7251c22279a06998ef7a9a57f723eb38d2184a4cceb117e898ccf83c56c69"
-    },
+    "commands": [["formal/collections/wire/generate.py", "--solc", "{solc}", "--output", "formal/collections/wire"]],
+    "outputs": {"formal/collections/wire/Signatures.generated.dfy": "f2e7251c22279a06998ef7a9a57f723eb38d2184a4cceb117e898ccf83c56c69"},
     "requires": []
   },
   {
     "package": "formal/collections/validation",
-    "commands": [
-      [
-        "formal/collections/validation/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/validation"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/validation/Source.generated.dfy": "7d9e58e348f4fca0092fe2b4794af6602c0e05ad0bc3c8a9f9066c7d394e5e3e"
-    },
+    "commands": [["formal/collections/validation/generate.py", "--solc", "{solc}", "--output", "formal/collections/validation"]],
+    "outputs": {"formal/collections/validation/Source.generated.dfy": "7d9e58e348f4fca0092fe2b4794af6602c0e05ad0bc3c8a9f9066c7d394e5e3e"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4187,18 +2996,8 @@
   },
   {
     "package": "formal/collections/sort-admission",
-    "commands": [
-      [
-        "formal/collections/sort-admission/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/sort-admission"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/sort-admission/Source.generated.dfy": "dcdbaf38e9b7bcc4d3dea79adb200de3e564e301b5823fad5c890573829fe326"
-    },
+    "commands": [["formal/collections/sort-admission/generate.py", "--solc", "{solc}", "--output", "formal/collections/sort-admission"]],
+    "outputs": {"formal/collections/sort-admission/Source.generated.dfy": "dcdbaf38e9b7bcc4d3dea79adb200de3e564e301b5823fad5c890573829fe326"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4223,33 +3022,13 @@
   },
   {
     "package": "formal/collections/sort-comparator",
-    "commands": [
-      [
-        "formal/collections/sort-comparator/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/sort-comparator"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/sort-comparator/Source.generated.dfy": "107ffb243b90fb81d0677cfb759616fbef07b70315ce6a89039d97479360e26b"
-    },
-    "requires": [
-      "formal/abi/source"
-    ]
+    "commands": [["formal/collections/sort-comparator/generate.py", "--solc", "{solc}", "--output", "formal/collections/sort-comparator"]],
+    "outputs": {"formal/collections/sort-comparator/Source.generated.dfy": "107ffb243b90fb81d0677cfb759616fbef07b70315ce6a89039d97479360e26b"},
+    "requires": ["formal/abi/source"]
   },
   {
     "package": "formal/collections/value-codec",
-    "commands": [
-      [
-        "formal/collections/value-codec/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/value-codec"
-      ]
-    ],
+    "commands": [["formal/collections/value-codec/generate.py", "--solc", "{solc}", "--output", "formal/collections/value-codec"]],
     "outputs": {
       "formal/collections/value-codec/Control.generated.dfy": "30801978ef1f2c4a604cf0d5e5530fc6de3f40468fb8f3ad49933bdc91d6b389",
       "formal/collections/value-codec/Pack.generated.dfy": "394a6fdb50e3e41b6ebf3e9feeff94252ffe8dc6072088d195bf9f80f161ab89",
@@ -4279,50 +3058,20 @@
   },
   {
     "package": "formal/collections/value-entry",
-    "commands": [
-      [
-        "formal/collections/value-entry/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/value-entry"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/value-entry/Selectors.generated.dfy": "f5a7c10aec29a49507edeba081768deb6bde182a0fd4ced13cea9052ee0a4495"
-    },
+    "commands": [["formal/collections/value-entry/generate.py", "--solc", "{solc}", "--output", "formal/collections/value-entry"]],
+    "outputs": {"formal/collections/value-entry/Selectors.generated.dfy": "f5a7c10aec29a49507edeba081768deb6bde182a0fd4ced13cea9052ee0a4495"},
     "requires": []
   },
   {
     "package": "formal/collections/value-loops",
-    "commands": [
-      [
-        "formal/collections/value-loops/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/value-loops"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/value-loops/Source.generated.dfy": "0311e517cef2bc1450c861c687affb60632acc4f2aea39b1e81c3a3dbb0f2125"
-    },
+    "commands": [["formal/collections/value-loops/generate.py", "--solc", "{solc}", "--output", "formal/collections/value-loops"]],
+    "outputs": {"formal/collections/value-loops/Source.generated.dfy": "0311e517cef2bc1450c861c687affb60632acc4f2aea39b1e81c3a3dbb0f2125"},
     "requires": []
   },
   {
     "package": "formal/collections/value-pairs",
-    "commands": [
-      [
-        "formal/collections/value-pairs/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/value-pairs"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/value-pairs/Control.generated.dfy": "31169b414e7ad71229000fe41bbd1879d9d94e90cc2f2976505aa77df7f1f52f"
-    },
+    "commands": [["formal/collections/value-pairs/generate.py", "--solc", "{solc}", "--output", "formal/collections/value-pairs"]],
+    "outputs": {"formal/collections/value-pairs/Control.generated.dfy": "31169b414e7ad71229000fe41bbd1879d9d94e90cc2f2976505aa77df7f1f52f"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4347,18 +3096,8 @@
   },
   {
     "package": "formal/collections/value-search",
-    "commands": [
-      [
-        "formal/collections/value-search/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/value-search"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/value-search/Control.generated.dfy": "d714b96602947c1105b96063fc0bc319d61db79d8d5dfa5e172a8051c001c2d2"
-    },
+    "commands": [["formal/collections/value-search/generate.py", "--solc", "{solc}", "--output", "formal/collections/value-search"]],
+    "outputs": {"formal/collections/value-search/Control.generated.dfy": "d714b96602947c1105b96063fc0bc319d61db79d8d5dfa5e172a8051c001c2d2"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4383,34 +3122,14 @@
   },
   {
     "package": "formal/collections/value-sort-trace",
-    "commands": [
-      [
-        "formal/collections/value-sort-trace/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/value-sort-trace"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/value-sort-trace/Source.generated.dfy": "5484ce6f0fdfa0ee742a60a7fbb5fe1cb7f35076018a9ae25f45cd622bfa6663"
-    },
+    "commands": [["formal/collections/value-sort-trace/generate.py", "--solc", "{solc}", "--output", "formal/collections/value-sort-trace"]],
+    "outputs": {"formal/collections/value-sort-trace/Source.generated.dfy": "5484ce6f0fdfa0ee742a60a7fbb5fe1cb7f35076018a9ae25f45cd622bfa6663"},
     "requires": []
   },
   {
     "package": "formal/collections/value-structure",
-    "commands": [
-      [
-        "formal/collections/value-structure/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/value-structure"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/value-structure/Control.generated.dfy": "b48b833991eeee3cc6299a5ab4ab11cac040b460f46f1bd6f0261d41f8d2d292"
-    },
+    "commands": [["formal/collections/value-structure/generate.py", "--solc", "{solc}", "--output", "formal/collections/value-structure"]],
+    "outputs": {"formal/collections/value-structure/Control.generated.dfy": "b48b833991eeee3cc6299a5ab4ab11cac040b460f46f1bd6f0261d41f8d2d292"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4435,18 +3154,8 @@
   },
   {
     "package": "formal/collections/value-unique",
-    "commands": [
-      [
-        "formal/collections/value-unique/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/value-unique"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/value-unique/Control.generated.dfy": "09239bb5ba2cbfade362211288e475aa112b0a6f71ba9d2ded291282c7ff978b"
-    },
+    "commands": [["formal/collections/value-unique/generate.py", "--solc", "{solc}", "--output", "formal/collections/value-unique"]],
+    "outputs": {"formal/collections/value-unique/Control.generated.dfy": "09239bb5ba2cbfade362211288e475aa112b0a6f71ba9d2ded291282c7ff978b"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4471,34 +3180,14 @@
   },
   {
     "package": "formal/collections/word-apply",
-    "commands": [
-      [
-        "formal/collections/word-apply/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/word-apply"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/word-apply/Control.generated.dfy": "ba6dbf0cfa9d84f193a9cbbe65dbf79400f776a78035f91af245d5924b7ce174"
-    },
+    "commands": [["formal/collections/word-apply/generate.py", "--solc", "{solc}", "--output", "formal/collections/word-apply"]],
+    "outputs": {"formal/collections/word-apply/Control.generated.dfy": "ba6dbf0cfa9d84f193a9cbbe65dbf79400f776a78035f91af245d5924b7ce174"},
     "requires": []
   },
   {
     "package": "formal/collections/word-call",
-    "commands": [
-      [
-        "formal/collections/word-call/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/word-call"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/word-call/Source.generated.dfy": "69ba2fe82aee99f9bfe0fe43a74938cc96aaeb2761cf2b0f915382ed426e2b7a"
-    },
+    "commands": [["formal/collections/word-call/generate.py", "--solc", "{solc}", "--output", "formal/collections/word-call"]],
+    "outputs": {"formal/collections/word-call/Source.generated.dfy": "69ba2fe82aee99f9bfe0fe43a74938cc96aaeb2761cf2b0f915382ed426e2b7a"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4519,52 +3208,20 @@
   },
   {
     "package": "formal/collections/word-memory",
-    "commands": [
-      [
-        "formal/collections/word-memory/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/word-memory"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/word-memory/Source.generated.dfy": "f5cd81a8a45eb35483546521480caa6f0d012e38531e20fcec3806900b34e203"
-    },
+    "commands": [["formal/collections/word-memory/generate.py", "--solc", "{solc}", "--output", "formal/collections/word-memory"]],
+    "outputs": {"formal/collections/word-memory/Source.generated.dfy": "f5cd81a8a45eb35483546521480caa6f0d012e38531e20fcec3806900b34e203"},
     "requires": []
   },
   {
     "package": "formal/collections/word-windows",
-    "commands": [
-      [
-        "formal/collections/word-windows/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/word-windows"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/word-windows/Source.generated.dfy": "0c5fa6072a246c71312a98651b43ea7c5610aaa330fd1228f62cf99ff925da55"
-    },
-    "requires": [
-      "formal/collections/word-memory"
-    ]
+    "commands": [["formal/collections/word-windows/generate.py", "--solc", "{solc}", "--output", "formal/collections/word-windows"]],
+    "outputs": {"formal/collections/word-windows/Source.generated.dfy": "0c5fa6072a246c71312a98651b43ea7c5610aaa330fd1228f62cf99ff925da55"},
+    "requires": ["formal/collections/word-memory"]
   },
   {
     "package": "formal/collections/word-fold-loop",
-    "commands": [
-      [
-        "formal/collections/word-fold-loop/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/word-fold-loop"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/word-fold-loop/Source.generated.dfy": "558450df820a90db718df4f84c6304030f73d813eaaaec0cf240d54005bb0c87"
-    },
+    "commands": [["formal/collections/word-fold-loop/generate.py", "--solc", "{solc}", "--output", "formal/collections/word-fold-loop"]],
+    "outputs": {"formal/collections/word-fold-loop/Source.generated.dfy": "558450df820a90db718df4f84c6304030f73d813eaaaec0cf240d54005bb0c87"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4588,15 +3245,7 @@
   },
   {
     "package": "formal/collections/word-fold-entry",
-    "commands": [
-      [
-        "formal/collections/word-fold-entry/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/word-fold-entry"
-      ]
-    ],
+    "commands": [["formal/collections/word-fold-entry/generate.py", "--solc", "{solc}", "--output", "formal/collections/word-fold-entry"]],
     "outputs": {
       "formal/collections/word-fold-entry/Selectors.generated.dfy": "2fb44f172f2d0f2dcc14ef5d1222ec264540c57e01a5a3978194aa914439cb8e",
       "formal/collections/word-fold-entry/Source.generated.dfy": "4e7246335c49a3c9d096be855b3cb63ee3198b885534b205faa04549e103b335"
@@ -4625,87 +3274,31 @@
   },
   {
     "package": "formal/collections/word-layout",
-    "commands": [
-      [
-        "formal/collections/word-layout/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/word-layout"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/word-layout/Control.generated.dfy": "78d0774f8d34d87062b6c23eba049d1035172137418f5c0091cf81943054231f"
-    },
-    "requires": [
-      "formal/collections/word-memory"
-    ]
+    "commands": [["formal/collections/word-layout/generate.py", "--solc", "{solc}", "--output", "formal/collections/word-layout"]],
+    "outputs": {"formal/collections/word-layout/Control.generated.dfy": "78d0774f8d34d87062b6c23eba049d1035172137418f5c0091cf81943054231f"},
+    "requires": ["formal/collections/word-memory"]
   },
   {
     "package": "formal/collections/word-scans",
-    "commands": [
-      [
-        "formal/collections/word-scans/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/word-scans"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/word-scans/Control.generated.dfy": "cdc406c7ec071333ab3581cfded28eae5b9a9b6c8b51384dbef883104bd976e3"
-    },
-    "requires": [
-      "formal/collections/word-memory"
-    ]
+    "commands": [["formal/collections/word-scans/generate.py", "--solc", "{solc}", "--output", "formal/collections/word-scans"]],
+    "outputs": {"formal/collections/word-scans/Control.generated.dfy": "cdc406c7ec071333ab3581cfded28eae5b9a9b6c8b51384dbef883104bd976e3"},
+    "requires": ["formal/collections/word-memory"]
   },
   {
     "package": "formal/collections/word-sort",
-    "commands": [
-      [
-        "formal/collections/word-sort/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/word-sort"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/word-sort/Source.generated.dfy": "818334ad07bb3739534de6550b576c3663ccc8d164ae5a5a1f4ff9c405472b5a"
-    },
-    "requires": [
-      "formal/collections/word-memory"
-    ]
+    "commands": [["formal/collections/word-sort/generate.py", "--solc", "{solc}", "--output", "formal/collections/word-sort"]],
+    "outputs": {"formal/collections/word-sort/Source.generated.dfy": "818334ad07bb3739534de6550b576c3663ccc8d164ae5a5a1f4ff9c405472b5a"},
+    "requires": ["formal/collections/word-memory"]
   },
   {
     "package": "formal/collections/word-unique",
-    "commands": [
-      [
-        "formal/collections/word-unique/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/collections/word-unique"
-      ]
-    ],
-    "outputs": {
-      "formal/collections/word-unique/Control.generated.dfy": "d6efd9db70c061449d4a449d6e3253b930b3818ad936210add7676f6e91c28d0"
-    },
-    "requires": [
-      "formal/collections/word-memory"
-    ]
+    "commands": [["formal/collections/word-unique/generate.py", "--solc", "{solc}", "--output", "formal/collections/word-unique"]],
+    "outputs": {"formal/collections/word-unique/Control.generated.dfy": "d6efd9db70c061449d4a449d6e3253b930b3818ad936210add7676f6e91c28d0"},
+    "requires": ["formal/collections/word-memory"]
   },
   {
     "package": "formal/navigation",
-    "commands": [
-      [
-        "formal/navigation/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/navigation"
-      ]
-    ],
+    "commands": [["formal/navigation/generate.py", "--solc", "{solc}", "--output", "formal/navigation"]],
     "outputs": {
       "formal/navigation/Cursor.generated.dfy": "261edbd18a708d7813f7403776c14dc703c8872a13fbfc0c1d7f24950cd3d3c4",
       "formal/navigation/DynamicSource.generated.dfy": "519d6513c7dfa352e19c8a7630d2ac80bcaa741f17321f05344fd0d4ef91d3a2",
@@ -4732,18 +3325,8 @@
   },
   {
     "package": "formal/composition",
-    "commands": [
-      [
-        "formal/composition/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/composition"
-      ]
-    ],
-    "outputs": {
-      "formal/composition/Source.generated.dfy": "9859d4500090cb3a3012faa2070a4de17b3d3c914c04b3393a523601c11ce23d"
-    },
+    "commands": [["formal/composition/generate.py", "--solc", "{solc}", "--output", "formal/composition"]],
+    "outputs": {"formal/composition/Source.generated.dfy": "9859d4500090cb3a3012faa2070a4de17b3d3c914c04b3393a523601c11ce23d"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4762,36 +3345,17 @@
   },
   {
     "package": "formal/control",
-    "commands": [
-      [
-        "formal/control/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/control"
-      ]
-    ],
+    "commands": [["formal/control/generate.py", "--solc", "{solc}", "--output", "formal/control"]],
     "outputs": {
       "formal/control/GuardSource.generated.dfy": "edfb1cfae2adc65ffb8301acb0d44578980d6a5100202ce34e2f44b7ec794af7",
       "formal/control/ProbeSource.generated.dfy": "a8c1cb6bd6fa817976e08d0ae7ba698aa371203612118730e2f7930f264afd3f"
     },
-    "requires": [
-      "formal/constraints",
-      "formal/resolution"
-    ]
+    "requires": ["formal/constraints", "formal/resolution"]
   },
   {
     "package": "formal/core/public-boundary",
-    "commands": [
-      [
-        "formal/core/public-boundary/generate.py",
-        "--solc",
-        "{solc}"
-      ]
-    ],
-    "outputs": {
-      "formal/core/public-boundary/Getters.generated.dfy": "ec9da27d656a0177ce47292b87c8f84d60e5e53af509678207432904d2a1187e"
-    },
+    "commands": [["formal/core/public-boundary/generate.py", "--solc", "{solc}"]],
+    "outputs": {"formal/core/public-boundary/Getters.generated.dfy": "ec9da27d656a0177ce47292b87c8f84d60e5e53af509678207432904d2a1187e"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4815,16 +3379,8 @@
   },
   {
     "package": "formal/core/serialization",
-    "commands": [
-      [
-        "formal/core/serialization/generate.py",
-        "--solc",
-        "{solc}"
-      ]
-    ],
-    "outputs": {
-      "formal/core/serialization/Signatures.generated.dfy": "68e04f9d7d44e215177079bd4f1de276de49b6eeb9d3ca61dd35c2f824efa4b0"
-    },
+    "commands": [["formal/core/serialization/generate.py", "--solc", "{solc}"]],
+    "outputs": {"formal/core/serialization/Signatures.generated.dfy": "68e04f9d7d44e215177079bd4f1de276de49b6eeb9d3ca61dd35c2f824efa4b0"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4849,41 +3405,14 @@
   },
   {
     "package": "formal/expressions/admission",
-    "commands": [
-      [
-        "formal/expressions/admission/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/expressions/admission"
-      ]
-    ],
-    "outputs": {
-      "formal/expressions/admission/Source.generated.dfy": "e24734bd64098348cfa89f46a96c966c332f9d8ec965d35787ca44d6a72d304f"
-    },
-    "requires": [
-      "formal/abi/aggregate",
-      "formal/abi/descriptor",
-      "formal/abi/parser",
-      "formal/abi/shape",
-      "formal/abi/source",
-      "formal/abi/words"
-    ]
+    "commands": [["formal/expressions/admission/generate.py", "--solc", "{solc}", "--output", "formal/expressions/admission"]],
+    "outputs": {"formal/expressions/admission/Source.generated.dfy": "e24734bd64098348cfa89f46a96c966c332f9d8ec965d35787ca44d6a72d304f"},
+    "requires": ["formal/abi/aggregate", "formal/abi/descriptor", "formal/abi/parser", "formal/abi/shape", "formal/abi/source", "formal/abi/words"]
   },
   {
     "package": "formal/expressions/cache",
-    "commands": [
-      [
-        "formal/expressions/cache/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/expressions/cache"
-      ]
-    ],
-    "outputs": {
-      "formal/expressions/cache/Source.generated.dfy": "0fd30c7ab040030e8fc654f8b31009fa2c5135f2d822aa2b2f5ff7d7bb40a2fa"
-    },
+    "commands": [["formal/expressions/cache/generate.py", "--solc", "{solc}", "--output", "formal/expressions/cache"]],
+    "outputs": {"formal/expressions/cache/Source.generated.dfy": "0fd30c7ab040030e8fc654f8b31009fa2c5135f2d822aa2b2f5ff7d7bb40a2fa"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4900,36 +3429,14 @@
   },
   {
     "package": "formal/expressions/scalars",
-    "commands": [
-      [
-        "formal/expressions/scalars/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/expressions/scalars"
-      ]
-    ],
-    "outputs": {
-      "formal/expressions/scalars/Source.generated.dfy": "962e1f567c3ec8ef7c443d387e92e87c2ec03c0701198e3527468f3548b9364a"
-    },
-    "requires": [
-      "formal/abi/source"
-    ]
+    "commands": [["formal/expressions/scalars/generate.py", "--solc", "{solc}", "--output", "formal/expressions/scalars"]],
+    "outputs": {"formal/expressions/scalars/Source.generated.dfy": "962e1f567c3ec8ef7c443d387e92e87c2ec03c0701198e3527468f3548b9364a"},
+    "requires": ["formal/abi/source"]
   },
   {
     "package": "formal/expressions/calls",
-    "commands": [
-      [
-        "formal/expressions/calls/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/expressions/calls"
-      ]
-    ],
-    "outputs": {
-      "formal/expressions/calls/Source.generated.dfy": "e56647aa09fb30abe17fe9ed145f6cdea4882845f5dfef56ddd3d947e5d51f31"
-    },
+    "commands": [["formal/expressions/calls/generate.py", "--solc", "{solc}", "--output", "formal/expressions/calls"]],
+    "outputs": {"formal/expressions/calls/Source.generated.dfy": "e56647aa09fb30abe17fe9ed145f6cdea4882845f5dfef56ddd3d947e5d51f31"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4946,18 +3453,8 @@
   },
   {
     "package": "formal/expressions/encoded",
-    "commands": [
-      [
-        "formal/expressions/encoded/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/expressions/encoded"
-      ]
-    ],
-    "outputs": {
-      "formal/expressions/encoded/Source.generated.dfy": "51c96ba41031005d3466b486184acf7298d5ee98246c4a9b43de6e11cd654a92"
-    },
+    "commands": [["formal/expressions/encoded/generate.py", "--solc", "{solc}", "--output", "formal/expressions/encoded"]],
+    "outputs": {"formal/expressions/encoded/Source.generated.dfy": "51c96ba41031005d3466b486184acf7298d5ee98246c4a9b43de6e11cd654a92"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -4975,34 +3472,14 @@
   },
   {
     "package": "formal/expressions/recursive",
-    "commands": [
-      [
-        "formal/expressions/recursive/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/expressions/recursive"
-      ]
-    ],
-    "outputs": {
-      "formal/expressions/recursive/Source.generated.dfy": "bdd06d709b0322877fa2b770177834d40f03d67390e88b2723d8b959349d51ec"
-    },
+    "commands": [["formal/expressions/recursive/generate.py", "--solc", "{solc}", "--output", "formal/expressions/recursive"]],
+    "outputs": {"formal/expressions/recursive/Source.generated.dfy": "bdd06d709b0322877fa2b770177834d40f03d67390e88b2723d8b959349d51ec"},
     "requires": []
   },
   {
     "package": "formal/expressions/resolve",
-    "commands": [
-      [
-        "formal/expressions/resolve/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/expressions/resolve"
-      ]
-    ],
-    "outputs": {
-      "formal/expressions/resolve/Source.generated.dfy": "4b42f00b3fc43daf0a312008aa07a3e87bf4c2a14181989fa603a3ef71de4dca"
-    },
+    "commands": [["formal/expressions/resolve/generate.py", "--solc", "{solc}", "--output", "formal/expressions/resolve"]],
+    "outputs": {"formal/expressions/resolve/Source.generated.dfy": "4b42f00b3fc43daf0a312008aa07a3e87bf4c2a14181989fa603a3ef71de4dca"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -5023,18 +3500,8 @@
   },
   {
     "package": "formal/expressions/guarded",
-    "commands": [
-      [
-        "formal/expressions/guarded/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/expressions/guarded"
-      ]
-    ],
-    "outputs": {
-      "formal/expressions/guarded/Source.generated.dfy": "53b04476cf05af9dc65b9e7dce8b2bfe0ac4f63921d846ca65b6254bfb138a59"
-    },
+    "commands": [["formal/expressions/guarded/generate.py", "--solc", "{solc}", "--output", "formal/expressions/guarded"]],
+    "outputs": {"formal/expressions/guarded/Source.generated.dfy": "53b04476cf05af9dc65b9e7dce8b2bfe0ac4f63921d846ca65b6254bfb138a59"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -5062,16 +3529,8 @@
   },
   {
     "package": "formal/expressions/frames",
-    "commands": [
-      [
-        "formal/expressions/frames/generate.py",
-        "--output",
-        "formal/expressions/frames"
-      ]
-    ],
-    "outputs": {
-      "formal/expressions/frames/Source.generated.dfy": "66357fe12add45f3de391d37dfddb9e74b327ad6e66406d5ea04dce48120ae7f"
-    },
+    "commands": [["formal/expressions/frames/generate.py", "--output", "formal/expressions/frames"]],
+    "outputs": {"formal/expressions/frames/Source.generated.dfy": "66357fe12add45f3de391d37dfddb9e74b327ad6e66406d5ea04dce48120ae7f"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -5100,16 +3559,8 @@
   },
   {
     "package": "formal/expressions/validation",
-    "commands": [
-      [
-        "formal/expressions/validation/generate.py",
-        "--output",
-        "formal/expressions/validation"
-      ]
-    ],
-    "outputs": {
-      "formal/expressions/validation/Body.generated.dfy": "d30b2bba3a6dd6b5d90ee8551f332c8bd269e55bf832df9ba817f0da6064e837"
-    },
+    "commands": [["formal/expressions/validation/generate.py", "--output", "formal/expressions/validation"]],
+    "outputs": {"formal/expressions/validation/Body.generated.dfy": "d30b2bba3a6dd6b5d90ee8551f332c8bd269e55bf832df9ba817f0da6064e837"},
     "requires": [
       "formal/abi/aggregate",
       "formal/abi/connection",
@@ -5139,13 +3590,7 @@
   },
   {
     "package": "formal/expressions/rejections",
-    "commands": [
-      [
-        "formal/expressions/rejections/generate.py",
-        "--output",
-        "formal/expressions/rejections"
-      ]
-    ],
+    "commands": [["formal/expressions/rejections/generate.py", "--output", "formal/expressions/rejections"]],
     "outputs": {
       "formal/expressions/rejections/Cold.generated.dfy": "81e4fad65d11f3fd52911582fede245984e6921056c248d124e4262707ccb3e2",
       "formal/expressions/rejections/Completion.generated.dfy": "1f0803702ad33283f03b3f4c84fedfc757df088e80e003a341799210b4c8d27c"
@@ -5181,29 +3626,13 @@
   },
   {
     "package": "formal/expressions/returns",
-    "commands": [
-      [
-        "formal/expressions/returns/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/expressions/returns"
-      ]
-    ],
-    "outputs": {
-      "formal/expressions/returns/Source.generated.dfy": "fc51694ff18f23b92de64e2142f304523a7471526bb38aeabf3c431aa1ac6471"
-    },
+    "commands": [["formal/expressions/returns/generate.py", "--solc", "{solc}", "--output", "formal/expressions/returns"]],
+    "outputs": {"formal/expressions/returns/Source.generated.dfy": "fc51694ff18f23b92de64e2142f304523a7471526bb38aeabf3c431aa1ac6471"},
     "requires": []
   },
   {
     "package": "formal/expressions/public",
-    "commands": [
-      [
-        "formal/expressions/public/generate.py",
-        "--output",
-        "formal/expressions/public"
-      ]
-    ],
+    "commands": [["formal/expressions/public/generate.py", "--output", "formal/expressions/public"]],
     "outputs": {
       "formal/expressions/public/Entry.generated.dfy": "27184acbb739a637661500841371aaa56062809d5dc576b2f9b9e10989e92272",
       "formal/expressions/public/Guarded.generated.dfy": "912cb708186df4ae2d763c2a2eb4fbb8fc4d6816eaf594b5716ce65fe7e7d817"
@@ -5241,15 +3670,7 @@
   },
   {
     "package": "formal/operations/ascii",
-    "commands": [
-      [
-        "formal/operations/ascii/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/ascii"
-      ]
-    ],
+    "commands": [["formal/operations/ascii/generate.py", "--solc", "{solc}", "--output", "formal/operations/ascii"]],
     "outputs": {
       "formal/operations/ascii/Control.generated.dfy": "97f3fc1dabfe4274c6968673c23deed3aebe83658b65bc9463cc5ed03dbad51b",
       "formal/operations/ascii/mapping.json": "f69dc9616d0f0a8980bd5a21079e1df8da48001f529c3235bd2eb2242158c18e"
@@ -5258,15 +3679,7 @@
   },
   {
     "package": "formal/operations/binary-log",
-    "commands": [
-      [
-        "formal/operations/binary-log/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/binary-log"
-      ]
-    ],
+    "commands": [["formal/operations/binary-log/generate.py", "--solc", "{solc}", "--output", "formal/operations/binary-log"]],
     "outputs": {
       "formal/operations/binary-log/Control.generated.dfy": "0df721883a8efe7a1f26a18f6c207d12519d8497b063187200fb42c1cbde9eed",
       "formal/operations/binary-log/mapping.json": "1ea4d1260a0e0b934b28b3635f64e9defb9b80ac7dea9eb963b8c6349e9154a3"
@@ -5275,15 +3688,7 @@
   },
   {
     "package": "formal/operations/byte-bounds",
-    "commands": [
-      [
-        "formal/operations/byte-bounds/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/byte-bounds"
-      ]
-    ],
+    "commands": [["formal/operations/byte-bounds/generate.py", "--solc", "{solc}", "--output", "formal/operations/byte-bounds"]],
     "outputs": {
       "formal/operations/byte-bounds/Control.generated.dfy": "3605e281e802d58c74ba34a56ff6698e87c828c952503411f0c3f17ed2103743",
       "formal/operations/byte-bounds/mapping.json": "cf571411cbcfca92062b0c6a0ede8ff2b20589b793353419257f9ff6d3d00061"
@@ -5292,15 +3697,7 @@
   },
   {
     "package": "formal/operations/concat",
-    "commands": [
-      [
-        "formal/operations/concat/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/concat"
-      ]
-    ],
+    "commands": [["formal/operations/concat/generate.py", "--solc", "{solc}", "--output", "formal/operations/concat"]],
     "outputs": {
       "formal/operations/concat/Control.generated.dfy": "dc860f0f6c7be46c2aed43b61d50005e529ed8217c898c9d3ccc22c0797138ab",
       "formal/operations/concat/mapping.json": "b910afdadcc2aab9a9df3110946b949e47caa27dba3d7dd3163499934a0cdcc2"
@@ -5309,15 +3706,7 @@
   },
   {
     "package": "formal/operations/word-match",
-    "commands": [
-      [
-        "formal/operations/word-match/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/word-match"
-      ]
-    ],
+    "commands": [["formal/operations/word-match/generate.py", "--solc", "{solc}", "--output", "formal/operations/word-match"]],
     "outputs": {
       "formal/operations/word-match/Control.generated.dfy": "4aafac9e3851fcbcceb80166a5e54b806f9c2146e3fa6ee742941f88311e672a",
       "formal/operations/word-match/mapping.json": "cdd4427597d828d1c14a2d2ff2f4ebb4ae1fba2b35da5b1147c3f6bbcb4f769f"
@@ -5326,76 +3715,35 @@
   },
   {
     "package": "formal/operations/occurrence-index",
-    "commands": [
-      [
-        "formal/operations/occurrence-index/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/occurrence-index"
-      ]
-    ],
+    "commands": [["formal/operations/occurrence-index/generate.py", "--solc", "{solc}", "--output", "formal/operations/occurrence-index"]],
     "outputs": {
       "formal/operations/occurrence-index/Control.generated.dfy": "778195e4a4437fb158d860f135121369020bd52cbfbdc11976c73d0c96992b1f",
       "formal/operations/occurrence-index/mapping.json": "e9aba01fb078e756e81e131ebe86f6c91a2fb24bb82af9e42dafe8828f83f342"
     },
-    "requires": [
-      "formal/operations/word-match"
-    ]
+    "requires": ["formal/operations/word-match"]
   },
   {
     "package": "formal/operations/byte-replace",
-    "commands": [
-      [
-        "formal/operations/byte-replace/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/byte-replace"
-      ]
-    ],
+    "commands": [["formal/operations/byte-replace/generate.py", "--solc", "{solc}", "--output", "formal/operations/byte-replace"]],
     "outputs": {
       "formal/operations/byte-replace/Control.generated.dfy": "f93a4dac967ea8472f126fda8d9f351148456faadb5059845fb226e701058085",
       "formal/operations/byte-replace/Matcher.generated.dfy": "1aa588c1f3288a74a1dd867199969b1dee86f9f4c968c3f5348d74ddcda6e103",
       "formal/operations/byte-replace/mapping.json": "6331492f4d2e7b585429c58430a78facc3cdd25c7dd8ccaac353d78216a4db9f"
     },
-    "requires": [
-      "formal/operations/concat",
-      "formal/operations/occurrence-index",
-      "formal/operations/word-match"
-    ]
+    "requires": ["formal/operations/concat", "formal/operations/occurrence-index", "formal/operations/word-match"]
   },
   {
     "package": "formal/operations/byte-split",
-    "commands": [
-      [
-        "formal/operations/byte-split/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/byte-split"
-      ]
-    ],
+    "commands": [["formal/operations/byte-split/generate.py", "--solc", "{solc}", "--output", "formal/operations/byte-split"]],
     "outputs": {
       "formal/operations/byte-split/Control.generated.dfy": "8d4a361f49c74c38552664dfe9b307f9cb9ff9fe2e17db5a4ba8b5d415984b87",
       "formal/operations/byte-split/mapping.json": "3d05f786d74616b3d91369afb72a3deb6b4a4f35d2757936a9fca4a57c461761"
     },
-    "requires": [
-      "formal/operations/occurrence-index",
-      "formal/operations/word-match"
-    ]
+    "requires": ["formal/operations/occurrence-index", "formal/operations/word-match"]
   },
   {
     "package": "formal/operations/checked-power",
-    "commands": [
-      [
-        "formal/operations/checked-power/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/checked-power"
-      ]
-    ],
+    "commands": [["formal/operations/checked-power/generate.py", "--solc", "{solc}", "--output", "formal/operations/checked-power"]],
     "outputs": {
       "formal/operations/checked-power/Control.generated.dfy": "cd560605ff4778e8fa37b3e07af99bc99ed0eeb36860a6a9f327be024628d5cc",
       "formal/operations/checked-power/mapping.json": "3df4831ea7a84cd78232450d3874c788a6233ccfc648db9315126efe60e63e42"
@@ -5404,15 +3752,7 @@
   },
   {
     "package": "formal/operations/modular",
-    "commands": [
-      [
-        "formal/operations/modular/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/modular"
-      ]
-    ],
+    "commands": [["formal/operations/modular/generate.py", "--solc", "{solc}", "--output", "formal/operations/modular"]],
     "outputs": {
       "formal/operations/modular/Control.generated.dfy": "41bb652f155af021be0805bf0f8d2b0c8c645cdf866f0c69062f16be966d8647",
       "formal/operations/modular/Math.generated.dfy": "cfc82f034d73947fe424c9aedcc99a15b8aeb2a3ae866fe58fe0d46f86c10b8d",
@@ -5422,73 +3762,34 @@
   },
   {
     "package": "formal/operations/decimal-digits",
-    "commands": [
-      [
-        "formal/operations/decimal-digits/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/decimal-digits"
-      ]
-    ],
+    "commands": [["formal/operations/decimal-digits/generate.py", "--solc", "{solc}", "--output", "formal/operations/decimal-digits"]],
     "outputs": {
       "formal/operations/decimal-digits/Control.generated.dfy": "345b36f09c5e96e0c0250bfaa3bf1dad65c759d54be44433853e0eb1833d9e4b",
       "formal/operations/decimal-digits/mapping.json": "64f6a003c016e327118f70493a1fbde38d42abad8e7a6b14cf376c27fa5ac306"
     },
-    "requires": [
-      "formal/operations/modular"
-    ]
+    "requires": ["formal/operations/modular"]
   },
   {
     "package": "formal/operations/decimal-render",
-    "commands": [
-      [
-        "formal/operations/decimal-render/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/decimal-render"
-      ]
-    ],
+    "commands": [["formal/operations/decimal-render/generate.py", "--solc", "{solc}", "--output", "formal/operations/decimal-render"]],
     "outputs": {
       "formal/operations/decimal-render/Control.generated.dfy": "ae8756850bb41d815a5ad01fac79d14a649131604b12beb93d525a777e4d7229",
       "formal/operations/decimal-render/mapping.json": "bbadff0b3c91ea9b6e864a85eb88883600202e8b7c108381265d64cea578fcd4"
     },
-    "requires": [
-      "formal/operations/modular"
-    ]
+    "requires": ["formal/operations/modular"]
   },
   {
     "package": "formal/operations/decimal-units",
-    "commands": [
-      [
-        "formal/operations/decimal-units/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/decimal-units"
-      ]
-    ],
+    "commands": [["formal/operations/decimal-units/generate.py", "--solc", "{solc}", "--output", "formal/operations/decimal-units"]],
     "outputs": {
       "formal/operations/decimal-units/Control.generated.dfy": "92e221c5efd07079e768bac7604cba099f48a754c20c37727c4f7e7294ac6519",
       "formal/operations/decimal-units/mapping.json": "cd0cfb12bd1f6962f93b169cab2a7887cfcc7faf1a8a347ad48f76d4981d17dd"
     },
-    "requires": [
-      "formal/operations/decimal-render",
-      "formal/operations/modular"
-    ]
+    "requires": ["formal/operations/decimal-render", "formal/operations/modular"]
   },
   {
     "package": "formal/operations/environment",
-    "commands": [
-      [
-        "formal/operations/environment/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/environment"
-      ]
-    ],
+    "commands": [["formal/operations/environment/generate.py", "--solc", "{solc}", "--output", "formal/operations/environment"]],
     "outputs": {
       "formal/operations/environment/Control.generated.dfy": "26637100091a1da9c195474a0c1c05a25d91001f5b65bb93c0e7b2117259ca2a",
       "formal/operations/environment/mapping.json": "b8ea83682079c31c19bfb14e7f963cafbe9a8eb3fa07ca62c96b541f5ec48dea"
@@ -5497,80 +3798,37 @@
   },
   {
     "package": "formal/operations/full-mul-div",
-    "commands": [
-      [
-        "formal/operations/full-mul-div/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/full-mul-div"
-      ]
-    ],
+    "commands": [["formal/operations/full-mul-div/generate.py", "--solc", "{solc}", "--output", "formal/operations/full-mul-div"]],
     "outputs": {
       "formal/operations/full-mul-div/Control.generated.dfy": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29",
       "formal/operations/full-mul-div/Helpers.generated.dfy": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a",
       "formal/operations/full-mul-div/mapping.json": "381ea3b503d577f526d869f5dfdb5ceaf5c4ee01980142228cadc67405bb2a2f"
     },
-    "requires": [
-      "formal/operations/binary-log"
-    ]
+    "requires": ["formal/operations/binary-log"]
   },
   {
     "package": "formal/operations/fixed-point",
-    "commands": [
-      [
-        "formal/operations/fixed-point/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/fixed-point"
-      ]
-    ],
+    "commands": [["formal/operations/fixed-point/generate.py", "--solc", "{solc}", "--output", "formal/operations/fixed-point"]],
     "outputs": {
       "formal/operations/fixed-point/Control.generated.dfy": "41ebb08d6ebe9a2fc93eaf67237207317e3064ebad61759f61f7943a356e3461",
       "formal/operations/fixed-point/mapping.json": "12da2c65bb82df5b6bcfaaddf69b1dbd327315be103fdce8b222e16f24f22148"
     },
-    "requires": [
-      "formal/operations/binary-log",
-      "formal/operations/full-mul-div"
-    ]
+    "requires": ["formal/operations/binary-log", "formal/operations/full-mul-div"]
   },
   {
     "package": "formal/operations/integer-root",
-    "commands": [
-      [
-        "formal/operations/integer-root/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/integer-root"
-      ]
-    ],
+    "commands": [["formal/operations/integer-root/generate.py", "--solc", "{solc}", "--output", "formal/operations/integer-root"]],
     "outputs": {
       "formal/operations/integer-root/Control.generated.dfy": "5c29f0691ea5e7dd00e2405c58d8c49677113a568df81fa43d8c7efb01076726",
       "formal/operations/integer-root/mapping.json": "4f81f42fee5b9fd8d33a20b383c1fbc234fa03e4c2ef8396f2dccb8ec78e3729"
     },
-    "requires": [
-      "formal/operations/binary-log"
-    ]
+    "requires": ["formal/operations/binary-log"]
   },
   {
     "package": "formal/operations/modular-power",
     "commands": [
-      [
-        "formal/operations/modular-power/generate-inverse.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/modular-power"
-      ],
-      [
-        "formal/operations/modular-power/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/modular-power"
-      ]
+      ["formal/operations/modular-power/generate-inverse.py", "--solc", "{solc}", "--output", "formal/operations/modular-power"],
+      ["formal/operations/modular-power/generate.py", "--solc", "{solc}", "--output", "formal/operations/modular-power"]
     ],
     "outputs": {
       "formal/operations/modular-power/Control.generated.dfy": "e20aa627fd9235267ec150eaeb9dd45c9cd3d4ae8b66461153fa369d66007389",
@@ -5578,42 +3836,20 @@
       "formal/operations/modular-power/inverse-mapping.json": "5066064c35f81dec5a374e40e37ced389890a19bec334862bad5bffe695f1853",
       "formal/operations/modular-power/mapping.json": "912db327ba1b8580b6e9cf27bbfd2f90a562eb5fa986a3420a2373ffdde4d9ef"
     },
-    "requires": [
-      "formal/operations/binary-log",
-      "formal/operations/full-mul-div"
-    ]
+    "requires": ["formal/operations/binary-log", "formal/operations/full-mul-div"]
   },
   {
     "package": "formal/operations/parse-units",
-    "commands": [
-      [
-        "formal/operations/parse-units/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/parse-units"
-      ]
-    ],
+    "commands": [["formal/operations/parse-units/generate.py", "--solc", "{solc}", "--output", "formal/operations/parse-units"]],
     "outputs": {
       "formal/operations/parse-units/Control.generated.dfy": "03416aabe0b391fa8326dea7d271295790797c7dccabd123bf69df3b65777b4d",
       "formal/operations/parse-units/mapping.json": "2bd47a804c70216dd2f850eadae83086916380a9986bfb1b50b5bdf13260ec2e"
     },
-    "requires": [
-      "formal/operations/decimal-render",
-      "formal/operations/modular"
-    ]
+    "requires": ["formal/operations/decimal-render", "formal/operations/modular"]
   },
   {
     "package": "formal/operations/raw-call",
-    "commands": [
-      [
-        "formal/operations/raw-call/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/raw-call"
-      ]
-    ],
+    "commands": [["formal/operations/raw-call/generate.py", "--solc", "{solc}", "--output", "formal/operations/raw-call"]],
     "outputs": {
       "formal/operations/raw-call/Control.generated.dfy": "ad3336bd516a329a47585d1e22e721e9d2959df9aa859787ab5e8b51a738f82e",
       "formal/operations/raw-call/mapping.json": "16ce2aaa21b26e352cb8eec37bb40f4da9a0c3a027c51fd135989dc4ae46b518"
@@ -5622,15 +3858,7 @@
   },
   {
     "package": "formal/operations/scalars",
-    "commands": [
-      [
-        "formal/operations/scalars/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/scalars"
-      ]
-    ],
+    "commands": [["formal/operations/scalars/generate.py", "--solc", "{solc}", "--output", "formal/operations/scalars"]],
     "outputs": {
       "formal/operations/scalars/Control.generated.dfy": "8bdcbe45b1d42fd5f12f2d924b9464b2d111c185031fb3006294e28278e8dc97",
       "formal/operations/scalars/mapping.json": "b7190e985c4e448fa1d5b3564fa76e1f3fb96f7ade3efc14a02d217c4d54ec43"
@@ -5639,35 +3867,16 @@
   },
   {
     "package": "formal/operations/scaled-power",
-    "commands": [
-      [
-        "formal/operations/scaled-power/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/scaled-power"
-      ]
-    ],
+    "commands": [["formal/operations/scaled-power/generate.py", "--solc", "{solc}", "--output", "formal/operations/scaled-power"]],
     "outputs": {
       "formal/operations/scaled-power/Control.generated.dfy": "63f03e1890454ef45bebe45fce9d30839ce1a93df7b4e6f52c867c86eb199ed6",
       "formal/operations/scaled-power/mapping.json": "648b536ee0935acaeae20c6100319b44159f3dd3216aa44f81559099efae0840"
     },
-    "requires": [
-      "formal/operations/binary-log",
-      "formal/operations/full-mul-div"
-    ]
+    "requires": ["formal/operations/binary-log", "formal/operations/full-mul-div"]
   },
   {
     "package": "formal/operations/tuple-encode",
-    "commands": [
-      [
-        "formal/operations/tuple-encode/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/tuple-encode"
-      ]
-    ],
+    "commands": [["formal/operations/tuple-encode/generate.py", "--solc", "{solc}", "--output", "formal/operations/tuple-encode"]],
     "outputs": {
       "formal/operations/tuple-encode/Control.generated.dfy": "2a7073d179250ae19771776fa33cedccae2543abf114a58851854c655f278c53",
       "formal/operations/tuple-encode/mapping.json": "4bc7b3f86d02458810282f0b2170e8b76d6eb35d679dd091d417833247912124"
@@ -5688,21 +3897,11 @@
   },
   {
     "package": "formal/operations/utf8",
-    "commands": [
-      [
-        "formal/operations/utf8/generate.py",
-        "--solc",
-        "{solc}",
-        "--output",
-        "formal/operations/utf8"
-      ]
-    ],
+    "commands": [["formal/operations/utf8/generate.py", "--solc", "{solc}", "--output", "formal/operations/utf8"]],
     "outputs": {
       "formal/operations/utf8/Control.generated.dfy": "480a38261993f69bc28479ee27e3d2e248bb2b03929ed7a848b7215a1e08a663",
       "formal/operations/utf8/mapping.json": "31acd343dcdcf561b5af4e402115bc204d91f331bbe602a4c77bcf3f683718a8"
     },
-    "requires": [
-      "formal/operations/byte-bounds"
-    ]
+    "requires": ["formal/operations/byte-bounds"]
   }
 ]

@@ -1,12 +1,4 @@
 [
-  {
-    "signature": "stringSlice(bytes,int256,int256)",
-    "selector": "c926204b",
-    "symbol": "stringSlice"
-  },
-  {
-    "signature": "stringAt(bytes,int256)",
-    "selector": "a1bc2139",
-    "symbol": "stringAt"
-  }
+  {"signature": "stringSlice(bytes,int256,int256)", "selector": "c926204b", "symbol": "stringSlice"},
+  {"signature": "stringAt(bytes,int256)", "selector": "a1bc2139", "symbol": "stringAt"}
 ]

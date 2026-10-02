@@ -1,12 +1,4 @@
 [
-  {
-    "signature": "toString(uint256)",
-    "selector": "6900a3ae",
-    "symbol": "toString"
-  },
-  {
-    "signature": "toString(int256)",
-    "selector": "a322c40e",
-    "symbol": "toString"
-  }
+  {"signature": "toString(uint256)", "selector": "6900a3ae", "symbol": "toString"},
+  {"signature": "toString(int256)", "selector": "a322c40e", "symbol": "toString"}
 ]

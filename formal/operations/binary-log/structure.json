@@ -4,25 +4,12 @@
       "nodeType": "Block",
       "statements": [
         {
-          "condition": {
-            "translated-slot": "ZERO"
-          },
+          "condition": {"translated-slot": "ZERO"},
           "nodeType": "IfStatement",
           "trueBody": {
             "errorCall": {
-              "arguments": [
-                {
-                  "hexValue": "30",
-                  "kind": "number",
-                  "nodeType": "Literal",
-                  "value": "0"
-                }
-              ],
-              "expression": {
-                "name": "LogarithmUndefined",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
+              "arguments": [{"hexValue": "30", "kind": "number", "nodeType": "Literal", "value": "0"}],
+              "expression": {"name": "LogarithmUndefined", "nodeType": "Identifier", "overloadedDeclarations": []},
               "kind": "functionCall",
               "names": [],
               "nodeType": "FunctionCall",
@@ -33,19 +20,9 @@
         },
         {
           "expression": {
-            "arguments": [
-              {
-                "name": "x",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              }
-            ],
+            "arguments": [{"name": "x", "nodeType": "Identifier", "overloadedDeclarations": []}],
             "expression": {
-              "expression": {
-                "name": "Math",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              },
+              "expression": {"name": "Math", "nodeType": "Identifier", "overloadedDeclarations": []},
               "memberName": "log2",
               "nodeType": "MemberAccess"
             },
@@ -74,10 +51,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -92,10 +66,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -110,116 +81,65 @@
       "statements": [
         {
           "expression": {
-            "leftHandSide": {
-              "name": "r",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "leftHandSide": {"name": "r", "nodeType": "Identifier", "overloadedDeclarations": []},
             "nodeType": "Assignment",
             "operator": "=",
-            "rightHandSide": {
-              "translated-slot": "FLAG_0"
-            }
+            "rightHandSide": {"translated-slot": "FLAG_0"}
           },
           "nodeType": "ExpressionStatement"
         },
         {
           "expression": {
-            "leftHandSide": {
-              "name": "r",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "leftHandSide": {"name": "r", "nodeType": "Identifier", "overloadedDeclarations": []},
             "nodeType": "Assignment",
             "operator": "|=",
-            "rightHandSide": {
-              "translated-slot": "FLAG_1"
-            }
+            "rightHandSide": {"translated-slot": "FLAG_1"}
           },
           "nodeType": "ExpressionStatement"
         },
         {
           "expression": {
-            "leftHandSide": {
-              "name": "r",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "leftHandSide": {"name": "r", "nodeType": "Identifier", "overloadedDeclarations": []},
             "nodeType": "Assignment",
             "operator": "|=",
-            "rightHandSide": {
-              "translated-slot": "FLAG_2"
-            }
+            "rightHandSide": {"translated-slot": "FLAG_2"}
           },
           "nodeType": "ExpressionStatement"
         },
         {
           "expression": {
-            "leftHandSide": {
-              "name": "r",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "leftHandSide": {"name": "r", "nodeType": "Identifier", "overloadedDeclarations": []},
             "nodeType": "Assignment",
             "operator": "|=",
-            "rightHandSide": {
-              "translated-slot": "FLAG_3"
-            }
+            "rightHandSide": {"translated-slot": "FLAG_3"}
           },
           "nodeType": "ExpressionStatement"
         },
         {
           "expression": {
-            "leftHandSide": {
-              "name": "r",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "leftHandSide": {"name": "r", "nodeType": "Identifier", "overloadedDeclarations": []},
             "nodeType": "Assignment",
             "operator": "|=",
-            "rightHandSide": {
-              "translated-slot": "FLAG_4"
-            }
+            "rightHandSide": {"translated-slot": "FLAG_4"}
           },
           "nodeType": "ExpressionStatement"
         },
         {
           "expression": {
-            "leftHandSide": {
-              "name": "r",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": []
-            },
+            "leftHandSide": {"name": "r", "nodeType": "Identifier", "overloadedDeclarations": []},
             "nodeType": "Assignment",
             "operator": "|=",
-            "rightHandSide": {
-              "translated-slot": "FLAG_5"
-            }
+            "rightHandSide": {"translated-slot": "FLAG_5"}
           },
           "nodeType": "ExpressionStatement"
         },
         {
           "AST": {
             "nodeType": "YulBlock",
-            "statements": [
-              {
-                "nodeType": "YulAssignment",
-                "value": {
-                  "translated-slot": "RETURN"
-                },
-                "variableNames": [
-                  {
-                    "name": "r",
-                    "nodeType": "YulIdentifier"
-                  }
-                ]
-              }
-            ]
+            "statements": [{"nodeType": "YulAssignment", "value": {"translated-slot": "RETURN"}, "variableNames": [{"name": "r", "nodeType": "YulIdentifier"}]}]
           },
           "evmVersion": "cancun",
-          "flags": [
-            "memory-safe"
-          ],
+          "flags": ["memory-safe"],
           "nodeType": "InlineAssembly"
         }
       ]
@@ -239,10 +159,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -257,10 +174,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -276,25 +190,10 @@
         {
           "AST": {
             "nodeType": "YulBlock",
-            "statements": [
-              {
-                "nodeType": "YulAssignment",
-                "value": {
-                  "translated-slot": "CAST"
-                },
-                "variableNames": [
-                  {
-                    "name": "u",
-                    "nodeType": "YulIdentifier"
-                  }
-                ]
-              }
-            ]
+            "statements": [{"nodeType": "YulAssignment", "value": {"translated-slot": "CAST"}, "variableNames": [{"name": "u", "nodeType": "YulIdentifier"}]}]
           },
           "evmVersion": "cancun",
-          "flags": [
-            "memory-safe"
-          ],
+          "flags": ["memory-safe"],
           "nodeType": "InlineAssembly"
         }
       ]
@@ -314,10 +213,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -332,10 +228,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]

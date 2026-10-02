@@ -4,59 +4,27 @@
       "nodeType": "Block",
       "statements": [
         {
-          "condition": {
-            "translated-slot": "EMPTY"
-          },
+          "condition": {"translated-slot": "EMPTY"},
           "nodeType": "IfStatement",
-          "trueBody": {
-            "expression": {
-              "hexValue": "74727565",
-              "kind": "bool",
-              "nodeType": "Literal",
-              "value": "true"
-            },
-            "nodeType": "Return"
-          }
+          "trueBody": {"expression": {"hexValue": "74727565", "kind": "bool", "nodeType": "Literal", "value": "true"}, "nodeType": "Return"}
         },
         {
-          "condition": {
-            "translated-slot": "TOO_LONG"
-          },
+          "condition": {"translated-slot": "TOO_LONG"},
           "nodeType": "IfStatement",
-          "trueBody": {
-            "expression": {
-              "hexValue": "66616c7365",
-              "kind": "bool",
-              "nodeType": "Literal",
-              "value": "false"
-            },
-            "nodeType": "Return"
-          }
+          "trueBody": {"expression": {"hexValue": "66616c7365", "kind": "bool", "nodeType": "Literal", "value": "false"}, "nodeType": "Return"}
         },
         {
           "body": {
             "nodeType": "Block",
             "statements": [
               {
-                "condition": {
-                  "translated-slot": "FOUND"
-                },
+                "condition": {"translated-slot": "FOUND"},
                 "nodeType": "IfStatement",
-                "trueBody": {
-                  "expression": {
-                    "hexValue": "74727565",
-                    "kind": "bool",
-                    "nodeType": "Literal",
-                    "value": "true"
-                  },
-                  "nodeType": "Return"
-                }
+                "trueBody": {"expression": {"hexValue": "74727565", "kind": "bool", "nodeType": "Literal", "value": "true"}, "nodeType": "Return"}
               }
             ]
           },
-          "condition": {
-            "translated-slot": "CONTAINS_LOOP"
-          },
+          "condition": {"translated-slot": "CONTAINS_LOOP"},
           "initializationExpression": {
             "declarations": [
               {
@@ -66,10 +34,7 @@
                 "nodeType": "VariableDeclaration",
                 "stateVariable": false,
                 "storageLocation": "default",
-                "typeName": {
-                  "name": "uint256",
-                  "nodeType": "ElementaryTypeName"
-                },
+                "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
                 "visibility": "internal"
               }
             ],
@@ -80,25 +45,13 @@
               "nodeType": "UnaryOperation",
               "operator": "++",
               "prefix": false,
-              "subExpression": {
-                "name": "i",
-                "nodeType": "Identifier",
-                "overloadedDeclarations": []
-              }
+              "subExpression": {"name": "i", "nodeType": "Identifier", "overloadedDeclarations": []}
             },
             "nodeType": "ExpressionStatement"
           },
           "nodeType": "ForStatement"
         },
-        {
-          "expression": {
-            "hexValue": "66616c7365",
-            "kind": "bool",
-            "nodeType": "Literal",
-            "value": "false"
-          },
-          "nodeType": "Return"
-        }
+        {"expression": {"hexValue": "66616c7365", "kind": "bool", "nodeType": "Literal", "value": "false"}, "nodeType": "Return"}
       ]
     },
     "functionSelector": "9a32ab77",
@@ -117,10 +70,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "calldata",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -130,10 +80,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "calldata",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -148,10 +95,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -170,46 +114,15 @@
             "statements": [
               {
                 "nodeType": "YulAssignment",
-                "value": {
-                  "kind": "number",
-                  "nodeType": "YulLiteral",
-                  "type": "",
-                  "value": "1"
-                },
-                "variableNames": [
-                  {
-                    "name": "equal",
-                    "nodeType": "YulIdentifier"
-                  }
-                ]
+                "value": {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "1"},
+                "variableNames": [{"name": "equal", "nodeType": "YulIdentifier"}]
               },
               {
                 "nodeType": "YulVariableDeclaration",
-                "value": {
-                  "name": "needle.length",
-                  "nodeType": "YulIdentifier"
-                },
-                "variables": [
-                  {
-                    "name": "n",
-                    "nodeType": "YulTypedName",
-                    "type": ""
-                  }
-                ]
+                "value": {"name": "needle.length", "nodeType": "YulIdentifier"},
+                "variables": [{"name": "n", "nodeType": "YulTypedName", "type": ""}]
               },
-              {
-                "nodeType": "YulVariableDeclaration",
-                "value": {
-                  "translated-slot": "A"
-                },
-                "variables": [
-                  {
-                    "name": "a",
-                    "nodeType": "YulTypedName",
-                    "type": ""
-                  }
-                ]
-              },
+              {"nodeType": "YulVariableDeclaration", "value": {"translated-slot": "A"}, "variables": [{"name": "a", "nodeType": "YulTypedName", "type": ""}]},
               {
                 "body": {
                   "nodeType": "YulBlock",
@@ -217,59 +130,25 @@
                     {
                       "nodeType": "YulVariableDeclaration",
                       "value": {
-                        "arguments": [
-                          {
-                            "translated-slot": "X_ADDRESS"
-                          }
-                        ],
-                        "functionName": {
-                          "name": "calldataload",
-                          "nodeType": "YulIdentifier"
-                        },
+                        "arguments": [{"translated-slot": "X_ADDRESS"}],
+                        "functionName": {"name": "calldataload", "nodeType": "YulIdentifier"},
                         "nodeType": "YulFunctionCall"
                       },
-                      "variables": [
-                        {
-                          "name": "x",
-                          "nodeType": "YulTypedName",
-                          "type": ""
-                        }
-                      ]
+                      "variables": [{"name": "x", "nodeType": "YulTypedName", "type": ""}]
                     },
                     {
                       "nodeType": "YulVariableDeclaration",
                       "value": {
-                        "arguments": [
-                          {
-                            "translated-slot": "Y_ADDRESS"
-                          }
-                        ],
-                        "functionName": {
-                          "name": "calldataload",
-                          "nodeType": "YulIdentifier"
-                        },
+                        "arguments": [{"translated-slot": "Y_ADDRESS"}],
+                        "functionName": {"name": "calldataload", "nodeType": "YulIdentifier"},
                         "nodeType": "YulFunctionCall"
                       },
-                      "variables": [
-                        {
-                          "name": "y",
-                          "nodeType": "YulTypedName",
-                          "type": ""
-                        }
-                      ]
+                      "variables": [{"name": "y", "nodeType": "YulTypedName", "type": ""}]
                     },
                     {
                       "nodeType": "YulVariableDeclaration",
-                      "value": {
-                        "translated-slot": "LEFT"
-                      },
-                      "variables": [
-                        {
-                          "name": "left",
-                          "nodeType": "YulTypedName",
-                          "type": ""
-                        }
-                      ]
+                      "value": {"translated-slot": "LEFT"},
+                      "variables": [{"name": "left", "nodeType": "YulTypedName", "type": ""}]
                     },
                     {
                       "body": {
@@ -277,46 +156,14 @@
                         "statements": [
                           {
                             "nodeType": "YulVariableDeclaration",
-                            "value": {
-                              "translated-slot": "DROP"
-                            },
-                            "variables": [
-                              {
-                                "name": "drop",
-                                "nodeType": "YulTypedName",
-                                "type": ""
-                              }
-                            ]
+                            "value": {"translated-slot": "DROP"},
+                            "variables": [{"name": "drop", "nodeType": "YulTypedName", "type": ""}]
                           },
-                          {
-                            "nodeType": "YulAssignment",
-                            "value": {
-                              "translated-slot": "SHIFT_X"
-                            },
-                            "variableNames": [
-                              {
-                                "name": "x",
-                                "nodeType": "YulIdentifier"
-                              }
-                            ]
-                          },
-                          {
-                            "nodeType": "YulAssignment",
-                            "value": {
-                              "translated-slot": "SHIFT_Y"
-                            },
-                            "variableNames": [
-                              {
-                                "name": "y",
-                                "nodeType": "YulIdentifier"
-                              }
-                            ]
-                          }
+                          {"nodeType": "YulAssignment", "value": {"translated-slot": "SHIFT_X"}, "variableNames": [{"name": "x", "nodeType": "YulIdentifier"}]},
+                          {"nodeType": "YulAssignment", "value": {"translated-slot": "SHIFT_Y"}, "variableNames": [{"name": "y", "nodeType": "YulIdentifier"}]}
                         ]
                       },
-                      "condition": {
-                        "translated-slot": "TAIL"
-                      },
+                      "condition": {"translated-slot": "TAIL"},
                       "nodeType": "YulIf"
                     },
                     {
@@ -325,50 +172,23 @@
                         "statements": [
                           {
                             "nodeType": "YulAssignment",
-                            "value": {
-                              "kind": "number",
-                              "nodeType": "YulLiteral",
-                              "type": "",
-                              "value": "0"
-                            },
-                            "variableNames": [
-                              {
-                                "name": "equal",
-                                "nodeType": "YulIdentifier"
-                              }
-                            ]
+                            "value": {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "0"},
+                            "variableNames": [{"name": "equal", "nodeType": "YulIdentifier"}]
                           },
-                          {
-                            "nodeType": "YulBreak"
-                          }
+                          {"nodeType": "YulBreak"}
                         ]
                       },
-                      "condition": {
-                        "translated-slot": "MISMATCH"
-                      },
+                      "condition": {"translated-slot": "MISMATCH"},
                       "nodeType": "YulIf"
                     }
                   ]
                 },
-                "condition": {
-                  "translated-slot": "MATCH_LOOP"
-                },
+                "condition": {"translated-slot": "MATCH_LOOP"},
                 "nodeType": "YulForLoop",
                 "post": {
                   "nodeType": "YulBlock",
                   "statements": [
-                    {
-                      "nodeType": "YulAssignment",
-                      "value": {
-                        "translated-slot": "MATCH_NEXT"
-                      },
-                      "variableNames": [
-                        {
-                          "name": "j",
-                          "nodeType": "YulIdentifier"
-                        }
-                      ]
-                    }
+                    {"nodeType": "YulAssignment", "value": {"translated-slot": "MATCH_NEXT"}, "variableNames": [{"name": "j", "nodeType": "YulIdentifier"}]}
                   ]
                 },
                 "pre": {
@@ -376,19 +196,8 @@
                   "statements": [
                     {
                       "nodeType": "YulVariableDeclaration",
-                      "value": {
-                        "kind": "number",
-                        "nodeType": "YulLiteral",
-                        "type": "",
-                        "value": "0"
-                      },
-                      "variables": [
-                        {
-                          "name": "j",
-                          "nodeType": "YulTypedName",
-                          "type": ""
-                        }
-                      ]
+                      "value": {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "0"},
+                      "variables": [{"name": "j", "nodeType": "YulTypedName", "type": ""}]
                     }
                   ]
                 }
@@ -396,9 +205,7 @@
             ]
           },
           "evmVersion": "cancun",
-          "flags": [
-            "memory-safe"
-          ],
+          "flags": ["memory-safe"],
           "nodeType": "InlineAssembly"
         }
       ]
@@ -418,10 +225,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "calldata",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -431,10 +235,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "calldata",
-          "typeName": {
-            "name": "bytes",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         },
         {
@@ -444,10 +245,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "uint256",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]
@@ -462,10 +260,7 @@
           "nodeType": "VariableDeclaration",
           "stateVariable": false,
           "storageLocation": "default",
-          "typeName": {
-            "name": "bool",
-            "nodeType": "ElementaryTypeName"
-          },
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
           "visibility": "internal"
         }
       ]

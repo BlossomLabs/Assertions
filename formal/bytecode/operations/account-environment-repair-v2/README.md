@@ -1,0 +1,5 @@
+# Operations balance and code hash exact-bytecode preparation
+
+Prepared raw canonical-address scalar read paths bind the current compiler instructions, decoded PUSH20 mask, faithful BALANCE/EXTCODEHASH observations and exact word serialization. World maps describe actual observations at this invocation; missing keys are modeled as zero only under the explicit faithful observation premise. This does not prove consensus, hash collision properties, or account existence rules. Raw nonpayable/short-head/dirty-address rejections and their connection are prepared and resolved. Native and retained public evidence remain open. Gas, deployment and performance stay outside scope.
+
+This isolated V2 package preserves the V1 retained failure. It adds the missing reverse-operand equality to the checked opaque `CleanDefinition`: the actual decoder AND uses `BitAnd(a,mask)` while the accessor defines `BitAnd(mask,a)`. The mask, address acceptance predicate, source/math observations, compiler runtime and complete raw paths remain unchanged. Its selected and full native campaigns have not yet run.

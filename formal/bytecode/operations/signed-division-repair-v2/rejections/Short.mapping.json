@@ -1,0 +1,255 @@
+{
+  "name": "Short",
+  "runtimeSha256": "5d69cebc087813f4fe85c1fd371ca4d826a582077a29d6318199bc19cb1b1ae8",
+  "runtimeBytes": 21346,
+  "selector": "43509138",
+  "specification": "0",
+  "maximumStackWords": 3,
+  "certificateByteCount": 26,
+  "requiredBytes": {
+    "0": 96,
+    "1": 128,
+    "2": 96,
+    "3": 64,
+    "4": 82,
+    "5": 52,
+    "6": 128,
+    "7": 21,
+    "8": 97,
+    "9": 0,
+    "10": 15,
+    "11": 87,
+    "15": 91,
+    "16": 80,
+    "17": 96,
+    "18": 4,
+    "19": 54,
+    "20": 16,
+    "21": 97,
+    "22": 4,
+    "23": 242,
+    "24": 87,
+    "1266": 91,
+    "1267": 95,
+    "1268": 95,
+    "1269": 253
+  },
+  "states": [
+    {
+      "id": 0,
+      "pc": 0,
+      "stack": [],
+      "memory": "[]",
+      "opcode": 96,
+      "next": 2,
+      "immediate": 128
+    },
+    {
+      "id": 1,
+      "pc": 2,
+      "stack": [
+        "128"
+      ],
+      "memory": "[]",
+      "opcode": 96,
+      "next": 4,
+      "immediate": 64
+    },
+    {
+      "id": 2,
+      "pc": 4,
+      "stack": [
+        "128",
+        "64"
+      ],
+      "memory": "[]",
+      "opcode": 82,
+      "next": 5,
+      "immediate": 0,
+      "store": [
+        64,
+        "128"
+      ]
+    },
+    {
+      "id": 3,
+      "pc": 5,
+      "stack": [],
+      "memory": "Store([],64,128)",
+      "opcode": 52,
+      "next": 6,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 6,
+      "stack": [
+        "value"
+      ],
+      "memory": "Store([],64,128)",
+      "opcode": 128,
+      "next": 7,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 7,
+      "stack": [
+        "value",
+        "value"
+      ],
+      "memory": "Store([],64,128)",
+      "opcode": 21,
+      "next": 8,
+      "immediate": 0
+    },
+    {
+      "id": 6,
+      "pc": 8,
+      "stack": [
+        "value",
+        "(if value == 0 then 1 else 0)"
+      ],
+      "memory": "Store([],64,128)",
+      "opcode": 97,
+      "next": 11,
+      "immediate": 15
+    },
+    {
+      "id": 7,
+      "pc": 11,
+      "stack": [
+        "value",
+        "(if value == 0 then 1 else 0)",
+        "15"
+      ],
+      "memory": "Store([],64,128)",
+      "opcode": 87,
+      "next": 12,
+      "immediate": 0,
+      "jump": 15
+    },
+    {
+      "id": 8,
+      "pc": 15,
+      "stack": [
+        "value"
+      ],
+      "memory": "Store([],64,128)",
+      "opcode": 91,
+      "next": 16,
+      "immediate": 0
+    },
+    {
+      "id": 9,
+      "pc": 16,
+      "stack": [
+        "value"
+      ],
+      "memory": "Store([],64,128)",
+      "opcode": 80,
+      "next": 17,
+      "immediate": 0
+    },
+    {
+      "id": 10,
+      "pc": 17,
+      "stack": [],
+      "memory": "Store([],64,128)",
+      "opcode": 96,
+      "next": 19,
+      "immediate": 4
+    },
+    {
+      "id": 11,
+      "pc": 19,
+      "stack": [
+        "4"
+      ],
+      "memory": "Store([],64,128)",
+      "opcode": 54,
+      "next": 20,
+      "immediate": 0
+    },
+    {
+      "id": 12,
+      "pc": 20,
+      "stack": [
+        "4",
+        "size"
+      ],
+      "memory": "Store([],64,128)",
+      "opcode": 16,
+      "next": 21,
+      "immediate": 0
+    },
+    {
+      "id": 13,
+      "pc": 21,
+      "stack": [
+        "(if (size) < (4) then 1 else 0)"
+      ],
+      "memory": "Store([],64,128)",
+      "opcode": 97,
+      "next": 24,
+      "immediate": 1266
+    },
+    {
+      "id": 14,
+      "pc": 24,
+      "stack": [
+        "(if (size) < (4) then 1 else 0)",
+        "1266"
+      ],
+      "memory": "Store([],64,128)",
+      "opcode": 87,
+      "next": 25,
+      "immediate": 0,
+      "jump": 1266
+    },
+    {
+      "id": 15,
+      "pc": 1266,
+      "stack": [],
+      "memory": "Store([],64,128)",
+      "opcode": 91,
+      "next": 1267,
+      "immediate": 0
+    },
+    {
+      "id": 16,
+      "pc": 1267,
+      "stack": [],
+      "memory": "Store([],64,128)",
+      "opcode": 95,
+      "next": 1268,
+      "immediate": 0
+    },
+    {
+      "id": 17,
+      "pc": 1268,
+      "stack": [
+        "0"
+      ],
+      "memory": "Store([],64,128)",
+      "opcode": 95,
+      "next": 1269,
+      "immediate": 0
+    },
+    {
+      "id": 18,
+      "pc": 1269,
+      "stack": [
+        "0",
+        "0"
+      ],
+      "memory": "Store([],64,128)",
+      "opcode": 253,
+      "next": 1270,
+      "immediate": 0,
+      "returned": true,
+      "outputWord": "0"
+    }
+  ],
+  "candidateRuntime": false
+}

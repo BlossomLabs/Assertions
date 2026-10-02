@@ -48,7 +48,7 @@
     "foundations": []
   },
   "closureSha256": {
-    "formal/source/operations/fixed-point-accuracy/Bridge.dfy": "eee615dc3ffc0a799cda34f243e1eba664eac6b5b697514aa6bba8f904ae62f8",
+    "formal/source/operations/fixed-point-accuracy/Bridge.dfy": "85f8ffa2fd6a13f46e13fec5c98734770b82bfb7e1a70cbe5f308ae9e05acb0f",
     "formal/source/operations/fixed-point/Bounds.dfy": "c54db686357986f04bf214301d0ece0c8c0b16baf5ee7f14c903f3b53a3efa31",
     "formal/source/operations/fixed-point/Model.dfy": "23aeced12c0d6f2625d4a4309607b7ba572e32d285ef06a1ceff204f87e0e24e",
     "formal/source/operations/full-mul-div/Connection.dfy": "33f4fcd752c28b6ab30c4b5f17b255f4f8aba776ec2f21b83853c0ac3a2b92a8",
@@ -63,10 +63,10 @@
     "formal/source/operations/binary-log/Control.generated.dfy": "0df721883a8efe7a1f26a18f6c207d12519d8497b063187200fb42c1cbde9eed",
     "formal/source/operations/binary-log/Model.dfy": "aaf63b8efc1db2c1f34b0f4c4489773029351e909e60473bbc1596d48f0d30d2",
     "formal/source/operations/full-mul-div/Helpers.generated.dfy": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a",
-    "formal/source/operations/fixed-point-accuracy/Series.dfy": "c015bb94cc74ade2be17fabcd6936cbbd198da72188132d0926737089d411f5c",
-    "formal/source/operations/fixed-point-accuracy/Intervals.dfy": "520ba920a9ba53cb79d68ae8525deeedb73f127b45c3e2c42c0ed122b1267119",
+    "formal/source/operations/fixed-point-accuracy/Series.dfy": "78c8402e20c312b711c593554b91cc6ef9ecfaf59b2883ca06779a6c4d534b83",
+    "formal/source/operations/fixed-point-accuracy/Intervals.dfy": "ad6154c9b18141db3410d16b7ed7f1672628ec8065afb7f1af7138a8c5bd2ab7",
     "formal/source/operations/fixed-point-accuracy/Spec.dfy": "ef5b20a00e4c3713a1bd11b49a58eae185dfa225f6d0b46de48cf88165160082",
-    "formal/source/operations/fixed-point-accuracy/Kernel.dfy": "6a586dce66acd5dad400fcb75b0792a8370ee145b127566782dfc458746c6837"
+    "formal/source/operations/fixed-point-accuracy/Kernel.dfy": "005749d8d963419600f7c5b78d84243876df15f95fd8440391fbcf15dd7e991b"
   },
   "missingInputs": [],
   "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."

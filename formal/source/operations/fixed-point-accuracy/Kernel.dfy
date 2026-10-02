@@ -48,8 +48,28 @@ module OperationsFixedPointAccuracyKernel {
       HornerSeedPerturbation(x as real,next as real,exact,coefficients[1..]);
       I.PowerMonotone(R.Abs(x as real)/(M.Q96 as real),kappa,|coefficients|-1);
       R.PowerNonnegative(kappa,|coefficients|-1);
-      R.Triangle((M.Horner(x,next,coefficients[1..]) as real)-Horner(x as real,next as real,coefficients[1..]),
-                 Horner(x as real,next as real,coefficients[1..])-Horner(x as real,exact,coefficients[1..]));
+      var tail := coefficients[1..];
+      var rate := R.Abs(x as real)/(M.Q96 as real);
+      R.PowerNonnegative(rate,|tail|);
+      var power := R.Power(rate,|tail|);
+      var error := R.Abs((next as real)-exact);
+      assert error < 1.0 && error >= 0.0;
+      assert power >= 0.0;
+      R.MultiplyOrder(error,1.0,power);
+      var recursive := R.Abs((M.Horner(x,next,tail) as real)-Horner(x as real,next as real,tail));
+      var perturbation := R.Abs(Horner(x as real,next as real,tail)-Horner(x as real,exact,tail));
+      assert recursive <= R.Geometric(kappa,|tail|);
+      assert perturbation == error*power;
+      assert perturbation <= R.Power(kappa,|tail|);
+      R.Triangle((M.Horner(x,next,tail) as real)-Horner(x as real,next as real,tail),
+                 Horner(x as real,next as real,tail)-Horner(x as real,exact,tail));
+      assert M.Horner(x,seed,coefficients) == M.Horner(x,next,tail);
+      assert Horner(x as real,seed as real,coefficients) == Horner(x as real,exact,tail);
+      var actual := R.Abs((M.Horner(x,seed,coefficients) as real)-Horner(x as real,seed as real,coefficients));
+      assert actual <= recursive+perturbation;
+      R.SumOrder(recursive,R.Geometric(kappa,|tail|),perturbation,R.Power(kappa,|tail|));
+      assert R.Geometric(kappa,|coefficients|) == R.Geometric(kappa,|tail|)+R.Power(kappa,|tail|);
+      assert actual <= R.Geometric(kappa,|coefficients|);
     }
   }
   lemma ProductPerturbation(a: real,b: real,a0: real,b0: real,da: real,db: real)
@@ -60,17 +80,54 @@ module OperationsFixedPointAccuracyKernel {
     assert a*b-a0*b0 == x*b0+y*a0+x*y;
     R.AbsProduct(x,b0); R.AbsProduct(y,a0); R.AbsProduct(x,y);
     R.Triangle(x*b0,y*a0); R.Triangle(x*b0+y*a0,x*y);
+    R.WeightedBound(R.Abs(x),da,R.Abs(b0),R.Abs(b0));
+    R.WeightedBound(R.Abs(y),db,R.Abs(a0),R.Abs(a0));
+    R.WeightedBound(R.Abs(x),da,R.Abs(y),db);
+    assert R.Abs(x*b0) <= da*R.Abs(b0);
+    assert R.Abs(y*a0) <= db*R.Abs(a0);
+    assert R.Abs(x*y) <= da*db;
+    assert R.Abs(a*b-a0*b0) <= R.Abs(x*b0)+R.Abs(y*a0)+R.Abs(x*y);
+    R.SumOrder(R.Abs(x*b0),da*R.Abs(b0),R.Abs(y*a0),db*R.Abs(a0));
+    R.SumOrder(R.Abs(x*b0)+R.Abs(y*a0),da*R.Abs(b0)+db*R.Abs(a0),R.Abs(x*y),da*db);
   }
   lemma QuotientPerturbation(p: real,q: real,p0: real,q0: real,dp: real,dq: real,pmax: real,qmin: real)
     requires q >= qmin > 0.0 && q0 >= qmin
     requires dp >= 0.0 && dq >= 0.0 && pmax >= 0.0
     requires R.Abs(p-p0) <= dp && R.Abs(q-q0) <= dq && R.Abs(p0) <= pmax
-    ensures R.Abs(p/q-p0/q0) <= dp/qmin+pmax*dq/(qmin*qmin)
+    ensures qmin*qmin > 0.0
+    ensures (R.PositiveSquare(qmin); R.Abs(p/q-p0/q0) <= dp/qmin+pmax*dq/(qmin*qmin))
   {
-    assert p/q-p0/q0 == (p-p0)/q+p0*(q0-q)/(q*q0);
-    R.Triangle((p-p0)/q,p0*(q0-q)/(q*q0));
-    R.AbsProduct(p0,q0-q);
+    R.PositiveSquare(qmin);
+    assert qmin*qmin > 0.0;
+    R.WeightedBound(qmin,q,qmin,q0);
     assert q*q0 >= qmin*qmin;
+    assert q*q0 > 0.0;
+    R.QuotientDifference(p,q,p0,q0);
+    R.Triangle((p-p0)/q,p0*(q0-q)/(q*q0));
+    R.AbsQuotient(p-p0,q);
+    R.AbsProduct(p0,q0-q);
+    R.AbsQuotient(p0*(q0-q),q*q0);
+    R.AbsNeg(q-q0);
+    assert R.Abs(q0-q) == R.Abs(q-q0);
+    var first := R.Abs((p-p0)/q);
+    var second := R.Abs(p0*(q0-q)/(q*q0));
+    R.DivideOrder(R.Abs(p-p0),dp,q);
+    R.DivideDenominator(dp,qmin,q);
+    assert first <= dp/qmin;
+    R.WeightedBound(R.Abs(p0),pmax,R.Abs(q0-q),dq);
+    R.DivideOrder(R.Abs(p0)*R.Abs(q0-q),pmax*dq,q*q0);
+    var minimum := qmin*qmin;
+    var denominator := q*q0;
+    assert 0.0 < minimum <= denominator;
+    var maximum := pmax*dq;
+    R.AbsProductBound(p0,q0-q,pmax,dq);
+    R.AbsQuotientBound(p0*(q0-q),denominator,maximum);
+    var bound := maximum/minimum;
+    assert second <= maximum/denominator;
+    R.DivideDenominator(maximum,minimum,denominator);
+    assert second <= bound;
+    assert R.Abs(p/q-p0/q0) <= first+second;
+    R.SumOrder(first,dp/qmin,second,bound);
   }
   ghost function ExpCoefficients(): seq<int> {
     [50020603652535783019961831881945,-533845033583426703283633433725380,

@@ -74,6 +74,10 @@ module OperationsFixedPointAccuracyIntervals {
   {
     if n > 0 {
       PowerMonotone(a,b,n-1); R.PowerNonnegative(a,n-1); R.PowerNonnegative(b,n-1);
+      R.MultiplyOrder(R.Power(a,n-1),R.Power(b,n-1),a);
+      R.MultiplyOrder(a,b,R.Power(b,n-1));
+      assert R.Power(a,n) == a*R.Power(a,n-1);
+      assert R.Power(b,n) == b*R.Power(b,n-1);
       assert b*R.Power(b,n-1)-a*R.Power(a,n-1) ==
              (b-a)*R.Power(b,n-1)+a*(R.Power(b,n-1)-R.Power(a,n-1));
     }
@@ -87,8 +91,32 @@ module OperationsFixedPointAccuracyIntervals {
   {
     R.LogArgumentRange(y);
     var z := R.LogArgument(y);
+    assert z == (y-1.0)/(y+1.0);
+    assert y+1.0 > 0.0;
+    assert 3.0*(y-1.0) <= y+1.0;
+    R.DivideOrder(y-1.0,(y+1.0)/3.0,y+1.0);
     assert 0.0 <= z <= 1.0/3.0;
+    R.MultiplyOrder(z,1.0/3.0,z);
+    R.MultiplyOrder(z,1.0/3.0,1.0/3.0);
     assert 1.0-z*z >= 8.0/9.0;
     R.PowerAbs(z,2*n+1); PowerMonotone(z,1.0/3.0,2*n+1);
+    R.PowerNonnegative(z,2*n+1);
+    R.PowerNonnegative(1.0/3.0,2*n+1);
+    assert R.Power(z,2*n+1) >= 0.0;
+    assert R.Abs(R.AtanhTerm(z,n)) == 2.0*R.Power(z,2*n+1)/((2*n+1) as real);
+    var term := R.Abs(R.AtanhTerm(z,n));
+    var maximum := 2.0*R.Power(1.0/3.0,2*n+1)/((2*n+1) as real);
+    R.MultiplyOrder(R.Power(z,2*n+1),R.Power(1.0/3.0,2*n+1),2.0);
+    R.DivideOrder(2.0*R.Power(z,2*n+1),2.0*R.Power(1.0/3.0,2*n+1),(2*n+1) as real);
+    assert 0.0 <= term <= maximum;
+    R.DivideOrder(term,maximum,1.0-z*z);
+    R.DivideDenominator(maximum,8.0/9.0,1.0-z*z);
+    assert maximum/(1.0-z*z) <= maximum/(8.0/9.0);
+    R.DivideProduct(2.0*R.Power(1.0/3.0,2*n+1),(2*n+1) as real,8.0/9.0);
+    R.DivideScale(R.Power(1.0/3.0,2*n+1),(2*n+1) as real,9.0/4.0);
+    assert maximum/(8.0/9.0) == (9.0/4.0)*R.Power(1.0/3.0,2*n+1)/((2*n+1) as real);
+    assert NormalizedRadius(n) == (9.0/4.0)*R.Power(1.0/3.0,2*n+1)/((2*n+1) as real);
+    assert R.AtanhRadius(z,n) == term/(1.0-z*z);
+    assert R.AtanhRadius(z,n) <= NormalizedRadius(n);
   }
 }

@@ -15,7 +15,7 @@ python3 formal/tools/readiness.py
 ```
 
 The checker needs Python, this library and the current public claim ledger. The 469 canonical files preserve
-3,474 original declaration identities and 21 additional helper declarations.
+3,474 original declaration identities and 45 additional helper declarations.
 Contract declaration indexes describe canonical interfaces; they are not public claims.
 The registry contains 132 proof packages and four generation intermediates.
 [Claim mapping rules](CLAIMS.md) describe the integration.
@@ -40,6 +40,10 @@ python3 formal/tools/campaign.py --output /tmp/fresh-library-campaign
 The runner snapshots complete source closures, producer scripts and descriptors,
 and binds source, tool and evidence hashes. Review checks the exact commands,
 all method/lemma batches, zero audits, full formatting and snapshot identity.
+The fixed-point accuracy proofs retain the original caller domains and mathematical
+error bounds. A proved postcondition hint supplies denominator well-formedness
+without adding a caller premise.
+
 Passing native gates does not establish production-source correspondence or
 exact-bytecode equivalence. No historical native acceptance is transferred to
 this branch.

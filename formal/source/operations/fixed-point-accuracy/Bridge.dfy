@@ -9,6 +9,22 @@ module OperationsFixedPointAccuracyBridge {
   const LnMultiplier: int := 1677202110996718588342820967067443963516166
   const LnExponentMultiplier: int := 16597577552685614221487285958193947469193820559219878177908093499208371
   const LnOffset: int := 600920179829731861736702779321621459595472258049074101567377883020018308
+  lemma QuotientBound(n: int,d: int)
+    requires n >= 0 && d > 0
+    ensures 0 <= n/d <= n
+  {
+    B.ProductMonotone(1,d as nat,(n/d) as nat);
+    assert n == (n/d)*d+n%d;
+    assert (n/d)*d <= n;
+  }
+  lemma QuotientZero(n: int,d: int)
+    requires 0 <= n < d
+    ensures n/d == 0
+  {
+    B.QuotientUpper(n as nat,d as nat,1);
+    var quotient := n/d;
+    assert 0 <= quotient < 1;
+  }
   lemma FloorError(a: int,d: int)
     requires d > 0
     ensures 0.0 <= (a as real)/(d as real)-((a/d) as real) < 1.0
@@ -16,27 +32,49 @@ module OperationsFixedPointAccuracyBridge {
     assert a == (a/d)*d+a%d;
     assert 0 <= a%d < d;
     assert (a as real) == ((a/d) as real)*(d as real)+(a%d) as real;
+    var quotient := (a/d) as real;
+    var remainder := (a%d) as real;
+    var divisor := d as real;
+    R.DivideSum(quotient*divisor,remainder,divisor);
+    R.CancelProduct(quotient,divisor);
+    R.DivideStrict(remainder,divisor,divisor);
+    var error := (a as real)/divisor-quotient;
+    assert error == remainder/divisor;
+    assert 0.0 <= error < 1.0;
   }
   lemma TruncError(a: int,d: int)
     requires d > 0
     ensures R.Abs((a as real)/(d as real)-(M.Trunc(a,d) as real)) < 1.0
   {
-    if a < 0 { FloorError(-a,d); }
-    else { FloorError(a,d); }
+    if a < 0 {
+      FloorError(-a,d);
+      assert M.Trunc(a,d) == -((-a)/d);
+      var error := ((-a) as real)/(d as real)-(((-a)/d) as real);
+      assert 0.0 <= error < 1.0;
+      assert (a as real)/(d as real)-(M.Trunc(a,d) as real) == -error;
+      R.AbsNeg(error);
+      assert R.Abs(error) == error;
+    } else {
+      FloorError(a,d);
+      assert M.Trunc(a,d) == a/d;
+      var error := (a as real)/(d as real)-((a/d) as real);
+      assert 0.0 <= error < 1.0;
+      assert R.Abs(error) == error;
+    }
   }
   lemma TruncSigned(a: int,d: int)
     requires M.Signed(a) && d > 0
     ensures M.Signed(M.Trunc(a,d))
     ensures M.S(M.Trunc(a,d)) == M.Trunc(a,d)
   {
-    A.TruncRemainder(a,d);
     if a < 0 {
+      QuotientBound(-a,d);
       var magnitude := (-a)/d;
       assert -a == magnitude*d+(-a)%d;
       assert 0 <= magnitude <= -a;
     } else {
-      assert a == (a/d)*d+a%d;
-      assert 0 <= a/d <= a;
+      QuotientBound(a,d);
+      assert M.Trunc(a,d) == a/d;
     }
     A.Identity(M.Trunc(a,d));
   }
@@ -57,7 +95,11 @@ module OperationsFixedPointAccuracyBridge {
     if n >= 256 {
       B.PowerAdd(256,n-256);
       assert B.Power(n) >= B.Word;
-      assert product/B.Power(n) == 0;
+      var divisor := B.Power(n);
+      QuotientZero(product,divisor);
+      var quotient := product/divisor;
+      assert quotient == 0;
+      assert product/B.Power(n) == quotient;
     }
   }
   // These are certificate conditions, not conclusions about all admitted inputs.
@@ -117,8 +159,25 @@ module OperationsFixedPointAccuracyBridge {
     var multiplier := (ExpMultiplier as real)/(B.Power((195-k) as nat) as real);
     assert multiplier > 0.0;
     R.AbsProduct(exact-rounded,multiplier);
-    R.Triangle(ExpFinishReal(exact,k)-ExpFinishReal(rounded,k),
-               ExpFinishReal(rounded,k)-(M.ExpFinish(M.S(M.Trunc(p,q)),k) as real));
+    var offset := 0.0;
+    var divisor := B.Power((195-k) as nat) as real;
+    R.AffineFractionDifference(exact,rounded,ExpMultiplier as real,offset,divisor);
+    var change := ExpFinishReal(exact,k)-ExpFinishReal(rounded,k);
+    var tail := ExpFinishReal(rounded,k)-(M.ExpFinish(M.S(M.Trunc(p,q)),k) as real);
+    var error := R.Abs(exact-rounded);
+    assert error < 1.0;
+    assert change == (exact-rounded)*multiplier;
+    R.AbsProduct(exact-rounded,multiplier);
+    assert R.Abs(change) == error*multiplier;
+    R.MultiplyStrict(error,1.0,multiplier);
+    assert R.Abs(change) < multiplier;
+    assert 0.0 <= tail < 1.0;
+    assert R.Abs(tail) == tail;
+    R.Triangle(change,tail);
+    var actual := ExpFinishReal(exact,k)-(M.ExpFinish(M.S(M.Trunc(p,q)),k) as real);
+    assert actual == change+tail;
+    assert R.Abs(actual) <= R.Abs(change)+tail;
+    assert R.Abs(actual) < multiplier+1.0;
   }
   lemma LnKernelRounding(p: int,q: int,k: int)
     requires M.Signed(p) && q > 0
@@ -132,24 +191,60 @@ module OperationsFixedPointAccuracyBridge {
     var multiplier := (LnMultiplier as real)/(B.Power(174) as real);
     assert multiplier > 0.0;
     R.AbsProduct(exact-rounded,multiplier);
-    R.Triangle(LnFinishReal(exact,k)-LnFinishReal(rounded,k),
-               LnFinishReal(rounded,k)-(M.LnFinish(M.S(M.Trunc(p,q)),k) as real));
+    var offset := (k as real)*(LnExponentMultiplier as real)+(LnOffset as real);
+    var divisor := B.Power(174) as real;
+    R.AffineFractionDifference(exact,rounded,LnMultiplier as real,offset,divisor);
+    var change := LnFinishReal(exact,k)-LnFinishReal(rounded,k);
+    var tail := LnFinishReal(rounded,k)-(M.LnFinish(M.S(M.Trunc(p,q)),k) as real);
+    var error := R.Abs(exact-rounded);
+    assert error < 1.0;
+    assert change == (exact-rounded)*multiplier;
+    R.AbsProduct(exact-rounded,multiplier);
+    assert R.Abs(change) == error*multiplier;
+    R.MultiplyStrict(error,1.0,multiplier);
+    assert R.Abs(change) < multiplier;
+    assert 0.0 <= tail < 1.0;
+    assert R.Abs(tail) == tail;
+    R.Triangle(change,tail);
+    var actual := LnFinishReal(exact,k)-(M.LnFinish(M.S(M.Trunc(p,q)),k) as real);
+    assert actual == change+tail;
+    assert R.Abs(actual) <= R.Abs(change)+tail;
+    assert R.Abs(actual) < multiplier+1.0;
   }
   lemma ErrorCompose(actual: real,kernel: real,ideal: real,rounding: real,analytic: real)
     requires R.Abs(actual-kernel) <= rounding && R.Abs(kernel-ideal) <= analytic
     ensures R.Abs(actual-ideal) <= rounding+analytic
   { R.Triangle(actual-kernel,kernel-ideal); }
+  lemma PowerIndexUpper(n: nat,bound: nat)
+    requires B.Power(n) < B.Power(bound)
+    ensures n < bound
+  {
+    if n >= bound {
+      B.PowerAdd(bound,n-bound);
+      B.ProductMonotone(1,B.Power(n-bound),B.Power(bound));
+      assert B.Power(n) >= B.Power(bound);
+    }
+  }
   lemma NormalizedMantissaError(entry: int,log: nat)
     requires 0 < entry && M.Signed(entry) && log == B.Log(entry as nat)
     ensures 0.0 <= (entry as real)/(B.Power(log) as real)-
             (M.LnNormalization(entry,log) as real)/(M.Q96 as real) < 1.0/(M.Q96 as real)
   {
     A.Powers(); B.KnownPowers(); B.Floor(entry as nat);
+    PowerIndexUpper(log,255);
     assert log < 255;
     var shift: nat := 255-log;
     B.PowerAdd(log,shift); B.PowerAdd(159,96);
+    B.PowerAdd(log+1,shift);
+    B.ProductMonotone(B.Power(log),entry as nat,B.Power(shift));
+    B.ProductMonotone((entry+1) as nat,B.Power(log+1),B.Power(shift));
     var moved := entry*B.Power(shift);
-    assert M.Half <= moved < B.Word;
+    assert B.Power(log)*B.Power(shift) == M.Half;
+    assert B.Power(log+1)*B.Power(shift) == B.Word;
+    assert M.Half <= moved;
+    assert (entry+1)*B.Power(shift) == moved+B.Power(shift);
+    assert moved+B.Power(shift) <= B.Word;
+    assert moved < B.Word;
     A.Identity(255-(log as int)); A.Residue(moved);
     var normalized := moved/B.Power(159);
     A.NormalizedRange(entry,log);
@@ -158,5 +253,15 @@ module OperationsFixedPointAccuracyBridge {
     FloorError(moved,B.Power(159));
     assert (entry as real)/(B.Power(log) as real) ==
            (moved as real)/((B.Power(159) as real)*(M.Q96 as real));
+    var divisor := B.Power(159) as real;
+    var scale := M.Q96 as real;
+    var error := (moved as real)/divisor-(normalized as real);
+    assert 0.0 <= error < 1.0;
+    R.DivideProduct(moved as real,divisor,scale);
+    R.DivideSum(error,normalized as real,scale);
+    R.DivideStrict(error,1.0,scale);
+    var actual := (entry as real)/(B.Power(log) as real)-(normalized as real)/scale;
+    assert actual == error/scale;
+    assert 0.0 <= actual < 1.0/scale;
   }
 }

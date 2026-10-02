@@ -14838,7 +14838,7 @@
       }
     },
     "formal/source/operations/fixed-point-accuracy/Kernel.dfy": {
-      "sha256": "6a586dce66acd5dad400fcb75b0792a8370ee145b127566782dfc458746c6837",
+      "sha256": "005749d8d963419600f7c5b78d84243876df15f95fd8440391fbcf15dd7e991b",
       "declarations": {
         "Horner": {
           "kind": "function",
@@ -14854,15 +14854,15 @@
         },
         "HornerQuantization": {
           "kind": "lemma",
-          "fullSha256": "5e89cef5764b633df6bd8b52114adf28d0119bdd54321837ead05db1e921ef09"
+          "fullSha256": "dc9f8db7cab3df19a84bae6793fd159d7f5d9373bb26f131b4624143b13cbf21"
         },
         "ProductPerturbation": {
           "kind": "lemma",
-          "fullSha256": "9808bb8e115156d798d0acb515dfaafbd92de5996e8e31f640901eb1b77cd749"
+          "fullSha256": "775a9ea6e66938c113401c26b77e6e0dceebe2e2bc2e86bd031c845f586c45f5"
         },
         "QuotientPerturbation": {
           "kind": "lemma",
-          "fullSha256": "9c7a08b69f2037f04d1d63addbcf8106a4ad578803abfdb6ee57a3e2e7f94bb3"
+          "fullSha256": "ab679c5d6d036fd1b8a60ac248447e971e945c85ce58ebe49fc34814afdf5fc2"
         },
         "ExpCoefficients": {
           "kind": "function",
@@ -14931,7 +14931,7 @@
       }
     },
     "formal/source/operations/fixed-point-accuracy/Bridge.dfy": {
-      "sha256": "eee615dc3ffc0a799cda34f243e1eba664eac6b5b697514aa6bba8f904ae62f8",
+      "sha256": "85f8ffa2fd6a13f46e13fec5c98734770b82bfb7e1a70cbe5f308ae9e05acb0f",
       "declarations": {
         "ExpMultiplier": {
           "kind": "const",
@@ -14949,17 +14949,25 @@
           "kind": "const",
           "fullSha256": "6f49bbba6b15d04507424aa86de4d36ae8968f34bded6c5317223acf548b52b8"
         },
+        "QuotientBound": {
+          "kind": "lemma",
+          "fullSha256": "f75ebd43b35ffc5e30a39d2f04484378da6e2afd77fe6b71448db3ff5bb609b1"
+        },
+        "QuotientZero": {
+          "kind": "lemma",
+          "fullSha256": "29fdb70bdf51866768a822048054a9af4ac4ea1b04dad1fc90fabdd162904d94"
+        },
         "FloorError": {
           "kind": "lemma",
-          "fullSha256": "f781e9c523cfd8acdf8614879e1e7be6a8f09f5000eb642355b1146b3e6e673f"
+          "fullSha256": "32bd5aa51e2d646efa13dc42cee01d6d0365d1ef03e8209a51a0c7995591de24"
         },
         "TruncError": {
           "kind": "lemma",
-          "fullSha256": "0337ad3e4ece4c4257f3b9aea4e69189d3e4d9b09311239bcd1bfc73f283bd0c"
+          "fullSha256": "9928fcc49f6bcc6a18009e87de3d40c3ded94538b0cd48007c1d39ef7f1fa991"
         },
         "TruncSigned": {
           "kind": "lemma",
-          "fullSha256": "36ba2a74752109b818e82feb4623e2f44ed91859ecfc6dcd4ec9850da993925b"
+          "fullSha256": "991584b64662403db2d06b126f2b1cfadf8256befead7af16463d1876b46932b"
         },
         "StepNoWrap": {
           "kind": "lemma",
@@ -14967,7 +14975,7 @@
         },
         "WordShiftAsFloor": {
           "kind": "lemma",
-          "fullSha256": "e03831dcecbcc84a7d9be5475610652ca4d3ad1c5db01b02d3148da66e4062c4"
+          "fullSha256": "85053e30a199f84bb96f9b8ec624f7dd7afa67d24ca50231b252f5d255447644"
         },
         "ExpFinishNoWrap": {
           "kind": "predicate",
@@ -14999,24 +15007,28 @@
         },
         "ExpKernelRounding": {
           "kind": "lemma",
-          "fullSha256": "f332b1c02c710d3eb725a63a3ac266938d4b76772576e16f19f5d086fa144b3e"
+          "fullSha256": "5963b66890fc632c2ad59ea61b7fda6d635c4dd33099be5c7e7b6ccc3a3efb1e"
         },
         "LnKernelRounding": {
           "kind": "lemma",
-          "fullSha256": "072ac7da77396bbf95db91455d7f859589ab621d60f78b256d51568e7ba70df0"
+          "fullSha256": "13bb8423b467d5a9ef615ea7fe601bcfc14b751113dff5e8ee60ba688df0eb72"
         },
         "ErrorCompose": {
           "kind": "lemma",
           "fullSha256": "e634404cff46b9759efe54f8c9a433b1f5756945956ebd316e642184a210352c"
         },
+        "PowerIndexUpper": {
+          "kind": "lemma",
+          "fullSha256": "359a3d3397264ee06590de4b422b88863901a7043b15cb10ab011a62670cab5a"
+        },
         "NormalizedMantissaError": {
           "kind": "lemma",
-          "fullSha256": "95cbeeace6e669b8f0e4f9e5a6f094c0d8b8047f61544c53ad7abc124057b003"
+          "fullSha256": "96dc6e7141b70217b2e686a00aade0aa1314205aaac5f66ce7b593d34f4e6806"
         }
       }
     },
     "formal/source/operations/fixed-point-accuracy/Series.dfy": {
-      "sha256": "c015bb94cc74ade2be17fabcd6936cbbd198da72188132d0926737089d411f5c",
+      "sha256": "78c8402e20c312b711c593554b91cc6ef9ecfaf59b2883ca06779a6c4d534b83",
       "declarations": {
         "Abs": {
           "kind": "function",
@@ -15102,9 +15114,93 @@
           "kind": "function",
           "fullSha256": "1ee714e26f9641a09745153da84ef04ee1d03d1fd0dff925e416eae9e8ff7952"
         },
+        "MultiplyOrder": {
+          "kind": "lemma",
+          "fullSha256": "4f5e4695352049e3b939fc8010b5a69ca1d59fdd4f46817ce17233e4fbd4625a"
+        },
+        "DivideOrder": {
+          "kind": "lemma",
+          "fullSha256": "8fb4bd77b420d3cee7f36a7ebe857a9c79632b2f7556aa75e88cd2884b59938f"
+        },
+        "DivideProduct": {
+          "kind": "lemma",
+          "fullSha256": "32f6eac62e8436f87e70db7583b8517203418bda5cf377f8eaa665e3fc980a5e"
+        },
+        "DivideScale": {
+          "kind": "lemma",
+          "fullSha256": "973a5ebb3573a36f4d2c358a8280e95af5ed0259d6d2fcdfaa11592aa6730202"
+        },
+        "AbsQuotient": {
+          "kind": "lemma",
+          "fullSha256": "de0e2690ad9a06b6c30a9bb92b573a81a8b0c2abdd6a5a5b02461bd4bc20a3ac"
+        },
+        "DivideIdentity": {
+          "kind": "lemma",
+          "fullSha256": "0ba9d97e281d1c095958315dc1d16a68822addeb03c580ec2759562940ea1761"
+        },
+        "DivideDenominator": {
+          "kind": "lemma",
+          "fullSha256": "eecf76db5151528a6f2de6f4f291be91189f0602964363890cb578274a1dbbc4"
+        },
+        "WeightedBound": {
+          "kind": "lemma",
+          "fullSha256": "ece8d54386294032d3e134c88c84bd5b5ef05cb401c309e6baa4b221b71b1baf"
+        },
+        "ProductDivide": {
+          "kind": "lemma",
+          "fullSha256": "875ab83a7044335c69da373db8223b955e366169aa894ddf92054f4159030ec1"
+        },
+        "SumOrder": {
+          "kind": "lemma",
+          "fullSha256": "d7d82e6cb2c50c52a64bb4fb260a49fed15575747facf64053f8b71320a6f96f"
+        },
+        "CancelEquality": {
+          "kind": "lemma",
+          "fullSha256": "61fcb5875e00eacf416bad47801faf8008d65028e06b0fcc311a0013e885e341"
+        },
+        "DivideSum": {
+          "kind": "lemma",
+          "fullSha256": "617b5ddbc8e14313cd9bd6eec153bb062d709fc1ea70e91ce8901ec60497df02"
+        },
+        "DivideStrict": {
+          "kind": "lemma",
+          "fullSha256": "ae190f92ca6fc4f5e7300b677114120047d1a991c5c18b8dc8ab28dde9fff716"
+        },
+        "MultiplyStrict": {
+          "kind": "lemma",
+          "fullSha256": "9b0c6985800713e99fd8474d891730f1338f5b216f29e3a6b9d12603e49326a2"
+        },
+        "AffineFractionDifference": {
+          "kind": "lemma",
+          "fullSha256": "e5809784b065c86ba133ad1b085f1789abc5b50bc918dd31bf5a08c5ef5098d9"
+        },
+        "QuotientDifference": {
+          "kind": "lemma",
+          "fullSha256": "38018b2f0848b44a91ddef7deae621f424634854cbde18f813ff18ba0ac95289"
+        },
+        "AbsNeg": {
+          "kind": "lemma",
+          "fullSha256": "36d0ca7d03696d7ec07d4bd4f546a4126d20e33657ef68cb978ec34b94ed4b71"
+        },
+        "CancelProduct": {
+          "kind": "lemma",
+          "fullSha256": "bf83df1d086027e48811cba2db675dbc917e41ace38717532287d69ee77b1abe"
+        },
+        "PositiveSquare": {
+          "kind": "lemma",
+          "fullSha256": "6d3239eaaf9bf2291cbdbd99f79fb431aaed4744da7330aa05e3f57dd773cac8"
+        },
         "AbsProduct": {
           "kind": "lemma",
           "fullSha256": "be1429930117e5346dce4fcb98c29172fb977acd43343d8206b4922b94a7135a"
+        },
+        "AbsProductBound": {
+          "kind": "lemma",
+          "fullSha256": "c252e003783753af1fbc6afac2710225a94ba23c0e8baac2c25375ab36cb0e0d"
+        },
+        "AbsQuotientBound": {
+          "kind": "lemma",
+          "fullSha256": "7a3ea579d91d2474d6d65a99e2c80a936805cb6bd7ac302ee2c0b5fa95618916"
         },
         "Triangle": {
           "kind": "lemma",
@@ -15124,11 +15220,11 @@
         },
         "GeometricBound": {
           "kind": "lemma",
-          "fullSha256": "13b0552f808fe21e0311f99ce856c9f704e508bb657f70c6b5bd080c0c5ce056"
+          "fullSha256": "0c8a7ca7555955919d33a5e9d3bb39b3261210eb5bf74541a7f56f0c77356d60"
         },
         "ExpTailTerm": {
           "kind": "lemma",
-          "fullSha256": "47725dc0159e3c6bbe7d46ddbbfd4c589f06c7f578fd0f4dff9facbd23e0d4fb"
+          "fullSha256": "e39d6299b7aef98a833c28eb717c288017ff890bdf061ed2c1731ebffba6a76b"
         },
         "ExpTailSegment": {
           "kind": "lemma",
@@ -15136,19 +15232,19 @@
         },
         "ExpFiniteTail": {
           "kind": "lemma",
-          "fullSha256": "9fa48162faf4222e6bf0f6abc6ff58d05f0618b95c23131133456c963b3513f4"
+          "fullSha256": "d383e14ed1ab0db6c5676e4a984aa626a0707040d5a59191c545d15fa49883f4"
         },
         "ExpLimitEnclosure": {
           "kind": "lemma",
-          "fullSha256": "b2a4742d48cc31c14cbedde927d4a57a650bdf213166a26e9d3337204ac99ad7"
+          "fullSha256": "db7fa9e418cb4ff7f492381ad0d554658ee3d0afe3bc8116f98c32c691efb8e1"
         },
         "AtanhTailTerm": {
           "kind": "lemma",
-          "fullSha256": "9fa8a67e54970cc97aee5c0062550bcc693610a194e463dcd64544bf08dc9ee4"
+          "fullSha256": "a01f617ddbd18706cd988597cd50d2499a2e4ad4021e56da939d8f413f91f736"
         },
         "AtanhTailSegment": {
           "kind": "lemma",
-          "fullSha256": "7010e345719869cace26b06c81cf3f7f1b43662f60815abddda97383e59b5f61"
+          "fullSha256": "54b675670002da4d9dcdd246d29267cfdf7055a0f47dda20b25e317ba2db74bf"
         },
         "AtanhFiniteTail": {
           "kind": "lemma",
@@ -15156,7 +15252,7 @@
         },
         "AtanhLimitEnclosure": {
           "kind": "lemma",
-          "fullSha256": "11fb354e86d9b852ca76465ffc86d2d94275e2ac1d78d79e1a824d6c104fa0e1"
+          "fullSha256": "a0790ac292962426132a341fc9ca5700a6791437e7368046172c004f3fc2dce8"
         },
         "LogArgumentRange": {
           "kind": "lemma",
@@ -15168,16 +15264,16 @@
         },
         "ExpLimitUnique": {
           "kind": "lemma",
-          "fullSha256": "6fa35901f69d59edcad4c447dae0a491ab54d8f3e53b39592b842a506c8789e0"
+          "fullSha256": "79121595afc3f3973d5e84a549fe071b148598f0a9acccefa31d19b544278f91"
         },
         "AtanhLimitUnique": {
           "kind": "lemma",
-          "fullSha256": "b6097acf9f80aad9995b5eb6680fc9e549e32a0fc0cde1aeaf0d7f3955a6da58"
+          "fullSha256": "a6df4d9917f8109d5cb85779e1181b3bc62e5fd0a73e275b277c05f6778e40de"
         }
       }
     },
     "formal/source/operations/fixed-point-accuracy/Intervals.dfy": {
-      "sha256": "520ba920a9ba53cb79d68ae8525deeedb73f127b45c3e2c42c0ed122b1267119",
+      "sha256": "ad6154c9b18141db3410d16b7ed7f1672628ec8065afb7f1af7138a8c5bd2ab7",
       "declarations": {
         "Interval": {
           "kind": "datatype",
@@ -15237,7 +15333,7 @@
         },
         "PowerMonotone": {
           "kind": "lemma",
-          "fullSha256": "2cea1ab77187d46d75790aab5c2720665f6297cfb7b307002ecf0f11c0fe052b"
+          "fullSha256": "ae7d615f627e5b2f06ce1093b2302d6b3fa77c51371acdf71c7f3346c09262f9"
         },
         "NormalizedRadius": {
           "kind": "function",
@@ -15245,7 +15341,7 @@
         },
         "NormalizedAtanhRadius": {
           "kind": "lemma",
-          "fullSha256": "c4ce7e9bff939ebcfe21d11578254512e7858751d9b9eeb58a7bb71b485c9495"
+          "fullSha256": "98296b30239f68cfccddc8a500570d552e664d69ffad53d89864dc11270c71cc"
         }
       }
     },

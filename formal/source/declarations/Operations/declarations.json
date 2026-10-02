@@ -3666,8 +3666,8 @@
       "contract": "Operations",
       "kind": "lemma",
       "symbol": "QuotientPerturbation",
-      "logicalInterface": "lemma QuotientPerturbation(p: real,q: real,p0: real,q0: real,dp: real,dq: real,pmax: real,qmin: real)\n    requires q >= qmin > 0.0 && q0 >= qmin\n    requires dp >= 0.0 && dq >= 0.0 && pmax >= 0.0\n    requires R.Abs(p-p0) <= dp && R.Abs(q-q0) <= dq && R.Abs(p0) <= pmax\n    ensures R.Abs(p/q-p0/q0) <= dp/qmin+pmax*dq/(qmin*qmin)",
-      "interfaceSha256": "9c862225e5fc2f2df71cc576f56d578b94d88fc8f4667a9e28e964bc553244bc",
+      "logicalInterface": "lemma QuotientPerturbation(p: real,q: real,p0: real,q0: real,dp: real,dq: real,pmax: real,qmin: real)\n    requires q >= qmin > 0.0 && q0 >= qmin\n    requires dp >= 0.0 && dq >= 0.0 && pmax >= 0.0\n    requires R.Abs(p-p0) <= dp && R.Abs(q-q0) <= dq && R.Abs(p0) <= pmax\n    ensures qmin*qmin > 0.0\n    ensures (R.PositiveSquare(qmin); R.Abs(p/q-p0/q0) <= dp/qmin+pmax*dq/(qmin*qmin))",
+      "interfaceSha256": "338e00bed43cff3fe28220d1c5e903ce67bc7a268fb5b11ee03c4292d2344c23",
       "canonicalFile": "formal/source/operations/fixed-point-accuracy/Kernel.dfy",
       "canonicalDeclarationId": "formal/source/operations/fixed-point-accuracy/Kernel.dfy::QuotientPerturbation",
       "selectionRole": "proof-interface"

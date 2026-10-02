@@ -1,0 +1,20 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/decimal-guards/End.generated.dfy",
+    "formal/bytecode/value-array/decimal-guards/Low.generated.dfy",
+    "formal/bytecode/value-array/decimal-guards/High.generated.dfy",
+    "formal/bytecode/value-array/decimal-guards/Large.generated.dfy",
+    "formal/bytecode/value-array/decimal-guards/DigitCall.generated.dfy",
+    "formal/bytecode/value-array/decimal-guards/ByteToMultiply.generated.dfy",
+    "formal/bytecode/value-array/decimal-guards/MultiplyToAdd.generated.dfy",
+    "formal/bytecode/value-array/decimal-guards/AddToIncrement.generated.dfy",
+    "formal/bytecode/value-array/decimal-guards/IncrementBack.generated.dfy"
+  ],
+  "selectedModuleCount": 9,
+  "scope": "Nine exact generic typeShape suffix decimal guards and frames around all four actual arithmetic routines. Exhaustive limit, low/high byte and oversized accumulator stopping branches, successful digit path and exact next q/k. Imported arithmetic bodies, arbitrary decimal loop, suffix close/error/tuple/full codec/public retention remain required. No public credit.",
+  "assumptions": [
+    "Pinned exact runtime, reviewed scan/copy/BYTE interpreter and toolchain remain trusted.",
+    "Arbitrary represented calldata/memory and fitting lower frame, generic descriptor bounds, exact actual byte and accumulator guards. All current imported bodies need complete final native closure."
+  ],
+  "formatExclusions": {}
+}

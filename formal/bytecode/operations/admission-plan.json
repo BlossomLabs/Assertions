@@ -1,0 +1,4024 @@
+{
+  "schemaVersion": 1,
+  "status": "generated-obligation-inventory-not-verified",
+  "sourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce",
+  "runtimeSha256": "5d69cebc087813f4fe85c1fd371ca4d826a582077a29d6318199bc19cb1b1ae8",
+  "runtimeBytes": 21346,
+  "abiArtifactSha256": "44b062db964d4ae05986cb44c32c7d8ba57c384b539c78d3f7092b35b0e27ecb",
+  "compilerOutputSha256": "14688bedd577b2ef3448d3a4b33f511a36d4feccb53e064c8149953cf0820c0a",
+  "entryCount": 92,
+  "staticInputEntries": 70,
+  "dynamicInputEntries": 22,
+  "entries": [
+    {
+      "signature": "absDiff(int256,int256)",
+      "selector": "1e4812c8",
+      "entryPc": 1486,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "0e1b4b6e9488bca9c0df457375245945ed5f677abd58e510c05f5bd7c76e7ea9",
+      "sourceFunctionId": 3888,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "absDiff(uint256,uint256)",
+      "selector": "a09ae0aa",
+      "entryPc": 2360,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "4b580dacabcef9a029977b5d342aeb446dc0f1fd5e430fdf063491574cb37f02",
+      "sourceFunctionId": 3853,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "add(int256,int256)",
+      "selector": "a5f3c23b",
+      "entryPc": 2455,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "6a032814c1a1f3818a828353cd8e7ac27a6e33e86a24db6bc81643f2913f34a6",
+      "sourceFunctionId": 3582,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "add(uint256,uint256)",
+      "selector": "771602f7",
+      "entryPc": 2108,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "0e81d8cf5af675c7e006a0c430d53c281ba014d47cf3a30bcfe4f38fb95ac025",
+      "sourceFunctionId": 3567,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "addMod(int256,int256,int256)",
+      "selector": "289b860c",
+      "entryPc": 1561,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-modular-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "m",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "5ad8d157c0827fcfe6231700695b97eefc33d341141f58ee94b8142d6d994f33",
+      "sourceFunctionId": 4144,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "addMod(uint256,uint256,uint256)",
+      "selector": "b12fe826",
+      "entryPc": 2592,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-modular-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "m",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "62860e0ed485732f7b483d75cd68274691ea1c7913befcf095d30c5bf2ef8b06",
+      "sourceFunctionId": 4045,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "balance(address)",
+      "selector": "e3d670d7",
+      "entryPc": 2850,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "account",
+          "abiType": "address",
+          "internalType": "address",
+          "headOffset": 4,
+          "kind": "address160",
+          "rawWordAdmission": "Upper 96 bits must be zero; exact dirty-word physical rejection remains to be proved."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "b623518c014cb2c5b43d65e7d4856c50db89074afd51b63f6d95f1f4a65f4122",
+      "sourceFunctionId": 5136,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "baseFee()",
+      "selector": "6ef25c3a",
+      "entryPc": 2066,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 4,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "3879f5e4ea9746181df0ff741611f0be6de9d833141c75bb3ee3fdfa3e30dd7d",
+      "sourceFunctionId": 5188,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "bitAnd(uint256,uint256)",
+      "selector": "7598b508",
+      "entryPc": 2072,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "c9708385b8c6b14f8d5b53b0de422e974bb2b19af80bbf4601b393d127f340b3",
+      "sourceFunctionId": 5029,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "bitOr(uint256,uint256)",
+      "selector": "b0229c96",
+      "entryPc": 2574,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "f2b22d99d390229825ae6a7406ef66ae2a95cb0d74120185299d37081df96598",
+      "sourceFunctionId": 5044,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "bitSet(uint256,uint256)",
+      "selector": "b280615c",
+      "entryPc": 2611,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "mask",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "index",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bool"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "54d5c07c07ed992b8711bf6c6a231af1a2745671b93d79b223782abf0eafeff4",
+      "sourceFunctionId": 5124,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "bitXor(uint256,uint256)",
+      "selector": "496e22b8",
+      "entryPc": 1833,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "d4f52fb06fb3b1aa69cc23c2b18e3fcd15979230a735e731aff30be9c91ef368",
+      "sourceFunctionId": 5059,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "blobBaseFee()",
+      "selector": "f8206140",
+      "entryPc": 2921,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 4,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "dfdbcc26ece8ab9e4d00f20cbbd82b4b442879935b469f7f20cd984c73f179c8",
+      "sourceFunctionId": 5228,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "blobHash(uint256)",
+      "selector": "0ba54e32",
+      "entryPc": 1375,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "index",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bytes32"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "4f31d4c72d2125f2e39a96008ac27986743d1d1fc2d09697c852108ac32a4914",
+      "sourceFunctionId": 5274,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "blockHash(uint256)",
+      "selector": "85df51fd",
+      "entryPc": 2203,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "n",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bytes32"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "24a4e7f998e0586c5c6cc5453ce1620e570ddd31156b4bf277b4d73e40eae74f",
+      "sourceFunctionId": 5241,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "blockNumber()",
+      "selector": "57e871e7",
+      "entryPc": 1870,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 4,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "935cdbfc56b757e258c05a04e8e180a57cad7b35069012adad7859b694cf6d3b",
+      "sourceFunctionId": 5168,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "byteAt(bytes,int256)",
+      "selector": "9ae8e8ea",
+      "entryPc": 2323,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-byte-bounds-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "data",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "index",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bytes"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "0126cbc13e86630793064a4243f12ed75e0ec1804b752b511058c532b030ce62",
+      "sourceFunctionId": 5572,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "byteLen(bytes)",
+      "selector": "248d6c38",
+      "entryPc": 1523,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-byte-bounds-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "data",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "8f1a78201324985e8446fc7dbdb6a61f3232a3c1c632b066dad265361ed2c2d9",
+      "sourceFunctionId": 5714,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "chainId()",
+      "selector": "9a8a0592",
+      "entryPc": 2317,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 4,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "4d6e934ffa1aa3cfc0b61c26602d0c52709479361e794ccccdbef875c172e944",
+      "sourceFunctionId": 5178,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "charset(bytes,uint256)",
+      "selector": "3e8c97e3",
+      "entryPc": 1738,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-ascii-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "s",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "mask",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bool"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "1f61c4f148b03b57260a2978e52ca8733258e8c8acf2dc0dec1863d08deeb521",
+      "sourceFunctionId": 6286,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "code(address)",
+      "selector": "5b90b752",
+      "entryPc": 1876,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "account",
+          "abiType": "address",
+          "internalType": "address",
+          "headOffset": 4,
+          "kind": "address160",
+          "rawWordAdmission": "Upper 96 bits must be zero; exact dirty-word physical rejection remains to be proved."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bytes"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "0aeb01811fb14c7622d9a5c13b4b997a9f526515a85e3b1f6112c9ee0b12ae26",
+      "sourceFunctionId": 5361,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "codeHash(address)",
+      "selector": "3dc44827",
+      "entryPc": 1711,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "account",
+          "abiType": "address",
+          "internalType": "address",
+          "headOffset": 4,
+          "kind": "address160",
+          "rawWordAdmission": "Upper 96 bits must be zero; exact dirty-word physical rejection remains to be proved."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bytes32"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "96617a27fd101b9ae673b1407f3b4d1170164cfcf1f30ead4a32182cc12d0b4c",
+      "sourceFunctionId": 5148,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "coinbase()",
+      "selector": "a6ae0aac",
+      "entryPc": 2474,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 4,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [],
+      "hasDynamicInput": false,
+      "outputs": [
+        "address"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "b65751a360fdb01994724c787e2e6111ce0d38cc26ef07303158c3c01489dcee",
+      "sourceFunctionId": 5208,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "concat(bytes[],bytes)",
+      "selector": "db38e786",
+      "entryPc": 2774,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-concat-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "parts",
+          "abiType": "bytes[]",
+          "internalType": "bytes[]",
+          "headOffset": 4,
+          "kind": "nested-dynamic-bytes-array",
+          "rawWordAdmission": "Raw relative offsets, array length, element offsets/lengths, windows and fitting allocation must all be checked from actual calldata."
+        },
+        {
+          "ordinal": 1,
+          "name": "delimiter",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 36,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bytes"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "9733f0bbbf728191b609778605cf226c5fb1b48dc88ae051951a71dd68582473",
+      "sourceFunctionId": 5464,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "contains(bytes,bytes)",
+      "selector": "9a32ab77",
+      "entryPc": 2298,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-word-match-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "s",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "needle",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 36,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bool"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "09dce40b80c692699dba4391f996a6a6f03e561257c0c3e81a02815af26df31f",
+      "sourceFunctionId": 5809,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "div(int256,int256)",
+      "selector": "43509138",
+      "entryPc": 1776,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "633119b10cb43bd87bcb18f1589be517e5913870e42dbc78b46b417988b6a21a",
+      "sourceFunctionId": 3672,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "div(uint256,uint256)",
+      "selector": "a391c15b",
+      "entryPc": 2417,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "dad38e1b7396a472a8487b6b9d61be7dc818686ef6b51c56e31d7ef49779810d",
+      "sourceFunctionId": 3657,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "encode(string,bytes[])",
+      "selector": "ffe9205d",
+      "entryPc": 2958,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-tuple-encode-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "types",
+          "abiType": "string",
+          "internalType": "string",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "values",
+          "abiType": "bytes[]",
+          "internalType": "bytes[]",
+          "headOffset": 36,
+          "kind": "nested-dynamic-bytes-array",
+          "rawWordAdmission": "Raw relative offsets, array length, element offsets/lengths, windows and fitting allocation must all be checked from actual calldata."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [],
+      "physicalOutputObligations": "Raw direct-return typed ABI envelope, per intentional source encode function.",
+      "sourceFunctionAstSha256": "d4500eeaa9d7e8ef825dade222db09df7a8d1f6fec15d583ae6128af5d5dff25",
+      "sourceFunctionId": 6668,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "encodeBytes(string,bytes[])",
+      "selector": "821f167b",
+      "entryPc": 2184,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-tuple-encode-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "types",
+          "abiType": "string",
+          "internalType": "string",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "values",
+          "abiType": "bytes[]",
+          "internalType": "bytes[]",
+          "headOffset": 36,
+          "kind": "nested-dynamic-bytes-array",
+          "rawWordAdmission": "Raw relative offsets, array length, element offsets/lengths, windows and fitting allocation must all be checked from actual calldata."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bytes"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "105fbfcc846562feb4d14b87a4120bfe0705ee0f89b698ca0ee8d61dbbb30c91",
+      "sourceFunctionId": 6689,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "eq(uint256,uint256)",
+      "selector": "32148d73",
+      "entryPc": 1655,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bool"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "7edbce88d789990f54367e9c9c20cfef5e1b202048b152507582f6a70ef5ba33",
+      "sourceFunctionId": 4879,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "exp(int256,uint256)",
+      "selector": "185af0ad",
+      "entryPc": 1411,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-checked-power-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "c306bacb0c1c068c6c5c655d75549564d4307bd19d2e2f12e02fb03f2b17ca55",
+      "sourceFunctionId": 3759,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "exp(uint256,uint256)",
+      "selector": "f5f565f8",
+      "entryPc": 2896,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-checked-power-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "20ff3290282c8248327c2fe31bd0e5b348fffe10c4d6ee0c90684ce57d9b7a0e",
+      "sourceFunctionId": 3717,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "expWad(int256)",
+      "selector": "40816fae",
+      "entryPc": 1757,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-fixed-point-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "x",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "9c8c3a700b639750b6c54d4b26adb3eb2cc0d4ff9c0b3cf947cad40105ccde48",
+      "sourceFunctionId": 4609,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "formatUnits(int256,uint256)",
+      "selector": "6470c9a3",
+      "entryPc": 1933,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-decimal-units-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "value",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "decimals",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "string"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "8117590dff5ce5839d85488b31a181d040dc0a3104af412029669a1b7e507895",
+      "sourceFunctionId": 6646,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "formatUnits(uint256,uint256)",
+      "selector": "aff33dd9",
+      "entryPc": 2555,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-decimal-units-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "value",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "decimals",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "string"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "e9e8d13ceee0bd5f617fa8eb6f5dcd2bb7f9893f41e7516dbcd50a27026f9375",
+      "sourceFunctionId": 6618,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "gasLimit()",
+      "selector": "f68016b7",
+      "entryPc": 2915,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 4,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "faf5db74ef21fb7f5d5b6836525515e9c7f3c83df2354d8c1c4c819de78bd83b",
+      "sourceFunctionId": 5218,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "gasPrice()",
+      "selector": "fe173b97",
+      "entryPc": 2933,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 4,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "c6b6d5ab23680690b34d31c99e7850abe78448e8a4c3f8d37c56898137efece0",
+      "sourceFunctionId": 5261,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "ge(int256,int256)",
+      "selector": "6552f187",
+      "entryPc": 1952,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bool"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "27685d0d23be409c990f45fc041a3bbd291cb636db3c348f6133bd0394dc8daa",
+      "sourceFunctionId": 5014,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "ge(uint256,uint256)",
+      "selector": "85e1f66c",
+      "entryPc": 2221,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bool"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "c0dadaface016420b726dc5474d0b7f79398e8f3e1cdca86126cc25dcc63ec2f",
+      "sourceFunctionId": 4999,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "gt(int256,int256)",
+      "selector": "ac08973d",
+      "entryPc": 2518,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bool"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "ea3172c5fef715a3614198de95878a9d721f0c46ad639ddd00649894e1af8c41",
+      "sourceFunctionId": 4954,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "gt(uint256,uint256)",
+      "selector": "21e5749b",
+      "entryPc": 1505,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bool"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "a4c643cb0c66ae9bee7df85e1b9976b68085eb09e6e8b72e873dac1b50e8c75e",
+      "sourceFunctionId": 4939,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "hash(bytes)",
+      "selector": "aa1e84de",
+      "entryPc": 2499,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-byte-bounds-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "data",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bytes32"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "e484d4bb6a374ae369f49c7b635c53cdf4c2debaf23d2bc3b4ff2baed31239fb",
+      "sourceFunctionId": 5727,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "hashPairSorted(bytes32,bytes32)",
+      "selector": "c203edb3",
+      "entryPc": 2698,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-byte-bounds-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "bytes32",
+          "internalType": "bytes32",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "bytes32",
+          "internalType": "bytes32",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bytes32"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "b911b3e3a6b5ed5bc5d1bf7772a8ba02416ffeb9e4a15e1a4b5eb861b466b992",
+      "sourceFunctionId": 5758,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "indexOf(bytes,bytes,int256)",
+      "selector": "31470145",
+      "entryPc": 1636,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-occurrence-index-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "s",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "needle",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 36,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 2,
+          "name": "occurrence",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "3cb92f9da0e55a5fcf85d80e324cd6d16b3f2ce4be3469009cd79cca2a2ccb2c",
+      "sourceFunctionId": 5960,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "le(int256,int256)",
+      "selector": "00136bb8",
+      "entryPc": 1270,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bool"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "bec68f1faaa6ea9ff427b455f2165022e9cfaa6ba48cc827d516c0623c39b13e",
+      "sourceFunctionId": 4984,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "le(uint256,uint256)",
+      "selector": "d3662cfd",
+      "entryPc": 2755,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bool"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "d411cec244320f556badef3c9e5e7a3538146fbe4af9a9edfa3d4bf48ba86e49",
+      "sourceFunctionId": 4969,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "lnWad(int256)",
+      "selector": "620ef2b4",
+      "entryPc": 1895,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-fixed-point-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "x",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "682738ef231fa7fb6c5a8f86a76f9be3c9a26bb1f5ea8e772a2120168eff9bdc",
+      "sourceFunctionId": 4842,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "log2(uint256)",
+      "selector": "5456bf13",
+      "entryPc": 1851,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-binary-log-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "x",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "667c63870143e90f25d2d077dcea7e17d124b52e564b41335e7422e5bfce8f99",
+      "sourceFunctionId": 4864,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "lt(int256,int256)",
+      "selector": "30880038",
+      "entryPc": 1618,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bool"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "2eded01f223df83a4b72b884b28fa11cbbfe74f2a2776c73bd5ec29f5f196f22",
+      "sourceFunctionId": 4924,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "lt(uint256,uint256)",
+      "selector": "118fc88c",
+      "entryPc": 1393,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bool"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "f605d3ac871167d86d280530b16b0ce3ea824b8964858123fb1011e4dbe7db25",
+      "sourceFunctionId": 4909,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "max(int256,int256)",
+      "selector": "81fe5786",
+      "entryPc": 2165,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "e9739d4a0f9e3780d70bebb41823c562557e5355722629735777ae8e5a38acc4",
+      "sourceFunctionId": 3831,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "max(uint256,uint256)",
+      "selector": "6d5433e6",
+      "entryPc": 2047,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "3ac0c63b0fb0ff9724e543ec43ba03498142256500fb83d3fef2b2ca9d5e10ca",
+      "sourceFunctionId": 3813,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "min(int256,int256)",
+      "selector": "29aa9cbe",
+      "entryPc": 1580,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "db46e2aeec0949dcda45226dd7d8226c97caff55b8032eb2f40f8c72c51c14ca",
+      "sourceFunctionId": 3795,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "min(uint256,uint256)",
+      "selector": "7ae2b5c7",
+      "entryPc": 2127,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "00fee963d9420c73ec6a6343fc95731e6f1e065b4c09b6b8876bc5f4e2dee615",
+      "sourceFunctionId": 3777,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "mod(int256,int256)",
+      "selector": "24e28928",
+      "entryPc": 1542,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "7a5a76c2a9255b64ce484b9699cd86f273b997f8263c033f8ebb79970627a900",
+      "sourceFunctionId": 3702,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "mod(uint256,uint256)",
+      "selector": "f43f523a",
+      "entryPc": 2877,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "362d506b67b996ac38b88ebf962b5996a29fc0cabc4b907401126e05cb68b39c",
+      "sourceFunctionId": 3687,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "mul(int256,int256)",
+      "selector": "bbe93d91",
+      "entryPc": 2660,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "4b53d24c8b7c8eee024c21444a19b0d364752ddfc881d2e022c9ce2e3410da61",
+      "sourceFunctionId": 3642,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "mul(uint256,uint256)",
+      "selector": "c8a4ac9c",
+      "entryPc": 2717,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "25d638f5a149a9c98ae8df56b62854a58a51c1edce8257f83b8e0880a93bc320",
+      "sourceFunctionId": 3627,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "mulDiv(int256,int256,int256,uint8)",
+      "selector": "693741c1",
+      "entryPc": 2028,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-full-mul-div-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 132,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "denominator",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 3,
+          "name": "rounding",
+          "abiType": "uint8",
+          "internalType": "enum Operations.Rounding",
+          "headOffset": 100,
+          "kind": "source-enum",
+          "members": [
+            "Trunc",
+            "Floor",
+            "Ceil"
+          ],
+          "minimum": 0,
+          "maximum": 2,
+          "rawWordAdmission": "Exact compiler clean-width and enum-domain admission/rejection, including physical error receipts, remains to be proved."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "4ae957a1e432828301c15c98e5e27c52040142a5506c111164bd49f90d86745f",
+      "sourceFunctionId": 4026,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "mulDiv(uint256,uint256,uint256,uint8)",
+      "selector": "1a134248",
+      "entryPc": 1430,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-full-mul-div-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 132,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "denominator",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 3,
+          "name": "rounding",
+          "abiType": "uint8",
+          "internalType": "enum Operations.Rounding",
+          "headOffset": 100,
+          "kind": "source-enum",
+          "members": [
+            "Trunc",
+            "Floor",
+            "Ceil"
+          ],
+          "minimum": 0,
+          "maximum": 2,
+          "rawWordAdmission": "Exact compiler clean-width and enum-domain admission/rejection, including physical error receipts, remains to be proved."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "a9a9a76cd562d4ae96f67f47bead5fe6398e615187df6ef5a113b1b96f7ee5f8",
+      "sourceFunctionId": 3930,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "mulMod(int256,int256,int256)",
+      "selector": "3daa08a5",
+      "entryPc": 1692,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-modular-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "m",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "5a25db2a220a1e49ee3a4440395ccf236e33acc8ed406dc721d403cfc08f539a",
+      "sourceFunctionId": 4180,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "mulMod(uint256,uint256,uint256)",
+      "selector": "a4ad2ee9",
+      "entryPc": 2436,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-modular-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "m",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "1e0c772385d9e3be6fd0d63d810f6e3622d2e67c1330ac1cfefc9feb258bec0d",
+      "sourceFunctionId": 4064,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "ne(uint256,uint256)",
+      "selector": "33151e4c",
+      "entryPc": 1673,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "bool"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "81eefe95afa026bf8a8657132347544ed3194562596ccfd19d3533ce7b5ad97c",
+      "sourceFunctionId": 4894,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "origin()",
+      "selector": "938b5f32",
+      "entryPc": 2240,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 4,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [],
+      "hasDynamicInput": false,
+      "outputs": [
+        "address"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "e7ab10b2cfec7b26bd60cbc052e5d49f818dfff6d7bff596b90ad7077376462f",
+      "sourceFunctionId": 5251,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "parseInt(bytes)",
+      "selector": "e08bc3fe",
+      "entryPc": 2831,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-decimal-digits-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "value",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "7c667af0eb3078255df9d5911d203f143da5bef710d2ad54affa8c467e2e7e9e",
+      "sourceFunctionId": 6342,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "parseUint(bytes)",
+      "selector": "1cce87ec",
+      "entryPc": 1467,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-decimal-digits-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "s",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "846dda792854052a64c57eaf3becb47e3427e2c4ab4fd3cdcdd178fbdd1bad4d",
+      "sourceFunctionId": 6300,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "parseUnits(bytes,uint256,uint8)",
+      "selector": "47417024",
+      "entryPc": 1814,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-parse-units-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "value",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "decimals",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "rounding",
+          "abiType": "uint8",
+          "internalType": "enum Operations.Rounding",
+          "headOffset": 68,
+          "kind": "source-enum",
+          "members": [
+            "Trunc",
+            "Floor",
+            "Ceil"
+          ],
+          "minimum": 0,
+          "maximum": 2,
+          "rawWordAdmission": "Exact compiler clean-width and enum-domain admission/rejection, including physical error receipts, remains to be proved."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "a2284e85f8a5b5e8ee68d94a7af11c0076b7ec6a46441aac68ddf04259f17960",
+      "sourceFunctionId": 6372,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "parseUnitsUnsigned(bytes,uint256,uint8)",
+      "selector": "a7334963",
+      "entryPc": 2480,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-parse-units-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "value",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "decimals",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "rounding",
+          "abiType": "uint8",
+          "internalType": "enum Operations.Rounding",
+          "headOffset": 68,
+          "kind": "source-enum",
+          "members": [
+            "Trunc",
+            "Floor",
+            "Ceil"
+          ],
+          "minimum": 0,
+          "maximum": 2,
+          "rawWordAdmission": "Exact compiler clean-width and enum-domain admission/rejection, including physical error receipts, remains to be proved."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "c718a4181bd6d2da9fcbe7e23cb09267eec4d937c3ba534d6fe6fed25f0c2d6e",
+      "sourceFunctionId": 6397,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "powMod(int256,int256,int256)",
+      "selector": "08198add",
+      "entryPc": 1310,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-modular-power-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "exponent",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "m",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "bf77ac8d58e6e0e6a5b02906dad9f02acbe17e610246cabcb52f886417ed9ee9",
+      "sourceFunctionId": 4317,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "powMod(int256,uint256,int256)",
+      "selector": "640c3e5a",
+      "entryPc": 1914,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-modular-power-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "exponent",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "m",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "c79a97bd8a0258ea9d53b9ef53cc6468a3fceb6e7d2023f9de16c19b1ef62431",
+      "sourceFunctionId": 4233,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "powMod(uint256,int256,uint256)",
+      "selector": "dec28c5b",
+      "entryPc": 2793,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-modular-power-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "exponent",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "m",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "c69d1c6d53b3079f4eff74586e4cf974beda58be80eecf3ce863757b27739fe6",
+      "sourceFunctionId": 4262,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "powMod(uint256,uint256,uint256)",
+      "selector": "44852766",
+      "entryPc": 1795,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-modular-power-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "exponent",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "m",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "e4d8769f5d94882f3fac86cf7d993273bbaeb30bda7cf509fc07578839bdaf44",
+      "sourceFunctionId": 4199,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "prevRandao()",
+      "selector": "fd6e98c4",
+      "entryPc": 2927,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 4,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "cee260d86bb0660e7c521827d4ee4e94d4dbdd8ea099547ea1abb498be332e58",
+      "sourceFunctionId": 5198,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "rawCall(address,bytes)",
+      "selector": "09acaa96",
+      "entryPc": 1343,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-raw-call-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "target",
+          "abiType": "address",
+          "internalType": "address",
+          "headOffset": 4,
+          "kind": "address160",
+          "rawWordAdmission": "Upper 96 bits must be zero; exact dirty-word physical rejection remains to be proved."
+        },
+        {
+          "ordinal": 1,
+          "name": "data",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 36,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bytes"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "c8fa865aff9d68b1b1a35666d0612d97c152182294dbe92112972fd795855665",
+      "sourceFunctionId": 5315,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "replace(bytes,bytes,bytes)",
+      "selector": "801cc257",
+      "entryPc": 2146,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-byte-replace-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "s",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "needle",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 36,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 2,
+          "name": "repl",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 68,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bytes"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "bb912e39b6bd0ffd503b549dcba359119c50cf025e43881948f74d567754eabb",
+      "sourceFunctionId": 6211,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "rpow(uint256,uint256,uint256)",
+      "selector": "67b870af",
+      "entryPc": 1990,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scaled-power-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "x",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "n",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "base",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "006cda4a1833938e20c1972f1d5db5855c67f7df8edbe51371ef247e73d6b988",
+      "sourceFunctionId": 4408,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "shl(uint256,uint256)",
+      "selector": "9da760ef",
+      "entryPc": 2342,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "bits",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "84904c2fab03ebe03bdeaae172d16115a6626bc6a6101324c117c9428ce67199",
+      "sourceFunctionId": 5074,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "shr(int256,uint256)",
+      "selector": "1b7d7318",
+      "entryPc": 1449,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "bits",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "92e1588c86a5026c52e9c5823b2a12408ad1eeefc73feccffa77a18405774004",
+      "sourceFunctionId": 5104,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "shr(uint256,uint256)",
+      "selector": "75f4479a",
+      "entryPc": 2090,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "bits",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "9667a26d8ae2a2c30115049e3d1f85a637093bfc15d3650fe669f4cc86d5f07a",
+      "sourceFunctionId": 5089,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "slice(bytes,uint256,uint256)",
+      "selector": "e0041396",
+      "entryPc": 2812,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-byte-bounds-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "data",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "start",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "len",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bytes"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "bc75b0dde6f01b18f17c795364f02247114bcb825237f4d14064065f29e68309",
+      "sourceFunctionId": 5504,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "sliceRange(bytes,int256,int256)",
+      "selector": "305dda92",
+      "entryPc": 1599,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-byte-bounds-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "data",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "start",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "end",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bytes"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "623f7625feb8e68851d178a7462dae404f50aff6bb8b8f90aea3b7a9f7461a64",
+      "sourceFunctionId": 5546,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "split(bytes,bytes)",
+      "selector": "98131876",
+      "entryPc": 2266,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-byte-split-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "data",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "delimiter",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 36,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bytes[]"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "e110123473a48f36e4949e822e8bb214a73eb2151d03e97b95e1cbacbf67bbbc",
+      "sourceFunctionId": 6049,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "sqrt(uint256)",
+      "selector": "677342ce",
+      "entryPc": 1971,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-integer-root-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "x",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "059cde2d2ca2ff367086771520b1ef81769e10f00471b6d08091250a701f130f",
+      "sourceFunctionId": 4331,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "stringAt(bytes,int256)",
+      "selector": "a1bc2139",
+      "entryPc": 2379,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-utf8-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "data",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "index",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bytes"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "d54572c4730c9308a10b8b4f47c9433c6724e3ae8fe4da0c1466e0a79e1fe879",
+      "sourceFunctionId": 5702,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "stringSlice(bytes,int256,int256)",
+      "selector": "c926204b",
+      "entryPc": 2736,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-utf8-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 100,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "data",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        },
+        {
+          "ordinal": 1,
+          "name": "start",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 2,
+          "name": "end",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 68,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bytes"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "7f31c2efea1506958dc1052bed97ac4aa016a77395c23d803f214ce0554b3279",
+      "sourceFunctionId": 5659,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "sub(int256,int256)",
+      "selector": "adefc37b",
+      "entryPc": 2536,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "int256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "1cea76a5a73fa925b5d77749a0e8925ffb5cf61afb81af05fe341f9ea2ebd43d",
+      "sourceFunctionId": 3612,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "sub(uint256,uint256)",
+      "selector": "b67d77c5",
+      "entryPc": 2635,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-scalars-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 68,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "a",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        },
+        {
+          "ordinal": 1,
+          "name": "b",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 36,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "449e600fb4a8e14a34f055ff7b27b3a856730ab12d8c87e1006c8569105a8cc6",
+      "sourceFunctionId": 3597,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "timestamp()",
+      "selector": "b80777ea",
+      "entryPc": 2654,
+      "stateMutability": "view",
+      "sourceLedger": "docs/verification/operations-environment-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 4,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [],
+      "hasDynamicInput": false,
+      "outputs": [
+        "uint256"
+      ],
+      "physicalOutputObligations": "Actual scalar ABI word physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "a534f6b7e146137f19dd0c81bf4532deb7782ace92d915c6bd64e0d31127bfef",
+      "sourceFunctionId": 5158,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "toLower(bytes)",
+      "selector": "c1459c04",
+      "entryPc": 2679,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-ascii-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "s",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bytes"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "12b5b1e1892e9ccc8ebbe8aec4f4926c573ac162e531d208897e88031445442b",
+      "sourceFunctionId": 6226,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "toString(int256)",
+      "selector": "a322c40e",
+      "entryPc": 2398,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-decimal-render-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "value",
+          "abiType": "int256",
+          "internalType": "int256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "string"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "5b1e7a96f285171aeec575a29a51b4ad557ddd18f80465f40cb33c0a58da8fcf",
+      "sourceFunctionId": 6501,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "toString(uint256)",
+      "selector": "6900a3ae",
+      "entryPc": 2009,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-decimal-render-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "v",
+          "abiType": "uint256",
+          "internalType": "uint256",
+          "headOffset": 4,
+          "kind": "unrestricted-word",
+          "rawWordAdmission": "All 256-bit patterns; int256 uses exact two\u2019s-complement interpretation."
+        }
+      ],
+      "hasDynamicInput": false,
+      "outputs": [
+        "string"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "78803091176bc6d8c05adc0b6ec0980cada176fe8509775eed49587aa0af67ef",
+      "sourceFunctionId": 6476,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    },
+    {
+      "signature": "toUpper(bytes)",
+      "selector": "feec0cff",
+      "entryPc": 2939,
+      "stateMutability": "pure",
+      "sourceLedger": "docs/verification/operations-ascii-source.json",
+      "bytecodeStatus": "open",
+      "status": "admission-obligations-open",
+      "minimumAbiHeadBytes": 36,
+      "minimumHeadNote": "ABI head layout inventory only; this value does not prove compiler admission or complete dynamic payloads.",
+      "arguments": [
+        {
+          "ordinal": 0,
+          "name": "s",
+          "abiType": "bytes",
+          "internalType": "bytes",
+          "headOffset": 4,
+          "kind": "dynamic-byte-window",
+          "rawWordAdmission": "Raw relative offset, length and complete window checks must be proved; alignment/padding behavior follows actual compiler instructions, with no assumed canonical ABI restriction."
+        }
+      ],
+      "hasDynamicInput": true,
+      "outputs": [
+        "bytes"
+      ],
+      "physicalOutputObligations": "Actual offset/length/header/payload/padding physical serialization and RETURN.",
+      "sourceFunctionAstSha256": "f21998d54d800722bd22aa02297f5e93c1a6debb7a2d1c03a9727217bae42518",
+      "sourceFunctionId": 6241,
+      "requiredProofs": [
+        "Full PC-zero nonpayable and selector admission.",
+        "Assigned entry raw head and every input-domain/window check; all malformed reached rejection receipts.",
+        "Actual body instructions and branches/loops to independently specified source/math/world outcome.",
+        "Actual physical memory/output or source-error serialization.",
+        "Fresh complete retained native/CSV/audit/regeneration/tool/input graph, exact EVM receipts, semantic byte faults and independent evidence check."
+      ]
+    }
+  ],
+  "assumptions": [
+    "Exact compiler input/runtime and source AST identity are checked inputs, not whole-compiler correctness.",
+    "Finite fitting representations and sufficient reached execution resources remain explicit.",
+    "External observations bind actual execution context and history, including self/caller when reached; no fixed deployment address premise.",
+    "MODEXP faithful successful exact 32-byte mathematical reply remains explicit. Real exp/log approximation accuracy remains open.",
+    "No source-only, fixture-only, gas, deployment, complexity or performance claim."
+  ]
+}

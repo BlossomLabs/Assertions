@@ -1,0 +1,473 @@
+{
+  "status": "pinned-source-assessed-not-upstream-verified",
+  "retrievedAt": "2026-10-02T14:22:54.094527+00:00",
+  "repository": "https://github.com/Consensys-Incorporated/evm-dafny",
+  "commit": "e2e52e86d6623d48d0849f5ce1664f88c8f0e547",
+  "commitTreeSha1": "d1741e2e3c022751ed8682b1e1c29c9f762ae66b",
+  "files": [
+    {
+      "path": ".gitmodules",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/.gitmodules",
+      "gitBlobSha1": "221f6631a1df3c2e03db1def1f0aaaf5ef5898d2",
+      "sha256": "e91adf941709cdc70c96fcd2a3a74e8d74cc68941ccabda711a4073341540178",
+      "bytes": 180
+    },
+    {
+      "path": "LICENSE",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/LICENSE",
+      "gitBlobSha1": "50813f511ebadaf2e0f5d1c3ba59ca3154f9b936",
+      "sha256": "94b018bbb81365b96f84f76794c2f9d305490a0f355c092696c4cd1c30896d76",
+      "bytes": 11353
+    },
+    {
+      "path": "README.md",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/README.md",
+      "gitBlobSha1": "2c16eeb9c5e8eb48b43a847e7ae3a565483ebc6f",
+      "sha256": "7694d70d324ad9678bff2c33478770fcca7938c38e682e6f1ef75bb86609e90c",
+      "bytes": 10840
+    },
+    {
+      "path": "src/dafny/bytecode.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/bytecode.dfy.txt",
+      "gitBlobSha1": "a5021261a015d7405bfcc0e124c14579514f622a",
+      "sha256": "c5fd75abc1a1505799277803ea3605930ed2bec2f0e630465a3f3e71eb6b9f49",
+      "bytes": 68101
+    },
+    {
+      "path": "src/dafny/core/code.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/core/code.dfy.txt",
+      "gitBlobSha1": "c2ffe59d4069e39db699794ab4f27ea38893c350",
+      "sha256": "4815ddfd0d89afba297c1e9db534b638c9e754667c6d809257087c43989b3baf",
+      "bytes": 2048
+    },
+    {
+      "path": "src/dafny/core/context.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/core/context.dfy.txt",
+      "gitBlobSha1": "dfacbf0fc64285ca655b425a97d88b61ef94629e",
+      "sha256": "0a019a8446278eac04408b0840363a50809704574950bcdad70fd3a70e7dc18a",
+      "bytes": 4500
+    },
+    {
+      "path": "src/dafny/core/fork.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/core/fork.dfy.txt",
+      "gitBlobSha1": "cf1eca83d30fc90cfe90f1cb2e2fa3e16a2441a7",
+      "sha256": "0324702d973eddca54f5b3746553eca6ac5d141e5792899dce1b388edc7d7e8f",
+      "bytes": 6846
+    },
+    {
+      "path": "src/dafny/core/memory.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/core/memory.dfy.txt",
+      "gitBlobSha1": "d6daf3b0362a17a55ee59b36b11b4a4b65109d1d",
+      "sha256": "8a548767a6975838b23bf84a10d44a290a81b12094d7b17ffa2b862079973ad1",
+      "bytes": 5175
+    },
+    {
+      "path": "src/dafny/core/precompiled.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/core/precompiled.dfy.txt",
+      "gitBlobSha1": "c7b5c53e20485dcd68219fc0813a6ba278a0d56c",
+      "sha256": "ad362d1b124c3cb43e6fcdecde87734de7638dbddf76bbd6f90a6ce4a1df362a",
+      "bytes": 14729
+    },
+    {
+      "path": "src/dafny/core/stack.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/core/stack.dfy.txt",
+      "gitBlobSha1": "4924a0f3de689312f690165130a2bb615705eb5b",
+      "sha256": "3b331c710ffe22a347070a6afd7064c4e4ce3f097577e71a012c1e3c59b0127f",
+      "bytes": 3625
+    },
+    {
+      "path": "src/dafny/core/storage.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/core/storage.dfy.txt",
+      "gitBlobSha1": "327d2fda3df3565d815fa5cf89a2569baed68d71",
+      "sha256": "fd60b712a12fe36537115db26ada9d6ce2b09e6f4e3c90931556c18089af4a5e",
+      "bytes": 1673
+    },
+    {
+      "path": "src/dafny/core/substate.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/core/substate.dfy.txt",
+      "gitBlobSha1": "c0ae5f1f9e3a79e3b2b5f116b984cbfab8ad86db",
+      "sha256": "839173495e9015135e9ea4ce98aed5a767260bf75a79f894e862dea838b143ca",
+      "bytes": 3706
+    },
+    {
+      "path": "src/dafny/core/transient.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/core/transient.dfy.txt",
+      "gitBlobSha1": "b7894df08b447c9d61209fcc9094147fd2872eb0",
+      "sha256": "06560035148524ac5a927ff68a8817443ff6a4dc8d06a64dcb588959800abefe",
+      "bytes": 1919
+    },
+    {
+      "path": "src/dafny/core/worldstate.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/core/worldstate.dfy.txt",
+      "gitBlobSha1": "384f41a51522c555352cfd05daf5ef39554a2e5b",
+      "sha256": "3779d59e07a5d2d12a14af294edfb416682efa73748c41a88e14d5012b6e92e2",
+      "bytes": 10294
+    },
+    {
+      "path": "src/dafny/evm.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/evm.dfy.txt",
+      "gitBlobSha1": "f2e2ef2f6d59136f4dc4d479c79b8febffae0690",
+      "sha256": "4bbe60ebce956f90934da6cc031e59ae258499e2f48a03585b97b05d0dc9b7e4",
+      "bytes": 20170
+    },
+    {
+      "path": "src/dafny/gas.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/gas.dfy.txt",
+      "gitBlobSha1": "bca84d3b5934d5055ba4ee6c1390dfcfd092cb6d",
+      "sha256": "2165b5e5c116109cea15de1f75fe9d2d7ec3eee027bde27dba37ae6d737b0af6",
+      "bytes": 18466
+    },
+    {
+      "path": "src/dafny/opcodes.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/opcodes.dfy.txt",
+      "gitBlobSha1": "b2ea4917e5faefdb89cfd2a7cb05cc50516faf3c",
+      "sha256": "62382727da89ae63b9b0850a8d306775fc5d2c23d3acb0aed99a410a3793af35",
+      "bytes": 5205
+    },
+    {
+      "path": "src/dafny/state.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/state.dfy.txt",
+      "gitBlobSha1": "796e335df67cdbdfedfded104c3d30742a3d3147",
+      "sha256": "822c06b3d17e104d8a4c55cff8bc34e0813593a3698e412a0ab4cdfbc16de856",
+      "bytes": 34669
+    },
+    {
+      "path": "src/dafny/t8n.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/t8n.dfy.txt",
+      "gitBlobSha1": "531eac698ebb4fdf180defe4e796d6bb91f50ca6",
+      "sha256": "b6d6e50db2d1d593d8f84478579033ae9b98def9f56f48fcbf1ba3d431c62549",
+      "bytes": 7209
+    },
+    {
+      "path": "src/dafny/util/arrays.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/util/arrays.dfy.txt",
+      "gitBlobSha1": "88711ae16a0fb1e7e98b68441e54a7cb09f62297",
+      "sha256": "4ee0ae29b03673675e88b35865e19403d48a266067085997992ed7279b319607",
+      "bytes": 2935
+    },
+    {
+      "path": "src/dafny/util/bytes.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/util/bytes.dfy.txt",
+      "gitBlobSha1": "e41de862d603515ed086e121da59fc4881a92149",
+      "sha256": "7269894666389062b25794cab94f3b13de75b06c49ac59fe70ec36249f58f5b1",
+      "bytes": 6678
+    },
+    {
+      "path": "src/dafny/util/extern.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/util/extern.dfy.txt",
+      "gitBlobSha1": "0a8fc74be588573629301b93011b911826cc8af2",
+      "sha256": "e574d309f91147209daf6b77a4388502bd3817671ee0eeec0fa1cad6dd61d6e6",
+      "bytes": 804
+    },
+    {
+      "path": "src/dafny/util/int.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/dafny/util/int.dfy.txt",
+      "gitBlobSha1": "90d0257a468d15325564e69c57d7ed2581a36f60",
+      "sha256": "e63b30eb632ed3439e7d4d55ef93be3c35f85bf5ff113568a58a4c4b34b487a5",
+      "bytes": 28327
+    },
+    {
+      "path": "src/test/dafny/proofs/FM-paper.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/proofs/FM-paper.dfy.txt",
+      "gitBlobSha1": "c3d01142e4e478683014e225cc6e32a91c574cd0",
+      "sha256": "4d9f77ee3bffe2ebbbf31033ba582ac4c21866460dad5aa2b7a22590dfe20809",
+      "bytes": 9302
+    },
+    {
+      "path": "src/test/dafny/proofs/GasTests.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/proofs/GasTests.dfy.txt",
+      "gitBlobSha1": "38c212dea90e117ade37d55de21f0c3c115b28e1",
+      "sha256": "518ac82a28bc53d638cffd504fa6be09b4491d7f29f5eff5021945a428e90802",
+      "bytes": 694
+    },
+    {
+      "path": "src/test/dafny/proofs/MemoryVerif.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/proofs/MemoryVerif.dfy.txt",
+      "gitBlobSha1": "b292da2a5f8771d124cdee760c6094904ce5dce0",
+      "sha256": "bf88a8d7579f682fbad26abf1876b4b17c8edd912dfa1ac65f39feaead32c379",
+      "bytes": 12017
+    },
+    {
+      "path": "src/test/dafny/proofs/Optimisations.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/proofs/Optimisations.dfy.txt",
+      "gitBlobSha1": "055db1a1e5eff3282b09062f07c6b28c790fb4d5",
+      "sha256": "238471af11b2b500b9d67980d479598be9f8fdf3880484d39687bbb59ba3fb22",
+      "bytes": 4593
+    },
+    {
+      "path": "src/test/dafny/proofs/Push.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/proofs/Push.dfy.txt",
+      "gitBlobSha1": "7a8628141007d412296e8ac447d60e8e6b52185c",
+      "sha256": "25c04df675c54fb0f412e1c8ad004777d8d74ff7cafa72ab33c016b2ffc502cc",
+      "bytes": 679
+    },
+    {
+      "path": "src/test/dafny/proofs/Simulation.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/proofs/Simulation.dfy.txt",
+      "gitBlobSha1": "b9c90e2e7f9f5f7c28f75853f71249a3fa45032a",
+      "sha256": "0aa5275959fecc4e242a88f89d37eacab5b9243e506cf9b0daf505e9ee30fbed",
+      "bytes": 12482
+    },
+    {
+      "path": "src/test/dafny/proofs/SimulationProof.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/proofs/SimulationProof.dfy.txt",
+      "gitBlobSha1": "0dd01067477ec03a64e5d4e56f3e56e343dafad4",
+      "sha256": "333551475359962e88e4251f1eb31579f65dd4c2760b8e08802fd707dbb617b5",
+      "bytes": 3026
+    },
+    {
+      "path": "src/test/dafny/proofs/Test10-with-gas.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/proofs/Test10-with-gas.dfy.txt",
+      "gitBlobSha1": "c454ddcb9da4e848fb0bae1cf5b8c4aee8180e32",
+      "sha256": "4d526a59e2182311d77333b89becd4d7b9bcc3594fb77bea8d713f5cb88e9ca7",
+      "bytes": 8710
+    },
+    {
+      "path": "src/test/dafny/proofs/Transient.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/proofs/Transient.dfy.txt",
+      "gitBlobSha1": "8d17d049c92fd05693da4d7a742d9c90c2478b36",
+      "sha256": "72bab9fb8e4a8379d5447edb5482125d49d0178d44f755b889b9ba8f514b0175",
+      "bytes": 8889
+    },
+    {
+      "path": "src/test/dafny/proofs/test.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/proofs/test.dfy.txt",
+      "gitBlobSha1": "4cb48ba92925092df0dcf8070dff4cdad026c2db",
+      "sha256": "6aeaf12662f5040f579ad4821daaf5a4ff5366706adb2cc0759dee42f9ba1d77",
+      "bytes": 6451
+    },
+    {
+      "path": "src/test/dafny/tests/ArrayTests.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/tests/ArrayTests.dfy.txt",
+      "gitBlobSha1": "d43acd57a59d7ed29e7e9c553e3a21481f342aab",
+      "sha256": "76f5909e73fd4b64dee599edb64eac119fe041aa5837ca08055b6e3c67dd5ed6",
+      "bytes": 1040
+    },
+    {
+      "path": "src/test/dafny/tests/ByteTests.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/tests/ByteTests.dfy.txt",
+      "gitBlobSha1": "6d23eceb0b4c22c641ea001e01b3488112889ab2",
+      "sha256": "a20fa07c1bfa41e8e0e03e652c9bbf44703620a78358386ba34faface118d91e",
+      "bytes": 5268
+    },
+    {
+      "path": "src/test/dafny/tests/CallExample.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/tests/CallExample.dfy.txt",
+      "gitBlobSha1": "9c99be92bee9a630123cc9cb7527cae1b4cc032f",
+      "sha256": "bf87f450a1002593942b534e40c24a22501a79c01acd4d2f9f60f2a0ff8ee549",
+      "bytes": 4259
+    },
+    {
+      "path": "src/test/dafny/tests/ForkTests.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/tests/ForkTests.dfy.txt",
+      "gitBlobSha1": "bf9c0d1619f45152f15cc285e73ce40cc99945c1",
+      "sha256": "cc5c20de967d6c6243e8e185cf50eea6164ea22a8a228679885d243932428100",
+      "bytes": 1395
+    },
+    {
+      "path": "src/test/dafny/tests/IntTests.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/tests/IntTests.dfy.txt",
+      "gitBlobSha1": "f5b5660490f644b08a92c2fb6cc03cac2a388203",
+      "sha256": "451da46edf6f6008f45711586f8f44c2c8ece62b81e3f24f61c101b925ddf0b8",
+      "bytes": 23605
+    },
+    {
+      "path": "src/test/dafny/tests/Test10.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/tests/Test10.dfy.txt",
+      "gitBlobSha1": "228a182565dbd7f22f00f2c77cd47e8d48fe58ba",
+      "sha256": "31b784d9b32cea754656a0c988acd43352a91176f2c9687ce4b9cb38ecf7d237",
+      "bytes": 8321
+    },
+    {
+      "path": "src/test/dafny/utils.dfy",
+      "retained": "formal/foundations/upstream/evm-dafny-e2e52e86/source/src/test/dafny/utils.dfy.txt",
+      "gitBlobSha1": "93bbf3eb9600aacc404a371c0095ed29d2fefcf4",
+      "sha256": "9d1788cdc76f4a643d9989dfeace244a27bb0585e61e7be92aca91e23b9a28e2",
+      "bytes": 185
+    }
+  ],
+  "submodulePins": [
+    {
+      "path": "fixtures",
+      "mode": "160000",
+      "type": "commit",
+      "sha": "fa51c5c164f79140730ccb8fe26a46c3d3994338"
+    },
+    {
+      "path": "libs/DafnyCrypto",
+      "mode": "160000",
+      "type": "commit",
+      "sha": "d67531318c191f5703b71b256352c58f9e0c2e4a"
+    }
+  ],
+  "trustFindings": [
+    {
+      "file": "src/dafny/bytecode.dfy",
+      "line": 448,
+      "text": "function {:verify false} And(st: ExecutingState): (st': State)"
+    },
+    {
+      "file": "src/dafny/bytecode.dfy",
+      "line": 487,
+      "text": "function {:verify false} Xor(st: ExecutingState): (st': State)"
+    },
+    {
+      "file": "src/dafny/core/fork.dfy",
+      "line": 137,
+      "text": "lemma {:verify false} BerlinFacts()"
+    },
+    {
+      "file": "src/dafny/core/fork.dfy",
+      "line": 143,
+      "text": "lemma {:verify false} LondonFacts()"
+    },
+    {
+      "file": "src/dafny/core/fork.dfy",
+      "line": 149,
+      "text": "lemma {:verify false} ShanghaiFacts()"
+    },
+    {
+      "file": "src/dafny/core/fork.dfy",
+      "line": 155,
+      "text": "lemma {:verify false} CancunFacts()"
+    },
+    {
+      "file": "src/dafny/core/precompiled.dfy",
+      "line": 186,
+      "text": "function {:verify false} CallModExp(data: Array<u8>) : Option<(Array<u8>,nat)> {"
+    },
+    {
+      "file": "src/dafny/gas.dfy",
+      "line": 82,
+      "text": "function {:verify false} QuadraticCost(memUsedSize: nat): nat"
+    },
+    {
+      "file": "src/dafny/gas.dfy",
+      "line": 90,
+      "text": "lemma {:verify false} QuadraticCostIsMonotonic(x: nat, y: nat)"
+    },
+    {
+      "file": "src/dafny/t8n.dfy",
+      "line": 154,
+      "text": "method {:verify false} Run(depth: nat, st0: EvmState.State) returns (st: EvmState.State) {"
+    },
+    {
+      "file": "src/dafny/t8n.dfy",
+      "line": 172,
+      "text": "method {:verify false} CallContinue(depth: nat, cc: EvmState.Continuation) returns (st: EvmState.State)"
+    },
+    {
+      "file": "src/dafny/t8n.dfy",
+      "line": 185,
+      "text": "method {:verify false} CreateContinue(depth: nat, cc: EvmState.Continuation) returns (st: EvmState.State)"
+    },
+    {
+      "file": "src/dafny/util/int.dfy",
+      "line": 303,
+      "text": "lemma {:verify false} LemmaToFromBytes(bytes:seq<u8>)"
+    },
+    {
+      "file": "src/dafny/util/int.dfy",
+      "line": 605,
+      "text": "lemma {:axiom} as_bv256_as_u256(v: bv256)"
+    },
+    {
+      "file": "src/test/dafny/proofs/FM-paper.dfy",
+      "line": 49,
+      "text": "method {:verify false} inc_proof(st: ExecutingState) returns (st': State)"
+    },
+    {
+      "file": "src/test/dafny/proofs/FM-paper.dfy",
+      "line": 68,
+      "text": "assume {:axiom} {PUSH1,SLOAD,ADD,DUP1,JUMPI,REVERT,JUMPDEST,SSTORE,STOP} <= EvmFork.BERLIN_BYTECODES;"
+    },
+    {
+      "file": "src/test/dafny/proofs/FM-paper.dfy",
+      "line": 123,
+      "text": "method {:verify false} OverflowCheck(st: ExecutingState, x: u256, y: u256) returns (st': State)"
+    },
+    {
+      "file": "src/test/dafny/proofs/FM-paper.dfy",
+      "line": 140,
+      "text": "assume {:axiom} {DUP2,ADD,LT,PUSH1,JUMPI,STOP,JUMPDEST,REVERT} <= EvmFork.BERLIN_BYTECODES;"
+    },
+    {
+      "file": "src/test/dafny/proofs/FM-paper.dfy",
+      "line": 171,
+      "text": "method {:verify false} Loopy(st: ExecutingState, c: u8) returns (st': State)"
+    },
+    {
+      "file": "src/test/dafny/proofs/FM-paper.dfy",
+      "line": 199,
+      "text": "assume {:axiom} {PUSH1,JUMPDEST,DUP1,JUMPI,STOP,SWAP1,SUB,JUMP} <= EvmFork.BERLIN_BYTECODES;"
+    },
+    {
+      "file": "src/test/dafny/proofs/GasTests.dfy",
+      "line": 17,
+      "text": "assume {:axiom} {GAS} <= EvmFork.BERLIN_BYTECODES;"
+    },
+    {
+      "file": "src/test/dafny/proofs/Optimisations.dfy",
+      "line": 89,
+      "text": "method {:verify false} Proposition12b(n: nat, s: seq<u256>, g: nat)"
+    },
+    {
+      "file": "src/test/dafny/proofs/Simulation.dfy",
+      "line": 58,
+      "text": "assume {:axiom} PUSH1 in EvmFork.BERLIN_BYTECODES;"
+    },
+    {
+      "file": "src/test/dafny/proofs/Simulation.dfy",
+      "line": 101,
+      "text": "assume {:axiom} {PUSH1,ADD,POP,STOP} <= EvmFork.BERLIN_BYTECODES;"
+    },
+    {
+      "file": "src/test/dafny/proofs/Simulation.dfy",
+      "line": 166,
+      "text": "method {:verify false} main5(c: u8, g: nat)"
+    },
+    {
+      "file": "src/test/dafny/proofs/SimulationProof.dfy",
+      "line": 46,
+      "text": "method {:verify false} proof(context: Context.T, world: map<u160,WorldState.Account>, gas: nat)"
+    },
+    {
+      "file": "src/test/dafny/proofs/Transient.dfy",
+      "line": 78,
+      "text": "assume {:axiom} st.IsJumpDest(0x1e);"
+    },
+    {
+      "file": "src/test/dafny/proofs/test.dfy",
+      "line": 31,
+      "text": "method {:verify false} Test_EVM_01(x: u8)"
+    },
+    {
+      "file": "src/test/dafny/proofs/test.dfy",
+      "line": 34,
+      "text": "assume {:axiom} {PUSH1,MSTORE,RETURN} <= EvmFork.BERLIN_BYTECODES;"
+    },
+    {
+      "file": "src/test/dafny/proofs/test.dfy",
+      "line": 68,
+      "text": "method {:verify false} Test_IR_01(x: u8)"
+    },
+    {
+      "file": "src/test/dafny/proofs/test.dfy",
+      "line": 84,
+      "text": "function {:verify false} Test_IR_02b(x: u8, y: u8) : (z:u16)"
+    },
+    {
+      "file": "src/test/dafny/proofs/test.dfy",
+      "line": 109,
+      "text": "method {:verify false} Test_IR_03(x: u8, y: u8) returns (z:u8)"
+    },
+    {
+      "file": "src/test/dafny/proofs/test.dfy",
+      "line": 155,
+      "text": "method {:verify false} Test_IR_04(x: u8, y: u8) returns (z:u8, revert:bool)"
+    }
+  ],
+  "sourceMethod": "Selected complete bytes from timed-out source archive individually matched against GitHub pinned recursive-tree blob identifiers. Original failed archive preserved under /tmp; this does not treat the incomplete archive as valid. Dafny originals retained with .txt suffix to prevent imports.",
+  "upstreamNativeVerificationRun": false,
+  "acceptedImportedTheorems": []
+}

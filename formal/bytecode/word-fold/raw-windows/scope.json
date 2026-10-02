@@ -1,0 +1,11 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Exact current compiler runtime routing from PC zero under zero call value, assigned domain selector and calldata length4 through2^64-1. Nonpayable and short-selector rejection stay separate mandatory retained dispatcher dependencies. Malformed fitting raw frames use the exhaustive actual compiler rejection partition, including loose/shared/misaligned tails.",
+    "Raw decoder rejection has priority, then foldWords alignment, then accumulator template/offset admission, then first failed supplied element window. Empty range/source still validates all supplied accumulator and element windows before later body/target behavior. No supplied window is limited to canonical or disjoint alignment.",
+    "Every admitted full-width range element count and initial accumulator word is retained. Array count bounds are derived from represented encoded element-array span, independently of range count. Successful partial terminal is actual fold continuation12029 with the complete original decoded and shared-body stack, preserving pre-allocation memory.",
+    "No external observation/copy is consumed during this partial trace. Old returndata and observation cursor are arbitrary and preserved; context address is explicitly admitted. Target admission, allocation/template copy, callback loop/guards/early exits and exact public scalar return remain open.",
+    "Static and selected native development proofs assume imported contracts. Full fresh included graph, EVM receipts, matching semantic mutations and independent current retained checker are mandatory before public coverage. Sufficient reached resources and truthful external observations remain explicit. No gas/deployment/performance or compiler-correctness claim."
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": "original-collections-word-scans",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/library/src/collections/word-scans/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/collections/word-scans/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/collections/word-scans/Connection.dfy",
+    "formal/source/library/src/collections/word-scans/Control.generated.dfy",
+    "formal/source/library/src/collections/word-scans/Model.dfy",
+    "formal/source/library/src/collections/word-scans/Source.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/library/src/abi/Frames.dfy",
+      "formal/source/library/src/collections/word-memory/Model.dfy",
+      "formal/source/library/src/collections/word-scans/Model.dfy",
+      "formal/source/library/src/collections/word-scans/Source.dfy"
+    ],
+    "execution": [
+      "formal/source/library/src/collections/word-memory/Source.generated.dfy",
+      "formal/source/library/src/collections/word-scans/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/library/src/collections/word-memory/Connection.dfy",
+      "formal/source/library/src/collections/word-scans/Connection.dfy"
+    ],
+    "foundations": [
+      "formal/source/library/src/foundations/SourceSequenceMemoryV1.dfy"
+    ]
+  },
+  "closureSha256": {
+    "formal/source/library/src/collections/word-scans/Connection.dfy": "8071ffe05db0e0bc4ced227d986b35286f1924bf5c826e0a7f781ae2415e66fc",
+    "formal/source/library/src/collections/word-scans/Source.dfy": "00c23705d1d7675eec777a8982cb570eedc4f77a51d036f7de72c4fe97fcd34e",
+    "formal/source/library/src/collections/word-scans/Control.generated.dfy": "cdc406c7ec071333ab3581cfded28eae5b9a9b6c8b51384dbef883104bd976e3",
+    "formal/source/library/src/collections/word-scans/Model.dfy": "cfb03743c2a2a6a89623dfb620b5a5cce490910a5bd89d09eae322c67514048b",
+    "formal/source/library/src/collections/word-memory/Connection.dfy": "9d4927ccb9c3459c9f59b1643731712b69bfffafe96be6cfb5d175803f5bdcd8",
+    "formal/source/library/src/collections/word-memory/Source.generated.dfy": "f5cd81a8a45eb35483546521480caa6f0d012e38531e20fcec3806900b34e203",
+    "formal/source/library/src/collections/word-memory/Model.dfy": "47c5a211c3c28737af9f6c62b5091bfb93834ec266920a7e7624fc6b568db6ba",
+    "formal/source/library/src/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
+    "formal/source/library/src/foundations/SourceSequenceMemoryV1.dfy": "368897bc49d5826c5e60df858cfee7009d0a7ccd82570daef148ac861ee0cc38"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

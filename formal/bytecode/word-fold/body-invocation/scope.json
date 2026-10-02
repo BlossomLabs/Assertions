@@ -1,0 +1,14 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "all-fold-body-invocations",
+      "owner": "formal/bytecode/word-fold/body-invocation"
+    }
+  ],
+  "assumptions": [
+    "Original complete seven-head fitting raw decoder admission. Range count and initial accumulator remain full uint256; no canonical tail placement/alignment/padding restriction. Successful Words wrapper additionally requires source length divisible by32, with complementary unaligned path separately required.",
+    "Actual body wrappers preserve arbitrary byte memory and fitting lower stack prefix with compiler outer continuation604. Independently projected12 shared Fold arguments and5 window-check arguments, actual domain0/1/2 and actual range/byte/word count are checked against all physical instruction/jump bytes.",
+    "Selected native imports assume included contracts. Complete window admission, empty/target/allocation/template/body/loop/callback/early exit/errors/output, current included graph, physical fixtures, semantic faults and independent retained checker remain required. No gas/deployment/performance claim."
+  ]
+}

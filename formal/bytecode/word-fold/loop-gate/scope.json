@@ -1,0 +1,14 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-loop-enter-exit",
+      "owner": "formal/bytecode/word-fold/loop-gate"
+    }
+  ],
+  "assumptions": [
+    "Pinned current Collections runtime and three fold selectors. Actual loop header16484 with complete lower caller stack and11 loop words; run pointer128, return12157. Arbitrary memory preserves physical run.count slot160; index and count unrestricted Word.",
+    "Enter index<count retains actual count MLOAD/comparison/branch, domain MLOAD slot128 and actual helper invocation19299/return16512. Canonical domain0..2. Exit index>=count retains actual16664 cleanup and physical accumulator MLOAD slot256, returns12157 with exact accumulator.",
+    "Both controls preserve arbitrary lower stack and memory and consume no external observation. Selected native imports assumed. Complete raw/template and iteration/domain extraction/stamping/callback/guard/error/early-exit/raw scalar terminal, fresh included graph, EVM receipts, matching semantic mutation and independently checked retention mandatory before coverage. Representation, sufficient reached resources and truthful reached observations explicit. No gas/deployment/performance or compiler-correctness claim."
+  ]
+}

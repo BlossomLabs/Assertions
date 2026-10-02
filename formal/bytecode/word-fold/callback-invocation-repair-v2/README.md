@@ -1,0 +1,7 @@
+# Fold physical callback invocation development
+
+The owned generator extracts the actual16536 caller cleanup, target MLOAD192, call-pointer/current-index arguments,16905 helper entry and two scratch initializations. It stops at16908 before the first GAS observation. The caller return is16553; the index is the full current loop index. Physical memory and arbitrary lower stack remain unchanged. Never edit generated controls or mappings directly.
+
+Finish package files before capture. The development verifier snapshots the complete input/owner graph, regenerates byte-identically, checks the whole selected native module and declaration inventory, audits and rechecks current inputs/tools. Imported contracts remain assumed. Full callback receipts/guards/errors/update/early exit/iteration/raw scalar output and whole retained evidence remain mandatory. Explicit representation, reached resources and observations; no gas/deployment/performance/compiler-correctness claim.
+
+V2 explicitly requires allocated FoldRun memory geometry:320 bytes present and32-byte alignment. This makes each actual run-field MLOAD expansion a no-op. The original failed invocation proof remains preserved; its two errors concerned unchanged memory after reads224/256, not a contract counterexample. Only the owned generator changes these proof admissions and module names; statements retain the complete physical instruction trace.

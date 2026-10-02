@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/assertions-resolution/constraints/or/evm-discovery.mjs",
+  "output": "/home/sem/assertions/formal/bytecode/assertions-resolution/constraints/or/evm-discovery-consolidated-v1.mjs",
+  "source_sha256": "b40bbe209493478b06dbee9858297583b73ff45fb7ced47064d3385ea8502b96",
+  "output_sha256": "b40bbe209493478b06dbee9858297583b73ff45fb7ced47064d3385ea8502b96",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

@@ -1,0 +1,14 @@
+{
+  "source": "contracts/Operations.sol",
+  "sourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce",
+  "bodySha256": "c4d577b3024c9117de1f4f2850e56588eca583dc1482fce7037419e68e7a8b92",
+  "buildInfoId": "solc-0_8_36-ac0eef8f2a0c22be618862258c50c9c272597da3",
+  "selector": "3e8c97e3",
+  "parameters": [
+    "bytes calldata",
+    "uint256"
+  ],
+  "result": "bool",
+  "loop": "all original bytes, short-circuit false on a missing bit, true for empty bytes",
+  "exactNormalizedBody": "functioncharset(bytescalldatas,uint256mask)externalpurereturns(bool){for(uint256i=0;i<s.length;i++){if(mask&(uint256(1)<<uint8(s[i]))==0)returnfalse;}returntrue;}"
+}

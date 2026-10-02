@@ -1,0 +1,5 @@
+# Compiled unsigned integer-power shortcuts
+
+Prepared16-module graph; native verification unlaunched and no public credit. Seven complementary compiler paths retain all422 actual instructions from body entry9089 through physical Panic17, exact result frontier1329 or generic loop entry20932. This includes all wrapper invocations/returns. Connection.Run connects shortcut results to independently specified unbounded integer powers; generic invocation preserves every actual intermediate caller frame for later loop composition.
+
+Zero exponent, zero base, unit base, fitting and overflowing base-two exponents, small compiler EXP ranges and generic invocation are exhaustive. The complete compiler/input gate must bind runtime bytes/boundaries/immediates/destinations and both public ASTs. Finite fitting representation, reached stack bounds, fresh byte memory, faithful environment observations and sufficient resources remain explicit. PCzero admission, generic-loop/final-product/physical RETURN/full retention and matching campaigns are open. No real-valued exponential accuracy, gas, deployment or performance theorem follows. Never hand-edit generated files.

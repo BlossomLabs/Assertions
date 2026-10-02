@@ -1,0 +1,7 @@
+# Raw square-root entry composition candidate
+
+The public entry starts atPC0 with fresh memory and actual original calldata. Its raw observer derives zero-padded words at0 and4 from the complete byte sequence; every reached load is one of those windows. Complementary guards cover nonpayable and short rejection, exact0/1 early behavior, and every larger input. The iterated branch derives the seed, proves fitting arithmetic for all six Newton updates, proves the final adjacent-root estimate, then executes the actual correction and32-byte physical return.
+
+The combined trace preserves every machine transition from entry through RETURN or REVERT, including each dispatcher, compiler wrapper and internal helper. Current instruction bytes, boundaries and jump destinations are constrained by the generated controls. Root output is independently defined by integer square inequalities and uniqueness; no library correctness assertion replaces executed instructions.
+
+The46-module graph is a prepared candidate. Its development verifier selects only the full connection, inventories the complete dependency closure, regenerates every generated control and records frozen source/tool/compiler evidence. Complete native retention, exact physical fixtures, a matching semantic one-byte mutation and independent checking remain required before public credit. Reviewed extraction/interpreter, finite fitting calldata below2^64 and reached resources remain explicit. No gas, deployment, performance or cryptographic claim.

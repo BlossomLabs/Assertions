@@ -1,0 +1,35 @@
+{
+  "id": "concat",
+  "status": "accepted-conditional-source",
+  "entry": "formal/source/operations/concat/v1/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/operations/concat/v1/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/operations/concat/v1/Model.dfy"
+    ],
+    "execution": [
+      "formal/source/operations/concat/v1/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/operations/concat/v1/Connection.dfy"
+    ],
+    "foundations": [
+      "formal/source/foundations/v1/TotalMemory.dfy"
+    ]
+  },
+  "closureSha256": {
+    "formal/source/foundations/v1/TotalMemory.dfy": "3712cf486aeb49e614a4611f78000e9e6268659daced25e46600388bf5ca11a8",
+    "formal/source/operations/concat/v1/Connection.dfy": "10ce59df7a196aa76232a5f823614d7210c8978223eaf52fe107636ffbb5c9f3",
+    "formal/source/operations/concat/v1/Control.generated.dfy": "dc860f0f6c7be46c2aed43b61d50005e529ed8217c898c9d3ccc22c0797138ab",
+    "formal/source/operations/concat/v1/Model.dfy": "9b5ab8976cccc1947958247a852d716ce5684da9161b88acbf4dfbf8b88a3a2c"
+  },
+  "verificationScope": "Native closure only; generation, source correspondence, faults and independent acceptance are separate gates."
+}

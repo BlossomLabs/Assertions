@@ -1,0 +1,5 @@
+# Actual callback exhaustion connection
+
+Receipt admission derives the physical guard's represented length header and, for4byte receipts, represented loaded first word from the checked full receipt allocator/copy. Empty receipts use zero-slot96. The exact five-instruction failed-call invocation preserves the complete caller stack. The decision engine composes all five extracted instruction paths and consumes exactly one truthful GAS observation, preserving memory and returndata.
+
+It reaches16171 for gasAfter<=gasBefore/63 or length4 plus masked signal header; otherwise it cleans the guard's local stack and returns to17017. The theorem preserves arbitrary low padding bits in the loaded word. It is conditional on finite fitting memory/stack and faithful external observations, with no gas-cost/delivery/deployment claim. Actual packet/CallbackFailed/raw composition and complete fresh included retention/physical/semantic checking remain open. Selected jobs assume imports; no public coverage.

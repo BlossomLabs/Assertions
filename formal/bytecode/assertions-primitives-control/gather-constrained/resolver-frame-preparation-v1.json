@@ -1,0 +1,7 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constrained-raw/Connection.dfy",
+  "sourceSha256": "98b587c0ccc84f645e2366ea789396fcf242d75f225f7f917bbaaec899c0e6a0",
+  "output": "formal/bytecode/assertions-primitives-control/gather-constrained/ResolverFrame.dfy",
+  "outputSha256": "6a5dfc65f64e247d83eb14c473462a7905964f73e7c920b86d27ed66843b8473",
+  "scope": "Fresh owned resolver physical composition with prior byte-window preservation. Original admission and judgments unchanged; added window bounds and frame statement only. No public credit."
+}

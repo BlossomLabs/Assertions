@@ -1,0 +1,40 @@
+{
+  "id": "original-abi",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/library/src/abi/Examples.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/abi/Examples.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/abi/Encoding.dfy",
+    "formal/source/library/src/abi/Examples.dfy",
+    "formal/source/library/src/abi/Frames.dfy",
+    "formal/source/library/src/abi/Validation.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/library/src/abi/Encoding.dfy",
+      "formal/source/library/src/abi/Examples.dfy",
+      "formal/source/library/src/abi/Frames.dfy",
+      "formal/source/library/src/abi/Validation.dfy"
+    ],
+    "execution": [],
+    "correspondence": [],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/library/src/abi/Encoding.dfy": "024b9f553cc72ae545b0ed2108c65bad4da6e6b02fa12d3bc7b6055ef257806e",
+    "formal/source/library/src/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
+    "formal/source/library/src/abi/Examples.dfy": "260d758c01fb73cd9d584449304d9140b6f57b166263cf164f4a99c76f5c2f57",
+    "formal/source/library/src/abi/Validation.dfy": "7f2c4248b39f1c7965c9a8e4cd45df4f3451bd997d911ef5ba355a1a9886ca87"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

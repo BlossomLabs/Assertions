@@ -1,0 +1,5 @@
+# Exact square-root seed branch controls
+
+The generator scans the exact current runtime and emits all fourteen taken/skipped paths of the seven seed thresholds64,32,16,8,4,2,1. Every136 reached instruction occurrence is bound to its actual opcode, immediate and instruction boundary. A path preserves arbitrary caller stack prefix, memory and truthful call context, and retains a complete physical execution trace through its next stage frontier. The last width1 branch changes only the seed; the actual residual AA is dead in the later computation.
+
+The18-module development graph checks every included declaration, reviewed Machine/conversion and actual execution layer, constant unfolding and all generated controls. Specific mathematical seed composition, Newton/body paths, raw entry and physical result serialization remain open. Complete retained mutation and independent evidence are required before public credit. Normative integer unsigned SHL and quotient SHR interpretation, finite fitting representation and adequate reached resources remain explicit. No gas, deployment or performance claim.

@@ -1,0 +1,402 @@
+{
+  "schemaVersion": 1,
+  "status": "preparation-source-gate-not-proof",
+  "sourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce",
+  "buildInfoId": "solc-0_8_36-ac0eef8f2a0c22be618862258c50c9c272597da3",
+  "entries": [
+    {
+      "signature": "exp(uint256,uint256)",
+      "selector": "f5f565f8",
+      "completeFunctionAstSha256": "4c802f3898287b10ef0472ba3cd71f30c7c58d99ea3bb892d86336606c71ca3f",
+      "normalizedFunction": {
+        "body": {
+          "nodeType": "Block",
+          "statements": [
+            {
+              "expression": {
+                "commonType": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "isConstant": false,
+                "isLValue": false,
+                "isPure": false,
+                "lValueRequested": false,
+                "leftExpression": {
+                  "name": "a",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "nodeType": "BinaryOperation",
+                "operator": "**",
+                "rightExpression": {
+                  "name": "b",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                }
+              },
+              "functionReturnParameters": 3711,
+              "nodeType": "Return"
+            }
+          ]
+        },
+        "documentation": {
+          "nodeType": "StructuredDocumentation",
+          "text": " @notice a ** b, checked (0 ** 0 == 1): canonical use is live\n         decimals scaling, e.g. mul(5, exp(10, token.decimals()))"
+        },
+        "functionSelector": "f5f565f8",
+        "implemented": true,
+        "kind": "function",
+        "modifiers": [],
+        "name": "exp",
+        "nameLocation": "8024:3:3",
+        "nodeType": "FunctionDefinition",
+        "parameters": {
+          "nodeType": "ParameterList",
+          "parameters": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "a",
+              "nameLocation": "8036:1:3",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            },
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "b",
+              "nameLocation": "8047:1:3",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ]
+        },
+        "returnParameters": {
+          "nodeType": "ParameterList",
+          "parameters": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "",
+              "nameLocation": "-1:-1:-1",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ]
+        },
+        "stateMutability": "pure",
+        "virtual": false,
+        "visibility": "external"
+      }
+    },
+    {
+      "signature": "exp(int256,uint256)",
+      "selector": "185af0ad",
+      "completeFunctionAstSha256": "5c21885099750bfa37be933387372e6cc410b8251d378f47cae8a20c85560291",
+      "normalizedFunction": {
+        "body": {
+          "nodeType": "Block",
+          "statements": [
+            {
+              "expression": {
+                "isConstant": false,
+                "isLValue": false,
+                "isPure": false,
+                "lValueRequested": false,
+                "leftHandSide": {
+                  "name": "result",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "nodeType": "Assignment",
+                "operator": "=",
+                "rightHandSide": {
+                  "hexValue": "31",
+                  "isConstant": false,
+                  "isLValue": false,
+                  "isPure": true,
+                  "kind": "number",
+                  "lValueRequested": false,
+                  "nodeType": "Literal",
+                  "value": "1"
+                }
+              },
+              "nodeType": "ExpressionStatement"
+            },
+            {
+              "body": {
+                "nodeType": "Block",
+                "statements": [
+                  {
+                    "condition": {
+                      "commonType": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "leftExpression": {
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "name": "b",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "&",
+                        "rightExpression": {
+                          "hexValue": "31",
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "value": "1"
+                        }
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "!=",
+                      "rightExpression": {
+                        "hexValue": "30",
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "number",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "value": "0"
+                      }
+                    },
+                    "nodeType": "IfStatement",
+                    "trueBody": {
+                      "expression": {
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftHandSide": {
+                          "name": "result",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "nodeType": "Assignment",
+                        "operator": "*=",
+                        "rightHandSide": {
+                          "name": "a",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        }
+                      },
+                      "nodeType": "ExpressionStatement"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "leftHandSide": {
+                        "name": "b",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "nodeType": "Assignment",
+                      "operator": ">>=",
+                      "rightHandSide": {
+                        "hexValue": "31",
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "number",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "value": "1"
+                      }
+                    },
+                    "nodeType": "ExpressionStatement"
+                  },
+                  {
+                    "condition": {
+                      "commonType": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "leftExpression": {
+                        "name": "b",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "!=",
+                      "rightExpression": {
+                        "hexValue": "30",
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "number",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "value": "0"
+                      }
+                    },
+                    "nodeType": "IfStatement",
+                    "trueBody": {
+                      "expression": {
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftHandSide": {
+                          "name": "a",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "nodeType": "Assignment",
+                        "operator": "*=",
+                        "rightHandSide": {
+                          "name": "a",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        }
+                      },
+                      "nodeType": "ExpressionStatement"
+                    }
+                  }
+                ]
+              },
+              "condition": {
+                "commonType": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "isConstant": false,
+                "isLValue": false,
+                "isPure": false,
+                "lValueRequested": false,
+                "leftExpression": {
+                  "name": "b",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "nodeType": "BinaryOperation",
+                "operator": "!=",
+                "rightExpression": {
+                  "hexValue": "30",
+                  "isConstant": false,
+                  "isLValue": false,
+                  "isPure": true,
+                  "kind": "number",
+                  "lValueRequested": false,
+                  "nodeType": "Literal",
+                  "value": "0"
+                }
+              },
+              "nodeType": "WhileStatement"
+            }
+          ]
+        },
+        "documentation": {
+          "nodeType": "StructuredDocumentation",
+          "text": " @notice a ** b, signed base, checked (0 ** 0 == 1)\n @dev Binary exponentiation with checked multiplies, so any\n      intermediate leaving int256 reverts with Panic(0x11)"
+        },
+        "functionSelector": "185af0ad",
+        "implemented": true,
+        "kind": "function",
+        "modifiers": [],
+        "name": "exp",
+        "nameLocation": "8332:3:3",
+        "nodeType": "FunctionDefinition",
+        "parameters": {
+          "nodeType": "ParameterList",
+          "parameters": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "a",
+              "nameLocation": "8343:1:3",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "int256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            },
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "b",
+              "nameLocation": "8354:1:3",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ]
+        },
+        "returnParameters": {
+          "nodeType": "ParameterList",
+          "parameters": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "result",
+              "nameLocation": "8387:6:3",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "int256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ]
+        },
+        "stateMutability": "pure",
+        "virtual": false,
+        "visibility": "external"
+      }
+    }
+  ],
+  "scope": "Complete current public exp function AST fingerprints, including parameters/visibility/mutability/return declarations and entire bodies. Stable compiler identity/exact instruction generation/native correspondence remain separately required; no public claim."
+}

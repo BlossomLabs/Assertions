@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/value-array/tuple-rejection/generate.py",
+  "output": "/home/sem/assertions/formal/bytecode/value-array/tuple-rejection/generate-consolidated-v24.py",
+  "source_sha256": "931b25f906fefc2f2bec9d8c13cf8da861d348406e0a5058ff3b09828b721f3e",
+  "output_sha256": "931b25f906fefc2f2bec9d8c13cf8da861d348406e0a5058ff3b09828b721f3e",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

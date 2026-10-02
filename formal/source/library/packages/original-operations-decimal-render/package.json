@@ -1,0 +1,36 @@
+{
+  "id": "original-operations-decimal-render",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/operations/decimal-render",
+  "entry": "formal/operations/decimal-render/Connection.dfy",
+  "verificationEntries": [
+    "formal/operations/decimal-render/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/operations/decimal-render/Model.dfy"
+    ],
+    "execution": [
+      "formal/operations/decimal-render/Control.generated.dfy",
+      "formal/operations/modular/Math.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/operations/decimal-render/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/operations/decimal-render/Connection.dfy": "9dfd5acc40f6299bafdef552714787980f7b1e75f60bcaf25aa946e4ce0ea7b5",
+    "formal/operations/decimal-render/Control.generated.dfy": "ae8756850bb41d815a5ad01fac79d14a649131604b12beb93d525a777e4d7229",
+    "formal/operations/decimal-render/Model.dfy": "27d6579e5182c2ada4cea4d4f28d1b645312811ef3b868d415785932522de0c5",
+    "formal/operations/modular/Math.generated.dfy": "cfc82f034d73947fe424c9aedcc99a15b8aeb2a3ae866fe58fe0d46f86c10b8d"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

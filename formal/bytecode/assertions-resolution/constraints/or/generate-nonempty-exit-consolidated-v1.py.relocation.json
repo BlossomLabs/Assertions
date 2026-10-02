@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-start-consolidated-v2.py",
+  "sourceSha256": "4f5100e1c961b31354bb26e7687f8c3197e64fa031e47b07c4f543bec6d1e969",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-exit-consolidated-v1.py",
+  "scope": "Reached nonempty decoder exit branch and cleanup19590\u21927777; arbitrary frame"
+}

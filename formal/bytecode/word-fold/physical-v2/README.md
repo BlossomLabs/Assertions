@@ -1,0 +1,7 @@
+# Complete finite fold physical development, revision2
+
+This isolated owner extends the preserved229-case development suite with all three folds' ordinary empty/four-byte callback failures, explicit exhaustion and near-exhaustion, exact four-byte signal with dirty child/parent receipt padding, shared source/template/array tails and tails overlapping raw heads. It retains the original independently computed word-stamping oracle, complete PC-zero paths, child caller/target/input/status/full returndata, reached GAS/EXTCODESIZE observations and final physical return/revert slices.
+
+Burn and near-burn fixtures must actually reach the recorded exhaustion comparison, with measured remaining gas at most the stored pre-call gas divided by63. This is a finite reached observation check, not a theorem of gas availability/cost. Exact-signal padding must actually be nonzero outside its four return bytes. Raw overlapping fixtures preserve compiler admission without assuming canonical tail placement, alignment or padding.
+
+All fixtures, owner scripts, compiler/source inputs and concrete tool hashes are captured before development execution. These finite receipts do not earn public function coverage. Fresh complete native bodies, raw admission and errors, semantic faults, all included declarations and independent retained checking remain required. Representation/resource/truthful external-observation premises remain explicit; no gas, deployment or performance claim.

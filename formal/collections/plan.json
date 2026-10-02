@@ -1,0 +1,496 @@
+{
+  "status": "source-correspondence-passed-under-explicit-premises",
+  "inventory": "formal/collections/inventory.json",
+  "scope": "All Collections public functions and helpers, including both callback modes and both word/value families.",
+  "milestones": [
+    {
+      "name": "Callback admission, binding, calls, result validation and map/filter/fold source traversal",
+      "status": "complete-conditional-source",
+      "requirements": [
+        "exact preparation and validation order",
+        "lazy target check and persistent prepared argument slots",
+        "direct ABI and evaluateEncoded callback construction",
+        "history-sensitive external outcomes, gas classification and exact callback indices/errors",
+        "inductive prefix and accumulator invariants for arbitrary finite domains",
+        "empty-input and early-exit behavior"
+      ],
+      "completionEvidence": "formal/collections/completion/evidence/all-source-bodies/manifest.json"
+    },
+    {
+      "name": "All remaining structural word/value operations",
+      "status": "complete-conditional-source",
+      "requirements": [
+        "alignment, counts, slicing, lanes and arithmetic",
+        "canonical pack/unpack, validation and callback contexts",
+        "find/any/all short circuit and unique representative semantics"
+      ],
+      "completionEvidence": "formal/collections/completion/evidence/all-source-bodies/manifest.json"
+    },
+    {
+      "name": "Sorting",
+      "status": "complete-conditional-source",
+      "requirements": [
+        "word and value bottom-up merge-sort source correspondence",
+        "permutation and stable occurrence order",
+        "sortedness conditional on suitable consistent comparator",
+        "current merge-position callback indices and exact failure propagation"
+      ],
+      "evidence": [
+        "formal/collections/word-sort/evidence/unsigned-word-source/manifest.json",
+        "formal/collections/value-sort-entry/evidence/public-value-sort/manifest.json"
+      ],
+      "completionEvidence": "formal/collections/completion/evidence/all-source-bodies/manifest.json"
+    },
+    {
+      "name": "Complete public composition and evidence audit",
+      "status": "complete-conditional-source",
+      "requirements": [
+        "fresh full ABI/helper inventory",
+        "concrete encoding and return memory",
+        "resource/decoder/context assumptions",
+        "retained native, source, tool, artifact, EVM and source-fault evidence appropriate to each layer"
+      ],
+      "completionEvidence": "formal/collections/completion/evidence/all-source-bodies/manifest.json"
+    }
+  ],
+  "completedFoundations": [
+    {
+      "name": "Abstract map/filter/fold traversal refinement",
+      "evidence": "formal/collections/traversal/evidence/abstract-value-traversals/manifest.json",
+      "obligations": 245,
+      "level": "abstract-model-only",
+      "remainingConnection": "These are abstract-model foundations for the mapped claims, not new source proofs or replacements for primary evidence. Solidity source gates, prepared callback/state projection, canonical predicate/result validation, external-call failure classification, ABI wire and physical memory/resource connection remain open. Callback indices count helper-application requests, including possible rejection before an EVM staticcall. No new EVM/source-fault campaign or bytecode claim."
+    },
+    {
+      "name": "Source-gated map/filter/fold loops under faithful helper projections",
+      "evidence": "formal/collections/value-loops/evidence/projected-helper-loops/manifest.json",
+      "obligations": 172,
+      "concreteTests": 7,
+      "level": "conditional-source-loop-correspondence",
+      "remainingConnection": "Source-gated traversal bodies under explicit faithful helper observations. Callback preparation/binding, actual ABI and predicate validation, external-call construction/classification, complete prepared-state projection, physical memory/resource and serialization connections remain open. No new source-fault campaign or compiled-bytecode claim."
+    },
+    {
+      "name": "Predicate canonicality and exhaustion postprocessing",
+      "evidence": "formal/collections/callback-results/evidence/predicate-and-exhaustion/manifest.json",
+      "obligations": 130,
+      "concreteTests": 7,
+      "sourceFaults": "formal/collections/callback-results/evidence/source-faults/manifest.json",
+      "sourceFaultsKilled": 3,
+      "level": "conditional-source-helper-correspondence",
+      "remainingConnection": "Predicate and gas postprocessing are source-gated under actual _callValue receipts, memory/read/serialization and resource premises. This does not yet establish _callValue, prepared state, component binding, callback construction or the complete traversal environment. Exhaustion is the conservative source classification, not a universal physical diagnosis."
+    },
+    {
+      "name": "Callback preparation and binding",
+      "evidence": "formal/collections/preparation/evidence/preparation-and-binding/manifest.json",
+      "obligations": 225,
+      "concreteTests": 7,
+      "sourceFaultAudit": "formal/collections/preparation/evidence/source-fault-audit/manifest.json",
+      "sourceFaultsKilled": 3,
+      "level": "conditional-source-helper-correspondence",
+      "remainingConnection": "Preparation and binding source correspondence under faithful shape/tupleLayout/validateComponent observations, aligned layout projection, valid initialized memory and adequate resources. Concrete codec instantiation and _callValue/state/traversal composition remain open. Binary-skip fault uses the original postcondition batch; the full mutant timeout is retained and not counted."
+    },
+    {
+      "name": "Callback invocation, target checks and prepared state",
+      "evidence": "formal/collections/calls/evidence/callback-invocation-v2/manifest.json",
+      "obligations": 279,
+      "concreteTests": 7,
+      "sourceFaults": "formal/collections/calls/evidence/source-faults-v2/manifest.json",
+      "sourceFaultsKilled": 3,
+      "level": "conditional-source-helper-correspondence",
+      "remainingConnection": "Source-gated callback invocation composed with proved binding and exhaustion. Code, codec, both encoders, actual staticcall/context/gas outcomes and physical memory/resources remain faithful-observation premises. Concrete encoders/error ABI and complete traversal instantiation remain open. The failed v1 test-runner naming attempt is retained but is not evidence."
+    },
+    {
+      "name": "Concrete callback encoding and failure bytes",
+      "evidence": "formal/collections/wire/evidence/concrete-callback-wire/manifest.json",
+      "obligations": 363,
+      "concreteTests": 6,
+      "level": "conditional-source-wire-composition",
+      "remainingConnection": "Concrete callback encoding environment and error bytes composed with source call/predicate adapters under explicit WireReady on reached requests, actual codec/external observations, compiler ABI and memory/resource premises. Deriving readiness from codec preparation/binding and complete traversal instantiation remain open. No new source-fault campaign."
+    },
+    {
+      "name": "Codec-derived canonical prepared state and direct readiness",
+      "evidence": "formal/collections/codec-state/evidence/canonical-prepared-state/manifest.json",
+      "obligations": 464,
+      "level": "conditional-codec-source-composition",
+      "remainingConnection": "Admitted rendered-tuple descriptor path; actual layout and component validation establish source binding canonicality and derive direct readiness. Initial canonical constants outside placeholder slots, faithful typed codec-error serialization and explicit memory/size/CursorRoom premises remain. Malformed descriptor admission and full preparation/traversal environment composition remain open. Proof-only composition; no new EVM or source-fault campaign."
+    },
+    {
+      "name": "Actual constant receipts through preparation and binding",
+      "evidence": "formal/collections/constants/evidence/actual-constant-receipts/manifest.json",
+      "obligations": 424,
+      "level": "conditional-codec-source-composition",
+      "remainingConnection": "Actual pure component receipts establish canonical constants outside placeholders and exact first failure for admitted rendered tuple descriptors, matching arity and valid substitution slots. Prepare-and-bind derives canonical arguments and direct readiness without assuming initial constant validity. Faithful typed-error encoding, arithmetic/CursorRoom/memory/resource premises remain; arbitrary descriptor/arity/slot admission and full callback/traversal environment composition remain open. No new EVM/source-fault campaign."
+    },
+    {
+      "name": "Arbitrary callback descriptor/slot/arity admission",
+      "evidence": "formal/collections/admission/evidence/arbitrary-descriptor-admission/manifest.json",
+      "obligations": 268,
+      "concreteTests": 7,
+      "level": "conditional-arbitrary-admission-source-composition",
+      "remainingConnection": "Arbitrary descriptor and slot/arity admission via actual source parser/layout outcomes, with recovered accepted witnesses and source-connected constant validation. Room supplies explicit representability/CursorRoom resources; compiler error ABI and source offsets are trusted projections. Component-validator error encoding remains a faithful supplied mapping; full callback/traversal environment composition remains open. No new source-fault campaign."
+    },
+    {
+      "name": "Concrete codec-error bytes through admission, constants and binding",
+      "evidence": "formal/collections/codec-errors/evidence/concrete-codec-errors/manifest.json",
+      "obligations": 290,
+      "concreteTests": 7,
+      "level": "conditional-codec-error-wire-composition",
+      "remainingConnection": "Concrete compiler-bound codec-error encoding replaces the supplied encoder in arbitrary admission, admitted constant validation and selected-slot binding. Field round trips require explicit Solidity-width Fits; source receipt projections, compiler ABI, memory and CursorRoom/resource premises remain. Input/result validation and full callback/traversal composition, remaining public families and sorting remain open. No new source-fault campaign."
+    },
+    {
+      "name": "Exact input and callback-result validation observations",
+      "evidence": "formal/collections/validation/evidence/validation-receipts/manifest.json",
+      "obligations": 485,
+      "concreteTests": 7,
+      "level": "conditional-validation-source-composition",
+      "remainingConnection": "Actual source parser and exact codec outcomes certify arbitrary-descriptor Shape/Validate/ValidateResult observations, canonical acceptance and exact first-offset/callback-context bytes. Room retains uint256 lengths and post-parse CursorRoom; source/context projections, compiler ABI and memory/resources remain. Prepared-state/external callback history and complete traversal environments, remaining public families and sorting remain open. No new source-fault campaign."
+    },
+    {
+      "name": "Concrete component receipts and encoders through callback execution",
+      "evidence": "formal/collections/bound-call/evidence/concrete-bound-callback/manifest.json",
+      "obligations": 479,
+      "level": "conditional-bound-callback-source-composition",
+      "remainingConnection": "Concrete component receipts and ABI encoders now instantiate _callValue for an accepted descriptor and partially canonical prepared state. Exact binding errors/partial assignments, canonical arguments, encoded calldata, lazy target cache and history-sensitive external observations are connected. Arbitrary preparation and complete traversal environments, outer error-packet resources, remaining public families and sorting remain open. Source translation/compiler ABI, context projections, memory/CursorRoom/size bounds and faithful external observations remain. Proof-only composition; no new EVM/source-fault campaign."
+    },
+    {
+      "name": "Raw preparation and first callback helper composition",
+      "evidence": "formal/collections/prepared-entry/evidence/raw-preparation-call/manifest.json",
+      "obligations": 231,
+      "level": "conditional-raw-preparation-call-composition",
+      "remainingConnection": "Raw descriptor/constant/slot preparation now composes with a first callback helper attempt. Preparation rejection preserves exact bytes and emits no target/external events; successful preparation recovers canonical constants and the unchecked state used by concrete source callback execution. This does not yet compose intervening traversal validations, repeated prepared state, result validation or outer error-packet bounds. Representability/CursorRoom, compiler ABI, source/context projections, physical memory/resources and faithful external observations remain. No new EVM/source-fault campaign."
+    },
+    {
+      "name": "Repeated concrete callback attempts and persistent prepared state",
+      "evidence": "formal/collections/repeated-call/evidence/repeated-source-callbacks/manifest.json",
+      "obligations": 312,
+      "level": "conditional-repeated-callback-source-composition",
+      "remainingConnection": "Arbitrary finite caller-supplied callback attempts now form an exact source/environment chain, preserving prepared arguments and full history, stopping at the first failure, establishing successful-prefix canonicality and reusing the target check once. Exact per-reached-step correspondence and successful external-call counts are proved. Entry assumes an admitted partially canonical prepared state; raw preparation is separate. Traversal operand/accumulator policies, input/result validation, predicate handling, outer packet bounds and public entry-point composition remain open. Existing resource/source/compiler/context/external-observation premises remain; no new EVM/source-fault campaign."
+    },
+    {
+      "name": "Source callback outcomes through predicate and result validation",
+      "evidence": "formal/collections/call-results/evidence/callback-result-observations/manifest.json",
+      "obligations": 279,
+      "level": "conditional-callback-result-observation-composition",
+      "remainingConnection": "Source callback records now compose with strict predicate processing and canonical result validation as separate call/check replies. Failed callbacks preserve exact outer error bytes and skip validation; predicate invalidity retains full context, value invalidity uses other=0, and descriptor errors preserve parser outcomes. Context/packet/codec resource bounds, source/compiler/memory premises remain. A repeated callback chain does not establish public traversal reachability after an earlier result failure: interleaved input checks, operand/accumulator policy and combined stopping still need composition. No new EVM/source-fault campaign."
+    },
+    {
+      "name": "Concrete interleaved map/filter/fold iteration",
+      "evidence": "formal/collections/iteration/evidence/concrete-interleaved-step/manifest.json",
+      "obligations": 316,
+      "level": "conditional-concrete-iteration-composition",
+      "remainingConnection": "One complete map/filter/fold Step now uses actual input validation, concrete callback operands/execution and predicate/result replies in order. Exact histories stop after input, callback/predicate or result failure; success establishes map/filter output and fold accumulator updates with canonical checked results. Concrete prepared state, low-level history and source callback environment are returned for chaining. This begins with admitted partial canonical state; whole-loop environment assembly, admission/public source-loop application and other families remain open. Explicit packet/codec/source/compiler/context/memory and faithful external-observation premises remain. No new EVM/source-fault campaign."
+    },
+    {
+      "name": "History-scoped replay and finite traversal environment assembly",
+      "evidence": "formal/collections/environment/evidence/history-scoped-assembly-v2/manifest.json",
+      "obligations": 190,
+      "level": "abstract-traversal-environment-composition",
+      "remainingConnection": "Abstract environment splicing and replay now assemble arbitrary finite iteration-row chains into one traversal Tail while preserving each reached history window, accumulator feedback and first failure. Admission can be spliced ahead of that tail. Concrete row construction, preparation/resource premises and application of public source-loop correspondence remain open; these lemmas do not make arbitrary supplied rows source receipts. No new EVM/source-fault campaign. The initial dependency-incomplete attempt is not evidence."
+    },
+    {
+      "name": "Concrete finite map/filter/fold tails with persistent state and first failure",
+      "evidence": "formal/collections/iteration-chain/evidence/concrete-finite-tail/manifest.json",
+      "obligations": 987,
+      "level": "conditional-concrete-tail-source-composition",
+      "remainingConnection": "Concrete finite map/filter/fold tails now construct actual source-helper rows, preserve exact input/call/result observations and thread prepared state, low-level history and fold feedback. The assembled environment equals traversal Tail; reached indices and first combined failure are exact. Entry still starts after admission with sufficient recursive resource/prepared-state bounds and faithful history-sensitive external observations. Raw public admission and source-loop application, remaining families and sorting remain open. Source/compiler/context/memory/packet/codec premises remain. No new EVM/source-fault campaign."
+    },
+    {
+      "name": "Public mapValues/filterValues/foldValues source composition",
+      "evidence": "formal/collections/value-entry/evidence/public-value-traversals-v2/manifest.json",
+      "obligations": 549,
+      "concreteTests": 7,
+      "level": "conditional-public-value-source-composition",
+      "completedPublicEntries": [
+        "mapValues",
+        "filterValues",
+        "foldValues"
+      ],
+      "remainingConnection": "Public mapValues/filterValues/foldValues source semantics now compose actual raw preparation, type/initial admission, concrete tail and source-loop adapters, with compiler-bound operation selectors, exact first failures and callback indices, canonical validation, strict predicates, stable filter positions, fold feedback and empty behavior. Decoded ABI input/output projection, physical memory/allocation/serialization, local execution resources, source/compiler/context/offset projections, explicit codec/packet budgets and faithful history-sensitive external observations remain premises. The other 26 public functions, sorting, complete Collections coverage and exact compiled bytecode remain open. Seven existing EVM fixtures replayed; no new source-fault campaign."
+    },
+    {
+      "name": "Indexed stable merge-sort mathematical foundation",
+      "evidence": "formal/collections/sort-core/evidence/indexed-stable-merge-sort/manifest.json",
+      "obligations": 788,
+      "level": "abstract-indexed-merge-sort",
+      "remainingConnection": "Indexed mathematical bottom-up merge sort now proves occurrence permutation for arbitrary comparison relations, cursor/prefix/frame invariants, complete run-doubling passes and termination. Under a finite total preorder it proves global sortedness and strict original-index stability; natural-key order discharges the comparator premise. This is not yet Solidity source correspondence: AST-gated word/value adapters, byte/memory representation, uint256/resource bounds, actual value admission/comparison/callback histories and failures remain open. No new public source entry, EVM, source-fault, compiled-bytecode, complexity/gas, deployment or performance claim."
+    },
+    {
+      "name": "Actual memory word helpers and byte frame preservation",
+      "evidence": "formal/collections/word-memory/evidence/actual-word-helpers-v2/manifest.json",
+      "obligations": 287,
+      "concreteTests": 6,
+      "sourceFaultsKilled": 2,
+      "level": "conditional-source-word-memory-correspondence",
+      "remainingConnection": "Actual _wordAt/_setWord helpers now have source-gated modular address translation, exact big-endian byte read/write, decoded one-slot assignment and preservation of length/header/trailing bytes and disjoint frames. This supplies the memory primitive foundation for sorting; complete sortWords/sortValues source adapters, caller allocation/disjointness, uint256 loop arithmetic, value comparator/callback histories and exact failures remain open. Finite-memory frames, uint256 values, trusted EVM load/store interpretation, source/compiler and execution-resource premises remain. No new completed public entry or bytecode/complexity/gas/deployment/performance claim."
+    },
+    {
+      "name": "Complete unsigned sortWords source composition",
+      "evidence": "formal/collections/word-sort/evidence/unsigned-word-source/manifest.json",
+      "obligations": 948,
+      "concreteTests": 8,
+      "sourceFaultsKilled": 2,
+      "level": "conditional-public-word-sort-source-composition",
+      "completedPublicEntries": [
+        "sortWords"
+      ],
+      "remainingConnection": "Complete sortWords source semantics now establish exact alignment rejection, physical byte-buffer helper reads/writes, run/pass/reference-swap invariants, uint256 counter safety, output length, unsigned sortedness, occurrence permutation and stable equal-key order. Decoded input, faithful compiler copy/zero scratch allocation into disjoint frames, outer ABI/error serialization, trusted load/store interpretation, source translation and adequate execution resources remain premises. sortValues and the other 24 remaining public entries, complete Collections coverage and exact compiled bytecode remain open. No complexity/gas/deployment/performance claim."
+    },
+    {
+      "name": "Signed sort comparator and concrete callback source composition",
+      "evidence": "formal/collections/sort-comparator/evidence/signed-comparison-source/manifest.json",
+      "obligations": 406,
+      "concreteTests": 9,
+      "sourceFaultsKilled": 3,
+      "level": "conditional-sort-comparison-source-composition",
+      "remainingConnection": "The actual sortValues comparison request/result fragment now composes concrete binary component binding, canonical encoding and _callValue source outcomes with exact one-word signed decision, current merge-position metadata and exact first failure propagation. Prepared state/history and cached target checks are retained; result inspection adds no calls or events. Admitted callback layout/constants, Uint/CursorRoom/packet bounds, faithful source/compiler/context/memory and history-sensitive external observations remain premises. Raw preparation, all-input prevalidation, complete merge traversal, comparator coherence and public sortValues composition remain open; public source coverage stays 4/29. No bytecode/complexity/gas/deployment/performance claim."
+    },
+    {
+      "name": "Value-sort preparation and all-input prevalidation source composition",
+      "evidence": "formal/collections/sort-admission/evidence/value-sort-prefix-v2/manifest.json",
+      "obligations": 462,
+      "concreteTests": 8,
+      "sourceFaultsKilled": 3,
+      "level": "conditional-sort-admission-source-composition",
+      "remainingConnection": "Actual sortValues preparation, input shape and all-input canonical prevalidation now compose with exact first failure bytes and input position, visited prefix, canonical prepared state and no target checks/external calls before merging. Uint/CursorRoom/preparation resources, faithful source/compiler/copy/allocation/memory and codec offsets remain premises. Complete history-sensitive merge traversal and comparator coherence remain open; public source coverage stays 4/29. No bytecode/complexity/gas/deployment/performance claim."
+    },
+    {
+      "name": "History-sensitive value merge suffix source correspondence",
+      "evidence": "formal/collections/value-sort-trace/evidence/observed-merge-suffix/manifest.json",
+      "obligations": 812,
+      "concreteTests": 6,
+      "sourceFaultsKilled": 3,
+      "level": "conditional-value-sort-observed-merge-source-correspondence",
+      "remainingConnection": "The source-gated sortValues merge suffix now refines an independent recursive trace specification for arbitrary history-sensitive comparison outcomes: lazy scheduling, current positions and occurrence operands, first rejection, successful occurrence permutation and safe loop counters. Global sortedness and stability require decisions coherent with a total preorder. Faithful comparison-result and occurrence/value-array projections, source/compiler/memory/allocation and execution resources remain premises. Concrete admission, callback prepared-state/history and merge-loop composition remain open; public source coverage stays 4/29. No bytecode/complexity/gas/deployment/performance claim."
+    },
+    {
+      "name": "Concrete history-sensitive sortValues merge execution",
+      "evidence": "formal/collections/value-sort-execution/evidence/concrete-merge-suffix/manifest.json",
+      "obligations": 910,
+      "level": "conditional-value-sort-execution-source-composition",
+      "remainingConnection": "Complete source merge suffix now constructs every concrete comparator receipt, threads prepared state and full low-level history, preserves current positions and original occurrence operands, stops at the first callback/result failure and refines the source merge schedule. Success preserves occurrences; total-preorder coherence is required for sortedness/stability. Finite sufficient request/codec/packet resources, faithful source/compiler/context/array-value/memory/allocation and external-observation projections remain premises. Raw admission/public composition remains open at this layer; no new completed public entry or EVM/mutation campaign. Exact bytecode, complexity/gas/deployment/performance remain separate."
+    },
+    {
+      "name": "Complete public sortValues source composition",
+      "evidence": "formal/collections/value-sort-entry/evidence/public-value-sort/manifest.json",
+      "obligations": 320,
+      "concreteTests": 14,
+      "level": "conditional-public-value-sort-source-composition",
+      "completedPublicEntries": [
+        "sortValues"
+      ],
+      "remainingConnection": "Complete public sortValues conditional source semantics now compose raw binary preparation, input shape and all-input canonical validation with concrete history-sensitive comparator execution and merge loops. Exact first admission/comparison failure, current positions, canonical occurrence permutation, empty/singleton behavior and conditional coherent-total-preorder sortedness/stability are proved. Decoded ABI inputs, faithful source/compiler/context/occurrence-to-value/memory/copy/scratch/allocation/serialization projections, sufficient codec/packet/request budgets and external observations remain premises. Fourteen existing EVM fixtures replayed; source-fault campaigns are retained dependencies, not a fresh campaign. Public source coverage is 5/29; remaining 24 entries, complete Collections coverage and exact compiled bytecode remain open. No gas/deployment/performance claim."
+    },
+    {
+      "name": "Word template window admission and ordered byte stamping",
+      "evidence": "formal/collections/word-windows/evidence/ordered-template-writes/manifest.json",
+      "obligations": 434,
+      "concreteTests": 7,
+      "sourceFaultsKilled": 3,
+      "level": "conditional-word-window-source-correspondence",
+      "remainingConnection": "Actual _checkWindows/_checkElementWindows and _stampWindows/_stampElements now have source-gated arbitrary finite offset-list correspondence: accumulator-first rejection, exact first invalid offset/error bytes, admitted modular-address safety, ordered unaligned/overlapping/duplicate stores, independent last-covering-write byte semantics, pristine bytes outside windows, physical header/outside-memory preservation and repeated-write replacement. Finite faithful byte frames, uint256 sizes/values, copy/allocation/ABI serialization, source/compiler and execution-resource assumptions remain. Public word callback/domain/fold/map/filter composition remains open; source coverage stays 5/29. No exact-bytecode/gas/deployment/performance claim."
+    },
+    {
+      "name": "Word domain elements, target checks and callback outcomes",
+      "evidence": "formal/collections/word-call/evidence/domain-and-call-source-v2/manifest.json",
+      "obligations": 113,
+      "concreteTests": 8,
+      "sourceFaultsKilled": 3,
+      "level": "conditional-word-domain-call-source-correspondence",
+      "remainingConnection": "Actual FoldDomain/_domainElem, _checkTarget and _callWord now have source-gated domain selection, safe word-slice arithmetic, exact code-less-target rejection, one full-history external observation and exact exhaustion/callback/malformed-result errors. Successful returndata is exactly one complete unsigned 256-bit word. Valid internal indices, representable fields and error-packet bounds, faithful decoded calldata/compiler/context/memory/serialization and staticcall/gas observations remain premises. Public alignment/admission/loop/stamping/Full-Any-All exit composition remains open; no new public entry and coverage stays 5/29. Initial domain-and-call-source failed only the isolated Solidity formatting gate and is not evidence. Exact bytecode and performance claims remain separate."
+    },
+    {
+      "name": "Complete word fold loop with concrete memory and first exit",
+      "evidence": "formal/collections/word-fold-loop/evidence/feedback-and-first-exit/manifest.json",
+      "obligations": 975,
+      "concreteTests": 8,
+      "sourceFaultsKilled": 3,
+      "level": "conditional-word-fold-loop-source-composition",
+      "remainingConnection": "Complete _foldLoop source correspondence now composes actual domain selection, persistent byte-memory stamping and history-sensitive word calls with independent recursive accumulator and Full/Any/All semantics. Exact reached indices/calldata, accumulator/history links, first failure, first stopping point, full-mode consumption and unchanged frame/outside memory are proved. Entry assumes admitted windows/domain bounds and a faithful copied frame after the caller target check, with sufficient reached-call packet/execution resources and source/compiler/context/memory/ABI projections. Raw _fold and public foldRange/foldBytes/foldWords admission still require composition; public coverage stays 5/29. Exact bytecode and performance evidence remain separate."
+    },
+    {
+      "name": "Complete public foldRange/foldBytes/foldWords source composition",
+      "evidence": "formal/collections/word-fold-entry/evidence/public-word-folds/manifest.json",
+      "obligations": 407,
+      "concreteTests": 14,
+      "sourceFaultsKilled": 3,
+      "level": "conditional-public-word-fold-source-composition",
+      "completedPublicEntries": [
+        "foldRange",
+        "foldBytes",
+        "foldWords"
+      ],
+      "remainingConnection": "Complete public foldRange/foldBytes/foldWords source composition at the decoded ABI boundary: compiler-bound domain/count/selectors, word alignment before windows, windows before empty return and target check, exact first failures, persistent-memory accumulator feedback and Full/Any/All stopping. Decoded ABI, faithful source/compiler/context/memory/copy/allocation/serialization and external-observation projections, and sufficient reached-loop execution/callback resources remain premises. Admission derives domain/window bounds; empty and rejected paths require no copied loop frame or callback budget. Other public entries and exact compiled bytecode remain open; no gas, deployment or performance claim. Public source coverage is 8/29; 21 entries remain."
+    },
+    {
+      "name": "Complete public mapWords/filterWords source composition",
+      "evidence": "formal/collections/word-apply/evidence/public-word-map-filter-v2/manifest.json",
+      "obligations": 1941,
+      "concreteTests": 14,
+      "sourceFaultsKilled": 4,
+      "level": "conditional-public-word-apply-source-composition",
+      "completedPublicEntries": [
+        "mapWords",
+        "filterWords"
+      ],
+      "remainingConnection": "Complete raw alignment/window/allocation/empty/target/copy order composes with concrete persistent-memory source traversal, history-sensitive callbacks and predicate failures, exact first failures, positional full-width map results and stable original-word filter selection. Successful physical output frame and actual header shrink are source-connected; decoded ABI, source/compiler/context/memory/allocation/copy/serialization and external-observation projections and sufficient reached resources remain explicit premises. Remaining Collections operations and exact compiled bytecode remain open; no gas, deployment or performance claim."
+    },
+    {
+      "name": "Complete public wordIndexOf/sumWords source composition",
+      "evidence": "formal/collections/word-scans/evidence/least-index-checked-sum/manifest.json",
+      "obligations": 194,
+      "concreteTests": 6,
+      "sourceFaultsKilled": 2,
+      "level": "conditional-public-word-scan-source-composition",
+      "completedPublicEntries": [
+        "wordIndexOf",
+        "sumWords"
+      ],
+      "remainingConnection": "Complete alignment/slice/control source semantics prove least matching word or count sentinel and exact checked sum or Panic(0x11). Full-width unsigned words, arbitrary finite aligned payloads and exact errors are covered under decoded ABI, compiler/calldata slice/checked-arithmetic/serialization projections and sufficient local execution resources. No external observations or output allocation occur in these bodies. Remaining Collections operations and exact compiled bytecode remain open; no gas, deployment or performance claim."
+    },
+    {
+      "name": "Complete public iotaWords/reverseWords/zipWords/unzipWords physical source composition",
+      "evidence": "formal/collections/word-layout/evidence/physical-word-layouts/manifest.json",
+      "obligations": 857,
+      "concreteTests": 10,
+      "sourceFaultsKilled": 4,
+      "level": "conditional-public-word-layout-source-composition",
+      "completedPublicEntries": [
+        "iotaWords",
+        "reverseWords",
+        "zipWords",
+        "unzipWords"
+      ],
+      "remainingConnection": "Applies to four word-layout entries only. Raw decoded widths, faithful compiler/calldata/checked arithmetic/memory/load-store/allocator/outer serialization, successful allocation projection and sufficient execution resources remain premises. Arithmetic multiplication overflow is source-connected. Compiler allocation guards/Panic(0x41) and OOG are excluded from this conditional theorem; the iota(2^59) fixture is a separate concrete observation. No bytecode/gas/deployment/performance claim. Remaining Collections operations and exact compiled bytecode stay open."
+    },
+    {
+      "name": "Complete public uniqueWords stable physical source composition",
+      "evidence": "formal/collections/word-unique/evidence/stable-first-word-source/manifest.json",
+      "obligations": 711,
+      "concreteTests": 5,
+      "sourceFaultsKilled": 3,
+      "level": "conditional-public-word-unique-source-composition",
+      "completedPublicEntries": [
+        "uniqueWords"
+      ],
+      "remainingConnection": "Applies only to uniqueWords. Stable full-width first occurrences and unordered uniqueness are proved; ordered selects run starts and can retain ungrouped repeats. Grouped-mode equivalence is conditional on explicit grouping. Faithful decoded/source/compiler/calldata/context/memory/allocator/outer serialization/load-store and sufficient successful allocation/execution premises remain. No exact bytecode/complexity/gas/deployment/performance claim. Remaining twelve Collections value operations and exact compiled bytecode stay open."
+    },
+    {
+      "name": "Public reverseValues/sliceValues/flattenValues source composition",
+      "evidence": "formal/collections/value-structure/evidence/pure-value-positions/manifest.json",
+      "nativeObligations": 1314,
+      "auditFindings": 0,
+      "concreteFixtures": 11,
+      "sourceFaults": 5,
+      "level": "conditional-public-pure-value-source-composition",
+      "remainingConnection": "Applies only to reverseValues/sliceValues/flattenValues. Exact selected original encodings, raw descriptor/canonical validation and first-error prefix are source-connected. Signed clamping admits int256 extrema under representable array-footprint bounds; slice validates only selected cells. Checked flatten count precedes allocation/validation. Faithful decoded source/compiler/calldata/context/memory/copy/logical array writes/allocator/outer serialization and adequate allocation/execution/codec resources remain explicit premises. Budget conservatively covers all selected cells after successful descriptor/count admission. Logical arrays do not establish physical allocator or return serializer. No bytecode/gas/complexity/deployment/performance claim. Other nine public entries and exact compiled bytecode remain open."
+    },
+    {
+      "name": "Public packArray/unpackArray exact source composition and inverses",
+      "evidence": "formal/collections/value-codec/evidence/public-array-codec/manifest.json",
+      "nativeObligations": 3068,
+      "auditFindings": 0,
+      "concreteFixtures": 9,
+      "sourceFaults": 4,
+      "level": "conditional-public-array-codec-source-composition",
+      "remainingConnection": "Applies to packArray/unpackArray only. Exact raw descriptor, first-invalid original packing value and recursive encoded-array errors are source-connected with canonical construction/splitting and both inverse directions calling the public source adapters. Finite decoded bytes, representable pointer-array/input/total encoding footprints, element/array cursor budgets, faithful source/compiler/calldata/memory/copy/logical writes/allocator/outer serialization/error projections and adequate allocation/execution remain explicit premises. Logical arrays/bytes do not establish physical compiler allocator or return serializer behavior. No exact bytecode/gas/complexity/deployment/performance claim. Other seven public entries and exact compiled bytecode remain open."
+    },
+    {
+      "name": "Public indexOfValues/anyValues/allValues/findValues raw source composition",
+      "evidence": "formal/collections/value-search/evidence/public-predicate-searches/manifest.json",
+      "nativeObligations": 1175,
+      "auditFindings": 0,
+      "concreteFixtures": 17,
+      "sourceFaults": 5,
+      "level": "conditional-public-predicate-search-source-composition",
+      "remainingConnection": "Applies only to the four search entries. Complete raw preparation/descriptor or needle validation, reached canonical candidates, actual binding/callback/strict-result receipts, first decisive or failure prefix and persistent prepared state/history are source-connected. Actual history-sensitive external outcomes are explicit; no stable callback truth or cross-entry agreement is assumed. Finite decoded/source/compiler/calldata/context/memory/copy/successful allocation/outer serialization and representable cursor/packet/execution resources remain premises. No exact bytecode, gas, complexity, deployment or performance claim. Other three Collections public entries and exact compiled bytecode remain open."
+    },
+    {
+      "name": "Public uniqueValues actual greedy source composition and conditional key-class selection",
+      "evidence": "formal/collections/value-unique/evidence/public-greedy-uniqueness/manifest.json",
+      "nativeObligations": 2684,
+      "auditFindings": 0,
+      "concreteFixtures": 16,
+      "sourceFaults": 8,
+      "level": "conditional-public-value-unique-source-composition",
+      "remainingConnection": "Applies only to uniqueValues. Raw binary callback/constant preparation and descriptor admission, every reached candidate validation, actual retained/candidate binding and strict predicate receipts, exact first failure, persistent prepared state/history and stable original output are source-connected. Arbitrary history-sensitive/asymmetric callback outcomes retain their exact greedy semantics. First key-class representatives require coherent key equality observations; ordered/unordered agreement additionally requires grouped keys. Finite decoded/source/compiler/calldata/context/byte memory/copy/logical writes/shrink/successful allocator/outer serialization and fitting cursor/packet/encoding/execution resources remain explicit. No exact bytecode, gas, complexity, deployment or performance claim. Other two Collections public entries and exact compiled bytecode remain open."
+    },
+    {
+      "name": "Public zipValues/unzipValues actual canonical pairing, exact framing and public inverses",
+      "evidence": "formal/collections/value-pairs/evidence/public-canonical-pairs-v3/manifest.json",
+      "nativeObligations": 4357,
+      "auditFindings": 0,
+      "concreteFixtures": 13,
+      "sourceFaults": 6,
+      "level": "conditional-public-value-pair-source-composition",
+      "remainingConnection": "Applies only to zipValues/unzipValues. Raw length/lane admission precedence, descriptor/head checks, actual left/right canonical validation, bare static or 0x20-envelope dynamic pair assembly, exact framing offset/boundary/span/tail errors, selected original lane and byte-preserving reassembly are source-connected. Both inverse directions call actual public source adapters under explicit canonical input/framing and intermediate resource premises. Finite decoded/source/compiler/calldata/context/byte memory/copy/logical writes/successful allocator/outer serialization and fitting cursor/packet/head/encoding/execution resources remain explicit. Compiler allocator guards/OOG and physical allocator/serializer behavior remain outside the logical bytes/array theorem. No exact bytecode, gas, complexity, deployment or performance claim. Complete Collections source inventory audit/composition and the exact compiled-bytecode track remain separate."
+    },
+    {
+      "name": "Complete Collections source coverage, dependency closure and compiler-bound ABI selector correspondence",
+      "evidence": "formal/collections/completion/evidence/all-source-bodies/manifest.json",
+      "nativeObligations": 126,
+      "auditFindings": 0,
+      "functionDefinitions": 51,
+      "publicEntries": 29,
+      "requirements": 21,
+      "dependencyManifests": 70,
+      "level": "complete-conditional-collections-source-coverage",
+      "remainingConnection": "All 51 explicit Solidity bodies and 29 public pure/view ABI entries have completed conditional source proof coverage. Retained completion evidence binds every body exactly once to actual source connection methods, audits 70 current native/source/tool/artifact dependency manifests and the 21 mapped package checkers, and proves compiler-bound abstract selector correspondence in 126 native obligations with zero escape audit. The union of leaf finite decoded representation, fitting resource, source/compiler/context/memory/allocator/serialization and truthful external-observation premises remains explicit; stronger sorting/uniqueness properties retain coherence/grouping premises. Exact compiled-bytecode semantics, physical resource safety, gas, deployment, complexity and performance remain separate and incomplete."
+    }
+  ],
+  "publicSourceCoverage": {
+    "level": "conditional-source-semantics-at-decoded-ABI-boundary",
+    "totalPublicEntries": 29,
+    "completedEntries": [
+      "mapValues",
+      "filterValues",
+      "foldValues",
+      "sortWords",
+      "sortValues",
+      "foldRange",
+      "foldBytes",
+      "foldWords",
+      "mapWords",
+      "filterWords",
+      "wordIndexOf",
+      "sumWords",
+      "iotaWords",
+      "reverseWords",
+      "zipWords",
+      "unzipWords",
+      "uniqueWords",
+      "reverseValues",
+      "sliceValues",
+      "flattenValues",
+      "packArray",
+      "unpackArray",
+      "indexOfValues",
+      "anyValues",
+      "allValues",
+      "findValues",
+      "uniqueValues",
+      "zipValues",
+      "unzipValues"
+    ],
+    "remainingEntries": [],
+    "evidence": "formal/collections/value-entry/evidence/public-value-traversals-v2/manifest.json",
+    "status": "complete-conditional-source",
+    "additionalEvidence": [
+      "formal/collections/word-sort/evidence/unsigned-word-source/manifest.json",
+      "formal/collections/value-sort-entry/evidence/public-value-sort/manifest.json",
+      "formal/collections/word-fold-entry/evidence/public-word-folds/manifest.json",
+      "formal/collections/word-apply/evidence/public-word-map-filter-v2/manifest.json",
+      "formal/collections/word-scans/evidence/least-index-checked-sum/manifest.json",
+      "formal/collections/word-layout/evidence/physical-word-layouts/manifest.json",
+      "formal/collections/word-unique/evidence/stable-first-word-source/manifest.json",
+      "formal/collections/value-structure/evidence/pure-value-positions/manifest.json",
+      "formal/collections/value-codec/evidence/public-array-codec/manifest.json",
+      "formal/collections/value-search/evidence/public-predicate-searches/manifest.json",
+      "formal/collections/value-unique/evidence/public-greedy-uniqueness/manifest.json",
+      "formal/collections/value-pairs/evidence/public-canonical-pairs-v3/manifest.json"
+    ],
+    "completionEvidence": "formal/collections/completion/evidence/all-source-bodies/manifest.json"
+  },
+  "next": "Continue the separate exact compiled-bytecode track for Assertions, Expressions and Collections; preserve completed source evidence and all explicit leaf premises.",
+  "sourceCompletionEvidence": "formal/collections/completion/evidence/all-source-bodies/manifest.json",
+  "sourceCompletionScope": "All 51 explicit Solidity bodies and 29 public pure/view ABI entries have completed conditional source proof coverage. Retained completion evidence binds every body exactly once to actual source connection methods, audits 70 current native/source/tool/artifact dependency manifests and the 21 mapped package checkers, and proves compiler-bound abstract selector correspondence in 126 native obligations with zero escape audit. The union of leaf finite decoded representation, fitting resource, source/compiler/context/memory/allocator/serialization and truthful external-observation premises remains explicit; stronger sorting/uniqueness properties retain coherence/grouping premises. Exact compiled-bytecode semantics, physical resource safety, gas, deployment, complexity and performance remain separate and incomplete."
+}

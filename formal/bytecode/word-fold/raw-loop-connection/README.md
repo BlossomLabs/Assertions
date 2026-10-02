@@ -1,0 +1,5 @@
+# Complete raw successful fold trace
+
+The connection starts at PC zero for all three nonempty compiler-admitted raw fold entries, performs ordered alignment/window/target admission, allocates the six-word FoldRun, copies the actual template, executes the complete finite callback loop through exhaustion or first canonical early exit, and follows all actual cleanup instructions through exact public32-byte RETURN. FinalReady derives final loop admission rather than introducing a new final-memory premise.
+
+Raw tails and supplied windows can overlap; range totals and output words remain unrestricted. The finite reached-memory resource schedule and truthful code-size/GAS/STATICCALL observations remain explicit and bind the actual stamped payload. Empty/error/failure/exhaustion-guard complements, full included native verification, compiler identity, physical fixtures, semantic source/bytecode faults and independent retained checking remain required before public credit. Selected imports are assumed during development. No gas, deployment, performance or compiler correctness claim.

@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-item-consolidated-v5.py",
+  "sourceSha256": "894912952dfc609a247ba102f13ebaf14c3375c808caeb713a9032e0e14044cc",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-item-consolidated-v6.py",
+  "correction": "19761 is free+64+length before19762adds32; MCOPY explicitFits derived from allocation-only shared StoreExtent and reachedbudget"
+}

@@ -1,0 +1,9 @@
+# Raw bytes hash preparation
+
+New isolated preparation for hash(bytes), binding compiler selector and actual complete instructions. Concrete fixtures guide full raw ABI admission, actual calldata-to-memory copy, SHA3 input and scalar32-byte physical receipt. The hash engine is an explicit faithful observation premise; no cryptographic implementation, collision, source-to-bytecode, gas/deployment or performance theorem is inferred. Native universal raw paths/copy/hash/serialization, semantic runtime mutation, complete provenance and independent retained checking remain open. Canonical/shared owners remain unchanged.
+
+Historical physical-closure-v1 passed38 full physical receipts, complete independent opcode/stack/expanded byte-memory/preimage replay, input/Node/Python/concrete-tool/hash-engine/evidence closure unchanged. Eight observed classes are Success211 states, Short19, Args71, Nonzero11, OffsetBound84, LengthWindow102, LengthBound116 andPayloadWindow132; actual CALLDATACOPY20051, SHA3/KECCAK2567593 andRETURN1309. This finite observation is development only and predates future native owners.
+
+New own constructive conversion/reviewed raw opcode/binary candidates and seven exact raw rejection controls are being prepared. They exclude the successful hash body/copy/hash-engine/return composition. No native development attempt has run in this new graph.
+
+The successful compiled path copies the admitted calldata payload directly into scratch memory128, stores a zero word at128+length, hashes exactly128..128+length and overwrites128 with the scalar result before RETURN12832. The observed body uses the existing scratch pointer. Successful native modeling must prove the actual dynamic byte copy/tail frame and hash span under explicit fitting reached memory/resources, rather than inventing a Solidity heap allocation.

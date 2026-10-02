@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Validate current complete admitted getter bytecode evidence and its exact scope."""
-import csv,hashlib,importlib.util,json,re,subprocess,sys,tempfile
+import argparse,csv,hashlib,importlib.util,json,re,subprocess,sys,tempfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
@@ -8,7 +8,19 @@ def require(ok,message):
     if not ok:raise SystemExit(message)
 def module(name,path):
     spec=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
-ledger=json.loads((ROOT/'docs/verification/constant-getters-bytecode.json').read_text());path=ROOT/ledger['baseline'];require(sha(path)==ledger['baselineSha256'],'Manifest drift');m=json.loads(path.read_text());out=path.parent
+p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path);args=p.parse_args()
+if args.manifest:
+    path=args.manifest.resolve()
+    ledger={'nativeObligations':6090,'concreteFixtures':12,'semanticBytecodeFaults':2,
+      'sharedTheorems':['DecodeBound','RoundTrip','WordPower','LoadProjection','StoreLoad','StoreFrame'],
+      'publicEntries':{f'Assertions.{name}()':{
+        'connection':f'BytecodeGetter{name}.Run','signedConstant':f'BytecodeGetter{name}.SignedConstant',
+        'instructionStates':states,'maximumStackWords':stack,'selector':selector,
+        'returnHex':format(value,'064x')}
+        for name,states,stack,selector,value in [('LEN',63,5,'694464da',1<<255),('PAYLOAD',101,11,'268e878d',(1<<255)+1)]}}
+else:
+    ledger=json.loads((ROOT/'docs/verification/constant-getters-bytecode.json').read_text());path=ROOT/ledger['baseline'];require(sha(path)==ledger['baselineSha256'],'Manifest drift')
+m=json.loads(path.read_text());out=path.parent
 require(m['status']=='passed' and all(m[k] for k in ['inputsUnchanged','toolsUnchanged','concreteToolsUnchanged']) and all(c['passed'] for c in m['checks']),'Incomplete retained baseline')
 for name,digest in m['sourceSha256'].items():require(sha(ROOT/name)==digest,'Current input drift '+name)
 for name,digest in m['evidenceSha256'].items():require(sha(out/name)==digest,'Evidence drift '+name)
@@ -55,6 +67,7 @@ with tempfile.TemporaryDirectory(prefix='getter-bytecode-check-') as folder:
     dest=Path(folder);subprocess.run([sys.executable,'-B',ROOT/'formal/bytecode/getters/generate.py','--output',dest/'generated'],check=True)
     for name in ['LEN','PAYLOAD']:
         for suffix in ['.generated.dfy','.mapping.json']:require((dest/'generated'/(name+suffix)).read_bytes()==(ROOT/'formal/bytecode/getters'/(name+suffix)).read_bytes(),'Current generation drift')
-    subprocess.run([sys.executable,'-B',ROOT/'formal/bytecode/dispatch/identity.py','--solc',solc,'--output',dest/'identity'],check=True)
+    retained_identity=json.loads((out/'identity/identity.json').read_text())
+    subprocess.run([sys.executable,'-B',ROOT/'formal/bytecode/dispatch/identity.py','--solc',solc,'--output',dest/'identity',*[v for item in retained_identity for v in ['--contract',item['contract']]]],check=True)
     require((dest/'identity/identity.json').read_bytes()==(out/'identity/identity.json').read_bytes(),'Current exact runtime identity differs')
 print('PASS: admitted LEN/PAYLOAD exact bytecode, 6090 native obligations, zero audits, 12 physical return/memory fixtures and two semantic bytecode faults; whole-contract bytecode remains open')

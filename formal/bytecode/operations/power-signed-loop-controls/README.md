@@ -1,0 +1,7 @@
+# Exact signed integer-power loop candidate
+
+Prepared20-module source/math/machine graph; native verification is queued and adds no public coverage. Eight generated loop segments retain all73 executed opcodes and complete continuous traces. Three generated checked-multiplication helper partitions retain106 further executed opcodes, including both actual caller continuations3275 and3301; successful calls preserve the arbitrary bounded caller prefix and fresh heap, and failures emit the exact36-byte Panic17 packet.
+
+Engine.Loop composes every segment and callee transition through finite exponent halving. Its outcome is the independently specified checked-intermediate signed source trace, including accumulator and square overflow. Engine.Run includes the initial compiler accumulator setup. Raw admission atPCzero and physical RETURN serialization are separate open connections.
+
+Exact current runtime bytes, instruction boundaries, immediates and reached jump destinations are premises that the retained compiler/input gate must bind. The finite256-bit representation, reached stack bound, fresh byte memory, sufficient execution resources, truthful environmental observations, reviewed interpreter/extractor and native verifier trust remain explicit. This is exact integer exponentiation; it establishes no real-valued exponential accuracy, gas, deployment or performance claim. Never edit generated files.

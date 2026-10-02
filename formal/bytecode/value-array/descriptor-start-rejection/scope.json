@@ -1,0 +1,13 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/descriptor-start-rejection/PAtLimit.generated.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "One complete prepared owner for exact typeShape entry with fitting limit<=length and p>=limit through actual InvalidTypeDescriptor(p) REVERT, generic lower stack, arbitrary full word p and fitting aligned free memory. All other rejection branches and full raw/recursive public error composition remain open. No public credit.",
+  "assumptions": [
+    "Current pinned runtime/tools and reviewed reached EVM instruction model.",
+    "Explicit source guard p>=limit with limit<=length and represented lower stack/free memory fitting; public raw and recursive connection must derive the actual entry frame and resource bounds.",
+    "Every current imported proof body requires complete final whole-owner native closure."
+  ],
+  "formatExclusions": {}
+}

@@ -1,0 +1,9 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Raw calldata representation length below2^64; candidate seven-head and dynamic tail checks preserve loose/shared/overlapping compiler inputs. Range count and accumulator retain full uint256 domain.",
+    "The element-window count bound is derived only from its fitting encoded span. Mathematical candidate predicates are not an actual executed decoder theorem.",
+    "Included checked contracts are assumed in selected development checks. Complete native instruction/declaration/include/raw-path/body/error/output closure, physical receipts, semantic faults and independent retained checker remain required. No gas/deployment/performance claims."
+  ]
+}

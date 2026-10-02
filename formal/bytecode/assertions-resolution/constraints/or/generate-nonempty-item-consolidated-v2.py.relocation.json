@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-item-consolidated-v1.py",
+  "sourceSha256": "f9406da1e006ce9defe7a6e3fcdf47c99b055145a3f95e0d93c2ff276ef4d62b",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-item-consolidated-v2.py",
+  "correction": "Parenthesized emitted mask input to preserve intended mathematical grouping; no active proof source edited"
+}

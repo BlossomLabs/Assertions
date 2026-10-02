@@ -1,0 +1,7 @@
+# Raw fold allocation and template connection development
+
+The handwritten connection starts at PC zero for fitting nonempty foldRange, foldBytes and foldWords calldata with their assigned selectors and valid ordered windows. One truthful positive target code-size observation precedes the exact six-word FoldRun allocation and physical template copy. It ends at loop header16484 with the original caller stack, run pointer128, loop index0, copied template at320 and unchanged old returndata. The observation cursor advances exactly once.
+
+The memory theorem preserves all six run words, including the unrestricted unsigned256-bit Range count and initial accumulator, and identifies the copied payload with the exact admitted raw calldata slice. Raw tails can share or overlap heads. Copy does not restrict the fold element count.
+
+All package files finish before snapshot. Static resolution/audits are not native proofs. Selected native proofs assume imported contracts and provide no public coverage. Full included native closure and complementary raw/window/empty/target error paths, domain element selection, stamping, callbacks/guards/errors/early exits, exact scalar RETURN, EVM fixtures, matching semantic mutations and independent retained checking remain open. Representation, sufficient reached resources and truthful observations are explicit; there is no gas, deployment, performance or compiler-correctness claim.

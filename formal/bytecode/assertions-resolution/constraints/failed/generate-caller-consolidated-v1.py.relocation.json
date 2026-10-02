@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/assertions-resolution/constraints/failed/generate-serialization.py",
+  "output": "/home/sem/assertions/formal/bytecode/assertions-resolution/constraints/failed/generate-caller-consolidated-v1.py",
+  "source_sha256": "eee65a4e6b74d6699287c0110e2addc483609d55ba0b6ae070663798695081e7",
+  "output_sha256": "eee65a4e6b74d6699287c0110e2addc483609d55ba0b6ae070663798695081e7",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

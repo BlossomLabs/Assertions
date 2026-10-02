@@ -1,0 +1,3 @@
+# Checked terminal stack decomposition
+
+This isolated generator repair preserves every existing decoded wrapper admission, physical opcode, terminal stack, arbitrary lower prefix and memory, and native30-second/two-core settings. It adds separately checked concatenation and terminal-pop lemmas to connect the flat extracted stack to the same grouped public window-call postcondition. Old captured owners remain unchanged; all generated files are emitted by this owned generator. Whole native inventory/zero audits and full retained dependency/compiler/physical/mutation/checker gates remain required. No public coverage or gas/deployment/performance claim.

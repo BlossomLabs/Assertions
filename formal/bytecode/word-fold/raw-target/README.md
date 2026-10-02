@@ -1,0 +1,7 @@
+# Raw nonempty fold target connection development
+
+The selected handwritten connection composes exact public-entry raw routing/decoding, Words alignment and ordered accumulator/element-window admission with the nonempty branch and actual shared target helper. It consumes exactly one truthful code-size observation, preserves arbitrary old returndata and advances cursor exactly1. Positive size reaches actual fold continuation12052 with all Fold arguments/lower stack and pre-allocation memory unchanged; zero code size writes and physically reverts with exact36-byte InvalidCallbackTarget(address).
+
+The target check precedes FoldRun and template allocation. The independent full-width range count has no output-allocation bound; only actual finite encoded source/window spans carry raw representation bounds. Empty input has its separate exact no-observation physical return connection.
+
+Static checks and selected native development proofs are separate; imported contracts are assumed in selected runs. Full current included graph, complete nonempty allocation/template/domain/stamping/callback/guards/early-exit/errors/scalar output, complementary raw/window/empty paths, EVM fixtures, matching semantic faults and independently checked retained evidence remain mandatory before public coverage. Sufficient reached resources and truthful observations remain explicit. No gas/deployment/performance or compiler-correctness claim.

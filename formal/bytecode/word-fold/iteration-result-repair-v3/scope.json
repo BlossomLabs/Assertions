@@ -1,0 +1,21 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-iteration-result",
+      "owner": "formal/bytecode/word-fold/iteration-result-repair-v3",
+      "generatedNames": [
+        "ContinueNever",
+        "ContinueZeroWhenNonZero",
+        "BreakNonZero",
+        "BreakZero",
+        "ContinueNonZeroWhenZero"
+      ]
+    }
+  ],
+  "assumptions": [
+    "Pinned exact current fold runtime and three selectors. Actual callback helper return16553 with complete11 loop words and zero scratch plus arbitrary full-word result. Run pointer128/return12157, canonical FoldExit0..2 at slot288; finite aligned physical memory contains all six FoldRun words.",
+    "Actual accumulator MSTORE256 precedes early-exit judgment. Five exhaustive canonical cases: never exits; exit1 returns early on nonzero; exit2 returns early on zero. Continue exact16484 full caller frame/index+1, break16664 full frame/index unchanged. Index<2^256-1 follows reached index<total Word; no separate Range count restriction.",
+    "All native selected imports assumed. Complete callback success/failure and resource guards, raw domain/stamping, unbounded finite iteration/scalar terminal and whole retained graph/physical replay/matching semantic faults/independent checker required. Representation, reached resources and observations explicit; no gas/deployment/performance/compiler-correctness claim."
+  ]
+}

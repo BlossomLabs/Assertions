@@ -1,0 +1,13 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/byte-machine/Machine.dfy",
+    "formal/bytecode/value-array/byte-machine/Scalar.dfy",
+    "formal/bytecode/value-array/byte-machine/Execution.dfy"
+  ],
+  "selectedModuleCount": 3,
+  "scope": "Reviewed local BYTE opcode extension for actual descriptor scanning; delegates unchanged all checked scanner/copy opcodes. Native all-data first-byte projection and exact trace lifting required. Descriptor parsing/canonical codec loops/errors/returns and full retained public evidence remain open.",
+  "assumptions": [
+    "Pinned bytecode and reviewed exact EVM BYTE/scan/copy interpretation remain premises. No compiler correctness, gas/deployment/performance or public native closure inferred from selected development evidence."
+  ],
+  "formatExclusions": {}
+}

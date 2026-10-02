@@ -1,0 +1,13 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/suffix-connection/Number.dfy",
+    "formal/bytecode/value-array/suffix-connection/Connection.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "Two complete exact owners for independent decimal prefix monotonicity and arbitrary successful single suffix: actual opening, full arbitrary digit loop, three complete closing branches, full next frame and unchanged memory. Semantic complete digit span admits leading zeros and every nonempty positive accepted uint32 length/footprint. All rejecting branches, arbitrary suffix-chain/tuple/codec and complete retained public graph remain required. No public credit.",
+  "assumptions": [
+    "Pinned runtime, reviewed interpreter and current tools remain trusted.",
+    "Arbitrary represented calldata/memory/lower frame, reached fitting resources, exact independent bracket/digit spans and valid mathematical source-branch bounds. All imported current bodies require complete final native closure."
+  ],
+  "formatExclusions": {}
+}

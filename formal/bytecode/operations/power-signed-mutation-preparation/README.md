@@ -1,0 +1,5 @@
+# Signed integer-power matching fault preparation
+
+Single compiled byte atMUL20148 is changed toADD. The intended native successor at the actual first signed3^31 checked helper call has product3 from source accumulator1 and factor3; the candidate computes4 and must contradict the same ordinary intended-result postcondition. Native baseline/candidate checks are queued; complete53-module caller/dependency retention remains open.
+
+Fresh67 complete physical candidate receipts were generated. Ordinal51 independently expects617673396283947 and instead reaches physical Panic17 after the corrupted product fails the compiler helper guard. The separate independent replay checks every actual opcode, stack, expanded byte memory and final packet. Concrete fault findings add no public proof credit; baseline native coverage, matching native contradiction, retained provenance and parent checker are required. Runtime identity, reviewed extraction/interpreter, finite fitting representation, faithful observations and reached resources remain explicit. Never edit generated files.

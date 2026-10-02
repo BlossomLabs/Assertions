@@ -1,0 +1,3 @@
+# Modular-power physical request construction preparation
+
+Exact compiled path from PC9283 through six MSTORE instructions and GAS to STATICCALL frontier9331. Starts from the reached fresh memory header128, keeps the caller continuation and outer stack, and constructs the physical192-byte MODEXP input with overlapping32-byte result buffer. GAS consumes a truthful parameterized observation and advances its cursor; no child gas amount or cost is inferred. Complete current source AST and actual instruction bytes are generated. Raw/inverse memory continuity, call/fallback/loop/error/physical return connections and universal native closure remain open. No public coverage credit.

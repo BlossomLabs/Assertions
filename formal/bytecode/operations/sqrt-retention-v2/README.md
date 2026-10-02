@@ -1,0 +1,7 @@
+# Square-root exact-bytecode candidate V2
+
+Prepared replacement composition using the complete raw-owner V2. The previous failed raw V1 logs, snapshots and authorized cancellation provenance remain retained. Args trace-only V2 development passed12,600 obligations with two zero audits; full eight-module raw development is now running. This fresh46-module public graph has no retained native result and adds no coverage.
+
+All paths begin at PCzero and finish in physical empty REVERT or exact32-byte floor-square-root RETURN. The existing independent167 complete physical receipts and matching DIV-to-MUL fault are development prerequisites; the new full graph must retain every native declaration, regeneration, compiler/source identity, audits, fresh physical receipts and matching native/physical mutation before ledger creation and independent parent checking. Finite fitting representation, faithful calldata observations, reviewed extraction/interpreter and sufficient reached resources remain explicit. No gas, deployment or performance claim is inferred.
+
+Future retention exits after an authoritative required native or audit failure and preserves partial declarations/CSV, frozen snapshots and current input/tool/evidence hashes. It does not cancel or restart another live process.

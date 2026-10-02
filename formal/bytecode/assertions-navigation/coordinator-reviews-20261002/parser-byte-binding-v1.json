@@ -1,0 +1,31 @@
+{
+  "status": "passed-independent-matching-fault-review",
+  "pc": 12536,
+  "nativePositiveManifestSha256": "022544ae58ecb6dc413059148d77e36d0ec5511663ea893b64f81873f45f4d8c",
+  "nativeNegativeManifestSha256": "c11ea96b403d5e6e0e910b6f8d06aa84b79a498ba859105b49a99e37f88519fc",
+  "physicalKills": 4,
+  "checks": [
+    {
+      "fixture": "case-0.json",
+      "actualFullStepMatches": true,
+      "sameByteSemanticResultWrong": true
+    },
+    {
+      "fixture": "case-1.json",
+      "actualFullStepMatches": true,
+      "sameByteSemanticResultWrong": true
+    },
+    {
+      "fixture": "case-2.json",
+      "actualFullStepMatches": true,
+      "sameByteSemanticResultWrong": true
+    },
+    {
+      "fixture": "case-3.json",
+      "actualFullStepMatches": true,
+      "sameByteSemanticResultWrong": true
+    }
+  ],
+  "publicCredit": false,
+  "scope": "Actual name-scanner BYTE versus SHR, unchanged ByteAt semantic postcondition and exact physical instruction state; constructor public composition remains separate"
+}

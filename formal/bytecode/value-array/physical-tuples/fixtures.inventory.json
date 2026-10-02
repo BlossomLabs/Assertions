@@ -1,0 +1,26 @@
+[
+  {
+    "name": "packArray-tuple-static"
+  },
+  {
+    "name": "unpackArray-tuple-static"
+  },
+  {
+    "name": "packArray-tuple-dynamic"
+  },
+  {
+    "name": "unpackArray-tuple-dynamic"
+  },
+  {
+    "name": "packArray-tuple-nested-dynamic-fixed"
+  },
+  {
+    "name": "unpackArray-tuple-nested-dynamic-fixed"
+  },
+  {
+    "name": "packArray-tuple-static-fixed"
+  },
+  {
+    "name": "unpackArray-tuple-static-fixed"
+  }
+]

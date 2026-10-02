@@ -1,0 +1,14 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "all-fold-stamp-loop",
+      "owner": "formal/bytecode/word-fold/stamp-loop"
+    }
+  ],
+  "assumptions": [
+    "Pinned Collections runtime and fold selectors. Complete compiler Fold stamp context: outer return16536, inner element loop return11291. Arbitrary accumulator/element words; independent finite supplied offset-array count derives from fitting raw representation and is unrelated to full Range element count.",
+    "Valid32-byte accumulator/element windows in source order, sufficient reached memory representation and resources. Accumulator Store occurs first; every element window uses original supplied order. Arbitrary/duplicate/partly overlapping offsets are admitted. Actual inner index<arrayCount/bounds/increment/cleanup preserved.",
+    "Selected native imports assumed. Full memory byte ordering/disjoint frames/composed engine/raw iteration/callback/guards/errors/early exits/scalar output, complete fresh included native graph, EVM receipts, matching semantic faults and independently checked retention mandatory before public credit. Truthful external observations explicit where reached; no gas/deployment/performance/compiler correctness claim."
+  ]
+}

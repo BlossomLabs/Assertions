@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/assertions-navigation/check-tuple-boundary-fixtures-v4.py",
+  "output": "/home/sem/assertions/formal/bytecode/assertions-navigation/check-tuple-boundary-consolidated-v1.py",
+  "source_sha256": "a88f17f5d7869f6773329469cdf4b69addc6ea7de157ad45bffb192251d5a1d5",
+  "output_sha256": "a88f17f5d7869f6773329469cdf4b69addc6ea7de157ad45bffb192251d5a1d5",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

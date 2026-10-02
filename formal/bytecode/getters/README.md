@@ -48,8 +48,8 @@ exact inputs must be preserved. Do not edit frozen inputs or restart a live run
 just because polling times out.
 
 `verify.py` snapshots the finished package, canonical compiler jobs/artifacts and
-current project/library inputs. It independently reproduces all three full current
-runtimes, regenerates both certificates, inventories every native declaration and
+current project/library inputs. It independently reproduces the full current
+Assertions runtime, regenerates both certificates, inventories every native declaration and
 checks proof/audit/format results. Its twelve full-call EDR fixtures retain memory
 and stack traces. Mutations reduce LEN's shift by one bit and change PAYLOAD's
 increment to two; each must translate and fail a baseline-covered exact-return

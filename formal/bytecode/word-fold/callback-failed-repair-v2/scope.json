@@ -1,0 +1,20 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-ordinary-callback-failed",
+      "owner": "formal/bytecode/word-fold/callback-failed-repair-v2",
+      "generatedNames": [
+        "Before",
+        "Between",
+        "After"
+      ]
+    }
+  ],
+  "assumptions": [
+    "All three compiler-bound fold selectors; unrestricted represented payload and complete failed returned reason; actual fold continuation16553.",
+    "Fitting finite actual memory for both dynamic bytes copies and exact CallbackFailed packet; truthful reached two GAS/STATICCALL and after-GAS observations.",
+    "Nonrefused guard is the ordinary-failure branch; exact exhaustion branch checked separately. Full raw first-failure/included/compiler/EVM/mutation/checker retained gates remain open. No public or gas/deployment/performance/compiler correctness claim."
+  ],
+  "repair": "Same six-module theorem/representation/input/observation scope. Checked both operand orders of low160 address AND, emitted only by owned generator. Original ordinary postcondition failure preserved; no contract edit, new premise or solver limit change. Checked Initial heap/stack bridge and hidden packet/heap implementation during Run; exact segment states and admissions preserved."
+}

@@ -1,0 +1,16 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/name-scanner/End.generated.dfy",
+    "formal/bytecode/value-array/name-scanner/Digit.generated.dfy",
+    "formal/bytecode/value-array/name-scanner/Lower.generated.dfy",
+    "formal/bytecode/value-array/name-scanner/Other.generated.dfy",
+    "formal/bytecode/value-array/name-scanner/Loop.dfy"
+  ],
+  "selectedModuleCount": 5,
+  "scope": "Five complete current exact scanName iteration and arbitrary finite loop owners. Actual calldata name bytes, every lower stack word and physical memory byte preserved. Remaining type grammar, both complete array codecs/errors/serialization and retained public graph remain open; no public credit.",
+  "assumptions": [
+    "Pinned current runtime extraction, reviewed BYTE/scan/copy machine and toolchain remain trusted premises.",
+    "Fitting lower stack, bounded represented descriptor address/length and reached resources. Selected native work does not complete imported module bodies."
+  ],
+  "formatExclusions": {}
+}

@@ -1,0 +1,13 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/tuple-child-update/UpdateStatic.generated.dfy",
+    "formal/bytecode/value-array/tuple-child-update/UpdateDynamic.generated.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "Complete actual static or dynamic tuple child-return update and exact checked-add body to PC 13988, before separator/end guards. Generic full lower stack/memory; original fitting mathematical sum supplied by independent caller span lemma. Missing/wrong separator and recursive rejecting grammar/public codec/retained closure remain open. No public credit.",
+  "assumptions": [
+    "Current runtime/tools and reviewed reached EVM interpretation.",
+    "Original represented tuple child return frame, canonical child flag, positive child span, fitting mathematical sum and positions below 2^64. Caller must derive the sum, not exclude overflow-capable original descriptors."
+  ],
+  "formatExclusions": {}
+}

@@ -1,0 +1,5 @@
+# Isolated same-domain square-root mathematics repair
+
+The original complete math run actually terminated with1084 recorded rows, five zero audits and unchanged input/tool closures. Seed/Limits/Algorithm passed; Math.SquareOrder had one ordinary algebraic proof failure, and Newton had two ordinary quotient/cancellation failures plus four30-second timeouts. Its failed snapshot remains preserved and supplies no completion.
+
+V2 changes proof structure only: chained generic product order for square order, opaque averaging with a checked definition when needed, explicit quotient upper/cancellation steps and factored refinement arithmetic. The large-scale theorem spells out n>=2, already implied by the original scale>=16 and scale squared<=n premises; no admitted input range narrows. Limits and mathematical outcomes stay unchanged. A fresh complete5-module native graph and regeneration/audit/file/tool/declaration closure must pass. Compiled opcode/raw/seed/physical serialization/semantic fault correspondence remains open; no public bytecode credit exists.

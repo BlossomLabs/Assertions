@@ -1,0 +1,7 @@
+# Fold count/domain connection development
+
+The handwritten connection composes the actual unsigned loop count check with every reached Range/Byte/Word extraction instruction, beginning at16484 and ending at16512. It states the complete lower stack and unchanged memory with the physical element result. Range keeps full uint256 count/index. Byte and Word counts are exactly the fitting source length and aligned word count. The external-frame lift preserves arbitrary old returndata and consumes no observation.
+
+The result is the index, byte SHR248 of CALLDATALOAD, or full-word CALLDATALOAD; the independent first-byte representation bridge remains required. Static resolution/audits and selected native proofs remain separate, and native imports are assumed. Complete raw/iteration/stamping/callback/guards/errors/early-exit/scalar return, included native closure, EVM receipts, matching semantic faults and independent retained checking remain mandatory before public coverage. Representation, sufficient reached resources and truthful observations stay explicit. No gas/deployment/performance or compiler-correctness claim.
+
+V2 uses the repaired load-frame controls and explicit allocated FoldRun memory geometry. Original static-only evidence and the failed invocation source snapshot remain preserved.

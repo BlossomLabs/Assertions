@@ -1,0 +1,15 @@
+# Resolution terminal checkpoint — consolidated v5
+
+All resolver native jobs are terminal. New native launches are held for the coordinator's user focus/stop decision. One core remains explicitly loaned to the coordinator; future own jobs max2 while loanactive. No production/shared source or ledger edits occurred.
+
+Accepted nonempty OR decoder kernels: `constraints/or/evidence/nonempty-kernel-bound-consolidated-v2/manifest.json`, independent coordinatorreview complete, helpercredit only.2754checks33files, generated115/234/18kernels exact, replay4808/8, actual19755 MCOPY→CALLDATACOPY semanticnative fault plus7physicalkills and explicit emptySKIPsurvivor. Existing accepted publicfirstfalse nonOR and ORstructural/falsehelpers remain frozen.
+
+Nearest new result: `constraints/or/development/nonempty-fill-native-consolidated-v3/manifest.json` PASSED2723checks35files;179ownFillRunchecks. Actual arbitrary-count loop19590→7777 consumes independent wireLayout and constructive Partialheap, invokes physical234-step child decoder periteration, joins fulltrace and exact18-step exit. Complete source/tool/declaration/audit closure passes. This result is development evidence, not accepted decoder/publicORcredit.
+
+Supporting freshclosures passed Payloadv2 exactoriginalreference slice (includinglength0), FillHeapv5 prefixpointer/kind induction, AllocationHeapv1 physicalStart count/free image toPartial0, AllocationFramev2 original wireLayoutpreservation, FillReady native inputnormalization. Failed evidence preserved: Payloadv1 extent/quantifier; FillHeapv1 WF/tabletrigger, v2reservedoldkeywordparse, v3singleImagecellWF, v4strongtablematerialization passed thenweakenedv5; AllocationFramev1 hiddenimagepostrelation; Fillv1 226checks0errors3timeouts, v2 174checks2WFindexerrors0timeouts, v3explicitnonemptytraceinvariant PASS. Timeouts remain60seconds.
+
+`constraints/or/NonemptyDecoder.dfy` prepared but never natively launched. It composes actual19462 Startallocation, sourceframe andPartial0, arbitraryFill, and returns structuralTable with independentlyderivedrecordpointers/kinds. Remaininggate: fullnativeclosure/binding/replay/matchedsemanticfault/independentreview. Fullrecordreferencepayload semantics, structural/verdictshortcircuit and allerrors, ORcaller/publicadmission remainopen. No ORwholeentrycredit.
+
+Primitivescond takeover remains READ-ONLY. Oldcondnativev1 progressed75→118checks duringobservations; lastBefore280/282symbols, manifestincomplete, nofinished/input/toolfinalflags. Erroredagent doesnotimplystoppednative. Sixexit4nativefailures and LoopSegmentsexit0inventoryreject remain. Keepitsreservation, preservev1, coordinateauthoritativeterminalstatus before successor. No condsource changed/restartorduplicate launched. Exactread-only10owner/117file5083declarationincludegraph incond-include-graph-v1.json; successcandidate stillneedscompleteclosure/generation/runtime/replay/fault/review, thenfailure/nonRAWandgather/pickcomposition.
+
+Exact latest hashes, runmanifests and scope are in the adjacent JSON checkpoint. Do not rewrite historical v1-v4handoffs or snapshots.

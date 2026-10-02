@@ -1,0 +1,12 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/tuple-initial/Initial.generated.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "One complete owner for exact tuple-entry guards and first recursive child invocation, including actual checked p+1 routine, full lower caller stack and unchanged memory. Tuple child/continuation/recursion/error/codec semantics and complete retention remain required. No public credit.",
+  "assumptions": [
+    "Pinned runtime, reviewed interpreter and current tools remain trusted.",
+    "Arbitrary represented data/memory/lower frame, original fitting descriptor offset/length and tuple opening byte, sufficient actual reached resources. All imported whole bodies require complete final native closure."
+  ],
+  "formatExclusions": {}
+}

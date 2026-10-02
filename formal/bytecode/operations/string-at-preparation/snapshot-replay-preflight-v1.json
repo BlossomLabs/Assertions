@@ -1,0 +1,117 @@
+{
+  "status": "passed-snapshot-concrete-only",
+  "nativeVerified": false,
+  "publicCredit": false,
+  "checks": [
+    {
+      "name": "raw",
+      "command": [
+        "python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-raw/check-mapping.py",
+        "/tmp/operations-stringat-sol-v1/baseline-profiles-v1"
+      ],
+      "actualExitCode": 0,
+      "passed": true
+    },
+    {
+      "name": "string-at-entry-controls",
+      "command": [
+        "python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-entry-controls/check-mapping.py",
+        "/tmp/operations-stringat-sol-v1/baseline-profiles-v1",
+        "--report",
+        "/tmp/operations-stringat-complete-preflight-v1/snapshot-replays/string-at-entry-controls.json"
+      ],
+      "actualExitCode": 0,
+      "passed": true
+    },
+    {
+      "name": "string-at-index-controls",
+      "command": [
+        "python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-index-controls/check-mapping.py",
+        "/tmp/operations-stringat-sol-v1/baseline-profiles-v1",
+        "--report",
+        "/tmp/operations-stringat-complete-preflight-v1/snapshot-replays/string-at-index-controls.json"
+      ],
+      "actualExitCode": 0,
+      "passed": true
+    },
+    {
+      "name": "string-at-body-controls",
+      "command": [
+        "python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-body-controls/check-mapping.py",
+        "/tmp/operations-stringat-sol-v1/baseline-profiles-v1",
+        "--report",
+        "/tmp/operations-stringat-complete-preflight-v1/snapshot-replays/string-at-body-controls.json"
+      ],
+      "actualExitCode": 0,
+      "passed": true
+    },
+    {
+      "name": "utf8",
+      "command": [
+        "python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/check-controls.py",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/controls.mapping.json",
+        "/tmp/operations-stringat-sol-v1/baseline-profiles-v1",
+        "--report",
+        "/tmp/operations-stringat-complete-preflight-v1/snapshot-replays/utf8.json"
+      ],
+      "actualExitCode": 0,
+      "passed": true
+    },
+    {
+      "name": "whole-physical-original",
+      "command": [
+        "python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-preparation/check-physical.py",
+        "/tmp/operations-stringat-sol-v1/baseline-profiles-v1",
+        "--expected-count",
+        "405"
+      ],
+      "actualExitCode": 0,
+      "passed": true
+    },
+    {
+      "name": "whole-physical-fault",
+      "command": [
+        "python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-preparation/check-physical.py",
+        "/tmp/operations-stringat-sol-v1/fault-profiles-v1",
+        "--runtime",
+        "/tmp/operations-stringat-sol-v1/mcopy-to-calldata.bin",
+        "--expected-count",
+        "405",
+        "--expect-semantic-fault"
+      ],
+      "actualExitCode": 0,
+      "passed": true
+    },
+    {
+      "name": "whole-frontier",
+      "command": [
+        "python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-preparation/check-frontier.py",
+        "/tmp/operations-stringat-sol-v1/baseline-profiles-v1",
+        "/tmp/operations-stringat-sol-v1/fault-profiles-v1",
+        "--runtime",
+        "/tmp/operations-stringat-sol-v1/mcopy-to-calldata.bin",
+        "--report",
+        "/tmp/operations-stringat-complete-preflight-v1/snapshot-replays/frontier.json"
+      ],
+      "actualExitCode": 0,
+      "passed": true
+    }
+  ],
+  "completedAt": "2026-10-02T09:11:12.594897+00:00"
+}

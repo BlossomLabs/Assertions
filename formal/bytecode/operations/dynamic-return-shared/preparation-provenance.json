@@ -1,0 +1,43 @@
+{
+  "status": "prepared-native-unverified-no-public-credit",
+  "nativeLaunched": false,
+  "changes": "Repository-relative includes only; fresh whole current owner graph native verification mandatory",
+  "copies": [
+    {
+      "original": "/home/sem/Documents/Codex/2026-10-02/can-x20/work/code-bytecode-preparation/native/Machine.dfy",
+      "originalSha256": "494dad593b2df29629b06987c571fadecc9d880640ea2b5cbce47c00ec20142b",
+      "canonical": "Machine.dfy",
+      "canonicalSha256": "9999aa20525208ce64eb01b284f9d0eeb7058fd002004af9b8b012eae3d9269c"
+    },
+    {
+      "original": "/home/sem/Documents/Codex/2026-10-02/can-x20/work/code-bytecode-preparation/native/Memory.dfy",
+      "originalSha256": "5c778902b4acfa37de18c58b7cd38aceb257d81b18be8802ab6026bbc5f45f9d",
+      "canonical": "Memory.dfy",
+      "canonicalSha256": "5c778902b4acfa37de18c58b7cd38aceb257d81b18be8802ab6026bbc5f45f9d"
+    },
+    {
+      "original": "/home/sem/Documents/Codex/2026-10-02/can-x20/work/code-bytecode-preparation/native/DynamicReturnMemory.dfy",
+      "originalSha256": "d843e93316ba5c705b199ce2d4ec63f47dd436ec1bd983ebcefa364fa361e11b",
+      "canonical": "DynamicReturnMemory.dfy",
+      "canonicalSha256": "d843e93316ba5c705b199ce2d4ec63f47dd436ec1bd983ebcefa364fa361e11b"
+    },
+    {
+      "original": "/home/sem/Documents/Codex/2026-10-02/can-x20/work/code-bytecode-preparation/native/ConstantMask.generated.dfy",
+      "originalSha256": "4cba6d5a908e5c884b539d40133ee9cb3bf7b655426f6d7ee710c8c4401cbe45",
+      "canonical": "ConstantMask.generated.dfy",
+      "canonicalSha256": "4cba6d5a908e5c884b539d40133ee9cb3bf7b655426f6d7ee710c8c4401cbe45"
+    },
+    {
+      "original": "/home/sem/Documents/Codex/2026-10-02/can-x20/work/code-bytecode-preparation/native/RoundMask.dfy",
+      "originalSha256": "110cec77b228fd3c01aa52017a4a9a2d6bb3a78cf4a6b9342ce1a13545bcbcbe",
+      "canonical": "RoundMask.dfy",
+      "canonicalSha256": "110cec77b228fd3c01aa52017a4a9a2d6bb3a78cf4a6b9342ce1a13545bcbcbe"
+    },
+    {
+      "original": "/home/sem/Documents/Codex/2026-10-02/can-x20/work/serializer-translation-preparation/MemoryTranslation.dfy",
+      "originalSha256": "7a43dd455b851b20a872cbcb488ab2e0e7f948757cf6fb886a8ff9e91f864905",
+      "canonical": "MemoryTranslation.dfy",
+      "canonicalSha256": "abc25846aa4fd823ba2eb4347b90113309ea777856fead15eab0aa5fed729584"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "name": "selector",
+    "pc": 5486,
+    "original": 147,
+    "mutated": 146,
+    "baseRuntimeSha256": "1085082ba1e19b0967431c8b7b0a79ce4f60b8df851b91b6e6194324b3feade7",
+    "candidateRuntimeSha256": "dd2061637ec6db1429541b36c22a697c553efe88d69b547497c3290b60b60c01",
+    "generationExitCode": 0,
+    "nativeSource": "/home/sem/assertions/formal/bytecode/expressions/address-fault-preparation-20261002/selector/source-snapshot/formal/bytecode/expressions/AddressConnection.dfy",
+    "semanticTarget": "ExpressionsAddressConnection.RejectLength",
+    "status": "prepared"
+  },
+  {
+    "name": "operand",
+    "pc": 5496,
+    "original": 131,
+    "mutated": 130,
+    "baseRuntimeSha256": "1085082ba1e19b0967431c8b7b0a79ce4f60b8df851b91b6e6194324b3feade7",
+    "candidateRuntimeSha256": "5fef35046717fce753d207e2e0032271e6053363f4c2d5bea655693907322270",
+    "generationExitCode": 0,
+    "nativeSource": "/home/sem/assertions/formal/bytecode/expressions/address-fault-preparation-20261002/operand/source-snapshot/formal/bytecode/expressions/AddressConnection.dfy",
+    "semanticTarget": "ExpressionsAddressConnection.RejectLength",
+    "status": "prepared"
+  },
+  {
+    "name": "extent",
+    "pc": 5500,
+    "original": 36,
+    "mutated": 35,
+    "baseRuntimeSha256": "1085082ba1e19b0967431c8b7b0a79ce4f60b8df851b91b6e6194324b3feade7",
+    "candidateRuntimeSha256": "ebd15cbfd46c4c6e1ccf8bf941cde8ef755739aa9ff5a5574563c6289fabf576",
+    "generationExitCode": 0,
+    "nativeSource": "/home/sem/assertions/formal/bytecode/expressions/address-fault-preparation-20261002/extent/source-snapshot/formal/bytecode/expressions/AddressConnection.dfy",
+    "semanticTarget": "ExpressionsAddressConnection.RejectLength",
+    "status": "prepared"
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-domain-bytes-repair-v2",
+      "owner": "formal/bytecode/word-fold/domain-bytes-repair-v2",
+      "generatedNames": [
+        "Bytes"
+      ]
+    }
+  ],
+  "assumptions": [
+    "Same complete57-instruction byte element path, all fitting raw source offsets and each reached index, arbitrary complete lower stack and memory. Exact SHR19382 step uses explicit stack grouping for the proved opcode helper.",
+    "No32-byte-fit premise: final byte still included. Native selected imports assumed; full first-byte projection and complete retained fold closure remain required. Original failed controls/logs and live Word control are preserved; no source/runtime/domain/postcondition change."
+  ]
+}

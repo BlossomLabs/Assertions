@@ -1,0 +1,16 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/named-type/Cleanup.generated.dfy",
+    "formal/bytecode/value-array/named-type/SubtractCall.generated.dfy",
+    "formal/bytecode/value-array/named-type/Ordinary.generated.dfy",
+    "formal/bytecode/value-array/named-type/Five.generated.dfy",
+    "formal/bytecode/value-array/named-type/Six.generated.dfy"
+  ],
+  "selectedModuleCount": 5,
+  "scope": "Five complete exact scanName return cleanup, successful nonempty named typeShape subtraction invocation, and exhaustive positive name-width classification blocks. The five/six-width branches retain exact CALLDATALOAD/SHR word equality; independent grammar/name decoding, tuples, suffixes, errors, codec and complete public retention remain open. No public credit.",
+  "assumptions": [
+    "Pinned exact runtime extraction, reviewed scan machine and toolchain remain trusted.",
+    "Arbitrary represented calldata/memory/lower frame and fitting stack; generic admitted descriptor offsets and bounds, exact caller frames and unchanged memory. Imported bodies need complete final retained closure."
+  ],
+  "formatExclusions": {}
+}

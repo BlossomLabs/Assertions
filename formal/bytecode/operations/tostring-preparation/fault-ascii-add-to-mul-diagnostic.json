@@ -1,0 +1,11 @@
+{
+  "pc": 20235,
+  "original": 1,
+  "candidate": 2,
+  "originalOpcode": "ADD",
+  "candidateOpcode": "MUL",
+  "pop": 2,
+  "push": 1,
+  "candidateSha256": "753662d808695a8eedbc07f11fe6d7ca1535d5ca1df8908570ac9018a792ab79",
+  "scope": "Historical development diagnostic only; includes checked-overflow reversions."
+}

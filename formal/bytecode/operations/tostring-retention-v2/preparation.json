@@ -1,0 +1,12 @@
+{
+  "status": "prepared-native-unlaunched-no-public-credit",
+  "previousFailure": "formal/bytecode/operations/tostring-retention/evidence/raw-entry-sol-v2/manifest.json",
+  "previousFailureSha256": "f5c408fb7e0c057dfbbe73fa1d006c255731a12af7e9962b0774d4388cebe592",
+  "actualFailure": "Nine ordinary raw transition postcondition failures; no timeout",
+  "diagnosticRepairWholeOwnerBatches": 690,
+  "diagnosticLog": "/tmp/operations-tostring-raw-delegation-v2.log",
+  "diagnosticCsv": "/tmp/operations-tostring-raw-delegation-v2.csv",
+  "currentCompleteRetainedGraphPending": true,
+  "publicDomainUnchanged": true,
+  "sourceAndRuntimeUnchanged": true
+}

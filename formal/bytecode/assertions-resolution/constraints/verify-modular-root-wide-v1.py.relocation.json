@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/assertions-resolution/constraints/verify-modular-consolidated-v1.py",
+  "output": "/home/sem/assertions/formal/bytecode/assertions-resolution/constraints/verify-modular-root-wide-v1.py",
+  "source_sha256": "36626b3f8161c1c47d8a1f211dc2892c01d95af2b2fc142b62a831072d753f70",
+  "output_sha256": "36626b3f8161c1c47d8a1f211dc2892c01d95af2b2fc142b62a831072d753f70",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

@@ -1,0 +1,34 @@
+{
+  "id": "original-operations-scalars",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/operations/scalars",
+  "entry": "formal/operations/scalars/Connection.dfy",
+  "verificationEntries": [
+    "formal/operations/scalars/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/operations/scalars/Model.dfy"
+    ],
+    "execution": [
+      "formal/operations/scalars/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/operations/scalars/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/operations/scalars/Connection.dfy": "bf7098c6a7548f7b39f239e317e5a3740455eb103a5089538749319ad3dc5577",
+    "formal/operations/scalars/Control.generated.dfy": "8bdcbe45b1d42fd5f12f2d924b9464b2d111c185031fb3006294e28278e8dc97",
+    "formal/operations/scalars/Model.dfy": "79f96caa06c00019b435820e188d3a5ca4dcd66bf5e0c1e7957a8aae7b561520"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

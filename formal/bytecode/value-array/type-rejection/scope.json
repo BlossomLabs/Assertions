@@ -1,0 +1,14 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/type-rejection/Semantics.dfy",
+    "formal/bytecode/value-array/type-rejection/Parser.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "Independent finite descriptor rejection trees and complete recursive exact EVM execution from type entry 13839 through InvalidTypeDescriptor(independently derived position) REVERT. Includes missing input, empty names, named/tuple bad suffix, missing/wrong tuple separator, and rejected recursive children after any accepted comma prefix. No expected error packet/frame is supplied. Universal witness classification, public codec callers, whole native and retained mutation/independent checks remain open; no public credit.",
+  "assumptions": [
+    "Pinned current runtime/tools and reviewed reached EVM interpretation.",
+    "Original represented lower/recursive stack budget, type positions within the descriptor limit below 2^64, and aligned fitting free memory. Partial sums are derived from independent grammar/disjoint spans.",
+    "Finite independent witness must still be constructed universally for every malformed descriptor; native proof of every included current complete owner remains required."
+  ],
+  "formatExclusions": {}
+}

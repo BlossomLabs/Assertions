@@ -1,0 +1,16 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/suffix-footprint/Scalar.dfy",
+    "formal/bytecode/value-array/suffix-footprint/Empty.generated.dfy",
+    "formal/bytecode/value-array/suffix-footprint/Dynamic.generated.dfy",
+    "formal/bytecode/value-array/suffix-footprint/Static.generated.dfy"
+  ],
+  "selectedModuleCount": 4,
+  "scope": "Four complete prepared owners derive static product fitting from mathematical descriptor-span and decimal-stop bounds and execute exact empty/dynamic/static suffix footprint calculation through actual post-footprint guard PC 14481. Arbitrary decimal zero/overflow/missing-close cases are retained. Preceding scanner/recursive rejecting parser and guard/public codec retention remain open. No public credit.",
+  "assumptions": [
+    "Pinned current runtime/tools and reviewed reached EVM model.",
+    "Original offset/length and positions below 2^64, represented lower frame, mathematical prefix span bound <=Max32*(end-p), finite decimal number <=Max32*10+9. Product fitting is derived by Scalar.ProductFits; complete caller composition must establish the independent prefix span and digit semantics.",
+    "All included current bodies need complete final native inventories and remaining physical/fault/retention gates."
+  ],
+  "formatExclusions": {}
+}

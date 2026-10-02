@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "status": "retained-owner-check-pending-parent",
+  "package": "formal/bytecode/operations/signed-arithmetic-retention",
+  "baseline": "formal/bytecode/operations/signed-arithmetic-retention/evidence/raw-entries-v1/manifest.json",
+  "baselineSha256": "e1b84a332e4755e8947453cb7db68f8ff26e148a9df35bf8508c41112e7fd8d0",
+  "checker": "formal/bytecode/operations/check-signed-arithmetic-evidence.py",
+  "publicEntries": [
+    "Operations.add(uint256,uint256)",
+    "Operations.sub(uint256,uint256)"
+  ],
+  "runtimeSha256": "5d69cebc087813f4fe85c1fd371ca4d826a582077a29d6318199bc19cb1b1ae8",
+  "nativeObligations": 31066,
+  "nativeDeclarations": 959,
+  "connections": [
+    "OperationsSignedArithmeticConnection.Run"
+  ],
+  "concreteSuccessReceipts": 22,
+  "concretePanicReceipts": 6,
+  "concreteCustomErrorReceipts": 0,
+  "concreteRejectionReceipts": 24,
+  "semanticBytecodeFaults": 2,
+  "assumptions": [
+    "Exact current compiler job/runtime and selector extraction, reviewed complete instruction-boundary scanning and reached opcode interpreter. No compiler correctness premise replaces executed instructions.",
+    "Physical zero-padded calldata windows, fresh zero call memory, fixed-width big-endian byte stores/loads and truthful call value. Calldata is finite with length below 2^64; reached stack/memory and instruction resources are sufficient. No gas availability/cost, deployment, complexity or performance theorem.",
+    "Matches constrains all reached instructions/immediates and valid actual JUMPDESTs; other runtime bytes remain arbitrary. Each generated path executes all its instructions without a cutoff. All input words and arbitrary trailing calldata are admitted.",
+    "Dafny/Boogie/Z3 and reviewed tooling are trusted. Source ledger completeness and concrete EVM fixtures do not substitute for native exact-opcode correspondence."
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-byte-representation-repair-v8",
+      "owner": "formal/bytecode/word-fold/byte-representation-repair-v8",
+      "generatedNames": [
+        "Shift"
+      ]
+    }
+  ],
+  "assumptions": [
+    "Every unsigned word and every existing calldata offset, including last byte, with zero-filled tail. Same exact SHR248 result; no new premise limiting word values or requiring32 bytes.",
+    "Selected imported conversion contracts assumed until full included retained verification. Static checks do not establish native proof. Original failed owners retained unchanged."
+  ]
+}

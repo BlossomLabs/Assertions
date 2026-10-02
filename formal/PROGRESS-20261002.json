@@ -1,0 +1,2664 @@
+{
+  "scope": "Saved source and proof progress. Generated evidence remains local/artifacts; no new public or exact-bytecode acceptance is asserted by this checkpoint.",
+  "historicalPR": "https://github.com/BlossomLabs/Assertions/pull/3",
+  "savedFromCommit": "9de93eb4ad3241f6a6a507c6d015c9de7fedc492",
+  "library": {
+    "files": 469,
+    "originalDeclarations": 3474,
+    "additionalHelpers": 21,
+    "nativeReviewedPackages": 28,
+    "proofPackages": 132,
+    "generationFamilies": [
+      "original-operations-ascii",
+      "original-operations-binary-log",
+      "original-operations-byte-bounds",
+      "original-operations-checked-power",
+      "original-operations-decimal-digits",
+      "original-operations-decimal-render",
+      "original-operations-decimal-units",
+      "original-operations-environment",
+      "original-operations-integer-root",
+      "original-operations-raw-call",
+      "original-operations-scalars",
+      "original-operations-utf8",
+      "original-operations-word-match"
+    ]
+  },
+  "nativePackages": [
+    {
+      "package": "concat",
+      "role": "proof-package",
+      "implementationStatus": "accepted-conditional-source",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/concat-relocation-v1.json",
+          "coveringPackage": "concat",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 307
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/concat-producer-binding-v1.json",
+          "coveringPackage": "concat",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 307
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/concat-command-review-v2.json",
+          "coveringPackage": "concat",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 307
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/replace-relocation-v1.json",
+          "coveringPackage": "replace-suite",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1388
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/replace-command-review-v2.json",
+          "coveringPackage": "replace-suite",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1388
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "replace-suite",
+      "role": "proof-package",
+      "implementationStatus": "native-passed-correspondence-pending",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/replace-relocation-v1.json",
+          "coveringPackage": "replace-suite",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 1388
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/replace-command-review-v2.json",
+          "coveringPackage": "replace-suite",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 1388
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "word-memory",
+      "role": "proof-package",
+      "implementationStatus": "native-passed-correspondence-pending",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/word-memory-relocation-v1.json",
+          "coveringPackage": "word-memory",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 634
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/word-memory-command-review-v2.json",
+          "coveringPackage": "word-memory",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 634
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/word-windows-relocation-v1.json",
+          "coveringPackage": "word-windows",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1079
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/word-windows-command-review-v2.json",
+          "coveringPackage": "word-windows",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1079
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "word-windows",
+      "role": "proof-package",
+      "implementationStatus": "native-passed-correspondence-pending",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/word-windows-relocation-v1.json",
+          "coveringPackage": "word-windows",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 1079
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/word-windows-command-review-v2.json",
+          "coveringPackage": "word-windows",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 1079
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "constraints",
+      "role": "proof-package",
+      "implementationStatus": "native-passed-correspondence-pending",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/constraints-command-review-v2.json",
+          "coveringPackage": "constraints",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 300
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/constraints-relocation-v1.json",
+          "coveringPackage": "constraints",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 300
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/core-raw-command-review-v2.json",
+          "coveringPackage": "core-raw",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1220
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/core-raw-relocation-v1.json",
+          "coveringPackage": "core-raw",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1220
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "expressions-recursive",
+      "role": "proof-package",
+      "implementationStatus": "native-passed-correspondence-pending",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/expressions-recursive-relocation-v1.json",
+          "coveringPackage": "expressions-recursive",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 523
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/expressions-recursive-command-review-v2.json",
+          "coveringPackage": "expressions-recursive",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 523
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "core-raw",
+      "role": "proof-package",
+      "implementationStatus": "native-passed-correspondence-pending",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/core-raw-command-review-v2.json",
+          "coveringPackage": "core-raw",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 1220
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/core-raw-relocation-v1.json",
+          "coveringPackage": "core-raw",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 1220
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "abi",
+      "role": "proof-package",
+      "implementationStatus": "native-passed-correspondence-pending",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/abi-relocation-v1.json",
+          "coveringPackage": "abi",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 24298
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/abi-command-review-v2.json",
+          "coveringPackage": "abi",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 24298
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-abi",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/abi-relocation-v1.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/abi-command-review-v2.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-abi-aggregate",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/abi-relocation-v1.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/abi-command-review-v2.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-abi-connection",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/abi-relocation-v1.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/abi-command-review-v2.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-abi-construction",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-abi-descriptor",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/abi-relocation-v1.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/abi-command-review-v2.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-abi-dynamic",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/abi-relocation-v1.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/abi-command-review-v2.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-abi-layout",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/abi-relocation-v1.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/abi-command-review-v2.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-abi-outcomes",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-abi-parser",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/abi-relocation-v1.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/abi-command-review-v2.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-abi-shape",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/abi-relocation-v1.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/abi-command-review-v2.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-abi-source",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/abi-relocation-v1.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/abi-command-review-v2.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-abi-tuples",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/abi-relocation-v1.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/abi-command-review-v2.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-abi-words",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/abi-relocation-v1.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/abi-command-review-v2.json",
+          "coveringPackage": "abi",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 24298
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-arguments",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-admission",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-bound-call",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-call-results",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-callback-results",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-calls",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-codec-errors",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-codec-state",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-completion",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-constants",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-environment",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-iteration",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-iteration-chain",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-preparation",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-prepared-entry",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-repeated-call",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-sort-admission",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-sort-comparator",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-sort-core",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-traversal",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-validation",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-value-codec",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-value-entry",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-value-loops",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-value-pairs",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-value-search",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-value-sort-entry",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-value-sort-execution",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-value-sort-trace",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-value-structure",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-value-unique",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-wire",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-word-apply",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-word-call",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-word-fold-entry",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-word-fold-loop",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-word-layout",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-word-memory",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/word-memory-relocation-v1.json",
+          "coveringPackage": "word-memory",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 634
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/word-memory-command-review-v2.json",
+          "coveringPackage": "word-memory",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 634
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/word-windows-relocation-v1.json",
+          "coveringPackage": "word-windows",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1079
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/word-windows-command-review-v2.json",
+          "coveringPackage": "word-windows",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1079
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-word-scans",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-word-sort",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-word-unique",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-collections-word-windows",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/word-windows-relocation-v1.json",
+          "coveringPackage": "word-windows",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 1079
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/word-windows-command-review-v2.json",
+          "coveringPackage": "word-windows",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 1079
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-composition",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-constraints",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/constraints-command-review-v2.json",
+          "coveringPackage": "constraints",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 300
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/constraints-relocation-v1.json",
+          "coveringPackage": "constraints",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 300
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/core-raw-command-review-v2.json",
+          "coveringPackage": "core-raw",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1220
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/core-raw-relocation-v1.json",
+          "coveringPackage": "core-raw",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1220
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-control",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-core",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/core-raw-command-review-v2.json",
+          "coveringPackage": "core-raw",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 1220
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/core-raw-relocation-v1.json",
+          "coveringPackage": "core-raw",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 1220
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-core-completion",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-core-frame-tree",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-core-public-boundary",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-core-raw-tree",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-core-recursive",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-core-serialization",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-admission",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-admission-errors",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-cache",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-calls",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-codec-errors",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-compound",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-context",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-dispatch",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-encoded",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-entry",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-evaluation",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-execution",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-frames",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-guard-receipts",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-guarded",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-oracle",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-oracle-stability",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-primitives",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-probe-input",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-public",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-receipts",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-recursive",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-rejections",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-requests",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-resolve",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-returns",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-scalars",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-self-call",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-trace-bounds",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-tree",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-expressions-validation",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-navigation",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-ascii",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "independently-reviewed-generation",
+      "generationEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/ascii-generation-v1.json",
+          "declarations": 4
+        }
+      ],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-binary-log",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "independently-reviewed-generation",
+      "generationEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/binary-log-generation-v1.json",
+          "declarations": 4
+        }
+      ],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-byte-bounds",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "independently-reviewed-generation",
+      "generationEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/byte-bounds-generation-v1.json",
+          "declarations": 8
+        }
+      ],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-byte-replace",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/replace-relocation-v1.json",
+          "coveringPackage": "replace-suite",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 1388
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/replace-command-review-v2.json",
+          "coveringPackage": "replace-suite",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 1388
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-byte-split",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-checked-power",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "independently-reviewed-generation",
+      "generationEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/checked-power-generation-v1.json",
+          "declarations": 4
+        }
+      ],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-concat",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/concat-relocation-v1.json",
+          "coveringPackage": "concat",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 307
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/concat-producer-binding-v1.json",
+          "coveringPackage": "concat",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 307
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/concat-command-review-v2.json",
+          "coveringPackage": "concat",
+          "coverage": "exact-closure",
+          "coveringNativeRows": 307
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/replace-relocation-v1.json",
+          "coveringPackage": "replace-suite",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1388
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/replace-command-review-v2.json",
+          "coveringPackage": "replace-suite",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1388
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-decimal-digits",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "independently-reviewed-generation",
+      "generationEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/decimal-digits-generation-v1.json",
+          "declarations": 3
+        }
+      ],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-decimal-render",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "independently-reviewed-generation",
+      "generationEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/decimal-render-generation-v1.json",
+          "declarations": 2
+        }
+      ],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-decimal-units",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "independently-reviewed-generation",
+      "generationEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/decimal-units-generation-v1.json",
+          "declarations": 2
+        }
+      ],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-environment",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "independently-reviewed-generation",
+      "generationEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/environment-generation-v1.json",
+          "declarations": 15
+        }
+      ],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-fixed-point",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-fixed-point-accuracy",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-fixed-point-muldiv-regenerated",
+      "role": "generation-intermediate",
+      "implementationStatus": "blocked-missing-inputs",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [
+        "formal/source/library/src/operations/fixed-point/muldiv-regenerated/Memory.dfy"
+      ],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-full-mul-div",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-integer-root",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "independently-reviewed-generation",
+      "generationEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/integer-root-generation-v1.json",
+          "declarations": 18
+        }
+      ],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-modular",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-modular-power",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-modular-power-muldiv-regenerated",
+      "role": "generation-intermediate",
+      "implementationStatus": "blocked-missing-inputs",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [
+        "formal/source/library/src/operations/modular-power/muldiv-regenerated/Memory.dfy"
+      ],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-occurrence-index",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/replace-relocation-v1.json",
+          "coveringPackage": "replace-suite",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1388
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/replace-command-review-v2.json",
+          "coveringPackage": "replace-suite",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1388
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-parse-units",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-raw-call",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "independently-reviewed-generation",
+      "generationEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/raw-call-generation-v1.json",
+          "declarations": 3
+        }
+      ],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-scalars",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "independently-reviewed-generation",
+      "generationEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/scalars-generation-v1.json",
+          "declarations": 33
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/scalars-generation-v2.json",
+          "declarations": 33
+        }
+      ],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-scaled-power",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-scaled-power-muldiv-regenerated",
+      "role": "generation-intermediate",
+      "implementationStatus": "blocked-missing-inputs",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [
+        "formal/source/library/src/operations/scaled-power/muldiv-regenerated/Memory.dfy"
+      ],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-tuple-encode",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-tuple-encode-compiler",
+      "role": "generation-intermediate",
+      "implementationStatus": "blocked-missing-inputs",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [
+        "formal/source/library/src/operations/tuple-encode/compiler/Memory.dfy"
+      ],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-utf8",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "independently-reviewed-generation",
+      "generationEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/utf8-generation-v1.json",
+          "declarations": 3
+        }
+      ],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-operations-word-match",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/replace-relocation-v1.json",
+          "coveringPackage": "replace-suite",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1388
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/replace-command-review-v2.json",
+          "coveringPackage": "replace-suite",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1388
+        }
+      ],
+      "canonicalGenerationStatus": "independently-reviewed-generation",
+      "generationEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/word-match-generation-v1.json",
+          "declarations": 2
+        }
+      ],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-resolution",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "independently-reviewed-native",
+      "missingInputs": [],
+      "nativeEvidence": [
+        {
+          "review": "formal/source/library/evidence/reviews/core-raw-command-review-v2.json",
+          "coveringPackage": "core-raw",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1220
+        },
+        {
+          "review": "formal/source/library/evidence/reviews/core-raw-relocation-v1.json",
+          "coveringPackage": "core-raw",
+          "coverage": "reviewed-superset",
+          "coveringNativeRows": 1220
+        }
+      ],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    },
+    {
+      "package": "original-signed-mod",
+      "role": "proof-package",
+      "implementationStatus": "original-unrecertified",
+      "canonicalNativeStatus": "not-independently-reviewed",
+      "missingInputs": [],
+      "nativeEvidence": [],
+      "canonicalGenerationStatus": "not-independently-reviewed",
+      "generationEvidence": [],
+      "canonicalSourceAcceptance": "not-established-by-native-status",
+      "bytecodeCredit": false
+    }
+  ],
+  "liveCampaign": {
+    "pendingPackages": 104,
+    "campaigns": [
+      {
+        "package": "original-expressions-tree",
+        "files": 155,
+        "covers": [
+          "original-abi-outcomes",
+          "original-arguments",
+          "original-expressions-admission",
+          "original-expressions-admission-errors",
+          "original-expressions-cache",
+          "original-expressions-calls",
+          "original-expressions-codec-errors",
+          "original-expressions-compound",
+          "original-expressions-context",
+          "original-expressions-encoded",
+          "original-expressions-entry",
+          "original-expressions-evaluation",
+          "original-expressions-execution",
+          "original-expressions-frames",
+          "original-expressions-guard-receipts",
+          "original-expressions-guarded",
+          "original-expressions-oracle",
+          "original-expressions-oracle-stability",
+          "original-expressions-primitives",
+          "original-expressions-probe-input",
+          "original-expressions-public",
+          "original-expressions-receipts",
+          "original-expressions-recursive",
+          "original-expressions-rejections",
+          "original-expressions-requests",
+          "original-expressions-resolve",
+          "original-expressions-returns",
+          "original-expressions-scalars",
+          "original-expressions-self-call",
+          "original-expressions-trace-bounds",
+          "original-expressions-tree"
+        ],
+        "descriptorSha256": "5fa1d3ce94181102c4d1187401b01023e7ec20a2bea031d03eb963439c72f874"
+      },
+      {
+        "package": "original-expressions-validation",
+        "files": 123,
+        "covers": [
+          "original-arguments",
+          "original-expressions-admission",
+          "original-expressions-cache",
+          "original-expressions-calls",
+          "original-expressions-codec-errors",
+          "original-expressions-compound",
+          "original-expressions-context",
+          "original-expressions-entry",
+          "original-expressions-evaluation",
+          "original-expressions-execution",
+          "original-expressions-frames",
+          "original-expressions-guarded",
+          "original-expressions-oracle",
+          "original-expressions-oracle-stability",
+          "original-expressions-primitives",
+          "original-expressions-probe-input",
+          "original-expressions-receipts",
+          "original-expressions-recursive",
+          "original-expressions-requests",
+          "original-expressions-resolve",
+          "original-expressions-scalars",
+          "original-expressions-trace-bounds",
+          "original-expressions-validation"
+        ],
+        "descriptorSha256": "9f4b8366591e8b2f4cffef6e48340e6a0ee8083908d3bc3d5ca151ca3b95166a"
+      },
+      {
+        "package": "original-collections-value-entry",
+        "files": 102,
+        "covers": [
+          "original-collections-admission",
+          "original-collections-bound-call",
+          "original-collections-call-results",
+          "original-collections-calls",
+          "original-collections-codec-errors",
+          "original-collections-codec-state",
+          "original-collections-constants",
+          "original-collections-environment",
+          "original-collections-iteration",
+          "original-collections-iteration-chain",
+          "original-collections-repeated-call",
+          "original-collections-traversal",
+          "original-collections-validation",
+          "original-collections-value-entry",
+          "original-collections-value-loops",
+          "original-collections-wire"
+        ],
+        "descriptorSha256": "d304d5b720f383b97e46b07428826eeab2f27dd2af33947471f9750e6b0b2073"
+      },
+      {
+        "package": "original-collections-value-sort-entry",
+        "files": 105,
+        "covers": [
+          "original-collections-admission",
+          "original-collections-bound-call",
+          "original-collections-calls",
+          "original-collections-codec-errors",
+          "original-collections-codec-state",
+          "original-collections-constants",
+          "original-collections-prepared-entry",
+          "original-collections-sort-admission",
+          "original-collections-sort-comparator",
+          "original-collections-sort-core",
+          "original-collections-validation",
+          "original-collections-value-sort-entry",
+          "original-collections-value-sort-execution",
+          "original-collections-value-sort-trace",
+          "original-collections-wire"
+        ],
+        "descriptorSha256": "f53897bf9884c70e0ccb63de8bde4a6d0fc883ac76717ec7eaa7548213284d55"
+      },
+      {
+        "package": "original-collections-value-unique",
+        "files": 108,
+        "covers": [
+          "original-collections-admission",
+          "original-collections-bound-call",
+          "original-collections-call-results",
+          "original-collections-calls",
+          "original-collections-codec-errors",
+          "original-collections-codec-state",
+          "original-collections-constants",
+          "original-collections-environment",
+          "original-collections-iteration",
+          "original-collections-iteration-chain",
+          "original-collections-repeated-call",
+          "original-collections-validation",
+          "original-collections-value-unique",
+          "original-collections-wire"
+        ],
+        "descriptorSha256": "b38ab342b4620e595bde32c2a12811e50dff81d3ed733306b8b80c1867c095b0"
+      },
+      {
+        "package": "original-collections-value-search",
+        "files": 102,
+        "covers": [
+          "original-collections-admission",
+          "original-collections-bound-call",
+          "original-collections-call-results",
+          "original-collections-calls",
+          "original-collections-codec-errors",
+          "original-collections-codec-state",
+          "original-collections-constants",
+          "original-collections-environment",
+          "original-collections-iteration",
+          "original-collections-iteration-chain",
+          "original-collections-repeated-call",
+          "original-collections-validation",
+          "original-collections-value-search",
+          "original-collections-wire"
+        ],
+        "descriptorSha256": "ab69a81c0d4d241d01acdea722f7317efbe7063f7fd0c8639654d2c0a8dd9eaa"
+      },
+      {
+        "package": "original-core-completion",
+        "files": 111,
+        "covers": [
+          "original-arguments",
+          "original-composition",
+          "original-control",
+          "original-core-completion",
+          "original-core-frame-tree",
+          "original-core-public-boundary",
+          "original-core-raw-tree",
+          "original-core-recursive",
+          "original-core-serialization",
+          "original-navigation"
+        ],
+        "descriptorSha256": "9c3430f60a3a9eb841653904f1ca32051f7ac8b3f369a57ef91d4fdbed940224"
+      },
+      {
+        "package": "original-collections-value-codec",
+        "files": 91,
+        "covers": [
+          "original-abi-construction",
+          "original-collections-admission",
+          "original-collections-calls",
+          "original-collections-codec-errors",
+          "original-collections-codec-state",
+          "original-collections-constants",
+          "original-collections-validation",
+          "original-collections-value-codec",
+          "original-collections-wire"
+        ],
+        "descriptorSha256": "39bda131e0a0a7f3f0bda4fab7fdee293f5267efb989c158489fdb54352eb091"
+      },
+      {
+        "package": "original-collections-value-pairs",
+        "files": 91,
+        "covers": [
+          "original-collections-admission",
+          "original-collections-calls",
+          "original-collections-codec-errors",
+          "original-collections-codec-state",
+          "original-collections-constants",
+          "original-collections-validation",
+          "original-collections-value-pairs",
+          "original-collections-wire"
+        ],
+        "descriptorSha256": "e3a30a7e060c762a9aa96bef60f7b365f70353b1713e20a886d930effd79cb8f"
+      },
+      {
+        "package": "original-collections-value-structure",
+        "files": 84,
+        "covers": [
+          "original-collections-admission",
+          "original-collections-calls",
+          "original-collections-codec-errors",
+          "original-collections-codec-state",
+          "original-collections-constants",
+          "original-collections-validation",
+          "original-collections-value-structure",
+          "original-collections-wire"
+        ],
+        "descriptorSha256": "d3054112d7aea1d59916a8288dfd0bf20559fdd8eb433944f48ea01d95d15ede"
+      },
+      {
+        "package": "original-collections-word-fold-entry",
+        "files": 79,
+        "covers": [
+          "original-collections-calls",
+          "original-collections-wire",
+          "original-collections-word-call",
+          "original-collections-word-fold-entry",
+          "original-collections-word-fold-loop"
+        ],
+        "descriptorSha256": "fa36ef91aebc61cfb2ea231750048b4c9b9ff544414101cc0fbf1c584ff94083"
+      },
+      {
+        "package": "original-collections-word-apply",
+        "files": 81,
+        "covers": [
+          "original-collections-calls",
+          "original-collections-wire",
+          "original-collections-word-apply",
+          "original-collections-word-call"
+        ],
+        "descriptorSha256": "bd9e67fcb7fb399e794f9d30c1241b6f89df49ec515f70c1aea8e1e4fd987d03"
+      },
+      {
+        "package": "original-operations-modular-power",
+        "files": 22,
+        "covers": [
+          "original-operations-binary-log",
+          "original-operations-full-mul-div",
+          "original-operations-modular-power"
+        ],
+        "descriptorSha256": "5ddf51e108b6d3aad3bd481780dc9e7101adcf070b506efa2a82442ad9585da5"
+      },
+      {
+        "package": "original-operations-fixed-point-accuracy",
+        "files": 19,
+        "covers": [
+          "original-operations-binary-log",
+          "original-operations-fixed-point-accuracy",
+          "original-operations-full-mul-div"
+        ],
+        "descriptorSha256": "0f546cb1360c61e7ad351579db46f149a64414093f16a222d081ee5ef5820f3c"
+      },
+      {
+        "package": "original-operations-fixed-point",
+        "files": 16,
+        "covers": [
+          "original-operations-binary-log",
+          "original-operations-fixed-point",
+          "original-operations-full-mul-div"
+        ],
+        "descriptorSha256": "cc371a1895567753b95a8c7dc6e0fbde98f924dbdaff980dc213f37fd82dcbc1"
+      },
+      {
+        "package": "original-operations-scaled-power",
+        "files": 15,
+        "covers": [
+          "original-operations-binary-log",
+          "original-operations-full-mul-div",
+          "original-operations-scaled-power"
+        ],
+        "descriptorSha256": "eb3ebedfbbdeb41e34781bb71568e5063e5888ad7efe14d89a3d1bf79707f335"
+      },
+      {
+        "package": "original-collections-word-sort",
+        "files": 13,
+        "covers": [
+          "original-collections-sort-core",
+          "original-collections-word-sort"
+        ],
+        "descriptorSha256": "4ec4dfabd24148d96585bba8855feaa4ab06bf6cd0d33aefc92113d7eb2cf822"
+      },
+      {
+        "package": "original-operations-integer-root",
+        "files": 8,
+        "covers": [
+          "original-operations-binary-log",
+          "original-operations-integer-root"
+        ],
+        "descriptorSha256": "600aee41b5f7c3ce65cb6b108d08973482c736e3bdf2a9e3cb36b7c0ec751c13"
+      },
+      {
+        "package": "original-operations-utf8",
+        "files": 6,
+        "covers": [
+          "original-operations-byte-bounds",
+          "original-operations-utf8"
+        ],
+        "descriptorSha256": "39f8d6e3135de581027ab2b49d34a490e609537e984ecdf629864ff9b635f58e"
+      },
+      {
+        "package": "original-operations-tuple-encode",
+        "files": 59,
+        "covers": [
+          "original-operations-tuple-encode"
+        ],
+        "descriptorSha256": "7f9c6e09edbdc0059dbde79ee1c2e33e1c619be6f30bbf8823bc73175438ef5e"
+      },
+      {
+        "package": "original-collections-word-layout",
+        "files": 10,
+        "covers": [
+          "original-collections-word-layout"
+        ],
+        "descriptorSha256": "91d2c10ef674bbcc8da8a15a8a9bb6d9e663bd8de86add566981df1b82c70ae3"
+      },
+      {
+        "package": "original-collections-word-scans",
+        "files": 9,
+        "covers": [
+          "original-collections-word-scans"
+        ],
+        "descriptorSha256": "290791b9ec552c573f0a25c771319b216ba2a109334a02e76bca227e580e19e0"
+      },
+      {
+        "package": "original-collections-word-unique",
+        "files": 9,
+        "covers": [
+          "original-collections-word-unique"
+        ],
+        "descriptorSha256": "99d641a72d66592780cd12651f79086eb7a55566a30ede7d589ba6459107782a"
+      },
+      {
+        "package": "original-operations-byte-split",
+        "files": 9,
+        "covers": [
+          "original-operations-byte-split"
+        ],
+        "descriptorSha256": "c6d5f63128c0db0835210870e1f7aea208b498145720f76b830887b481fdd275"
+      },
+      {
+        "package": "original-operations-parse-units",
+        "files": 7,
+        "covers": [
+          "original-operations-parse-units"
+        ],
+        "descriptorSha256": "0ea340e95fd7469a1204c3c451fc1bb99afd737e0c21072509c3819366b227ab"
+      },
+      {
+        "package": "original-operations-decimal-units",
+        "files": 6,
+        "covers": [
+          "original-operations-decimal-units"
+        ],
+        "descriptorSha256": "ac257778b467f82ab22e80f433f04b83760c19a6e8f7589e2042135948c36e78"
+      },
+      {
+        "package": "original-collections-callback-results",
+        "files": 5,
+        "covers": [
+          "original-collections-callback-results"
+        ],
+        "descriptorSha256": "00100fa6de02736d9aaa873cae2f14b9743a3341031bd8a8ad0ff158cf2056b6"
+      },
+      {
+        "package": "original-collections-preparation",
+        "files": 4,
+        "covers": [
+          "original-collections-preparation"
+        ],
+        "descriptorSha256": "fee5eb9dc4acbc9540da1844d4778264d4142301af270c3297b89ae763706d03"
+      },
+      {
+        "package": "original-operations-decimal-digits",
+        "files": 4,
+        "covers": [
+          "original-operations-decimal-digits"
+        ],
+        "descriptorSha256": "1eceda4761c7894d2e5084445ec16da5cf6ff81e7b945a3c79faa6bb2d29fc6d"
+      },
+      {
+        "package": "original-operations-decimal-render",
+        "files": 4,
+        "covers": [
+          "original-operations-decimal-render"
+        ],
+        "descriptorSha256": "1ea2dd266d632b54aa0c51bdcfc27f876652bbcad8ad8fa69676c7bb858171fe"
+      },
+      {
+        "package": "original-operations-ascii",
+        "files": 3,
+        "covers": [
+          "original-operations-ascii"
+        ],
+        "descriptorSha256": "7fcfb330d9cb5f1aa76af709953755a9841984111902bddf87ee1871382f94fc"
+      },
+      {
+        "package": "original-operations-checked-power",
+        "files": 3,
+        "covers": [
+          "original-operations-checked-power"
+        ],
+        "descriptorSha256": "2c3f388a370f5f9fb10ec94c6e34349f1ad2a35552ce958a68a371becd23a94d"
+      },
+      {
+        "package": "original-operations-environment",
+        "files": 3,
+        "covers": [
+          "original-operations-environment"
+        ],
+        "descriptorSha256": "c84b256001a0fbf2172924bca3167920f9a862dacb81de08def7122a8f0d3925"
+      },
+      {
+        "package": "original-operations-modular",
+        "files": 3,
+        "covers": [
+          "original-operations-modular"
+        ],
+        "descriptorSha256": "3a534a560650edf3cc6ec8a023259e820fd7425f1220bba9316c7e06cb04c851"
+      },
+      {
+        "package": "original-operations-raw-call",
+        "files": 3,
+        "covers": [
+          "original-operations-raw-call"
+        ],
+        "descriptorSha256": "44a03cec31d2808b088b8c71a936667ece9daf08fecb94bd59e3659b13ce0706"
+      },
+      {
+        "package": "original-operations-scalars",
+        "files": 3,
+        "covers": [
+          "original-operations-scalars"
+        ],
+        "descriptorSha256": "1dc1bab356b6ba9da53251b5077ffee326248f7e6f087d075b9ce18903bd4bc0"
+      },
+      {
+        "package": "original-signed-mod",
+        "files": 2,
+        "covers": [
+          "original-signed-mod"
+        ],
+        "descriptorSha256": "9843886dc4bacf54539a7c30d8be024c2d6afd8dcd081cd0b4386af204f1cdff"
+      },
+      {
+        "package": "original-collections-completion",
+        "files": 1,
+        "covers": [
+          "original-collections-completion"
+        ],
+        "descriptorSha256": "271225594588d5fb6ca63ee091a211ae2a03dcfc7c51db651fac9db5e195d813"
+      },
+      {
+        "package": "original-expressions-dispatch",
+        "files": 1,
+        "covers": [
+          "original-expressions-dispatch"
+        ],
+        "descriptorSha256": "3ef3ae063d7fafaddc31e3a0fc97a18b6a36bb69b5d5953248a9dc58d735d445"
+      }
+    ],
+    "status": "running",
+    "startedAt": "2026-10-02T18:50:19.438506+00:00",
+    "runnerSha256": "75d53bb0dc416fc2078680dbaea88c07eebe7e3ec3b4f49929f6cf771e4c20c2",
+    "results": []
+  },
+  "transition": "Keep historical formal tree on PR #3; promote self-contained library to formal/ on separate branch."
+}

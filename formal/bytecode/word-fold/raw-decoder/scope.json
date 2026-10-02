@@ -1,0 +1,14 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "accepted-fold-decoders",
+      "owner": "formal/bytecode/word-fold/raw-decoder"
+    }
+  ],
+  "assumptions": [
+    "Native candidate calldata length below2^64, fitting raw seven heads and source/template/element-window tails, canonical address and exit0/1/2. Range count and initial accumulator retain full uint256 domain. No canonical tail order, tail alignment or padding restriction.",
+    "Each generated step follows actual current opcodes/immediates/jump bytes, including exact address mask, full array stride and enum validation, under explicit fitting stack and sufficient reached resources. Lower stack prefix and all byte memory are preserved.",
+    "Selected imports assume included contracts. Complete current include/declaration/native closure, complementary raw rejections, body/loop/external observations/early exits/errors/scalar terminal, physical and semantic faults and independent retained checker remain required. No gas/deployment/performance claim."
+  ]
+}

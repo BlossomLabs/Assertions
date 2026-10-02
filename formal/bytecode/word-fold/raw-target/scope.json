@@ -1,0 +1,10 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Exact current raw assigned-selector PC-zero routing, compiler fitting frame, Words alignment and all ordered accumulator/element-window admission. Nonempty Range count is full unsigned256-bit; source and independent array spans retain their exact raw representation bounds.",
+    "Successful window validation enters12029, actual nonempty branch enters shared target helper15859 with fold continuation12052. Pre-allocation memory is actual Store([],64,128). No target/gas/callback observation occurs before the helper.",
+    "Exactly one truthful CodeSize(target,codeSize) observation is consumed. Code size zero produces exact physical36-byte InvalidCallbackTarget(address) REVERT; positive size returns actual12052 with full Fold stack/memory preserved. Old returndata stays arbitrary and unchanged, cursor advances exactly1.",
+    "Selected native imported contracts are assumed. Complete fresh included graph, complementary raw/window/empty paths, FoldRun allocation/template copy/domain/stamping/callback/guards/early-exit/errors/physical scalar return, EVM fixtures, matching semantic mutations and independent retained checking remain mandatory before public coverage. Sufficient reached resources and truthful observations are explicit. No gas/deployment/performance or compiler-correctness claim."
+  ]
+}

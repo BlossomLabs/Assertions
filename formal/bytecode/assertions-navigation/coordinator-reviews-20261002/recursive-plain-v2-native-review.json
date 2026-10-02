@@ -1,0 +1,8 @@
+{
+  "status": "passed-independent-native-closure-review",
+  "publicCredit": false,
+  "scope": "Constructive arbitrary nested name/tuple physical parser traces from independent encoded grammar, with explicit stack and finite calldata premises; fixed/dynamic suffixes and PC0 entry composition remain open",
+  "modules": 70,
+  "nativeBatches": 4071,
+  "manifestSha256": "7a44550f5d0e2da6d177b4438ce43424f9a173e20aaa567634ca9445e6359b1a"
+}

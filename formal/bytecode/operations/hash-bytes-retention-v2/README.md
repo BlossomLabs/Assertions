@@ -1,0 +1,3 @@
+# Hash bytes retained V2
+
+Fresh complete67-module retained graph for the unchanged current hash(bytes) runtime and all admitted raw frames. Generic checked MLOAD64 and JUMP bridges repair two failed first-block postconditions. Four selected native declarations passed before capture. Full fresh native graph, compiler/runtime identity, byte-identical regeneration, physical receipts, matching semantic fault, and independent checker must pass before any public ledger. The faithful exact hash-engine observation premise remains explicit. Previous failed complete retainer and cancellation-review rejection are preserved; no gas, deployment, performance or cryptographic claims.

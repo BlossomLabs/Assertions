@@ -1,0 +1,11 @@
+# Resolution checkpoint — 2026-10-02 consolidated v4
+
+All resolver native jobs are terminal. Current allocation is three total cores; coordinator borrowed one explicitly after terminal, so future own native jobs use at most two until released. No cond job launched and no cond source edited.
+
+Accepted public/helper sources remain frozen as recorded in v3. New review candidate: `constraints/or/evidence/nonempty-kernel-bound-consolidated-v2/manifest.json`, retained with `constraints/or/retain-nonempty-kernel-consolidated-v2.py`. Complete native `development/nonempty-kernel-native-consolidated-v1` passed 2754 checks / 33 files, complete declarations/imports/audits, current source/tool identities. Start115, arbitrary single-child Item234, completed-table Exit18 regenerate byte-identically. Full physical decoder replay4808 instructions /8executions passed. Actual19755 MCOPY to CALLDATACOPY mutation failed native result-word semantic postcondition; seven of eight independent physical policies killed. Empty SKIP reference policy survives because its true alternative succeeds after corrupted EQ; survivor explicitly retained. Retainer v1 rejected an overstated eight-kill count before output; immutable v2 records exact seven.
+
+Scope is successful allocation/one-child/exit kernels with explicit independent heap/metadata/resources. Arbitrary child-fill induction, decoded Table, OR structural/verdict composition and public credit remain open. Do not count these kernels as a full nonempty decoder.
+
+Child closure v1/v2 failed evidence preserved. v3 passed2192 checks/31files, with Item1482 verified0errors. Shared MemoryFramesv3 consumer wrappers and StoreExtent Length/Aligned consumer bridges included in whole closure. Shared registry checker passes memory-copy-v3, word-totals-v1, store-extent-v1 and environment-step-v4b; current registry identity copied in bound evidence. No shared foundation source edited.
+
+`20261002-cond-readonly-assessment-v1.json` records read-only future takeover. Coordinator authorized only cond-constrained after resolver package readiness, no gather/pick assignment. Old native closure v1 progressed75→94checks during review and remains incomplete, including Sequences.Span native error; preserve it and coordinate authoritative terminal status before duplicate work. Namespace PID/old handle absence is not liveness evidence.

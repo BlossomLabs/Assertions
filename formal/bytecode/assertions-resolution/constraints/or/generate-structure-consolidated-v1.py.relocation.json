@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/assertions-resolution/constraints/or/generate-structure.py",
+  "output": "/home/sem/assertions/formal/bytecode/assertions-resolution/constraints/or/generate-structure-consolidated-v1.py",
+  "source_sha256": "7e031f67bb4a2c80a29949d9373cc0864e8e42ee9de205f5299c2cc0c999ae1e",
+  "output_sha256": "7e031f67bb4a2c80a29949d9373cc0864e8e42ee9de205f5299c2cc0c999ae1e",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

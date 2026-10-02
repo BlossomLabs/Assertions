@@ -1,0 +1,26 @@
+{
+  "source": "contracts/Operations.sol",
+  "sourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce",
+  "buildInfoId": "solc-0_8_36-ac0eef8f2a0c22be618862258c50c9c272597da3",
+  "selectors": [
+    "c1459c04",
+    "feec0cff"
+  ],
+  "functions": [
+    {
+      "name": "toLower",
+      "bodySha256": "dbb5bccfa1bc5eac92e36c6d7c4991029b46e971bae48d66b43c4e3e202b9612",
+      "exactNormalizedBody": "functiontoLower(bytescalldatas)externalpurereturns(bytesmemory){return_foldCase(s,\"A\",\"Z\");}"
+    },
+    {
+      "name": "toUpper",
+      "bodySha256": "11b8e467b0ede5d57e084850530cd13415f1603e5d22238cfaaaea178629a9f7",
+      "exactNormalizedBody": "functiontoUpper(bytescalldatas)externalpurereturns(bytesmemory){return_foldCase(s,\"a\",\"z\");}"
+    },
+    {
+      "name": "_foldCase",
+      "bodySha256": "596c85a1d4a4ce92d2e8493326e129677550635cdafec3c768992d26e72bcab5",
+      "exactNormalizedBody": "function_foldCase(bytescalldatas,bytes1low,bytes1high)privatepurereturns(bytesmemoryout){out=s;for(uint256i=0;i<out.length;i++){bytes1c=out[i];if(c>=low&&c<=high)out[i]=c^0x20;}}"
+    }
+  ]
+}

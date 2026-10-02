@@ -1,0 +1,7 @@
+# Complete raw fold decoder outcome composition
+
+The owned generator gates the current runtime and all three compiler selector/entry bindings. It composes complete selector paths, seven-instruction wrapper invocations and both successful decoder paths with all26 ordered compiler rejection classes. `Partition` proves coverage for every calldata length from4 through2^64-1, `Disjoint` excludes simultaneous success and rejection, and `ExactPartition` equates rejection with failing the complete seven-head fitting predicate.
+
+The composed `Decode` theorem accepts arbitrary initial byte memory, a fitting lower stack prefix and actual wrapper continuation. The three PC-zero theorems produce either exact empty REVERT or the actual fold-body entry with the independently named decoded stack fields, original memory and complete executed trace. The outer wrapper continuation is604. Successful range decoding retains full uint256 range count and accumulator. No canonical placement, tail alignment or padding restriction is imposed.
+
+These are selected development compositions; imported leaf contracts remain assumed. Complete current included native closure, fold-body admission/loop/callback/early exit/error/output proofs, resource and truthful external-observation premises, complete EVM fixtures, matching semantic faults and an independent retained checker remain required before public function coverage. No gas, deployment or performance claim.

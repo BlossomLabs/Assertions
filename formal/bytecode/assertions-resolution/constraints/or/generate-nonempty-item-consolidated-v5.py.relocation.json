@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-item-consolidated-v4.py",
+  "sourceSha256": "8cc6e22b871510c204327631838ffc7cff74dfa0d61e9e490512b4a73bdea351",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-item-consolidated-v5.py",
+  "correction": "History lemma loop variable must not shadow current MSTORE word; native caught free+64 replacingkind"
+}

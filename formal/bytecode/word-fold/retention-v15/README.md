@@ -1,0 +1,11 @@
+# Full current fold retention V15
+
+This fresh package preserves V13 callback-fault and V14 scalar-fault native postcondition timeouts. All three faults now use a complete healthy terminal owner, unchanged-admission healthy and faithfully changed caller frame bridges, and an entire changed terminal owner. The size fault really returns33 bytes versus the unchanged32-byte oracle; the two kind faults use the actual changed terminal opcode. Both bridges retain every original admission condition and exact complete pre-step stack/memory slice/original packet. They use valid memory lemmas and never call an invalid caller Advance/Run/Block theorem.
+
+The full end-to-end preflight and exact strict checker block passed at development/whole-terminal-control-smoke-v1. Changed entire terminal inventories36,36,31 contain only ordinary semantic postcondition failures, with matching full PCzero EVM contradictions. Healthy scalar terminal owners36each and healthy/changed caller bridges25each passed; healthy callback terminal31 and healthy/changed bridges38each passed. Actual original /tmp commands remain preserved provenance. Every gate is rerun in this fresh retention.
+
+The native public graph is unchanged:208 whole current module bodies,2 include-only forwarders and263648 current native obligations. Pinned runtime/compiler/source/tool identities, owned byte-identical generation, zero native root audits,258 complete PCzero physical receipts,all3 exact-bytecode native/EVM controls,all3 faithful translated source native/EVM controls,owner independent checker and parent independent checker remain mandatory before any public ledger. No credit is assigned here.
+
+The local strict source auditor is unchanged from V13: original Basic+Budget admission preserved, healthy and changed whole witness methods, faithful early branch before any Loop.Run callee, no skipped callee preconditions or native obligations. All source controls are rerun.
+
+Representation, reached fitting resources, truthful reached external observations,reviewed EVM interpreter and pinned compiler/runtime extraction remain explicit assumptions. Complete Collections bytecode,array codec/value traversal and remaining public entries stay open. No compiler correctness,gas,performance or deployment claim.

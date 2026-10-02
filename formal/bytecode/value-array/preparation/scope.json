@@ -1,0 +1,17 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/prefix-pack/ShiftKernel.dfy",
+    "formal/bytecode/value-array/prefix-unpack/ShiftKernel.dfy",
+    "formal/bytecode/value-array/prefix-pack/Prefix.generated.dfy",
+    "formal/bytecode/value-array/prefix-unpack/Prefix.generated.dfy",
+    "formal/bytecode/value-array/decoder-unpack/Decoder.generated.dfy"
+  ],
+  "selectedModuleCount": 5,
+  "scope": "Five complete new physical entry/accepted-unpack-decoder module inventories only. Public packArray/unpackArray semantic completion, exhaustive malformed partition and retention remain open.",
+  "assumptions": [
+    "Pinned runtime/compiler metadata, reviewed EVM instruction semantics and concrete toolchain remain trusted boundaries.",
+    "Loaded selector, zero value and fitting calldata prefix representation are explicit; accepted decoder permits arbitrary fitting loose/shared/overlapping spans.",
+    "These paths stop before canonical descriptor validation, array loops and output/error serialization. No compiler-correctness, gas, deployment or performance claim."
+  ],
+  "formatExclusions": {}
+}

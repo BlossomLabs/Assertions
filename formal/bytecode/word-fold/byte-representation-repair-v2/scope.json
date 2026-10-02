@@ -1,0 +1,16 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-byte-representation",
+      "owner": "formal/bytecode/word-fold/byte-representation-repair-v2",
+      "generatedNames": [
+        "Shift"
+      ]
+    }
+  ],
+  "assumptions": [
+    "All bytes0..255 and complete unsigned256-bit words. Calldata load uses actual zero-filled32-byte window; only one source byte must exist, including last byte. No32-byte-fit premise.",
+    "Source bridge applies all fitting raw source offsets and every index<declared source length. Native selected imported contracts assumed; complete public fold graph and retained physical/fault/independent checking remain required. No gas/deployment/performance claims."
+  ]
+}

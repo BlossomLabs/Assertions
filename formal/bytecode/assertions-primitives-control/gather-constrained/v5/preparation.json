@@ -1,0 +1,41 @@
+{
+  "scope": "Fresh constrained RAW gather candidate. Existing failed V4 snapshots and sources retained. Explicit Word well-formedness premise is already the physical loop invariant; it follows from Budget, Positions and Monotone for admitted indices. No public calldata or mathematical verdict changes.",
+  "files": [
+    {
+      "source": "formal/bytecode/assertions-primitives-control/gather-constrained/LoopSpec.dfy",
+      "sourceSha256": "4141447c85fa5359a6b1734129eb8afd2547240bd6a8280852d8703a96dd8350",
+      "output": "formal/bytecode/assertions-primitives-control/gather-constrained/v5/LoopSpec.dfy",
+      "outputSha256": "44ba011b07f1ea7d03a68203491ee5f959e0f6c906ce94b109379d39dd2373d5"
+    },
+    {
+      "source": "formal/bytecode/assertions-primitives-control/gather-constrained/Loop.dfy",
+      "sourceSha256": "00b118dd1cb5568e6718f9f821ff31a42c787f6e38d52485d60193bb1b36e9ac",
+      "output": "formal/bytecode/assertions-primitives-control/gather-constrained/v5/Loop.dfy",
+      "outputSha256": "51dd72eb18affea7e4ad32475b139402c9806f23392120e789b2e3da64eda33b"
+    },
+    {
+      "source": "formal/bytecode/assertions-primitives-control/gather-constrained/Body.dfy",
+      "sourceSha256": "750bfcc21a0529710d1e5354130c950972479bcab820f5d9e22e85ee48592d68",
+      "output": "formal/bytecode/assertions-primitives-control/gather-constrained/v5/Body.dfy",
+      "outputSha256": "b12865598c338043b3cf532bb9aef0b41273aad4b239e60c0199b5f2883f0606"
+    },
+    {
+      "source": "formal/bytecode/assertions-primitives-control/gather-constrained/Values.dfy",
+      "sourceSha256": "18e3994b97f7f4042f1f65e498c01ba6b7990c8ed2e3bf248c7f2446811bb1bb",
+      "output": "formal/bytecode/assertions-primitives-control/gather-constrained/v5/Values.dfy",
+      "outputSha256": "6ddda757cc1f4f94c9963cc4d6b2626965866d6567e8cbcaf9393a5412b5136e"
+    },
+    {
+      "source": "formal/bytecode/assertions-primitives-control/gather-constrained/Spec.dfy",
+      "sourceSha256": "6dae8ecc3a1e89060bc8cb0845661c508bf5e6f5f43c95c9ce55a7112c16112f",
+      "output": "formal/bytecode/assertions-primitives-control/gather-constrained/v5/Spec.dfy",
+      "outputSha256": "1d84ef08dc2db6c52e7669d13048c86a6ce6bb82d84579d09759e1e9407ae78d"
+    },
+    {
+      "source": "formal/bytecode/assertions-primitives-control/gather-constrained/Connection.dfy",
+      "sourceSha256": "4f9483a4d399d999da881118b3c516225329e8ada15c0771586c8309b84c4dff",
+      "output": "formal/bytecode/assertions-primitives-control/gather-constrained/v5/Connection.dfy",
+      "outputSha256": "4f9483a4d399d999da881118b3c516225329e8ada15c0771586c8309b84c4dff"
+    }
+  ]
+}

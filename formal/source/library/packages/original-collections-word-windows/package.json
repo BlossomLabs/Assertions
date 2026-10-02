@@ -1,0 +1,44 @@
+{
+  "id": "original-collections-word-windows",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/collections/word-windows",
+  "entry": "formal/collections/word-windows/Connection.dfy",
+  "verificationEntries": [
+    "formal/collections/word-windows/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/abi/Frames.dfy",
+      "formal/collections/word-memory/Model.dfy",
+      "formal/collections/word-windows/Model.dfy",
+      "formal/collections/word-windows/Properties.dfy"
+    ],
+    "execution": [
+      "formal/collections/word-memory/Source.generated.dfy",
+      "formal/collections/word-windows/Source.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/collections/word-memory/Connection.dfy",
+      "formal/collections/word-windows/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
+    "formal/collections/word-memory/Connection.dfy": "bd417efb1b4ed5843b45d1db33cd789053800db946e4f1b33bf6c2beda025f3d",
+    "formal/collections/word-memory/Model.dfy": "47c5a211c3c28737af9f6c62b5091bfb93834ec266920a7e7624fc6b568db6ba",
+    "formal/collections/word-memory/Source.generated.dfy": "f5cd81a8a45eb35483546521480caa6f0d012e38531e20fcec3806900b34e203",
+    "formal/collections/word-windows/Connection.dfy": "ca6007ba4d580431af9954448f2b7fb38bcfea295dcf5cb0b900de9f91fba3da",
+    "formal/collections/word-windows/Model.dfy": "b0bb6054b7192f2183b8e6b1fa535a950494f316b0ac41ffb500d33fd6a3c26d",
+    "formal/collections/word-windows/Properties.dfy": "2ba4e013b97c202b8982f9aa5c854e028300973c8a7b217fcf8b20a45c36e1b9",
+    "formal/collections/word-windows/Source.generated.dfy": "0c5fa6072a246c71312a98651b43ea7c5610aaa330fd1228f62cf99ff925da55"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

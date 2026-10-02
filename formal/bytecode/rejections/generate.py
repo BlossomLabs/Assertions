@@ -84,4 +84,4 @@ module BytecodeReject{name} {{
 '''
             (out/(name+'.generated.dfy')).write_text(text);(out/(name+'.mapping.json')).write_text(json.dumps({'contract':contract,'kind':kind,'runtimeSha256':hashlib.sha256(code).hexdigest(),'runtimeBytes':len(code),'maximumStackWords':cap,'candidateRuntime':bool(runtime),'states':states,'requiredBytes':required},indent=2)+'\n');print(name,len(states),'complete physical rejection states')
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--runtime',type=Path);p.add_argument('--contract',choices=['Assertions','Expressions','Collections']);a=p.parse_args();assert bool(a.runtime)==bool(a.contract);generate(a.output,a.runtime,a.contract)
+    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--runtime',type=Path);p.add_argument('--contract',choices=['Assertions','Expressions','Collections']);a=p.parse_args();assert not a.runtime or a.contract;generate(a.output,a.runtime,a.contract)

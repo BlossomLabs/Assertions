@@ -1,0 +1,51 @@
+{
+  "id": "original-collections-calls",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/library/src/collections/calls/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/collections/calls/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/collections/calls/Connection.dfy",
+    "formal/source/library/src/collections/calls/Model.dfy",
+    "formal/source/library/src/collections/calls/Source.generated.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/library/src/abi/Frames.dfy",
+      "formal/source/library/src/collections/callback-results/Model.dfy",
+      "formal/source/library/src/collections/calls/Model.dfy",
+      "formal/source/library/src/collections/preparation/Model.dfy",
+      "formal/source/library/src/collections/traversal/Model.dfy"
+    ],
+    "execution": [
+      "formal/source/library/src/collections/callback-results/Source.generated.dfy",
+      "formal/source/library/src/collections/calls/Source.generated.dfy",
+      "formal/source/library/src/collections/preparation/Source.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/library/src/collections/calls/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/library/src/collections/calls/Connection.dfy": "d4aaaecaa3a0af9ae1bf5f411c5450d6ecac7929ce0b190506004355b11b1a16",
+    "formal/source/library/src/collections/calls/Source.generated.dfy": "876c0baeacc42637e0bc7b3716b2d80d95ce2d982a1fb6ea5a6b7794b0e2ef58",
+    "formal/source/library/src/collections/calls/Model.dfy": "3b8d41b9480c69b597a3fa0f5d59aaa4e4c9abf9b21bb4b7d7890287fed8975d",
+    "formal/source/library/src/collections/preparation/Source.generated.dfy": "0516fdc764b9b59b88475ad61cd0d2e2444d1899265045e6f6fa91861c91d133",
+    "formal/source/library/src/collections/preparation/Model.dfy": "fe987b75c7ad60773b12840a0736839af6868da55068ceb1c73eeebaf7f533a6",
+    "formal/source/library/src/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
+    "formal/source/library/src/collections/callback-results/Source.generated.dfy": "5ed18983bdd94c0c3864258a26cf448a0f1f4a82b51e31d9f12466b0127af966",
+    "formal/source/library/src/collections/callback-results/Model.dfy": "47406aa3a6d22096a8e225cb56954e963ef54fc015cba500d27c601cc5f9a3dc",
+    "formal/source/library/src/collections/traversal/Model.dfy": "1f78b7eafac8fee4fd51c58f511149b595b216bef9e02a4cd88ea6f1e3dc23de"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

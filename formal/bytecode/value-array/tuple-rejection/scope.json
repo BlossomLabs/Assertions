@@ -1,0 +1,13 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/tuple-rejection/AtLimit.generated.dfy",
+    "formal/bytecode/value-array/tuple-rejection/WrongSeparator.generated.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "Two complete actual tuple continuation guards from post-add PC 13988: child end at/beyond limit or a byte other than comma/close, through exact InvalidTypeDescriptor(e) REVERT. Generic full lower frame/aligned free memory. Recursive child/update/caller and public codec/native retained controls remain open; no public credit.",
+  "assumptions": [
+    "Pinned runtime/tools and reviewed EVM model.",
+    "Original represented tuple continuation frame, original positions below 2^64, positive child span and aligned fitting free memory. Independent caller composition must derive these frames."
+  ],
+  "formatExclusions": {}
+}

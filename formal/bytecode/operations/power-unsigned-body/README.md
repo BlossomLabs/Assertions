@@ -1,0 +1,5 @@
+# Exact unsigned integer exponent body candidate
+
+Prepared complete graph, native verification unlaunched and no public credit. The body combines every actual shortcut/invocation, finite generic exponent-halving iteration, checked final product and caller cleanup. Its continuous machine trace reaches the actual result frontier1329 or emits the exact36-byte Panic17 packet, with a result connected to the independently specified unbounded integer power.
+
+PCzero raw admission and complete physical RETURN are separate open connections. Complete native graph, input/compiler/runtime binding, fresh regeneration/audits, physical fixtures, matching semantic mutation and independent parent checking remain required before a public ledger. Runtime instruction bytes/boundaries/immediates/destinations, finite fitting representation, bounded reached caller stack, fresh memory, faithful observations and sufficient resources remain explicit. There is no real-valued exponential accuracy, gas, deployment or performance claim. Never hand-edit generated files.

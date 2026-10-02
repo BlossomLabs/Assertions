@@ -1,0 +1,13 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/parser-suffix-rejection/Connection.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "Complete exact named and accepted-child tuple base parsing, any finite accepted suffix prefix, then the independently witnessed rejected next suffix through InvalidTypeDescriptor(q) REVERT. Every full caller stack/memory/trace join is preserved; error outcome is derived, never supplied as a receipt. Recursive rejected children/tuple separators/public codec/native retention/fault closure remain open; no public credit.",
+  "assumptions": [
+    "Pinned runtime/tools and reviewed reached EVM interpretation remain assumptions.",
+    "Original represented offset/length/positions below 2^64, lower/recursive stack budget and fitting aligned free memory.",
+    "Independent accepted base/finite prefix grammar and earliest decimal rejection witness; no expected EVM error frame or packet is assumed. Complete native checking must establish every current included owner."
+  ],
+  "formatExclusions": {}
+}

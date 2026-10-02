@@ -26,16 +26,21 @@ def inventory(paths):
     return result
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--dafny',type=Path,required=True);p.add_argument('--solc',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
+    global NAMES
+    p=argparse.ArgumentParser();p.add_argument('--dafny',type=Path,required=True);p.add_argument('--solc',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--contract',choices=['Assertions']);a=p.parse_args()
+    if a.contract:NAMES=[a.contract]
     dafny,solc=a.dafny.resolve(),a.solc.resolve();solver=dafny.parent/'z3/bin/z3-4.12.1';out=a.output.resolve();out.mkdir(parents=True,exist_ok=False)
     files=inputs();hashes={str(f.relative_to(ROOT)):sha(f) for f in files};snap=out/'source-snapshot'
     for f in files:
         dest=snap/f.relative_to(ROOT);dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(f,dest)
     source=snap/HERE.relative_to(ROOT)
-    m={'status':'incomplete','scope':'Exact current canonical runtime dispatcher control for all 49 selectors, arbitrary 256-bit environment words and all prefix paths under explicit EVM/resource/projection premises. Stops before wrapper decoding/function bodies; no whole-contract source/bytecode equivalence claim.','sourceSha256':hashes,'startedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'executableSha256':{k:sha(v) for k,v in [('dafny',dafny),('Dafny.dll',dafny.parent/'Dafny.dll'),('z3',solver),('solc',solc)]},'checks':[]}
+    selector_count=sum(len(json.loads((HERE/'inventory.json').read_text())[n]['methodIdentifiers']) for n in NAMES)
+    trace_count=selector_count*3+len(NAMES)*7
+    m={'status':'incomplete','contracts':NAMES,'scope':f'Exact current canonical runtime dispatcher control for {selector_count} selectors of {", ".join(NAMES)}, arbitrary 256-bit environment words and all prefix paths under explicit EVM/resource/projection premises. Stops before wrapper decoding/function bodies; no whole-contract source/bytecode equivalence claim.','sourceSha256':hashes,'startedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'executableSha256':{k:sha(v) for k,v in [('dafny',dafny),('Dafny.dll',dafny.parent/'Dafny.dll'),('z3',solver),('solc',solc)]},'checks':[]}
     m['versions']={k:subprocess.check_output([str(v),'--version'],text=True).strip() for k,v in [('dafny',dafny),('z3',solver),('solc',solc)]};assert m['versions']['dafny']==json.loads((ROOT/'formal/abi/toolchain.json').read_text())['dafnyVersion']
     assert '4.12.1' in m['versions']['z3'] and '0.8.36+commit.8a079791' in m['versions']['solc'],'Unpinned proof/compiler tools'
-    assert {f.name for f in HERE.glob('*.dfy')}=={'Machine.dfy',*[n+'.generated.dfy' for n in NAMES]},'Uninventoried proof source'
+    assert {f.name for f in HERE.glob('*.dfy')} <= {'Machine.dfy',*[n+'.generated.dfy' for n in ['Assertions','Expressions','Collections']]},'Uninventoried proof source'
+    assert all((HERE/(n+'.generated.dfy')).is_file() for n in NAMES),'Missing selected proof source'
     for file in HERE.glob('*.dfy'):
         assert set(re.findall(r'^include "([^"]+)"',file.read_text(),re.M)) <= {'Machine.dfy'},'Uninventoried proof dependency'
     m['assumptions']=[
@@ -43,13 +48,13 @@ def main():
       'All baseline expected selector/entry addresses are frozen independently of candidate generation. They are the declared equality-branch destinations, not a proof that the subsequent wrapper/decoder/body implements the named source entry. Public source proof results cannot fill that bytecode gap.',
       'Every modeled continuing step increases PC within the exact prefix; a well-founded PC rank proves termination without dropping paths at a loop or fuel bound. Arbitrary 256-bit loaded words/calldata sizes/call values overapproximate real inputs, including infeasible huge sizes; no successful body/allocation is assumed or proved.',
       'The initial physical memory write is recorded as an initialization flag in the control projection. This package does not model full byte memory, ABI argument decoding, body/callback behavior, returned success bytes, physical allocation/serialization or metadata reachability after entry.',
-      'Dafny/Boogie/Z3, solc ABI extraction and reproduction, Node/Hardhat/EDR tooling and reviewed evidence scripts are trusted. All native declarations, zero audit, input/tool/runtime identity, 168 real EVM prefix traces and two semantic bytecode mutations must pass; no deployment, gas, complexity, performance or whole-contract verification claim.'
+      f'Dafny/Boogie/Z3, solc ABI extraction and reproduction, Node/Hardhat/EDR tooling and reviewed evidence scripts are trusted. All native declarations, zero audit, input/tool/runtime identity, {trace_count} real EVM prefix traces and two semantic bytecode mutations must pass; no deployment, gas, complexity, performance or whole-contract verification claim.'
     ]
     def save():(out/'manifest.json').write_text(json.dumps(m,indent=2)+'\n')
     def record(name,command,timeout=3600):
         j=run(command,out/(name+'.log'),timeout);j.update(name=name,passed=j['exitCode']==0);m['checks'].append(j);save();return j
     save()
-    record('runtime-identity',[sys.executable,'-B',source/'identity.py','--solc',solc,'--output',out/'identity'],240)
+    record('runtime-identity',[sys.executable,'-B',source/'identity.py','--solc',solc,'--output',out/'identity',*[v for n in NAMES for v in ['--contract',n]]],240)
     for name in NAMES:
         gate=record('source-gate-'+name,[sys.executable,'-B',source/'generate.py','--solc',solc,'--contract',name,'--output',out/'generated'],240)
         gate['passed']=gate['passed'] and all((out/'generated'/(name+suffix)).read_bytes()==(source/(name+suffix)).read_bytes() for suffix in ['.generated.dfy','.mapping.json']);save()
@@ -63,10 +68,10 @@ def main():
     record('format',[dafny,'format','--check',source/'Machine.dfy',*[source/(n+'.generated.dfy') for n in NAMES]],180)
     # The in-process EDR installation is the existing local dependency runtime.
     # Its live inputs must match the frozen snapshot and remain unchanged at completion.
-    concrete=record('concrete',[shutil.which('node'),HERE/'evm-traces.mjs',out/'evm-traces'],180)
+    concrete=record('concrete',[shutil.which('node'),HERE/'evm-traces.mjs',out/'evm-traces',*([a.contract] if a.contract else [])],180)
     traces=json.loads((out/'evm-traces/results.json').read_text()) if (out/'evm-traces/results.json').is_file() else []
     frozen=json.loads((source/'inventory.json').read_text());expected={(n,k+suffix) for n in NAMES for k in frozen[n]['methodIdentifiers'] for suffix in ['','-tail','-nonzero-value']}|{(n,'short-'+str(i)) for n in NAMES for i in range(4)}|{(n,'unknown-'+k) for n in NAMES for k in ['00000000','ffffffff','12345678']}
-    concrete.update(passed=concrete['passed'] and len(traces)==168 and {(t['contract'],t['name']) for t in traces}==expected and all(t['passed'] for t in traces),expectedTraces=168)
+    concrete.update(passed=concrete['passed'] and len(traces)==trace_count and {(t['contract'],t['name']) for t in traces}==expected and all(t['passed'] for t in traces),expectedTraces=trace_count)
     if (out/'evm-traces/toolchain.json').is_file():m['concreteToolchain']=json.loads((out/'evm-traces/toolchain.json').read_text())
     save()
     record('candidate-generation',[sys.executable,'-B',source/'make-candidates.py','--output',out/'candidates'],180)

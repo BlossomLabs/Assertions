@@ -1,0 +1,9 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Current exact fold runtime, canonical domain and actual physical count/domain/accumulator slots. Full range index/count; finite fitting byte/word source. Template/memory and independently represented raw offset-array count satisfy explicit Fits; no bound introduced on Range element count.",
+    "Continuous actual16484 to16536 trace composes count gate/domain helper, all18 accumulator-load/stamp-invocation instructions and actual19449 stamp engine. Exact accumulator-first then original supplied-order element writes include duplicates/partial overlaps and bytewise last-write behavior. All complete old words before template pointer, caller stack, old returndata and observation cursor preserved.",
+    "Selected native imported contracts assumed. First-byte mathematical representation bridge, complete raw-template/iteration/callback/guard/error/early-exit/scalar terminal, fresh included native closure, finite physical replay, matching semantic mutation and independent retained checking remain mandatory. Representation, sufficient reached resources and truthful observations explicit. No gas/deployment/performance/compiler-correctness claim."
+  ]
+}

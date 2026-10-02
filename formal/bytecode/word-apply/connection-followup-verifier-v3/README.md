@@ -1,0 +1,9 @@
+# Unchanged map/filter connection timeout followup
+
+The original complete retained attempt has authoritative ordinary30-second solver timeouts in BytecodeApplyRawSuccessfulEntry.Run (three joins/widening obligations) and BytecodeApplyRawTemplateCopy.Run (one copied-payload postcondition). It reports zero verification errors for these modules; timeouts remain incomplete evidence. Original logs, CSV rows, sources and manifests are preserved. The original live retained process stays frozen and continues checking the remaining graph.
+
+This new verifier selects those two exact original modules without changing statements, admitted domains, parameters or postconditions. It increases only the ordinary solver allowance to120 seconds after the actual timed-out checks. Whole-module7200 seconds,2cores, manual induction, isolation, complete inventories and audits are retained. Its own source/scope/docs finish before a fresh snapshot. No native run has started yet; launch only after an actual pair becomes free.
+
+Selected native imports remain assumed. These checks provide no public coverage by themselves. Complete current included native closure, complementary raw/error paths, physical EVM receipts, matching semantic mutations and independent retained checking remain mandatory before a ledger. Representation, sufficient reached resources and truthful observations stay explicit. No gas/deployment/performance/compiler-correctness claim.
+
+The previous143-obligation raw-template proof actually completed with exit0, all CSV rows Passed and zero errors. Its recorded failure was a validator false positive: the shared broad `time.?out` pattern matched the evidence directory name. This fresh owner and output path avoid that name while retaining every original statement, admitted domain, full selected inventory and120-second allowance. The previous live driver is allowed to finish before launching any replacement. No failed manifest is relabeled passed.

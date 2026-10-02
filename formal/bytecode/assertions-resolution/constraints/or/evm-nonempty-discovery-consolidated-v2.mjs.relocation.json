@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/evm-nonempty-discovery-consolidated-v1.mjs",
+  "sourceSha256": "51d0ef950af8791d278536429c920371ed82357084acfa9b068dfdcc3a554cc5",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/evm-nonempty-discovery-consolidated-v2.mjs",
+  "correction": "SKIP accepts emptyreference only whenreached; firsttrueEQ keeps allchilddecoding but skips leafwidthverdict"
+}

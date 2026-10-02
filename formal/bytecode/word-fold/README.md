@@ -1,0 +1,11 @@
+# Exact bytecode folds
+
+The current complete raw public `foldRange`, `foldBytes` and `foldWords` paths have retained exact-bytecode coverage under the explicit assumptions below. The [public ledger](../../../docs/verification/fold-words-bytecode.json) records V15 evidence and both successful independent checks. These are three distinct entries within Collections coverage of 13/29; the complete Collections contract remains open.
+
+The retained package is `retention-v15/evidence/physical-raw-current-inputs-v15/manifest.json`: 208 complete current native module owners, 263,648 native obligations, 8,838 declarations, zero audit findings and 258 complete PC-zero physical receipts. All three exact-bytecode fault controls and all three faithful translated-source controls produced ordinary native semantic failures with matching full EVM contradictions. Original failed and interrupted predecessors are preserved and excluded where incomplete.
+
+The connection covers compiler-admitted loose/shared/overlapping offsets, enum checking, word alignment, accumulator and element windows in source order, empty return before target checking, actual template copying and FoldRun allocation, range/byte/word extraction, accumulator-first and supplied-order element writes, reached callbacks, exact one-word callback return, first callback failure, exhaustion guards, Any/All early exit and final 32-byte return. Source correspondence evidence remains a separate claim.
+
+Pinned compiler input/settings/runtime extraction, reviewed interpreter semantics, represented finite calldata and reached fitting stack/memory/serialization resources remain explicit premises. Reached caller identity, target code size, staticcall payload/full output and before/after gas observations must be truthful for their actual context/history. No gas, deployment, performance or compiler correctness claim is inferred.
+
+Recheck the current evidence with `python3 -B scripts/check-fold-words-bytecode-v15-evidence.py --manifest formal/bytecode/word-fold/retention-v15/evidence/physical-raw-current-inputs-v15/manifest.json` from the repository root. The checker reconstructs current include/declaration/native ownership, verifies source/tool/snapshot identities and generation, and independently replays runtime and physical evidence.

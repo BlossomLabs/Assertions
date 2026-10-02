@@ -1,0 +1,180 @@
+{
+  "rows": [
+    {
+      "oldFile": "formal/abi/Encoding.dfy",
+      "newFile": "formal/source/migration-v4/abi/Encoding.dfy"
+    },
+    {
+      "oldFile": "formal/abi/Examples.dfy",
+      "newFile": "formal/source/migration-v4/abi/Examples.dfy"
+    },
+    {
+      "oldFile": "formal/abi/Frames.dfy",
+      "newFile": "formal/source/migration-v4/abi/Frames.dfy"
+    },
+    {
+      "oldFile": "formal/abi/Validation.dfy",
+      "newFile": "formal/source/migration-v4/abi/Validation.dfy"
+    },
+    {
+      "oldFile": "formal/abi/aggregate/CursorSemantics.dfy",
+      "newFile": "formal/source/migration-v4/abi/aggregate/CursorSemantics.dfy"
+    },
+    {
+      "oldFile": "formal/abi/aggregate/Cursors.generated.dfy",
+      "newFile": "formal/source/migration-v4/abi/aggregate/Cursors.generated.dfy"
+    },
+    {
+      "oldFile": "formal/abi/aggregate/Refinement.dfy",
+      "newFile": "formal/source/migration-v4/abi/aggregate/Refinement.dfy"
+    },
+    {
+      "oldFile": "formal/abi/connection/Bridge.generated.dfy",
+      "newFile": "formal/source/migration-v4/abi/connection/Bridge.generated.dfy"
+    },
+    {
+      "oldFile": "formal/abi/connection/Descriptor.dfy",
+      "newFile": "formal/source/migration-v4/abi/connection/Descriptor.dfy"
+    },
+    {
+      "oldFile": "formal/abi/connection/Model.dfy",
+      "newFile": "formal/source/migration-v4/abi/connection/Model.dfy"
+    },
+    {
+      "oldFile": "formal/abi/connection/Refinement.dfy",
+      "newFile": "formal/source/migration-v4/abi/connection/Refinement.dfy"
+    },
+    {
+      "oldFile": "formal/abi/connection/Static.dfy",
+      "newFile": "formal/source/migration-v4/abi/connection/Static.dfy"
+    },
+    {
+      "oldFile": "formal/abi/construction/Memory.dfy",
+      "newFile": "formal/source/migration-v4/abi/construction/Memory.dfy"
+    },
+    {
+      "oldFile": "formal/abi/construction/Validation.dfy",
+      "newFile": "formal/source/migration-v4/abi/construction/Validation.dfy"
+    },
+    {
+      "oldFile": "formal/abi/descriptor/Refinement.dfy",
+      "newFile": "formal/source/migration-v4/abi/descriptor/Refinement.dfy"
+    },
+    {
+      "oldFile": "formal/abi/descriptor/Semantics.dfy",
+      "newFile": "formal/source/migration-v4/abi/descriptor/Semantics.dfy"
+    },
+    {
+      "oldFile": "formal/abi/descriptor/Suffixes.generated.dfy",
+      "newFile": "formal/source/migration-v4/abi/descriptor/Suffixes.generated.dfy"
+    },
+    {
+      "oldFile": "formal/abi/dynamic/Body.generated.dfy",
+      "newFile": "formal/source/migration-v4/abi/dynamic/Body.generated.dfy"
+    },
+    {
+      "oldFile": "formal/abi/dynamic/Semantics.dfy",
+      "newFile": "formal/source/migration-v4/abi/dynamic/Semantics.dfy"
+    },
+    {
+      "oldFile": "formal/abi/dynamic/Validation.generated.dfy",
+      "newFile": "formal/source/migration-v4/abi/dynamic/Validation.generated.dfy"
+    },
+    {
+      "oldFile": "formal/abi/dynamic/Zero.dfy",
+      "newFile": "formal/source/migration-v4/abi/dynamic/Zero.dfy"
+    },
+    {
+      "oldFile": "formal/abi/layout/Canonical.dfy",
+      "newFile": "formal/source/migration-v4/abi/layout/Canonical.dfy"
+    },
+    {
+      "oldFile": "formal/abi/layout/Count.generated.dfy",
+      "newFile": "formal/source/migration-v4/abi/layout/Count.generated.dfy"
+    },
+    {
+      "oldFile": "formal/abi/layout/Layout.generated.dfy",
+      "newFile": "formal/source/migration-v4/abi/layout/Layout.generated.dfy"
+    },
+    {
+      "oldFile": "formal/abi/layout/Scan.dfy",
+      "newFile": "formal/source/migration-v4/abi/layout/Scan.dfy"
+    },
+    {
+      "oldFile": "formal/abi/layout/Soundness.dfy",
+      "newFile": "formal/source/migration-v4/abi/layout/Soundness.dfy"
+    },
+    {
+      "oldFile": "formal/abi/layout/Spec.dfy",
+      "newFile": "formal/source/migration-v4/abi/layout/Spec.dfy"
+    },
+    {
+      "oldFile": "formal/abi/parser/Completeness.dfy",
+      "newFile": "formal/source/migration-v4/abi/parser/Completeness.dfy"
+    },
+    {
+      "oldFile": "formal/abi/parser/Parser.generated.dfy",
+      "newFile": "formal/source/migration-v4/abi/parser/Parser.generated.dfy"
+    },
+    {
+      "oldFile": "formal/abi/parser/Spec.dfy",
+      "newFile": "formal/source/migration-v4/abi/parser/Spec.dfy"
+    },
+    {
+      "oldFile": "formal/abi/shape/Refinement.dfy",
+      "newFile": "formal/source/migration-v4/abi/shape/Refinement.dfy"
+    },
+    {
+      "oldFile": "formal/abi/shape/Semantics.dfy",
+      "newFile": "formal/source/migration-v4/abi/shape/Semantics.dfy"
+    },
+    {
+      "oldFile": "formal/abi/shape/TypeShape.generated.dfy",
+      "newFile": "formal/source/migration-v4/abi/shape/TypeShape.generated.dfy"
+    },
+    {
+      "oldFile": "formal/abi/source/ByteSemantics.dfy",
+      "newFile": "formal/source/migration-v4/abi/source/ByteSemantics.dfy"
+    },
+    {
+      "oldFile": "formal/abi/source/BytesBody.generated.dfy",
+      "newFile": "formal/source/migration-v4/abi/source/BytesBody.generated.dfy"
+    },
+    {
+      "oldFile": "formal/abi/source/Correspondence.dfy",
+      "newFile": "formal/source/migration-v4/abi/source/Correspondence.dfy"
+    },
+    {
+      "oldFile": "formal/abi/tuples/CheckWords.generated.dfy",
+      "newFile": "formal/source/migration-v4/abi/tuples/CheckWords.generated.dfy"
+    },
+    {
+      "oldFile": "formal/abi/tuples/Names.generated.dfy",
+      "newFile": "formal/source/migration-v4/abi/tuples/Names.generated.dfy"
+    },
+    {
+      "oldFile": "formal/abi/tuples/Refinement.dfy",
+      "newFile": "formal/source/migration-v4/abi/tuples/Refinement.dfy"
+    },
+    {
+      "oldFile": "formal/abi/tuples/Semantics.dfy",
+      "newFile": "formal/source/migration-v4/abi/tuples/Semantics.dfy"
+    },
+    {
+      "oldFile": "formal/abi/tuples/Words.dfy",
+      "newFile": "formal/source/migration-v4/abi/tuples/Words.dfy"
+    },
+    {
+      "oldFile": "formal/abi/words/Refinement.dfy",
+      "newFile": "formal/source/migration-v4/abi/words/Refinement.dfy"
+    },
+    {
+      "oldFile": "formal/abi/words/Scanners.generated.dfy",
+      "newFile": "formal/source/migration-v4/abi/words/Scanners.generated.dfy"
+    },
+    {
+      "oldFile": "formal/abi/words/Semantics.dfy",
+      "newFile": "formal/source/migration-v4/abi/words/Semantics.dfy"
+    }
+  ]
+}

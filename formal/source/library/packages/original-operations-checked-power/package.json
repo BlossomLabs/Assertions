@@ -1,0 +1,34 @@
+{
+  "id": "original-operations-checked-power",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/operations/checked-power",
+  "entry": "formal/operations/checked-power/Connection.dfy",
+  "verificationEntries": [
+    "formal/operations/checked-power/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/operations/checked-power/Model.dfy"
+    ],
+    "execution": [
+      "formal/operations/checked-power/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/operations/checked-power/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/operations/checked-power/Connection.dfy": "a9d0efa33f1eff28162dd25536412d798898102b460a229314655c84ec2765ad",
+    "formal/operations/checked-power/Control.generated.dfy": "cd560605ff4778e8fa37b3e07af99bc99ed0eeb36860a6a9f327be024628d5cc",
+    "formal/operations/checked-power/Model.dfy": "12c1637fad74d68e16fda3406b04cc783a6219fc682779d9e18e605c103e491a"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

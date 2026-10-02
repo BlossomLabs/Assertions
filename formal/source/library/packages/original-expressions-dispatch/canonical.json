@@ -1,0 +1,31 @@
+{
+  "id": "original-expressions-dispatch",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/library/src/expressions/dispatch/Model.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/expressions/dispatch/Model.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/expressions/dispatch/Model.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/library/src/expressions/dispatch/Model.dfy"
+    ],
+    "execution": [],
+    "correspondence": [],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/library/src/expressions/dispatch/Model.dfy": "24956a82ff09284a8f267b36f4963dd037cf8a64f91a6f4ccd369dd34cccc303"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

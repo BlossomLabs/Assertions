@@ -1,0 +1,11 @@
+# Exact comparison bytecode evidence
+
+This package covers the ten public equality and ordered-comparison entries: `eq(uint256,uint256)`, `ne(uint256,uint256)` and the signed/unsigned overloads of `lt`, `gt`, `le` and `ge`. The successful theorems start at PC zero with arbitrary 256-bit arguments, zero call value and any finite calldata length from 68 through less than 2^64. The connection theorem derives actual zero-padded argument windows from raw calldata. Signed words mean exact two’s-complement integers. Successful results are the independent mathematical predicate serialized as one Boolean ABI word by actual physical memory stores and `RETURN`.
+
+Nonzero value, calldata shorter than four selector bytes, and assigned selectors with incomplete 68-byte scalar heads have complete physical empty `REVERT` paths. Other selectors are outside this package. Exact runtime instruction bytes, PUSH immediates, instruction boundaries and actual JUMPDESTs constrain every reached instruction. No path cutoff is used.
+
+The retained runner snapshots the complete package and native dependency graph before verification, regenerates generated files, checks the exact current pinned compiler input/runtime, verifies every native declaration with CSV inventory and zero audits, and checks formatting. It then records 140 physical successful EVM receipts, 88 rejection receipts and ten single-byte semantic comparison opcode faults. Every fault must both fail the independently specified native result and produce a wrong physical EVM output. Parse/type errors, timeouts and fixture differences alone are not accepted as semantic fault evidence. Final input/tool identities and all evidence hashes must remain unchanged.
+
+No public bytecode ledger entry is claimed until the retained runner passes and an independent evidence checker passes. Current preparation receipts and native development checks are not retained coverage. Generated files are owned by `comparison/generate.py` and `comparison/rejections/generate.py`; never edit them directly.
+
+The reviewed extraction/interpreter, Dafny/Boogie/Z3, truthful call observations, fitting finite representations and sufficient reached execution resources remain explicit assumptions. These proofs do not establish gas cost/availability, deployment equivalence, whole-compiler correctness or performance.

@@ -1,0 +1,11 @@
+{
+  "status": "prepared-native-unlaunched-no-public-credit",
+  "historicalFailure": "formal/bytecode/operations/power-retention/evidence/raw-entry-sol-v1/manifest.json",
+  "historicalFailureSha256": "32aa979058557c75aff36f60db2d897b744ecc58b9b09a69cc81f70da5070e09",
+  "actualFailure": "Whole RawUnsignedArgs owner reached its 7200-second watchdog; no semantic contradiction inferred",
+  "instructionChunkLength": 16,
+  "admissionUnchanged": true,
+  "runtimeMappingUnchanged": true,
+  "publicRunContractsUnchanged": true,
+  "originalPackageUnchanged": true
+}

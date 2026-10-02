@@ -1,0 +1,16 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-loop-common-return",
+      "owner": "formal/bytecode/word-fold/loop-return",
+      "generatedNames": [
+        "Return"
+      ]
+    }
+  ],
+  "assumptions": [
+    "Exact current compiled common cleanup16664 to12157, arbitrary full-word index/count and lower stack. No index>=total premise; covers early stop as well as exhaustion.",
+    "Physical memory finite, at least320 bytes and aligned; accumulator is actual MLOAD256. Selected imported contracts assumed; full included retained graph and physical/fault/checker gates still required."
+  ]
+}

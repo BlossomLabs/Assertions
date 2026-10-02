@@ -1,0 +1,5 @@
+# Raw ordinary failed callback
+
+Development package being composed: actual PC-zero map/filter admission, arbitrary successful prefix, first failed callback with a nonrefused guard, and complete CallbackFailed ABI error. Full original stamped template and exact complete returned reason are preserved. Representation, combined fitting serializer resources, and truthful external observations remain explicit. Resource names the actual reached memory free pointer; no fixture length cap. No suffix external observations are required. Imported declarations are assumed in selected development runs, with a fresh complete included retainer mandatory before public coverage. No gas-cost, deployment or performance claim.
+
+V2 keeps the451-row failed V1 snapshot (Bindings159/Reached129 pass; one163-row Connection BadTape projection timeout). BadTape is opaque with explicit checked reveal in Reached; callCursor uses the exact natural cardinality expression already required by the raw theorem. Same domain, cursor and error packet; no weakened resources/observations/native limits.

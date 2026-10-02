@@ -1,0 +1,10 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "All3assigned compiler-bound selectors and existing finite raw prefix representation, including every admitted loose/shared/overlapping dynamic tail and complete decoder/alignment/ordered window rejection.",
+    "Branch-specific represented finite memory/resources and truthful reached external observations. No observations for empty/precheck errors; code size only for invalid target; only reached callback observations thereafter.",
+    "Shortselector/nonzero-value dispatcher rejections are separate complete retained dependencies. Complete included native/compiler/EVM/semantic source and bytecode faults/independent checker required before public credit. No gas/deployment/performance/compiler correctness claim."
+  ],
+  "repair": "Same complete public outcome theorem, unchanged branch-specific input/resource/observation admissions; points to the separately owned exact opaque-selector raw failure repair. Original378-row public theorem/current closure preserved; no input narrowing."
+}

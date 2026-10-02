@@ -1,0 +1,17 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-callback-success",
+      "owner": "formal/bytecode/word-fold/callback-success",
+      "generatedNames": [
+        "Success"
+      ]
+    }
+  ],
+  "assumptions": [
+    "Pinned current Collections runtime and all three fold selectors. Complete actual helper success receipt16948 through fold return16553; exact32 returned bytes, fitting physical callback memory and sufficient reached resources. Full arbitrary caller lower stack retained.",
+    "Shared reviewed successful receipt memory/scalar lemmas imported and separately proven in retained map/filter evidence; selected development imports assumed. No replacement of actual fold helper return with map/filter return12484.",
+    "Full callback invocation, truthful reached STATICCALL observations, failed/wrong-length/exhaustion controls, finite fold iteration and complete raw public retained graph remain required. Representation, resources and observations explicit; no gas, deployment, performance or compiler correctness claim."
+  ]
+}

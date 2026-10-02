@@ -1,0 +1,41 @@
+{
+  "id": "original-operations-decimal-digits",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/library/src/operations/decimal-digits/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/operations/decimal-digits/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/operations/decimal-digits/Connection.dfy",
+    "formal/source/library/src/operations/decimal-digits/Control.generated.dfy",
+    "formal/source/library/src/operations/decimal-digits/Model.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/library/src/operations/decimal-digits/Model.dfy"
+    ],
+    "execution": [
+      "formal/source/library/src/operations/decimal-digits/Control.generated.dfy",
+      "formal/source/library/src/operations/modular/Math.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/library/src/operations/decimal-digits/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/library/src/operations/decimal-digits/Connection.dfy": "7c41bbad2eb9373ee12d794934d55b6af82b9b351d220f640da679427968297e",
+    "formal/source/library/src/operations/decimal-digits/Control.generated.dfy": "345b36f09c5e96e0c0250bfaa3bf1dad65c759d54be44433853e0eb1833d9e4b",
+    "formal/source/library/src/operations/decimal-digits/Model.dfy": "922164e4f9d4de4cd73d91df0972845cd416dc7a5a7d1c80a7552cb26f88a615",
+    "formal/source/library/src/operations/modular/Math.generated.dfy": "cfc82f034d73947fe424c9aedcc99a15b8aeb2a3ae866fe58fe0d46f86c10b8d"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

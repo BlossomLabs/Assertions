@@ -1,0 +1,3 @@
+# Signed modular V5 result bridge candidate
+
+Preserves all exact raw signed modular entries and original input domains. V4 retained Case7 hit a30-second terminal RETURN normalization timeout; this isolated owner factors the same output-word mathematical equality into a separately checked ComputedResult lemma before physical RETURN. The old V4 snapshot and interruption remain preserved. The parent isolated Case7 value20 and terminal49 obligations passed; complete dependency native, retained graph, physical replay, matching faults and independent checker remain mandatory. No public coverage yet.

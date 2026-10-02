@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/check-nonempty-memory-consolidated-v1.py",
+  "sourceSha256": "ba939b4437d6a92d8b1f45325daf853dcf53c43d03be0250ba21cbf15faa934c",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/check-nonempty-item-consolidated-v1.py",
+  "scope": "Adds exact generated child iteration opcode schedule and byte guards to complete physical replay"
+}

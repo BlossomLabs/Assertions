@@ -1,0 +1,49 @@
+{
+  "concat": {
+    "generationDirectory": "formal/source/operations/concat/v1",
+    "generationSha256": {
+      "solc-input.json": "4727b7f1b1af6fdefa8f46b292eb277a40445f0d4f1482efa9069519e40f45ac",
+      "solc-output.json.gz": "767b8d6f79d6dca24ee907be0243ca805091fb36a1fab77d81a3f5671606cd66",
+      "mapping.json": "af885c65d133bea5ba815d0a9042948ad7a0a7613ac0816fb534a430e4481082"
+    },
+    "status": "native closure or rerun complete/pending; source-correspondence gates separate"
+  },
+  "replace": {
+    "generationDirectory": "formal/source/operations/replace-suite-v1/byte-replace",
+    "generationSha256": {
+      "solc-input.json": "4727b7f1b1af6fdefa8f46b292eb277a40445f0d4f1482efa9069519e40f45ac",
+      "solc-output.json.gz": "767b8d6f79d6dca24ee907be0243ca805091fb36a1fab77d81a3f5671606cd66",
+      "mapping.json": "e0def0a491deb0ddafd0326881b884c3213e0b6a2f0d18d128f586f5992a98f1"
+    },
+    "status": "native closure or rerun complete/pending; source-correspondence gates separate"
+  },
+  "word-memory": {
+    "generationDirectory": "formal/source/migration-v1/collections/word-memory",
+    "generationSha256": {
+      "solc-input.json": "94620d98824f7727b709eb0d36ad205e6c14ae826cd3adbf055915566bb973c6",
+      "solc-output.json.gz": "5ce13b2478f1b482867144a06ba2ee0a40122e6a299711ac415d269bb7da8ec2",
+      "mapping.json": "772377b57152b2479ab6e3083692643e28572f7ea11f7f1085c638101c4bfecc"
+    },
+    "status": "native closure or rerun complete/pending; source-correspondence gates separate"
+  },
+  "constraints": {
+    "generationDirectory": "formal/source/migration-v1/constraints",
+    "generationSha256": {
+      "Engine.original.dfy.txt": "5b51517fa7f94e0a18ba40cba61c47d9fe41ef3a1e9a1f0fad31d67621fe20a0",
+      "solc-input.json": "d05e3a16bc401724ebaf7fc81915ea437343c078c7d1c5ed335938668d1ea514",
+      "solc-output.json.gz": "433f2447741b2daf8f75d9d40dea257f6eb2ee72c19e5215c5202bda371e5fef",
+      "mapping.json": "9490c68f6e5c4f31d9937a41bb55dceb5d97d2eb24b66c692b1c6b2ee06a4ae4"
+    },
+    "status": "native closure or rerun complete/pending; source-correspondence gates separate"
+  },
+  "expressions-recursive": {
+    "generationDirectory": "formal/source/migration-v1/expressions/recursive",
+    "generationSha256": {
+      "Source.original.dfy.txt": "bdd06d709b0322877fa2b770177834d40f03d67390e88b2723d8b959349d51ec",
+      "solc-input.json": "787781634bcca9efcfeefa553b455bf905b4e32145028e78d46488a2b6d4bfbe",
+      "solc-output.json.gz": "eb1b974bceb4d027907199045479960c6b7ce6386ea280ab6e46e3c22e340246",
+      "mapping.json": "213603de189021fbfa15e395b9c3c80529f231a8d5d0f72481120973e762173c"
+    },
+    "status": "native closure or rerun complete/pending; source-correspondence gates separate"
+  }
+}

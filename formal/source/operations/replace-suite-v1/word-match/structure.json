@@ -1,0 +1,272 @@
+{
+  "contains": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "condition": {"translated-slot": "EMPTY"},
+          "nodeType": "IfStatement",
+          "trueBody": {"expression": {"hexValue": "74727565", "kind": "bool", "nodeType": "Literal", "value": "true"}, "nodeType": "Return"}
+        },
+        {
+          "condition": {"translated-slot": "TOO_LONG"},
+          "nodeType": "IfStatement",
+          "trueBody": {"expression": {"hexValue": "66616c7365", "kind": "bool", "nodeType": "Literal", "value": "false"}, "nodeType": "Return"}
+        },
+        {
+          "body": {
+            "nodeType": "Block",
+            "statements": [
+              {
+                "condition": {"translated-slot": "FOUND"},
+                "nodeType": "IfStatement",
+                "trueBody": {"expression": {"hexValue": "74727565", "kind": "bool", "nodeType": "Literal", "value": "true"}, "nodeType": "Return"}
+              }
+            ]
+          },
+          "condition": {"translated-slot": "CONTAINS_LOOP"},
+          "initializationExpression": {
+            "declarations": [
+              {
+                "constant": false,
+                "mutability": "mutable",
+                "name": "i",
+                "nodeType": "VariableDeclaration",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
+                "visibility": "internal"
+              }
+            ],
+            "nodeType": "VariableDeclarationStatement"
+          },
+          "loopExpression": {
+            "expression": {
+              "nodeType": "UnaryOperation",
+              "operator": "++",
+              "prefix": false,
+              "subExpression": {"name": "i", "nodeType": "Identifier", "overloadedDeclarations": []}
+            },
+            "nodeType": "ExpressionStatement"
+          },
+          "nodeType": "ForStatement"
+        },
+        {"expression": {"hexValue": "66616c7365", "kind": "bool", "nodeType": "Literal", "value": "false"}, "nodeType": "Return"}
+      ]
+    },
+    "functionSelector": "9a32ab77",
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "contains",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "s",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "needle",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "external"
+  },
+  "_matchesAt": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "AST": {
+            "nodeType": "YulBlock",
+            "statements": [
+              {
+                "nodeType": "YulAssignment",
+                "value": {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "1"},
+                "variableNames": [{"name": "equal", "nodeType": "YulIdentifier"}]
+              },
+              {
+                "nodeType": "YulVariableDeclaration",
+                "value": {"name": "needle.length", "nodeType": "YulIdentifier"},
+                "variables": [{"name": "n", "nodeType": "YulTypedName", "type": ""}]
+              },
+              {"nodeType": "YulVariableDeclaration", "value": {"translated-slot": "A"}, "variables": [{"name": "a", "nodeType": "YulTypedName", "type": ""}]},
+              {
+                "body": {
+                  "nodeType": "YulBlock",
+                  "statements": [
+                    {
+                      "nodeType": "YulVariableDeclaration",
+                      "value": {
+                        "arguments": [{"translated-slot": "X_ADDRESS"}],
+                        "functionName": {"name": "calldataload", "nodeType": "YulIdentifier"},
+                        "nodeType": "YulFunctionCall"
+                      },
+                      "variables": [{"name": "x", "nodeType": "YulTypedName", "type": ""}]
+                    },
+                    {
+                      "nodeType": "YulVariableDeclaration",
+                      "value": {
+                        "arguments": [{"translated-slot": "Y_ADDRESS"}],
+                        "functionName": {"name": "calldataload", "nodeType": "YulIdentifier"},
+                        "nodeType": "YulFunctionCall"
+                      },
+                      "variables": [{"name": "y", "nodeType": "YulTypedName", "type": ""}]
+                    },
+                    {
+                      "nodeType": "YulVariableDeclaration",
+                      "value": {"translated-slot": "LEFT"},
+                      "variables": [{"name": "left", "nodeType": "YulTypedName", "type": ""}]
+                    },
+                    {
+                      "body": {
+                        "nodeType": "YulBlock",
+                        "statements": [
+                          {
+                            "nodeType": "YulVariableDeclaration",
+                            "value": {"translated-slot": "DROP"},
+                            "variables": [{"name": "drop", "nodeType": "YulTypedName", "type": ""}]
+                          },
+                          {"nodeType": "YulAssignment", "value": {"translated-slot": "SHIFT_X"}, "variableNames": [{"name": "x", "nodeType": "YulIdentifier"}]},
+                          {"nodeType": "YulAssignment", "value": {"translated-slot": "SHIFT_Y"}, "variableNames": [{"name": "y", "nodeType": "YulIdentifier"}]}
+                        ]
+                      },
+                      "condition": {"translated-slot": "TAIL"},
+                      "nodeType": "YulIf"
+                    },
+                    {
+                      "body": {
+                        "nodeType": "YulBlock",
+                        "statements": [
+                          {
+                            "nodeType": "YulAssignment",
+                            "value": {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "0"},
+                            "variableNames": [{"name": "equal", "nodeType": "YulIdentifier"}]
+                          },
+                          {"nodeType": "YulBreak"}
+                        ]
+                      },
+                      "condition": {"translated-slot": "MISMATCH"},
+                      "nodeType": "YulIf"
+                    }
+                  ]
+                },
+                "condition": {"translated-slot": "MATCH_LOOP"},
+                "nodeType": "YulForLoop",
+                "post": {
+                  "nodeType": "YulBlock",
+                  "statements": [
+                    {"nodeType": "YulAssignment", "value": {"translated-slot": "MATCH_NEXT"}, "variableNames": [{"name": "j", "nodeType": "YulIdentifier"}]}
+                  ]
+                },
+                "pre": {
+                  "nodeType": "YulBlock",
+                  "statements": [
+                    {
+                      "nodeType": "YulVariableDeclaration",
+                      "value": {"kind": "number", "nodeType": "YulLiteral", "type": "", "value": "0"},
+                      "variables": [{"name": "j", "nodeType": "YulTypedName", "type": ""}]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "evmVersion": "cancun",
+          "flags": ["memory-safe"],
+          "nodeType": "InlineAssembly"
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "_matchesAt",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "s",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "needle",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {"name": "bytes", "nodeType": "ElementaryTypeName"},
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "pos",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {"name": "uint256", "nodeType": "ElementaryTypeName"},
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "equal",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {"name": "bool", "nodeType": "ElementaryTypeName"},
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "private"
+  }
+}

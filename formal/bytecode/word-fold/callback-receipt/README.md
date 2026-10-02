@@ -1,0 +1,5 @@
+# Complete fold callback receipt and success-flag dispatch
+
+The owned generators extract the complete actual16948 receipt path for empty and arbitrary nonempty returned bytes, preserving the fold continuation16553. The handwritten engine composes the native-passed fold GAS/packing/truthful STATICCALL path with actual receipt allocation/copy and exact flag dispatch, reaching17065 on success or17008 on failure. Both outcomes and complete returndata remain represented; exact32-byte success is no longer assumed.
+
+Physical callback memory, finite receipt/resource representation and truthful twoGAS/STATICCALL observations are explicit. Existing shared complete receipt memory bodies are reused under identical contracts. This is reached helper development; subsequent wrong-length/ordinary-failure/exhaustion guards, full raw first-failure loop composition and included retained physical/fault/independent gates remain required before public coverage. No gas, deployment, performance or compiler correctness claim. Every package file finishes before native capture; generated files are emitted only by these owned generators.

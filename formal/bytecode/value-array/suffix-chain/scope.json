@@ -1,0 +1,13 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/suffix-chain/Semantics.dfy",
+    "formal/bytecode/value-array/suffix-chain/Loop.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "Two whole owners for independent arbitrary valid digit-span suffix-chain semantics and its full exact compiled loop through the actual return instruction. Includes empty, fixed static, fixed dynamic, leading-zero digit spans and repeated suffixes under original successful mathematical branch bounds. Errors, tuples, complete name-word bridge, codec loops and retained public closure remain open. No public credit.",
+  "assumptions": [
+    "Pinned runtime, reviewed interpreter and current tools remain trusted.",
+    "Arbitrary represented calldata/memory/lower frame, fitting resources, complete independently valid bracket/digit spans and mathematical footprint bounds. Imported bodies require complete final native closure."
+  ],
+  "formatExclusions": {}
+}

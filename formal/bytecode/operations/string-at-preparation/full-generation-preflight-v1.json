@@ -1,0 +1,643 @@
+{
+  "status": "passed-static-preflight-native-unlaunched",
+  "wholeOwners": 109,
+  "inputs": 312,
+  "nativeVerified": false,
+  "publicCredit": false,
+  "checks": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-preparation/generate-source-gate.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-string-at-preparation-generate-source-gate.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.115,
+      "log": "generation-string-at-preparation-generate-source-gate.py.log",
+      "name": "generation-string-at-preparation-generate-source-gate.py",
+      "passed": true,
+      "generatedFiles": [
+        "source-gate.json"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/map-prefix/format-generated.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-string-at-preparation-generate-source-gate.py",
+        "--include-root",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-preparation"
+      ],
+      "exitCode": 0,
+      "seconds": 0.065,
+      "log": "generation-format-string-at-preparation-generate-source-gate.py.log",
+      "name": "generation-format-string-at-preparation-generate-source-gate.py",
+      "passed": true
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-raw/generate.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-string-at-raw-generate.py"
+      ],
+      "exitCode": 0,
+      "seconds": 2.372,
+      "log": "generation-string-at-raw-generate.py.log",
+      "name": "generation-string-at-raw-generate.py",
+      "passed": true,
+      "generatedFiles": [
+        "Accepted.generated.dfy",
+        "Args.generated.dfy",
+        "LengthBound.generated.dfy",
+        "LengthWindow.generated.dfy",
+        "Nonzero.generated.dfy",
+        "OffsetBound.generated.dfy",
+        "PayloadWindow.generated.dfy",
+        "Short.generated.dfy",
+        "raw.mapping.json"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/map-prefix/format-generated.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-string-at-raw-generate.py",
+        "--include-root",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-raw"
+      ],
+      "exitCode": 0,
+      "seconds": 4.879,
+      "log": "generation-format-string-at-raw-generate.py.log",
+      "name": "generation-format-string-at-raw-generate.py",
+      "passed": true
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-entry-controls/generate.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-string-at-entry-controls-generate.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.166,
+      "log": "generation-string-at-entry-controls-generate.py.log",
+      "name": "generation-string-at-entry-controls-generate.py",
+      "passed": true,
+      "generatedFiles": [
+        "IndexCall.generated.dfy",
+        "Utf8Call.generated.dfy",
+        "mapping.json"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/map-prefix/format-generated.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-string-at-entry-controls-generate.py",
+        "--include-root",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-entry-controls"
+      ],
+      "exitCode": 0,
+      "seconds": 1.52,
+      "log": "generation-format-string-at-entry-controls-generate.py.log",
+      "name": "generation-format-string-at-entry-controls-generate.py",
+      "passed": true
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-index-controls/generate.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-string-at-index-controls-generate.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.115,
+      "log": "generation-string-at-index-controls-generate.py.log",
+      "name": "generation-string-at-index-controls-generate.py",
+      "passed": true,
+      "generatedFiles": [
+        "InvalidHigh.generated.dfy",
+        "InvalidLow.generated.dfy",
+        "Negative.generated.dfy",
+        "Positive.generated.dfy",
+        "mapping.json"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/map-prefix/format-generated.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-string-at-index-controls-generate.py",
+        "--include-root",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-index-controls"
+      ],
+      "exitCode": 0,
+      "seconds": 3.678,
+      "log": "generation-format-string-at-index-controls-generate.py.log",
+      "name": "generation-format-string-at-index-controls-generate.py",
+      "passed": true
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-body-controls/generate.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-string-at-body-controls-generate.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.065,
+      "log": "generation-string-at-body-controls-generate.py.log",
+      "name": "generation-string-at-body-controls-generate.py",
+      "passed": true,
+      "generatedFiles": [
+        "Ascii.generated.dfy",
+        "NonAscii.generated.dfy",
+        "mapping.json"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/map-prefix/format-generated.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-string-at-body-controls-generate.py",
+        "--include-root",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-body-controls"
+      ],
+      "exitCode": 0,
+      "seconds": 1.569,
+      "log": "generation-format-string-at-body-controls-generate.py.log",
+      "name": "generation-format-string-at-body-controls-generate.py",
+      "passed": true
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-mutation/generate.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-string-at-mutation-generate.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.315,
+      "log": "generation-string-at-mutation-generate.py.log",
+      "name": "generation-string-at-mutation-generate.py",
+      "passed": true,
+      "generatedFiles": [
+        "Witness.generated.dfy",
+        "witness.mapping.json"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/map-prefix/format-generated.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-string-at-mutation-generate.py",
+        "--include-root",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-mutation"
+      ],
+      "exitCode": 0,
+      "seconds": 0.365,
+      "log": "generation-format-string-at-mutation-generate.py.log",
+      "name": "generation-format-string-at-mutation-generate.py",
+      "passed": true
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/generate-controls.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-utf8-shared-generate-controls.py"
+      ],
+      "exitCode": 0,
+      "seconds": 29.907,
+      "log": "generation-utf8-shared-generate-controls.py.log",
+      "name": "generation-utf8-shared-generate-controls.py",
+      "passed": true,
+      "generatedFiles": [
+        "Ascii.generated.dfy",
+        "BadE0At1High.generated.dfy",
+        "BadE0At1Low.generated.dfy",
+        "BadE0At2High.generated.dfy",
+        "BadE0At2Low.generated.dfy",
+        "BadE1ECAt1High.generated.dfy",
+        "BadE1ECAt1Low.generated.dfy",
+        "BadE1ECAt2High.generated.dfy",
+        "BadE1ECAt2Low.generated.dfy",
+        "BadEDAt1High.generated.dfy",
+        "BadEDAt1Low.generated.dfy",
+        "BadEDAt2High.generated.dfy",
+        "BadEDAt2Low.generated.dfy",
+        "BadEEEFAt1High.generated.dfy",
+        "BadEEEFAt1Low.generated.dfy",
+        "BadEEEFAt2High.generated.dfy",
+        "BadEEEFAt2Low.generated.dfy",
+        "BadF0At1High.generated.dfy",
+        "BadF0At1Low.generated.dfy",
+        "BadF0At2High.generated.dfy",
+        "BadF0At2Low.generated.dfy",
+        "BadF0At3High.generated.dfy",
+        "BadF0At3Low.generated.dfy",
+        "BadF1F3At1High.generated.dfy",
+        "BadF1F3At1Low.generated.dfy",
+        "BadF1F3At2High.generated.dfy",
+        "BadF1F3At2Low.generated.dfy",
+        "BadF1F3At3High.generated.dfy",
+        "BadF1F3At3Low.generated.dfy",
+        "BadF4At1High.generated.dfy",
+        "BadF4At1Low.generated.dfy",
+        "BadF4At2High.generated.dfy",
+        "BadF4At2Low.generated.dfy",
+        "BadF4At3High.generated.dfy",
+        "BadF4At3Low.generated.dfy",
+        "BadLeadHigh.generated.dfy",
+        "BadLeadLow.generated.dfy",
+        "BadTwoAt1High.generated.dfy",
+        "BadTwoAt1Low.generated.dfy",
+        "Done.generated.dfy",
+        "Entry.generated.dfy",
+        "GoodE0.generated.dfy",
+        "GoodE1EC.generated.dfy",
+        "GoodED.generated.dfy",
+        "GoodEEEF.generated.dfy",
+        "GoodF0.generated.dfy",
+        "GoodF1F3.generated.dfy",
+        "GoodF4.generated.dfy",
+        "GoodTwo.generated.dfy",
+        "Truncated2.generated.dfy",
+        "Truncated3.generated.dfy",
+        "Truncated4.generated.dfy",
+        "controls.mapping.json"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/map-prefix/format-generated.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-utf8-shared-generate-controls.py",
+        "--include-root",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared"
+      ],
+      "exitCode": 0,
+      "seconds": 97.767,
+      "log": "generation-format-utf8-shared-generate-controls.py.log",
+      "name": "generation-format-utf8-shared-generate-controls.py",
+      "passed": true
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/generate-engine.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-utf8-shared-generate-engine.py",
+        "--mapping",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/controls.mapping.json"
+      ],
+      "exitCode": 0,
+      "seconds": 0.667,
+      "log": "generation-utf8-shared-generate-engine.py.log",
+      "name": "generation-utf8-shared-generate-engine.py",
+      "passed": true,
+      "generatedFiles": [
+        "Execution.generated.dfy"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/map-prefix/format-generated.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-utf8-shared-generate-engine.py",
+        "--include-root",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared"
+      ],
+      "exitCode": 0,
+      "seconds": 15.566,
+      "log": "generation-format-utf8-shared-generate-engine.py.log",
+      "name": "generation-format-utf8-shared-generate-engine.py",
+      "passed": true
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/tostring-return/generate.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-tostring-return-generate.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.365,
+      "log": "generation-tostring-return-generate.py.log",
+      "name": "generation-tostring-return-generate.py",
+      "passed": true,
+      "generatedFiles": [
+        "Return.generated.dfy",
+        "return.mapping.json"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/map-prefix/format-generated.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-tostring-return-generate.py",
+        "--include-root",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/tostring-return"
+      ],
+      "exitCode": 0,
+      "seconds": 0.716,
+      "log": "generation-format-tostring-return-generate.py.log",
+      "name": "generation-format-tostring-return-generate.py",
+      "passed": true
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/casefold-machine/generate-binary.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-casefold-machine-generate-binary.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.315,
+      "log": "generation-casefold-machine-generate-binary.py.log",
+      "name": "generation-casefold-machine-generate-binary.py",
+      "passed": true,
+      "generatedFiles": [
+        "Binary.generated.dfy"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/map-prefix/format-generated.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-casefold-machine-generate-binary.py",
+        "--include-root",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/casefold-machine"
+      ],
+      "exitCode": 0,
+      "seconds": 0.416,
+      "log": "generation-format-casefold-machine-generate-binary.py.log",
+      "name": "generation-format-casefold-machine-generate-binary.py",
+      "passed": true
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/dynamic-return-shared/generate-constant-mask.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-dynamic-return-shared-generate-constant-mask.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.315,
+      "log": "generation-dynamic-return-shared-generate-constant-mask.py.log",
+      "name": "generation-dynamic-return-shared-generate-constant-mask.py",
+      "passed": true,
+      "generatedFiles": [
+        "ConstantMask.generated.dfy"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/map-prefix/format-generated.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-dynamic-return-shared-generate-constant-mask.py",
+        "--include-root",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/dynamic-return-shared"
+      ],
+      "exitCode": 0,
+      "seconds": 0.365,
+      "log": "generation-format-dynamic-return-shared-generate-constant-mask.py.log",
+      "name": "generation-format-dynamic-return-shared-generate-constant-mask.py",
+      "passed": true
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/account-environment-repair-v2/generate-conversion.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-account-environment-repair-v2-generate-conversion.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.366,
+      "log": "generation-account-environment-repair-v2-generate-conversion.py.log",
+      "name": "generation-account-environment-repair-v2-generate-conversion.py",
+      "passed": true,
+      "generatedFiles": [
+        "Conversion.generated.dfy"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/map-prefix/format-generated.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/generated-account-environment-repair-v2-generate-conversion.py",
+        "--include-root",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/account-environment-repair-v2"
+      ],
+      "exitCode": 0,
+      "seconds": 0.365,
+      "log": "generation-format-account-environment-repair-v2-generate-conversion.py.log",
+      "name": "generation-format-account-environment-repair-v2-generate-conversion.py",
+      "passed": true
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/word-conversion/generate.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/word-conversion"
+      ],
+      "exitCode": 0,
+      "seconds": 0.416,
+      "log": "generation-word-conversion.log",
+      "name": "generation-word-conversion",
+      "passed": true
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-fold/byte-representation-repair-v8/generate.py",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/word-first-byte-shift"
+      ],
+      "exitCode": 0,
+      "seconds": 0.416,
+      "log": "generation-word-first-byte-shift.log",
+      "name": "generation-word-first-byte-shift",
+      "passed": true
+    },
+    {
+      "command": [
+        "/tmp/assertions-dafny-4.11.0/dafny/dafny",
+        "format",
+        "--check",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/getters/Machine.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/scans/Machine.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/Spec.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-inputs/Inputs.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/scans/Representation.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-apply/word-conversion/Conversion.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-fold/byte-representation-repair-v8/Shift.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/word-fold/byte-representation-repair-v9/Representation.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/copy/Memory.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/external-calls/Memory.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/copy/Machine.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/external-calls/Machine.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/casefold-machine/Machine.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/charset-inputs/Inputs.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/casefold-inputs/Inputs.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/casefold-machine/Binary.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/Kernel.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/scans/Fetch.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/scans/Execution.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/copy/Execution.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/external-calls/Execution.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/casefold-machine/Execution.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-kernel/Kernel.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-raw/Nonzero.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-raw/Short.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-raw/Args.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-raw/OffsetBound.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-raw/LengthWindow.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-raw/LengthBound.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-raw/PayloadWindow.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-raw/Accepted.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-raw/Admission.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-entry-controls/Utf8Call.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-entry-controls/IndexCall.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/Entry.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/Done.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/Ascii.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadLeadLow.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadLeadHigh.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/Truncated2.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/Truncated3.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/Truncated4.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/GoodTwo.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadTwoAt1Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadTwoAt1High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/GoodE0.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadE0At1Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadE0At1High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadE0At2Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadE0At2High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/GoodE1EC.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadE1ECAt1Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadE1ECAt1High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadE1ECAt2Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadE1ECAt2High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/GoodED.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadEDAt1Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadEDAt1High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadEDAt2Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadEDAt2High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/GoodEEEF.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadEEEFAt1Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadEEEFAt1High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadEEEFAt2Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadEEEFAt2High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/GoodF0.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF0At1Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF0At1High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF0At2Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF0At2High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF0At3Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF0At3High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/GoodF1F3.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF1F3At1Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF1F3At1High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF1F3At2Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF1F3At2High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF1F3At3Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF1F3At3High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/GoodF4.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF4At1Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF4At1High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF4At2Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF4At2High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF4At3Low.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/BadF4At3High.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/utf8-shared/Execution.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/byte-at-repair-v3/Indices.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-kernel/StrictIndex.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-kernel/IndexError.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-index-controls/InvalidHigh.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-index-controls/InvalidLow.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-index-controls/Positive.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-index-controls/Negative.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-index-controls/Connection.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/account-environment-repair-v2/Conversion.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/dynamic-return-shared/Machine.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/dynamic-return-shared/Memory.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/dynamic-return-shared/DynamicReturnMemory.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/dynamic-return-shared/MemoryTranslation.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/dynamic-return-shared/ConstantMask.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/dynamic-return-shared/RoundMask.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/tostring-return/Kernel.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-body-controls/Memory.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-body-controls/Ascii.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-body-controls/NonAscii.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/tostring-return/Return.generated.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-full/Full.dfy",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/string-at-mutation/Witness.generated.dfy"
+      ],
+      "exitCode": 0,
+      "seconds": 88.247,
+      "log": "complete-109-source-format.log",
+      "name": "complete-109-source-format",
+      "passed": true
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "/tmp/operations-stringat-complete-preflight-v1/source-snapshot/formal/bytecode/operations/identity.py",
+        "--solc",
+        "/home/sem/.cache/hardhat-nodejs/compilers-v3/linux-amd64/solc-linux-amd64-v0.8.36+commit.8a079791",
+        "--output",
+        "/tmp/operations-stringat-complete-preflight-v1/identity"
+      ],
+      "exitCode": 0,
+      "seconds": 0.617,
+      "log": "runtime-identity.log",
+      "name": "runtime-identity",
+      "passed": true
+    }
+  ],
+  "completedAt": "2026-10-02T09:10:08.907750+00:00"
+}

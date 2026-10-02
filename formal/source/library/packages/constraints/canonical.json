@@ -1,0 +1,38 @@
+{
+  "id": "constraints",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "native-passed-correspondence-pending",
+  "entry": "formal/source/library/src/assertions/constraints/Engine.generated.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/assertions/constraints/Engine.generated.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/assertions/constraints/Engine.generated.dfy",
+    "formal/source/library/src/assertions/constraints/Model.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/library/src/assertions/constraints/Model.dfy"
+    ],
+    "execution": [
+      "formal/source/library/src/assertions/constraints/Engine.generated.dfy"
+    ],
+    "correspondence": [],
+    "foundations": [
+      "formal/source/library/src/foundations/SourceConstraintFactsV1.dfy"
+    ]
+  },
+  "closureSha256": {
+    "formal/source/library/src/assertions/constraints/Engine.generated.dfy": "6a09b1d699f451bd1278b6411b87d19c884e47a98d539f7a356bbc525dedcd24",
+    "formal/source/library/src/assertions/constraints/Model.dfy": "67905d6c00c411f4b04ed6343d06d55ce43ca2088a602b1651b04e4f0a40ddb8",
+    "formal/source/library/src/foundations/SourceConstraintFactsV1.dfy": "5e7b972d5407d346460e870815bd8935b2b6a9ad1ba52243c69ef599fa8936bd"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

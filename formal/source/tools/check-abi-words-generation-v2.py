@@ -1,0 +1,7 @@
+import hashlib,json,subprocess,sys
+from pathlib import Path
+r=Path.cwd(); o=r/'formal/source/evidence/abi-words-generation-v2';o.mkdir(exist_ok=False)
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+t=r/'proof-tools/source-smt-z3-4.12.6'; files=[Path('/usr/bin/python3').resolve(),*sorted(x for x in t.rglob('*') if x.is_file()),r/'proof-tools/assertions/solc-0.8.36',r/'formal/abi/words/generate.py',r/'formal/abi/words/yul.py',r/'contracts/lib/AbiCodec.sol']
+before={str(p):sha(p) for p in files};cmd=[str(t/'bin/python'),'-B',str(r/'formal/abi/words/generate.py'),'--solc',str(r/'proof-tools/assertions/solc-0.8.36'),'--source',str(r/'contracts/lib/AbiCodec.sol'),'--output',str(o/'generated')]
+p=subprocess.run(cmd,capture_output=True,text=True);(o/'generation.log').write_text(p.stdout+p.stderr);after={str(p):sha(p) for p in files};fresh=o/'generated/Scanners.generated.dfy';old=r/'formal/source/migration-v4/abi/words/Scanners.generated.dfy';equal=fresh.exists() and fresh.read_bytes()==old.read_bytes();receipt={'command':cmd,'exitCode':p.returncode,'toolsAndInputsBefore':before,'toolsAndInputsAfter':after,'stagedSha256':sha(old),'freshSha256':sha(fresh) if fresh.exists() else None,'equal':equal,'passed':p.returncode==0 and before==after and equal};(o/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps({k:receipt[k] for k in ['exitCode','equal','passed']}));sys.exit(0 if receipt['passed'] else 1)

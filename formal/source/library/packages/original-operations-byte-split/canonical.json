@@ -1,0 +1,51 @@
+{
+  "id": "original-operations-byte-split",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/library/src/operations/byte-split/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/operations/byte-split/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/operations/byte-split/Connection.dfy",
+    "formal/source/library/src/operations/byte-split/Control.generated.dfy",
+    "formal/source/library/src/operations/byte-split/Model.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/library/src/operations/byte-split/Model.dfy",
+      "formal/source/library/src/operations/occurrence-index/Model.dfy",
+      "formal/source/library/src/operations/word-match/Model.dfy"
+    ],
+    "execution": [
+      "formal/source/library/src/operations/byte-split/Control.generated.dfy",
+      "formal/source/library/src/operations/occurrence-index/Control.generated.dfy",
+      "formal/source/library/src/operations/word-match/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/library/src/operations/byte-split/Connection.dfy",
+      "formal/source/library/src/operations/occurrence-index/Connection.dfy",
+      "formal/source/library/src/operations/word-match/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/library/src/operations/byte-split/Connection.dfy": "fc9e552a20c0d8118e4b94324fbe419df457b879d2392ca60afd98cd817c4ada",
+    "formal/source/library/src/operations/byte-split/Control.generated.dfy": "8d4a361f49c74c38552664dfe9b307f9cb9ff9fe2e17db5a4ba8b5d415984b87",
+    "formal/source/library/src/operations/byte-split/Model.dfy": "6460dd758cbf866f67b8c7a1fdc108f446431e3d24a0fde2b9c407c9f699509f",
+    "formal/source/library/src/operations/occurrence-index/Connection.dfy": "10062ff582bdc79d8016440734973f51b8853851d170014ab071354059eb471f",
+    "formal/source/library/src/operations/occurrence-index/Control.generated.dfy": "778195e4a4437fb158d860f135121369020bd52cbfbdc11976c73d0c96992b1f",
+    "formal/source/library/src/operations/occurrence-index/Model.dfy": "09e278c54834187452ed74889444f7ca448482bbb07d2988522558206cb4dfce",
+    "formal/source/library/src/operations/word-match/Connection.dfy": "9a40f05ee1c0114e1e1ac093de5e7d1be34b972d8822e1080dd139d1107ffba2",
+    "formal/source/library/src/operations/word-match/Control.generated.dfy": "4aafac9e3851fcbcceb80166a5e54b806f9c2146e3fa6ee742941f88311e672a",
+    "formal/source/library/src/operations/word-match/Model.dfy": "637d9c8fe24f727eb8ca1d949d72a7bc99452d828bb5721fad1533f24c065bdb"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

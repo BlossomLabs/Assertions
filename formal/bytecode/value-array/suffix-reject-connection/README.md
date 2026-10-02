@@ -1,0 +1,7 @@
+# Complete invalid suffix connection development
+
+`Semantics.dfy` prepares independent finite earliest-stop construction and a uniqueness proof against the actual decimal loop facts. `Connection.dfy` connects the exact suffix opening, complete scanner, footprint calculation and rejecting guard through full `InvalidTypeDescriptor(q)` bytes. The existing product-fit lemma derives fitting arithmetic from the original prefix span and decimal-stop bounds.
+
+`development/static-v2/results.json` records complete resolution and zero audits for both owners. `development/physical-v1/results.json` independently reconstructs every actual opcode, PC, full stack and full physical memory through terminal error for all 24 invalid suffixes among 60 complete PC-zero error receipts, totaling 19,138 instructions. It derives the error position from independent earliest-stop and footprint calculations; no generated state map supplies expected replay states. The reviewed concrete opcode replay and physical interpreter remain explicit interpretation assumptions.
+
+Complete native owners and every included body remain unproved here until their queued native records actually pass. The valid preceding prefix frame, original offset/length/positions below 2^64, mathematical span bound, represented stack and aligned fitting free memory still need public caller composition. Remaining recursive tuple/name rejecting grammar, complete codecs, meaningful fault controls and retained independent acceptance remain required. These development records add no public coverage.

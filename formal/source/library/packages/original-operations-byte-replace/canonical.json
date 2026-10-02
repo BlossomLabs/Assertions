@@ -1,0 +1,63 @@
+{
+  "id": "original-operations-byte-replace",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/library/src/operations/byte-replace/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/operations/byte-replace/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/operations/byte-replace/Connection.dfy",
+    "formal/source/library/src/operations/byte-replace/Control.generated.dfy",
+    "formal/source/library/src/operations/byte-replace/Matcher.generated.dfy",
+    "formal/source/library/src/operations/byte-replace/Model.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/library/src/operations/byte-replace/Model.dfy",
+      "formal/source/library/src/operations/concat/Model.dfy",
+      "formal/source/library/src/operations/occurrence-index/Model.dfy",
+      "formal/source/library/src/operations/word-match/Model.dfy"
+    ],
+    "execution": [
+      "formal/source/library/src/operations/byte-replace/Control.generated.dfy",
+      "formal/source/library/src/operations/byte-replace/Matcher.generated.dfy",
+      "formal/source/library/src/operations/concat/Control.generated.dfy",
+      "formal/source/library/src/operations/occurrence-index/Control.generated.dfy",
+      "formal/source/library/src/operations/word-match/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/library/src/operations/byte-replace/Connection.dfy",
+      "formal/source/library/src/operations/concat/Connection.dfy",
+      "formal/source/library/src/operations/occurrence-index/Connection.dfy",
+      "formal/source/library/src/operations/word-match/Connection.dfy"
+    ],
+    "foundations": [
+      "formal/source/library/src/foundations/SourceTotalMemoryV1.dfy"
+    ]
+  },
+  "closureSha256": {
+    "formal/source/library/src/operations/byte-replace/Connection.dfy": "ece890929be86f9ccf331425c8bd220e7a17810dc79f42340e4f3ed332fd24e1",
+    "formal/source/library/src/operations/byte-replace/Control.generated.dfy": "f93a4dac967ea8472f126fda8d9f351148456faadb5059845fb226e701058085",
+    "formal/source/library/src/operations/byte-replace/Model.dfy": "e42af4c9796dbe8bef7e6f5ab044c09b1b721bcdd11043d14fd63ca6ef94c1e3",
+    "formal/source/library/src/operations/occurrence-index/Connection.dfy": "10062ff582bdc79d8016440734973f51b8853851d170014ab071354059eb471f",
+    "formal/source/library/src/operations/occurrence-index/Control.generated.dfy": "778195e4a4437fb158d860f135121369020bd52cbfbdc11976c73d0c96992b1f",
+    "formal/source/library/src/operations/occurrence-index/Model.dfy": "09e278c54834187452ed74889444f7ca448482bbb07d2988522558206cb4dfce",
+    "formal/source/library/src/operations/word-match/Connection.dfy": "9a40f05ee1c0114e1e1ac093de5e7d1be34b972d8822e1080dd139d1107ffba2",
+    "formal/source/library/src/operations/word-match/Control.generated.dfy": "4aafac9e3851fcbcceb80166a5e54b806f9c2146e3fa6ee742941f88311e672a",
+    "formal/source/library/src/operations/word-match/Model.dfy": "637d9c8fe24f727eb8ca1d949d72a7bc99452d828bb5721fad1533f24c065bdb",
+    "formal/source/library/src/operations/concat/Connection.dfy": "10ce59df7a196aa76232a5f823614d7210c8978223eaf52fe107636ffbb5c9f3",
+    "formal/source/library/src/operations/concat/Control.generated.dfy": "dc860f0f6c7be46c2aed43b61d50005e529ed8217c898c9d3ccc22c0797138ab",
+    "formal/source/library/src/operations/concat/Model.dfy": "8ee4cff68a7b579615ebbb922c9493d65fdb9f871000edeb9d0fe84dca7b1bac",
+    "formal/source/library/src/foundations/SourceTotalMemoryV1.dfy": "3712cf486aeb49e614a4611f78000e9e6268659daced25e46600388bf5ca11a8",
+    "formal/source/library/src/operations/byte-replace/Matcher.generated.dfy": "1aa588c1f3288a74a1dd867199969b1dee86f9f4c968c3f5348d74ddcda6e103"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "packArray-descriptor-empty"
+  },
+  {
+    "name": "unpackArray-descriptor-empty"
+  },
+  {
+    "name": "packArray-descriptor-open-tuple"
+  },
+  {
+    "name": "unpackArray-descriptor-open-tuple"
+  },
+  {
+    "name": "packArray-descriptor-tuple-after-comma"
+  },
+  {
+    "name": "unpackArray-descriptor-tuple-after-comma"
+  },
+  {
+    "name": "packArray-descriptor-nested-tuple-after-comma"
+  },
+  {
+    "name": "unpackArray-descriptor-nested-tuple-after-comma"
+  }
+]

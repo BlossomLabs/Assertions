@@ -1,0 +1,11 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/parser-execution/Execution.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "Complete exact generic scan-to-BYTE/copy trace lifting, destination enlargement preserving all existing actual non-Bad successors, and concatenation. No source interpretation or arbitrary parser/public credit; remaining bodies require complete retained closure.",
+  "assumptions": [
+    "Reviewed existing scan/copy/BYTE machines, current tool identity and represented reached-resource premises remain explicit."
+  ],
+  "formatExclusions": {}
+}

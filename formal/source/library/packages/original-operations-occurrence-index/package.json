@@ -1,0 +1,40 @@
+{
+  "id": "original-operations-occurrence-index",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/operations/occurrence-index",
+  "entry": "formal/operations/occurrence-index/Connection.dfy",
+  "verificationEntries": [
+    "formal/operations/occurrence-index/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/operations/occurrence-index/Model.dfy",
+      "formal/operations/word-match/Model.dfy"
+    ],
+    "execution": [
+      "formal/operations/occurrence-index/Control.generated.dfy",
+      "formal/operations/word-match/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/operations/occurrence-index/Connection.dfy",
+      "formal/operations/word-match/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/operations/occurrence-index/Connection.dfy": "10062ff582bdc79d8016440734973f51b8853851d170014ab071354059eb471f",
+    "formal/operations/occurrence-index/Control.generated.dfy": "778195e4a4437fb158d860f135121369020bd52cbfbdc11976c73d0c96992b1f",
+    "formal/operations/occurrence-index/Model.dfy": "09e278c54834187452ed74889444f7ca448482bbb07d2988522558206cb4dfce",
+    "formal/operations/word-match/Connection.dfy": "9a40f05ee1c0114e1e1ac093de5e7d1be34b972d8822e1080dd139d1107ffba2",
+    "formal/operations/word-match/Control.generated.dfy": "4aafac9e3851fcbcceb80166a5e54b806f9c2146e3fa6ee742941f88311e672a",
+    "formal/operations/word-match/Model.dfy": "637d9c8fe24f727eb8ca1d949d72a7bc99452d828bb5721fad1533f24c065bdb"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

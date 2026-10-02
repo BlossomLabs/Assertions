@@ -1,0 +1,14 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/suffix-reject-connection/Semantics.dfy",
+    "formal/bytecode/value-array/suffix-reject-connection/Connection.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "Two complete prepared owners independently construct the earliest finite decimal-stop witness for every input and connect every invalid suffix from its actual opening through scanner, exact footprint calculation, invalid guard and complete InvalidTypeDescriptor(q) REVERT. Zero/overflow/limit/wrong-closing cases retain original domains; the expected stop is unique against actual loop facts. Preceding recursive prefix parser/full rejecting grammar, public codecs and retained closure remain open. No public credit.",
+  "assumptions": [
+    "Pinned current runtime/tools and reviewed reached EVM model.",
+    "Original offset/length and positions below 2^64, valid preceding prefix span bound <=Max32*(end-p), original dynamic/static shape relation, represented lower stack and aligned fitting free memory. The complete caller must derive that prefix frame.",
+    "Native checking must prove the whole independent witness construction and product fitting owners instead of assuming external expected-error receipts. All included bodies/native inventories/physical faults/final retention remain required."
+  ],
+  "formatExclusions": {}
+}

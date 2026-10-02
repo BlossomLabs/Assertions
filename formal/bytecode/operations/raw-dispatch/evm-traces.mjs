@@ -1,0 +1,35 @@
+// Complete physical routing fixtures. Known wrapper bodies remain outside this proof scope.
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {resolve,dirname} from 'node:path';
+import {createRequire} from 'node:module';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+import {network} from 'hardhat';
+const out=resolve(process.argv[2]);mkdirSync(out,{recursive:true});const candidate=process.argv[3]??null;
+const artifact=JSON.parse(readFileSync('artifacts/contracts/Operations.sol/Operations.json'));const code=candidate?'0x'+readFileSync(candidate).toString('hex'):artifact.deployedBytecode;
+const inventory=JSON.parse(readFileSync(new URL('../inventory.json',import.meta.url))),mapping=JSON.parse(readFileSync(new URL('./Operations.mapping.json',import.meta.url)));
+const sha=x=>createHash('sha256').update(x).digest('hex'),digest=sha(Buffer.from(code.slice(2),'hex'));if(!candidate&&digest!==inventory.runtimeSha256)throw Error('Runtime drift');
+const known=Object.entries(inventory.compilerIdentity.methodIdentifiers).sort((a,b)=>parseInt(a[1],16)-parseInt(b[1],16));const selectors=known.map(x=>parseInt(x[1],16));
+const bytes=Buffer.from(code.slice(2),'hex');
+function fallback(selector){let pc=0,stack=[];for(let steps=0;steps<1024;steps++){const op=bytes[pc];let next=pc+1;const pop=()=>stack.pop();if(op===0x5f)stack.push(0n);else if(op>=0x60&&op<=0x7f){const width=op-95;stack.push(BigInt('0x'+bytes.subarray(pc+1,pc+1+width).toString('hex')));next+=width;}else if(op===0x34)stack.push(0n);else if(op===0x36)stack.push(4n);else if(op===0x80)stack.push(stack.at(-1));else if(op===0x50)pop();else if(op===0x35){if(pop()!==0n)throw Error('Wrong selector offset');stack.push(BigInt(selector)<<224n);}else if(op===0x1c){const n=pop(),v=pop();stack.push(v>>n);}else if(op===0x15)stack.push(pop()===0n?1n:0n);else if([0x10,0x11,0x14].includes(op)){const a=pop(),b=pop();stack.push((op===0x10?a<b:op===0x11?a>b:a===b)?1n:0n);}else if(op===0x52){if(pop()!==64n||pop()!==128n)throw Error('Wrong heap stamp');}else if(op===0x57){const dest=pop(),condition=pop();if(condition)next=Number(dest);}else if(op===0x5b){}else if(op===0xfd||op===0xf3)return pc;else throw Error('Unsupported routing opcode '+op);pc=next;}throw Error('Unbounded fixture routing');}
+const pool=[0,0xffffffff,selectors[0]-1,...selectors.filter(x=>x<0xffffffff).map(x=>x+1)].filter(x=>!selectors.includes(x));const representatives=new Map();for(const selector of pool){const terminal=fallback(selector);if(!representatives.has(terminal))representatives.set(terminal,selector);}const terminalPcs=new Set(mapping.states.filter(n=>n.terminal==='rejected'&&n.stack.length===3&&n.stack[0]==='Selector(word)').map(n=>n.pc));if(terminalPcs.size!==16||representatives.size!==16||[...representatives.keys()].some(pc=>!terminalPcs.has(pc)))throw Error('Incomplete actual fallback leaf inventory');const unknown=[...representatives.values()];
+const fixtures=known.map(([signature,selector],ordinal)=>({name:'known-'+ordinal,kind:'known',signature,selector,data:'0x'+selector,value:'0x0',wrapper:inventory.selectorToDeclaredEntryPc[String(parseInt(selector,16))]}));
+for(const [ordinal,selector] of unknown.entries())fixtures.push({name:'unknown-'+ordinal,kind:'unknown',selector:selector.toString(16).padStart(8,'0'),data:'0x'+selector.toString(16).padStart(8,'0')+(ordinal%2?'ff'.repeat(28)+'a5'.repeat(23):''),value:'0x0'});
+for(let length=0;length<4;length++)fixtures.push({name:'short-'+length,kind:'short',data:'0x'+'ff'.repeat(length),value:'0x0'});
+for(const [ordinal,data] of ['0x','0x1234','0x'+known[0][1],'0xffffffff'+'ab'.repeat(32)].entries())fixtures.push({name:'nonzero-'+ordinal,kind:'nonzero',data,value:ordinal%2?'0x1':'0x10000000000000000'});
+const connection=await network.connect('hardhatMainnet'),p=connection.provider,accounts=await p.request({method:'eth_accounts'}),target='0x0000000000000000000000000000000000002301';await p.request({method:'hardhat_setCode',params:[target,code]});const results=[];let failures=0;
+const nat=x=>BigInt('0x'+x.replace(/^0x/,''));
+for(const fixture of fixtures){
+ const trace=await p.request({method:'debug_traceCall',params:[{from:accounts[0],to:target,data:fixture.data,value:fixture.value,gas:'0x989680'},'latest',{enableMemory:true,disableStorage:true,disableStack:false}]});
+ const logs=trace.structLogs,last=logs.at(-1),memory=last.memory.map(x=>x.replace(/^0x/,'')).join(''),actual=trace.returnValue.replace(/^0x/,'');let passed=true,prefixLength=logs.length;
+ if(!logs.length||logs[0].pc!==0||logs.some(x=>x.depth!==1))throw Error('Nonlocal or incomplete fixture trace');
+ if(fixture.kind==='known'){
+  const index=logs.findIndex(x=>x.pc===fixture.wrapper);if(index<0)throw Error('Missing actual compiler wrapper');prefixLength=index+1;const reached=logs[index];const reachedMemory=reached.memory.map(x=>x.replace(/^0x/,'')).join('');
+  if(reached.op!=='JUMPDEST'||reached.stack.length!==1||nat(reached.stack[0])!==BigInt('0x'+fixture.selector)||reachedMemory!=='00'.repeat(95)+'80')throw Error('Wrong physical compiler wrapper entry state');
+ }else passed=trace.failed&&actual===''&&last.op==='REVERT'&&last.stack.length>=2&&nat(last.stack.at(-1))===0n&&nat(last.stack.at(-2))===0n&&memory==='00'.repeat(95)+'80';
+ if(!['RETURN','REVERT'].includes(last.op))throw Error('Nonreceipt terminal');const offset=Number(nat(last.stack.at(-1))),length=Number(nat(last.stack.at(-2)));if(memory.slice(offset*2,(offset+length)*2)!==actual)throw Error('Physical receipt differs from last memory');
+ const prefix=logs.slice(0,prefixLength);if(Math.max(...prefix.map(x=>x.stack.length))>3)throw Error('Wrong dispatcher stack bound');
+ if(!passed)failures++;writeFileSync(resolve(out,fixture.name+'.json'),JSON.stringify({...fixture,runtimeSha256:digest,candidate:Boolean(candidate),scope:'Known fixtures prove routing to wrapper only; full body receipts are archived observations.',prefixLength,trace},null,2)+'\n');results.push({...fixture,trace:fixture.name+'.json',prefixLength,actualFailed:trace.failed,actualBytes:actual,passed});
+}
+const hh=fileURLToPath(import.meta.resolve('hardhat')),edr=createRequire(hh).resolve('@nomicfoundation/edr'),binding=createRequire(edr).resolve('@nomicfoundation/edr-linux-x64-gnu');writeFileSync(resolve(out,'toolchain.json'),JSON.stringify({nodeVersion:process.version,nodeExecutable:process.execPath,nodeSha256:sha(readFileSync(process.execPath)),hardhatEntry:hh,hardhatEntrySha256:sha(readFileSync(hh)),edrEntry:edr,edrEntrySha256:sha(readFileSync(edr)),edrVersion:JSON.parse(readFileSync(resolve(dirname(edr),'package.json'))).version,nativeBinding:binding,nativeBindingSha256:sha(readFileSync(binding)),lockfileSha256:sha(readFileSync('pnpm-lock.yaml'))},null,2)+'\n');
+await connection.close();writeFileSync(resolve(out,'results.json'),JSON.stringify(results,null,2)+'\n');if(failures)throw Error('Wrong raw rejection receipts: '+failures);console.log('PASS:92 actual wrapper prefixes,16 unknown fallback leaves,4 short and4 nonzero physical rejections; no body coverage claim');

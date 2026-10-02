@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+"""Generate complete admitted raw byteAt prefix from current runtime bytes.
+
+No native/public credit from this generator. Every reached opcode/immediate and
+actual jump destination is bound; complete actual calldata feeds the machine.
+"""
+import argparse,hashlib,json
+from pathlib import Path
+HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[3];MOD=1<<256
+CASES={'Prefix':dict(value=0,size=101,a=64,b=1,c=0)}
+def signed(v):return v if v<MOD//2 else v-MOD
+def generate(out,runtime=None):
+ inventory=json.loads((HERE.parent/'inventory.json').read_text());artifact=json.loads((ROOT/'artifacts/contracts/Operations.sol/Operations.json').read_text());code=runtime.read_bytes() if runtime else bytes.fromhex(artifact['deployedBytecode'][2:])
+ assert runtime or hashlib.sha256(code).hexdigest()==inventory['runtimeSha256']
+ assert inventory['compilerIdentity']['methodIdentifiers']['byteAt(bytes,int256)']=='9ae8e8ea'
+ ins={};pc=0
+ while pc<len(code):
+  op=code[pc];width=op-0x5f if 0x60<=op<=0x7f else 0;ins[pc]=(op,pc+width+1,int.from_bytes(code[pc+1:pc+width+1].ljust(width,b'\0'),'big'));pc+=width+1
+ jumpdest={p for p,x in ins.items() if x[0]==0x5b};out.mkdir(parents=True,exist_ok=True)
+ for name,case in CASES.items():
+  pc=0;stack=[];expr=[];memory='[]';nodes=[];required={};seen=set()
+  def pop():return stack.pop(),expr.pop()
+  def push(v,e=None):stack.append(v);expr.append(str(v) if e is None else e)
+  while True:
+   state=(pc,tuple(stack),tuple(expr),memory);assert state not in seen;seen.add(state)
+   op,nxt,imm=ins[pc];assert nxt<=len(code);required.update({i:code[i] for i in range(pc,nxt)})
+   node=dict(id=len(nodes),pc=pc,opcode=op,next=nxt,immediate=imm,stack=expr.copy(),memory=memory);nodes.append(node)
+   if pc==7143:node['frontier']=True;break
+   if op==0x5f or 0x60<=op<=0x7f:push(imm)
+   elif op==0x34:push(case['value'],'value')
+   elif op==0x36:push(case['size'],'|data|')
+   elif op==0x35:
+    at,ae=pop();v=(int('9ae8e8ea',16)<<224) if at==0 else case['a'] if at==4 else case['c'] if at==36 else case['b'] if at==case['a']+4 else None;assert v is not None,(name,pc,at)
+    push(v,f'I.DataWord(data,{ae})')
+   elif op==0x1c:
+    amount,ae=pop();v,ve=pop();assert amount==224
+    push(v>>amount,str(int('9ae8e8ea',16)));node['selectorProjection']=True
+   elif 0x80<=op<=0x8f:k=op-0x7f;push(stack[-k],expr[-k])
+   elif 0x90<=op<=0x9f:k=op-0x8f;stack[-1],stack[-1-k]=stack[-1-k],stack[-1];expr[-1],expr[-1-k]=expr[-1-k],expr[-1]
+   elif op==0x50:pop()
+   elif op==0x15:v,e=pop();push(int(v==0),f'Bool(({e})==0)' if 'data' in e or 'value' in e else None)
+   elif op in [0x01,0x03,0x10,0x11,0x12,0x14,0x1b]:
+    a,ae=pop();b,be=pop();v={0x01:lambda:(a+b)%MOD,0x03:lambda:(a-b)%MOD,0x10:lambda:int(a<b),0x11:lambda:int(a>b),0x12:lambda:int(signed(a)<signed(b)),0x14:lambda:int(a==b),0x1b:lambda:(b<<a)%MOD if a<256 else 0}[op]()
+    expressions={0x01:f'((({ae}) as nat)+(({be}) as nat))%M',0x03:f'((({ae}) as nat)+M-(({be}) as nat))%M',0x10:f'Bool(({ae})<({be}))',0x11:f'Bool(({ae})>({be}))',0x12:f'Bool(N.Signed({ae})<N.Signed({be}))',0x14:f'Bool(({ae})==({be}))',0x1b:f'Left({be},{ae})'}
+    push(v,expressions[op] if 'data' in ae+be or 'value' in ae+be else None)
+    if op==0x1b:assert(a,b)==(64,1);node['offsetLimitShift']=True
+   elif op==0x52:
+    at,ae=pop();v,ve=pop();assert at==64 and v==128;memory=f'B.Copy({memory},I.Encode({ve},32),0,{ae},32)'
+   elif op==0x5b:pass
+   elif op in [0x56,0x57]:
+    dest,_=pop();take=op==0x56 or pop()[0]!=0;assert dest in jumpdest;node['jump']=dest;required[dest]=code[dest]
+    if take:nxt=dest
+   elif op==0xfd:
+    at,_=pop();count,_=pop();assert at==0 and count==0;node['reverted']=True;break
+   else:raise ValueError((name,pc,hex(op)))
+   pc=nxt;assert len(stack)<=1024
+  constraints=' &&\n    '.join(f'code[{i}]=={v}' for i,v in sorted(required.items()));destinations=sorted({n['jump'] for n in nodes if 'jump' in n});maximum=max(len(n['stack']) for n in nodes)
+  good='\n'.join('    '+('if' if n['id']==0 else 'else if')+f" id=={n['id']} then state==Running({n['pc']},[{','.join(n['stack'])}],{n['memory']})" for n in nodes)+'\n    else false'
+  text=f'''// SPDX-License-Identifier: MIT
+// Generated complete admitted raw prefix. Never edit directly.
+include "../byte-at-repair-v3/AdmissionKernel.dfy"
+module OperationsByteAtSuccess{name} {{
+  import opened OperationsByteAtMachine
+  import I = OperationsByteAtInputs
+  import N = OperationsByteAtIndices
+  import B = OperationsByteAtMemory
+  import K = OperationsByteAtAdmissionKernel
+  predicate Admitted(value: Word,data: seq<Byte>) {{
+    I.Frame(data) && I.Assigned(data,value) && value==0 && I.Span(data)
+  }}
+  opaque predicate Matches(code: seq<Byte>) {{
+    |code|=={len(code)} &&
+    {constraints}
+  }}
+  function Destinations(): set<nat> {{ {{{','.join(map(str,destinations))}}} }}
+  opaque predicate Good(id: nat,state: State,value: Word,data: seq<Byte>)
+    requires I.Frame(data)
+  {{
+{good}
+  }}
+'''
+  for n in nodes[:-1]:
+   i=n['id'];post='next==Reverted([])' if n.get('reverted') else f'Good({i+1},next,value,data)';guide=f'    reveal Good(); reveal Matches(); reveal Step();\n    assert state==Running({n["pc"]},[{",".join(n["stack"])}],{n["memory"]});\n'
+   if n['opcode']>=0x60 and n['opcode']<=0x7f:
+    width=n['opcode']-0x5f
+    for k in range(1,width+1):guide+=f'    assert I.Load(code,{n["pc"]+1},{k})=={int.from_bytes(code[n["pc"]+1:n["pc"]+1+k],"big")};\n'
+   guide+=f'    assert Fetch(code,{n["pc"]})==Op({n["opcode"]},{n["next"]},{n["immediate"]});\n'
+   if n.get('selectorProjection'):guide+='    K.AssignedSelector(data,value);\n'
+   if n.get('offsetLimitShift'):guide+='    K.OffsetLimitShift();\n'
+   if 'jump' in n:guide+=f'    assert {n["jump"]} in Destinations() && code[{n["jump"]}]==0x5b;\n'
+   text+=f'''  lemma Advance{i}(code: seq<Byte>,state: State,value: Word,data: seq<Byte>)
+    requires Matches(code) && Admitted(value,data) && Good({i},state,value,data)
+    ensures state.Running? && |state.stack|<={maximum} && |state.memory|<=96
+    ensures var next:=Step(code,Destinations(),state,value,data); {post}
+  {{
+{guide}  }}
+'''
+  frontier=nodes[-1];last=frontier['id'];initial=f'Good(0,Running(0,[],[]),value,data)'
+  text+=f'''  lemma Start(value: Word,data: seq<Byte>)
+    requires Admitted(value,data)
+    ensures {initial}
+  {{ reveal Good(); }}
+  lemma Frontier(state: State,value: Word,data: seq<Byte>)
+    requires Admitted(value,data) && Good({last},state,value,data)
+    ensures state==Running(7143,[0x9ae8e8ea,1362,I.Offset(data)+36,I.Length(data),I.Index(data)],B.Copy([],I.Encode(128,32),0,64,32))
+  {{ reveal Good(); }}
+}}
+'''
+  (out/(name+'.generated.dfy')).write_text(text);(out/(name+'.mapping.json')).write_text(json.dumps(dict(name=name,runtimeSha256=hashlib.sha256(code).hexdigest(),runtimeBytes=len(code),candidateRuntime=bool(runtime),maximumStackWords=maximum,requiredBytes=required,states=nodes,scope='Unverified full actual-data raw prefix; no public credit'),indent=2)+'\n');print(name,len(nodes))
+if __name__=='__main__':
+ p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--runtime',type=Path);a=p.parse_args();generate(a.output,a.runtime)

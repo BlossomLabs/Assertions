@@ -1,0 +1,18 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-full-callback-receipt",
+      "owner": "formal/bytecode/word-fold/callback-receipt",
+      "generatedNames": [
+        "Nonempty",
+        "Empty"
+      ]
+    }
+  ],
+  "assumptions": [
+    "Arbitrary empty/nonempty returned bytes and either actual success flag; original fitting finite shared receipt-memory representation, arbitrary lower caller stack and actual fold continuation16553.",
+    "Truthful actualself/target/packedpayload/twoGAS/STATICCALL observations and reached execution resources remain explicit. No successful receipt assumption or changed value domain.",
+    "Shared included bodies assumed during selected development; subsequent error/guard serializers/full raw first-failure loop/full included retainer/EVM/semantic faults/independent checker remain mandatory. No public credit or gas/deployment/performance/compiler correctness claim."
+  ]
+}

@@ -1,0 +1,3 @@
+# packArray accepted raw decoder preparation
+
+All actual instructions from wrapperPC827 to bodyPC5682, deriving descriptor span and bytes-array head/count. The real count<<5 opcodePC20736 uses the existing checked arbitrary-uint64 stride bridge. Fitting representation, loose/shared/overlapping tails and arbitrary memory/call value remain explicit. Element-pointer dereferences occur later and are not inferred from the head-array admission. Canonical descriptor/value validation, arbitrary finite packing, malformed partition, library errors/returns and complete native/retained evidence remain open. Generated files are owned by generate.py; no public credit.

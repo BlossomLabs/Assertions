@@ -1,0 +1,16 @@
+{
+  "status": "terminal-failed-preserved",
+  "session": 47959,
+  "exitCode": 1,
+  "manifest": "formal/bytecode/operations/account-environment-retention/evidence/raw-entries-v1/manifest.json",
+  "manifestSha256": "144ef1873a20913b64ae3bc73c88673af03720f6f105f09e4e3b910d6455a83c",
+  "nativeRows": 25458,
+  "declarations": 809,
+  "failedChecks": [
+    "proof-OperationsAccountEnvironmentRawBalanceBadAddress",
+    "proof-OperationsAccountEnvironmentRawCodeHashBadAddress"
+  ],
+  "inputsUnchanged": true,
+  "toolsUnchanged": true,
+  "failure": "Opaque Clean definition did not supply reverse-operand AND equality at the dirty-address projection; no contract counterexample."
+}

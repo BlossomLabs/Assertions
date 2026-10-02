@@ -1,0 +1,14 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/shape-complete/Connection.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "Input-derived complete descriptor shape invocation, recursive parser rejection, successful return, and trailing-descriptor error when the constructed original recursive stack budget fits. No supplied parse tree, expected error packet or internal EVM frame. Resource budget and original public caller composition remain explicit; all native, physical and retained acceptance gates remain open. No public credit.",
+  "assumptions": [
+    "Current exact runtime/compiler/tool identities and reviewed finite EVM interpreter.",
+    "Original represented offset/length below 2^64, valid actual return destination, aligned fitting free memory.",
+    "resourceFits reports the original constructed recursive budget; no execution claim is made when it is false.",
+    "Full current dependency native closure, public codec loops, faults and independent retained checks remain required."
+  ],
+  "formatExclusions": {}
+}

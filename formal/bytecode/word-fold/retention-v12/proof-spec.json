@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "status": "preparation-not-retained",
+  "publicEntries": [
+    "Collections.foldRange(uint256,address,bytes,uint256,uint256[],bytes32,uint8)",
+    "Collections.foldBytes(bytes,address,bytes,uint256,uint256[],bytes32,uint8)",
+    "Collections.foldWords(bytes,address,bytes,uint256,uint256[],bytes32,uint8)"
+  ],
+  "selectors": {
+    "foldRange": "f1d88dc8",
+    "foldBytes": "6d24e79c",
+    "foldWords": "6de60cb0"
+  },
+  "rootProofs": [
+    "formal/bytecode/word-fold/raw-closure-repair-v11/public-entry-repair-v2/Connection.dfy"
+  ],
+  "physicalOwner": "formal/bytecode/word-fold/physical-v3",
+  "physicalFixtureCount": 258,
+  "scope": "All three assigned raw fold entries from PCzero through full decoder/alignment/window rejection, empty before target, code-less target, complete successful finite loop/first canonical stop/public return and first reached callback failure after an arbitrary finite successful nonstopping prefix. All physical memory, supplied-order payload, exact error/return/full returndata and consumed observations remain connected under explicit finite resources and truthful reached observations. Source and exact bytecode tracks are separate.",
+  "assumptions": [
+    "Pinned compiler input/settings/runtime extraction, reviewed EVM machine semantics and toolchain remain trusted premises; compiler correctness is not inferred.",
+    "Existing finite admitted raw prefix representation includes loose/shared/overlapping tails where the compiled decoder admits them; full-width range count and arbitrary result words preserved.",
+    "Fitting stack/memory/copy/error serialization resources are conditional on the branch actually reached. No completion for arbitrary gas budgets is inferred.",
+    "Actual self, target code size, requested GAS, STATICCALL success/payload/full returned bytes and reached after-GAS observations are truthful for the reached context/history.",
+    "Empty/precheck-error branches require no external observation. Early stops and first failures omit later callback observations. Source claims do not establish deployment/gas/performance claims."
+  ],
+  "remainingRequiredWork": [
+    "Preserve V11 passed native/audit/258 receipt gates and failed pre-native mutation parser. Derive candidate adapter paths from this actual retained package and statically smoke all three mutations before fresh retained gates.",
+    "Preserve failed V10 retention. Snapshot the shared map-prefix formatter required by five word-apply generators, then reproduce all generated owners byte-for-byte and pass every retained gate with the unchanged 208 native owners.",
+    "Derive all current distinct module bodies from the V11 root and require 208 complete owners: independently complete unchanged whole modules from terminal predecessors, the unchanged Windows/Target/Empty V10 owners, and all five fresh V11 transitive template owners. Interrupted V8 and failed unchanged Windows confirmation are excluded. Zero audits and every retained/checker gate remain mandatory.",
+    "Finish verifier, generated owner reproduction, physical fixture/mutation files and independent evidence checker before any retained source snapshot.",
+    "Every transitive current qualified declaration must have complete native evidence with exact current source/transitive contracts/tool identities; imported assumptions in selected development evidence alone do not complete the graph. Audit all retained roots and inventory completeness.",
+    "Recompile pinned complete compiler input and verify runtime/settings/source identity; revalidate short-selector and nonzero-value dispatcher rejection dependencies against current compiler inputs.",
+    "Replay all258 complete PCzero physical EVM receipt/observation fixtures with exact return/error bytes and callback order; add any missing geometry rather than narrowing the public theorem.",
+    "Run semantic source mutations that pass translation and fail native/EVM claims, and semantic exact-bytecode mutations with matching ordinary native assertion/physical contradictions. Timeouts, parser/gate failures and precondition failures are not semantic mutation evidence.",
+    "Independent current-input/tool/evidence/inventory/reuse checker must pass before a ledger or public coverage update. These three entries would advance current Collections10/29to13/29only after every retained gate passes."
+  ],
+  "formatExclusions": {
+    "formal/bytecode/word-apply/callback-failed-memory-repair-v3/Memory.dfy": "d3fa543f7e2a854b4f9111eeeab467ffcce1f4827afaccc075eb8a524d36f67a"
+  },
+  "formatExclusionScope": "Style check only for the exact hashed preserved handwritten legacy dependency. Every declaration and native audit still required; no generated or semantic exclusion.",
+  "supportOwners": [
+    "formal/bytecode/word-fold/raw-closure-repair-v8",
+    "formal/bytecode/word-fold/raw-closure-repair-v9",
+    "formal/bytecode/word-fold/raw-closure-repair-v10",
+    "formal/bytecode/word-fold/raw-closure-repair-v11"
+  ],
+  "generationSupportFiles": [
+    "formal/bytecode/word-apply/map-prefix/format-generated.py"
+  ]
+}

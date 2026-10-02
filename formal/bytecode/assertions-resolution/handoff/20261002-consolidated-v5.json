@@ -1,0 +1,151 @@
+{
+  "checkpointAt": "2026-10-02T16:13:44.711626+00:00",
+  "nativeLive": false,
+  "nativeTerminalHandles": [
+    2999,
+    71333,
+    7056,
+    96725,
+    62272,
+    8408,
+    68617,
+    85025,
+    41903,
+    11487,
+    34150,
+    43472,
+    12265,
+    19503,
+    93608,
+    73326
+  ],
+  "solverQuota": "Three assigned; one explicitly loaned to coordinator, nextnative max2whileloanactive. New launches held for coordinatorfocus/stopsteering.",
+  "retainedRuns": [
+    {
+      "manifest": "formal/bytecode/assertions-resolution/constraints/or/development/nonempty-kernel-native-consolidated-v1/manifest.json",
+      "sha256": "40e3953ba88fad7ee1373e11629acb07fa4f9a4b021227ed11382b49588f1db5",
+      "status": "passed",
+      "nativeChecks": 2754,
+      "files": 33,
+      "coverageComplete": true,
+      "inputsUnchanged": true,
+      "toolsUnchanged": true
+    },
+    {
+      "manifest": "formal/bytecode/assertions-resolution/constraints/or/development/nonempty-payload-native-consolidated-v2/manifest.json",
+      "sha256": "abf7802789dfb19f89aff6fd38eb8434de3097218566393eb0e5cd145b7b8d87",
+      "status": "passed",
+      "nativeChecks": 354,
+      "files": 11,
+      "coverageComplete": true,
+      "inputsUnchanged": true,
+      "toolsUnchanged": true
+    },
+    {
+      "manifest": "formal/bytecode/assertions-resolution/constraints/or/development/nonempty-fillheap-native-consolidated-v5/manifest.json",
+      "sha256": "a8cc5e484bf071bfdd02898c0d025ce5fb95d5914759ba48b9de8f69334884c0",
+      "status": "passed",
+      "nativeChecks": 601,
+      "files": 13,
+      "coverageComplete": true,
+      "inputsUnchanged": true,
+      "toolsUnchanged": true
+    },
+    {
+      "manifest": "formal/bytecode/assertions-resolution/constraints/or/development/nonempty-allocationheap-native-consolidated-v1/manifest.json",
+      "sha256": "3b716c7dd0047e305a629ecce7790cd516e202643c55148a97786efd0e99c374",
+      "status": "passed",
+      "nativeChecks": 1407,
+      "files": 32,
+      "coverageComplete": true,
+      "inputsUnchanged": true,
+      "toolsUnchanged": true
+    },
+    {
+      "manifest": "formal/bytecode/assertions-resolution/constraints/or/development/nonempty-allocationframe-native-consolidated-v2/manifest.json",
+      "sha256": "a8e1da270fd9014823f4504348098138a7c40dbd06c3bee3b41ce51d85487e41",
+      "status": "passed",
+      "nativeChecks": 1499,
+      "files": 33,
+      "coverageComplete": true,
+      "inputsUnchanged": true,
+      "toolsUnchanged": true
+    },
+    {
+      "manifest": "formal/bytecode/assertions-resolution/constraints/or/development/nonempty-fill-native-consolidated-v3/manifest.json",
+      "sha256": "d7f31f87e3229f72f0bcc09f4aaaddd024fcad4270cd84ac4520adf91d172321",
+      "status": "passed",
+      "nativeChecks": 2723,
+      "files": 35,
+      "coverageComplete": true,
+      "inputsUnchanged": true,
+      "toolsUnchanged": true
+    }
+  ],
+  "acceptedKernelBinding": "formal/bytecode/assertions-resolution/constraints/or/evidence/nonempty-kernel-bound-consolidated-v2/manifest.json",
+  "preparedUnverifiedDecoder": "formal/bytecode/assertions-resolution/constraints/or/NonemptyDecoder.dfy",
+  "sourceSha256": {
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyAllocationFrame.dfy": "4f7cb5fd7a17e4995ad3d4a16bf5a0e09378a4749b1036b082a99c0857859c1d",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyAllocationHeap.dfy": "dc80decc4b69b10ab5eca989bfdc1725405e5e2058b9ba53236890f872defb28",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyBounds.dfy": "a301df3d7f0a9ae99686c603fec34bff61af2af9e0b8315857cec9427518ef79",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyCopyWitness.dfy": "337b36c24cdcdfa7a4cc528e5fd97021528716ef25153394ded3a0161db4a04f",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyCopyWitness.mutant-consolidated-v1.dfy": "3acab0d320491f99f3bb206dcc98e1af3b16d30a786a0661ff2151e2ec45f4a4",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyDecoder.dfy": "049a471c551f9156c6eb63d2acda29ada1528700aa434905a9066816a162d2a7",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyExit.generated.dfy": "41c8dbf5bb02285382f53086120a0d21627a5ab6b33ef26e7d59673fe77a2001",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyFill.dfy": "2641e67bf1f9994eaef3b1cae7f549e1312899835ab3e5c76c25c8d23db960bb",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyFillHeap.dfy": "14f96ee492513f6fdd020cbce3ff98ab94887125120a9862bc02734c0e086b0e",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyFillReady.dfy": "931263b20ce5445442f4db569873a7927a01bcce08ebf840c77b52fa20ebfb36",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyItem.generated.dfy": "f4c3493e865dc21646b4c06d4985dbaf46d38cc8a4c5f6345c9852265895b539",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyMemory.dfy": "015f7c2b0aa49c36ed524e0f8a4f42216ba00d40f4c310a7372979d74f19789b",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyPayload.dfy": "e93df106e95002084b56714aee4f54b495bd6ca6474fb5cee3951056b8dcf6d1",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyRound.dfy": "db2e17f1f14145ac1d3800aa8e246743be4e386ff55f7eac88ad24b89c09ba8d",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyStart.generated.dfy": "8e186fa6a6ff8f4663262839658b94b26a63c968b5237146734295287a96f34e",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyWire.dfy": "bdeea0a9d9b20959b4376671b21f326c4b8a0863a4f8b34850a1985691713206",
+    "formal/bytecode/assertions-resolution/constraints/or/NonemptyWireFrame.dfy": "266b0202f5abe3d706826c20b9131b284df1c9b73f1ce6b75ce6d37d9176a9d2"
+  },
+  "open": [
+    "Complete19462to7777wrapper nativeclosure/runtimebinding/independentreview; decodedstructuralTable only.",
+    "Originalreferencepayload/recordsemantics overarbitraryfill; structuralthenverdictshortcircuit; successful/allfalse/baddata/badrange/nested outcomes.",
+    "ORcaller/publicadmission and complete entry remainopen."
+  ],
+  "condReadOnly": {
+    "manifest": "formal/bytecode/assertions-primitives-control/cond-constrained/development/native-closure-v1/manifest.json",
+    "sha256": "0b2e347dbcee4a68a9d71682f8ae05560dfce41cc44aff29c9a0cdaf337287c8",
+    "status": "incomplete",
+    "checks": 118,
+    "logLastKnown": "AssertionsConstrainedRawBefore280/282symbols; Advance thenRun pending",
+    "failedChecks": [
+      {
+        "name": "AssertionsConstraintKind3Below",
+        "exitCode": 4
+      },
+      {
+        "name": "AssertionsConstraintKind3BadRange",
+        "exitCode": 4
+      },
+      {
+        "name": "AssertionsConstraintKind8Below",
+        "exitCode": 4
+      },
+      {
+        "name": "AssertionsConstraintKind8Inside",
+        "exitCode": 4
+      },
+      {
+        "name": "AssertionsConstraintLoopSegments",
+        "exitCode": 0
+      },
+      {
+        "name": "AssertionsConstraintSequences",
+        "exitCode": 4
+      },
+      {
+        "name": "AssertionsConstraintKind8BadRange",
+        "exitCode": 4
+      }
+    ],
+    "ownership": "Onlyfuturecond-constrained assignment authorized; no sourcechanges orduplicate native launched.",
+    "takeoverAssessment": "formal/bytecode/assertions-resolution/handoff/20261002-cond-readonly-assessment-v1.json",
+    "includeGraph": "formal/bytecode/assertions-resolution/handoff/20261002-cond-include-graph-v1.json"
+  }
+}

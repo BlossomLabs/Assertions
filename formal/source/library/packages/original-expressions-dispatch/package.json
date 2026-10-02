@@ -1,0 +1,28 @@
+{
+  "id": "original-expressions-dispatch",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/expressions/dispatch",
+  "entry": "formal/expressions/dispatch/Model.dfy",
+  "verificationEntries": [
+    "formal/expressions/dispatch/Model.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/expressions/dispatch/Model.dfy"
+    ],
+    "execution": [],
+    "correspondence": [],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/expressions/dispatch/Model.dfy": "24956a82ff09284a8f267b36f4963dd037cf8a64f91a6f4ccd369dd34cccc303"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

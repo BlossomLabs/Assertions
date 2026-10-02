@@ -1,0 +1,7 @@
+# Fold empty-body physical RETURN development
+
+The three generated modules retain complete exact current-runtime empty-domain control after successful ordered window validation. Range has58 physical instructions and Bytes/Words59; these include the shared fold and decoded wrapper cleanup, scalar serialization, actual Store at output128 and physical RETURN of exactly32 initial-accumulator bytes. The initial accumulator remains a full unsigned256-bit word.
+
+The handwritten connection composes PC-zero routing, compiler raw decoder, alignment and all ordered accumulator/element windows with the exact empty return. EmptyEquivalent states that zero word count and zero source length coincide under required32-byte alignment. Target code, gas and callback observations are not consumed; the external frame preserves arbitrary old returndata and cursor. Raw/window rejections have mandatory separate complete connections.
+
+Generated files are produced only by generate.py and its formatter. All owner files are completed before snapshot. Static and selected native development evidence are separate; imported contracts are assumed in selected native checks. Full fresh included graph, nonempty target/FoldRun allocation/template copy/domain/stamping/callback/early-exit/errors/scalar return, EVM fixtures, matching semantic mutations and independently checked retention remain required before public coverage. Representation, sufficient reached resources and truthful observations remain explicit. No gas/deployment/performance or compiler-correctness claim.

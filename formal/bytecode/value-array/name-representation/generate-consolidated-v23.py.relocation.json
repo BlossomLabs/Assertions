@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/value-array/name-representation/generate.py",
+  "output": "/home/sem/assertions/formal/bytecode/value-array/name-representation/generate-consolidated-v23.py",
+  "source_sha256": "1887f2dc1e851b70f6183321752dbe20173e96bb6aea0cf4dd9e6fbc7796679a",
+  "output_sha256": "1887f2dc1e851b70f6183321752dbe20173e96bb6aea0cf4dd9e6fbc7796679a",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

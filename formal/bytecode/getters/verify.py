@@ -13,7 +13,7 @@ sha=common.sha
 NAMES=['LEN','PAYLOAD']
 def inputs():
     files={f for f in HERE.iterdir() if f.is_file()}|{ROOT/p for p in ['formal/constraints/verify.py','formal/abi/toolchain.json','formal/bytecode/dispatch/identity.py','formal/bytecode/dispatch/inventory.json','hardhat.config.ts','pnpm-lock.yaml','package.json']}
-    for name in ['Assertions','Expressions','Collections']:
+    for name in ['Assertions']:
         ap=ROOT/'artifacts/contracts'/f'{name}.sol'/f'{name}.json';a=json.loads(ap.read_text());bp=ROOT/'artifacts/build-info'/(a['buildInfoId']+'.json');files|={ap,bp}
         for key in json.loads(bp.read_text())['input']['sources']:
             files.add(identity.source_path(key))
@@ -42,7 +42,7 @@ def main():
     def save():(out/'manifest.json').write_text(json.dumps(m,indent=2)+'\n')
     def record(name,command,timeout=3600):
         j=common.run(command,out/(name+'.log'),timeout);j.update(name=name,passed=j['exitCode']==0);m['checks'].append(j);save();return j
-    save();record('runtime-identity',[sys.executable,'-B',snap/'formal/bytecode/dispatch/identity.py','--solc',solc,'--output',out/'identity'],240)
+    save();record('runtime-identity',[sys.executable,'-B',snap/'formal/bytecode/dispatch/identity.py','--solc',solc,'--output',out/'identity','--contract','Assertions'],240)
     gate=record('generation',[sys.executable,'-B',source/'generate.py','--output',out/'generated'],180)
     gate['passed']=gate['passed'] and all((source/(n+s)).read_bytes()==(out/'generated'/(n+s)).read_bytes() for n in NAMES for s in ['.generated.dfy','.mapping.json']);save()
     if not all(c['passed'] for c in m['checks']):raise SystemExit('Identity/generation gate failed')

@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-item-consolidated-v3.py",
+  "sourceSha256": "9eaed556b437edfb933efee3d6940130fa8683aedf07a0f83e89e33eaa548ab5",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-item-consolidated-v4.py",
+  "scope": "Abstract copy/store/load bodies during reachedstep proof; explicit verified word/size interfaces and isolated arithmetic/copy obligations"
+}

@@ -1,0 +1,5 @@
+# Square-root reached arithmetic candidate
+
+The local execution layer delegates reached scalar, control and physical memory instructions to the freshly included reviewed EVM Machine. It implements genuine MUL as unsigned multiplication modulo2^256 and SHL as unsigned multiplication by2^amount modulo2^256, returning zero for amounts>=256. SHR uses the unsigned quotient representation. This reviewed normative integer opcode representation is explicit; an equivalence to a separate bitvector interpreter is not assumed.
+
+The candidate checks actual opcode step equations and arithmetic connections for the seven seed reductions and every first/later Newton update. The independently specified floor-root theorem and nonwrapping bounds remain in the unchanged mathematical dependency graph. The specific current-runtime instruction paths, raw admission and physical result serialization are still open. Complete retained native/physical/mutation closure is required before public credit; resources, finite fitting representation and reviewed extraction/interpretation remain explicit. No gas, deployment or performance claim.

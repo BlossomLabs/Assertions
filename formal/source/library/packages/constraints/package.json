@@ -1,0 +1,31 @@
+{
+  "id": "constraints",
+  "status": "native-passed-correspondence-pending",
+  "entry": "formal/source/migration-v1/constraints/Engine.generated.dfy",
+  "verificationEntries": [
+    "formal/source/migration-v1/constraints/Engine.generated.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/migration-v1/constraints/Facts.dfy",
+      "formal/source/migration-v1/constraints/Model.dfy"
+    ],
+    "execution": [
+      "formal/source/migration-v1/constraints/Engine.generated.dfy"
+    ],
+    "correspondence": [],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/migration-v1/constraints/Engine.generated.dfy": "a6515e8b787248e8c712fe33d787b04518db6a81449b3345c7a71e9843caf605",
+    "formal/source/migration-v1/constraints/Facts.dfy": "eda41ce076baade2420e1813ee3fdee622e6557571fbac73e61693481186b642",
+    "formal/source/migration-v1/constraints/Model.dfy": "67905d6c00c411f4b04ed6343d06d55ce43ca2088a602b1651b04e4f0a40ddb8"
+  },
+  "verificationScope": "Native closure only; generation, source correspondence, faults and independent acceptance are separate gates."
+}

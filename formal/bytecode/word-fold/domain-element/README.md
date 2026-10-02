@@ -1,0 +1,7 @@
+# Fold domain element development
+
+The generator retains the exact shared helper entry19299 through actual fold return16512 for Range, Bytes and Words. Every reached enum gate, byte bounds branch, checked word multiplication/addition, slice/conversion helper and final stack cleanup is included. Range retains every uint256 index. Bytes requires index below the admitted source length; Words requires an aligned admitted source and index below its word count. The lower stack and memory remain arbitrary and unchanged.
+
+Physical results are the Range index, SHR248 of CALLDATALOAD at the byte position, and CALLDATALOAD at the word position. A small handwritten instruction kernel isolates the actual byte SHR. The separate raw first-byte representation theorem and the connection to the fold iteration remain required; these candidate controls do not claim semantic public coverage.
+
+Generated sources come only from generate.py and its formatter. Finish all package files before snapshot. Static checks are separate from native proofs; selected native imports are assumed. Complete included native closure, representation/raw loop connection, stamping/callbacks/guards/errors/early exits/exact scalar return, EVM receipts, matching semantic faults and independent retained checking are mandatory before public coverage. Representation, sufficient reached resources and truthful external observations stay explicit. No gas, deployment, performance or compiler-correctness claim.

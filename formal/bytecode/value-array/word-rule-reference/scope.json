@@ -1,0 +1,13 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/word-rule-reference/Reference.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "Independent accepted base-name window and the separately verified96-name canonical-word specification. Derive fitting actual input window and exact low/signed/high rule encoding. A kind0 rule admits every word and its unused returned bits remain semantically irrelevant; actual opcode/stack/memory proofs must still pin their real value. WordRule/checkRule/checkWords opcode connections, public codec loops and retained controls remain open. No bytecode or public completion credit.",
+  "assumptions": [
+    "Original accepted name grammar and current pinned runtime/source/tool identities.",
+    "Existing independently specified ABI canonical-word whitelist is a mathematical reference; all current bodies require whole native verification in final closure.",
+    "Actual compiled classification/check loops, physical replays, errors, mutations and retained independent acceptance remain required."
+  ],
+  "formatExclusions": {}
+}

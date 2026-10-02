@@ -1,0 +1,61 @@
+{
+  "observedAt": "2026-10-02T15:37:53.296455+00:00",
+  "mode": "read-only",
+  "ownership": "future cond-constrained assignment authorized after resolver package ready; no cond writes or native launches performed",
+  "oldManifest": "formal/bytecode/assertions-primitives-control/cond-constrained/development/native-closure-v1/manifest.json",
+  "oldManifestSha256": "81888c42a551316af5c955ede6367f0f07ca15441592ed08407c694ea9b2f566",
+  "oldManifestStatus": "incomplete",
+  "oldCheckCount": 94,
+  "oldFailedChecks": [
+    {
+      "name": "AssertionsConstraintKind3Below",
+      "exitCode": 4
+    },
+    {
+      "name": "AssertionsConstraintKind3BadRange",
+      "exitCode": 4
+    },
+    {
+      "name": "AssertionsConstraintKind8Below",
+      "exitCode": 4
+    },
+    {
+      "name": "AssertionsConstraintKind8Inside",
+      "exitCode": 4
+    },
+    {
+      "name": "AssertionsConstraintLoopSegments",
+      "exitCode": 0
+    },
+    {
+      "name": "AssertionsConstraintSequences",
+      "exitCode": 4
+    }
+  ],
+  "oldRunLiveness": "Manifest progressed75 to94 during review; namespace runnerPid2 and absent root toolhandle cannot prove terminal. Preserve reservation, coordinate authoritative status before successor.",
+  "sourceSha256": {
+    "formal/bytecode/assertions-primitives-control/cond-constrained/Admission.dfy": "476412a07bed8a58696e69518e6e8fde0482fe3820f6266958348cc12e44322d",
+    "formal/bytecode/assertions-primitives-control/cond-constrained/Body.dfy": "6ceb1f60b5e1a78685f0bbb2ec3ab0e887521f5512c005c7441e6cb30dfa217f",
+    "formal/bytecode/assertions-primitives-control/cond-constrained/Condition.dfy": "0d3cb9d94e99754414e6dc338899bbbc85a81a3dbb23fad78a8bf37f1bcd43a9",
+    "formal/bytecode/assertions-primitives-control/cond-constrained/Connection.dfy": "f2cdb718b3c8adb5db912ca27d4391eb454beae42215de8433ba153efc441c94",
+    "formal/bytecode/assertions-primitives-control/cond-constrained/Heap.dfy": "87f8ed737c3a85632042d8e0121976516dbcd59e4749f6aed8d9f859e3837d1d",
+    "formal/bytecode/assertions-primitives-control/cond-constrained/Prefix.dfy": "cf8c7b4716f9968bd6de65d55b16c2877c8add9903c3442763144a95a0a5fe64",
+    "formal/bytecode/assertions-primitives-control/cond-constrained/Selected.dfy": "17fdee46a71ade74798b5e35fbe801ad12ac58eb15eaceace4ef0491a67c4edb",
+    "formal/bytecode/assertions-primitives-control/cond-constrained/Spec.dfy": "a17be9b2e81216ee4b34c49832de1374ce7f64fa0a5ff7e29be7e0823f12d7f7"
+  },
+  "consumerInterfaces": [
+    "AssertionsConstrainedRawConnection.Run/Admitted",
+    "AssertionsConstraintLoopSpec.Heap/PhysicalWord/Free/Cost",
+    "AssertionsCondConstrainedCondition.Run",
+    "AssertionsCondConstrainedSelected.Run"
+  ],
+  "scope": "Successful non-OR constrained RAW condition; short condition exact error; only selected successful constrained RAW resolves; unselected operand lazy. No failure propagation/nonRAW/OR/fullentry credit.",
+  "nextSequence": [
+    "Coordinator establish terminal or deliberately drain old closure; preserve complete uncertain v1 unchanged.",
+    "Stage fresh current runners, exact dependency/declaration inventories and evidence under explicitly assigned cond-constrained.",
+    "Reuse only exact current passed file closures; retain complete native audits and generation/runtime/tool/source identities.",
+    "Fresh physical complete public replay and matched1824DUP5toDUP4 native/physical semantic control; independent coordinator review.",
+    "Then canonical BadData/BadRange and ConstraintFailed condition/selected propagation, preserving current accepted resolver interfaces. Gather/pick remain unassigned."
+  ],
+  "solverQuota": "One job max2while root one-coreloan active; no additional quota or duplicate oldcond run."
+}

@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/value-array/tuple-continuations/generate.py",
+  "output": "/home/sem/assertions/formal/bytecode/value-array/tuple-continuations/generate-consolidated-v24.py",
+  "source_sha256": "3e301cb0ad11b966354d618dcf523d302c32946edc06f1f520cd346a77e5c561",
+  "output_sha256": "3e301cb0ad11b966354d618dcf523d302c32946edc06f1f520cd346a77e5c561",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

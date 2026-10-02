@@ -1,0 +1,40 @@
+{
+  "sha": "e2e52e86d6623d48d0849f5ce1664f88c8f0e547",
+  "node_id": "C_kwDOGyRQNdoAKGUyZTUyZTg2ZDY2MjNkNDhkMDg0OWY1Y2UxNjY0Zjg4YzhmMGU1NDc",
+  "url": "https://api.github.com/repos/Consensys-Incorporated/evm-dafny/git/commits/e2e52e86d6623d48d0849f5ce1664f88c8f0e547",
+  "html_url": "https://github.com/Consensys-Incorporated/evm-dafny/commit/e2e52e86d6623d48d0849f5ce1664f88c8f0e547",
+  "author": {
+    "name": "David Pearce",
+    "email": "david.pearce@consensys.net",
+    "date": "2024-10-24T08:49:30Z"
+  },
+  "committer": {
+    "name": "GitHub",
+    "email": "noreply@github.com",
+    "date": "2024-10-24T08:49:30Z"
+  },
+  "tree": {
+    "sha": "d1741e2e3c022751ed8682b1e1c29c9f762ae66b",
+    "url": "https://api.github.com/repos/Consensys-Incorporated/evm-dafny/git/trees/d1741e2e3c022751ed8682b1e1c29c9f762ae66b"
+  },
+  "message": "Merge pull request #651 from Consensys/642-add-examples-for-tstore-tload\n\nfeat: add examples for tstore tload",
+  "parents": [
+    {
+      "sha": "c0bdb9cd7de0f466921df33219bb3d8020e0f130",
+      "url": "https://api.github.com/repos/Consensys-Incorporated/evm-dafny/git/commits/c0bdb9cd7de0f466921df33219bb3d8020e0f130",
+      "html_url": "https://github.com/Consensys-Incorporated/evm-dafny/commit/c0bdb9cd7de0f466921df33219bb3d8020e0f130"
+    },
+    {
+      "sha": "741fff5314f5405af58bf045f8e96a9d8df3ea62",
+      "url": "https://api.github.com/repos/Consensys-Incorporated/evm-dafny/git/commits/741fff5314f5405af58bf045f8e96a9d8df3ea62",
+      "html_url": "https://github.com/Consensys-Incorporated/evm-dafny/commit/741fff5314f5405af58bf045f8e96a9d8df3ea62"
+    }
+  ],
+  "verification": {
+    "verified": true,
+    "reason": "valid",
+    "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJnGgoaCRC1aQ7uu5UhlAAA5fAQAHs+aPC0/51KJD5k/2cbAYr8\nqzpp3lzkHwiGoA3ep0hTreoqZNTv6cIwZQgNWznfrtC0N+jn8Kw1COzexN/xKQRE\nUe34YxJlh1Ur0I0Hl0XLMnabiF8PjqgzgUmLo+BSB0ZjnBRkSnCatNk5vftgFgGf\ngDzw+INLncfx4z6Y4my5BSe33CFvCgX9IqpDKpUndKkJRvZkHKTETIw/QTgm3a1D\nxP4xZJwgI7wkFpvBhuNdbqPJtz++55XFys89YSgAHx0OudNZs9AyuTB7locJXUGw\nysVa+2fiKeE391dE9+v74GjiLYRY7fnMsr837Iw2gUCGIWENyYIuLznDqZinZ18y\nwPpBpSZDuw2MLN5JeFLIIv3xRdh+azeRbYA8yMveFkqWtx13hRU88F5TPzgeDRpc\nC6jqVINeeBInzcruPRRJs29ykggUBdQiCtcqdnQyl89SnssCXsQeLUw8WPqucsKu\niNTfiQMn8RJyuO6kiITNEkhY5rUn744rNF9Dn6HQUvecp9TNAJcTmAUH74AMeQDn\ntG4yGJCdCipnbDYV4RWg59zEGe2UN4GMAgM/5Tt+9T3hfaDJ9typDuo23hIEUPWM\nvux7E9Gv5kDFZbyouwryyR2PFJudAIVTvrYb4wECZduyRAMf1eyzyf1+9Dvp9EmP\n3O/JmSjtGC77WUShmuCK\n=TNYB\n-----END PGP SIGNATURE-----\n",
+    "payload": "tree d1741e2e3c022751ed8682b1e1c29c9f762ae66b\nparent c0bdb9cd7de0f466921df33219bb3d8020e0f130\nparent 741fff5314f5405af58bf045f8e96a9d8df3ea62\nauthor David Pearce <david.pearce@consensys.net> 1729759770 +1300\ncommitter GitHub <noreply@github.com> 1729759770 +1300\n\nMerge pull request #651 from Consensys/642-add-examples-for-tstore-tload\n\nfeat: add examples for tstore tload",
+    "verified_at": "2024-11-13T00:30:20Z"
+  }
+}

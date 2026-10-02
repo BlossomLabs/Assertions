@@ -1,0 +1,10 @@
+{
+  "pc": 20305,
+  "original": 6,
+  "candidate": 4,
+  "originalOpcode": "MOD",
+  "candidateOpcode": "DIV",
+  "pop": 2,
+  "push": 1,
+  "candidateSha256": "d131d66312ee43347ddb459093b0f9d145fcba8899e38b1b1424a366271594ee"
+}

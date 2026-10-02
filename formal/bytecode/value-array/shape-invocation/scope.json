@@ -1,0 +1,12 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/shape-invocation/Memory.dfy",
+    "formal/bytecode/value-array/shape-invocation/Invocation.generated.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "Actual unpack ArrayState six-word allocation, all zero fields, and shape function invocation. Whole universal descriptor parser/codec loops/error/serialization and retained public closure remain open.",
+  "assumptions": [
+    "Pinned runtime and reviewed scan interpreter; exact generic stack and heap representation, finite local resources. Development native/imported/physical output gives no public coverage."
+  ],
+  "formatExclusions": {}
+}

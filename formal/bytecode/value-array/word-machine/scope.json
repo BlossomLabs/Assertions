@@ -1,0 +1,16 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/word-machine/Euclidean.dfy",
+    "formal/bytecode/value-array/word-machine/Mathematics.dfy",
+    "formal/bytecode/value-array/word-machine/Machine.dfy",
+    "formal/bytecode/value-array/word-machine/Execution.dfy"
+  ],
+  "selectedModuleCount": 4,
+  "scope": "Prepared four-owner local exact SIGNEXTEND opcode extension and independent signed ABI canonical-word bridge, with existing BYTE/copy/scan step behavior delegated unchanged. Whole native verification, complete current include closure, all concrete opcode cases and matching retained controls, actual checkRule/checkWords/codec loops and independent acceptance remain open; no public credit.",
+  "assumptions": [
+    "Current source/tool/runtime identities and the reviewed EVM opcode/memory/resource representation remain explicit.",
+    "Mathematical sign extension follows Ethereum execution-specs byte_num/value pop order, least-significant byte window and sign propagation. Arbitrary 256-bit word/index and unchanged lower stack/memory; no canonicality or desired result supplied as an input premise.",
+    "Prepared source bodies are not native evidence. Required whole owner, current full dependency, physical, mutation and retained checker gates remain open."
+  ],
+  "formatExclusions": {}
+}

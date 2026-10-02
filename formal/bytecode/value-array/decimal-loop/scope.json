@@ -1,0 +1,13 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/decimal-loop/Iteration.dfy",
+    "formal/bytecode/value-array/decimal-loop/Loop.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "Two complete exact owners for a successful decimal suffix digit through all four actual checked arithmetic calls and arbitrary finite scanning with the uint32 stop guard. Final q/k binds an independent recursive base-10 number and the exact complete execution state/trace. Suffix close/error/tuple/codec and complete retained public graph remain open. No public credit.",
+  "assumptions": [
+    "Pinned runtime, reviewed scan/copy/BYTE machines and toolchain remain trusted.",
+    "Arbitrary represented calldata/memory and fitting lower frame, generic reached descriptor bounds; all imported current native bodies require complete final retained closure. No gas availability or unconditional termination claim."
+  ],
+  "formatExclusions": {}
+}

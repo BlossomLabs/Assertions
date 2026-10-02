@@ -1,0 +1,14 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-element-window-controls",
+      "owner": "formal/bytecode/word-fold/element-windows"
+    }
+  ],
+  "assumptions": [
+    "Raw seven-head fitting decoder fields imply finite admitted element-window array without wrap. The bound count<2^59 is derived from encoded calldata span below2^64, never assumed for the independent full uint256 range element count.",
+    "Actual shared element-window entry/iteration/exit retains continuation16419. Supplied offsets are arbitrary words in supplied order, including duplicates/misaligned/overlapping windows; successful admission requires each offset<=templateLength-32. First failed offset and preceding accumulator rejection remain separate mandatory paths.",
+    "Unbounded finite-loop theorem decreases count-index, with complete53-step iterations and no fuel/case cutoff. Arbitrary represented initial byte memory/lower prefix are preserved. Selected imports assume included contracts; full body/errors/terminal/current retained evidence still required. No gas/deployment/performance claim."
+  ]
+}

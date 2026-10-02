@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/value-array/tuple-initial/generate.py",
+  "output": "/home/sem/assertions/formal/bytecode/value-array/tuple-initial/generate-consolidated-v24.py",
+  "source_sha256": "7090cf7b516bde4abc70c28df46f21a84b51b99bed2e6156d9c1b86a56da3774",
+  "output_sha256": "7090cf7b516bde4abc70c28df46f21a84b51b99bed2e6156d9c1b86a56da3774",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

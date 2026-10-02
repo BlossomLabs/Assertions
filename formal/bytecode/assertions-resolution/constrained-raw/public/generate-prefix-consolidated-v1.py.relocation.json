@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/assertions-resolution/constrained-raw/public/generate-prefix.py",
+  "output": "/home/sem/assertions/formal/bytecode/assertions-resolution/constrained-raw/public/generate-prefix-consolidated-v1.py",
+  "source_sha256": "7b4d3966c62dd7452d0cc83f68b7c34989042d173afabd4c28ae85a8b70ba1d0",
+  "output_sha256": "7b4d3966c62dd7452d0cc83f68b7c34989042d173afabd4c28ae85a8b70ba1d0",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

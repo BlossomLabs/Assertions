@@ -1,0 +1,5 @@
+# Raw fold loop memory admission
+
+The handwritten configuration names every actual decoded source, template, window, accumulator, exit and target field. Fitting raw nonempty admission and the exact FoldRun allocation/template copy imply the loop model Ready predicate; the proof establishes the copied header, free pointer, all six run words and original seed. Range totals remain unrestricted uint256 words. Loose, overlapping compiler-admitted tails and overlapping supplied windows retain their original domain.
+
+This closes initial memory admission; finite reached callback resources and truthful observations remain explicit in the recursive loop model. Selected imported bodies are assumed during development. No completed public bytecode evidence, gas, deployment, performance or compiler-correctness claim follows; full raw path, failure/resource guards, scalar return, included native retainer, physical fixtures, semantic faults and independent checker remain required. Every owner file finishes before capture.

@@ -1,0 +1,41 @@
+{
+  "id": "expressions-recursive",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "native-passed-correspondence-pending",
+  "entry": "formal/source/library/src/expressions/recursive/Source.generated.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/expressions/recursive/Source.generated.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/expressions/evaluation/Control.dfy",
+    "formal/source/library/src/expressions/recursive/Source.generated.dfy",
+    "formal/source/library/src/expressions/recursive/Spec.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/library/src/expressions/evaluation/Control.dfy",
+      "formal/source/library/src/expressions/recursive/Spec.dfy"
+    ],
+    "execution": [
+      "formal/source/library/src/expressions/recursive/Source.generated.dfy"
+    ],
+    "correspondence": [],
+    "foundations": [
+      "formal/source/library/src/foundations/SourceMemoOrderV3.dfy"
+    ]
+  },
+  "closureSha256": {
+    "formal/source/library/src/expressions/evaluation/Control.dfy": "cb213bf31e340dd3d8db833a33b3dc1fa8f6bb0d8f81e9d466da869fea012cc4",
+    "formal/source/library/src/foundations/SourceMemoOrderV3.dfy": "157c39da57e26a43abd6052d585deca8e5d039cfbe363cab0e0a63f0d32ebb1d",
+    "formal/source/library/src/expressions/recursive/Source.generated.dfy": "bdd06d709b0322877fa2b770177834d40f03d67390e88b2723d8b959349d51ec",
+    "formal/source/library/src/expressions/recursive/Spec.dfy": "8cddfe997b95016af3b6de8d3b7ccc90acb81f3460bfa81b0cdd339b0decbc96"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

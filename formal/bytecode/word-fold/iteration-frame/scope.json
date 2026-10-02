@@ -1,0 +1,8 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Same actual accumulator-first stamping, callback payload packing, exact32-byte successful return, accumulator256 update. All fitting values and overlapping windows; no domain narrowing.",
+    "Explicit finite physical-memory bound on callback completion. Selected imports assumed until complete included retained graph, fresh physical receipts, semantic faults and independent checker pass."
+  ]
+}

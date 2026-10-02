@@ -1,0 +1,5 @@
+# Successful map/filter terminal composition development
+
+The original successful raw connection retained244 verified obligations but its final accumulated exit-to-serializer frame equality still timed out at120 seconds. This fresh proof owner isolates the exact loop exit and serializer contracts so the join uses the same opaque final memory expression on both sides. Every actual opcode, original callback result and observation tape, return bytes and exact trace length remains retained.
+
+The repaired root preserves its complete Run requirements and postconditions verbatim, adding no premises and reducing no domain. Original failed runs and source snapshots remain preserved. Finish all files before capture. Full selected native inventory and zero audit precede a complete current retained graph, physical/mutation evidence and independent checker. Imported contracts are assumed only in development. No public coverage, gas, deployment, performance or compiler-correctness claim follows from a selected pass.

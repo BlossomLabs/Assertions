@@ -1,0 +1,23 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/raw-pack/RawHeadShort.generated.dfy",
+    "formal/bytecode/value-array/raw-pack/RawFirstOffsetLarge.generated.dfy",
+    "formal/bytecode/value-array/raw-pack/RawFirstHeaderShort.generated.dfy",
+    "formal/bytecode/value-array/raw-pack/RawFirstLengthLarge.generated.dfy",
+    "formal/bytecode/value-array/raw-pack/RawFirstTailShort.generated.dfy",
+    "formal/bytecode/value-array/raw-pack/RawSecondOffsetLarge.generated.dfy",
+    "formal/bytecode/value-array/raw-pack/RawSecondHeaderShort.generated.dfy",
+    "formal/bytecode/value-array/raw-pack/RawSecondLengthLarge.generated.dfy",
+    "formal/bytecode/value-array/raw-pack/RawSecondTailShort.generated.dfy",
+    "formal/bytecode/value-array/raw-pack/Admission.dfy",
+    "formal/bytecode/value-array/raw-pack/Boundary.dfy"
+  ],
+  "selectedModuleCount": 11,
+  "scope": "Eleven development modules: nine ordered malformed descriptor/bytes-array-head decoder classes, their complete fitting-size complement and exact PCzero packArray entry boundary. The accepted array count is checked as32-byte heads; each element span and all descriptor/value/library loops remain later obligations. No public credit.",
+  "assumptions": [
+    "Pinned complete runtime and reviewed EVM machine semantics remain trusted boundaries. Compiler correctness is not inferred.",
+    "Fitting calldata representation permits loose/shared/overlapping spans. Pack decoder checks descriptor span and array-head count/stride; element pointer validation remains a later obligation.",
+    "Exact physical initialization and adequate reached resource premises remain explicit. No native/public credit from resolution, finite fixtures or audits."
+  ],
+  "formatExclusions": {}
+}

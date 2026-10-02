@@ -1,0 +1,10 @@
+{
+  "pc": 18907,
+  "original": 94,
+  "candidate": 55,
+  "originalOpcode": "MCOPY",
+  "candidateOpcode": "CALLDATACOPY",
+  "pop": 3,
+  "push": 0,
+  "candidateSha256": "9f9387f48ec71ffd14357b0f618915769dc16fc4f968e9b106ec76d9d5e6bac5"
+}

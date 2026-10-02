@@ -1,0 +1,34 @@
+{
+  "id": "original-operations-concat",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/operations/concat",
+  "entry": "formal/operations/concat/Connection.dfy",
+  "verificationEntries": [
+    "formal/operations/concat/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/operations/concat/Model.dfy"
+    ],
+    "execution": [
+      "formal/operations/concat/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/operations/concat/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/operations/concat/Connection.dfy": "10ce59df7a196aa76232a5f823614d7210c8978223eaf52fe107636ffbb5c9f3",
+    "formal/operations/concat/Control.generated.dfy": "dc860f0f6c7be46c2aed43b61d50005e529ed8217c898c9d3ccc22c0797138ab",
+    "formal/operations/concat/Model.dfy": "c27a3c5b99f67a60058790dbe7e9924cfa65160e9b3b6496a55d98c258b80692"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

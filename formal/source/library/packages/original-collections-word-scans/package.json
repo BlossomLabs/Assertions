@@ -1,0 +1,44 @@
+{
+  "id": "original-collections-word-scans",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/collections/word-scans",
+  "entry": "formal/collections/word-scans/Connection.dfy",
+  "verificationEntries": [
+    "formal/collections/word-scans/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/abi/Frames.dfy",
+      "formal/collections/word-memory/Model.dfy",
+      "formal/collections/word-scans/Model.dfy",
+      "formal/collections/word-scans/Source.dfy"
+    ],
+    "execution": [
+      "formal/collections/word-memory/Source.generated.dfy",
+      "formal/collections/word-scans/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/collections/word-memory/Connection.dfy",
+      "formal/collections/word-scans/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
+    "formal/collections/word-memory/Connection.dfy": "bd417efb1b4ed5843b45d1db33cd789053800db946e4f1b33bf6c2beda025f3d",
+    "formal/collections/word-memory/Model.dfy": "47c5a211c3c28737af9f6c62b5091bfb93834ec266920a7e7624fc6b568db6ba",
+    "formal/collections/word-memory/Source.generated.dfy": "f5cd81a8a45eb35483546521480caa6f0d012e38531e20fcec3806900b34e203",
+    "formal/collections/word-scans/Connection.dfy": "8071ffe05db0e0bc4ced227d986b35286f1924bf5c826e0a7f781ae2415e66fc",
+    "formal/collections/word-scans/Control.generated.dfy": "cdc406c7ec071333ab3581cfded28eae5b9a9b6c8b51384dbef883104bd976e3",
+    "formal/collections/word-scans/Model.dfy": "cfb03743c2a2a6a89623dfb620b5a5cce490910a5bd89d09eae322c67514048b",
+    "formal/collections/word-scans/Source.dfy": "00c23705d1d7675eec777a8982cb570eedc4f77a51d036f7de72c4fe97fcd34e"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

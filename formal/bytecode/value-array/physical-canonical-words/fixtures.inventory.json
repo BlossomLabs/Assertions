@@ -1,0 +1,2822 @@
+[
+  {
+    "name": "packArray-uint8-canonical-boundaries",
+    "descriptor": "uint8",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint8-canonical-boundaries",
+    "descriptor": "uint8",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint8-first-dirty-after-prefix",
+    "descriptor": "uint8",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint8-first-dirty-after-prefix",
+    "descriptor": "uint8",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int8-canonical-boundaries",
+    "descriptor": "int8",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int8-canonical-boundaries",
+    "descriptor": "int8",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int8-first-dirty-after-prefix",
+    "descriptor": "int8",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int8-first-dirty-after-prefix",
+    "descriptor": "int8",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int8-zero-extended-negative",
+    "descriptor": "int8",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int8-zero-extended-negative",
+    "descriptor": "int8",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint16-canonical-boundaries",
+    "descriptor": "uint16",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint16-canonical-boundaries",
+    "descriptor": "uint16",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint16-first-dirty-after-prefix",
+    "descriptor": "uint16",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint16-first-dirty-after-prefix",
+    "descriptor": "uint16",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int16-canonical-boundaries",
+    "descriptor": "int16",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int16-canonical-boundaries",
+    "descriptor": "int16",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int16-first-dirty-after-prefix",
+    "descriptor": "int16",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int16-first-dirty-after-prefix",
+    "descriptor": "int16",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int16-zero-extended-negative",
+    "descriptor": "int16",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int16-zero-extended-negative",
+    "descriptor": "int16",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint24-canonical-boundaries",
+    "descriptor": "uint24",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint24-canonical-boundaries",
+    "descriptor": "uint24",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint24-first-dirty-after-prefix",
+    "descriptor": "uint24",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint24-first-dirty-after-prefix",
+    "descriptor": "uint24",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int24-canonical-boundaries",
+    "descriptor": "int24",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int24-canonical-boundaries",
+    "descriptor": "int24",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int24-first-dirty-after-prefix",
+    "descriptor": "int24",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int24-first-dirty-after-prefix",
+    "descriptor": "int24",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int24-zero-extended-negative",
+    "descriptor": "int24",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int24-zero-extended-negative",
+    "descriptor": "int24",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint32-canonical-boundaries",
+    "descriptor": "uint32",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint32-canonical-boundaries",
+    "descriptor": "uint32",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint32-first-dirty-after-prefix",
+    "descriptor": "uint32",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint32-first-dirty-after-prefix",
+    "descriptor": "uint32",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int32-canonical-boundaries",
+    "descriptor": "int32",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int32-canonical-boundaries",
+    "descriptor": "int32",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int32-first-dirty-after-prefix",
+    "descriptor": "int32",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int32-first-dirty-after-prefix",
+    "descriptor": "int32",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int32-zero-extended-negative",
+    "descriptor": "int32",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int32-zero-extended-negative",
+    "descriptor": "int32",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint40-canonical-boundaries",
+    "descriptor": "uint40",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint40-canonical-boundaries",
+    "descriptor": "uint40",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint40-first-dirty-after-prefix",
+    "descriptor": "uint40",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint40-first-dirty-after-prefix",
+    "descriptor": "uint40",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int40-canonical-boundaries",
+    "descriptor": "int40",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int40-canonical-boundaries",
+    "descriptor": "int40",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int40-first-dirty-after-prefix",
+    "descriptor": "int40",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int40-first-dirty-after-prefix",
+    "descriptor": "int40",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int40-zero-extended-negative",
+    "descriptor": "int40",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int40-zero-extended-negative",
+    "descriptor": "int40",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint48-canonical-boundaries",
+    "descriptor": "uint48",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint48-canonical-boundaries",
+    "descriptor": "uint48",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint48-first-dirty-after-prefix",
+    "descriptor": "uint48",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint48-first-dirty-after-prefix",
+    "descriptor": "uint48",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int48-canonical-boundaries",
+    "descriptor": "int48",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int48-canonical-boundaries",
+    "descriptor": "int48",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int48-first-dirty-after-prefix",
+    "descriptor": "int48",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int48-first-dirty-after-prefix",
+    "descriptor": "int48",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int48-zero-extended-negative",
+    "descriptor": "int48",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int48-zero-extended-negative",
+    "descriptor": "int48",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint56-canonical-boundaries",
+    "descriptor": "uint56",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint56-canonical-boundaries",
+    "descriptor": "uint56",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint56-first-dirty-after-prefix",
+    "descriptor": "uint56",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint56-first-dirty-after-prefix",
+    "descriptor": "uint56",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int56-canonical-boundaries",
+    "descriptor": "int56",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int56-canonical-boundaries",
+    "descriptor": "int56",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int56-first-dirty-after-prefix",
+    "descriptor": "int56",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int56-first-dirty-after-prefix",
+    "descriptor": "int56",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int56-zero-extended-negative",
+    "descriptor": "int56",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int56-zero-extended-negative",
+    "descriptor": "int56",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint64-canonical-boundaries",
+    "descriptor": "uint64",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint64-canonical-boundaries",
+    "descriptor": "uint64",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint64-first-dirty-after-prefix",
+    "descriptor": "uint64",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint64-first-dirty-after-prefix",
+    "descriptor": "uint64",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int64-canonical-boundaries",
+    "descriptor": "int64",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int64-canonical-boundaries",
+    "descriptor": "int64",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int64-first-dirty-after-prefix",
+    "descriptor": "int64",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int64-first-dirty-after-prefix",
+    "descriptor": "int64",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int64-zero-extended-negative",
+    "descriptor": "int64",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int64-zero-extended-negative",
+    "descriptor": "int64",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint72-canonical-boundaries",
+    "descriptor": "uint72",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint72-canonical-boundaries",
+    "descriptor": "uint72",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint72-first-dirty-after-prefix",
+    "descriptor": "uint72",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint72-first-dirty-after-prefix",
+    "descriptor": "uint72",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int72-canonical-boundaries",
+    "descriptor": "int72",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int72-canonical-boundaries",
+    "descriptor": "int72",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int72-first-dirty-after-prefix",
+    "descriptor": "int72",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int72-first-dirty-after-prefix",
+    "descriptor": "int72",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int72-zero-extended-negative",
+    "descriptor": "int72",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int72-zero-extended-negative",
+    "descriptor": "int72",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint80-canonical-boundaries",
+    "descriptor": "uint80",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint80-canonical-boundaries",
+    "descriptor": "uint80",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint80-first-dirty-after-prefix",
+    "descriptor": "uint80",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint80-first-dirty-after-prefix",
+    "descriptor": "uint80",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int80-canonical-boundaries",
+    "descriptor": "int80",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int80-canonical-boundaries",
+    "descriptor": "int80",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int80-first-dirty-after-prefix",
+    "descriptor": "int80",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int80-first-dirty-after-prefix",
+    "descriptor": "int80",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int80-zero-extended-negative",
+    "descriptor": "int80",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int80-zero-extended-negative",
+    "descriptor": "int80",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint88-canonical-boundaries",
+    "descriptor": "uint88",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint88-canonical-boundaries",
+    "descriptor": "uint88",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint88-first-dirty-after-prefix",
+    "descriptor": "uint88",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint88-first-dirty-after-prefix",
+    "descriptor": "uint88",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int88-canonical-boundaries",
+    "descriptor": "int88",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int88-canonical-boundaries",
+    "descriptor": "int88",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int88-first-dirty-after-prefix",
+    "descriptor": "int88",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int88-first-dirty-after-prefix",
+    "descriptor": "int88",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int88-zero-extended-negative",
+    "descriptor": "int88",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int88-zero-extended-negative",
+    "descriptor": "int88",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint96-canonical-boundaries",
+    "descriptor": "uint96",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint96-canonical-boundaries",
+    "descriptor": "uint96",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint96-first-dirty-after-prefix",
+    "descriptor": "uint96",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint96-first-dirty-after-prefix",
+    "descriptor": "uint96",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int96-canonical-boundaries",
+    "descriptor": "int96",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int96-canonical-boundaries",
+    "descriptor": "int96",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int96-first-dirty-after-prefix",
+    "descriptor": "int96",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int96-first-dirty-after-prefix",
+    "descriptor": "int96",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int96-zero-extended-negative",
+    "descriptor": "int96",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int96-zero-extended-negative",
+    "descriptor": "int96",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint104-canonical-boundaries",
+    "descriptor": "uint104",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint104-canonical-boundaries",
+    "descriptor": "uint104",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint104-first-dirty-after-prefix",
+    "descriptor": "uint104",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint104-first-dirty-after-prefix",
+    "descriptor": "uint104",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int104-canonical-boundaries",
+    "descriptor": "int104",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int104-canonical-boundaries",
+    "descriptor": "int104",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int104-first-dirty-after-prefix",
+    "descriptor": "int104",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int104-first-dirty-after-prefix",
+    "descriptor": "int104",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int104-zero-extended-negative",
+    "descriptor": "int104",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int104-zero-extended-negative",
+    "descriptor": "int104",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint112-canonical-boundaries",
+    "descriptor": "uint112",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint112-canonical-boundaries",
+    "descriptor": "uint112",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint112-first-dirty-after-prefix",
+    "descriptor": "uint112",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint112-first-dirty-after-prefix",
+    "descriptor": "uint112",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int112-canonical-boundaries",
+    "descriptor": "int112",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int112-canonical-boundaries",
+    "descriptor": "int112",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int112-first-dirty-after-prefix",
+    "descriptor": "int112",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int112-first-dirty-after-prefix",
+    "descriptor": "int112",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int112-zero-extended-negative",
+    "descriptor": "int112",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int112-zero-extended-negative",
+    "descriptor": "int112",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint120-canonical-boundaries",
+    "descriptor": "uint120",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint120-canonical-boundaries",
+    "descriptor": "uint120",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint120-first-dirty-after-prefix",
+    "descriptor": "uint120",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint120-first-dirty-after-prefix",
+    "descriptor": "uint120",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int120-canonical-boundaries",
+    "descriptor": "int120",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int120-canonical-boundaries",
+    "descriptor": "int120",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int120-first-dirty-after-prefix",
+    "descriptor": "int120",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int120-first-dirty-after-prefix",
+    "descriptor": "int120",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int120-zero-extended-negative",
+    "descriptor": "int120",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int120-zero-extended-negative",
+    "descriptor": "int120",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint128-canonical-boundaries",
+    "descriptor": "uint128",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint128-canonical-boundaries",
+    "descriptor": "uint128",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint128-first-dirty-after-prefix",
+    "descriptor": "uint128",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint128-first-dirty-after-prefix",
+    "descriptor": "uint128",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int128-canonical-boundaries",
+    "descriptor": "int128",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int128-canonical-boundaries",
+    "descriptor": "int128",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int128-first-dirty-after-prefix",
+    "descriptor": "int128",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int128-first-dirty-after-prefix",
+    "descriptor": "int128",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int128-zero-extended-negative",
+    "descriptor": "int128",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int128-zero-extended-negative",
+    "descriptor": "int128",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint136-canonical-boundaries",
+    "descriptor": "uint136",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint136-canonical-boundaries",
+    "descriptor": "uint136",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint136-first-dirty-after-prefix",
+    "descriptor": "uint136",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint136-first-dirty-after-prefix",
+    "descriptor": "uint136",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int136-canonical-boundaries",
+    "descriptor": "int136",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int136-canonical-boundaries",
+    "descriptor": "int136",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int136-first-dirty-after-prefix",
+    "descriptor": "int136",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int136-first-dirty-after-prefix",
+    "descriptor": "int136",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int136-zero-extended-negative",
+    "descriptor": "int136",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int136-zero-extended-negative",
+    "descriptor": "int136",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint144-canonical-boundaries",
+    "descriptor": "uint144",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint144-canonical-boundaries",
+    "descriptor": "uint144",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint144-first-dirty-after-prefix",
+    "descriptor": "uint144",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint144-first-dirty-after-prefix",
+    "descriptor": "uint144",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int144-canonical-boundaries",
+    "descriptor": "int144",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int144-canonical-boundaries",
+    "descriptor": "int144",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int144-first-dirty-after-prefix",
+    "descriptor": "int144",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int144-first-dirty-after-prefix",
+    "descriptor": "int144",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int144-zero-extended-negative",
+    "descriptor": "int144",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int144-zero-extended-negative",
+    "descriptor": "int144",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint152-canonical-boundaries",
+    "descriptor": "uint152",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint152-canonical-boundaries",
+    "descriptor": "uint152",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint152-first-dirty-after-prefix",
+    "descriptor": "uint152",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint152-first-dirty-after-prefix",
+    "descriptor": "uint152",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int152-canonical-boundaries",
+    "descriptor": "int152",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int152-canonical-boundaries",
+    "descriptor": "int152",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int152-first-dirty-after-prefix",
+    "descriptor": "int152",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int152-first-dirty-after-prefix",
+    "descriptor": "int152",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int152-zero-extended-negative",
+    "descriptor": "int152",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int152-zero-extended-negative",
+    "descriptor": "int152",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint160-canonical-boundaries",
+    "descriptor": "uint160",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint160-canonical-boundaries",
+    "descriptor": "uint160",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint160-first-dirty-after-prefix",
+    "descriptor": "uint160",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint160-first-dirty-after-prefix",
+    "descriptor": "uint160",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int160-canonical-boundaries",
+    "descriptor": "int160",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int160-canonical-boundaries",
+    "descriptor": "int160",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int160-first-dirty-after-prefix",
+    "descriptor": "int160",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int160-first-dirty-after-prefix",
+    "descriptor": "int160",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int160-zero-extended-negative",
+    "descriptor": "int160",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int160-zero-extended-negative",
+    "descriptor": "int160",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint168-canonical-boundaries",
+    "descriptor": "uint168",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint168-canonical-boundaries",
+    "descriptor": "uint168",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint168-first-dirty-after-prefix",
+    "descriptor": "uint168",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint168-first-dirty-after-prefix",
+    "descriptor": "uint168",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int168-canonical-boundaries",
+    "descriptor": "int168",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int168-canonical-boundaries",
+    "descriptor": "int168",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int168-first-dirty-after-prefix",
+    "descriptor": "int168",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int168-first-dirty-after-prefix",
+    "descriptor": "int168",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int168-zero-extended-negative",
+    "descriptor": "int168",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int168-zero-extended-negative",
+    "descriptor": "int168",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint176-canonical-boundaries",
+    "descriptor": "uint176",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint176-canonical-boundaries",
+    "descriptor": "uint176",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint176-first-dirty-after-prefix",
+    "descriptor": "uint176",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint176-first-dirty-after-prefix",
+    "descriptor": "uint176",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int176-canonical-boundaries",
+    "descriptor": "int176",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int176-canonical-boundaries",
+    "descriptor": "int176",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int176-first-dirty-after-prefix",
+    "descriptor": "int176",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int176-first-dirty-after-prefix",
+    "descriptor": "int176",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int176-zero-extended-negative",
+    "descriptor": "int176",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int176-zero-extended-negative",
+    "descriptor": "int176",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint184-canonical-boundaries",
+    "descriptor": "uint184",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint184-canonical-boundaries",
+    "descriptor": "uint184",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint184-first-dirty-after-prefix",
+    "descriptor": "uint184",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint184-first-dirty-after-prefix",
+    "descriptor": "uint184",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int184-canonical-boundaries",
+    "descriptor": "int184",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int184-canonical-boundaries",
+    "descriptor": "int184",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int184-first-dirty-after-prefix",
+    "descriptor": "int184",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int184-first-dirty-after-prefix",
+    "descriptor": "int184",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int184-zero-extended-negative",
+    "descriptor": "int184",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int184-zero-extended-negative",
+    "descriptor": "int184",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint192-canonical-boundaries",
+    "descriptor": "uint192",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint192-canonical-boundaries",
+    "descriptor": "uint192",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint192-first-dirty-after-prefix",
+    "descriptor": "uint192",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint192-first-dirty-after-prefix",
+    "descriptor": "uint192",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int192-canonical-boundaries",
+    "descriptor": "int192",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int192-canonical-boundaries",
+    "descriptor": "int192",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int192-first-dirty-after-prefix",
+    "descriptor": "int192",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int192-first-dirty-after-prefix",
+    "descriptor": "int192",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int192-zero-extended-negative",
+    "descriptor": "int192",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int192-zero-extended-negative",
+    "descriptor": "int192",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint200-canonical-boundaries",
+    "descriptor": "uint200",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint200-canonical-boundaries",
+    "descriptor": "uint200",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint200-first-dirty-after-prefix",
+    "descriptor": "uint200",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint200-first-dirty-after-prefix",
+    "descriptor": "uint200",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int200-canonical-boundaries",
+    "descriptor": "int200",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int200-canonical-boundaries",
+    "descriptor": "int200",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int200-first-dirty-after-prefix",
+    "descriptor": "int200",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int200-first-dirty-after-prefix",
+    "descriptor": "int200",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int200-zero-extended-negative",
+    "descriptor": "int200",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int200-zero-extended-negative",
+    "descriptor": "int200",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint208-canonical-boundaries",
+    "descriptor": "uint208",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint208-canonical-boundaries",
+    "descriptor": "uint208",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint208-first-dirty-after-prefix",
+    "descriptor": "uint208",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint208-first-dirty-after-prefix",
+    "descriptor": "uint208",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int208-canonical-boundaries",
+    "descriptor": "int208",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int208-canonical-boundaries",
+    "descriptor": "int208",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int208-first-dirty-after-prefix",
+    "descriptor": "int208",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int208-first-dirty-after-prefix",
+    "descriptor": "int208",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int208-zero-extended-negative",
+    "descriptor": "int208",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int208-zero-extended-negative",
+    "descriptor": "int208",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint216-canonical-boundaries",
+    "descriptor": "uint216",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint216-canonical-boundaries",
+    "descriptor": "uint216",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint216-first-dirty-after-prefix",
+    "descriptor": "uint216",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint216-first-dirty-after-prefix",
+    "descriptor": "uint216",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int216-canonical-boundaries",
+    "descriptor": "int216",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int216-canonical-boundaries",
+    "descriptor": "int216",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int216-first-dirty-after-prefix",
+    "descriptor": "int216",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int216-first-dirty-after-prefix",
+    "descriptor": "int216",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int216-zero-extended-negative",
+    "descriptor": "int216",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int216-zero-extended-negative",
+    "descriptor": "int216",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint224-canonical-boundaries",
+    "descriptor": "uint224",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint224-canonical-boundaries",
+    "descriptor": "uint224",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint224-first-dirty-after-prefix",
+    "descriptor": "uint224",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint224-first-dirty-after-prefix",
+    "descriptor": "uint224",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int224-canonical-boundaries",
+    "descriptor": "int224",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int224-canonical-boundaries",
+    "descriptor": "int224",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int224-first-dirty-after-prefix",
+    "descriptor": "int224",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int224-first-dirty-after-prefix",
+    "descriptor": "int224",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int224-zero-extended-negative",
+    "descriptor": "int224",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int224-zero-extended-negative",
+    "descriptor": "int224",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint232-canonical-boundaries",
+    "descriptor": "uint232",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint232-canonical-boundaries",
+    "descriptor": "uint232",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint232-first-dirty-after-prefix",
+    "descriptor": "uint232",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint232-first-dirty-after-prefix",
+    "descriptor": "uint232",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int232-canonical-boundaries",
+    "descriptor": "int232",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int232-canonical-boundaries",
+    "descriptor": "int232",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int232-first-dirty-after-prefix",
+    "descriptor": "int232",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int232-first-dirty-after-prefix",
+    "descriptor": "int232",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int232-zero-extended-negative",
+    "descriptor": "int232",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int232-zero-extended-negative",
+    "descriptor": "int232",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint240-canonical-boundaries",
+    "descriptor": "uint240",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint240-canonical-boundaries",
+    "descriptor": "uint240",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint240-first-dirty-after-prefix",
+    "descriptor": "uint240",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint240-first-dirty-after-prefix",
+    "descriptor": "uint240",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int240-canonical-boundaries",
+    "descriptor": "int240",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int240-canonical-boundaries",
+    "descriptor": "int240",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int240-first-dirty-after-prefix",
+    "descriptor": "int240",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int240-first-dirty-after-prefix",
+    "descriptor": "int240",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int240-zero-extended-negative",
+    "descriptor": "int240",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int240-zero-extended-negative",
+    "descriptor": "int240",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-uint248-canonical-boundaries",
+    "descriptor": "uint248",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint248-canonical-boundaries",
+    "descriptor": "uint248",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint248-first-dirty-after-prefix",
+    "descriptor": "uint248",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-uint248-first-dirty-after-prefix",
+    "descriptor": "uint248",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int248-canonical-boundaries",
+    "descriptor": "int248",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int248-canonical-boundaries",
+    "descriptor": "int248",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int248-first-dirty-after-prefix",
+    "descriptor": "int248",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-int248-first-dirty-after-prefix",
+    "descriptor": "int248",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-int248-zero-extended-negative",
+    "descriptor": "int248",
+    "operation": "packArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "unpackArray-int248-zero-extended-negative",
+    "descriptor": "int248",
+    "operation": "unpackArray",
+    "label": "zero-extended-negative"
+  },
+  {
+    "name": "packArray-bytes1-canonical-boundaries",
+    "descriptor": "bytes1",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes1-canonical-boundaries",
+    "descriptor": "bytes1",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes1-first-dirty-after-prefix",
+    "descriptor": "bytes1",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes1-first-dirty-after-prefix",
+    "descriptor": "bytes1",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes2-canonical-boundaries",
+    "descriptor": "bytes2",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes2-canonical-boundaries",
+    "descriptor": "bytes2",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes2-first-dirty-after-prefix",
+    "descriptor": "bytes2",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes2-first-dirty-after-prefix",
+    "descriptor": "bytes2",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes3-canonical-boundaries",
+    "descriptor": "bytes3",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes3-canonical-boundaries",
+    "descriptor": "bytes3",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes3-first-dirty-after-prefix",
+    "descriptor": "bytes3",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes3-first-dirty-after-prefix",
+    "descriptor": "bytes3",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes4-canonical-boundaries",
+    "descriptor": "bytes4",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes4-canonical-boundaries",
+    "descriptor": "bytes4",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes4-first-dirty-after-prefix",
+    "descriptor": "bytes4",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes4-first-dirty-after-prefix",
+    "descriptor": "bytes4",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes5-canonical-boundaries",
+    "descriptor": "bytes5",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes5-canonical-boundaries",
+    "descriptor": "bytes5",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes5-first-dirty-after-prefix",
+    "descriptor": "bytes5",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes5-first-dirty-after-prefix",
+    "descriptor": "bytes5",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes6-canonical-boundaries",
+    "descriptor": "bytes6",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes6-canonical-boundaries",
+    "descriptor": "bytes6",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes6-first-dirty-after-prefix",
+    "descriptor": "bytes6",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes6-first-dirty-after-prefix",
+    "descriptor": "bytes6",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes7-canonical-boundaries",
+    "descriptor": "bytes7",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes7-canonical-boundaries",
+    "descriptor": "bytes7",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes7-first-dirty-after-prefix",
+    "descriptor": "bytes7",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes7-first-dirty-after-prefix",
+    "descriptor": "bytes7",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes8-canonical-boundaries",
+    "descriptor": "bytes8",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes8-canonical-boundaries",
+    "descriptor": "bytes8",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes8-first-dirty-after-prefix",
+    "descriptor": "bytes8",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes8-first-dirty-after-prefix",
+    "descriptor": "bytes8",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes9-canonical-boundaries",
+    "descriptor": "bytes9",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes9-canonical-boundaries",
+    "descriptor": "bytes9",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes9-first-dirty-after-prefix",
+    "descriptor": "bytes9",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes9-first-dirty-after-prefix",
+    "descriptor": "bytes9",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes10-canonical-boundaries",
+    "descriptor": "bytes10",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes10-canonical-boundaries",
+    "descriptor": "bytes10",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes10-first-dirty-after-prefix",
+    "descriptor": "bytes10",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes10-first-dirty-after-prefix",
+    "descriptor": "bytes10",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes11-canonical-boundaries",
+    "descriptor": "bytes11",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes11-canonical-boundaries",
+    "descriptor": "bytes11",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes11-first-dirty-after-prefix",
+    "descriptor": "bytes11",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes11-first-dirty-after-prefix",
+    "descriptor": "bytes11",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes12-canonical-boundaries",
+    "descriptor": "bytes12",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes12-canonical-boundaries",
+    "descriptor": "bytes12",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes12-first-dirty-after-prefix",
+    "descriptor": "bytes12",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes12-first-dirty-after-prefix",
+    "descriptor": "bytes12",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes13-canonical-boundaries",
+    "descriptor": "bytes13",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes13-canonical-boundaries",
+    "descriptor": "bytes13",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes13-first-dirty-after-prefix",
+    "descriptor": "bytes13",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes13-first-dirty-after-prefix",
+    "descriptor": "bytes13",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes14-canonical-boundaries",
+    "descriptor": "bytes14",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes14-canonical-boundaries",
+    "descriptor": "bytes14",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes14-first-dirty-after-prefix",
+    "descriptor": "bytes14",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes14-first-dirty-after-prefix",
+    "descriptor": "bytes14",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes15-canonical-boundaries",
+    "descriptor": "bytes15",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes15-canonical-boundaries",
+    "descriptor": "bytes15",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes15-first-dirty-after-prefix",
+    "descriptor": "bytes15",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes15-first-dirty-after-prefix",
+    "descriptor": "bytes15",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes16-canonical-boundaries",
+    "descriptor": "bytes16",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes16-canonical-boundaries",
+    "descriptor": "bytes16",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes16-first-dirty-after-prefix",
+    "descriptor": "bytes16",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes16-first-dirty-after-prefix",
+    "descriptor": "bytes16",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes17-canonical-boundaries",
+    "descriptor": "bytes17",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes17-canonical-boundaries",
+    "descriptor": "bytes17",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes17-first-dirty-after-prefix",
+    "descriptor": "bytes17",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes17-first-dirty-after-prefix",
+    "descriptor": "bytes17",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes18-canonical-boundaries",
+    "descriptor": "bytes18",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes18-canonical-boundaries",
+    "descriptor": "bytes18",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes18-first-dirty-after-prefix",
+    "descriptor": "bytes18",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes18-first-dirty-after-prefix",
+    "descriptor": "bytes18",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes19-canonical-boundaries",
+    "descriptor": "bytes19",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes19-canonical-boundaries",
+    "descriptor": "bytes19",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes19-first-dirty-after-prefix",
+    "descriptor": "bytes19",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes19-first-dirty-after-prefix",
+    "descriptor": "bytes19",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes20-canonical-boundaries",
+    "descriptor": "bytes20",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes20-canonical-boundaries",
+    "descriptor": "bytes20",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes20-first-dirty-after-prefix",
+    "descriptor": "bytes20",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes20-first-dirty-after-prefix",
+    "descriptor": "bytes20",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes21-canonical-boundaries",
+    "descriptor": "bytes21",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes21-canonical-boundaries",
+    "descriptor": "bytes21",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes21-first-dirty-after-prefix",
+    "descriptor": "bytes21",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes21-first-dirty-after-prefix",
+    "descriptor": "bytes21",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes22-canonical-boundaries",
+    "descriptor": "bytes22",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes22-canonical-boundaries",
+    "descriptor": "bytes22",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes22-first-dirty-after-prefix",
+    "descriptor": "bytes22",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes22-first-dirty-after-prefix",
+    "descriptor": "bytes22",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes23-canonical-boundaries",
+    "descriptor": "bytes23",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes23-canonical-boundaries",
+    "descriptor": "bytes23",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes23-first-dirty-after-prefix",
+    "descriptor": "bytes23",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes23-first-dirty-after-prefix",
+    "descriptor": "bytes23",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes24-canonical-boundaries",
+    "descriptor": "bytes24",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes24-canonical-boundaries",
+    "descriptor": "bytes24",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes24-first-dirty-after-prefix",
+    "descriptor": "bytes24",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes24-first-dirty-after-prefix",
+    "descriptor": "bytes24",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes25-canonical-boundaries",
+    "descriptor": "bytes25",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes25-canonical-boundaries",
+    "descriptor": "bytes25",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes25-first-dirty-after-prefix",
+    "descriptor": "bytes25",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes25-first-dirty-after-prefix",
+    "descriptor": "bytes25",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes26-canonical-boundaries",
+    "descriptor": "bytes26",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes26-canonical-boundaries",
+    "descriptor": "bytes26",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes26-first-dirty-after-prefix",
+    "descriptor": "bytes26",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes26-first-dirty-after-prefix",
+    "descriptor": "bytes26",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes27-canonical-boundaries",
+    "descriptor": "bytes27",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes27-canonical-boundaries",
+    "descriptor": "bytes27",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes27-first-dirty-after-prefix",
+    "descriptor": "bytes27",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes27-first-dirty-after-prefix",
+    "descriptor": "bytes27",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes28-canonical-boundaries",
+    "descriptor": "bytes28",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes28-canonical-boundaries",
+    "descriptor": "bytes28",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes28-first-dirty-after-prefix",
+    "descriptor": "bytes28",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes28-first-dirty-after-prefix",
+    "descriptor": "bytes28",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes29-canonical-boundaries",
+    "descriptor": "bytes29",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes29-canonical-boundaries",
+    "descriptor": "bytes29",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes29-first-dirty-after-prefix",
+    "descriptor": "bytes29",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes29-first-dirty-after-prefix",
+    "descriptor": "bytes29",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes30-canonical-boundaries",
+    "descriptor": "bytes30",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes30-canonical-boundaries",
+    "descriptor": "bytes30",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes30-first-dirty-after-prefix",
+    "descriptor": "bytes30",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes30-first-dirty-after-prefix",
+    "descriptor": "bytes30",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bytes31-canonical-boundaries",
+    "descriptor": "bytes31",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes31-canonical-boundaries",
+    "descriptor": "bytes31",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes31-first-dirty-after-prefix",
+    "descriptor": "bytes31",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bytes31-first-dirty-after-prefix",
+    "descriptor": "bytes31",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-address-canonical-boundaries",
+    "descriptor": "address",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-address-canonical-boundaries",
+    "descriptor": "address",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-address-first-dirty-after-prefix",
+    "descriptor": "address",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-address-first-dirty-after-prefix",
+    "descriptor": "address",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-bool-canonical-boundaries",
+    "descriptor": "bool",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bool-canonical-boundaries",
+    "descriptor": "bool",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bool-first-dirty-after-prefix",
+    "descriptor": "bool",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-bool-first-dirty-after-prefix",
+    "descriptor": "bool",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-function-canonical-boundaries",
+    "descriptor": "function",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-function-canonical-boundaries",
+    "descriptor": "function",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-function-first-dirty-after-prefix",
+    "descriptor": "function",
+    "operation": "packArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "unpackArray-function-first-dirty-after-prefix",
+    "descriptor": "function",
+    "operation": "unpackArray",
+    "label": "first-dirty-after-prefix"
+  },
+  {
+    "name": "packArray-uint256-canonical-boundaries",
+    "descriptor": "uint256",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint256-canonical-boundaries",
+    "descriptor": "uint256",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int256-canonical-boundaries",
+    "descriptor": "int256",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int256-canonical-boundaries",
+    "descriptor": "int256",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes32-canonical-boundaries",
+    "descriptor": "bytes32",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes32-canonical-boundaries",
+    "descriptor": "bytes32",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint-canonical-boundaries",
+    "descriptor": "uint",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint-canonical-boundaries",
+    "descriptor": "uint",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int-canonical-boundaries",
+    "descriptor": "int",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int-canonical-boundaries",
+    "descriptor": "int",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-bytes0-canonical-boundaries",
+    "descriptor": "bytes0",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-bytes0-canonical-boundaries",
+    "descriptor": "bytes0",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint7-canonical-boundaries",
+    "descriptor": "uint7",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint7-canonical-boundaries",
+    "descriptor": "uint7",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint08-canonical-boundaries",
+    "descriptor": "uint08",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint08-canonical-boundaries",
+    "descriptor": "uint08",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int7-canonical-boundaries",
+    "descriptor": "int7",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int7-canonical-boundaries",
+    "descriptor": "int7",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-int08-canonical-boundaries",
+    "descriptor": "int08",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-int08-canonical-boundaries",
+    "descriptor": "int08",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-foo-canonical-boundaries",
+    "descriptor": "foo",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-foo-canonical-boundaries",
+    "descriptor": "foo",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "packArray-uint248x-canonical-boundaries",
+    "descriptor": "uint248x",
+    "operation": "packArray",
+    "label": "canonical-boundaries"
+  },
+  {
+    "name": "unpackArray-uint248x-canonical-boundaries",
+    "descriptor": "uint248x",
+    "operation": "unpackArray",
+    "label": "canonical-boundaries"
+  }
+]

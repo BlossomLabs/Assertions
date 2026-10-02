@@ -1,0 +1,5 @@
+# Exact nonempty fold scalar result return
+
+The generator gates all three current compiler selector/entry bindings and decodes the complete reached12157 cleanup, shared helper return, public wrapper cleanup and actual32-byte scalar RETURN. The output word is unrestricted and the actual current free pointer is loaded from arbitrary fitting physical memory. It covers both exhausted and canonical early-stopped loop results; it assumes no empty-domain count or fixed free pointer. The full raw decoded caller fields are retained while the physical result is written and returned.
+
+Fitting raw heads/tails, admitted finite memory, fitting stack and reached resources are explicit. Selected imported bodies are assumed during development; full included retainer, raw admission/loop/failure guards, EVM fixtures, semantic faults and independent checker remain mandatory before public coverage. No gas, deployment, performance or compiler correctness claim. Generated files are emitted only by this generator, and every owner file finishes before native capture.

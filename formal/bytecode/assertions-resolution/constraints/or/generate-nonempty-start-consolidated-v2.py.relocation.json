@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-start-consolidated-v1.py",
+  "sourceSha256": "7faddaf30203427ebf76d2785aa06a16927aaeca6cbfcd13b1a75babd6f3a793",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-start-consolidated-v2.py",
+  "correction": "Nonzerocount endpoint normalization and final boundary opcode guard"
+}

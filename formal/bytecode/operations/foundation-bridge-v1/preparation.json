@@ -1,0 +1,40 @@
+{
+  "status": "resolved-mathematical-development-native-unlaunched",
+  "publicCredit": false,
+  "source": "/home/sem/assertions/formal/bytecode/operations/foundation-bridge-v1/Memory.dfy",
+  "sourceInputs": {
+    "/home/sem/assertions/formal/bytecode/operations/foundation-bridge-v1/Memory.dfy": "626762176b60ddceccb562a91f9878009273f8abaf3d3e54f69015259d7b7c38",
+    "/home/sem/assertions/formal/foundations/v3/MemoryFrames.dfy": "bd753f1a6d15bc9424ad0dfba4262942122207041b7f4ec9cdba39c1593d1def",
+    "/home/sem/assertions/formal/bytecode/copy/Memory.dfy": "fdc0d30ae3d1ade6ec995af4c31b9a33bd1de66e22633fea29bd0af75388c215",
+    "/home/sem/assertions/formal/bytecode/scans/Machine.dfy": "c8d37efffab0207606458218612a1ac97874d102cebf0e6a2f09e6de09689b07",
+    "/home/sem/assertions/formal/bytecode/getters/Machine.dfy": "580ed7e6adb650de585aa990a30839380a5f977deb9d1bb8451d780c5aae8c20",
+    "/home/sem/assertions/formal/bytecode/scans/Representation.dfy": "234e786e0e3a75b79f5fb111544979cb032901541fe203b64dc7d70f520d542b",
+    "/home/sem/assertions/formal/foundations/v1/SequenceCopy.dfy": "3fba9b0262d1022174251679126282f8e030f9966124c4b89a5e7a61a467b2ec",
+    "/home/sem/assertions/formal/foundations/v1/WordArithmetic.dfy": "76e7401f17e06d691e1fb37db0a5d9f69ae14cdd25a0395d20d57070b61b4001",
+    "/home/sem/assertions/proof-workspace/work/operations-code-closure-v3/sources/proof-workspace/work/code-bytecode-preparation/native/Machine.dfy": "e7d5cfbbbd8f005d17ab3f1a404c8bd9bd2350fab79cc8d79a813e86843197d8",
+    "/home/sem/assertions/proof-workspace/work/operations-code-closure-v3/sources/formal/bytecode/operations/account-environment-repair-v2/Conversion.generated.dfy": "d8b015149dede11539498559220fba4e5abae7d09d481b3d722e40039d165ec5"
+  },
+  "registryCheckCommand": "python3 formal/foundations/check-registry.py",
+  "registryVerifiedPackages": {
+    "memory-copy-v3": 90,
+    "word-totals-v1": 39
+  },
+  "resolveCommand": "source proof-env.sh; dafny resolve formal/bytecode/operations/foundation-bridge-v1/Memory.dfy",
+  "resolveExitCode": 0,
+  "interfaces": [
+    "ModulusBridge",
+    "EncodingBridge",
+    "DecodingBridge",
+    "ExpansionBridge",
+    "StoreBridge",
+    "CopyBridge",
+    "StoreSpanFrame",
+    "CopySpanFrame",
+    "WordRoundTrip",
+    "AdditionOverflow"
+  ],
+  "alignmentPremise": "|mem| % 32 == 0 for expansion/store/copy bridges",
+  "liveSliceGraphUnchanged": true,
+  "nativeLaunch": false,
+  "next": "Complete minimal native owner/dependency/declaration/audit check after current native queue drains; then coordinator review before consumer migration"
+}

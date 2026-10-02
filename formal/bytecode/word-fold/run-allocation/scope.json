@@ -1,0 +1,15 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "all-fold-run-allocations",
+      "owner": "formal/bytecode/word-fold/run-allocation"
+    }
+  ],
+  "assumptions": [
+    "Pinned exact current runtime and assigned fold selector bindings; actual post-target continuation12052 with complete original decoded/shared Fold stack and pre-allocation memory Store([],64,128). Nonempty count remains full uint256 for Range, exact raw SourceLength for Bytes and aligned SourceLength/32 for Words.",
+    "Six actual physical structure slots128,160,192,224,256,288 store domain/count/target/accOffset/initial/exit in source order. Free pointer64 becomes320. Recursive staged-memory frames preserve earlier slots; full initial accumulator and full range count are not narrowed.",
+    "Every actual reached enum check, address mask, memory write and loop invocation retained. Source/array spans derive only from accepted compiler raw representation. Actual caller-local pointer128 remains on lower shared stack before return12157 and the loop arguments, with every continuation physically retained.",
+    "Selected native imports are assumed. Complete raw/window/empty/target and allocation connections, template copy/domain/stamping/callback/guards/early exits/errors/physical scalar return, fresh included graph, EVM receipts, matching semantic mutations and independent retained checking remain mandatory before public coverage. Sufficient reached resources and truthful observations stay explicit. No gas/deployment/performance or compiler-correctness claim."
+  ]
+}

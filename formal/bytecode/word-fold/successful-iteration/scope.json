@@ -1,0 +1,8 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Exact complete reached iteration from16484 through stamping,16536 callback invocation, truthful GAS/STATICCALL/exact32 receipt and16553 accumulator update with exhaustive canonical early exit. Full lower caller frame, original data and memory retained.",
+    "All finite aligned representations, explicit original packing fit and reached post-callback finite memory geometry; no independent range-count or callback-result restriction. Native selected imports assumed; complete finite loop/raw admission/errors/resource guards/scalar output and full retained graph required. No gas/deployment/performance claims."
+  ]
+}

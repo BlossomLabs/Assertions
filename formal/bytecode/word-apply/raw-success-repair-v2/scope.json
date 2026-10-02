@@ -1,0 +1,9 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Original exact map/filter runtime, successful raw decoded input and complete callback observation tape; full finite element count, original bytes, stable filtering/map positions and exact final serializer output retained.",
+    "Proof-body composition separates exit and serializer into exact frame/trace contracts. Original Run requires/ensures and trace-length formula preserved verbatim in repaired root; no new representation/resource/observation assumption added.",
+    "Selected native imports assumed. Complete included native graph, actual compiler/runtime identity, fresh physical receipt/observation fixtures, matching native/physical semantic mutations and independent retained evidence checking mandatory. No gas/deployment/performance/compiler-correctness claim."
+  ]
+}

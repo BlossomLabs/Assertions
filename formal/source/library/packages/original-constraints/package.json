@@ -1,0 +1,31 @@
+{
+  "id": "original-constraints",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/constraints",
+  "entry": "formal/constraints/Engine.generated.dfy",
+  "verificationEntries": [
+    "formal/constraints/Engine.generated.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/constraints/Model.dfy"
+    ],
+    "execution": [
+      "formal/constraints/Engine.generated.dfy"
+    ],
+    "correspondence": [],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/constraints/Engine.generated.dfy": "5b51517fa7f94e0a18ba40cba61c47d9fe41ef3a1e9a1f0fad31d67621fe20a0",
+    "formal/constraints/Model.dfy": "67905d6c00c411f4b04ed6343d06d55ce43ca2088a602b1651b04e4f0a40ddb8"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

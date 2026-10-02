@@ -1,0 +1,29 @@
+{
+  "source": "contracts/Operations.sol",
+  "sourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce",
+  "buildInfoId": "solc-0_8_36-ac0eef8f2a0c22be618862258c50c9c272597da3",
+  "selectors": [
+    "a1bc2139"
+  ],
+  "errorSignatures": {
+    "InvalidByteIndex": "int256,uint256",
+    "InvalidUtf8": "uint256"
+  },
+  "functions": [
+    {
+      "name": "stringAt",
+      "bodySha256": "4cf816ebe9c218cf38e94f546e94364e3cf9b50e1bdb3676303cc4f16bc62554",
+      "exactNormalizedBody": "functionstringAt(bytescalldatadata,int256index)externalpurereturns(bytesmemory){_checkUtf8(data);uint256position=_strictIndex(index,data.length);if(uint8(data[position])>=0x80)revertInvalidUtf8(position);returndata[position:position+1];}"
+    },
+    {
+      "name": "_strictIndex",
+      "bodySha256": "3699537d994a3cf72aa48b777b5449552ad1f32d9ad655954245ccb66bdbf8af",
+      "exactNormalizedBody": "function_strictIndex(int256index,uint256length)privatepurereturns(uint256){if(index>=int256(length)||index<-int256(length))revertInvalidByteIndex(index,length);returnindex<0?uint256(int256(length)+index):uint256(index);}"
+    },
+    {
+      "name": "_checkUtf8",
+      "bodySha256": "059d5c322a43478ce0db20f23028d6dddfa0fab878c46723c6c54605042633b2",
+      "exactNormalizedBody": "function_checkUtf8(bytescalldatadata)privatepure{for(uint256i;i<data.length;){uint8first=uint8(data[i]);if(first<0x80){i++;continue;}uint256count;if(first>=0xc2&&first<=0xdf)count=1;elseif(first>=0xe0&&first<=0xef)count=2;elseif(first>=0xf0&&first<=0xf4)count=3;elserevertInvalidUtf8(i);if(data.length-i<=count)revertInvalidUtf8(i);uint8second=uint8(data[i+1]);if((first==0xe0&&second<0xa0)||(first==0xed&&second>=0xa0)||(first==0xf0&&second<0x90)||(first==0xf4&&second>=0x90))revertInvalidUtf8(i+1);for(uint256j=1;j<=count;j++){if(uint8(data[i+j])&0xc0!=0x80)revertInvalidUtf8(i+j);}i+=count+1;}}"
+    }
+  ]
+}

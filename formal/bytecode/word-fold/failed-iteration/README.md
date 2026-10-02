@@ -1,0 +1,7 @@
+# Complete reached failing fold iteration
+
+The connection begins at the actual fold loop head16484, reads the reached range/byte/word element, performs accumulator-first and supplied-order template stamping, executes the real callback invocation and full empty/nonempty receipt, and reaches exact WrongCallbackResult, SubcallOutOfGas or ordinary CallbackFailed REVERT. Error operation/index/target/payload/full returned reason remain exact. The first failure leaves no later iteration trace.
+
+The represented initial configuration and fitting actual callback memory are explicit. Ordinary serialization requires its actual finite copy/packet bound only on that reached branch. Wrong-size successful callbacks include every represented length except32; failed callbacks include any represented reason, including zero. Truthful reached two GAS/STATICCALL observations and the reached failed-call after-GAS observation are explicit; no gas costs are inferred. All three compiler-bound selectors remain admitted.
+
+Selected imported bodies are assumed until full included native retention. Recursive first-failure/full raw composition, complete current compiler identity, EVM fixtures, matching semantic source/bytecode faults and independent retained checker remain required before public coverage. No deployment/performance/compiler correctness claim. All owner files finish before source capture; generated dependencies are reused unchanged.

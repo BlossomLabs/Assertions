@@ -1,0 +1,8 @@
+{
+  "status": "passed-independent-native-closure-review",
+  "publicCredit": false,
+  "scope": "Constructive arbitrary canonical recursive name/tuple/fixed/dynamic suffix parser traces from independent encoded grammar, with explicit stack and finite calldata premises; malformed and alternative accepted spellings plus PC0 nav/get composition remain open",
+  "modules": 86,
+  "nativeBatches": 6060,
+  "manifestSha256": "59c8acf93b8ed4f0ea7a2e039485ef8638867eccc2c4f1d62b91edc79dbb10d0"
+}

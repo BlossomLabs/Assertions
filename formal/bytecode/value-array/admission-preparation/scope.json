@@ -1,0 +1,24 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/decoder-pack/Decoder.generated.dfy",
+    "formal/bytecode/value-array/raw-unpack/RawFirstHeaderShort.generated.dfy",
+    "formal/bytecode/value-array/raw-unpack/RawFirstLengthLarge.generated.dfy",
+    "formal/bytecode/value-array/raw-unpack/RawFirstOffsetLarge.generated.dfy",
+    "formal/bytecode/value-array/raw-unpack/RawFirstTailShort.generated.dfy",
+    "formal/bytecode/value-array/raw-unpack/RawHeadShort.generated.dfy",
+    "formal/bytecode/value-array/raw-unpack/RawSecondHeaderShort.generated.dfy",
+    "formal/bytecode/value-array/raw-unpack/RawSecondLengthLarge.generated.dfy",
+    "formal/bytecode/value-array/raw-unpack/RawSecondOffsetLarge.generated.dfy",
+    "formal/bytecode/value-array/raw-unpack/RawSecondTailShort.generated.dfy",
+    "formal/bytecode/value-array/raw-unpack/Admission.dfy",
+    "formal/bytecode/value-array/raw-unpack/Boundary.dfy"
+  ],
+  "selectedModuleCount": 12,
+  "scope": "Twelve complete new module inventories: accepted packArray decoder, nine malformed unpackArray raw decoder classes, exhaustive unpack admission and actual PCzero boundary. Array element/descriptor/library bodies and all retained public-entry gates remain open.",
+  "assumptions": [
+    "Pinned complete runtime and reviewed EVM machine semantics remain trusted boundaries. Compiler correctness is not inferred.",
+    "Fitting calldata representation permits loose/shared/overlapping spans. Pack decoder checks descriptor span and array-head count/stride; element pointer validation remains a later obligation.",
+    "Exact physical initialization and adequate reached resource premises remain explicit. No native/public credit from resolution, finite fixtures or audits."
+  ],
+  "formatExclusions": {}
+}

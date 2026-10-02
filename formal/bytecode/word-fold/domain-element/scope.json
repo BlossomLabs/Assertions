@@ -1,0 +1,15 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "all-fold-domain-elements",
+      "owner": "formal/bytecode/word-fold/domain-element"
+    }
+  ],
+  "assumptions": [
+    "Exact pinned Collections runtime and three fold selectors. Actual helper entry19299 with lower arbitrary stack and [returnPc,domain,index,sourceOffset,sourceLength]; exact compiler fold continuation16512. All lower stack/memory preserved and no observations consumed.",
+    "Range domain0 returns the unrestricted unsigned256-bit index. Bytes domain1 requires a fitting raw source span and index<sourceLength; returns actual SHR248(CALLDATALOAD(sourceOffset+index)). Words domain2 requires aligned fitting source and index<sourceLength/32; returns exact CALLDATALOAD(sourceOffset+32index) through actual checked arithmetic/slicing/conversion helpers.",
+    "Every reached enum/bounds branch, helper call and cleanup retained. Physical source-offset/index arithmetic derived from fitting source bounds; no arbitrary Range index/count bound. The byte opcode bridge only establishes the exact SHR instruction; the raw first-byte representation theorem remains a separate required step.",
+    "Selected native imported contracts assumed. Complete fresh included graph, raw loop/domain extraction/representation connection, stamping/callback/guards/errors/early-exit/scalar return, physical receipts, matching semantic mutations and independent retained checker mandatory before public coverage. Representation, sufficient reached resources and truthful observations explicit; no gas/deployment/performance or compiler-correctness claim."
+  ]
+}

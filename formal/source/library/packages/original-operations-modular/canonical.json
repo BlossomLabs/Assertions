@@ -1,0 +1,38 @@
+{
+  "id": "original-operations-modular",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/library/src/operations/modular/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/operations/modular/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/operations/modular/Connection.dfy",
+    "formal/source/library/src/operations/modular/Control.generated.dfy",
+    "formal/source/library/src/operations/modular/Math.generated.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [],
+    "execution": [
+      "formal/source/library/src/operations/modular/Control.generated.dfy",
+      "formal/source/library/src/operations/modular/Math.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/library/src/operations/modular/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/library/src/operations/modular/Connection.dfy": "5531a92f52768f234a115d7344ccda8de8eecf723b14f8371419992916753016",
+    "formal/source/library/src/operations/modular/Control.generated.dfy": "41bb652f155af021be0805bf0f8d2b0c8c645cdf866f0c69062f16be966d8647",
+    "formal/source/library/src/operations/modular/Math.generated.dfy": "cfc82f034d73947fe424c9aedcc99a15b8aeb2a3ae866fe58fe0d46f86c10b8d"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

@@ -1,0 +1,440 @@
+{
+  "entry": 6375,
+  "runtimeSha256": "1085082ba1e19b0967431c8b7b0a79ce4f60b8df851b91b6e6194324b3feade7",
+  "source": "contracts/Expressions.sol:_checkPublicCall",
+  "environmentOpcodes": [
+    48
+  ],
+  "instructions": [
+    {
+      "pc": 6375,
+      "opcode": 91,
+      "immediate": 0,
+      "next": 6376
+    },
+    {
+      "pc": 6376,
+      "opcode": 96,
+      "immediate": 1,
+      "next": 6378
+    },
+    {
+      "pc": 6378,
+      "opcode": 96,
+      "immediate": 1,
+      "next": 6380
+    },
+    {
+      "pc": 6380,
+      "opcode": 96,
+      "immediate": 160,
+      "next": 6382
+    },
+    {
+      "pc": 6382,
+      "opcode": 27,
+      "immediate": 0,
+      "next": 6383
+    },
+    {
+      "pc": 6383,
+      "opcode": 3,
+      "immediate": 0,
+      "next": 6384
+    },
+    {
+      "pc": 6384,
+      "opcode": 130,
+      "immediate": 0,
+      "next": 6385
+    },
+    {
+      "pc": 6385,
+      "opcode": 22,
+      "immediate": 0,
+      "next": 6386
+    },
+    {
+      "pc": 6386,
+      "opcode": 48,
+      "immediate": 0,
+      "next": 6387
+    },
+    {
+      "pc": 6387,
+      "opcode": 20,
+      "immediate": 0,
+      "next": 6388
+    },
+    {
+      "pc": 6388,
+      "opcode": 128,
+      "immediate": 0,
+      "next": 6389
+    },
+    {
+      "pc": 6389,
+      "opcode": 21,
+      "immediate": 0,
+      "next": 6390
+    },
+    {
+      "pc": 6390,
+      "opcode": 97,
+      "immediate": 6401,
+      "next": 6393
+    },
+    {
+      "pc": 6393,
+      "opcode": 87,
+      "immediate": 0,
+      "next": 6394
+    },
+    {
+      "pc": 6394,
+      "opcode": 80,
+      "immediate": 0,
+      "next": 6395
+    },
+    {
+      "pc": 6395,
+      "opcode": 96,
+      "immediate": 4,
+      "next": 6397
+    },
+    {
+      "pc": 6397,
+      "opcode": 129,
+      "immediate": 0,
+      "next": 6398
+    },
+    {
+      "pc": 6398,
+      "opcode": 81,
+      "immediate": 0,
+      "next": 6399
+    },
+    {
+      "pc": 6399,
+      "opcode": 16,
+      "immediate": 0,
+      "next": 6400
+    },
+    {
+      "pc": 6400,
+      "opcode": 21,
+      "immediate": 0,
+      "next": 6401
+    },
+    {
+      "pc": 6401,
+      "opcode": 91,
+      "immediate": 0,
+      "next": 6402
+    },
+    {
+      "pc": 6402,
+      "opcode": 128,
+      "immediate": 0,
+      "next": 6403
+    },
+    {
+      "pc": 6403,
+      "opcode": 21,
+      "immediate": 0,
+      "next": 6404
+    },
+    {
+      "pc": 6404,
+      "opcode": 97,
+      "immediate": 6437,
+      "next": 6407
+    },
+    {
+      "pc": 6407,
+      "opcode": 87,
+      "immediate": 0,
+      "next": 6408
+    },
+    {
+      "pc": 6408,
+      "opcode": 80,
+      "immediate": 0,
+      "next": 6409
+    },
+    {
+      "pc": 6409,
+      "opcode": 99,
+      "immediate": 4260710243,
+      "next": 6414
+    },
+    {
+      "pc": 6414,
+      "opcode": 96,
+      "immediate": 224,
+      "next": 6416
+    },
+    {
+      "pc": 6416,
+      "opcode": 27,
+      "immediate": 0,
+      "next": 6417
+    },
+    {
+      "pc": 6417,
+      "opcode": 97,
+      "immediate": 6425,
+      "next": 6420
+    },
+    {
+      "pc": 6420,
+      "opcode": 130,
+      "immediate": 0,
+      "next": 6421
+    },
+    {
+      "pc": 6421,
+      "opcode": 97,
+      "immediate": 17542,
+      "next": 6424
+    },
+    {
+      "pc": 6424,
+      "opcode": 86,
+      "immediate": 0,
+      "next": 6425
+    },
+    {
+      "pc": 6425,
+      "opcode": 91,
+      "immediate": 0,
+      "next": 6426
+    },
+    {
+      "pc": 6426,
+      "opcode": 96,
+      "immediate": 1,
+      "next": 6428
+    },
+    {
+      "pc": 6428,
+      "opcode": 96,
+      "immediate": 1,
+      "next": 6430
+    },
+    {
+      "pc": 6430,
+      "opcode": 96,
+      "immediate": 224,
+      "next": 6432
+    },
+    {
+      "pc": 6432,
+      "opcode": 27,
+      "immediate": 0,
+      "next": 6433
+    },
+    {
+      "pc": 6433,
+      "opcode": 3,
+      "immediate": 0,
+      "next": 6434
+    },
+    {
+      "pc": 6434,
+      "opcode": 25,
+      "immediate": 0,
+      "next": 6435
+    },
+    {
+      "pc": 6435,
+      "opcode": 22,
+      "immediate": 0,
+      "next": 6436
+    },
+    {
+      "pc": 6436,
+      "opcode": 20,
+      "immediate": 0,
+      "next": 6437
+    },
+    {
+      "pc": 6437,
+      "opcode": 91,
+      "immediate": 0,
+      "next": 6438
+    },
+    {
+      "pc": 6438,
+      "opcode": 21,
+      "immediate": 0,
+      "next": 6439
+    },
+    {
+      "pc": 6439,
+      "opcode": 97,
+      "immediate": 6467,
+      "next": 6442
+    },
+    {
+      "pc": 6442,
+      "opcode": 87,
+      "immediate": 0,
+      "next": 6443
+    },
+    {
+      "pc": 6443,
+      "opcode": 96,
+      "immediate": 64,
+      "next": 6445
+    },
+    {
+      "pc": 6445,
+      "opcode": 81,
+      "immediate": 0,
+      "next": 6446
+    },
+    {
+      "pc": 6446,
+      "opcode": 99,
+      "immediate": 1480706717,
+      "next": 6451
+    },
+    {
+      "pc": 6451,
+      "opcode": 96,
+      "immediate": 225,
+      "next": 6453
+    },
+    {
+      "pc": 6453,
+      "opcode": 27,
+      "immediate": 0,
+      "next": 6454
+    },
+    {
+      "pc": 6454,
+      "opcode": 129,
+      "immediate": 0,
+      "next": 6455
+    },
+    {
+      "pc": 6455,
+      "opcode": 82,
+      "immediate": 0,
+      "next": 6456
+    },
+    {
+      "pc": 6456,
+      "opcode": 96,
+      "immediate": 4,
+      "next": 6458
+    },
+    {
+      "pc": 6458,
+      "opcode": 1,
+      "immediate": 0,
+      "next": 6459
+    },
+    {
+      "pc": 6459,
+      "opcode": 96,
+      "immediate": 64,
+      "next": 6461
+    },
+    {
+      "pc": 6461,
+      "opcode": 81,
+      "immediate": 0,
+      "next": 6462
+    },
+    {
+      "pc": 6462,
+      "opcode": 128,
+      "immediate": 0,
+      "next": 6463
+    },
+    {
+      "pc": 6463,
+      "opcode": 145,
+      "immediate": 0,
+      "next": 6464
+    },
+    {
+      "pc": 6464,
+      "opcode": 3,
+      "immediate": 0,
+      "next": 6465
+    },
+    {
+      "pc": 6465,
+      "opcode": 144,
+      "immediate": 0,
+      "next": 6466
+    },
+    {
+      "pc": 6466,
+      "opcode": 253,
+      "immediate": 0,
+      "next": 6467
+    },
+    {
+      "pc": 6467,
+      "opcode": 91,
+      "immediate": 0,
+      "next": 6468
+    },
+    {
+      "pc": 6468,
+      "opcode": 80,
+      "immediate": 0,
+      "next": 6469
+    },
+    {
+      "pc": 6469,
+      "opcode": 80,
+      "immediate": 0,
+      "next": 6470
+    },
+    {
+      "pc": 6470,
+      "opcode": 86,
+      "immediate": 0,
+      "next": 6471
+    }
+  ],
+  "classes": [
+    {
+      "name": "foreign-target",
+      "guard": "target != self",
+      "semanticResult": "return with unchanged prefix/memory"
+    },
+    {
+      "name": "short-self-data",
+      "guard": "target == self && length < 4",
+      "semanticResult": "return with unchanged prefix/memory"
+    },
+    {
+      "name": "other-self-selector",
+      "guard": "target == self && length >= 4 && first4 != 0xfdf54763",
+      "semanticResult": "return with unchanged prefix/memory"
+    },
+    {
+      "name": "guarded-self-selector",
+      "guard": "target == self && length >= 4 && first4 == 0xfdf54763",
+      "semanticResult": "GuardedCallForbidden() exact4bytes 0xb083953a"
+    }
+  ],
+  "semanticTrustedInputs": [
+    "160-bit actual self/caller accounts from environment profile",
+    "canonical160-bit target argument",
+    "actual bytes length word/resident prefix; pointer,free and stack/return bounds",
+    "symbolic first payload Word and selector comparison only first4bytes"
+  ],
+  "nextDependencies": [
+    "Coordinator immutable v4 EnvironmentStep ADDRESS/CALLER plus trace bridges",
+    "Independent bytes4 conversion at PC17542, requiring readable first Word when length>=4",
+    "Matching native+actualphysical unchanged-oracle faults",
+    "Whole native include closure,audit,format,generation/runtime identities and coordinator review"
+  ]
+}

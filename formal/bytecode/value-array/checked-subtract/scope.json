@@ -1,0 +1,12 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/checked-subtract/Subtract.generated.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "One complete generic exact nonunderflowing checked-subtraction routine owner atPC23784, arbitrary lower stack/memory and valid return JUMPDEST. Underflow/panic serialization, full descriptor parser/codec and retained public graph remain open; no public coverage.",
+  "assumptions": [
+    "Pinned exact Collections runtime and reviewed scan machine/toolchain.",
+    "Actual uint256 right<=left, fitting stack and actual valid caller return JUMPDEST; imported dependencies require complete final native closure."
+  ],
+  "formatExclusions": {}
+}

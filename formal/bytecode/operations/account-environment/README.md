@@ -1,0 +1,3 @@
+# Operations balance and code hash exact-bytecode preparation
+
+Prepared raw canonical-address scalar read paths bind the current compiler instructions, decoded PUSH20 mask, faithful BALANCE/EXTCODEHASH observations and exact word serialization. World maps describe actual observations at this invocation; missing keys are modeled as zero only under the explicit faithful observation premise. This does not prove consensus, hash collision properties, or account existence rules. Raw nonpayable/short-head/dirty-address rejections and their connection are prepared and resolved. Native and retained public evidence remain open. Gas, deployment and performance stay outside scope.

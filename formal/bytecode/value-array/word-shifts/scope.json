@@ -1,0 +1,14 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/word-shifts/Bytes.generated.dfy",
+    "formal/bytecode/value-array/word-shifts/Shifts.generated.dfy",
+    "formal/bytecode/value-array/word-shifts/Canonical.dfy"
+  ],
+  "selectedModuleCount": 3,
+  "scope": "Prepared three complete owners connecting arbitrary 256-bit values to exact byte shifts, all admitted finite narrow ABI widths and independent canonical-word meaning. Actual checkRule/checkWords/codec loops, full current native closure and retained fault evidence remain required. No public credit.",
+  "assumptions": [
+    "Reviewed current EVM interpreter and memory/resource representation, runtime/compiler/source/tool identities remain explicit.",
+    "No canonical-word property or expected shift is supplied as an input premise. The arbitrary 256-bit word and exact narrow rule bounds remain unchanged. Every helper body requires complete current native verification before retention."
+  ],
+  "formatExclusions": {}
+}

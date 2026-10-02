@@ -1,0 +1,5 @@
+# First physical raw successful word callback
+
+The handwritten connection starts atPC0 and composes accepted raw public decoding, alignment/windows/output allocation, one positive code-size observation, template allocation/copy, original-word loading, all ordered window writes, invocation, actual callback packing/STATICCALL, and the complete exact32 successful receipt. It reaches12484 with the exact callback word and physical allocated receipt memory. The observation tape binds actual caller, requested gas, the fully stamped payload and full returned bytes.
+
+Raw layouts may overlap or be misaligned as the compiler permits. Source/template/array representation and adequate resources remain explicit. This is the first successful callback only; result processing, repeated iterations, noncanonical predicates, callback failure/wrong-length/OOG receipts, full output and fresh retained public evidence remain open. Prepared declarations are not verification evidence; full native include graph, physical fixtures, semantic faults and independent checker remain mandatory.

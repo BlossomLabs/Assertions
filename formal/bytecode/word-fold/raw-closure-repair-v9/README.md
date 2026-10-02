@@ -1,0 +1,3 @@
+# Fold template slice repair V9
+
+Preserve the complete V8 proof run and snapshot. The V8 raw template Run had331 passed obligations and two well-formedness slice bounds timed out; raw windows passed254. Define the exact source/copied template slices once under the direct representation premise, retaining their complete byte equality. Five changed transitive connection owners require fresh whole native checks and zero audits. Unchanged V8 and historical modules may contribute only complete same-source/transitive native provenance. Current208-module closure, retained compiler/generation/physical/source/bytecode fault gates and independent checking remain mandatory. No public coverage.

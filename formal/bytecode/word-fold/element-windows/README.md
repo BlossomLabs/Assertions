@@ -1,0 +1,7 @@
+# Fold element-window loop development
+
+This isolated generator extracts the exact shared element-window entry,53-instruction iteration and physical dynamic exit with actual fold continuation16419. That PC is also a shared cleanup block: the exit extractor preserves its first visit with the callee arguments and waits until the dynamic return reaches16419 with the relative callee stack empty. No instruction or cleanup is skipped.
+
+The five selected modules include mathematical raw7-head fitting array inputs and an unbounded finite loop composition. `RawFrame` derives represented array bounds from the exact accepted fold decoder, independently of the full uint256 range element count. Each supplied offset is checked in order; duplicates, misaligned and overlapping windows are allowed whenever the complete32-byte window fits the template. The successful loop terminates with count-index, exact trace length24+53*count, unchanged byte memory and preserved lower stack.
+
+These selected development proofs assume imports. Actual accumulator window checking, first failed element offsets, full raw body/empty/target/allocation/template/callback/early-exit/errors/scalar terminal, fresh current included proofs, finite EVM cases, semantic faults and independent retained checking remain required before public coverage. Representation, sufficient reached resources and truthful reached observations remain explicit; no gas/deployment/performance claim.

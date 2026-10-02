@@ -1,0 +1,14 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/suffix-prefix/Semantics.dfy",
+    "formal/bytecode/value-array/suffix-prefix/Loop.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "Complete independent finite successful suffix prefixes and exact full executions back to PC 14279, allowing the next suffix to reject. Mathematical fitting and original span resource bounds are derived for every prefix. Public codec/error composition/native/retention/fault gates remain open; no public credit.",
+  "assumptions": [
+    "Reviewed current runtime and EVM interpretation remain assumptions.",
+    "Original represented offset/length/positions below 2^64 and lower stack budget; independent valid finite prefix grammar, no assumption about the following byte.",
+    "All current complete included owners must be native verified before their contracts can supply retained evidence."
+  ],
+  "formatExclusions": {}
+}

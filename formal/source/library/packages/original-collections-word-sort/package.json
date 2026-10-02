@@ -1,0 +1,52 @@
+{
+  "id": "original-collections-word-sort",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/collections/word-sort",
+  "entry": "formal/collections/word-sort/Connection.dfy",
+  "verificationEntries": [
+    "formal/collections/word-sort/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/abi/Frames.dfy",
+      "formal/collections/sort-core/Merge.dfy",
+      "formal/collections/sort-core/Model.dfy",
+      "formal/collections/sort-core/Ranges.dfy",
+      "formal/collections/word-memory/Model.dfy",
+      "formal/collections/word-sort/Model.dfy",
+      "formal/collections/word-sort/Representation.dfy"
+    ],
+    "execution": [
+      "formal/collections/word-memory/Source.generated.dfy",
+      "formal/collections/word-sort/Source.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/collections/sort-core/Connection.dfy",
+      "formal/collections/word-memory/Connection.dfy",
+      "formal/collections/word-sort/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
+    "formal/collections/sort-core/Connection.dfy": "7574916b597311b26e95349897aab10e2fdfac3bec169e0132572acc46aae6b9",
+    "formal/collections/sort-core/Merge.dfy": "2f9405f5d219b0ea4c5a10e657c20e73e64a792e1aa8f35723a0dd5d1ac1a6f2",
+    "formal/collections/sort-core/Model.dfy": "1b73d1d7aaa59051903118d267e827d207bc7e4ee8695b6e492eacc4a5f6d954",
+    "formal/collections/sort-core/Ranges.dfy": "8c98f2d0b23db5ae862a50a1c0c3ebfb29b865445bda15623333dde2d89edeab",
+    "formal/collections/word-memory/Connection.dfy": "bd417efb1b4ed5843b45d1db33cd789053800db946e4f1b33bf6c2beda025f3d",
+    "formal/collections/word-memory/Model.dfy": "47c5a211c3c28737af9f6c62b5091bfb93834ec266920a7e7624fc6b568db6ba",
+    "formal/collections/word-memory/Source.generated.dfy": "f5cd81a8a45eb35483546521480caa6f0d012e38531e20fcec3806900b34e203",
+    "formal/collections/word-sort/Connection.dfy": "85a9842c52f8f4cd825e908024c2bf60ecf2685d6f9989c82ca7e786638ebcff",
+    "formal/collections/word-sort/Model.dfy": "555e0b05d31461a572c28a4d57846ef6b1e6e72da04ae2523053fcbec14d7dec",
+    "formal/collections/word-sort/Representation.dfy": "8fee4d806910ea7849419ab098ceadf06517fdff54124d216e1266687549f063",
+    "formal/collections/word-sort/Source.generated.dfy": "818334ad07bb3739534de6550b576c3663ccc8d164ae5a5a1f4ff9c405472b5a"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

@@ -1,0 +1,11 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/shape-invocation/Memory.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "Whole current ArrayState allocation memory module only, complete functions/lemma contracts. Descriptor/codec/native public closure and retained gates remain open.",
+  "assumptions": [
+    "Pinned tools and reviewed interpreter, finite represented heap; selected native evidence alone gives no public coverage."
+  ],
+  "formatExclusions": {}
+}

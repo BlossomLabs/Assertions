@@ -1,0 +1,31 @@
+{
+  "id": "original-collections-completion",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/library/src/collections/completion/Boundary.generated.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/collections/completion/Boundary.generated.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/collections/completion/Boundary.generated.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [],
+    "execution": [
+      "formal/source/library/src/collections/completion/Boundary.generated.dfy"
+    ],
+    "correspondence": [],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/library/src/collections/completion/Boundary.generated.dfy": "93d175dc1b62994b9b31a290aca1448e8038e10382b8d94551b101a95b2f4d48"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

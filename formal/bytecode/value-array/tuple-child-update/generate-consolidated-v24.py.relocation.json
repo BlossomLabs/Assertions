@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/value-array/tuple-child-update/generate.py",
+  "output": "/home/sem/assertions/formal/bytecode/value-array/tuple-child-update/generate-consolidated-v24.py",
+  "source_sha256": "36fabcfe29463d6800475b9cd6e069a5ddc8ab3411425c9416cb48578ee127c7",
+  "output_sha256": "36fabcfe29463d6800475b9cd6e069a5ddc8ab3411425c9416cb48578ee127c7",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

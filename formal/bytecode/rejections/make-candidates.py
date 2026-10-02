@@ -6,8 +6,9 @@ if not __debug__:raise RuntimeError('Run without Python -O')
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[2]
 def main():
- p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False);result=[]
+ p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--contract',choices=['Assertions','Expressions','Collections']);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False);result=[]
  for contract in ['Assertions','Expressions','Collections']:
+  if a.contract and a.contract!=contract:continue
   code=bytes.fromhex(json.loads((ROOT/'artifacts/contracts'/f'{contract}.sol'/f'{contract}.json').read_text())['deployedBytecode'][2:])
   for kind in ['Nonzero','Short']:
    name=contract+kind;mapping=json.loads((HERE/(name+'.mapping.json')).read_text());assert hashlib.sha256(code).hexdigest()==mapping['runtimeSha256'];pc=mapping['states'][-1]['pc'];assert code[pc]==0xfd

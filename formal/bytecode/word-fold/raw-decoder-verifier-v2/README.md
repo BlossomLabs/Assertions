@@ -1,0 +1,7 @@
+# Identical successful fold decoder native follow-up
+
+This verifier revision selects the unchanged `raw-decoder/RangeAccepted.generated.dfy` and `raw-decoder/SourceAccepted.generated.dfy` modules. Their owner files, generated text, admissions, return theorems, current byte binding and selected declaration inventory remain identical. The original range check reached239 of270 symbols before its actual1800.311-second whole-module watchdog expired; the original snapshot, logs and manifest are preserved. That incomplete run yields no public credit and showed no reported semantic counterexample.
+
+The new whole-module watchdog is7200 seconds. Ordinary30-second per-obligation limit, isolation, manual induction, two cores and complete whole-file module filtering remain unchanged. Both modules and all owner/includes/compiler/tool inputs are captured before the follow-up. Generated outputs are checked byte-for-byte against the original owner. This queued verifier must not start until the previous driver actually terminates and releases its pair.
+
+This remains selected development evidence with imported contracts assumed. Every complementary raw rejection, complete fold body/callback/early exit/error/output path, fresh included proof closure, finite physical receipts, matching semantic faults and independent retained checker remain required before public coverage. Resource/representation/truthful reached-observation assumptions remain explicit. No gas, deployment or performance claim.

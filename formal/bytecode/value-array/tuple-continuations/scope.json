@@ -1,0 +1,16 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/tuple-continuations/CommaStatic.generated.dfy",
+    "formal/bytecode/value-array/tuple-continuations/CommaDynamic.generated.dfy",
+    "formal/bytecode/value-array/tuple-continuations/CloseStatic.generated.dfy",
+    "formal/bytecode/value-array/tuple-continuations/CloseParentDynamic.generated.dfy",
+    "formal/bytecode/value-array/tuple-continuations/CloseChildDynamic.generated.dfy"
+  ],
+  "selectedModuleCount": 5,
+  "scope": "Five complete actual tuple child continuation owners, checked sum addition, exact comma increment/next recursive frame, static/dynamic close and full suffix-entry frame, preserving full lower stack and memory. Arbitrary tuple recursion/error/codec semantics and public retained closure remain required. No public credit.",
+  "assumptions": [
+    "Pinned runtime, reviewed interpreter and current tools remain trusted.",
+    "Arbitrary represented data/memory/fitting lower frames, exact reached tuple-iteration frames, canonical child dynamic flag, original mathematical checked-add success and actual comma/closing byte. All imported current whole bodies require complete final native closure."
+  ],
+  "formatExclusions": {}
+}

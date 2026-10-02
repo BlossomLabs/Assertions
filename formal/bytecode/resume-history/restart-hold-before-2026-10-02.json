@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "status": "draining-current-batches-new-batches-held",
+  "requestedAt": "2026-10-01T23:34:49.396191+00:00",
+  "authorization": "User: ok, stop new batches then",
+  "allowNewNativeRetainedPhysicalStaticOrCheckerBatches": false,
+  "resumeRequiresUserInstruction": true,
+  "currentRuns": [
+    {
+      "sessionId": 23203,
+      "owner": "Collections fold twelve-module V7 native repair",
+      "manifest": "formal/bytecode/word-fold/raw-closure-repair-v7/development/closure-native-v7/manifest.json"
+    },
+    {
+      "sessionId": 62859,
+      "owner": "Collections twelve-module array admission native",
+      "manifest": "formal/bytecode/value-array/admission-preparation/development/native-v1/manifest.json"
+    },
+    {
+      "sessionId": 10640,
+      "owner": "Operations signed modular arithmetic retained native"
+    },
+    {
+      "sessionId": 20496,
+      "owner": "Operations prior sqrt raw V2 native finishing naturally"
+    },
+    {
+      "sessionId": 18201,
+      "owner": "Operations sqrt raw V3 native development"
+    }
+  ],
+  "stoppedUnstartedContinuation": {
+    "driver": "formal/bytecode/word-fold/retention-v5/run-after-closure.py",
+    "sessionId": 11955,
+    "actualExitCode": 143,
+    "retainedManifestAbsent": true,
+    "record": "/tmp/assertions-restart-retention-hold-v1.json"
+  },
+  "pendingNotLaunched": [
+    "Collections raw-pack eleven-module static/native preparation",
+    "Collections full fold retained verifier and independent checker",
+    "Further Collections proof families",
+    "Expressions three public bytecode entries",
+    "Further Operations proof packages"
+  ],
+  "finishedBeforeHold": {
+    "arrayPrefixAndDecoderModules": 5,
+    "arrayPrefixAndDecoderObligations": 9444,
+    "arrayPrefixAndDecoderManifest": "formal/bytecode/value-array/preparation/development/native-v1/manifest.json",
+    "rawPackPhysicalFixtures": 91,
+    "rawPackPhysicalManifest": "formal/bytecode/value-array/physical-pack-admission/development/raw-pack-receipts-v1/manifest.json",
+    "operationsHashParentCheckerExitCode": 0,
+    "operationsRetainedEntries": 53
+  },
+  "cpuCap": "Existing12/16 core affinity remains enabled until human restores it. Root at most3 native pairs; Operations at most3.",
+  "restartReady": false,
+  "scope": "No currently running proof was cancelled or restarted. Whole current batches may finish their remaining modules and internal required checks. Do not automatically launch another batch, repair campaign, retained continuation or checker. Preserve all uncommitted work; no reset/stash/commit/push/worktree switch. Resume Collections then Expressions; remaining Assertions proofs are assigned to another computer.",
+  "hostInventoryObservedAt": "2026-10-01T23:34:22.717865+00:00"
+}

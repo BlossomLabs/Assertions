@@ -1,0 +1,12 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/shape-boundary/Memory.dfy",
+    "formal/bytecode/value-array/shape-boundary/Boundary.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "PC-zero raw decoder rejection or full physical encoded copy/six-word state allocation and shape call. Descriptor parser, canonical codec loops/errors/serialization and full native/retained graph remain open.",
+  "assumptions": [
+    "Pinned compiler runtime, reviewed interpreter, generic raw stack/heap representation and finite reached resources. Selected development native evidence gives no public coverage."
+  ],
+  "formatExclusions": {}
+}

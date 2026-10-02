@@ -1,0 +1,24 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-callback-pack-control",
+      "owner": "formal/bytecode/word-fold/callback-pack-control",
+      "generatedNames": [
+        "Before",
+        "After"
+      ]
+    },
+    {
+      "name": "fold-callback-success",
+      "owner": "formal/bytecode/word-fold/callback-success",
+      "generatedNames": [
+        "Success"
+      ]
+    }
+  ],
+  "assumptions": [
+    "Exact full physical callback16908 GAS and template packing and truthful reached STATICCALL observations with canonical target, actual fold helper return16553; old returndata/context/cursor preserved until actual observation.",
+    "Success composes exact32-byte return receipt and result word. Native selected imports assumed; full failure/exhaustion/iteration/raw/output/retained closure required; representation/resources and observations explicit, no gas/deployment/performance claims."
+  ]
+}

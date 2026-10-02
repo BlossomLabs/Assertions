@@ -1,0 +1,10 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Arbitrary finite successful32-byte nonstopping prefix followed by first represented failure; each reached physical memory/resource state admitted explicitly.",
+    "All3compiler-bound raw selectors, admitted nonempty fitting/aligned calldata, actual positive target check and every reached truthful GAS/STATICCALL observation. Canonical early-stop/success path checked separately.",
+    "Selected imports assumed; complete included/compiler/EVM/source and bytecode mutations/independent retained gates remain open. No public/gas/deployment/performance/compiler correctness claim."
+  ],
+  "repair": "Same complete theorem, type definitions, finite resource schedule and observation/input domains; imports separately owned corrected ordinary serializer. Original selected pass/static evidence preserved unchanged; no contract/generated edit or increased solver limit."
+}

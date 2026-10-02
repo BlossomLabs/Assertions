@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/evm-discovery-consolidated-v1.mjs",
+  "sourceSha256": "b40bbe209493478b06dbee9858297583b73ff45fb7ced47064d3385ea8502b96",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/evm-nonempty-discovery-consolidated-v1.mjs",
+  "scope": "Eight nonempty decoder geometries with arbitrary SKIP reference byte lengths; independent raw result expected"
+}

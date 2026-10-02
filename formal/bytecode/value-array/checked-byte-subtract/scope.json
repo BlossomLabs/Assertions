@@ -1,0 +1,13 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/checked-byte-subtract/Scalar.dfy",
+    "formal/bytecode/value-array/checked-byte-subtract/ByteSubtract.generated.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "Complete exact checked uint8 subtraction machine branch for arbitrary full256-bit word operands whose low8-bit subtrahend is no greater than the low8-bit minuend. Includes exact native masks, arbitrary lower stack/memory and valid return JUMPDEST. Underflow/panic, full descriptor parser/codec and retained public graph remain open; no public coverage.",
+  "assumptions": [
+    "Pinned exact Collections runtime and reviewed scan machine/toolchain.",
+    "Low8-bit operand order, fitting stack and actual valid caller return JUMPDEST; imported dependencies require complete final native closure."
+  ],
+  "formatExclusions": {}
+}

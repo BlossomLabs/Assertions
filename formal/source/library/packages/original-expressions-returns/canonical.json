@@ -1,0 +1,47 @@
+{
+  "id": "original-expressions-returns",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/library/src/expressions/returns/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/expressions/returns/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/expressions/returns/Connection.dfy",
+    "formal/source/library/src/expressions/returns/Model.dfy",
+    "formal/source/library/src/expressions/returns/Source.generated.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/library/src/abi/Encoding.dfy",
+      "formal/source/library/src/abi/Frames.dfy",
+      "formal/source/library/src/abi/Validation.dfy",
+      "formal/source/library/src/abi/source/ByteSemantics.dfy",
+      "formal/source/library/src/expressions/returns/Model.dfy"
+    ],
+    "execution": [
+      "formal/source/library/src/expressions/returns/Source.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/library/src/expressions/returns/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/library/src/expressions/returns/Connection.dfy": "971c3d76cbb7fd06733a4f10e989458adfeed28bc527b0e82ac8573dd8e60cdf",
+    "formal/source/library/src/expressions/returns/Source.generated.dfy": "fc51694ff18f23b92de64e2142f304523a7471526bb38aeabf3c431aa1ac6471",
+    "formal/source/library/src/expressions/returns/Model.dfy": "78ebe50b562bc703067870638f1ce3184845fc40cb71a0f6beb5077c51be5a82",
+    "formal/source/library/src/abi/source/ByteSemantics.dfy": "1d78911eeb20e81caec23c2c1e7461001d9dba5c55d034254992c17bb249d5f9",
+    "formal/source/library/src/abi/Validation.dfy": "7f2c4248b39f1c7965c9a8e4cd45df4f3451bd997d911ef5ba355a1a9886ca87",
+    "formal/source/library/src/abi/Encoding.dfy": "024b9f553cc72ae545b0ed2108c65bad4da6e6b02fa12d3bc7b6055ef257806e",
+    "formal/source/library/src/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

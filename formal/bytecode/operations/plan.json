@@ -1,0 +1,2143 @@
+{
+  "schemaVersion": 1,
+  "status": "exact-bytecode-development-open",
+  "scope": "All 92 Operations public ABI entries; exact current runtime admitted success and rejection receipts. Conditional source coverage is independently complete and does not substitute for opcode correspondence.",
+  "inventory": "formal/bytecode/operations/inventory.json",
+  "publicCoverage": {
+    "provedPublicEntries": 55,
+    "totalPublicEntries": 92,
+    "remainingPublicEntries": 37,
+    "scope": "Conditional exact current bytecode coverage after owner and parent independent checks for22 retained packages and exact55-selector union. Other37 entries remain open."
+  },
+  "currentRuntime": {
+    "bytes": 21346,
+    "sha256": "5d69cebc087813f4fe85c1fd371ca4d826a582077a29d6318199bc19cb1b1ae8"
+  },
+  "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce",
+  "development": {
+    "bitwise": {
+      "directory": "formal/bytecode/operations/bitwise",
+      "entries": [
+        "bitAnd(uint256,uint256)",
+        "bitOr(uint256,uint256)",
+        "bitXor(uint256,uint256)"
+      ],
+      "status": "retained-v1-failed-semantic-native-timeouts-preserved",
+      "scope": "Complete zero-value successful PC-zero paths under truthful argument word projections and fitting raw calldata size at least 68. Physical raw projection/rejections, retained native/audit/EVM/mutation evidence and independent ledger remain open.",
+      "developmentSnapshot": "formal/bytecode/operations/bitwise/development/raw-v1/manifest.json",
+      "physicalFixtures": {
+        "success": 27,
+        "rejection": 32,
+        "status": "development-concrete-passed-not-retained"
+      },
+      "semanticFaultPreflight": "AND opcode to OR produces seven wrong EVM output receipts; no native mutation count yet.",
+      "nativeOpen": "All baseline native/audit/physical checks passed; three final encoded-result native semantic faults timed out at 30 seconds. Failed evidence preserved; new actual MSTORE result checkpoint under development, not retained.",
+      "retainedManifest": "formal/bytecode/operations/bitwise-retention/evidence/raw-entries-v1/manifest.json",
+      "retainedSession": 42514,
+      "repair": {
+        "directory": "formal/bytecode/operations/bitwise-repair",
+        "targetedNativeObligations": 82,
+        "scope": "Opaque exact bitwise formulas with separately proved symmetry and arbitrary-byte-memory ADD/SUB kernel; no changed theorem result or time limit.",
+        "status": "baseline-passed-semantic-checkpoint-development"
+      },
+      "freshRetainedPassedSoFar": {
+        "machineNativeObligations": 345,
+        "binaryKernelNativeObligations": 16,
+        "zeroAudits": 5,
+        "exactCurrentRuntime": "passed",
+        "regeneration": "passed",
+        "andEntry": 3704,
+        "orEntry": 4396,
+        "xorEntry": 4281
+      },
+      "replacement": {
+        "package": "formal/bytecode/operations/bitwise-retention",
+        "status": "full-retained-v2-failed-raw-definition-bridge-preserved",
+        "selectedManifest": "formal/bytecode/operations/bitwise-repair/development/semantic-checkpoint-v4/manifest.json",
+        "scope": "All-word complete source/math outcome remains unchanged. Native/EVM semantic fault counterexample explicitly uses actual MSTORE128 input word at (123,456), matching physical ordinal4. Constructive conversion is locally generated and fully reverified.",
+        "nativeModules": 12,
+        "inputFiles": 48,
+        "formatPreflight": "passed",
+        "physicalSuccessPreflight": 27,
+        "physicalRejectionPreflight": 32,
+        "checker": "formal/bytecode/operations/check-bitwise-evidence.py",
+        "manifest": "formal/bytecode/operations/bitwise-retention/evidence/raw-entries-v2/manifest.json",
+        "terminalNativeObligations": 22539,
+        "terminalNativeDeclarations": 742,
+        "terminalZeroAudits": 12,
+        "terminalSemanticNativePhysicalFaults": 3,
+        "soleFailure": "Raw connection omitted checked opaque bitwise-definition bridge to independently specified transparent expected result; mathematical operation and contract unchanged."
+      },
+      "connectionRepair": {
+        "status": "development-selected-passed-not-retained",
+        "manifest": "formal/bytecode/operations/bitwise-repair/development/connection-v2/manifest.json",
+        "positiveNativeObligations": 82,
+        "nativeDeclarations": 9,
+        "zeroAudits": 1,
+        "scope": "Independently specified Expected function body unchanged; opaque Expected plus separately proved definition bridge prevents BV facts from entering raw memory cases. Complete raw connection proved; full retained V3 still required.",
+        "preservedFailure": "formal/bytecode/operations/bitwise-repair/development/connection-v1/manifest.json"
+      },
+      "replacementV3": {
+        "status": "retained-and-parent-independently-checked-complete",
+        "session": 46757,
+        "manifest": "formal/bytecode/operations/bitwise-retention/evidence/raw-entries-v3/manifest.json",
+        "scope": "Fresh complete12-module graph, unchanged broad results and full raw admission; all proof/generation/audit/currentcompiler/EVM/fault/closure gates rerun."
+      }
+    },
+    "environment": {
+      "directory": "formal/bytecode/operations/environment",
+      "status": "retained-independent-check-passed",
+      "entries": [
+        "baseFee()",
+        "blobBaseFee()",
+        "blockNumber()",
+        "chainId()",
+        "gasLimit()",
+        "gasPrice()",
+        "prevRandao()",
+        "timestamp()"
+      ],
+      "scope": "Eight exact current runtime complete raw entries, truthful independent context observations, physical successful RETURN and complete global rejection. Conditional representation/resource/context assumptions remain explicit.",
+      "manifest": "formal/bytecode/operations/environment/development/raw-v1/manifest.json",
+      "session": 26496,
+      "developmentNativePassedSoFar": {
+        "machine": 325,
+        "baseFeeEntry": 2270
+      },
+      "physicalReceipts": 24,
+      "executionContextNote": "Local Hardhat debug_traceCall BASEFEE is zero although separately queried latest RPC header base fee is 1 gwei; faithful World premise binds actual execution observations, not an assumed header equivalence.",
+      "retainedManifest": "formal/bytecode/operations/environment-retention/evidence/raw-entries-v1/manifest.json",
+      "retainedSession": 37019,
+      "freshRetainedPassedSoFar": {
+        "machine": 325,
+        "baseFee": 2270,
+        "blobBaseFee": 2414,
+        "blockNumber": 2472,
+        "chainId": 2645,
+        "gasLimit": 2241,
+        "zeroAudits": 6
+      },
+      "physicalRejections": 8,
+      "nativeObligations": 21422,
+      "nativeDeclarations": 726,
+      "zeroAudits": 12,
+      "semanticBytecodeFaults": 8,
+      "ledger": "docs/verification/operations-environment-bytecode.json",
+      "independentChecker": "formal/bytecode/operations/check-environment-evidence.py",
+      "independentCheckLog": "/tmp/operations-environment-independent-check-v2.log"
+    },
+    "comparison": {
+      "directory": "formal/bytecode/operations/comparison",
+      "status": "original-development-and-retention-terminal-failed-preserved",
+      "manifest": "formal/bytecode/operations/comparison/development/raw-v1/manifest.json",
+      "session": 27862,
+      "entries": [
+        "eq(uint256,uint256)",
+        "ne(uint256,uint256)",
+        "lt(uint256,uint256)",
+        "gt(uint256,uint256)",
+        "le(uint256,uint256)",
+        "ge(uint256,uint256)",
+        "lt(int256,int256)",
+        "gt(int256,int256)",
+        "le(int256,int256)",
+        "ge(int256,int256)"
+      ],
+      "scope": "All-word arguments, exact two\u2019s-complement signed relations, canonical Boolean scalar RETURN, and complete assigned-selector head/global rejection paths. Fresh native and retained physical/fault/checker evidence remain open. No public coverage.",
+      "retainedPackage": "formal/bytecode/operations/comparison-retention",
+      "retainedStatus": "original-failed-preserved-repair-v2-live-frozen",
+      "developmentNativePassedSoFar": {
+        "machine": 347,
+        "binary": 16,
+        "eq": 3774,
+        "ne": 3979
+      },
+      "physicalSuccessReceipts": 140,
+      "physicalRejectionReceipts": 88,
+      "semanticFaultPreflight": "EQ to LT byte mutation produced eight wrong EVM outputs; native semantic campaign remains open.",
+      "retainedSession": 13968,
+      "retainedManifest": "formal/bytecode/operations/comparison-retention/evidence/raw-entries-v1/manifest.json",
+      "repairV2": {
+        "directory": "formal/bytecode/operations/comparison-repair-v2",
+        "retainer": "formal/bytecode/operations/comparison-repair-v2-retention",
+        "status": "full-retained-live-frozen",
+        "nativeModules": 25,
+        "inputs": 75,
+        "physicalSuccessReceipts": 140,
+        "physicalRawRejectionReceipts": 88,
+        "physicalSemanticFaults": 10,
+        "scope": "All-word source/math Boolean results and exact physical scalar serialization unchanged. Universal MSTORE result checkpoint; concrete native/EVM semantic witnesses at (2,1) for eq/ne, ordinal5, and (123,456) for relations, ordinal13. All ten actual EVM fault witness preflights passed. No native/retained coverage.",
+        "selectedSession": 13509,
+        "selectedManifest": "formal/bytecode/operations/comparison-repair-v2/development/selected-final-and-witness-v1/manifest.json",
+        "selectedStatus": "development-selected-passed-not-retained",
+        "positiveSelectedNativeObligations": 324,
+        "positiveSelectedDeclarations": 23,
+        "selectedNativeSemanticFaults": 10,
+        "retainedSession": 27422,
+        "retainedManifest": "formal/bytecode/operations/comparison-repair-v2-retention/evidence/raw-entries-v1/manifest.json"
+      },
+      "developmentTerminal": "original-development-native-failed-preserved-only-GtS-final-timeout"
+    },
+    "shifts": {
+      "directory": "formal/bytecode/operations/shifts",
+      "entries": [
+        "shl(uint256,uint256)",
+        "shr(uint256,uint256)",
+        "shr(int256,uint256)",
+        "bitSet(uint256,uint256)"
+      ],
+      "status": "package-prepared-no-native-run",
+      "retainedPackage": "formal/bytecode/operations/shifts-retention",
+      "physicalSuccessReceipts": 68,
+      "physicalRejectionReceipts": 40,
+      "nativeOpen": [
+        "SelectorRight: exact variable word selector extraction by logical shift224.",
+        "SignedRight: exact complement and large-amount saturation.",
+        "UnitMask: low-bit bound; full raw source/math result correspondence.",
+        "Fresh full native/declaration/audit/input/tool closure, semantic faults and independent checker."
+      ],
+      "scope": "Four full PC-zero generated raw entries and assigned short-head/global rejections, with arbitrary words/trailing calldata and faithful finite-word shifts. Physical development receipts are not retained coverage.",
+      "selectedFailures": [
+        "formal/bytecode/operations/shifts/development/selector-right-v1/manifest.json",
+        "formal/bytecode/operations/shifts/development/selector-right-v2/manifest.json"
+      ],
+      "selectorBridge": {
+        "manifest": "formal/bytecode/operations/shifts/development/selector-right-v3/manifest.json",
+        "status": "development-selected-passed-not-retained",
+        "nativeObligations": 2,
+        "scope": "Selector uses the exact finite-word Right operation at constant224; no independent integer-division equivalence claim."
+      },
+      "modelNativeObligations": 399,
+      "modelManifest": "formal/bytecode/operations/shifts/development/model-v3/manifest.json",
+      "shlEntry": {
+        "manifest": "formal/bytecode/operations/shifts/development/shl-entry-v3/manifest.json",
+        "nativeObligations": 4252,
+        "nativeDeclarations": 127,
+        "status": "development-native-passed-not-retained"
+      }
+    },
+    "indexedEnvironment": {
+      "directory": "formal/bytecode/operations/indexed-environment",
+      "entries": [
+        "blockHash(uint256)",
+        "blobHash(uint256)"
+      ],
+      "status": "foundation-and-blockhash-entry-development-passed-retention-open",
+      "modelNativeObligations": 363,
+      "physicalSuccessReceipts": 54,
+      "physicalRejectionReceipts": 16,
+      "scope": "All word indices and complete assigned raw admission, truthful complete recent block history and transaction blob sequence; native model checked but whole entry graph/retained checker remain open. Empty-blob physical fixture context explicitly recorded.",
+      "retainedPackage": "formal/bytecode/operations/indexed-environment-retention",
+      "retainedStatus": "prepared-not-launched",
+      "entryDevelopmentManifest": "formal/bytecode/operations/indexed-environment/development/blockhash-entry-v1/manifest.json",
+      "blockHashEntry": {
+        "manifest": "formal/bytecode/operations/indexed-environment/development/blockhash-entry-v1/manifest.json",
+        "nativeObligations": 3642,
+        "nativeDeclarations": 110,
+        "status": "development-native-passed-not-retained"
+      }
+    },
+    "addressEnvironment": {
+      "directory": "formal/bytecode/operations/address-environment",
+      "entries": [
+        "origin()",
+        "coinbase()"
+      ],
+      "status": "selected-643-native-63-declarations-2-faults-passed-full-retainer-live-frozen",
+      "scope": "Distinct truthful fitting160-bit context fields, exact PUSH20 masks and physical address return. No retained/native public coverage claim.",
+      "physicalSuccessPreflight": 6,
+      "physicalRejectionPreflight": 8,
+      "retainedPackage": "formal/bytecode/operations/address-environment-retention",
+      "semanticFaultPreflight": "Origin-to-Coinbase opcode swap produced3 wrong physical EVM receipts; native fault proof remains open."
+    },
+    "minmax": {
+      "directory": "formal/bytecode/operations/minmax",
+      "entries": [
+        "min(uint256,uint256)",
+        "min(int256,int256)",
+        "max(uint256,uint256)",
+        "max(int256,int256)"
+      ],
+      "status": "eight-branch-certificates-prepared-resolved-no-native-run",
+      "scope": "Complementary source/math true and false case guards cover all unsigned and signed word operands. All actual complete branch paths are generated, with stable pre-serialization intended-word checkpoint names for semantic bytecode mutants. No native/retained coverage claim.",
+      "nativeModulesPrepared": 17,
+      "physicalSuccessPreflight": 56,
+      "physicalRejectionPreflight": 40,
+      "semanticCandidates": 4,
+      "retainedPackage": "formal/bytecode/operations/minmax-retention",
+      "retainedStatus": "complete-package-prepared-no-native-run",
+      "inputFiles": 59,
+      "semanticFaultPreflight": "MinU operand LT-to-GT swap produced12 wrong complete physical EVM receipts; native fault proof remains open."
+    },
+    "unsignedDivision": {
+      "directory": "formal/bytecode/operations/unsigned-division",
+      "retainedPackage": "formal/bytecode/operations/unsigned-division-retention",
+      "status": "package-resolved-physical-preflights-passed-native-pending",
+      "entries": [
+        "div(uint256,uint256)",
+        "mod(uint256,uint256)"
+      ],
+      "nativeModules": 11,
+      "inputFiles": 46,
+      "physicalSuccessfulReceipts": 24,
+      "physicalPanicReceipts": 4,
+      "physicalRawRejections": 24,
+      "scope": "Complementary zero/nonzero divisor full raw paths. Natural quotient/remainder success and complete exact36-byte Panic(0x12) from actual overlapping MSTORE0/MSTORE4 writes; finite raw calldata and reached resource premises explicit. No native/retained coverage."
+    },
+    "currentLiveCampaigns": {
+      "unsignedArithmetic": 12223,
+      "unsignedMultiplyV1KnownGuardFailure": 51488,
+      "signedDivisionRepairV2": 9743,
+      "byteLengthV1KnownHarnessFailure": 78779,
+      "unsignedModular": 11331,
+      "nativeCores": 10
+    },
+    "shiftsRetainedPassed": {
+      "manifest": "formal/bytecode/operations/shifts-retention/evidence/raw-entries-v1/manifest.json",
+      "nativeObligations": 28453,
+      "nativeDeclarations": 928,
+      "ownerChecker": "passed",
+      "parentChecker": "passed",
+      "publicCredit": "counted4-after-independent-parent"
+    },
+    "indexedEnvironmentRetainedPassed": {
+      "manifest": "formal/bytecode/operations/indexed-environment-retention/evidence/raw-entries-v1/manifest.json",
+      "nativeObligations": 14248,
+      "nativeDeclarations": 486,
+      "ownerChecker": "passed",
+      "publicCredit": "counted2-after-independent-parent",
+      "parentChecker": "passed"
+    },
+    "byteAtPhysicalPreparation": {
+      "directory": "formal/bytecode/operations/byte-at/development/physical-v2",
+      "status": "development-only-80-independent-physical-receipts-not-native-credit",
+      "sourcePathCount": 11
+    },
+    "byteAtFoundation": {
+      "status": "development-passed-no-public-credit",
+      "manifest": "formal/bytecode/operations/byte-at/development/foundation-v3/manifest.json",
+      "nativeObligations": 660,
+      "nativeDeclarations": 72,
+      "zeroAudits": 4,
+      "physicalFixtures": 80,
+      "physicalReturnReceipts": 28,
+      "physicalInvalidIndexReceipts": 36,
+      "physicalRawRejectReceipts": 16,
+      "scope": "Exact independently specified raw admission/signed positions, physical zero-padded copies/overlap-safe MCOPY, reached opcode model WF. Compiler-bound path and actual physical serialization/error connections remain open."
+    },
+    "rawDispatcher": {
+      "status": "complete-retainer-prepared-unlaunched-no-body-credit",
+      "directory": "formal/bytecode/operations/raw-dispatch",
+      "nativeFoundationManifest": "formal/bytecode/operations/raw-dispatch/development/native-foundation-v1/manifest.json",
+      "nativeFoundationObligations": 552,
+      "zeroAudits": 5,
+      "physicalClosureManifest": "formal/bytecode/operations/raw-dispatch/development/physical-closure-v3/manifest.json",
+      "actualWrapperPrefixes": 92,
+      "distinctUnknownRejectionLeaves": 16,
+      "nativeModules": 10,
+      "retainer": "formal/bytecode/operations/raw-dispatch/verify-retained.py",
+      "scope": "All92 known-selector actual wrapper prefixes and complete global raw physical rejections. Wrapper bodies remain separate; public-entry count zero. Full native/replay/regeneration closure unlaunched."
+    },
+    "byteAtAdmissionPreparation": {
+      "status": "generated-formatted-resolved-not-native",
+      "kernel": "formal/bytecode/operations/byte-at/AdmissionKernel.dfy",
+      "generator": "formal/bytecode/operations/byte-at/generate-admission.py",
+      "rawRejectionPaths": 7,
+      "candidateInstructionStates": 595,
+      "scope": "Actual complete calldata, leading selector bytes, loose raw span gates and physical empty REVERT. Body/error/success original-byte proofs and complete retention remain open."
+    },
+    "byteAtAdmissionV3": {
+      "status": "complete-native-development-passed-no-public-credit",
+      "manifest": "formal/bytecode/operations/byte-at-repair-v3/development/admission-v3/manifest.json",
+      "authoritativeSession": 36655,
+      "terminalExitCode": 0,
+      "nativeModules": 15,
+      "nativeObligations": 32294,
+      "nativeDeclarations": 760,
+      "zeroAudits": 15,
+      "inputsAndToolsUnchanged": true,
+      "scope": "Seven complete original-data PCzero empty-rejection paths plus checked original-byte envelope/overlapping InvalidByteIndex memory, indices/raw admission/machine foundations. Success/custom error compiled body and retained public proof remain open."
+    },
+    "powerRetainerPreparation": {
+      "directory": "formal/bytecode/operations/power-retention",
+      "status": "complete-55-module-retainer-preflight-passed-native-unlaunched",
+      "preflight": "/tmp/operations-power-retainer-preflight-v1/summary.json",
+      "publicEntries": [
+        "Operations.exp(uint256,uint256)",
+        "Operations.exp(int256,uint256)"
+      ],
+      "scope": "Complete source/native declaration/input closure and byte-identical generation; two compiler-bound raw physical return paths; two independent67-receipt matching mutation campaigns prepared. Native foundation/body/whole-retention and independent checker remain required before any public increment. No real exponential/log accuracy claim."
+    },
+    "hashBodyRepairV3": {
+      "directory": "formal/bytecode/operations/hash-bytes-success-repair-v3",
+      "status": "selected-and-whole-first-block-passed-generator-late-load-scope-error-preserved",
+      "retainer": "formal/bytecode/operations/hash-bytes-retention-v3",
+      "checker": "formal/bytecode/operations/check-hash-bytes-v3-evidence.py",
+      "preflight": "/tmp/operations-hash-v3-preflight-v1/checks.json",
+      "scope": "Same exact67-module raw/hash/physical receipt graph; explicit typed LoadState projection. V2 required Advance5 ordinary postcondition failure remains preserved while live; public credit withheld.",
+      "nativeHandle": 14129,
+      "selectedManifest": "formal/bytecode/operations/hash-bytes-success-repair-v3/development/opcodes-v1/manifest.json",
+      "selectedNativeHandle": 14129,
+      "selectedNativeObligations": 126,
+      "selectedZeroAudits": 5,
+      "wholeAffectedHandle": 70838,
+      "wholeAffectedManifest": "formal/bytecode/operations/hash-bytes-success-repair-v3/development/whole-block-v1/manifest.json",
+      "wholeAffectedNativeObligations": 793,
+      "wholeAffectedZeroAudits": 2,
+      "scopeReviewFinding": "State-specific LoadState Good5 hint emitted on later loads29/44/54; no full retention/public credit. Preserved V3 unchanged; corrected newV4 restricts hint toPC7574 and usesactual current-memory generic helper elsewhere."
+    },
+    "modularPowerPreparation": {
+      "directory": "formal/bytecode/operations/modexp-entry-preparation",
+      "status": "development-physical-ast-preparation-passed-native-unlaunched",
+      "publicEntries": [
+        "powMod(uint256,uint256,uint256)",
+        "powMod(int256,uint256,int256)",
+        "powMod(uint256,int256,uint256)",
+        "powMod(int256,int256,int256)"
+      ],
+      "physicalReceipts": 122,
+      "physicalPartitions": {
+        "NoInverse": 2,
+        "RawRejection": 44,
+        "Success": 70,
+        "ZeroModulus": 6
+      },
+      "modeExpPhysicalObservations": 16,
+      "scope": "Complete current4 public+5helperAST fingerprints and independently replayed finite original-runtime receipts only. Raw admission/opcode/loop native proofs, matching semantic campaigns, retained and parent independent checking remain open; faithful exact32-byte MODEXP reply premise explicit."
+    },
+    "modularPowerExecutionPreparation": {
+      "directory": "formal/bytecode/operations/modexp-execution",
+      "status": "complete-12-module-foundation-static-passed-native-queued",
+      "staticChecks": "/tmp/operations-modexp-execution-static-v1/checks.json",
+      "scope": "Immutable reviewed root external packet/memory/history/interpreter plus isolated arithmetic extension. Exact faithful MODEXP reply predicate and self/caller parameters explicit. No shared edits, no public credit. Whole native12-module foundation, raw/loop/output full retention remain required."
+    },
+    "futureRetainerFailurePolicy": {
+      "status": "prepared-unlaunched-drivers-required-gate-fail-fast",
+      "directories": [
+        "formal/bytecode/operations/power-retention",
+        "formal/bytecode/operations/hash-bytes-retention-v3",
+        "formal/bytecode/operations/sqrt-retention-v2"
+      ],
+      "scope": "Preserve authoritative failure and whole partial input/tool/CSV/evidence closure, then exit own driver before further native jobs. No live driver edits/signals; ordinary30-second and whole-module7200-second policy unchanged."
+    },
+    "hashRetainedV2Terminal": {
+      "status": "failed-required-ordinary-postcondition-gate-preserved",
+      "handle": 13135,
+      "manifest": "formal/bytecode/operations/hash-bytes-retention-v2/evidence/raw-entry-v2/manifest.json",
+      "nativeObligations": 52595,
+      "nativeDeclarations": 959,
+      "modules": 67,
+      "passedModules": 66,
+      "failedModule": "OperationsHashSuccessBlock0",
+      "failedDeclaration": "OperationsHashSuccessBlock0.Advance5",
+      "physicalReceipts": 38,
+      "matchingSemanticFaults": 1,
+      "inputsToolsEvidenceClosuresUnchanged": true,
+      "publicCredit": false,
+      "termination": "natural-authoritative-exit1-no-signal"
+    },
+    "hashBodyRepairV4": {
+      "directory": "formal/bytecode/operations/hash-bytes-success-repair-v4",
+      "retainer": "formal/bytecode/operations/hash-bytes-retention-v4",
+      "checker": "formal/bytecode/operations/check-hash-bytes-v4-evidence.py",
+      "status": "all-four-affected-native-modules-passed-fresh-whole-retainer-running",
+      "scope": "Same public domain, exact60 body instructions and67-module graph; typed Good5 helper restricted toits one reachedPC7574, generic current-memory header loads forother3. Native4/whole67 andindependent checking required beforepublic credit.",
+      "nativeHandle": 29951,
+      "nativeManifest": "formal/bytecode/operations/hash-bytes-success-repair-v4/development/whole-blocks-v1/manifest.json",
+      "staticChecks": "/tmp/operations-hash-v4-static-v1/checks.json",
+      "nativeObligations": 2217,
+      "zeroAudits": 4,
+      "preflightHandle": 50607,
+      "preflight": "/tmp/operations-hash-v4-final-preflight-v1/checks.json",
+      "preflightStatus": "passed"
+    },
+    "hashRetainedV4": {
+      "directory": "formal/bytecode/operations/hash-bytes-retention-v4",
+      "status": "fresh-full67-running-public-credit-withheld",
+      "handle": 10720,
+      "manifest": "formal/bytecode/operations/hash-bytes-retention-v4/evidence/raw-entry-v4/manifest.json",
+      "log": "/tmp/operations-hash-bytes-full-retention-v4.log",
+      "checker": "formal/bytecode/operations/check-hash-bytes-v4-evidence.py",
+      "preflight": "/tmp/operations-hash-v4-final-preflight-v1/checks.json",
+      "publicEntries": [
+        "Operations.hash(bytes)"
+      ],
+      "scope": "Native67-module full closure, compiler/runtime identity, byte-identical generation,38 physical receipts/one matching semantic mutation, owner andparent independent checks required. Faithful exact requestedhash observation explicit; no crypto/gas/deployment/performance claim."
+    }
+  },
+  "requiredEvidence": [
+    "Exact current compiler input/runtime and selector identity.",
+    "Complete opcode, physical stack/memory/raw admission/return or error correspondence.",
+    "Fresh native declaration and input/tool/dependency closure; zero audit.",
+    "Actual exact-runtime EVM physical receipts and semantic bytecode faults.",
+    "Independent retained checker before public ledger/counter inclusion."
+  ],
+  "assumptions": [
+    "Finite fitting calldata, stack and memory representation; adequate reached execution resources.",
+    "Reviewed opcode interpreter/extraction and truthful external context/history-indexed observations.",
+    "MODEXP faithful successful 32-byte reply premise remains explicit; no precompile implementation proof.",
+    "expWad/lnWad finite-word kernels only; real approximation accuracy and inverse/monotonicity bounds remain open."
+  ],
+  "coordination": "Parent owns main plans. Operations public51/92 is independently checked. Signed arithmetic correct fullV2, owner checker and parent independent replay passed. Child active native8cores in four one-worker --cores2 graphs: log2full13064, signedmodfull92470, hashbytesdevelopment28872, ByteAtdevelopment77922. Freed signed arithmetic pair offered and accepted by parent; root8/child8 host16 cap. All live owner/include/input graphs frozen. Isolated repairs prepared only; no restart on polling timeout.",
+  "signedDivision": {
+    "status": "prepared-no-native-or-public-coverage",
+    "directory": "formal/bytecode/operations/signed-division",
+    "retainer": "formal/bytecode/operations/signed-division-retention/verify.py",
+    "nativeModules": 13,
+    "capturedInputFiles": 50,
+    "publicEntries": 2,
+    "bodyPaths": 5,
+    "physicalReceipts": 28,
+    "physicalSuccesses": 23,
+    "physicalPanics": 5,
+    "physicalRawRejections": 24,
+    "mutationPreflights": {
+      "DivS": 9,
+      "ModS": 10
+    },
+    "nativeSelected": "formal/bytecode/operations/signed-division-selected.py",
+    "assumptions": [
+      "Finite fitting raw calldata length below 2^64, reviewed exact instruction extraction/interpreter including reached SHL/NOT compiler constants, actual fresh byte memory and sufficient reached resources. Local constructive word conversion kernel prepared, not native checked here.",
+      "Signed quotient truncates toward zero; signed remainder has dividend sign; division min/-1 is Panic(17), zero divisor Panic(18), actual overlapping writes and complete 36-byte revert.",
+      "Preparation and concrete fixtures are not retained native public evidence; gas/deployment/performance claims remain outside scope."
+    ]
+  },
+  "unsignedDivisionPreparation": {
+    "status": "prepared-no-native-or-public-coverage",
+    "nativeModules": 12,
+    "capturedInputFiles": 48,
+    "conversionPreparation": "Local constructive conversion and exact panic-shift bridge added before any native snapshot; selected full closure remains queued."
+  },
+  "absoluteDifference": {
+    "status": "selected-574-native-40-declarations-2-faults-passed-full-retainer-live-frozen",
+    "directory": "formal/bytecode/operations/absolute-difference",
+    "retainer": "formal/bytecode/operations/absolute-difference-retention/verify.py",
+    "nativeModules": 11,
+    "capturedInputFiles": 46,
+    "bodyPaths": 4,
+    "physicalReturns": 28,
+    "physicalRawRejects": 24,
+    "physicalMutationPreflights": {
+      "UnsignedSubtractToDivide": 9,
+      "SignedSubtractToAdd": 3
+    },
+    "assumptions": [
+      "Reviewed exact bytecode extraction/interpreter and mathematical two-complement distance bridge; finite fitting calldata, physical memory and enough reached resources.",
+      "No native or retained public evidence yet; source proofs and concrete traces do not imply bytecode, gas, deployment or performance theorems."
+    ]
+  },
+  "comparisonOriginalTerminal": {
+    "status": "terminal-exit1-preserved-incomplete",
+    "manifest": "formal/bytecode/operations/comparison-retention/evidence/raw-entries-v1/manifest.json",
+    "manifestSha256": "003b324d8339041b4234508fb5bd4594fc3f18a3c6401a889f88c30e78979390",
+    "nativeRows": 70310,
+    "declarations": 2172,
+    "zeroAudits": 25,
+    "failure": "Three baseline final serialization timeouts, two mutation final serialization timeouts, then mandatory baseline gate refused the LtU semantic mutation because its baseline declaration failed. No retained pass or public coverage.",
+    "log": "/tmp/operations-comparison-retained-v1.log"
+  },
+  "unsignedDivisionSelected": {
+    "status": "v1-through-v7-terminal-failed-preserved-v8-terminal-passed-not-retained",
+    "session": null,
+    "requestedNativeCores": 2,
+    "manifest": "formal/bytecode/operations/unsigned-division/development/selected-model-and-panic-v8/manifest.json",
+    "nativeObligations": 853,
+    "nativeDeclarations": 79,
+    "semanticFaults": 2
+  },
+  "accountEnvironment": {
+    "status": "selected-660-native-70-declarations-2-faults-passed-full-retainer-live-frozen",
+    "directory": "formal/bytecode/operations/account-environment",
+    "retainer": "formal/bytecode/operations/account-environment-retention/verify.py",
+    "nativeModules": 13,
+    "capturedInputFiles": 49,
+    "nativeSelected": "formal/bytecode/operations/account-environment-selected.py",
+    "physicalReceipts": 24,
+    "physicalRawRejections": 24,
+    "physicalMutationPreflights": {
+      "BalanceToCodeHash": 12,
+      "CodeHashToBalance": 12
+    },
+    "assumptions": [
+      "Reviewed exact current instruction extraction/interpreter; canonical-address and dirty-address raw paths bind all reached PUSH20 bytes, fitting calldata and actual fresh memory.",
+      "World account balance/code-hash maps must faithfully match actual invocation-specific observations. Existing positive-balance empty-code and nonempty-code accounts covered in fixtures; no absent-account or hash implementation theorem inferred.",
+      "Native and retained evidence remain open; gas, deployment, performance, consensus and cryptographic hash properties are outside this track."
+    ]
+  },
+  "bitwiseComplete": {
+    "status": "parent-independently-checked-complete",
+    "ledger": "docs/verification/operations-bitwise-bytecode.json",
+    "manifest": "formal/bytecode/operations/bitwise-retention/evidence/raw-entries-v3/manifest.json",
+    "checker": "formal/bytecode/operations/check-bitwise-evidence.py",
+    "nativeObligations": 22540,
+    "nativeDeclarations": 743,
+    "nativeAudits": 12,
+    "physicalSuccesses": 27,
+    "physicalRawRejections": 32,
+    "semanticFaults": 3
+  },
+  "newLiveRetainers": {
+    "absoluteDifference": null,
+    "accountEnvironment": null,
+    "comparisonRepair": 27422,
+    "addressEnvironment": null,
+    "unsignedDivision": null,
+    "minmaxSelected": null,
+    "minmax": 42224,
+    "accountRepairSelected": null,
+    "accountRepairFull": 93255,
+    "comparisonRepairV2": null,
+    "signedDivisionSelected": null,
+    "shiftsSelected": null,
+    "signedDivisionFull": 26149,
+    "shiftsFull": 48487
+  },
+  "addressSelected": {
+    "status": "native-selected-passed-not-retained",
+    "manifest": "formal/bytecode/operations/address-environment/development/selected-model-and-witness-v1/manifest.json"
+  },
+  "addressCompletePendingParentCheck": {
+    "status": "parent-independently-checked-complete",
+    "manifest": "formal/bytecode/operations/address-environment-retention/evidence/raw-entries-v1/manifest.json",
+    "nativeObligations": 8150,
+    "nativeDeclarations": 320,
+    "nativeAudits": 8,
+    "physicalSuccesses": 6,
+    "rawRejections": 8,
+    "semanticFaults": 2,
+    "checker": "formal/bytecode/operations/check-address-environment-evidence.py",
+    "parentCheckSession": 94170
+  },
+  "unsignedArithmeticPreparation": {
+    "status": "complete-paths-and-physical-preflights-prepared-no-native-run",
+    "nativeModules": 12,
+    "bodyPaths": 4,
+    "physicalReturns": 17,
+    "physicalPanics": 11,
+    "physicalRawRejects": 24,
+    "bytecodeFaultPreflights": {
+      "AddToOr": 7,
+      "SubToAnd": 13
+    },
+    "scope": "Complementary exact natural sum/difference success versus overflow, Panic17 physical overlapping writes, exact PC-zero assigned raw admission. Candidate extraction also preserves changed error/success paths, while intended source result remains unchanged. No retained/native public coverage yet.",
+    "inputFiles": 47
+  },
+  "minmaxSelected": {
+    "status": "development-selected-passed-not-retained",
+    "manifest": "formal/bytecode/operations/minmax/development/selected-model-and-witness-v1/manifest.json",
+    "nativeObligations": 707,
+    "nativeDeclarations": 46,
+    "semanticFaults": 4
+  },
+  "unsignedMultiplyPreparation": {
+    "status": "prepared-physical-and-mutant-preflights-passed-native-unlaunched",
+    "directory": "formal/bytecode/operations/unsigned-multiply",
+    "retainer": "formal/bytecode/operations/unsigned-multiply-retention/verify.py",
+    "checker": "formal/bytecode/operations/check-unsigned-multiply-evidence.py",
+    "nativeSelected": "formal/bytecode/operations/unsigned-multiply-selected.py",
+    "nativeModules": 9,
+    "inputFiles": 41,
+    "physicalReceipts": 15,
+    "successfulPhysicalReceipts": 8,
+    "panicPhysicalReceipts": 7,
+    "rawRejectPhysicalReceipts": 16,
+    "semanticBytecodeFaultPreflight": {
+      "opcode": "MUL-to-ADD",
+      "wrongFullReceipts": 7,
+      "matchingWitnessArguments": [
+        456,
+        1
+      ],
+      "matchingWitnessOrdinal": 14
+    },
+    "format": "complete-nine-module-check-passed",
+    "scope": "Complementary full-word product fitting/overflow raw admission; exact natural multiplication or physical overlapping Panic17. Division-based overflow compiler guard is independently specified in arithmetic helper lemmas. No native or retained public coverage claim.",
+    "physicalIndependentPreflight": "Python arbitrary-precision math and complete physical path/store/serialization checks passed15"
+  },
+  "accountEnvironmentRepairPreparation": {
+    "status": "selected-development-passed-fresh-full-retention-started",
+    "directory": "formal/bytecode/operations/account-environment-repair-v2",
+    "retainer": "formal/bytecode/operations/account-environment-repair-v2-retention/verify.py",
+    "selected": "formal/bytecode/operations/account-environment-repair-v2-selected.py",
+    "change": "CleanDefinition also proves reversed actual AND operand order; unchanged low160 mask, canonical ABI admission and mathematical observation. Original native failed AND-to-Good postcondition preserved. No contract defect or public coverage claim.",
+    "originalTerminal": {
+      "status": "terminal-failed-preserved",
+      "session": 47959,
+      "exitCode": 1,
+      "manifest": "formal/bytecode/operations/account-environment-retention/evidence/raw-entries-v1/manifest.json",
+      "manifestSha256": "144ef1873a20913b64ae3bc73c88673af03720f6f105f09e4e3b910d6455a83c",
+      "nativeRows": 25458,
+      "declarations": 809,
+      "failedChecks": [
+        "proof-OperationsAccountEnvironmentRawBalanceBadAddress",
+        "proof-OperationsAccountEnvironmentRawCodeHashBadAddress"
+      ],
+      "inputsUnchanged": true,
+      "toolsUnchanged": true,
+      "failure": "Opaque Clean definition did not supply reverse-operand AND equality at the dirty-address projection; no contract counterexample."
+    },
+    "selectedManifest": "formal/bytecode/operations/account-environment-repair-v2/development/selected-model-and-dirty-mask-v1/manifest.json",
+    "selectedNativeObligations": 714,
+    "selectedNativeDeclarations": 72,
+    "selectedGenuineSemanticFaults": 2,
+    "retainedSession": 93255,
+    "retainedManifest": "formal/bytecode/operations/account-environment-repair-v2-retention/evidence/raw-entries-v1/manifest.json"
+  },
+  "unsignedModularPreparation": {
+    "status": "prepared-physical-and-mutant-preflights-passed-native-unlaunched",
+    "directory": "formal/bytecode/operations/unsigned-modular",
+    "retainer": "formal/bytecode/operations/unsigned-modular-retention/verify.py",
+    "checker": "formal/bytecode/operations/check-unsigned-modular-evidence.py",
+    "selected": "formal/bytecode/operations/unsigned-modular-selected.py",
+    "nativeModules": 12,
+    "inputFiles": 47,
+    "physicalReceipts": 24,
+    "successfulPhysicalReceipts": 18,
+    "panicPhysicalReceipts": 6,
+    "rawRejectPhysicalReceipts": 24,
+    "oneByteFaults": 2,
+    "semanticWitnessArguments": [
+      123,
+      456,
+      7
+    ],
+    "semanticWitnessOrdinal": 3,
+    "scope": "Complementary third-operand zero/nonzero guards, full natural sum/product modulo without 256-bit intermediate wrapping, complete raw head100 and actual physical overlapping Panic18. Entire generated dependency graph resolves. No native or public coverage claimed.",
+    "format": "complete12-module-check-passed",
+    "audit": "complete-dependency-resolution-audit-zero",
+    "physicalIndependentPreflight": "Python arbitrary-precision math and complete physical path/store/serialization checks passed24"
+  },
+  "signedArithmeticPreparation": {
+    "status": "prepared-physical-and-mutant-preflights-passed-native-unlaunched",
+    "directory": "formal/bytecode/operations/signed-arithmetic",
+    "retainer": "formal/bytecode/operations/signed-arithmetic-retention/verify.py",
+    "checker": "formal/bytecode/operations/check-signed-arithmetic-evidence.py",
+    "selected": "formal/bytecode/operations/signed-arithmetic-selected.py",
+    "nativeModules": 12,
+    "inputFiles": 47,
+    "physicalReceipts": 28,
+    "successfulPhysicalReceipts": 22,
+    "panicPhysicalReceipts": 6,
+    "rawRejectPhysicalReceipts": 24,
+    "oneByteFaults": 2,
+    "semanticWitnessArguments": [
+      456,
+      123
+    ],
+    "semanticWitnessOrdinal": 4,
+    "format": "complete12-module-check-passed",
+    "audit": "complete-dependency-resolution-audit-zero",
+    "scope": "Two complementarily admitted success/error paths per signed operation cover all signs and all Word operands. Independent signed sum/difference bounds, finite word projection and compiler Boolean flag conditions are explicit new unverified helper claims. Full PC-zero raw paths and physical word/overlapping Panic17 receipts independently checked. Native and public coverage remain open."
+  },
+  "preparedNativeQueue": [
+    "formal/bytecode/operations/signed-multiply-repair-v2/verify-return-development.py",
+    "formal/bytecode/operations/hash-pair-sorted-repair-v2/verify-block-development.py",
+    "formal/bytecode/operations/byte-at/verify-admission-development.py",
+    "formal/bytecode/operations/log2/verify-development.py",
+    "formal/bytecode/operations/raw-dispatch/verify-retained.py"
+  ],
+  "preparedNativeQueueScope": "Development/preflight is never public credit. Log2 V5 exact-whole-file full-retainer preflight passed; signed-modular V2 unchanged-domain37-file preflight passed. Sqrt math now live as explicit loaned pair; own arithmetic word bridge remains static preparation.",
+  "absoluteDifferenceRetained": {
+    "status": "retained-and-owner-and-parent-independently-checked-complete",
+    "manifest": "formal/bytecode/operations/absolute-difference-retention/evidence/raw-entries-v1/manifest.json",
+    "session": 27692,
+    "nativeObligations": 29415,
+    "nativeDeclarations": 903,
+    "zeroAudits": 11,
+    "successReceipts": 28,
+    "rawRejectionReceipts": 24,
+    "matchingSemanticFaults": 2,
+    "ledger": "docs/verification/operations-absolute-difference-bytecode.json",
+    "checker": "formal/bytecode/operations/check-absolute-difference-evidence.py",
+    "independentLog": "/tmp/operations-absolute-difference-bytecode-independent-check-v1.log",
+    "ownerCheckerSession": 22253
+  },
+  "comparisonRetained": {
+    "status": "retained-and-owner-and-parent-independently-checked-complete",
+    "manifest": "formal/bytecode/operations/comparison-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+    "session": 27422,
+    "nativeObligations": 70550,
+    "nativeDeclarations": 2192,
+    "zeroAudits": 25,
+    "successReceipts": 140,
+    "panicReceipts": 0,
+    "rawRejectReceipts": 88,
+    "matchingSemanticFaults": 10,
+    "ledger": "docs/verification/operations-comparison-bytecode.json",
+    "checker": "formal/bytecode/operations/check-comparison-evidence.py",
+    "ownerCheckerSession": 71600,
+    "independentLog": "/tmp/operations-comparison-bytecode-independent-check-v1.log"
+  },
+  "unsignedDivisionRetained": {
+    "status": "retained-and-owner-and-parent-independently-checked-complete",
+    "manifest": "formal/bytecode/operations/unsigned-division-retention/evidence/raw-entries-v1/manifest.json",
+    "session": 76341,
+    "nativeObligations": 26658,
+    "nativeDeclarations": 853,
+    "zeroAudits": 12,
+    "successReceipts": 24,
+    "panicReceipts": 4,
+    "rawRejectReceipts": 24,
+    "matchingSemanticFaults": 2,
+    "ledger": "docs/verification/operations-unsigned-division-bytecode.json",
+    "checker": "formal/bytecode/operations/check-unsigned-division-evidence.py",
+    "ownerCheckerSession": 26331,
+    "independentLog": "/tmp/operations-unsigned-division-bytecode-independent-check-v1.log"
+  },
+  "signedDivisionSelected": {
+    "status": "development-selected-passed-not-retained",
+    "manifest": "formal/bytecode/operations/signed-division/development/selected-model-minimum-and-panic-v1/manifest.json",
+    "session": 21917,
+    "positiveNativeObligations": 938,
+    "positiveNativeDeclarations": 85,
+    "genuineSemanticFaults": 2,
+    "inputsUnchanged": true,
+    "toolsUnchanged": true
+  },
+  "shiftsSelectedFailureV1": {
+    "status": "development-selected-failed-preserved",
+    "manifest": "formal/bytecode/operations/shifts/development/selected-model-and-witness-v1/manifest.json",
+    "session": 91925,
+    "soleFailure": "BitSet.SemanticWitness lacked reverse-AND symmetry/unit-mask guide already proved by SemanticResult; unchanged specification and runtime."
+  },
+  "shiftsSelectedV2": {
+    "status": "development-selected-passed-not-retained",
+    "manifest": "formal/bytecode/operations/shifts/development/selected-model-and-witness-v2/manifest.json",
+    "session": 96014,
+    "positiveNativeObligations": 740,
+    "positiveNativeDeclarations": 61,
+    "genuineSemanticFaults": 4,
+    "scope": "Same broad word semantics and fixed native/EVM witnesses; compiler BitSet reverse-AND symmetry and unit-mask guide supplied. V1 failed snapshot preserved."
+  },
+  "currentLiveRetainers": [
+    {
+      "session": 13064,
+      "kind": "full-retained",
+      "manifest": "formal/bytecode/operations/log2-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+      "requestedNativeCores": 2
+    },
+    {
+      "session": 92470,
+      "kind": "full-retained",
+      "manifest": "formal/bytecode/operations/signed-modular-retention/evidence/raw-entries-v1/manifest.json",
+      "requestedNativeCores": 2
+    },
+    {
+      "session": 28872,
+      "kind": "development",
+      "manifest": "formal/bytecode/operations/hash-bytes/development/admission-copy-v1/manifest.json",
+      "requestedNativeCores": 2
+    },
+    {
+      "session": 77922,
+      "kind": "development",
+      "manifest": "formal/bytecode/operations/byte-at/development/admission-v1/manifest.json",
+      "requestedNativeCores": 2
+    }
+  ],
+  "signedDivisionRepairV2Preparation": {
+    "status": "isolated-repair-prepared-native-unlaunched",
+    "directory": "formal/bytecode/operations/signed-division-repair-v2",
+    "reason": "Original live campaign has recorded one ordinary guard JUMPI proof bridge failure in completed DivSNonzero.Advance112; no timeout or contract counterexample. Add same-body opaque boolean AND bridge only, all guards/specification/runtime/limits unchanged. Preserve original owners and failed evidence."
+  },
+  "signedMultiplyPreparation": {
+    "status": "retained-passed-and-parent-independently-checked",
+    "directory": "formal/bytecode/operations/signed-multiply",
+    "nativeModules": 10,
+    "inputFiles": 44,
+    "physicalReturns": 9,
+    "physicalPanics": 6,
+    "rawRejects": 16,
+    "physicalWrongMutationReceipts": 8,
+    "scope": "Three complementary compiler paths including minimum-word times negative operand. Independent signed mathematical product and physical Panic17. Native bridges remain candidate bodies.",
+    "manifest": "formal/bytecode/operations/signed-multiply-repair-v2-retention/evidence/raw-entries-v3/manifest.json",
+    "ledger": "docs/verification/operations-signed-multiply-bytecode.json",
+    "checker": "formal/bytecode/operations/check-signed-multiply-repair-v2-evidence.py",
+    "parentCheckerLog": "/tmp/operations-signed-multiply-bytecode-parent-check-v4.log"
+  },
+  "byteLengthPreparation": {
+    "status": "complete-package-native-unlaunched-no-public-credit",
+    "directory": "formal/bytecode/operations/byte-length",
+    "nativeModules": 12,
+    "inputFiles": 46,
+    "physicalReturns": 22,
+    "rawRejects": 16,
+    "physicalWrongMutationReceipts": 22,
+    "scope": "Eight complementary raw ABI paths, no canonical offset restriction; zero, overlapping, gaps and unaligned offsets, complete 64-bit bounds/windows, actual length RETURN/empty REVERT. Native universal raw proofs remain open."
+  },
+  "progressInventory": "formal/bytecode/operations/progress-inventory.json",
+  "indexedEnvironmentSelected": {
+    "status": "development-selected-passed-not-retained",
+    "manifest": "formal/bytecode/operations/indexed-environment/development/selected-model-and-witness-v1/manifest.json",
+    "session": 41518,
+    "positiveNativeObligations": 465,
+    "positiveNativeDeclarations": 37,
+    "genuineNativeSemanticFaults": 2,
+    "inputsUnchanged": true,
+    "toolsUnchanged": true
+  },
+  "accountEnvironmentRetained": {
+    "status": "retained-owner-and-parent-independently-checked-complete",
+    "manifest": "formal/bytecode/operations/account-environment-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+    "nativeObligations": 25460,
+    "nativeDeclarations": 809,
+    "zeroAudits": 13,
+    "returns": 24,
+    "rawRejects": 24,
+    "semanticFaults": 2,
+    "ledger": "docs/verification/operations-account-environment-bytecode.json",
+    "checker": "formal/bytecode/operations/check-account-environment-repair-v2-evidence.py"
+  },
+  "minmaxRetained": {
+    "status": "retained-owner-and-parent-independently-checked-complete",
+    "manifest": "formal/bytecode/operations/minmax-retention/evidence/raw-entries-v1/manifest.json",
+    "nativeObligations": 50587,
+    "nativeDeclarations": 1540,
+    "zeroAudits": 17,
+    "returns": 56,
+    "rawRejects": 40,
+    "semanticFaults": 4,
+    "ledger": "docs/verification/operations-minmax-bytecode.json",
+    "checker": "formal/bytecode/operations/check-minmax-evidence.py"
+  },
+  "unsignedMultiplySelected": {
+    "status": "development-selected-passed-not-retained",
+    "manifest": "formal/bytecode/operations/unsigned-multiply/development/selected-model-and-witness-v1/manifest.json",
+    "positiveNativeObligations": 853,
+    "positiveNativeDeclarations": 84,
+    "genuineNativeFaults": 1
+  },
+  "pendingIndependentParentEvidence": {},
+  "completedParentCheckedEvidence": {
+    "unsignedModular": {
+      "status": "retained-passed-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/unsigned-modular-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-unsigned-modular-bytecode.json",
+      "checker": "formal/bytecode/operations/check-unsigned-modular-evidence.py",
+      "parentCheckerLog": "/tmp/operations-unsigned-modular-bytecode-parent-check-v1.log",
+      "publicEntries": [
+        "Operations.addMod(uint256,uint256,uint256)",
+        "Operations.mulMod(uint256,uint256,uint256)"
+      ],
+      "nativeObligations": 25627,
+      "nativeDeclarations": 822,
+      "zeroAudits": 12,
+      "successfulPhysicalReceipts": 18,
+      "panicPhysicalReceipts": 6,
+      "rawRejectionReceipts": 24,
+      "semanticBytecodeFaults": 2,
+      "scope": "Complete exact all-word raw unsigned addMod/mulMod with full unbounded intermediate arithmetic before reduction and exact Panic18 on zero modulus. Current compiler/source/runtime/tool/evidence closure, fixed regeneration, fresh independent full physical replay and matching native/physical semantic faults passed. Explicit finite fitting calldata, reached resources and reviewed interpreter; no deployment, gas or performance claim."
+    },
+    "signedDivisionEvidence": {
+      "publicEntries": [
+        "Operations.div(int256,int256)",
+        "Operations.mod(int256,int256)"
+      ],
+      "nativeObligations": 30667,
+      "nativeDeclarations": 958,
+      "semanticBytecodeFaults": 2,
+      "status": "retained-passed-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/signed-division-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-signed-division-bytecode.json",
+      "checker": "formal/bytecode/operations/check-signed-division-repair-v2-evidence.py",
+      "parentCheckerLog": "/tmp/operations-signed-division-bytecode-parent-check-v2.log",
+      "zeroAudits": 13,
+      "successfulPhysicalReceipts": 23,
+      "panicPhysicalReceipts": 5,
+      "rawRejectionReceipts": 24,
+      "scope": "Complete exact all-word raw signed division/remainder with truncation toward zero, exact Panic18 on zero divisor and Panic17 on minimum/-1 division; signed minimum%-1 returns0. Current source/compiler/runtime/native/tool/evidence closure, fixed regeneration, fresh independent physical replay and matching native/physical faults passed. Explicit fitting representation/reached resources/reviewed interpreter; no deployment, gas or performance claim."
+    },
+    "unsignedMultiplyEvidence": {
+      "publicEntries": [
+        "Operations.mul(uint256,uint256)"
+      ],
+      "nativeObligations": 14318,
+      "nativeDeclarations": 497,
+      "semanticBytecodeFaults": 1,
+      "status": "retained-passed-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/unsigned-multiply-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-unsigned-multiply-bytecode.json",
+      "checker": "formal/bytecode/operations/check-unsigned-multiply-repair-v2-evidence.py",
+      "parentCheckerLog": "/tmp/operations-unsigned-multiply-bytecode-parent-check-v2.log",
+      "zeroAudits": 9,
+      "successfulPhysicalReceipts": 8,
+      "panicPhysicalReceipts": 7,
+      "rawRejectionReceipts": 16,
+      "scope": "Complete exact all-word raw unsigned multiplication, natural product fitting/overflow admission and exact Panic17. Zero operands are included. Current source/compiler/runtime/native/tool/evidence closure, fixed regeneration, fresh independent physical replay and matching native/physical faults passed. Explicit fitting representation/reached resources/reviewed interpreter; no deployment, gas or performance claim."
+    },
+    "unsignedArithmetic": {
+      "status": "retained-passed-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/unsigned-arithmetic-retention/evidence/raw-entries-v2/manifest.json",
+      "ledger": "docs/verification/operations-unsigned-arithmetic-bytecode.json",
+      "checker": "formal/bytecode/operations/check-unsigned-arithmetic-evidence.py",
+      "parentCheckerLog": "/tmp/operations-unsigned-arithmetic-bytecode-parent-check-v2.log",
+      "publicEntries": [
+        "Operations.add(uint256,uint256)",
+        "Operations.sub(uint256,uint256)"
+      ],
+      "nativeObligations": 26740,
+      "nativeDeclarations": 866,
+      "zeroAudits": 12,
+      "successfulPhysicalReceipts": 17,
+      "panicPhysicalReceipts": 11,
+      "rawRejectionReceipts": 24,
+      "semanticBytecodeFaults": 2,
+      "scope": "Complete exact all-word raw unsigned addition/subtraction with natural sum/difference fitting versus overflow and exact Panic17. Current source/compiler/runtime/native/tool/evidence closure, fixed regeneration, fresh independent physical replay and matching native/physical faults passed. Explicit finite fitting calldata, reached resources and reviewed interpreter; no deployment, gas or performance claim."
+    },
+    "signedMultiply": {
+      "status": "retained-passed-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/signed-multiply-repair-v2-retention/evidence/raw-entries-v3/manifest.json",
+      "ledger": "docs/verification/operations-signed-multiply-bytecode.json",
+      "checker": "formal/bytecode/operations/check-signed-multiply-repair-v2-evidence.py",
+      "parentCheckerLog": "/tmp/operations-signed-multiply-bytecode-parent-check-v4.log",
+      "parentCheckerLogSha256": "93544cecda0f56e6300de947ee4dd1f7e5bf7c489298359acf4fe85798f8c552",
+      "publicEntries": [
+        "Operations.mul(int256,int256)"
+      ],
+      "nativeObligations": 22489,
+      "nativeDeclarations": 724,
+      "zeroAudits": 10,
+      "successfulPhysicalReceipts": 9,
+      "panicPhysicalReceipts": 6,
+      "rawRejectionReceipts": 16,
+      "semanticBytecodeFaults": 1,
+      "scope": "Complete exact all-word raw signed multiplication with mathematical fitting versus overflow, signed minimum endpoints and exact Panic17. Complete current compiler/runtime/source/native/tool/evidence closure, fixed generation and independently replayed actual physical receipts and matching semantic opcode fault passed. Explicit finite fitting calldata, reached resources and reviewed interpreter; no deployment/gas/performance claim."
+    },
+    "byteLengthEvidence": {
+      "status": "retained-passed-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/byte-length-repair-v2-retention/evidence/raw-entries-v2/manifest.json",
+      "ledger": "docs/verification/operations-byte-length-bytecode.json",
+      "checker": "formal/bytecode/operations/check-byte-length-repair-v2-evidence.py",
+      "parentCheckerLog": "/tmp/operations-byte-length-bytecode-parent-check-v3.log",
+      "parentCheckerLogSha256": "3d5758215025625086f54db90cd36e4e1c4b37ad7f46e0878a9179424a2411a2",
+      "publicEntries": [
+        "Operations.byteLen(bytes)"
+      ],
+      "nativeObligations": 28217,
+      "nativeDeclarations": 828,
+      "zeroAudits": 12,
+      "successfulPhysicalReceipts": 22,
+      "panicPhysicalReceipts": 0,
+      "rawRejectionReceipts": 16,
+      "semanticBytecodeFaults": 1,
+      "scope": "Complete current raw entry/opcode/physical-return connection, full native/declaration/current compiler/tool/evidence closure, regeneration and independently replayed fresh physical receipts plus matching semantic faults. Explicit finite fitting inputs/reached resources/reviewed interpreter; sorted pair requires faithful KECCAK observation. No deployment/gas/performance or cryptographic-security claim."
+    },
+    "hashPairSortedEvidence": {
+      "status": "retained-passed-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/hash-pair-sorted-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-hash-pair-sorted-bytecode.json",
+      "checker": "formal/bytecode/operations/check-hash-pair-sorted-repair-v2-evidence.py",
+      "parentCheckerLog": "/tmp/operations-hash-pair-sorted-bytecode-parent-check-v2.log",
+      "parentCheckerLogSha256": "0eba3a0bed8fb77fa70afafeffcef33b1f8c3225c4b90a1b0ffd977d9c61d7b6",
+      "publicEntries": [
+        "Operations.hashPairSorted(bytes32,bytes32)"
+      ],
+      "nativeObligations": 18553,
+      "nativeDeclarations": 549,
+      "zeroAudits": 9,
+      "successfulPhysicalReceipts": 16,
+      "panicPhysicalReceipts": 0,
+      "rawRejectionReceipts": 16,
+      "semanticBytecodeFaults": 1,
+      "scope": "Complete current raw entry/opcode/physical-return connection, full native/declaration/current compiler/tool/evidence closure, regeneration and independently replayed fresh physical receipts plus matching semantic faults. Explicit finite fitting inputs/reached resources/reviewed interpreter; sorted pair requires faithful KECCAK observation. No deployment/gas/performance or cryptographic-security claim."
+    },
+    "signedArithmetic": {
+      "status": "retained-passed-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/signed-arithmetic-retention/evidence/raw-entries-v2/manifest.json",
+      "ledger": "docs/verification/operations-signed-arithmetic-bytecode.json",
+      "checker": "formal/bytecode/operations/check-signed-arithmetic-evidence.py",
+      "parentCheckerLog": "/tmp/operations-signed-arithmetic-parent-check-v2.log",
+      "parentCheckerLogSha256": "7bac15799f2bdba187883eb49ceb916cc057129d925f358abbb9d06e47f1a660",
+      "publicEntries": [
+        "Operations.add(int256,int256)",
+        "Operations.sub(int256,int256)"
+      ],
+      "nativeObligations": 31066,
+      "nativeDeclarations": 959,
+      "zeroAudits": 12,
+      "successfulPhysicalReceipts": 22,
+      "panicPhysicalReceipts": 6,
+      "rawRejectionReceipts": 24,
+      "semanticBytecodeFaults": 2,
+      "scope": "Correct two signed public signatures; complete all-word raw opcode/physical-return-or-Panic17 connections, native/declaration/current compiler/source/tool/evidence closure, fixed generation and fresh independently replayed receipts plus matching semantic faults. Invalid unsigned metadata predecessor preserved. Explicit fitting representation/reached resources/reviewed interpreter; no deployment/gas/performance claim."
+    },
+    "log2Evidence": {
+      "status": "retained-passed-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/log2-repair-v7-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-log2-bytecode.json",
+      "checker": "formal/bytecode/operations/check-log2-repair-v7-evidence.py",
+      "parentCheckerLog": "/tmp/operations-log2-bytecode-parent-check-v7.log",
+      "parentCheckerLogSha256": "4f2672aee87997a7c13f708a862c52e0a87867e26393b97980eb48eb040ec900",
+      "publicEntries": [
+        "Operations.log2(uint256)"
+      ],
+      "nativeObligations": 16771,
+      "nativeDeclarations": 575,
+      "zeroAudits": 22,
+      "successfulPhysicalReceipts": 21,
+      "customErrorPhysicalReceipts": 1,
+      "rawRejectionReceipts": 9,
+      "semanticBytecodeFaults": 1,
+      "scope": "Complete exact all-word log2 raw entry, independent floor logarithm and exact zero error; all current native, generation, compiler, physical and matching semantic mutation closures passed owner and parent independent replay. Explicit fitting finite calldata, reached resources and reviewed interpretation; no gas/deployment/performance claim."
+    },
+    "byteAt": {
+      "status": "retained-passed-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/byte-at-retention-v3/evidence/raw-entry-resume-v1/manifest.json",
+      "ledger": "docs/verification/operations-byte-at-bytecode.json",
+      "checker": "docs/verification/operations-byte-at-independent-v1/checked-corrected-checker.py",
+      "checkerCorrectionProvenance": "docs/verification/operations-byte-at-independent-v1/provenance.json",
+      "publicEntries": [
+        "Operations.byteAt(bytes,int256)"
+      ],
+      "nativeObligations": 64424,
+      "nativeDeclarations": 1507,
+      "zeroAudits": 65,
+      "successfulPhysicalReceipts": 28,
+      "customErrorPhysicalReceipts": 36,
+      "rawRejectionReceipts": 16,
+      "semanticBytecodeFaults": 1,
+      "ownerCheckerExitCode": 0,
+      "parentCheckerExitCode": 0,
+      "parentCheckerSessionId": 29792,
+      "parentCheckerLog": "docs/verification/operations-byte-at-independent-v1/parent-check.log",
+      "scope": "Complete exact current Operations byteAt(bytes,int256) raw entry: seven PC-zero raw rejections,170-instruction accepted decoder, strict signed index guards and exact68-byte InvalidByteIndex packet, then original-byte copy/zero/header/MCOPY/physical96-byte ABI RETURN. All compatible loose/unaligned offsets, raw signed indices and arbitrary trailing calldata are admitted within finite below2^64 frames. Other entries remain open."
+    },
+    "sqrtEvidence": {
+      "status": "retained-passed-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/sqrt-retention-v3/evidence/raw-entry-resume-v1/manifest.json",
+      "manifestSha256": "228b7636a0da503c7e1ce2eeb85b8696b90926dfdabb28ae6d1d573a249cef26",
+      "ledger": "docs/verification/operations-sqrt-bytecode-v3.json",
+      "checker": "formal/bytecode/operations/check-sqrt-v3-evidence.py",
+      "parentCheckerLog": "docs/verification/operations-sqrt-independent-v3/parent-check.log",
+      "parentCheckerLogSha256": "4f62d2a40e48e2bbd68df47cce3d43f21ba853033ca99379ee8bfea1095345c5",
+      "independentCheckProvenance": "docs/verification/operations-sqrt-independent-v3/provenance.json",
+      "publicEntries": [
+        "Operations.sqrt(uint256)"
+      ],
+      "nativeObligations": 102879,
+      "nativeDeclarations": 944,
+      "zeroAudits": 46,
+      "successfulPhysicalReceipts": 158,
+      "rawRejectionReceipts": 9,
+      "semanticBytecodeFaults": 1,
+      "scope": "Complete exact raw Operations.sqrt(uint256), PCzero through nonpayable/short empty REVERT or physical32-byte floor-root RETURN. Exact seven seed branches, initial scaling, six updates, final correction and every machine transition; all intermediate fitting bounds derived from independent integer-square inequalities and uniqueness. Other public entries remain open."
+    }
+  },
+  "unsignedArithmeticRetained": {
+    "status": "retained-owner-and-parent-independently-checked",
+    "manifest": "formal/bytecode/operations/unsigned-arithmetic-retention/evidence/raw-entries-v2/manifest.json",
+    "ledger": "docs/verification/operations-unsigned-arithmetic-bytecode.json",
+    "checker": "formal/bytecode/operations/check-unsigned-arithmetic-evidence.py",
+    "ownerLog": "/tmp/operations-unsigned-arithmetic-bytecode-owner-check-v2.log",
+    "nativeObligations": 26740,
+    "nativeDeclarations": 866,
+    "zeroAudits": 12,
+    "physicalSuccesses": 17,
+    "physicalPanics": 11,
+    "physicalRawRejections": 24,
+    "matchingSemanticFaults": 2,
+    "publicCredit": "2 entries independently parentchecked; exact public union46/92",
+    "parentLog": "/tmp/operations-unsigned-arithmetic-bytecode-parent-check-v2.log"
+  },
+  "nativeCoreAllocation": {
+    "rootRequestedCoreCap": 6,
+    "childRequestedCoreCap": 6,
+    "childLiveNativeHandles": [
+      10640,
+      20496,
+      10720
+    ],
+    "coresPerChildHandle": 2,
+    "notedAt": "2026-10-01T21:30:11.647128+00:00",
+    "rule": "Persistent user80-percent CPU cap active until explicitly restored: host affinity4-15 for12/16 logical CPUs; child at most three2-core native pairs, new commands taskset -c4-15. Existing live graphs remain frozen; swap slots only after authoritative terminal. Earlier preserved-handle list records history, not current live jobs.",
+    "existingLiveNativeHandlesPreserved": [
+      10640,
+      56124,
+      53126,
+      19352
+    ]
+  },
+  "log2Preparation": {
+    "status": "eleven-module-candidate-resolved-audit-zero-no-native-public-credit",
+    "modules": 11,
+    "completeRawPartitions": 5,
+    "totalInstructionStates": 381,
+    "paths": {
+      "Nonzero": 11,
+      "Short": 19,
+      "Args": 66,
+      "Zero": 104,
+      "Positive": 181
+    },
+    "positivePhysicalReceipts": 21,
+    "zeroCustomErrorReceipts": 1,
+    "rawPhysicalRejections": 9,
+    "physicalSemanticFaultMismatches": 21,
+    "physicalManifest": "formal/bytecode/operations/log2/development/physical-closure-v2/manifest.json",
+    "scope": "Historical development physical provenance closure; new Machine/Math/Kernel/generated controls/Connection require fresh native/full retained closure. Reviewed local integer-quotient SHR/BYTE, actual PUSH1..32, six shift/OR stages and exact lookup/custom-error/RETURN connection candidates. No library/source postcondition assumed, no public credit.",
+    "retainer": "formal/bytecode/operations/log2-retention/verify.py",
+    "checker": "formal/bytecode/operations/check-log2-evidence.py",
+    "retainedInputFiles": 49,
+    "latestPhysicalDevelopment": "formal/bytecode/operations/log2/development/physical-closure-v3/manifest.json",
+    "latestPhysicalStatus": "Fresh31 baseline and31 one-byte mutant whole-call receipts independently replayed with input/Python/Node/concrete-tool hashes unchanged at completion. New retained workflow prepared separately afterward; native/development/full public credit remains open.",
+    "latestSelectedPrefixFraming": {
+      "status": "development-selected-passed-no-public-credit",
+      "manifest": "formal/bytecode/operations/log2-repair-v3/development/store-prefix-v1/manifest.json",
+      "nativeObligations": 47,
+      "nativeDeclarations": 2,
+      "zeroAudits": 2
+    },
+    "latestFullRetainer": {
+      "status": "live-no-public-credit",
+      "handle": 21573,
+      "manifest": "formal/bytecode/operations/log2-repair-v4-retention/evidence/raw-entries-v1/manifest.json",
+      "nativeGraphModules": 22,
+      "preserves": "all181 exact instruction helpers and full raw admission/physical return/error theorem",
+      "preflightLog": "/tmp/operations-log2-block-preflight-v4.log"
+    },
+    "preservedV2Terminal": {
+      "handle": 13064,
+      "exitCode": 1,
+      "recordedRows": 9155,
+      "ordinaryFailures": 1,
+      "positiveModuleProcessWatchdog": 1800,
+      "manifest": "formal/bytecode/operations/log2-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+      "status": "incomplete-failed-preserved-no-credit"
+    }
+  },
+  "hashPairBlockRepairPreparation": {
+    "status": "complete-same-theorem-block-candidate-resolved-no-native-public-credit",
+    "directory": "formal/bytecode/operations/hash-pair-sorted-repair-v2",
+    "retainer": "formal/bytecode/operations/hash-pair-sorted-repair-v2-retention/verify.py",
+    "checker": "formal/bytecode/operations/check-hash-pair-sorted-repair-v2-evidence.py",
+    "nativeModules": 9,
+    "maximumCompositionInstructionsPerBlock": 20,
+    "inputFiles": 43,
+    "scope": "Original full V1 still live/frozen. Its Keep process actual1800s watchdog at final Run produced no complete CSV. Preserve failed capture. New complete blocks execute every original Advance once in order, retaining same exact runtime/admission/physical return bytes/hash-observation premise/result theorem/30s limits. Selected block and full retained closure queued; no new contract counterexample/public credit."
+  },
+  "latestAuthoritativeCoordinationAt": "2026-10-01T16:20:06.795826+00:00",
+  "cpuThrottleCoordination": {
+    "status": "ended-early-at-user-request-parent-restored",
+    "userRequest": "Reduce CPU use80% for next30minutes, retaining live runs.",
+    "existingNativeHandles": [
+      13064,
+      92470,
+      28872,
+      77922
+    ],
+    "rule": "Resume normal root8/child8 allocation. Preserve existing runs, captured inputs and failed snapshots. Reuse slots only after authoritative completion.",
+    "notedAt": "2026-10-01T12:52:38.876974+00:00",
+    "cpus": [
+      13,
+      14,
+      15
+    ],
+    "combinedCapacityCores": 3,
+    "restoreAtUtc": "2026-10-01T13:22:46Z",
+    "restoreAtMadrid": "2026-10-01T15:22:46+02:00",
+    "supervisorSession": 74622,
+    "externalStatus": "/tmp/assertions-cpu-throttle-20261001.json",
+    "commandPrefix": null,
+    "endedAtUtc": "2026-10-01T13:11:34.065038+00:00",
+    "restoredSurvivingThreads": 92,
+    "supervisorOutcome": "Parent terminated74622 after successful affinity restoration cleanup."
+  },
+  "sqrtMathematicsDevelopment": {
+    "status": "development-passed-no-public-credit",
+    "manifest": "formal/bytecode/operations/sqrt-repair-v3/development/math-graph-v3/manifest.json",
+    "nativeObligations": 1134,
+    "zeroAudits": 5,
+    "scope": "Independent integer-root mathematics only; actual compiled seed/finite-word loop/raw entry/physical receipt/semantic campaign remain open. Isolated sqrt-word-kernel has complete static format/resolve/audit0 but no native check."
+  },
+  "byteAtErrorShiftDevelopment": {
+    "manifest": "formal/bytecode/operations/byte-at-repair-v3/development/error-shift-v2/manifest.json",
+    "status": "development-selected-passed-no-public-credit",
+    "nativeObligations": 46,
+    "nativeDeclarations": 4,
+    "zeroAudits": 1,
+    "scope": "Exact original constant Left(selector,224)==Header and pure bit/projection/generic bridge only; complete raw body/retained entry evidence open."
+  },
+  "log2OrConnectionDevelopment": {
+    "status": "development-selected-passed-no-public-credit",
+    "manifest": "formal/bytecode/operations/log2-repair-v7/development/or-result-bridge-v1/manifest.json",
+    "nativeObligations": 137,
+    "nativeDeclarations": 7,
+    "zeroAudits": 3,
+    "scope": "Generic actual OR opcode/result joining plus before/after shape bridges and exact Advance107/116. Complete fresh22-module retention remains required.",
+    "retainer": "formal/bytecode/operations/log2-repair-v7-retention/verify.py",
+    "checker": "formal/bytecode/operations/check-log2-repair-v7-evidence.py"
+  },
+  "signedModularKnownFailedCancellation": {
+    "manifest": "formal/bytecode/operations/signed-modular-retention/evidence/raw-entries-v1/manifest.json",
+    "record": "formal/bytecode/operations/signed-modular-retention/evidence/raw-entries-v1/known-failed-cancellation.json",
+    "exitCode": 143,
+    "reason": "Parent-authorized exact driver cancellation after three completed native module watchdog failures; not a restart caused by polling timeout. Partial evidence/input hashes preserved; no public credit."
+  },
+  "sqrtWordSeedDevelopment": {
+    "status": "development-passed-no-public-credit",
+    "manifest": "formal/bytecode/operations/sqrt-word-kernel-v3/development/word-seed-graph-v3/manifest.json",
+    "nativeObligations": 1334,
+    "zeroAudits": 7,
+    "scope": "Complete seven-module independent math, seven conditional mathematical seed reductions, finite-word First/Later intermediate windows. Actual compiled state/opcode/raw/return/mutation/independent retained evidence remains open."
+  },
+  "hashCopyExecutionDevelopment": {
+    "status": "development-selected-passed-no-public-credit",
+    "manifest": "formal/bytecode/operations/hash-bytes-repair-v3/development/memory-execution-foundations-v2/manifest.json",
+    "nativeObligations": 197,
+    "nativeDeclarations": 10,
+    "zeroAudits": 2,
+    "scope": "Complete own byte-copy memory and actual CALLDATACOPY/KECCAK execution foundation modules, zero-count behavior included. Raw successful/full entry and retained public evidence open."
+  },
+  "sqrtSeedConnectionDevelopmentV2": {
+    "manifest": "formal/bytecode/operations/sqrt-seed-connection-v2/development/connection-v2/manifest.json",
+    "status": "development-passed-no-public-credit",
+    "selectedNativeObligations": 1115,
+    "selectedModules": 3,
+    "completeSnapshotModules": 29,
+    "zeroAudits": 3,
+    "inputsAndToolsUnchanged": true,
+    "scope": "Exact seven-stage compiled seed connection only. Whole raw public bytecode and physical receipt remain open."
+  },
+  "sqrtNewtonDevelopmentV1": {
+    "status": "development-passed-no-public-credit",
+    "manifest": "formal/bytecode/operations/sqrt-newton-controls/development/newton-graph-v1/manifest.json",
+    "nativeObligations": 10028,
+    "completeNativeModules": 17,
+    "zeroAudits": 17,
+    "inputsAndToolsUnchanged": true,
+    "compiledInstructionOccurrences": 83,
+    "scope": "Only six exact compiled Newton update controls and their included math/word/instruction graph; complete raw/iteration/public retained evidence remains open."
+  },
+  "sqrtPreparedRawGraph": {
+    "status": "prepared-static-resolved-no-native-public-credit",
+    "directory": "formal/bytecode/operations/sqrt-full",
+    "completeModules": 46,
+    "sourceModulesSelectedOnly": 1,
+    "scope": "PCzero complementary raw gates, early0/1, exact seed/six updates/correction, complete physical32-byte serialization. Fresh full native retained graph, matching mutation and independent checker remain required."
+  },
+  "sqrtPipelineDevelopment": {
+    "status": "selected-native-passed-no-public-credit",
+    "manifest": "formal/bytecode/operations/sqrt-pipeline/development/pipeline-v1/manifest.json",
+    "nativeObligations": 790,
+    "zeroAudits": 1,
+    "completeCapturedModules": 38,
+    "authoritativeSession": 42575,
+    "inputsAndToolsUnchanged": true,
+    "scope": "Exact seven-stage seed/initial scaling/six Newton/correction machine traces connected to unique mathematical floor root. Raw entry/physical return and complete retained graph remain open."
+  },
+  "sqrtRetainerPreparation": {
+    "status": "prepared-not-native-retained",
+    "directory": "formal/bytecode/operations/sqrt-retention",
+    "nativeGraphModules": 46,
+    "regenerationChecks": 17,
+    "regenerationPassed": true,
+    "physicalBaselineReceipts": 167,
+    "successReceipts": 158,
+    "rawRejectionReceipts": 9,
+    "matchingPhysicalFaultReceipts": 167,
+    "wrongSuccessReceipts": 132,
+    "matchingNativeFault": "prepared-not-launched",
+    "scope": "Physical one-byteDIV-to-MUL witness20 actual first update744 and public23 instead of11; no native/public proof inferred."
+  },
+  "byteAtSuccessPrefixPreparation": {
+    "status": "generated-formatted-resolved-audited-zero-not-native",
+    "directory": "formal/bytecode/operations/byte-at-success-prefix",
+    "completeNativeModules": 17,
+    "instructions": 170,
+    "blocks": 9,
+    "terminalPc": 7143,
+    "scope": "Actual PCzero decoder through admitted source/length/signed index, all loose spans under finite fitting assumptions. Body and retained public evidence remain open."
+  },
+  "byteAtBodySupportPreparation": {
+    "status": "formatted-resolved-not-native",
+    "directory": "formal/bytecode/operations/byte-at-body-support",
+    "scope": "Actual selector225bit shift, length guards, boolean masks and physical load frames; no public credit."
+  },
+  "sqrtReturnDevelopment": {
+    "status": "complete-development-passed-no-public-credit",
+    "manifest": "formal/bytecode/operations/sqrt-return-controls/development/return-graph-v1/manifest.json",
+    "nativeObligations": 8197,
+    "nativeModules": 5,
+    "scope": "Both actual 54-instruction scalar RETURN tails; exact32-byte output and reached heap/header frame. Full raw retention and parent checking remain required."
+  },
+  "sqrtMatchingNativeFaultDevelopment": {
+    "status": "development-matching-native-fault-passed-no-public-credit",
+    "manifest": "formal/bytecode/operations/sqrt-retention/development/matching-native-fault-v1/manifest.json",
+    "baselinePassedObligations": 15,
+    "candidatePassedObligations": 3,
+    "candidateFailedSemanticObligations": 1,
+    "oneByteFaultPc": 11298,
+    "matchingPhysicalWitnessOrdinal": 20
+  },
+  "byteAtFullPreparation": {
+    "status": "static-passed-native-unlaunched",
+    "nativeModules": 63,
+    "manifest": "/tmp/operations-byte-at-complete-preflight-v1/manifest.json",
+    "staticChecks": 24,
+    "physicalIndependentReplays": 80,
+    "matchingWrongPhysicalReturns": 28,
+    "scope": "Prepared full raw strict signed index/error/original-byte ABI composition; full dependency native and retained campaign/parent checker still required."
+  },
+  "byteAtPrefixDevelopment": {
+    "status": "development-passed-no-public-credit",
+    "manifest": "formal/bytecode/operations/byte-at-success-prefix/development/prefix-v1/manifest.json",
+    "nativeModules": 17,
+    "nativeObligations": 12188,
+    "auditFindings": 0,
+    "scope": "Complete170-instruction actual PC0 accepted raw prefix with all nine bounded trace blocks and exact7143 decoder frontier. Full body/native-retention/parent checking remains required."
+  },
+  "byteAtMatchingNativeFaultDevelopment": {
+    "status": "development-matching-native-fault-passed-no-public-credit",
+    "manifest": "formal/bytecode/operations/byte-at-retention/development/matching-native-fault-v1/manifest.json",
+    "baselinePassedObligations": 22,
+    "candidatePassedObligations": 2,
+    "candidateFailedSemanticObligations": 1,
+    "oneByteFaultPc": 18907,
+    "matchingPhysicalWitnessOrdinal": 6,
+    "scope": "MCOPY-to-CALLDATACOPY actual copied-byte postcondition fails, matching full physical original0xa5-to0 return. Full63-module retention and independent checking still required."
+  },
+  "byteAtBodyKernelDevelopment": {
+    "status": "development-passed-no-public-credit",
+    "manifest": "formal/bytecode/operations/byte-at-body-support/development/kernel-v1/manifest.json",
+    "nativeObligations": 216,
+    "auditFindings": 0,
+    "scope": "Actual225-bit error-selector shift,255-bit half-word shift, Boolean bit guards, strict index arithmetic, rounding mask and exact physical word-load frames. Native index/serialization and full retained campaign remain required."
+  },
+  "hashBytesFullDevelopment": {
+    "status": "development-passed-no-public-credit",
+    "manifest": "formal/bytecode/operations/hash-bytes-success/development/full-raw-graph-v1/manifest.json",
+    "nativeModules": 66,
+    "nativeObligations": 52494,
+    "nativeDeclarations": 957,
+    "auditFindings": 0,
+    "scope": "Complete current raw admission and original payload hashing through physical return; fresh retained campaign/owner and parent checking still required."
+  },
+  "hashBytesRetentionLive": {
+    "status": "full-retained-campaign-live-no-public-credit",
+    "session": 56124,
+    "manifest": "formal/bytecode/operations/hash-bytes-retention/evidence/raw-entry-v1/manifest.json",
+    "ordinaryObligationLimitSeconds": 30,
+    "wholeModuleWatchdogSeconds": 7200
+  },
+  "signedModularV3RequiredFailure": {
+    "status": "failed-required-gate-authorized-cancellation-preserved",
+    "session": 74849,
+    "manifest": "formal/bytecode/operations/signed-modular-repair-v3-retention/evidence/raw-entries-v3/manifest.json",
+    "reason": "Case1 Advance206 ordinary postcondition at actual SHL(1,255);12968passed/1failed, no contract counterexample",
+    "driverExitCode": 143,
+    "allFourCapturedProcessesGone": true,
+    "cancellationEvidence": "formal/bytecode/operations/signed-modular-repair-v3-retention/evidence/raw-entries-v3/required-failure-scoped-cancellation.json"
+  },
+  "signedModularShiftV4": {
+    "status": "selected-development-passed-no-public-credit",
+    "session": 55514,
+    "manifest": "formal/bytecode/operations/signed-modular-repair-v4/development/shift-v1/manifest.json",
+    "scope": "Checked constructive HalfWordShift followed by generated Case1 Advance206; unchanged admission/result/runtime/ordinary30-second limit. Complete retained37-module closure still required.",
+    "nativeObligations": 58,
+    "zeroAudits": 2,
+    "inputsAndToolsUnchanged": true
+  },
+  "signedModularFullV4": {
+    "status": "full-retained-live-no-public-credit",
+    "session": 10640,
+    "manifest": "formal/bytecode/operations/signed-modular-repair-v4-retention/evidence/raw-entries-v4/manifest.json",
+    "nativeModules": 37,
+    "wholeModuleWatchdogSeconds": 7200,
+    "ordinaryNativeLimitSeconds": 30,
+    "preflightChecks": 11,
+    "physicalPreflightReceipts": 1476,
+    "checker": "formal/bytecode/operations/check-signed-modular-repair-v4-evidence.py"
+  },
+  "byteAtIndexV1Failure": {
+    "status": "development-failed-preserved",
+    "session": 64943,
+    "manifest": "formal/bytecode/operations/byte-at-index-controls/development/index-graph-v1/manifest.json",
+    "nativeModules": 32,
+    "nativeRows": 12035,
+    "passingModules": 31,
+    "failedOwner": "OperationsByteAtIndexNegative",
+    "failures": [
+      "Advance74 Boolean helper instantiation30-second timeout",
+      "Advance77 addition-overflow branch postcondition"
+    ],
+    "inputsAndToolsUnchanged": true
+  },
+  "byteAtNegativeGuardV2": {
+    "status": "selected-development-passed-no-public-credit",
+    "session": 74241,
+    "manifest": "formal/bytecode/operations/byte-at-index-repair-v2/development/guard-v1/manifest.json",
+    "nativeObligations": 96,
+    "zeroAudits": 3,
+    "scope": "Same admitted negative index gives nonnegative signed wrapped sum; exact Boolean and branch transitions passed. Complete64-module fresh retention remains required."
+  },
+  "byteAtSerializerLive": {
+    "status": "full-development-live-no-public-credit",
+    "session": 19352,
+    "manifest": "formal/bytecode/operations/byte-at-serialization/development/serialization-graph-v1/manifest.json",
+    "nativeModules": 21
+  },
+  "powerFoundationPreparation": {
+    "status": "static-mathematics-prepared-native-queued-no-public-credit",
+    "directory": "formal/bytecode/operations/power-kernel",
+    "nativeModules": 3,
+    "nativeStarted": false,
+    "scope": "Independent exact unbounded powers, modular binary residue, checked unsigned trace meaning, signed encoding, constructive256-bit/shortcut bounds and depth. Actual compiled exp raw/loop/physical-error connection remains open."
+  },
+  "powerPhysicalPreparation": {
+    "status": "development-physical-passed-independently-replayed-no-public-credit",
+    "receipts": 67,
+    "independentReplay": true,
+    "directory": "formal/bytecode/operations/power-entry-preparation",
+    "preflight": "formal/bytecode/operations/power-entry-preparation/preflight.json",
+    "scope": "Only concrete exact opcode/stack/byte-memory/physical-receipt replay, independently computed integer/signed checked-intermediate outcomes. Universal raw/compiler-loop/native correspondence and retained matching campaign remain open."
+  },
+  "cpuCap80Coordination": {
+    "status": "active-user-requested-persistent-until-restored",
+    "policy": "/tmp/assertions-cpu-cap80-20261001-policy.json",
+    "rootMonitorSession": 30732,
+    "sharedHostAffinity": "4-15",
+    "combinedLogicalCpuLimit": 12,
+    "hostLogicalCpus": 16,
+    "proofInputChange": false,
+    "scope": "Record scheduler affinity separately from immutable source/tool proof inputs; no killed/restarted live runs and ordinary30-second limits unchanged."
+  },
+  "byteAtSerializerV1Failure": {
+    "manifest": "formal/bytecode/operations/byte-at-serialization/development/serialization-graph-v1/manifest.json",
+    "ownerExitCode": 4,
+    "nativePassed": 7800,
+    "nativeTimeouts": 1,
+    "failedSymbol": "OperationsByteAtSerialization.Advance61",
+    "instructionPC": 20343,
+    "ordinaryTimeLimitSeconds": 30,
+    "remainingDriver": "actual terminal1;21 complete modules11333rows,20 passed and owner1timeout; preserved",
+    "scope": "No production counterexample; isolated same-domain arithmetic Count helper prepared, not native checked"
+  },
+  "sqrtRawV1Failure": {
+    "manifest": "formal/bytecode/operations/sqrt-raw-controls/development/raw-graph-v1/manifest.json",
+    "ownerExitCode": 4,
+    "seconds": 5343.575,
+    "requiredFailure": "Args.Run three final trace endpoint/transition postconditions",
+    "remainingDriver": "actual terminal143 under specific parent required-failure cancellation authorization; all exact captured descendant processes gone",
+    "repairPreparation": "sqrt-raw-repair-v2 explicit checked Extend and trace endpoint assertions, no native run launched",
+    "publicCredit": false,
+    "cancellation": "formal/bytecode/operations/sqrt-raw-controls/development/raw-graph-v1/required-failure-scoped-cancellation.json"
+  },
+  "lastChildInspectionAt": "2026-10-01T20:35:18.844341+00:00",
+  "byteAtSerializerCountV2": {
+    "status": "development-selected-passed-no-public-credit",
+    "manifest": "formal/bytecode/operations/byte-at-serialization-repair-v2/development/count-v1/manifest.json",
+    "nativeObligations": 48,
+    "declarations": 3,
+    "zeroAudits": 3,
+    "oneByte": 6,
+    "selectedPosition": 8,
+    "Advance61": 34,
+    "runtimePC": 20343,
+    "inputsUnchanged": true,
+    "toolsUnchanged": true,
+    "full22ModuleGraph": "queued"
+  },
+  "sqrtTraceRepairV2": {
+    "status": "selected-development-passed-no-public-credit",
+    "session": 36680,
+    "manifest": "formal/bytecode/operations/sqrt-raw-repair-v2/development/trace-v1/manifest.json",
+    "selectedDeclarations": [
+      "OperationsSquareRootRawArgs.Extend",
+      "OperationsSquareRootRawArgs.Run"
+    ],
+    "capturedModules": 8,
+    "ordinaryTimeLimitSeconds": 30,
+    "wholeModuleWatchdogSeconds": 7200,
+    "exitCode": 0,
+    "nativeObligations": 12600,
+    "zeroAudits": 2,
+    "inputsAndToolsUnchanged": true
+  },
+  "currentChildNativeAllocation": {
+    "capRequestedNativeCores": 6,
+    "livePairs": 3,
+    "handles": [
+      10640,
+      20496,
+      10720
+    ],
+    "commandPrefix": "taskset -c 4-15",
+    "cpuPolicy": "/tmp/assertions-cpu-cap80-20261001-policy.json"
+  },
+  "powerOpcodePreparation": {
+    "status": "static-resolved-audit-zero-native-queued-no-public-credit",
+    "directory": "formal/bytecode/operations/power-opcode-kernel",
+    "modules": 6,
+    "meaning": "Actual EXP top-word base/next-word exponent, independent unbounded integer power modulo2^256; other opcodes use immutable signed-multiply machine",
+    "nativeStarted": false
+  },
+  "powerRawPreparation": {
+    "status": "static-resolved-audit-zero-native-queued-no-public-credit",
+    "directory": "formal/bytecode/operations/power-raw-controls",
+    "modules": 14,
+    "classes": 8,
+    "exactInstructionOccurrences": 406,
+    "completeASTGate": true,
+    "staticResolutions": 8,
+    "zeroAudits": 8,
+    "unsignedFrontierPC": 9089,
+    "signedFrontierPC": 3247,
+    "nativeStarted": false
+  },
+  "powerUnitShiftPreparation": {
+    "status": "static-resolved-audit-zero-native-queued-no-public-credit",
+    "directory": "formal/bytecode/operations/power-unit-shift",
+    "modules": 7,
+    "literalCases": 256,
+    "rangeBlocks": 16,
+    "nativeStarted": false
+  },
+  "powerMutationPreparation": {
+    "status": "development-physical-fault-independently-replayed-native-matching-queued-no-public-credit",
+    "directory": "formal/bytecode/operations/power-mutation-preparation",
+    "runtimeMutationPC": 21115,
+    "fromOpcode": 10,
+    "toOpcode": 2,
+    "fullPhysicalReceipts": 67,
+    "independentlyReplayedWrongOutcomes": 3,
+    "nativeMatchingStarted": false
+  },
+  "hashBodyOpcodeRepairV2": {
+    "status": "selected-native-passed-full-retention-live",
+    "directory": "formal/bytecode/operations/hash-bytes-success-repair-v2",
+    "completeRetainerGraphModules": 67,
+    "selectedSymbols": [
+      "OperationsHashSuccessOpcodes.LoadHeap",
+      "OperationsHashSuccessOpcodes.Jump",
+      "OperationsHashSuccessBlock0.Advance5",
+      "OperationsHashSuccessBlock0.Advance11"
+    ],
+    "reason": "Required current retainer Block0 failed two ordinary postconditions; previous identical-source development passed. Same runtime/domain/outcomes, explicit ordinary opcode bridges only. Live V1 unchanged.",
+    "publicCredit": false,
+    "selectedNativeObligations": 106,
+    "selectedManifest": "formal/bytecode/operations/hash-bytes-success-repair-v2/development/opcodes-v1/manifest.json"
+  },
+  "hashRetainerV1RequiredFailure": {
+    "status": "naturally-terminal-failed-preserved",
+    "handle": 56124,
+    "failedModule": "OperationsHashSuccessBlock0",
+    "nativePassedObligations": 718,
+    "ordinaryPostconditionFailures": 2,
+    "cancellation": "Automatic approval rejected; no signals sent. Natural terminal awaited.",
+    "preservation": "formal/bytecode/operations/hash-bytes-retention/evidence/raw-entry-v1/required-failure-cancellation-review-rejection.json",
+    "publicCredit": false,
+    "actualExitCode": 1,
+    "completeNativeObligations": 52494,
+    "completeNativeModules": 66
+  },
+  "powerShortcutPreparation": {
+    "status": "prepared-static-passed-native-unlaunched",
+    "directory": "formal/bytecode/operations/power-shortcut-kernel",
+    "completeModules": 8,
+    "scope": "Independent unbounded integer outcomes for compiler zero/unit/base-two/small EXP shortcuts, signed unit/zero checked-intermediate paths; full compiled loops/raw/returns remain open",
+    "publicCredit": false
+  },
+  "powerSignedMultiplyHelperPreparation": {
+    "status": "trace-enhanced-static-passed-native-unlaunched",
+    "directory": "formal/bytecode/operations/power-signed-multiply-controls",
+    "completeModules": 10,
+    "partitions": 3,
+    "instructions": [
+      33,
+      42,
+      31
+    ],
+    "entryPc": 20145,
+    "actualContinuations": [
+      3275,
+      3301
+    ],
+    "scope": "Both actual signed-power multiplication callers, generic preserved prefix and sufficient reached stack bound; full loop/raw composition open",
+    "publicCredit": false,
+    "staticEvidence": "/tmp/operations-power-loop-static-v2/checks.json"
+  },
+  "byteAtCompleteV3Preparation": {
+    "status": "prepared-native-unlaunched",
+    "fullGraph": "formal/bytecode/operations/byte-at-full-v3",
+    "retainer": "formal/bytecode/operations/byte-at-retention-v3",
+    "checker": "formal/bytecode/operations/check-byte-at-v3-evidence.py",
+    "completeModules": 65,
+    "newSerializerProofHintsNativeSelected": 48,
+    "negativeGuardSelectedNative": 96,
+    "publicCredit": false
+  },
+  "hashBytesRetentionV2Live": {
+    "handle": 13135,
+    "status": "live",
+    "completeModules": 67,
+    "manifest": "formal/bytecode/operations/hash-bytes-retention-v2/evidence/raw-entry-v2/manifest.json",
+    "sourceClosureFrozen": true,
+    "publicCredit": false
+  },
+  "sqrtRawFullV2": {
+    "status": "complete-eight-module-development-running-no-public-credit",
+    "session": 20496,
+    "manifest": "formal/bytecode/operations/sqrt-raw-repair-v2/development/full-v1/manifest.json",
+    "ordinaryTimeLimitSeconds": 30,
+    "wholeModuleWatchdogSeconds": 7200
+  },
+  "powerHalvingPreparation": {
+    "status": "static-resolved-audit-zero-native-unlaunched",
+    "directory": "formal/bytecode/operations/power-halving-kernel",
+    "completeModules": 7,
+    "scope": "Actual SHR1 and AND1 all-word quotient/remainder from constructive bitvector split and bounded count cast",
+    "publicCredit": false
+  },
+  "powerSignedLoopPreparation": {
+    "status": "prepared20-module-static-passed-native-unlaunched",
+    "directory": "formal/bytecode/operations/power-signed-loop-controls",
+    "completeModules": 20,
+    "loopSegments": 8,
+    "loopInstructionOccurrences": 73,
+    "helperInstructionOccurrences": 106,
+    "scope": "Finite actual signed-power loop plus every checked callee transition, exact source checked-intermediate outcome and continuous traces; public raw/RETURN remains open",
+    "publicCredit": false,
+    "staticEvidence": "/tmp/operations-power-loop-static-v2/checks.json",
+    "engineStaticEvidence": "/tmp/operations-power-loop-engine-static-v3/checks.json"
+  },
+  "sqrtCompleteV2Preparation": {
+    "status": "fresh46-module-public-graph-static-resolved-native-retention-unlaunched",
+    "directory": "formal/bytecode/operations/sqrt-retention-v2",
+    "fullOwner": "formal/bytecode/operations/sqrt-full-v2",
+    "checker": "formal/bytecode/operations/check-sqrt-v2-evidence.py",
+    "publicCredit": false
+  },
+  "powerUnsignedLoopKernelPreparation": {
+    "status": "static-resolved-zero-audit-native-unlaunched",
+    "directory": "formal/bytecode/operations/power-unsigned-loop-kernel",
+    "completeModules": 7,
+    "scope": "Independent positive-accumulator/factor invariant, exact unbounded power, square/final overflow and quotient/product guard equivalence",
+    "publicCredit": false
+  },
+  "powerUnsignedLoopPreparation": {
+    "status": "prepared14-module-static-passed-native-unlaunched",
+    "directory": "formal/bytecode/operations/power-unsigned-loop-controls",
+    "completeModules": 14,
+    "loopPaths": 5,
+    "actualInstructionOccurrences": 118,
+    "scope": "Full finite generic-loop trace to actual final product frontier21132, derived fitting intermediate products, complete Panic17 overflow packet; public shortcuts/raw/final product/RETURN open",
+    "publicCredit": false,
+    "staticEvidence": "/tmp/operations-power-unsigned-loop-static-v1/checks.json"
+  },
+  "powerUnsignedShortcutPreparation": {
+    "status": "prepared16-module-static-passed-native-unlaunched",
+    "directory": "formal/bytecode/operations/power-unsigned-shortcut-controls",
+    "completeModules": 16,
+    "actualInstructionOccurrences": 422,
+    "staticEvidence": "/tmp/operations-power-unsigned-shortcuts-static-v2/checks.json",
+    "preservedFailure": "/tmp/operations-power-unsigned-shortcuts-static-v1/checks.json",
+    "publicCredit": false
+  },
+  "powerUnsignedBodyPreparation": {
+    "status": "prepared28-module-static-passed-native-unlaunched",
+    "directory": "formal/bytecode/operations/power-unsigned-body",
+    "completeModules": 28,
+    "staticEvidence": "/tmp/operations-power-unsigned-body-static-v1/checks.json",
+    "publicCredit": false
+  },
+  "powerFullPreparation": {
+    "status": "prepared53-module-static-format-passed-native-unlaunched",
+    "directory": "formal/bytecode/operations/power-full",
+    "completeModules": 53,
+    "publicEntries": [
+      "Operations.exp(uint256,uint256)",
+      "Operations.exp(int256,uint256)"
+    ],
+    "rawInstructionOccurrences": 406,
+    "shortcutInstructionOccurrences": 422,
+    "unsignedLoopInstructionOccurrences": 118,
+    "unsignedFinalInstructionOccurrences": 57,
+    "signedLoopInstructionOccurrences": 73,
+    "signedHelperInstructionOccurrences": 106,
+    "returnInstructionOccurrences": 42,
+    "staticEvidence": "/tmp/operations-power-full-static-v2/checks.json",
+    "publicCredit": false,
+    "remainingRequired": [
+      "native development53",
+      "full retained source/tool/compiler closure",
+      "fresh67 physical baseline independent replay",
+      "matching unsigned and signed native/full physical one-byte semantic faults",
+      "independent checker and parent coverage promotion"
+    ],
+    "preservedStaticFailure": "/tmp/operations-power-full-static-v1/checks.json",
+    "formatLog": "/tmp/operations-power-whole53-format-v1.log"
+  },
+  "powerSignedMutationPreparation": {
+    "status": "full67-physical-fault-independent-replayed-native-matching-unlaunched",
+    "directory": "formal/bytecode/operations/power-signed-mutation-preparation",
+    "candidatePc": 20148,
+    "baselineOpcode": 2,
+    "candidateOpcode": 1,
+    "physicalReceipts": 67,
+    "physicalIntendedOutcomeContradictions": 12,
+    "matchingPhysicalWitnessOrdinal": 51,
+    "publicCredit": false
+  },
+  "latestChildNativeSnapshot": {
+    "checkedAt": "2026-10-01T23:21:32.291478+00:00",
+    "runs": [
+      {
+        "name": "signedmod",
+        "handle": 10640,
+        "status": "incomplete",
+        "completedNativeModules": 12,
+        "processCompletedNativeModules": 12,
+        "totalNativeModules": 37,
+        "failedModules": [],
+        "currentClosureRehashUnchanged": true,
+        "nativeRows": 88302
+      },
+      {
+        "name": "sqrt-v2-preserved",
+        "handle": 20496,
+        "status": "development-running-no-public-credit",
+        "completedNativeModules": 4,
+        "processCompletedNativeModules": 5,
+        "totalNativeModules": 8,
+        "failedModules": [
+          {
+            "name": "proof-OperationsSquareRootRawEarly",
+            "exitCode": null,
+            "seconds": 7200.562,
+            "classification": "incomplete-whole-module-watchdog"
+          }
+        ],
+        "currentClosureRehashUnchanged": true,
+        "nativeRows": 15102
+      },
+      {
+        "name": "sqrt-v3",
+        "handle": 18201,
+        "status": "development-running-no-public-credit",
+        "completedNativeModules": 3,
+        "processCompletedNativeModules": 3,
+        "totalNativeModules": 8,
+        "failedModules": [],
+        "currentClosureRehashUnchanged": true,
+        "nativeRows": 810
+      }
+    ],
+    "publicCoverageUnchanged": 52,
+    "nativeRequestedCores": 6,
+    "launchPrefix": "taskset -c 4-15"
+  },
+  "latestChildNativeSnapshotAt": "2026-10-01T21:15:38.952291+00:00",
+  "modexpKernelPreparation": {
+    "status": "static-resolved-audit-zero-native-unlaunched-no-credit",
+    "owner": "formal/bytecode/operations/modexp-kernel",
+    "proofModules": 14,
+    "capturedInputs": 126,
+    "staticChecks": "/tmp/operations-modexp-kernel-static-v1/checks.json",
+    "scope": "Independent unbounded natural power, variable-modulus binary loop and connection to explicit faithful successful exact32-byte MODEXP reply. Precompile internals, complete raw entries/physical serialization/retention remain open."
+  },
+  "modexpRawPreparation": {
+    "status": "static-resolved-audit-zero-regenerated-native-unlaunched-no-credit",
+    "owner": "formal/bytecode/operations/modexp-raw-controls",
+    "proofModules": 29,
+    "generatedPaths": 16,
+    "actualInstructionOccurrences": 822,
+    "staticChecks": "/tmp/operations-modexp-raw-static-v2/checks.json",
+    "regeneration": "/tmp/operations-modexp-raw-admission-final-preflight-v1/checks.json",
+    "finiteExtractionPreflight": "/tmp/operations-modexp-raw-path-preflight-v1.json",
+    "finitePhysicalPrefixes": 122,
+    "preservedPreparationFailures": [
+      "/tmp/operations-modexp-raw-static-v1/checks.json",
+      "/tmp/operations-modexp-raw-final-preflight-v1/regenerate.log"
+    ],
+    "scope": "Four signatures: nonzero value, short selector, selected signature with short three-word head, or complete accepted argument-load/body prefix. Independent actual finite receipts and byte boundaries checked, universal native obligations remain open. No public credit.",
+    "admissionStaticChecks": "/tmp/operations-modexp-raw-admission-static-v1/checks.json",
+    "connection": "Family-parameterized PC-zero admission joins all sixteen paths to exact empty error or decoded body frontier; universal native obligations still open."
+  },
+  "lastPreparationUpdateAt": "2026-10-01T22:35:36.599261+00:00",
+  "modexpPacketPreparation": {
+    "status": "static-resolved-audit-zero-whole-format-native-unlaunched-no-credit",
+    "owner": "formal/bytecode/operations/modexp-packet",
+    "proofModules": 13,
+    "preflight": "/tmp/operations-modexp-packet-preflight-v1.json",
+    "scope": "Physical192-byte packet, exact32-byte overlapping reply and disjoint byte frames under explicit fitting aligned reached heap. No precompile or gas inference."
+  },
+  "modexpSemanticMutationPreparation": {
+    "status": "prepared-native-unlaunched-no-public-credit",
+    "pc": 9399,
+    "baselineOpcode": 9,
+    "candidateOpcode": 8,
+    "candidateSha256": "89264416208120dd3eeab87a7670ee339815b38b779f85b191d485a94b0109c7",
+    "baselineFixtureOrdinal": 5,
+    "baselineFixture": "UU-5",
+    "intendedValue": 2,
+    "candidateValue": 3,
+    "scope": "Baseline-covered actual result update; both opcodes normatively interpreted. Complete physical candidate and native matching fault still pending.",
+    "physicalReceipts": 122,
+    "wrongIntendedOutcomes": 42,
+    "physicalPreflight": "/tmp/operations-modexp-semantic-fault-preflight-v1",
+    "independentReplayPassed": true,
+    "staticWitnessChecks": "/tmp/operations-modexp-semantic-witness-static-v1/checks.json",
+    "preservedHarnessFailure": "/tmp/operations-modexp-semantic-independent-v1-failed/diagnostic.json",
+    "nativeBaselinePreflight": "/tmp/operations-modexp-semantic-final-preflight-v2/checks.json",
+    "nativeBaselineGraphModules": 13,
+    "nativeBaselineOrFaultLaunched": false,
+    "isolatedNormativeAddModStaticChecks": "/tmp/operations-modexp-execution-static-v2/checks.json"
+  },
+  "modexpPrecompilePreparation": {
+    "status": "static-resolved-audit-zero-regenerated-native-unlaunched-no-credit",
+    "owner": "formal/bytecode/operations/modexp-precompile",
+    "proofModules": 15,
+    "actualStaticCallPc": 9331,
+    "staticChecks": "/tmp/operations-modexp-precompile-static-v1/checks.json",
+    "preflight": "/tmp/operations-modexp-precompile-final-preflight-v1/checks.json",
+    "scope": "Exact physical six-word MODEXP packet and actual STATICCALL effect; exact32-byte successful reply projects integer power residue only under explicit faithful observation. Caller/context/gas/history remain parameterized. Native closure, surrounding guards/fallback/loop/error/return open."
+  },
+  "modexpReplyPreparation": {
+    "status": "static-resolved-audit-zero-regenerated-native-unlaunched-no-credit",
+    "owner": "formal/bytecode/operations/modexp-reply-controls",
+    "proofModules": 18,
+    "generatedComplementaryPaths": 3,
+    "actualInstructionOccurrences": 40,
+    "staticChecks": "/tmp/operations-modexp-reply-static-v1/checks.json",
+    "preflight": "/tmp/operations-modexp-reply-final-preflight-v1/checks.json",
+    "finitePhysicalEffects": "/tmp/operations-modexp-precompile-physical-effects-v1.json",
+    "scope": "Actual postcall exact32-byte success, failed and wrong-size paths from9332 through9354. Existing122 finite fixtures include16 successful physical packet/reply/result gates; failed/wrong-size finite cases absent. Universal native obligations and surrounding loop/raw/error/return open."
+  },
+  "modexpSignedPreparation": {
+    "status": "static-resolved-audit-zero-formatted-native-unlaunched-no-credit",
+    "owner": "formal/bytecode/operations/modexp-signed-kernel",
+    "proofModules": 13,
+    "staticChecks": "/tmp/operations-modexp-signed-kernel-static-v1/checks.json",
+    "scope": "Independent signed magnitude/int256.min, parity and fitting signed-result representation; actual wrapper/runtime/inverse/power/raw/error/return connections open."
+  },
+  "modexpInverseDependencyPreparation": {
+    "status": "complete-current-imported-AST-binding-regenerated-native-correspondence-open-no-credit",
+    "owner": "formal/bytecode/operations/modexp-inverse-dependencies",
+    "completeFunctions": [
+      "Math.invMod(uint256,uint256)",
+      "Math.ternary(bool,uint256,uint256)",
+      "SafeCast.toUint(bool)"
+    ],
+    "regeneration": "/tmp/operations-modexp-inverse-dependency-preflight-v1/dependencies.mapping.json",
+    "futurePreparedDriversRequireGate": [
+      "modexp-kernel",
+      "modexp-packet",
+      "modexp-raw-controls",
+      "modexp-mutation-preparation",
+      "modexp-precompile",
+      "modexp-reply-controls",
+      "modexp-signed-kernel"
+    ],
+    "scope": "Complete exact current source/compiler identity only. Imported inverse compiled loops/arithmetic/error/return correspondence remain open. No source proof or AST binding gives bytecode credit."
+  },
+  "modexpInitializationPreparation": {
+    "status": "static-resolved-audit-zero-regenerated-native-unlaunched-no-credit",
+    "owner": "formal/bytecode/operations/modexp-initial-controls",
+    "proofModules": 17,
+    "generatedPaths": 2,
+    "actualInstructionOccurrences": 86,
+    "staticChecks": "/tmp/operations-modexp-initial-static-v1/checks.json",
+    "preflight": "/tmp/operations-modexp-initial-final-preflight-v1/checks.json",
+    "finiteReplay": "/tmp/operations-modexp-initial-finite-preflight-v1.json",
+    "finiteInitializationPaths": 70,
+    "scope": "Exact nonzero-modulus helper initialization to loop/precompile frontier, independent reduced binary-power meaning. Zero modulus, full loops/request/wrappers/inverse/errors/physical output remain open."
+  },
+  "modexpRequestPreparation": {
+    "status": "static-resolved-audit-zero-regenerated-native-unlaunched-no-credit",
+    "owner": "formal/bytecode/operations/modexp-request-controls",
+    "proofModules": 17,
+    "actualInstructionOccurrences": 37,
+    "staticChecks": "/tmp/operations-modexp-request-static-v1/checks.json",
+    "preflight": "/tmp/operations-modexp-request-final-preflight-v2/checks.json",
+    "finiteReplay": "/tmp/operations-modexp-request-finite-preflight-v1.json",
+    "finiteRequestPaths": 16,
+    "preservedGenerationFailure": "/tmp/operations-modexp-request-generation-failed-v1",
+    "scope": "Actual six-store packet/GAS prefix from9283 through9331 and physical packet connection; reached fresh header128 and truthful gas/caller observations explicit. Universal native/raw/inverse/loop/error/return open."
+  },
+  "modexpCallEnginePreparation": {
+    "status": "complete-static21-audit-zero-regenerated-native-unlaunched-no-credit",
+    "owner": "formal/bytecode/operations/modexp-call-engine",
+    "proofModules": 21,
+    "preflight": "/tmp/operations-modexp-call-engine-final-preflight-v2/checks.json",
+    "preservedTriggerWarning": "/tmp/operations-modexp-call-engine-static-v1",
+    "scope": "Actual request/call/all reply gates through9354. Parameterized self/caller/gas/success/returned/history; explicit faithful exact32-byte MODEXP mathematical reply premise. Failure/wrong-size retains fallback state; iterative fallback/raw/inverse/error/return/public retention open."
+  },
+  "modexpInitialCallPreparation": {
+    "status": "static27-resolved-audit-zero-regenerated-native-unlaunched-no-credit",
+    "owner": "formal/bytecode/operations/modexp-initial-call-connection",
+    "proofModules": 27,
+    "preflight": "/tmp/operations-modexp-initial-call-final-preflight-v2/checks.json",
+    "scope": "Compiled nonzero initialization and optional complete precompile attempt: small exponent reaches loop state; exact32-byte successful faithful reply yields independent raw-base power residue; failure/wrong size retains fallback state. Actual loop/zero modulus/inverse/signed wrappers/physical return/error remain open."
+  },
+  "sqrtRawChunkPreparation": {
+    "status": "complete8-module-native-development-live",
+    "recordedAt": "2026-10-01T23:05:00.683382+00:00",
+    "oldDriverStillLiveAndUntouched": 20496,
+    "nativeLimitSeconds": 30,
+    "wholeModuleWatchdogSeconds": 7200,
+    "chunkInstructions": 12,
+    "admissionAndMappingUnchanged": true,
+    "regenerationByteIdentical": true,
+    "ownerFiles": {
+      "Early.generated.dfy": "657c9ee9a543c72ecef3df027f449566284050868ac04d2fc651c95e036e2f69",
+      "README.md": "87d49d56fb229651f9cd6d01c915f6f7e6798b0ea5a1d5470d5beec853a40ad5",
+      "verify-development.py": "4a4bff79e43fc1acb166f012b904e43556d13377e388ea4cb3e58970a3076198",
+      "Nonzero.generated.dfy": "715191136a5fa17b6d00d5cdab7855bf8f555fa218a23d00753ab65e6b6b96dd",
+      "Iterated.generated.dfy": "c5848ec072ab48d53d9456ca9debcde058a80599b2b2083fa4d8136a1c07a2ab",
+      "Args.generated.dfy": "5dff815d8eca581cc4ceb2bed7a82c10800031bb5890844e32a795fd25eb8020",
+      "raw.mapping.json": "6811ea34e0caba32a4bfa4b0646fed6a91c9a3348eb108fe6a8c402e6a15eaf2",
+      "Short.generated.dfy": "751d7f6a9249b402c8b6f96277eceb8f850ed1e9d1258d4c03efd850dc737992",
+      "generate.py": "089aa4994c89d143dd094db27588b91ce58caa41f9bee023313f21bdd1897f54",
+      "format-generated.py": "6018f62b9884f4c4c83d01e51f023aa7350152d0db73eb8763286ac27da390b3"
+    },
+    "staticEvidence": "/tmp/operations-sqrt-raw-v3-static-v1/checks.json",
+    "owner": "formal/bytecode/operations/sqrt-raw-repair-v3",
+    "scope": "Same five raw classes,289 instruction occurrences and exact final trace statements; twelve-instruction proof chunks joined by checked lemma. Complete8-module native still required, no public coverage.",
+    "staticResolveAuditAndFormatPassed": true,
+    "sessionId": 18201,
+    "manifest": "formal/bytecode/operations/sqrt-raw-repair-v3/development/full-v1/manifest.json"
+  },
+  "sqrtWholeV3Preparation": {
+    "status": "static-passed-native-unlaunched",
+    "owner": "formal/bytecode/operations/sqrt-retention-v3/verify.py",
+    "connection": "formal/bytecode/operations/sqrt-full-v3/Full.dfy",
+    "checker": "formal/bytecode/operations/check-sqrt-v3-evidence.py",
+    "nativeGraphModules": 46,
+    "rawChunkOwner": "formal/bytecode/operations/sqrt-raw-repair-v3",
+    "staticEvidence": "/tmp/operations-sqrt-full-v3-static-v1/checks.json",
+    "scope": "Fresh complete retained graph awaits full native/current/compiler/regeneration/167 physical/matching semantic campaign and independent checker. Old evidence remains preserved; no coverage credit.",
+    "fullRegenerationEvidence": "/tmp/operations-sqrt-retention-v3-regeneration-v1/checks.json",
+    "allControlAndConversionRegenerationByteIdentical": true,
+    "physicalPreflight": {
+      "receipts": 167,
+      "status": "all-baseline-and-independent-passed",
+      "path": "/tmp/operations-sqrt-retention-v3-physical-preflight-v1",
+      "scope": "Finite receipts, no universal/native/public credit"
+    },
+    "matchingPhysicalFaultPreflight": "/tmp/operations-sqrt-retention-v3-matching-physical-preflight-v1/record.json"
+  },
+  "modexpHalvingPreparation": {
+    "status": "static-passed-native-unlaunched",
+    "owner": "formal/bytecode/operations/modexp-halving-kernel",
+    "nativeGraphModules": 14,
+    "staticEvidence": "/tmp/operations-modexp-halving-static-v1/checks.json",
+    "scope": "Independent all-word bit decomposition connects normative machine SHR by1 and AND with1 to exponent quotient/parity; complete native and exact compiled loop connections remain open. No coverage credit."
+  },
+  "modexpLoopPreparation": {
+    "status": "static-and-finite-passed-native-unlaunched",
+    "owner": "formal/bytecode/operations/modexp-loop-controls",
+    "nativeGraphModules": 18,
+    "actualInstructionOccurrences": 120,
+    "staticEvidence": "/tmp/operations-modexp-loop-static-v1/checks.json",
+    "regenerationByteIdentical": true,
+    "finiteEvidence": "/tmp/operations-modexp-loop-finite-preflight-v1.json",
+    "completeFiniteLoopPaths": 300,
+    "partitionCounts": {
+      "Zero": 54,
+      "Final": 46,
+      "Odd": 184,
+      "Even": 16
+    },
+    "scope": "Actual zero/final/odd/even opcode paths independently replayed against integer quotient/parity/residue updates. Universal native/recursive-loop/complete public retention remain open; no coverage."
+  },
+  "modexpLoopEnginePreparation": {
+    "status": "static-passed-native-unlaunched",
+    "owner": "formal/bytecode/operations/modexp-loop-engine",
+    "nativeGraphModules": 20,
+    "staticEvidence": "/tmp/operations-modexp-loop-engine-static-v1/checks.json",
+    "scope": "Recursive exact opcode traces from loop9367 through exit3085, independent modular Loop result, exponent decreases byhalving; includes all4 complementary paths and checks exact trace joins. Native proof and public caller/raw/serialization connections remain open. No coverage."
+  },
+  "modexpFallbackPreparation": {
+    "status": "static-passed-native-unlaunched",
+    "owner": "formal/bytecode/operations/modexp-fallback-controls",
+    "actualInstructionOccurrences": 13,
+    "staticEvidence": "/tmp/operations-modexp-fallback-static-v1/checks.json",
+    "regenerationByteIdentical": true,
+    "scope": "Complete actual zero/nonzero reply flag dispatch9354 to loop9367 or exit3085. Prior packet/call/reply and later loop/helper/raw serialization composition remain separate required native proofs. No public coverage.",
+    "finiteEvidence": "/tmp/operations-modexp-fallback-finite-preflight-v1.json",
+    "finiteReachedSuccessDispatches": 16,
+    "finiteReachedFallbackDispatches": 0
+  },
+  "hashBytesV4Retention": {
+    "status": "retained-passed-owner-and-parent-independently-checked",
+    "actualTerminalExitCode": 0,
+    "sessionId": 10720,
+    "manifest": "formal/bytecode/operations/hash-bytes-retention-v4/evidence/raw-entry-v4/manifest.json",
+    "ledger": "docs/verification/operations-hash-bytes-bytecode-v4.json",
+    "ownerCheckerSessionId": 93473,
+    "nativeObligations": 52635,
+    "nativeDeclarations": 961,
+    "zeroAudits": 67,
+    "physicalSuccess": 22,
+    "physicalRawRejections": 16,
+    "matchingSemanticBytecodeFaults": 1,
+    "scope": "Retained evidence passed; owner and parent independent replay required before public52/92 may increase. Faithful hash-engine premise explicit.",
+    "ownerCheck": {
+      "status": "passed",
+      "command": "taskset -c 4-15 python3 -B formal/bytecode/operations/check-hash-bytes-v4-evidence.py",
+      "sessionId": 93473,
+      "actualTerminalExitCode": 0,
+      "log": "/tmp/operations-hash-bytes-bytecode-owner-check-v4.log",
+      "logSha256": "7aaab88b48f1088b8df6af296a66908c8f6c700100b909954be63483b099f3fe"
+    },
+    "parentCheck": {
+      "parentCheckerExitCode": 0,
+      "parentCheckerSessionId": 14985,
+      "parentCheckerLog": "/tmp/operations-hash-bytes-bytecode-parent-check-v4.log",
+      "parentCheckerLogSha256": "7aaab88b48f1088b8df6af296a66908c8f6c700100b909954be63483b099f3fe",
+      "parentCheckedAt": "2026-10-01T23:23:06.898010+00:00"
+    }
+  },
+  "modexpInverseRepresentationPreparation": {
+    "status": "static-passed-native-unlaunched",
+    "owner": "formal/bytecode/operations/modexp-inverse-representation",
+    "staticEvidence": "/tmp/operations-modexp-inverse-representation-static-v1/checks.json",
+    "scope": "Pure mathematical quotient/remainder, signed coefficient bounds and wrap-to-Euclid representation bridges; reuses checked source Euclid mathematics but actual compiled inverse traces/control/termination/errors remain open. Complete fresh native/source-generator closure required before public use, no bytecode coverage.",
+    "nativeGraphModules": 26,
+    "driver": "formal/bytecode/operations/modexp-inverse-representation/verify-development.py",
+    "sourceGenerationEvidence": "/tmp/operations-modexp-inverse-source-generation-preflight-v1/checks.json",
+    "sourceDependencyRegenerationByteIdentical": true
+  },
+  "byteAtV3Retained": {
+    "status": "retained-passed-and-parent-independently-checked",
+    "manifest": "formal/bytecode/operations/byte-at-retention-v3/evidence/raw-entry-resume-v1/manifest.json",
+    "ledger": "docs/verification/operations-byte-at-bytecode.json",
+    "checker": "docs/verification/operations-byte-at-independent-v1/checked-corrected-checker.py",
+    "checkerCorrectionProvenance": "docs/verification/operations-byte-at-independent-v1/provenance.json",
+    "publicEntries": [
+      "Operations.byteAt(bytes,int256)"
+    ],
+    "nativeObligations": 64424,
+    "nativeDeclarations": 1507,
+    "zeroAudits": 65,
+    "successfulPhysicalReceipts": 28,
+    "customErrorPhysicalReceipts": 36,
+    "rawRejectionReceipts": 16,
+    "semanticBytecodeFaults": 1,
+    "ownerCheckerExitCode": 0,
+    "parentCheckerExitCode": 0,
+    "parentCheckerSessionId": 29792,
+    "parentCheckerLog": "docs/verification/operations-byte-at-independent-v1/parent-check.log",
+    "scope": "Complete exact current Operations byteAt(bytes,int256) raw entry: seven PC-zero raw rejections,170-instruction accepted decoder, strict signed index guards and exact68-byte InvalidByteIndex packet, then original-byte copy/zero/header/MCOPY/physical96-byte ABI RETURN. All compatible loose/unaligned offsets, raw signed indices and arbitrary trailing calldata are admitted within finite below2^64 frames. Other entries remain open."
+  },
+  "sqrtV3Retained": {
+    "status": "retained-passed-and-parent-independently-checked",
+    "manifest": "formal/bytecode/operations/sqrt-retention-v3/evidence/raw-entry-resume-v1/manifest.json",
+    "manifestSha256": "228b7636a0da503c7e1ce2eeb85b8696b90926dfdabb28ae6d1d573a249cef26",
+    "ledger": "docs/verification/operations-sqrt-bytecode-v3.json",
+    "checker": "formal/bytecode/operations/check-sqrt-v3-evidence.py",
+    "parentCheckerLog": "docs/verification/operations-sqrt-independent-v3/parent-check.log",
+    "parentCheckerLogSha256": "4f62d2a40e48e2bbd68df47cce3d43f21ba853033ca99379ee8bfea1095345c5",
+    "independentCheckProvenance": "docs/verification/operations-sqrt-independent-v3/provenance.json",
+    "publicEntries": [
+      "Operations.sqrt(uint256)"
+    ],
+    "nativeObligations": 102879,
+    "nativeDeclarations": 944,
+    "zeroAudits": 46,
+    "successfulPhysicalReceipts": 158,
+    "rawRejectionReceipts": 9,
+    "semanticBytecodeFaults": 1,
+    "scope": "Complete exact raw Operations.sqrt(uint256), PCzero through nonpayable/short empty REVERT or physical32-byte floor-root RETURN. Exact seven seed branches, initial scaling, six updates, final correction and every machine transition; all intermediate fitting bounds derived from independent integer-square inequalities and uniqueness. Other public entries remain open."
+  }
+}

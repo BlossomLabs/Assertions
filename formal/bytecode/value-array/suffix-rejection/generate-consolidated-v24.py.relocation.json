@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/value-array/suffix-rejection/generate.py",
+  "output": "/home/sem/assertions/formal/bytecode/value-array/suffix-rejection/generate-consolidated-v24.py",
+  "source_sha256": "69b10a49d900bf5c1ceb25df2304ae31999d6847f8bd6877e76d3d65f9b05596",
+  "output_sha256": "69b10a49d900bf5c1ceb25df2304ae31999d6847f8bd6877e76d3d65f9b05596",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

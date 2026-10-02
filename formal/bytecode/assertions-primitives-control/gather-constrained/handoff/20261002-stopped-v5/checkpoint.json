@@ -1,0 +1,217 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-02T17:50:06.258702+00:00",
+  "status": "stopped-at-user-request-after-current-campaign-drained",
+  "nativeSession": 73378,
+  "nativeSessionTerminalExitCode": 0,
+  "historicalHostRunnerPid": 564285,
+  "currentTarget": "AssertionsGatherConstrainedPublicConnection.Run, PC0 successful constrained RAW gather class",
+  "native": {
+    "manifest": "formal/bytecode/assertions-primitives-control/gather-constrained/development/native-public-consolidated-v5/manifest.json",
+    "manifestSha256": "fc77e5178d2264f3f1cbee72fa1b415fdbe6fd77515d81649993e354ebb75821",
+    "status": "native-closure-passed",
+    "finishedAt": "2026-10-02T17:48:41.289081+00:00",
+    "modules": 147,
+    "declarations": 5290,
+    "nativeRows": 137023,
+    "failedModules": []
+  },
+  "allNativeFinalGatesPassed": true,
+  "publicCredit": false,
+  "wholeGatherOpen": true,
+  "wholeAssertionsCoverage": "2/17",
+  "condClass": "Coordinator accepted constrained RAW cond success/short class in coordinator-continuation-20261002-v44; whole cond open.",
+  "independentReview": "Gather framing V2 and iteration V3 native+identity checked by coordinator. Complete public V5 independent review remains pending.",
+  "retainedRuns": [
+    {
+      "manifest": "formal/bytecode/assertions-primitives-control/gather-constrained/development/native-validator-frame-consolidated-v1/manifest.json",
+      "manifestSha256": "823bbe7ee609ee0d8f307cc1d99e38943c7e2605091adb36e9371ed7579351b5",
+      "status": "failed",
+      "finishedAt": "2026-10-02T17:11:34.082616+00:00",
+      "modules": 70,
+      "declarations": 3779,
+      "nativeRows": 69223,
+      "failedModules": [
+        "AssertionsGatherConstrainedValidatorFrame"
+      ]
+    },
+    {
+      "manifest": "formal/bytecode/assertions-primitives-control/gather-constrained/development/native-framing-consolidated-v2/manifest.json",
+      "manifestSha256": "c6da69c34afd20ef728de0bdc0302473c6a8f704003abb1792748f76e990154d",
+      "status": "native-closure-passed",
+      "finishedAt": "2026-10-02T17:17:42.234606+00:00",
+      "modules": 101,
+      "declarations": 4378,
+      "nativeRows": 101937,
+      "failedModules": []
+    },
+    {
+      "manifest": "formal/bytecode/assertions-primitives-control/gather-constrained/development/native-iteration-consolidated-v3/manifest.json",
+      "manifestSha256": "4ce37d178cc01132607b09e6f7cac36eec9feec0aa3d1464879e32a5d8da10c7",
+      "status": "native-closure-passed",
+      "finishedAt": "2026-10-02T17:25:48.765395+00:00",
+      "modules": 109,
+      "declarations": 4570,
+      "nativeRows": 110956,
+      "failedModules": []
+    },
+    {
+      "manifest": "formal/bytecode/assertions-primitives-control/gather-constrained/development/native-loop-consolidated-v4/manifest.json",
+      "manifestSha256": "56a7e96f78c0a7eafcdbfc41f68279ac6ab67d08e59951f4d25157db197b9f22",
+      "status": "failed",
+      "finishedAt": "2026-10-02T17:32:54.756815+00:00",
+      "modules": 121,
+      "declarations": 4786,
+      "nativeRows": 121700,
+      "failedModules": [
+        "AssertionsGatherConstrainedLoopSpec"
+      ]
+    },
+    {
+      "manifest": "formal/bytecode/assertions-primitives-control/gather-constrained/development/native-public-consolidated-v5/manifest.json",
+      "manifestSha256": "fc77e5178d2264f3f1cbee72fa1b415fdbe6fd77515d81649993e354ebb75821",
+      "status": "native-closure-passed",
+      "finishedAt": "2026-10-02T17:48:41.289081+00:00",
+      "modules": 147,
+      "declarations": 5290,
+      "nativeRows": 137023,
+      "failedModules": []
+    }
+  ],
+  "sourceInventory": [
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/Allocation.dfy",
+      "sha256": "5ac8b87399cb3a80a0c1838ff9f385e66365136617535fe224ace71e4e62eaf9"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/Body.dfy",
+      "sha256": "750bfcc21a0529710d1e5354130c950972479bcab820f5d9e22e85ee48592d68"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/Bounds.dfy",
+      "sha256": "fefccdfd68d2ec095969680a3ac463a2e8ff4bdca296328230620c22d2c16596"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/Connection.dfy",
+      "sha256": "4f9483a4d399d999da881118b3c516225329e8ada15c0771586c8309b84c4dff"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/DevelopmentV2.dfy",
+      "sha256": "ec4b318d347232d7461f1837164f71a9836b09f0e4b9e786f4c7c32f96f0daf0"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/GatherMemory.dfy",
+      "sha256": "06164137c16b870da7aeff213cbe5f1cd93079f93834b63a8a6eaffc0b295ca2"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/Iteration.dfy",
+      "sha256": "d75c0263da13e7cf1b5867f484a1696c82051c14ecc6d8362761056fe2f45a5b"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/Loop.dfy",
+      "sha256": "00b118dd1cb5568e6718f9f821ff31a42c787f6e38d52485d60193bb1b36e9ac"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/LoopSpec.dfy",
+      "sha256": "4141447c85fa5359a6b1734129eb8afd2547240bd6a8280852d8703a96dd8350"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/RawMemory.dfy",
+      "sha256": "1f16c6c6fc168743eb2569b9efc8f74efe84ecf73b0c7fc212be24df9de5e125"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/ResolverFrame.dfy",
+      "sha256": "6a5dfc65f64e247d83eb14c473462a7905964f73e7c920b86d27ed66843b8473"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/ResolverFrameV2.dfy",
+      "sha256": "efcc57c11fb59f37159987b207f2f448c92a8324cba9cc32b1014ec71a703e1f"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/Spec.dfy",
+      "sha256": "6dae8ecc3a1e89060bc8cb0845661c508bf5e6f5f43c95c9ce55a7112c16112f"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/ValidatorFrame.dfy",
+      "sha256": "18ca9d394fad852c055b30fd4d35071c13fdde9bcfb8bdf32752dcbb10e3c365"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/ValidatorFrameV2.dfy",
+      "sha256": "85f91abc0d609cbf8f8661d7a0a7d76413e7ca710ea826361f7fdcf5727414d7"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/Values.dfy",
+      "sha256": "18e3994b97f7f4042f1f65e498c01ba6b7990c8ed2e3bf248c7f2446811bb1bb"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/development/evm-traces-consolidated-v1.mjs",
+      "sha256": "297292b688b6c6bff5601fdc3668847a4fbdf2d8eda0f3693d033c689d69c9b9"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/development/verify-closure-consolidated-v1.py",
+      "sha256": "900ef4daede1f56c1efdf356515c1b7ff8a70d7ee90319871a4b286ea5098bc3"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/development/verify-closure-consolidated-v2.py",
+      "sha256": "2e4871c185097e90328619f16e0bc6e962b8d48b8d16fb12e0009d538a039091"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/development/verify-public-consolidated-v1.py",
+      "sha256": "edc828e1e6b711eaf3742b243bc2edf8ac2e718e62ce6a703e768a65a0bc6cde"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/resolver-frame-preparation-v1.json",
+      "sha256": "a41c3dc56cab2b753dc3bf5e93129080419a5bd94c1a36593d5b98ee2377430e"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/v5/Body.dfy",
+      "sha256": "b12865598c338043b3cf532bb9aef0b41273aad4b239e60c0199b5f2883f0606"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/v5/Connection.dfy",
+      "sha256": "4f9483a4d399d999da881118b3c516225329e8ada15c0771586c8309b84c4dff"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/v5/Loop.dfy",
+      "sha256": "51dd72eb18affea7e4ad32475b139402c9806f23392120e789b2e3da64eda33b"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/v5/LoopSpec.dfy",
+      "sha256": "44ba011b07f1ea7d03a68203491ee5f959e0f6c906ce94b109379d39dd2373d5"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/v5/Spec.dfy",
+      "sha256": "1d84ef08dc2db6c52e7669d13048c86a6ce6bb82d84579d09759e1e9407ae78d"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/v5/Values.dfy",
+      "sha256": "6ddda757cc1f4f94c9963cc4d6b2626965866d6567e8cbcaf9393a5412b5136e"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/v5/preparation.json",
+      "sha256": "f9729a33614298015cee2a6dfce75283917e8c1fdce9515d29b94133760aae82"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/validator-frame-preparation-v1.json",
+      "sha256": "b10dc8a17fdc8f04d6b0d33b543b2e4398d1809e5500ae43a36aa7f1ba54a755"
+    },
+    {
+      "file": "formal/bytecode/assertions-primitives-control/gather-constrained/validator-frame-preparation-v2.json",
+      "sha256": "26227d63b82e7e7a093fa386ad7eee5d5639dee2f4a3d0765febd1dfd249ed5c"
+    }
+  ],
+  "remainingGates": [
+    "Independent coordinator reparse/review of complete V5 native results, normalized/original source graphs, runtime, compiler/input/tool and evidence hashes.",
+    "Current generation reproduces all 60 generated proof sources plus generated ElementSpec/CallerElementSpec and relevant maps/provenance from fresh staged recipes.",
+    "Fresh PC0 concrete gather receipts including mixed counts, all non-OR kinds, signed values, partial bytes, SKIP reference lengths and alias/relocated/unaligned/trailing calldata.",
+    "Independent full opcode/PC/stack/memory replay of every baseline and mutant trace. PC sequence comparison alone is insufficient.",
+    "Matching exact one-byte native/physical semantic fault with consistent fetched certificate; proposed serializer immediate17298:31->30, AssertionsGatherBytesEncoder.Advance23 and constrained bytes32 fixture.",
+    "Independent coordinator class acceptance; no whole-entry inference."
+  ],
+  "stagedUnexecutedPublicWork": [
+    "development/evm-traces-consolidated-v1.mjs: staged and node --check passed before stop; not executed on EVM.",
+    "development/verify-public-consolidated-v1.py: staged before stop, not executed. It currently expects 39 fixtures but the harness declares 37; correct this inventory check in a fresh successor before execution.",
+    "Full gather transition replay checker has not been staged; adapt the retained reviewed cond step interpreter in a fresh owned checker on resume."
+  ],
+  "stopPolicy": "No successor proof, generation, concrete, replay, mutation or acceptance campaign launched after the stop instruction. Do not resume without user authorization."
+}

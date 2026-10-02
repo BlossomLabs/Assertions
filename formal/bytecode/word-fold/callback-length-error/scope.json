@@ -1,0 +1,17 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-wrong-callback-length",
+      "owner": "formal/bytecode/word-fold/callback-length-error",
+      "generatedNames": [
+        "WrongSize"
+      ]
+    }
+  ],
+  "assumptions": [
+    "Both empty/nonempty successful callback receipts of any represented length except32; fitting finite actual memory and all3compiler-bound operation words; exact fold continuation16553.",
+    "Truthful reached twoGAS/actualpayload/successfulSTATICCALL observations and fitting execution resources. No value restriction or independent domain count bound.",
+    "Selected imports assumed; ordinary failure/exhaustion/full raw first-failure and full included/currentcompiler/physical/fault/independent retained gates remain open. No public credit or gas/deployment/performance/compiler correctness claim."
+  ]
+}

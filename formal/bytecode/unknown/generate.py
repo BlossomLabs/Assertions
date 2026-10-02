@@ -3,8 +3,9 @@
 import argparse,hashlib,json,subprocess,sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[2]
-def generate(out):
+def generate(out,only=None,dispatch_manifest=None):
  for name in ['Assertions','Expressions','Collections']:
+  if only and name!=only:continue
   mapping=json.loads((ROOT/'formal/bytecode/dispatch'/f'{name}.mapping.json').read_text());code=bytes.fromhex(json.loads((ROOT/'artifacts/contracts'/f'{name}.sol'/f'{name}.json').read_text())['deployedBytecode'][2:]);assert hashlib.sha256(code).hexdigest()==mapping['runtimeSha256'];nodes=mapping['states']
   text=f'''// SPDX-License-Identifier: MIT
 // Generated physical connection to immutable retained dispatcher controls.
@@ -99,7 +100,7 @@ module BytecodeUnknown{name} {{
   }}
 }}
 '''
-  out.mkdir(parents=True,exist_ok=True);(out/(name+'.generated.dfy')).write_text(text);(out/(name+'.mapping.json')).write_text(json.dumps({'runtimeSha256':mapping['runtimeSha256'],'runtimeBytes':len(code),'dispatchManifest':'formal/bytecode/dispatch/evidence/canonical-dispatchers-v1/manifest.json','modeledPrefixBytes':mapping['modeledPrefixBytes'],'states':nodes,'scope':'Development physical unknown-selector connection; complete retention/dependency/native/audit/EVM/mutation closure required.'},indent=2)+'\n');print(name,len(nodes),'physical frame certificates')
+  out.mkdir(parents=True,exist_ok=True);(out/(name+'.generated.dfy')).write_text(text);(out/(name+'.mapping.json')).write_text(json.dumps({'runtimeSha256':mapping['runtimeSha256'],'runtimeBytes':len(code),'dispatchManifest':str(dispatch_manifest) if dispatch_manifest else None,'modeledPrefixBytes':mapping['modeledPrefixBytes'],'states':nodes,'scope':'Development physical unknown-selector connection; complete retention/dependency/native/audit/EVM/mutation closure required.'},indent=2)+'\n');print(name,len(nodes),'physical frame certificates')
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);a=p.parse_args();generate(a.output)
+ p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--contract',choices=['Assertions','Expressions','Collections']);p.add_argument('--dispatch-manifest',type=Path);a=p.parse_args();generate(a.output,a.contract,a.dispatch_manifest)
  subprocess.run([sys.executable,'-B',HERE/'format-generated.py','--output',a.output,'--include-root',HERE],check=True)

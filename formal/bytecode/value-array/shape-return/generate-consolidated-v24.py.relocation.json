@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/value-array/shape-return/generate.py",
+  "output": "/home/sem/assertions/formal/bytecode/value-array/shape-return/generate-consolidated-v24.py",
+  "source_sha256": "3ce22110152f2bcfecf5fc89721640ab5692a7174f890207c5fe189b17966fe1",
+  "output_sha256": "3ce22110152f2bcfecf5fc89721640ab5692a7174f890207c5fe189b17966fe1",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

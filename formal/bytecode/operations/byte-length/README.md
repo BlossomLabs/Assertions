@@ -1,0 +1,7 @@
+# Exact byteLen raw-admission candidate
+
+No native or retained evidence yet. Eight complementary cases cover every caller value and raw input frame for byteLen(bytes), with the assigned selector after a complete selector window: nonpayable, selector and ABI-head truncation; 64-bit offset rejection; length-word window rejection; 64-bit length rejection; payload-window rejection; and success. Offsets may be zero, unaligned, overlapping or noncanonical; padding and trailing bytes remain unrestricted. Zero-offset aliasing is an explicit projection identity proved from physical raw calldata in the connection.
+
+The result is the length loaded from the admitted raw length word. Local execution models physical big-endian calldata windows, fresh memory, actual byte stores/loads and exact RETURN/empty REVERT slices. All representation frames are finite below 2^64, with reviewed compiler/extraction/interpreter and sufficient reached resources explicit; no gas, deployment or performance claim. Concrete preflight receipts do not replace universal native proofs.
+
+Selected development native passed: 933 positive obligations and 83 covered declarations, plus the one-byte SWAP1-to-DUP1 mutation genuinely fails the exact result checkpoint. Model, compiled dynamic admission prefixes/final receipts and original-length witness passed with unchanged inputs/tools. Full retained public native graph and independent evidence remain required.

@@ -1,0 +1,11 @@
+{
+  "source": "formal/bytecode/assertions-primitives-control/gather-constrained/ValidatorFrame.dfy",
+  "sourceSha256": "18ca9d394fad852c055b30fd4d35071c13fdde9bcfb8bdf32752dcbb10e3c365",
+  "output": "formal/bytecode/assertions-primitives-control/gather-constrained/ValidatorFrameV2.dfy",
+  "outputSha256": "85f91abc0d609cbf8f8661d7a0a7d76413e7ca710ea826361f7fdcf5727414d7",
+  "changes": [
+    "Export preserved-window output extent before the slice equality",
+    "Maintain explicit extent in arbitrary-count loop"
+  ],
+  "scope": "Fresh candidate; original 30-second failures and snapshot retained. Mathematical admission and runtime trace unchanged."
+}

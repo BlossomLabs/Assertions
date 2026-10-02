@@ -1,0 +1,9 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Exact assigned-selector PC-zero routing and fitting raw heads/tails; tails may overlap/share including static heads. Words aligned; accumulator and every supplied element window valid before target checking. Full unsigned256-bit Range count independent of raw array count.",
+    "Exactly one truthful positive CodeSize observation consumed, arbitrary old returndata preserved. Sufficient reached resources. Actual FoldRun pointer128 and six-field allocation through free pointer320 retained; actual template CALLDATACOPY and trailing32-byte zero write included.",
+    "Selected imported contracts assumed. Complete current included native graph, all complementary raw/empty/error paths, domain/stamping/callback/guards/early-exit/scalar return, EVM fixtures, matching semantic faults and independent retained checking mandatory before public coverage. No gas/deployment/performance or compiler correctness claim."
+  ]
+}

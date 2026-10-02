@@ -1,0 +1,715 @@
+{
+  "schemaVersion": 1,
+  "scope": "Planning inventory only. Public credit is solely the independently checked52-entry/19-ledger union; live and prepared entries remain unproved. Parent owns main verification plans.",
+  "runtimeSha256": "5d69cebc087813f4fe85c1fd371ca4d826a582077a29d6318199bc19cb1b1ae8",
+  "sourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce",
+  "statusCounts": {
+    "retained-owner-and-parent-independently-checked": 54,
+    "full-retained-campaign-live-no-public-credit": 2,
+    "unstarted-exact-bytecode": 35,
+    "full-development-native-graph-live-no-public-credit": 1
+  },
+  "publicEntries": [
+    {
+      "signature": "absDiff(int256,int256)",
+      "selector": "1e4812c8",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-absolute-difference-bytecode.json",
+      "manifest": "formal/bytecode/operations/absolute-difference-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "absDiff(uint256,uint256)",
+      "selector": "a09ae0aa",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-absolute-difference-bytecode.json",
+      "manifest": "formal/bytecode/operations/absolute-difference-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "add(int256,int256)",
+      "selector": "a5f3c23b",
+      "status": "retained-owner-and-parent-independently-checked",
+      "package": "formal/bytecode/operations/signed-arithmetic",
+      "manifest": "formal/bytecode/operations/signed-arithmetic-retention/evidence/raw-entries-v2/manifest.json",
+      "selectedManifest": "formal/bytecode/operations/signed-arithmetic/development/selected-v1/manifest.json",
+      "invalidMetadataManifest": "formal/bytecode/operations/signed-arithmetic-retention/evidence/raw-entries-v1/manifest.json",
+      "invalidLedger": "docs/verification/operations-signed-arithmetic-bytecode.json",
+      "ownerCheckerLog": "/tmp/operations-signed-arithmetic-owner-check-v2.log",
+      "ledger": "docs/verification/operations-signed-arithmetic-bytecode.json",
+      "parentLog": "/tmp/operations-signed-arithmetic-parent-check-v2.log"
+    },
+    {
+      "signature": "add(uint256,uint256)",
+      "selector": "771602f7",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/unsigned-arithmetic-retention/evidence/raw-entries-v2/manifest.json",
+      "failedManifest": "formal/bytecode/operations/unsigned-arithmetic-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-unsigned-arithmetic-bytecode.json",
+      "checker": "formal/bytecode/operations/check-unsigned-arithmetic-evidence.py",
+      "parentLog": "/tmp/operations-unsigned-arithmetic-bytecode-parent-check-v2.log"
+    },
+    {
+      "signature": "addMod(int256,int256,int256)",
+      "selector": "289b860c",
+      "status": "full-retained-campaign-live-no-public-credit",
+      "package": "formal/bytecode/operations/signed-modular-repair-v3-retention",
+      "manifest": "formal/bytecode/operations/signed-modular-repair-v4-retention/evidence/raw-entries-v4/manifest.json",
+      "observedBodyPaths": 18,
+      "session": 10640,
+      "foundationManifest": "formal/bytecode/operations/signed-modular/development/foundations-v2/manifest.json",
+      "historicalFailedManifest": "formal/bytecode/operations/signed-modular-retention/evidence/raw-entries-v1/manifest.json",
+      "wholeModuleWatchdogSeconds": 7200,
+      "ordinaryObligationLimitSeconds": 30,
+      "preservedFailedManifest": "formal/bytecode/operations/signed-modular-repair-v3-retention/evidence/raw-entries-v3/manifest.json",
+      "selectedShiftRepairNativeObligations": 58
+    },
+    {
+      "signature": "addMod(uint256,uint256,uint256)",
+      "selector": "b12fe826",
+      "status": "retained-owner-and-parent-independently-checked",
+      "package": "formal/bytecode/operations/unsigned-modular",
+      "manifest": "formal/bytecode/operations/unsigned-modular-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-unsigned-modular-bytecode.json"
+    },
+    {
+      "signature": "balance(address)",
+      "selector": "e3d670d7",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/account-environment-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-account-environment-bytecode.json"
+    },
+    {
+      "signature": "baseFee()",
+      "selector": "6ef25c3a",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-environment-bytecode.json",
+      "manifest": "formal/bytecode/operations/environment-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "bitAnd(uint256,uint256)",
+      "selector": "7598b508",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-bitwise-bytecode.json",
+      "manifest": "formal/bytecode/operations/bitwise-retention/evidence/raw-entries-v3/manifest.json"
+    },
+    {
+      "signature": "bitOr(uint256,uint256)",
+      "selector": "b0229c96",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-bitwise-bytecode.json",
+      "manifest": "formal/bytecode/operations/bitwise-retention/evidence/raw-entries-v3/manifest.json"
+    },
+    {
+      "signature": "bitSet(uint256,uint256)",
+      "selector": "b280615c",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/shifts-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-shifts-bytecode.json"
+    },
+    {
+      "signature": "bitXor(uint256,uint256)",
+      "selector": "496e22b8",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-bitwise-bytecode.json",
+      "manifest": "formal/bytecode/operations/bitwise-retention/evidence/raw-entries-v3/manifest.json"
+    },
+    {
+      "signature": "blobBaseFee()",
+      "selector": "f8206140",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-environment-bytecode.json",
+      "manifest": "formal/bytecode/operations/environment-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "blobHash(uint256)",
+      "selector": "0ba54e32",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/indexed-environment-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-indexed-environment-bytecode.json"
+    },
+    {
+      "signature": "blockHash(uint256)",
+      "selector": "85df51fd",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/indexed-environment-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-indexed-environment-bytecode.json"
+    },
+    {
+      "signature": "blockNumber()",
+      "selector": "57e871e7",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-environment-bytecode.json",
+      "manifest": "formal/bytecode/operations/environment-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "byteAt(bytes,int256)",
+      "selector": "9ae8e8ea",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/byte-at-retention-v3/evidence/raw-entry-resume-v1/manifest.json",
+      "ledger": "docs/verification/operations-byte-at-bytecode.json",
+      "checker": "docs/verification/operations-byte-at-independent-v1/checked-corrected-checker.py",
+      "checkerCorrectionProvenance": "docs/verification/operations-byte-at-independent-v1/provenance.json",
+      "publicEntries": [
+        "Operations.byteAt(bytes,int256)"
+      ],
+      "nativeObligations": 64424,
+      "nativeDeclarations": 1507,
+      "zeroAudits": 65,
+      "successfulPhysicalReceipts": 28,
+      "customErrorPhysicalReceipts": 36,
+      "rawRejectionReceipts": 16,
+      "semanticBytecodeFaults": 1,
+      "ownerCheckerExitCode": 0,
+      "parentCheckerExitCode": 0,
+      "parentCheckerSessionId": 29792,
+      "parentCheckerLog": "docs/verification/operations-byte-at-independent-v1/parent-check.log",
+      "scope": "Complete exact current Operations byteAt(bytes,int256) raw entry: seven PC-zero raw rejections,170-instruction accepted decoder, strict signed index guards and exact68-byte InvalidByteIndex packet, then original-byte copy/zero/header/MCOPY/physical96-byte ABI RETURN. All compatible loose/unaligned offsets, raw signed indices and arbitrary trailing calldata are admitted within finite below2^64 frames. Other entries remain open.",
+      "historicalDevelopment": {
+        "signature": "byteAt(bytes,int256)",
+        "selector": "9ae8e8ea",
+        "status": "full-development-native-graph-live-no-public-credit",
+        "package": "formal/bytecode/operations/byte-at-full",
+        "manifest": "formal/bytecode/operations/byte-at-serialization/development/serialization-graph-v1/manifest.json",
+        "nativeFoundationObligations": 660,
+        "nativeFoundationDeclarations": 72,
+        "zeroAudits": 4,
+        "developmentSession": 77922,
+        "nativeManifest": "formal/bytecode/operations/byte-at/development/admission-v1/manifest.json",
+        "session": 19352,
+        "priorAdmissionNativeObligations": 32294,
+        "preparedWholeGraphModules": 63,
+        "preparedRetainer": "formal/bytecode/operations/byte-at-retention-v2",
+        "priorAcceptedPrefixManifest": "formal/bytecode/operations/byte-at-success-prefix/development/prefix-v1/manifest.json",
+        "priorAcceptedPrefixNativeObligations": 12188,
+        "scope": "Complete32-module signed index/error/position development graph is live; full63-module retention and parent checking remain open.",
+        "matchingNativeFaultManifest": "formal/bytecode/operations/byte-at-retention/development/matching-native-fault-v1/manifest.json",
+        "bodyKernelManifest": "formal/bytecode/operations/byte-at-body-support/development/kernel-v1/manifest.json",
+        "bodyKernelNativeObligations": 216,
+        "preservedFailedIndexManifest": "formal/bytecode/operations/byte-at-index-controls/development/index-graph-v1/manifest.json",
+        "selectedNegativeGuardRepairNativeObligations": 96,
+        "preparedFullNativeModules": 64
+      }
+    },
+    {
+      "signature": "byteLen(bytes)",
+      "selector": "248d6c38",
+      "status": "retained-owner-and-parent-independently-checked",
+      "package": "formal/bytecode/operations/byte-length-repair-v2",
+      "manifest": "formal/bytecode/operations/byte-length-repair-v2-retention/evidence/raw-entries-v2/manifest.json",
+      "failedManifest": "formal/bytecode/operations/byte-length-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+      "selectedRepairManifest": "formal/bytecode/operations/byte-length-repair-v2/development/raw-connection-v3/manifest.json",
+      "ledger": "docs/verification/operations-byte-length-bytecode.json"
+    },
+    {
+      "signature": "chainId()",
+      "selector": "9a8a0592",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-environment-bytecode.json",
+      "manifest": "formal/bytecode/operations/environment-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "charset(bytes,uint256)",
+      "selector": "3e8c97e3",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "code(address)",
+      "selector": "5b90b752",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "codeHash(address)",
+      "selector": "3dc44827",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/account-environment-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-account-environment-bytecode.json"
+    },
+    {
+      "signature": "coinbase()",
+      "selector": "a6ae0aac",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-address-environment-bytecode.json",
+      "manifest": "formal/bytecode/operations/address-environment-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "concat(bytes[],bytes)",
+      "selector": "db38e786",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "contains(bytes,bytes)",
+      "selector": "9a32ab77",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "div(int256,int256)",
+      "selector": "43509138",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/signed-division-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+      "sessionId": 9743,
+      "ledger": "docs/verification/operations-signed-division-bytecode.json"
+    },
+    {
+      "signature": "div(uint256,uint256)",
+      "selector": "a391c15b",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-unsigned-division-bytecode.json",
+      "manifest": "formal/bytecode/operations/unsigned-division-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "encode(string,bytes[])",
+      "selector": "ffe9205d",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "encodeBytes(string,bytes[])",
+      "selector": "821f167b",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "eq(uint256,uint256)",
+      "selector": "32148d73",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-comparison-bytecode.json",
+      "manifest": "formal/bytecode/operations/comparison-repair-v2-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "exp(int256,uint256)",
+      "selector": "185af0ad",
+      "status": "unstarted-exact-bytecode",
+      "mathematicalPreparation": "formal/bytecode/operations/power-kernel",
+      "physicalDevelopmentReceipts": 67,
+      "physicalDevelopmentPreflight": "formal/bytecode/operations/power-entry-preparation/preflight.json",
+      "scopeNote": "Pure mathematical native verification queued;67 concrete full-stack/memory replays passed. Universal compiled raw paths/loop/receipts and retained evidence remain unstarted."
+    },
+    {
+      "signature": "exp(uint256,uint256)",
+      "selector": "f5f565f8",
+      "status": "unstarted-exact-bytecode",
+      "mathematicalPreparation": "formal/bytecode/operations/power-kernel",
+      "physicalDevelopmentReceipts": 67,
+      "physicalDevelopmentPreflight": "formal/bytecode/operations/power-entry-preparation/preflight.json",
+      "scopeNote": "Pure mathematical native verification queued;67 concrete full-stack/memory replays passed. Universal compiled raw paths/loop/receipts and retained evidence remain unstarted."
+    },
+    {
+      "signature": "expWad(int256)",
+      "selector": "40816fae",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "formatUnits(int256,uint256)",
+      "selector": "6470c9a3",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "formatUnits(uint256,uint256)",
+      "selector": "aff33dd9",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "gasLimit()",
+      "selector": "f68016b7",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-environment-bytecode.json",
+      "manifest": "formal/bytecode/operations/environment-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "gasPrice()",
+      "selector": "fe173b97",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-environment-bytecode.json",
+      "manifest": "formal/bytecode/operations/environment-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "ge(int256,int256)",
+      "selector": "6552f187",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-comparison-bytecode.json",
+      "manifest": "formal/bytecode/operations/comparison-repair-v2-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "ge(uint256,uint256)",
+      "selector": "85e1f66c",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-comparison-bytecode.json",
+      "manifest": "formal/bytecode/operations/comparison-repair-v2-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "gt(int256,int256)",
+      "selector": "ac08973d",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-comparison-bytecode.json",
+      "manifest": "formal/bytecode/operations/comparison-repair-v2-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "gt(uint256,uint256)",
+      "selector": "21e5749b",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-comparison-bytecode.json",
+      "manifest": "formal/bytecode/operations/comparison-repair-v2-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "hash(bytes)",
+      "selector": "aa1e84de",
+      "status": "retained-owner-and-parent-independently-checked",
+      "package": "formal/bytecode/operations/hash-bytes-success",
+      "manifest": "formal/bytecode/operations/hash-bytes-retention/evidence/raw-entry-v1/manifest.json",
+      "developmentSession": 28872,
+      "nativeManifest": "formal/bytecode/operations/hash-bytes/development/admission-copy-v1/manifest.json",
+      "session": 56124,
+      "preparedRetainer": "formal/bytecode/operations/hash-bytes-retention",
+      "priorFullDevelopmentManifest": "formal/bytecode/operations/hash-bytes-success/development/full-raw-graph-v1/manifest.json",
+      "priorFullDevelopmentNativeObligations": 52494,
+      "currentCheckedLedger": "docs/verification/operations-hash-bytes-bytecode-v4.json",
+      "currentCheckedManifest": "formal/bytecode/operations/hash-bytes-retention-v4/evidence/raw-entry-v4/manifest.json"
+    },
+    {
+      "signature": "hashPairSorted(bytes32,bytes32)",
+      "selector": "c203edb3",
+      "status": "retained-owner-and-parent-independently-checked",
+      "package": "formal/bytecode/operations/hash-pair-sorted",
+      "manifest": "formal/bytecode/operations/hash-pair-sorted-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+      "failedManifest": "formal/bytecode/operations/hash-pair-sorted-retention/evidence/raw-entries-v1/manifest.json",
+      "repairPackage": "formal/bytecode/operations/hash-pair-sorted-repair-v2",
+      "failure": "Keep.Run whole-process1800-second watchdog; no complete Keep CSV; other checks/current closures passed",
+      "selectedRepairManifest": "formal/bytecode/operations/hash-pair-sorted-repair-v2/development/block-composition-v1/manifest.json",
+      "selectedSession": 40321,
+      "ledger": "docs/verification/operations-hash-pair-sorted-bytecode.json"
+    },
+    {
+      "signature": "indexOf(bytes,bytes,int256)",
+      "selector": "31470145",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "le(int256,int256)",
+      "selector": "00136bb8",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-comparison-bytecode.json",
+      "manifest": "formal/bytecode/operations/comparison-repair-v2-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "le(uint256,uint256)",
+      "selector": "d3662cfd",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-comparison-bytecode.json",
+      "manifest": "formal/bytecode/operations/comparison-repair-v2-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "lnWad(int256)",
+      "selector": "620ef2b4",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "log2(uint256)",
+      "selector": "5456bf13",
+      "status": "retained-owner-and-parent-independently-checked",
+      "package": "formal/bytecode/operations/log2-repair-v7-retention",
+      "manifest": "formal/bytecode/operations/log2-repair-v7-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-log2-bytecode.json",
+      "checker": "formal/bytecode/operations/check-log2-repair-v7-evidence.py"
+    },
+    {
+      "signature": "lt(int256,int256)",
+      "selector": "30880038",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-comparison-bytecode.json",
+      "manifest": "formal/bytecode/operations/comparison-repair-v2-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "lt(uint256,uint256)",
+      "selector": "118fc88c",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-comparison-bytecode.json",
+      "manifest": "formal/bytecode/operations/comparison-repair-v2-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "max(int256,int256)",
+      "selector": "81fe5786",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/minmax-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-minmax-bytecode.json"
+    },
+    {
+      "signature": "max(uint256,uint256)",
+      "selector": "6d5433e6",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/minmax-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-minmax-bytecode.json"
+    },
+    {
+      "signature": "min(int256,int256)",
+      "selector": "29aa9cbe",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/minmax-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-minmax-bytecode.json"
+    },
+    {
+      "signature": "min(uint256,uint256)",
+      "selector": "7ae2b5c7",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/minmax-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-minmax-bytecode.json"
+    },
+    {
+      "signature": "mod(int256,int256)",
+      "selector": "24e28928",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/signed-division-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+      "sessionId": 9743,
+      "ledger": "docs/verification/operations-signed-division-bytecode.json"
+    },
+    {
+      "signature": "mod(uint256,uint256)",
+      "selector": "f43f523a",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-unsigned-division-bytecode.json",
+      "manifest": "formal/bytecode/operations/unsigned-division-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "mul(int256,int256)",
+      "selector": "bbe93d91",
+      "status": "retained-owner-and-parent-independently-checked",
+      "package": "formal/bytecode/operations/signed-multiply",
+      "manifest": "formal/bytecode/operations/signed-multiply-repair-v2-retention/evidence/raw-entries-v3/manifest.json",
+      "failedManifest": "formal/bytecode/operations/signed-multiply-retention/evidence/raw-entries-v1/manifest.json",
+      "repairPackage": "formal/bytecode/operations/signed-multiply-repair-v2",
+      "selectedRepairManifest": "formal/bytecode/operations/signed-multiply-repair-v2/development/return-connection-v1/manifest.json",
+      "selectedSession": 16027,
+      "failure": "MulSOk.Advance165 final physical RETURN projection30-second solver timeout; other native/audit/physical/fault/current closure checks passed",
+      "ledger": "docs/verification/operations-signed-multiply-bytecode.json",
+      "ownerCheckerLog": "/tmp/operations-signed-multiply-owner-check-v4.log",
+      "parentCheckerLog": "/tmp/operations-signed-multiply-bytecode-parent-check-v4.log"
+    },
+    {
+      "signature": "mul(uint256,uint256)",
+      "selector": "c8a4ac9c",
+      "status": "retained-owner-and-parent-independently-checked",
+      "package": "formal/bytecode/operations/unsigned-multiply-repair-v2",
+      "sessionId": 51488,
+      "failedManifest": "formal/bytecode/operations/unsigned-multiply-retention/evidence/raw-entries-v1/manifest.json",
+      "manifest": "formal/bytecode/operations/unsigned-multiply-repair-v2-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-unsigned-multiply-bytecode.json"
+    },
+    {
+      "signature": "mulDiv(int256,int256,int256,uint8)",
+      "selector": "693741c1",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "mulDiv(uint256,uint256,uint256,uint8)",
+      "selector": "1a134248",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "mulMod(int256,int256,int256)",
+      "selector": "3daa08a5",
+      "status": "full-retained-campaign-live-no-public-credit",
+      "package": "formal/bytecode/operations/signed-modular-repair-v3-retention",
+      "manifest": "formal/bytecode/operations/signed-modular-repair-v4-retention/evidence/raw-entries-v4/manifest.json",
+      "observedBodyPaths": 9,
+      "session": 10640,
+      "foundationManifest": "formal/bytecode/operations/signed-modular/development/foundations-v2/manifest.json",
+      "historicalFailedManifest": "formal/bytecode/operations/signed-modular-retention/evidence/raw-entries-v1/manifest.json",
+      "wholeModuleWatchdogSeconds": 7200,
+      "ordinaryObligationLimitSeconds": 30,
+      "preservedFailedManifest": "formal/bytecode/operations/signed-modular-repair-v3-retention/evidence/raw-entries-v3/manifest.json",
+      "selectedShiftRepairNativeObligations": 58
+    },
+    {
+      "signature": "mulMod(uint256,uint256,uint256)",
+      "selector": "a4ad2ee9",
+      "status": "retained-owner-and-parent-independently-checked",
+      "package": "formal/bytecode/operations/unsigned-modular",
+      "manifest": "formal/bytecode/operations/unsigned-modular-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-unsigned-modular-bytecode.json"
+    },
+    {
+      "signature": "ne(uint256,uint256)",
+      "selector": "33151e4c",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-comparison-bytecode.json",
+      "manifest": "formal/bytecode/operations/comparison-repair-v2-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "origin()",
+      "selector": "938b5f32",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-address-environment-bytecode.json",
+      "manifest": "formal/bytecode/operations/address-environment-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "parseInt(bytes)",
+      "selector": "e08bc3fe",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "parseUint(bytes)",
+      "selector": "1cce87ec",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "parseUnits(bytes,uint256,uint8)",
+      "selector": "47417024",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "parseUnitsUnsigned(bytes,uint256,uint8)",
+      "selector": "a7334963",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "powMod(int256,int256,int256)",
+      "selector": "08198add",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "powMod(int256,uint256,int256)",
+      "selector": "640c3e5a",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "powMod(uint256,int256,uint256)",
+      "selector": "dec28c5b",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "powMod(uint256,uint256,uint256)",
+      "selector": "44852766",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "prevRandao()",
+      "selector": "fd6e98c4",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-environment-bytecode.json",
+      "manifest": "formal/bytecode/operations/environment-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "rawCall(address,bytes)",
+      "selector": "09acaa96",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "replace(bytes,bytes,bytes)",
+      "selector": "801cc257",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "rpow(uint256,uint256,uint256)",
+      "selector": "67b870af",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "shl(uint256,uint256)",
+      "selector": "9da760ef",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/shifts-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-shifts-bytecode.json"
+    },
+    {
+      "signature": "shr(int256,uint256)",
+      "selector": "1b7d7318",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/shifts-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-shifts-bytecode.json"
+    },
+    {
+      "signature": "shr(uint256,uint256)",
+      "selector": "75f4479a",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/shifts-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-shifts-bytecode.json"
+    },
+    {
+      "signature": "slice(bytes,uint256,uint256)",
+      "selector": "e0041396",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "sliceRange(bytes,int256,int256)",
+      "selector": "305dda92",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "split(bytes,bytes)",
+      "selector": "98131876",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "sqrt(uint256)",
+      "selector": "677342ce",
+      "status": "full-development-native-graph-live-no-public-credit",
+      "package": "formal/bytecode/operations/sqrt-retention",
+      "manifest": "formal/bytecode/operations/sqrt-raw-controls/development/raw-graph-v1/manifest.json",
+      "physicalReceipts": 167,
+      "observedSuccessfulBodyPaths": 21,
+      "nativeMathStatus": "prepared-not-verified",
+      "session": 53126,
+      "physicalReturnNativeObligations": 8197,
+      "mathematicalPipelineNativeObligations": 790,
+      "matchingNativeFaultManifest": "formal/bytecode/operations/sqrt-retention/development/matching-native-fault-v1/manifest.json"
+    },
+    {
+      "signature": "stringAt(bytes,int256)",
+      "selector": "a1bc2139",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "stringSlice(bytes,int256,int256)",
+      "selector": "c926204b",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "sub(int256,int256)",
+      "selector": "adefc37b",
+      "status": "retained-owner-and-parent-independently-checked",
+      "package": "formal/bytecode/operations/signed-arithmetic",
+      "manifest": "formal/bytecode/operations/signed-arithmetic-retention/evidence/raw-entries-v2/manifest.json",
+      "selectedManifest": "formal/bytecode/operations/signed-arithmetic/development/selected-v1/manifest.json",
+      "invalidMetadataManifest": "formal/bytecode/operations/signed-arithmetic-retention/evidence/raw-entries-v1/manifest.json",
+      "invalidLedger": "docs/verification/operations-signed-arithmetic-bytecode.json",
+      "ownerCheckerLog": "/tmp/operations-signed-arithmetic-owner-check-v2.log",
+      "ledger": "docs/verification/operations-signed-arithmetic-bytecode.json",
+      "parentLog": "/tmp/operations-signed-arithmetic-parent-check-v2.log"
+    },
+    {
+      "signature": "sub(uint256,uint256)",
+      "selector": "b67d77c5",
+      "status": "retained-owner-and-parent-independently-checked",
+      "manifest": "formal/bytecode/operations/unsigned-arithmetic-retention/evidence/raw-entries-v2/manifest.json",
+      "failedManifest": "formal/bytecode/operations/unsigned-arithmetic-retention/evidence/raw-entries-v1/manifest.json",
+      "ledger": "docs/verification/operations-unsigned-arithmetic-bytecode.json",
+      "checker": "formal/bytecode/operations/check-unsigned-arithmetic-evidence.py",
+      "parentLog": "/tmp/operations-unsigned-arithmetic-bytecode-parent-check-v2.log"
+    },
+    {
+      "signature": "timestamp()",
+      "selector": "b80777ea",
+      "status": "retained-owner-and-parent-independently-checked",
+      "ledger": "docs/verification/operations-environment-bytecode.json",
+      "manifest": "formal/bytecode/operations/environment-retention/evidence/raw-entries-v1/manifest.json"
+    },
+    {
+      "signature": "toLower(bytes)",
+      "selector": "c1459c04",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "toString(int256)",
+      "selector": "a322c40e",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "toString(uint256)",
+      "selector": "6900a3ae",
+      "status": "unstarted-exact-bytecode"
+    },
+    {
+      "signature": "toUpper(bytes)",
+      "selector": "feec0cff",
+      "status": "unstarted-exact-bytecode"
+    }
+  ],
+  "assumptions": "Finite fitting representation, reviewed extraction/opcode interpretation, faithful actual external observations and adequate reached resources remain explicit; no gas/deployment/performance or real exp/log approximation claims.",
+  "updatedAt": "2026-10-02T03:57:48.894308+00:00"
+}

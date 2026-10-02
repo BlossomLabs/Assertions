@@ -1,0 +1,1263 @@
+{
+  "status": "prospective-graph-only-not-retained-proof",
+  "rootProofs": [
+    "formal/bytecode/word-fold/raw-closure-repair-v3/public-entry-repair-v2/Connection.dfy"
+  ],
+  "moduleCount": 208,
+  "includeOnlyCount": 2,
+  "modules": [
+    {
+      "module": "BytecodeWordLengthMask",
+      "source": "formal/bytecode/alignment/Mask.dfy",
+      "sha256": "5684b77db748a7fad43830f21bb5e2b6109e767326290e9928b031993e3e8506",
+      "declarations": 8
+    },
+    {
+      "module": "BytecodeWordAlignmentScalar",
+      "source": "formal/bytecode/alignment/Scalar.dfy",
+      "sha256": "f274a4d7750e15a636d04743d83df24a3c5a211fe43dbb904aa704f68c8341b0",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeCopyExecution",
+      "source": "formal/bytecode/copy/Execution.dfy",
+      "sha256": "392542072d1b116bd66b1f3d86acff2dcf43cd3b21ac5907fb0e689012f13067",
+      "declarations": 6
+    },
+    {
+      "module": "BytecodeCopyMachine",
+      "source": "formal/bytecode/copy/Machine.dfy",
+      "sha256": "724e1346c5f2f090cfa5f8642a7d064a89fe2820345c00856d54fa2db0ede138",
+      "declarations": 6
+    },
+    {
+      "module": "BytecodeCopyMemory",
+      "source": "formal/bytecode/copy/Memory.dfy",
+      "sha256": "fdc0d30ae3d1ade6ec995af4c31b9a33bd1de66e22633fea29bd0af75388c215",
+      "declarations": 15
+    },
+    {
+      "module": "BytecodeExternalExecution",
+      "source": "formal/bytecode/external-calls/Execution.dfy",
+      "sha256": "ec018233baa7e54821b55bbf743c7747a74052faf3ecd574204226242322675c",
+      "declarations": 7
+    },
+    {
+      "module": "BytecodeExternalMachine",
+      "source": "formal/bytecode/external-calls/Machine.dfy",
+      "sha256": "f1ac6fe630aebb1dcdc6569432581748a745a6c23104f6f324913bf00151b984",
+      "declarations": 13
+    },
+    {
+      "module": "BytecodeExternalMemory",
+      "source": "formal/bytecode/external-calls/Memory.dfy",
+      "sha256": "0a88db28cec1660b1921a62f0e24204c64dcd19ed6ccdf3161f9767e12e03383",
+      "declarations": 17
+    },
+    {
+      "module": "BytecodeGetterMachine",
+      "source": "formal/bytecode/getters/Machine.dfy",
+      "sha256": "580ed7e6adb650de585aa990a30839380a5f977deb9d1bb8451d780c5aae8c20",
+      "declarations": 20
+    },
+    {
+      "module": "BytecodeIotaAllocationMemory",
+      "source": "formal/bytecode/iota/AllocationMemory.dfy",
+      "sha256": "fd689d03da01da236cfb56c6172f7150e317f9bb0e136d52111c9cfa7e628691",
+      "declarations": 4
+    },
+    {
+      "module": "BytecodeIotaAllocationScalar",
+      "source": "formal/bytecode/iota/AllocationScalar.dfy",
+      "sha256": "4328773b0312ebe71dc9d4e81845729cb39b67d39193455bca69301aa18d191d",
+      "declarations": 2
+    },
+    {
+      "module": "BytecodeIotaOutput",
+      "source": "formal/bytecode/iota/Output.dfy",
+      "sha256": "86b7416476bb94d9e6933b675bbd71484f55c29350645bf45c2a592c65cf4182",
+      "declarations": 9
+    },
+    {
+      "module": "BytecodeOpcodeAnd",
+      "source": "formal/bytecode/opcode-kernels/And.dfy",
+      "sha256": "d54ec40ab37afb95b9cfbac07a654cbaaec92fb006ebe1a427e77abcef38bb25",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeScanDecoderScalar",
+      "source": "formal/bytecode/scans/DecoderScalar.dfy",
+      "sha256": "5e4d8ba20779c56b3fdaff4a2ed1de77e455aad6c11500133c75f7c967d29095",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeScanErrorBytes",
+      "source": "formal/bytecode/scans/ErrorBytes.dfy",
+      "sha256": "5e49ce6ed0671cc801682ea9e44185a61a12cf2911521f01425947dc0e26ef9d",
+      "declarations": 2
+    },
+    {
+      "module": "BytecodeScanExecution",
+      "source": "formal/bytecode/scans/Execution.dfy",
+      "sha256": "b4326de16c5fe07cd4e74c73e315003cdf090d2423e5421c79ec44750c2362cc",
+      "declarations": 5
+    },
+    {
+      "module": "BytecodeScanFetch",
+      "source": "formal/bytecode/scans/Fetch.dfy",
+      "sha256": "fa4751dbcb8bf1b9f326e79ed9eeefd6731c6e8564b66cdd4d11e05ea2533285",
+      "declarations": 2
+    },
+    {
+      "module": "BytecodeScanMachine",
+      "source": "formal/bytecode/scans/Machine.dfy",
+      "sha256": "c8d37efffab0207606458218612a1ac97874d102cebf0e6a2f09e6de09689b07",
+      "declarations": 11
+    },
+    {
+      "module": "BytecodeScanPush",
+      "source": "formal/bytecode/scans/Push.dfy",
+      "sha256": "1bd63fee04c97fce5564c040906eb81cfccabb95595d28f70e624b40473f4526",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeScanRepresentation",
+      "source": "formal/bytecode/scans/Representation.dfy",
+      "sha256": "234e786e0e3a75b79f5fb111544979cb032901541fe203b64dc7d70f520d542b",
+      "declarations": 6
+    },
+    {
+      "module": "BytecodeScanScalar",
+      "source": "formal/bytecode/scans/Scalar.dfy",
+      "sha256": "4fc9b1fbd82ca6c97d9dee342ca9235acfd88c056a4d820fc13d9a7ac29fdb94",
+      "declarations": 3
+    },
+    {
+      "module": "BytecodeApplyAddressMask",
+      "source": "formal/bytecode/word-apply/address-kernel/Mask.dfy",
+      "sha256": "422e773e2e5f6769f4fd5ea9c1a1a62815569105b94278f057724e08f42320bc",
+      "declarations": 19
+    },
+    {
+      "module": "BytecodeApplyAllocationMemory",
+      "source": "formal/bytecode/word-apply/allocation-header/Memory.dfy",
+      "sha256": "7a767b869d2c381a05743da6efb112984c5057fde3239a8b4e40420c89131758",
+      "declarations": 5
+    },
+    {
+      "module": "BytecodeApplyArrayStride",
+      "source": "formal/bytecode/word-apply/array-stride/Stride.dfy",
+      "sha256": "983662c9e7caabae4b230f7a82b0ac376ac13a636c8f35fe9578395530d9fae9",
+      "declarations": 10
+    },
+    {
+      "module": "BytecodeApplyCallbackCopyMemory",
+      "source": "formal/bytecode/word-apply/callback-copy/Memory.dfy",
+      "sha256": "25f05a8155ce441d6824ae05c49b082053a4420f96dc0cff6562a26a744b171d",
+      "declarations": 9
+    },
+    {
+      "module": "BytecodeApplyEmptyReceiptMemory",
+      "source": "formal/bytecode/word-apply/callback-empty-receipt/Memory.dfy",
+      "sha256": "c96bbb1682bf755ec58afaefc627f7a246bc9ae75db5712935c3100509379528",
+      "declarations": 2
+    },
+    {
+      "module": "BytecodeApplyCallbackExhaustionScalar",
+      "source": "formal/bytecode/word-apply/callback-exhaustion-controls/Scalar.dfy",
+      "sha256": "967a914513b086e38b2b25282c88c911cce94a3cede69d892a7d72f5fa092998",
+      "declarations": 7
+    },
+    {
+      "module": "BytecodeApplyCallbackExhaustionFourLengthContinue",
+      "source": "formal/bytecode/word-apply/callback-exhaustion-controls-repair-v2/FourLengthContinue.generated.dfy",
+      "sha256": "f2a01441f7201b29ea5ab3b33187f2574b34ae978129258b2c7ab3857fce65bb",
+      "declarations": 67
+    },
+    {
+      "module": "BytecodeApplyCallbackExhaustionFourLengthExhausted",
+      "source": "formal/bytecode/word-apply/callback-exhaustion-controls-repair-v2/FourLengthExhausted.generated.dfy",
+      "sha256": "32c06de46ce208800ead82f686c22bfa0cd60b6b0850a4c87d82f29c6c36f14c",
+      "declarations": 48
+    },
+    {
+      "module": "BytecodeApplyCallbackExhaustionFourLengthSignal",
+      "source": "formal/bytecode/word-apply/callback-exhaustion-controls-repair-v2/FourLengthSignal.generated.dfy",
+      "sha256": "5cd02c858ade2091bf93aec87b621cde7c9b6889f7217a524102ebe8f4063ba2",
+      "declarations": 62
+    },
+    {
+      "module": "BytecodeApplyCallbackExhaustionOtherLengthContinue",
+      "source": "formal/bytecode/word-apply/callback-exhaustion-controls-repair-v2/OtherLengthContinue.generated.dfy",
+      "sha256": "01f024fd8715dcc64ff8f75deec69ea98e65b2022bff271121b125d85d632a14",
+      "declarations": 62
+    },
+    {
+      "module": "BytecodeApplyCallbackExhaustionOtherLengthExhausted",
+      "source": "formal/bytecode/word-apply/callback-exhaustion-controls-repair-v2/OtherLengthExhausted.generated.dfy",
+      "sha256": "14153e17b7ff506e4a95333dbb18ead41a57e401e278d01f1458e588feb0bf27",
+      "declarations": 43
+    },
+    {
+      "module": "BytecodeApplyCallbackExhaustionEngine",
+      "source": "formal/bytecode/word-apply/callback-exhaustion-engine-repair-v5/Engine.dfy",
+      "sha256": "c4cb127537eefe889827e34a6bb6d356d5e0365d802356c811a119d82adc7481",
+      "declarations": 4
+    },
+    {
+      "module": "BytecodeApplyCallbackExhaustionMemory",
+      "source": "formal/bytecode/word-apply/callback-exhaustion-engine-repair-v5/Memory.dfy",
+      "sha256": "a9df4c07d54008abd6c220a223f6ecb48842db955717bcf3725aca12b8389b30",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeApplyCallbackFailedReceiptAdmission",
+      "source": "formal/bytecode/word-apply/callback-failed-admission-repair-v4/Memory.dfy",
+      "sha256": "6eca464e2e9f18b5504884c35cb6d69af8b8a2c5d786b75caa9c56b1efa2638a",
+      "declarations": 4
+    },
+    {
+      "module": "BytecodeApplyCallbackFailedControlMemory",
+      "source": "formal/bytecode/word-apply/callback-failed-controls-repair-v7/Bindings.dfy",
+      "sha256": "39f9abaa28301b78ffc4349808883f32026e10743a3a805ece58cb273d20e2ce",
+      "declarations": 6
+    },
+    {
+      "module": "BytecodeApplyCallbackFailedMemory",
+      "source": "formal/bytecode/word-apply/callback-failed-memory-repair-v3/Memory.dfy",
+      "sha256": "d3fa543f7e2a854b4f9111eeeab467ffcce1f4827afaccc075eb8a524d36f67a",
+      "declarations": 25
+    },
+    {
+      "module": "BytecodeApplyCallbackLengthScalar",
+      "source": "formal/bytecode/word-apply/callback-length-error/Scalar.dfy",
+      "sha256": "f814f7b48e0c602ac24c19c2c4883004928ef7e770ba30e9a65c91fd7b1d3031",
+      "declarations": 5
+    },
+    {
+      "module": "BytecodeApplyCallbackObservation",
+      "source": "formal/bytecode/word-apply/callback-observation/Binding.dfy",
+      "sha256": "bacec81d84037432ff6bb476008ba0ac9ab9e1637a8fcae57947bb2d520dc84b",
+      "declarations": 3
+    },
+    {
+      "module": "BytecodeApplyCallStackSequence",
+      "source": "formal/bytecode/word-apply/callback-observation/Sequence.dfy",
+      "sha256": "04d5505bc0c3256c3cf1eca2f0a6b05c8d00684c5ca756086ddc7cb36eec3acc",
+      "declarations": 2
+    },
+    {
+      "module": "BytecodeApplyCallbackOutOfGasReturnControl",
+      "source": "formal/bytecode/word-apply/callback-out-of-gas-return-repair-v3/Control.generated.dfy",
+      "sha256": "269f2ad35984636e06340582c156ab87e6b638e120d5580b8f8d590c92d08134",
+      "declarations": 21
+    },
+    {
+      "module": "BytecodeApplyCallbackOutOfGasReturnMemory",
+      "source": "formal/bytecode/word-apply/callback-out-of-gas-return-repair-v3/Memory.dfy",
+      "sha256": "2e9b3e7b9d2cf9e12ba8bdeb492561a9a41dff0d3fe1b71793e3d1f35d2b3348",
+      "declarations": 8
+    },
+    {
+      "module": "BytecodeApplyCallbackPack",
+      "source": "formal/bytecode/word-apply/callback-pack/Pack.generated.dfy",
+      "sha256": "ca0d161fb947ad3b64975ad4a93e9142b1b431d24a550e6fc175e5d0f979c5f7",
+      "declarations": 44
+    },
+    {
+      "module": "BytecodeApplyCallbackPackMask",
+      "source": "formal/bytecode/word-apply/callback-pack-control/Mask.dfy",
+      "sha256": "c2b6bec848405850dc10e7d7f40868ee7f9ca67b04f2c254edb99e765b5a0237",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeApplyCallbackReceiptMemory",
+      "source": "formal/bytecode/word-apply/callback-receipt/Memory.dfy",
+      "sha256": "4fe7e78a123f4b83ad14e5c439d751e6b720a17cf2ce607983b4170c9c6d9ccc",
+      "declarations": 9
+    },
+    {
+      "module": "BytecodeApplyCallbackReceiptRounding",
+      "source": "formal/bytecode/word-apply/callback-receipt/Rounding.dfy",
+      "sha256": "70a5d324d7e9050a9187c369949409caf457f14aa76032c4a1ca94c0dac7be0c",
+      "declarations": 15
+    },
+    {
+      "module": "BytecodeApplyCallbackReceiptScalar",
+      "source": "formal/bytecode/word-apply/callback-receipt-control/Scalar.dfy",
+      "sha256": "4d3e0f5f9f00ebb01aceda754a9bd67545c2d91fb9d77e97b2c342cb03f0c8c4",
+      "declarations": 3
+    },
+    {
+      "module": "BytecodeApplyFullCallbackReceiptMemory",
+      "source": "formal/bytecode/word-apply/callback-receipt-engine/Memory.dfy",
+      "sha256": "f1bbfe75b23c752f4f1ddef69042c04a45456a04461efc105b181967e94c588d",
+      "declarations": 6
+    },
+    {
+      "module": "BytecodeApplyWrongCallbackMemory",
+      "source": "formal/bytecode/word-apply/callback-result-error/Memory.dfy",
+      "sha256": "03e4b85ef0846d7b1bb551f41e1f2cb45114deaee67ee0d086fdd211a0386ba1",
+      "declarations": 8
+    },
+    {
+      "module": "BytecodeApplyWrongCallbackScalar",
+      "source": "formal/bytecode/word-apply/callback-result-error/Scalar.dfy",
+      "sha256": "7bd9ccaa494ef9e10aefeadb9d5167c4da6c1338908df769331dbdab36e8cbca",
+      "declarations": 13
+    },
+    {
+      "module": "BytecodeApplyCallbackSuccessMemory",
+      "source": "formal/bytecode/word-apply/callback-success/Memory.dfy",
+      "sha256": "68b7f07d0b96550d16ce00169f55b0311cf8c34f65a12ed7027b52146eacdbfa",
+      "declarations": 7
+    },
+    {
+      "module": "BytecodeApplyCallbackSuccessScalar",
+      "source": "formal/bytecode/word-apply/callback-success/Scalar.dfy",
+      "sha256": "5c66ed971766b6ae2c69593fdc1de5b2687953af4d607d337453c98881f64045",
+      "declarations": 5
+    },
+    {
+      "module": "BytecodeApplySuccessfulCallMemory",
+      "source": "formal/bytecode/word-apply/callback-success-engine/Memory.dfy",
+      "sha256": "b577141a7ec852850f1aaccbbe37979e54db43ac5569641bf1d371eafd377e30",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeApplyDynamicBytesCopyControl",
+      "source": "formal/bytecode/word-apply/dynamic-bytes-copy-repair-v2/Control.generated.dfy",
+      "sha256": "3516c0ac82d7adb423848db911fac04d298b7e2134e98d679db41f2e8672f7f4",
+      "declarations": 47
+    },
+    {
+      "module": "BytecodeApplyDynamicBytesCopyMemory",
+      "source": "formal/bytecode/word-apply/dynamic-bytes-copy-repair-v2/Memory.dfy",
+      "sha256": "2153bd4da415c5a3217ce284951abfa07d67a0a0bcf48edc58571577e705d133",
+      "declarations": 11
+    },
+    {
+      "module": "BytecodeApplyRawCallbackMemory",
+      "source": "formal/bytecode/word-apply/raw-callback-memory/Memory.dfy",
+      "sha256": "a8e3a30df969a158d47568d7f285ad91624228f2d12a863230b6bf809dbff43a",
+      "declarations": 6
+    },
+    {
+      "module": "BytecodeApplyRawInputs",
+      "source": "formal/bytecode/word-apply/raw-decoder/Inputs.dfy",
+      "sha256": "0726f86ac770ed27d67e6a401cab4acdd882117a14f2f26832ad7c15583d0d60",
+      "declarations": 23
+    },
+    {
+      "module": "BytecodeApplyRawScalar",
+      "source": "formal/bytecode/word-apply/raw-decoder/Scalar.dfy",
+      "sha256": "3842761eb7beb899894f9d1778e64178c22567ffd0e11c8f481bf2230b563c39",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeApplyRawStampMemory",
+      "source": "formal/bytecode/word-apply/raw-stamp/Memory.dfy",
+      "sha256": "dde0065d0d6e014fe31af08ff366eda02ccf0ebfd9918dbeb8d46ccf159edab7",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeApplyStampMemory",
+      "source": "formal/bytecode/word-apply/stamp-engine/Memory.dfy",
+      "sha256": "baa9fb0950cd4975c98dd64fadd0f99d163ffcd6f1a68ee8d71e3349712bfd6c",
+      "declarations": 5
+    },
+    {
+      "module": "BytecodeApplyStoreByteFrame",
+      "source": "formal/bytecode/word-apply/store-bytes/Frame.dfy",
+      "sha256": "c0abb1e6c49cf43e9fcacd728ec0e90347442717067208ee771eca33c78f876c",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeApplyTargetMaskOpcode",
+      "source": "formal/bytecode/word-apply/target-check/MaskOpcode.dfy",
+      "sha256": "9154e1d603dd0002694ee958628fdc796aaa076805574c8456e990c7035f1c37",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeApplyTargetSequence",
+      "source": "formal/bytecode/word-apply/target-check/Sequence.dfy",
+      "sha256": "8a62114fd9c43fcd3ca49d3dca172f774f5f291c2238f7d43477d605fb38b890",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeApplyTargetErrorScalar",
+      "source": "formal/bytecode/word-apply/target-rejection/Scalar.dfy",
+      "sha256": "e7449fa3cbffcf8d0eab31c767093709efa9d5c0bd9b77236faa440d504501cb",
+      "declarations": 3
+    },
+    {
+      "module": "BytecodeApplyTargetErrorSequence",
+      "source": "formal/bytecode/word-apply/target-rejection/Sequence.dfy",
+      "sha256": "935311a90f65f11cd42392e75eee1c5aa5fe535c0eea172f31fcb41065a95936",
+      "declarations": 6
+    },
+    {
+      "module": "BytecodeApplyTemplateMemory",
+      "source": "formal/bytecode/word-apply/template-copy/Memory.dfy",
+      "sha256": "c7dfba4894b6608e2d615379caa119d66bdc8a2917835c3603543408fa97313e",
+      "declarations": 9
+    },
+    {
+      "module": "BytecodeApplyTemplateFrame",
+      "source": "formal/bytecode/word-apply/template-frame/Frame.dfy",
+      "sha256": "1a2da501a5fc44523e626d122484604ebdae8e5f19df475b0f482aad96fb9373",
+      "declarations": 4
+    },
+    {
+      "module": "BytecodeApplyWindowErrorMemory",
+      "source": "formal/bytecode/word-apply/window-errors/Memory.dfy",
+      "sha256": "2a42df2ac57610793ae51c55af6ed48bd75c0a60fad1daebbd53afeb83c6de19",
+      "declarations": 2
+    },
+    {
+      "module": "BytecodeApplyWindowErrorScalar",
+      "source": "formal/bytecode/word-apply/window-errors/Scalar.dfy",
+      "sha256": "eac73d3d2aa740dd7415026d242a53d2e2833a2be73401f1d41b67f83a69ef39",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeApplyWindowInputs",
+      "source": "formal/bytecode/word-apply/windows/Inputs.dfy",
+      "sha256": "637960ede2af58ec5b054963279db2fc303ceaf31ef34287bd946d39da69b684",
+      "declarations": 6
+    },
+    {
+      "module": "BytecodeApplyWordConversion",
+      "source": "formal/bytecode/word-apply/word-conversion/Conversion.generated.dfy",
+      "sha256": "7e3af0226cfb345f8cc169a6c39ea559137dbaf6e6e6c40965c6b6330d7c2015",
+      "declarations": 16
+    },
+    {
+      "module": "BytecodeFoldWindowConnection",
+      "source": "formal/bytecode/word-fold/accumulator-window/Connection.dfy",
+      "sha256": "ce03f04c1db13878700d9d277183451593a35dc62a2e6a2bd79d969aa3819ce5",
+      "declarations": 6
+    },
+    {
+      "module": "BytecodeFoldAccumulatorWindowExit",
+      "source": "formal/bytecode/word-fold/accumulator-window/Exit.generated.dfy",
+      "sha256": "645c361d96057ad95cde51727a2e071701f7d18533ac05fceda1b717fc5c8476",
+      "declarations": 13
+    },
+    {
+      "module": "BytecodeFoldAccumulatorWindowGate",
+      "source": "formal/bytecode/word-fold/accumulator-window/Gate.generated.dfy",
+      "sha256": "1b1502a308e87c876f2986bdc87ce2e424e267ec2be57b8207e79d371bfdd2a5",
+      "declarations": 52
+    },
+    {
+      "module": "BytecodeFoldAccumulatorWindowInvalid",
+      "source": "formal/bytecode/word-fold/accumulator-window/Invalid.generated.dfy",
+      "sha256": "e8f17a9708a441de6153a836d813360a68b02ffc7c400d06eec1166148ef3862",
+      "declarations": 76
+    },
+    {
+      "module": "BytecodeFoldAccumulatorWindowShort",
+      "source": "formal/bytecode/word-fold/accumulator-window/Short.generated.dfy",
+      "sha256": "3e6428087c8675c5da2918cc264dd1906092ea79492351e7ce91e4151861f894",
+      "declarations": 50
+    },
+    {
+      "module": "BytecodeFoldBodyErrorUnaligned",
+      "source": "formal/bytecode/word-fold/body-alignment-error/Unaligned.generated.dfy",
+      "sha256": "00d7d67b3aa017d201a45eb2905cbe0af60a36b26440c6b2709652a5cf8ad0a0",
+      "declarations": 55
+    },
+    {
+      "module": "BytecodeFoldBodyInvokeBytes",
+      "source": "formal/bytecode/word-fold/body-invocation-repair-v2/Bytes.generated.dfy",
+      "sha256": "4cf4e4ca0a068be7ae7b35e36d55ac3bd0f689a3b628ea3ba3d74a4da2941fa0",
+      "declarations": 43
+    },
+    {
+      "module": "BytecodeFoldBodyInvokeRange",
+      "source": "formal/bytecode/word-fold/body-invocation-repair-v2/Range.generated.dfy",
+      "sha256": "263d2888f91d2b566f1eba1f5a3fb66a34751dc01f5f3fdcdc804be67375e388",
+      "declarations": 80
+    },
+    {
+      "module": "BytecodeFoldBodyInvokeWords",
+      "source": "formal/bytecode/word-fold/body-invocation-repair-v2/Words.generated.dfy",
+      "sha256": "6f6a796382ddfd47bb2640fd0f618817bc21b8c64366d5318d37efc36b33ef97",
+      "declarations": 80
+    },
+    {
+      "module": "BytecodeFoldByteRepresentationV10",
+      "source": "formal/bytecode/word-fold/byte-representation-repair-v10/Representation.dfy",
+      "sha256": "65a2b0ef00e167758b166f26ee641a68220ecd6e0caba5f5667077f247136d40",
+      "declarations": 6
+    },
+    {
+      "module": "BytecodeFoldByteShiftV8",
+      "source": "formal/bytecode/word-fold/byte-representation-repair-v8/Shift.generated.dfy",
+      "sha256": "645eecfed759f068ad566d37d726d5cb66d1e5b1e7335aec9c9330aa78329c76",
+      "declarations": 22
+    },
+    {
+      "module": "BytecodeFoldCallbackEngine",
+      "source": "formal/bytecode/word-fold/callback-engine/Engine.dfy",
+      "sha256": "8c8055cdd8620ea2a0540f51bad6708e667e52d40ba89245f54d24da54fec9e2",
+      "declarations": 4
+    },
+    {
+      "module": "BytecodeFoldSuccessfulCallEngine",
+      "source": "formal/bytecode/word-fold/callback-engine/Success.dfy",
+      "sha256": "ff39cd4dbd594166907340fd96f139fd872f2f7e180a3b477c67e9bbb7feafe0",
+      "declarations": 3
+    },
+    {
+      "module": "BytecodeFoldFailedCallbackGuardConnection",
+      "source": "formal/bytecode/word-fold/callback-exhaustion/Connection.dfy",
+      "sha256": "a3d47922b24b85ef6233faac41a2ef1b0e0806dcf83b36ee832d2d58d9fd101b",
+      "declarations": 4
+    },
+    {
+      "module": "BytecodeFoldCallbackExhaustionInvoke",
+      "source": "formal/bytecode/word-fold/callback-exhaustion/Invoke.dfy",
+      "sha256": "8a9e0a271355ec1112b82fc83282a2c587b9ba55ce610dcc376a70089947bd64",
+      "declarations": 7
+    },
+    {
+      "module": "BytecodeFoldCallbackFailedAfter",
+      "source": "formal/bytecode/word-fold/callback-failed-repair-v2/After.generated.dfy",
+      "sha256": "6e2ef96d113d90e8c80a29968f2e79bca1c7c83851a86962f00258388b79b0e2",
+      "declarations": 31
+    },
+    {
+      "module": "BytecodeFoldCallbackFailedBefore",
+      "source": "formal/bytecode/word-fold/callback-failed-repair-v2/Before.generated.dfy",
+      "sha256": "1d09a1c949aa177b706388c64aa349debc5183a388dad4b810e393ede656dfbd",
+      "declarations": 97
+    },
+    {
+      "module": "BytecodeFoldCallbackFailedBetween",
+      "source": "formal/bytecode/word-fold/callback-failed-repair-v2/Between.generated.dfy",
+      "sha256": "2940be56b980a5d7868b0ef25abe624fb7ad95275f5bedad648e87e61a036455",
+      "declarations": 22
+    },
+    {
+      "module": "BytecodeFoldOrdinaryFailedCallbackConnection",
+      "source": "formal/bytecode/word-fold/callback-failed-repair-v2/Connection.dfy",
+      "sha256": "9d074427c55fff0eaccff6c58966c31e7a34260b17b8f4c4c057f4022d857a02",
+      "declarations": 3
+    },
+    {
+      "module": "BytecodeFoldCallbackFailedSerializerEngine",
+      "source": "formal/bytecode/word-fold/callback-failed-repair-v2/Engine.dfy",
+      "sha256": "2b96fb021daa14da3441aca27e6d7346e0e0dd4cd3dd756791bb54e5433c5c6c",
+      "declarations": 6
+    },
+    {
+      "module": "BytecodeFoldCallbackFailedControlScalar",
+      "source": "formal/bytecode/word-fold/callback-failed-repair-v2/Scalar.dfy",
+      "sha256": "d75c7ece9a3ea3850d8c356f5f00855b27688518fcce24a389de3015234d9d89",
+      "declarations": 3
+    },
+    {
+      "module": "BytecodeFoldCallbackInvokeV2",
+      "source": "formal/bytecode/word-fold/callback-invocation-repair-v2/Invoke.generated.dfy",
+      "sha256": "52e87b9acfa4fd23e887979ea6326de26202ad0094551d052fb38ac4976a20a6",
+      "declarations": 22
+    },
+    {
+      "module": "BytecodeFoldWrongSizeCallbackEngine",
+      "source": "formal/bytecode/word-fold/callback-length-error/Engine.dfy",
+      "sha256": "eb4fd6bee70e5375f67182db1c82b4dbb6b3b9fe5212194bc57966c3951c9b3d",
+      "declarations": 4
+    },
+    {
+      "module": "BytecodeFoldCallbackLengthScalar",
+      "source": "formal/bytecode/word-fold/callback-length-error/Scalar.dfy",
+      "sha256": "db02396852f902ecba689e2ccccffff8f5e22932ddd3cb79665fcaea613ca405",
+      "declarations": 9
+    },
+    {
+      "module": "BytecodeFoldCallbackLengthError",
+      "source": "formal/bytecode/word-fold/callback-length-error/WrongSize.generated.dfy",
+      "sha256": "33c4971baad8420f795fe3309f8d39bc2aa765e3ce814e74a33ae0b43c97523c",
+      "declarations": 94
+    },
+    {
+      "module": "BytecodeFoldCallbackMemoryV2",
+      "source": "formal/bytecode/word-fold/callback-memory-repair-v2/Memory.dfy",
+      "sha256": "23f34b443e2bab3f9dd05bb583ad38a080c76d65ce7eab5c74f20639ebf1e2d7",
+      "declarations": 6
+    },
+    {
+      "module": "BytecodeFoldCallbackPackAfter",
+      "source": "formal/bytecode/word-fold/callback-pack-control/After.generated.dfy",
+      "sha256": "28cb11899fec5c3653c276bc09690ffd4b923e826bae4d2be553e6b5bad66a2b",
+      "declarations": 15
+    },
+    {
+      "module": "BytecodeFoldCallbackPackBefore",
+      "source": "formal/bytecode/word-fold/callback-pack-control/Before.generated.dfy",
+      "sha256": "5d52f1df9b4f7d673fe8b37eeebc3fb76f06411701373b2da10af2c2030f586c",
+      "declarations": 26
+    },
+    {
+      "module": "BytecodeFoldEmptyCallbackReceipt",
+      "source": "formal/bytecode/word-fold/callback-receipt/Empty.generated.dfy",
+      "sha256": "c8320e5233b8cd0a59b27dda81c091932392a8903880bb0b4dd6668c4135748b",
+      "declarations": 26
+    },
+    {
+      "module": "BytecodeFoldFullCallbackReceiptEngine",
+      "source": "formal/bytecode/word-fold/callback-receipt/Engine.dfy",
+      "sha256": "19b0befe81b372dacf282bbd20ce11961155eb8a41d10a03dcdc3e83b11627c9",
+      "declarations": 3
+    },
+    {
+      "module": "BytecodeFoldCallbackFlagDispatch",
+      "source": "formal/bytecode/word-fold/callback-receipt/Flag.dfy",
+      "sha256": "940d0427eb4793e0f748352bf25bf5141e0197f9f996b1f9d39e6d0522e02077",
+      "declarations": 5
+    },
+    {
+      "module": "BytecodeFoldNonemptyCallbackReceipt",
+      "source": "formal/bytecode/word-fold/callback-receipt/Nonempty.generated.dfy",
+      "sha256": "380fe2baf4f80d334286f307bf796d537055aef8e7dac781b5653e65efd5c2f1",
+      "declarations": 49
+    },
+    {
+      "module": "BytecodeFoldExactWordCallbackReturn",
+      "source": "formal/bytecode/word-fold/callback-success/Success.generated.dfy",
+      "sha256": "acbd6352cb4856fd87809cae6880c56ff3662621d7a942d41f7ba72e97864a95",
+      "declarations": 73
+    },
+    {
+      "module": "BytecodeFoldDecodeInvokeBytes",
+      "source": "formal/bytecode/word-fold/decoder-invocation/Bytes.generated.dfy",
+      "sha256": "c16f45d6c84d62a06eb5dd8c35798d6a4fd4edc83d4b0d3db149aaec08390b1a",
+      "declarations": 14
+    },
+    {
+      "module": "BytecodeFoldDecodeInvokeRange",
+      "source": "formal/bytecode/word-fold/decoder-invocation/Range.generated.dfy",
+      "sha256": "d71b39eb226ca7f72f682e945b71cd44ef74e44f5a81dac843b59d19103a16d8",
+      "declarations": 14
+    },
+    {
+      "module": "BytecodeFoldDecodeInvokeWords",
+      "source": "formal/bytecode/word-fold/decoder-invocation/Words.generated.dfy",
+      "sha256": "2e0fca831da4e873758f4b9320bed0f290757a07769ab1cf3184d5917fd18f6b",
+      "declarations": 14
+    },
+    {
+      "module": "BytecodeFoldDomainBytesV2",
+      "source": "formal/bytecode/word-fold/domain-bytes-repair-v2/Bytes.generated.dfy",
+      "sha256": "4c18d2ce6acf9cc93adf4bf7cad8eb3121217451f97cd344507ee649b8be521d",
+      "declarations": 67
+    },
+    {
+      "module": "BytecodeFoldDomainConnectionV3",
+      "source": "formal/bytecode/word-fold/domain-connection-repair-v3/Connection.dfy",
+      "sha256": "4704015f194d126e945def70865b7992395a7ea0744b8104ce5c468de9443374",
+      "declarations": 7
+    },
+    {
+      "module": "BytecodeFoldDomainRange",
+      "source": "formal/bytecode/word-fold/domain-element/Range.generated.dfy",
+      "sha256": "749fa091cf31ef33b2009ccc435c1c30d0d2b299d60fedd86017724da2485741",
+      "declarations": 35
+    },
+    {
+      "module": "BytecodeFoldDomainShift",
+      "source": "formal/bytecode/word-fold/domain-element/Shift.dfy",
+      "sha256": "839fb5a3a551be3686bd92732cc79a9c68998a86e150b17064cb38b3f7b469da",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeFoldDomainWords",
+      "source": "formal/bytecode/word-fold/domain-element/Words.generated.dfy",
+      "sha256": "5d7801c22f5409569c9ac2e3a2b5e9b7a8498c3be61e14cac88e345caf45f02a",
+      "declarations": 189
+    },
+    {
+      "module": "BytecodeFoldElementWindowRejection",
+      "source": "formal/bytecode/word-fold/element-window-errors/Engine.dfy",
+      "sha256": "c81ebf6a5b413245883d98b4b7ef9a4a4900b319099ceba810bf1e60a7face63",
+      "declarations": 3
+    },
+    {
+      "module": "BytecodeFoldElementWindowErrorInvalid",
+      "source": "formal/bytecode/word-fold/element-window-errors/Invalid.generated.dfy",
+      "sha256": "65a03841a925d1c148cfaf0e049560dcdb55bc0fade31da1265867e435ea9859",
+      "declarations": 106
+    },
+    {
+      "module": "BytecodeFoldElementWindowEngine",
+      "source": "formal/bytecode/word-fold/element-windows/Engine.dfy",
+      "sha256": "c76a693157570444e12f64e76b52d73dfe8d7048253ab46cf6b7b051b45f5472",
+      "declarations": 3
+    },
+    {
+      "module": "BytecodeFoldElementWindowsEntry",
+      "source": "formal/bytecode/word-fold/element-windows/Entry.generated.dfy",
+      "sha256": "8d1ec046590987288b3f93ea7d159d2f0475aacd72f644f6fe832bce3ba7f283",
+      "declarations": 16
+    },
+    {
+      "module": "BytecodeFoldElementWindowsExit",
+      "source": "formal/bytecode/word-fold/element-windows/Exit.generated.dfy",
+      "sha256": "48e490872dc5f623c924d3fd3b378ecd9cabe2a509e6b95300f80737f9eedb34",
+      "declarations": 21
+    },
+    {
+      "module": "BytecodeFoldElementWindowInputs",
+      "source": "formal/bytecode/word-fold/element-windows/Inputs.dfy",
+      "sha256": "9f02b53fc2a86d20b75563cbde85689f0994a95b148725628568383dc06babb5",
+      "declarations": 6
+    },
+    {
+      "module": "BytecodeFoldElementWindowsIteration",
+      "source": "formal/bytecode/word-fold/element-windows/Iteration.generated.dfy",
+      "sha256": "5407aba2c4eaa44ab72d7df7ec56c018b366a07e6e82180d4a1c76784528d454",
+      "declarations": 62
+    },
+    {
+      "module": "BytecodeFoldEmptyBodyBytes",
+      "source": "formal/bytecode/word-fold/empty-body/Bytes.generated.dfy",
+      "sha256": "8b1c50734980c8548cddaf8381daee39c84a6067dae708195aad78597810a545",
+      "declarations": 71
+    },
+    {
+      "module": "BytecodeFoldEmptyBodyRange",
+      "source": "formal/bytecode/word-fold/empty-body/Range.generated.dfy",
+      "sha256": "182961fce2a39942bb138cff09c6c806263c569810da8ee7408552ab04b1b7db",
+      "declarations": 70
+    },
+    {
+      "module": "BytecodeFoldEmptyBodyWords",
+      "source": "formal/bytecode/word-fold/empty-body/Words.generated.dfy",
+      "sha256": "9f7d10c4c75559f8a830a56df7f84c0b9a886fd7d7c7b6ef76747b0b242c1690",
+      "declarations": 71
+    },
+    {
+      "module": "BytecodeFoldFailedIteration",
+      "source": "formal/bytecode/word-fold/failed-iteration-repair-v2/Connection.dfy",
+      "sha256": "7505fd4c98390425f6f230b8596a6ffa7a7e0e1cc9d232d5711691e4cd2e1007",
+      "declarations": 9
+    },
+    {
+      "module": "BytecodeFoldFirstFailureLoop",
+      "source": "formal/bytecode/word-fold/first-failure-repair-v2/Loop.dfy",
+      "sha256": "521b039125d48090f60dd0feca4a0eeaca89d1b0d2cf29d238e2b5e9c8719863",
+      "declarations": 3
+    },
+    {
+      "module": "BytecodeFoldFirstFailureModel",
+      "source": "formal/bytecode/word-fold/first-failure-repair-v2/Model.dfy",
+      "sha256": "9c93de41165e6c41f6afd757304582d500eac160fecea7134e6b1dba51894fb4",
+      "declarations": 4
+    },
+    {
+      "module": "BytecodeFoldIterationFrame",
+      "source": "formal/bytecode/word-fold/iteration-frame/Memory.dfy",
+      "sha256": "aba0af20f97e8f291793c7a5ba985bc0e408f0087a9425950efd4b993b20e697",
+      "declarations": 8
+    },
+    {
+      "module": "BytecodeFoldResultBreakNonZeroV3",
+      "source": "formal/bytecode/word-fold/iteration-result-repair-v3/BreakNonZero.generated.dfy",
+      "sha256": "02d4a67c01a3c5d3807d5e0501ca975ea325a5c3bd37b765af066406529656e1",
+      "declarations": 45
+    },
+    {
+      "module": "BytecodeFoldResultBreakZeroV3",
+      "source": "formal/bytecode/word-fold/iteration-result-repair-v3/BreakZero.generated.dfy",
+      "sha256": "9b4a602aca752e80cc62e1569adf9116d5f0ba7dc1cda5eb9d68ad633171c000",
+      "declarations": 67
+    },
+    {
+      "module": "BytecodeFoldResultContinueNeverV3",
+      "source": "formal/bytecode/word-fold/iteration-result-repair-v3/ContinueNever.generated.dfy",
+      "sha256": "7c1de64f89c419e8d6ce3ee59524bf67f9c9d45ec20f6e63e5eb6bc865229580",
+      "declarations": 67
+    },
+    {
+      "module": "BytecodeFoldResultContinueNonZeroWhenZeroV3",
+      "source": "formal/bytecode/word-fold/iteration-result-repair-v3/ContinueNonZeroWhenZero.generated.dfy",
+      "sha256": "f81ff70a39eab1ef1ace6b6450250ceedeba3995a55ddbdb29907f95a12ef0ec",
+      "declarations": 71
+    },
+    {
+      "module": "BytecodeFoldResultContinueZeroWhenNonZeroV3",
+      "source": "formal/bytecode/word-fold/iteration-result-repair-v3/ContinueZeroWhenNonZero.generated.dfy",
+      "sha256": "f4e5202cfbaee96a4fa05123d4fe2998764cf1c25a1d85655f65ff95f149f675",
+      "declarations": 72
+    },
+    {
+      "module": "BytecodeFoldResultMemoryV3",
+      "source": "formal/bytecode/word-fold/iteration-result-repair-v3/Memory.dfy",
+      "sha256": "18e16446ef52d93168c6dced664464855b52d9f917284655b5e697742262cdc6",
+      "declarations": 4
+    },
+    {
+      "module": "BytecodeFoldLoopConnectionV2",
+      "source": "formal/bytecode/word-fold/loop-connection-repair-v2/Loop.dfy",
+      "sha256": "439e7dafd975799084b12e8005b7228847441e36354eb5d4279b9a917ea5bc0c",
+      "declarations": 8
+    },
+    {
+      "module": "BytecodeFoldLoopEnterV2",
+      "source": "formal/bytecode/word-fold/loop-gate-repair-v2/Enter.generated.dfy",
+      "sha256": "05ed763a6541f1988d92797a7b93ca87dd2f255eb119b276caad9980423d5558",
+      "declarations": 29
+    },
+    {
+      "module": "BytecodeFoldLoopExitV2",
+      "source": "formal/bytecode/word-fold/loop-gate-repair-v2/Exit.generated.dfy",
+      "sha256": "3d2e8f16ceb8f11a5cf8b3b9047bb04662cc605ed37662e95a4ae9ee3fce3e94",
+      "declarations": 36
+    },
+    {
+      "module": "BytecodeFoldLoopModelV2",
+      "source": "formal/bytecode/word-fold/loop-model-repair-v2/Model.dfy",
+      "sha256": "64ff9b6f22f6cdc63362198ae5cee27ebd373803f22b65867b4c043d24d0ebcc",
+      "declarations": 11
+    },
+    {
+      "module": "BytecodeFoldLoopReturn",
+      "source": "formal/bytecode/word-fold/loop-return/Return.generated.dfy",
+      "sha256": "20cf952d06c240575fe1ff316978123dcc449ef27d6e4e25e593a4a4f7f57e1d",
+      "declarations": 25
+    },
+    {
+      "module": "BytecodeFoldBytesPrefix",
+      "source": "formal/bytecode/word-fold/prefix-bytes/Prefix.generated.dfy",
+      "sha256": "ede04e7b6c6c716675ab9155c43abaa266d2e7a9d0ada26cb9a99c7033b81009",
+      "declarations": 48
+    },
+    {
+      "module": "BytecodeFoldBytesPrefixShift",
+      "source": "formal/bytecode/word-fold/prefix-bytes/ShiftKernel.dfy",
+      "sha256": "d028df56c4be2c4fa498f7b9b5790d83e5aceb698b02ff5f825fca1a48f8b558",
+      "declarations": 2
+    },
+    {
+      "module": "BytecodeFoldRangePrefix",
+      "source": "formal/bytecode/word-fold/prefix-range/Prefix.generated.dfy",
+      "sha256": "f3fc367f7886d90f01797fa4ec437d64dcfa9fe95290dce091927911e55aaeac",
+      "declarations": 62
+    },
+    {
+      "module": "BytecodeFoldRangePrefixShift",
+      "source": "formal/bytecode/word-fold/prefix-range/ShiftKernel.dfy",
+      "sha256": "8eadf2880a9d81d67aa45f1099ffc5952517847a6ff2997139d7956dc5ecee03",
+      "declarations": 2
+    },
+    {
+      "module": "BytecodeFoldWordsPrefix",
+      "source": "formal/bytecode/word-fold/prefix-words/Prefix.generated.dfy",
+      "sha256": "fdd00514ccb54b90ec79689eab9f41178f9db9cfc7994d2423efe7c6b3ccf824",
+      "declarations": 53
+    },
+    {
+      "module": "BytecodeFoldWordsPrefixShift",
+      "source": "formal/bytecode/word-fold/prefix-words/ShiftKernel.dfy",
+      "sha256": "f9b587aee75f7abef600e7790f71ca85a3d3a97f3d9ba38c797b0656c266f0f4",
+      "declarations": 2
+    },
+    {
+      "module": "BytecodeFoldRawEmpty",
+      "source": "formal/bytecode/word-fold/raw-closure-repair-v3/empty-body/Connection.dfy",
+      "sha256": "7dc65c07de8ca1bed364d3583bea63755fe31f1938a0ba75c53653ac4b0012a2",
+      "declarations": 9
+    },
+    {
+      "module": "BytecodeFoldRawFirstFailure",
+      "source": "formal/bytecode/word-fold/raw-closure-repair-v3/first-failure-raw-repair-v3/Raw.dfy",
+      "sha256": "fb05585c28777ffe6620fffda493bcea501c7114b44064bf72535ff8b6fc63c3",
+      "declarations": 4
+    },
+    {
+      "module": "BytecodeFoldPublicEntry",
+      "source": "formal/bytecode/word-fold/raw-closure-repair-v3/public-entry-repair-v2/Connection.dfy",
+      "sha256": "4a3b535779ceb2c2afd4561c6002fef59eaf89694fd9ab3fa2dc2c6d68ceb974",
+      "declarations": 9
+    },
+    {
+      "module": "BytecodeFoldRawLoopConnectionV3",
+      "source": "formal/bytecode/word-fold/raw-closure-repair-v3/raw-loop-connection-repair-v3/Connection.dfy",
+      "sha256": "cf9a81a8f0bc28db636c647eebbcead0e37cdca4d188f401b1cfbb2d1e5ed91c",
+      "declarations": 8
+    },
+    {
+      "module": "BytecodeFoldRawLoopReadyV2",
+      "source": "formal/bytecode/word-fold/raw-closure-repair-v3/raw-loop-ready-repair-v2/Memory.dfy",
+      "sha256": "135c411bbba32ef0697a38a687106579ffb21f66dd33d3f82575c998bfb0474b",
+      "declarations": 5
+    },
+    {
+      "module": "BytecodeFoldRawTarget",
+      "source": "formal/bytecode/word-fold/raw-closure-repair-v3/raw-target/Connection.dfy",
+      "sha256": "cb6f279fb6dd33e09c28b1e765d15ef36824e9d468c82155bab6e19f618d117d",
+      "declarations": 5
+    },
+    {
+      "module": "BytecodeFoldRawTemplate",
+      "source": "formal/bytecode/word-fold/raw-closure-repair-v3/raw-template/Connection.dfy",
+      "sha256": "850b42326030835e4d4a44bec74b6ee60f6655c69a52991d4671bcc34267fb38",
+      "declarations": 9
+    },
+    {
+      "module": "BytecodeFoldRawWindows",
+      "source": "formal/bytecode/word-fold/raw-closure-repair-v3/raw-windows/Connection.dfy",
+      "sha256": "e390dc8094c6ceace84adf8b6cc04046145bb12b419865979d8dff0716522298",
+      "declarations": 7
+    },
+    {
+      "module": "BytecodeFoldDecoderRangeAccepted",
+      "source": "formal/bytecode/word-fold/raw-decoder/RangeAccepted.generated.dfy",
+      "sha256": "006ca3314a2a3d909829a0eba9445c230f96c6fd7ab42e47ef58d39f4c3a199e",
+      "declarations": 270
+    },
+    {
+      "module": "BytecodeFoldDecoderSourceAccepted",
+      "source": "formal/bytecode/word-fold/raw-decoder/SourceAccepted.generated.dfy",
+      "sha256": "a214be7726bfdc849b669b71c94c8db54190ca707d2fd5e47e36e8a38dc536ac",
+      "declarations": 348
+    },
+    {
+      "module": "BytecodeFoldRawEntryRange",
+      "source": "formal/bytecode/word-fold/raw-entry/Range.generated.dfy",
+      "sha256": "c18fdb9ea0ca2843c63e1fb44db4bd5bf483ff90d4044928e39890bc6033d489",
+      "declarations": 12
+    },
+    {
+      "module": "BytecodeFoldRawEntrySource",
+      "source": "formal/bytecode/word-fold/raw-entry/Source.generated.dfy",
+      "sha256": "0d521195ab39394e8e57890aa0dc19c05f9fadfee360cb477d483dff727f741d",
+      "declarations": 13
+    },
+    {
+      "module": "BytecodeFoldRawInputs",
+      "source": "formal/bytecode/word-fold/raw-inputs/Inputs.dfy",
+      "sha256": "79254c5402a06fef7937c02b11ba652395fe999ea48b38d4aaded8b4bd74972e",
+      "declarations": 30
+    },
+    {
+      "module": "BytecodeFoldRawScalar",
+      "source": "formal/bytecode/word-fold/raw-inputs/Scalar.dfy",
+      "sha256": "c723d864b1054f37814ebb4202eeafd83116d7e69d2d954858be65a9da8e9e54",
+      "declarations": 1
+    },
+    {
+      "module": "BytecodeFoldRejectionRangeArrayCountLarge",
+      "source": "formal/bytecode/word-fold/raw-rejections/RangeArrayCountLarge.generated.dfy",
+      "sha256": "b847a13cc198b2fd1b2070c7e5d8f58778f96be1f5fad7cb3322afbb9a903415",
+      "declarations": 198
+    },
+    {
+      "module": "BytecodeFoldRejectionRangeArrayHeaderShort",
+      "source": "formal/bytecode/word-fold/raw-rejections/RangeArrayHeaderShort.generated.dfy",
+      "sha256": "7ecd0773e370a9786be025560c4b6b6b5309de0910427f1b7864d1b00734383e",
+      "declarations": 183
+    },
+    {
+      "module": "BytecodeFoldRejectionRangeArrayOffsetLarge",
+      "source": "formal/bytecode/word-fold/raw-rejections/RangeArrayOffsetLarge.generated.dfy",
+      "sha256": "63aff9643feeea8caed29ca22d8b9905848d6177140e40105166eeed7d182c8a",
+      "declarations": 164
+    },
+    {
+      "module": "BytecodeFoldRejectionRangeArrayTailShort",
+      "source": "formal/bytecode/word-fold/raw-rejections/RangeArrayTailShort.generated.dfy",
+      "sha256": "30155cc6606a76c624740a91c88bff27f9c97bbc02bc3934d1e9b03509f67ad4",
+      "declarations": 216
+    },
+    {
+      "module": "BytecodeFoldRejectionRangeBadAddress",
+      "source": "formal/bytecode/word-fold/raw-rejections/RangeBadAddress.generated.dfy",
+      "sha256": "1dc90526715702cfc7043f3dcf2748df291e5e8b639f07845b5cab057bbb7ad6",
+      "declarations": 55
+    },
+    {
+      "module": "BytecodeFoldRejectionRangeBadExit",
+      "source": "formal/bytecode/word-fold/raw-rejections/RangeBadExit.generated.dfy",
+      "sha256": "3fd89933edc34120e991250a673c538619ee0189f57dc99d14e4a85dffb4b852",
+      "declarations": 252
+    },
+    {
+      "module": "BytecodeFoldRejectionRangeHeadShort",
+      "source": "formal/bytecode/word-fold/raw-rejections/RangeHeadShort.generated.dfy",
+      "sha256": "d0a1598b043b6fc05db9d6fa9f6bd3549b0d19c95b8a011a30b9760974c6e83f",
+      "declarations": 29
+    },
+    {
+      "module": "BytecodeFoldRejectionRangeTemplateHeaderShort",
+      "source": "formal/bytecode/word-fold/raw-rejections/RangeTemplateHeaderShort.generated.dfy",
+      "sha256": "aea0ce7faf9746d02d0890c285ddc5775d225c1227487f9ef4b19c22416f4e45",
+      "declarations": 97
+    },
+    {
+      "module": "BytecodeFoldRejectionRangeTemplateLengthLarge",
+      "source": "formal/bytecode/word-fold/raw-rejections/RangeTemplateLengthLarge.generated.dfy",
+      "sha256": "9b095913f25742b561838cf36920984ce9d0a11a1eef903d5eda36b1206ab172",
+      "declarations": 111
+    },
+    {
+      "module": "BytecodeFoldRejectionRangeTemplateOffsetLarge",
+      "source": "formal/bytecode/word-fold/raw-rejections/RangeTemplateOffsetLarge.generated.dfy",
+      "sha256": "3d1bdc136dc21b98a759a043b8d30cbfee02d00675bd74cc745f2ef0af853223",
+      "declarations": 78
+    },
+    {
+      "module": "BytecodeFoldRejectionRangeTemplateTailShort",
+      "source": "formal/bytecode/word-fold/raw-rejections/RangeTemplateTailShort.generated.dfy",
+      "sha256": "36712aca2247c6d4f87590ffef89ee921958cec1dd28bd42ac5c4af83697efe2",
+      "declarations": 128
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceArrayCountLarge",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceArrayCountLarge.generated.dfy",
+      "sha256": "4977b517728f55f7b97722769d824a8715b9d6fbaf487bf3dab8de2ffadc347f",
+      "declarations": 273
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceArrayHeaderShort",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceArrayHeaderShort.generated.dfy",
+      "sha256": "f39f708f3a6f618c0471cda85d1733f54fe5fead3e4e3bcfeec144eb9e58fc0f",
+      "declarations": 258
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceArrayOffsetLarge",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceArrayOffsetLarge.generated.dfy",
+      "sha256": "970f30e93a526dac15d7f815e8a7e7c53b3f20cb0ad642ae24229133dde950f9",
+      "declarations": 240
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceArrayTailShort",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceArrayTailShort.generated.dfy",
+      "sha256": "f21877795f40fd817b6455a4091f61567f863fd05e34fdb51e582ece62350146",
+      "declarations": 292
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceBadAddress",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceBadAddress.generated.dfy",
+      "sha256": "39c63998c4d1803f97f60ece19db46d4848c2c22c245852a20ae6dc73959b39a",
+      "declarations": 130
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceBadExit",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceBadExit.generated.dfy",
+      "sha256": "742a8c30997c88edf24544b5505984ebbcd967c902131e976decfe5c1c643d01",
+      "declarations": 328
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceHeadShort",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceHeadShort.generated.dfy",
+      "sha256": "c9a7005ae13e983e563bc35b3368c50fa25471c0a06044ae24c6e17d60ca4922",
+      "declarations": 30
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceSourceHeaderShort",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceSourceHeaderShort.generated.dfy",
+      "sha256": "49cc5c2b15fef8e5de966f18e2d9399bf0f74ae2749c3d8d5f02bea3040e5b63",
+      "declarations": 62
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceSourceLengthLarge",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceSourceLengthLarge.generated.dfy",
+      "sha256": "9ed9685c5dcb83820182d4d920bc6cbf86fabef5e6a0f6bd3c1ef389e5c1c08d",
+      "declarations": 77
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceSourceOffsetLarge",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceSourceOffsetLarge.generated.dfy",
+      "sha256": "7aac727f34b5ccc805ac3eaf37c40fa969dfbeddb36dd3c3526e6e2831780bc7",
+      "declarations": 43
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceSourceTailShort",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceSourceTailShort.generated.dfy",
+      "sha256": "bca9af55869389849d349c2ef50281df33553f481bfa4586ef1d4125242394bd",
+      "declarations": 94
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceTemplateHeaderShort",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceTemplateHeaderShort.generated.dfy",
+      "sha256": "6d797da46ebf0b909dcac034aff372e67aa2e90b0da9767bf95a1bffb5c96e48",
+      "declarations": 172
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceTemplateLengthLarge",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceTemplateLengthLarge.generated.dfy",
+      "sha256": "978b698424f08d44df3ba27296cd11ce67ece70d1d6c180c60f8d233ff579ea1",
+      "declarations": 187
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceTemplateOffsetLarge",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceTemplateOffsetLarge.generated.dfy",
+      "sha256": "6bd6df91f841d89d15a0501492da0c937c608aca6730028fdadb9c3166d05ce5",
+      "declarations": 153
+    },
+    {
+      "module": "BytecodeFoldRejectionSourceTemplateTailShort",
+      "source": "formal/bytecode/word-fold/raw-rejections/SourceTemplateTailShort.generated.dfy",
+      "sha256": "9bb4c0aac1838db01637ff929dd29a100e67a7ecd09db8fb0b1349bf448163bc",
+      "declarations": 204
+    },
+    {
+      "module": "BytecodeFoldRunAllocationBytes",
+      "source": "formal/bytecode/word-fold/run-allocation/Bytes.generated.dfy",
+      "sha256": "b03d57198720739313ebae85f0682d530bcafca8e713363909ddd69ec306fb87",
+      "declarations": 83
+    },
+    {
+      "module": "BytecodeFoldRunMemory",
+      "source": "formal/bytecode/word-fold/run-allocation/Memory.dfy",
+      "sha256": "9a55ac0bd55dc7dfd4e13a94b98919af9adaadec1cb6015c33949a8efd40fe90",
+      "declarations": 7
+    },
+    {
+      "module": "BytecodeFoldRunAllocationRange",
+      "source": "formal/bytecode/word-fold/run-allocation/Range.generated.dfy",
+      "sha256": "912a7ca94c07a94ee964db79052b4320116b4a5c84032caf821f25eff9176cfa",
+      "declarations": 83
+    },
+    {
+      "module": "BytecodeFoldRunAllocationWords",
+      "source": "formal/bytecode/word-fold/run-allocation/Words.generated.dfy",
+      "sha256": "2adbf5143cd777b6fca80be317e30dacca34690f9b5fc29ab82a4c9373b47ab7",
+      "declarations": 83
+    },
+    {
+      "module": "BytecodeFoldScalarReturnBytes",
+      "source": "formal/bytecode/word-fold/scalar-return/Bytes.generated.dfy",
+      "sha256": "9f250a865c01791265abfa570f918f370d053e67093de1721076af5d9f831e3c",
+      "declarations": 65
+    },
+    {
+      "module": "BytecodeFoldScalarReturnRange",
+      "source": "formal/bytecode/word-fold/scalar-return/Range.generated.dfy",
+      "sha256": "5f9c9bf14fd3f90febbaa7c91cfd7d489b0a5a1ae109f7d7ea3225fef3c6263f",
+      "declarations": 64
+    },
+    {
+      "module": "BytecodeFoldScalarReturnWords",
+      "source": "formal/bytecode/word-fold/scalar-return/Words.generated.dfy",
+      "sha256": "e4ae9fb3a72d8370aa774b0a7b85eee565c9e9f529915548d0953ecb3dcf6498",
+      "declarations": 65
+    },
+    {
+      "module": "BytecodeFoldStampConnectionV4",
+      "source": "formal/bytecode/word-fold/stamp-connection-repair-v4/Connection.dfy",
+      "sha256": "8ff9f0ba4dfb579c9358cd41af64ca31cb670ed3f0d82929398daf978edcf638",
+      "declarations": 5
+    },
+    {
+      "module": "BytecodeFoldStampEngineV2",
+      "source": "formal/bytecode/word-fold/stamp-engine-repair-v2/Engine.dfy",
+      "sha256": "e8bab5cd2b6ac894253800966b919a64fea1730207e6d818d680103f0ec99b7b",
+      "declarations": 3
+    },
+    {
+      "module": "BytecodeFoldStampMemoryV2",
+      "source": "formal/bytecode/word-fold/stamp-engine-repair-v2/Memory.dfy",
+      "sha256": "b7afc80e580ef02c132d3f84cfc033fd99122909df2e24ecd4bbf812fd46098d",
+      "declarations": 8
+    },
+    {
+      "module": "BytecodeFoldStampInvokeV2",
+      "source": "formal/bytecode/word-fold/stamp-invocation-repair-v2/Invoke.generated.dfy",
+      "sha256": "8969c0626dcd12651c6ce382563e145abdd85c6730755bf55435b11289670b0f",
+      "declarations": 25
+    },
+    {
+      "module": "BytecodeFoldStampExit",
+      "source": "formal/bytecode/word-fold/stamp-loop/Exit.generated.dfy",
+      "sha256": "8f6c1f7f51a34c33ad415ca24caf7b3257d859e25714a60dfcb4a260a8e44af0",
+      "declarations": 20
+    },
+    {
+      "module": "BytecodeFoldStampIteration",
+      "source": "formal/bytecode/word-fold/stamp-loop/Iteration.generated.dfy",
+      "sha256": "1c314a8dd0d48344070412625ce3579ef5162bc5e82544e3215d1ef8e0634f9f",
+      "declarations": 47
+    },
+    {
+      "module": "BytecodeFoldStampOuterEntryV2",
+      "source": "formal/bytecode/word-fold/stamp-outer-repair-v2/Entry.generated.dfy",
+      "sha256": "da143e0484516beaa14190fde7c779ff2a0b17eecb4fa133aaeac1b92ed497f5",
+      "declarations": 24
+    },
+    {
+      "module": "BytecodeFoldStampOuterExitV2",
+      "source": "formal/bytecode/word-fold/stamp-outer-repair-v2/Exit.generated.dfy",
+      "sha256": "cb80e6c7ed1f7ac4e0c0fdbb79803b230f8492dc5a6c995dbee14c5c8716f54d",
+      "declarations": 15
+    },
+    {
+      "module": "BytecodeFoldSuccessfulIterationV2",
+      "source": "formal/bytecode/word-fold/successful-iteration-repair-v2/Connection.dfy",
+      "sha256": "1ff39563e119c5d06c0593754312814f1181c5cee31ae806f5976c880f8c3fca",
+      "declarations": 4
+    },
+    {
+      "module": "BytecodeFoldSuccessfulIterationMemoryV2",
+      "source": "formal/bytecode/word-fold/successful-iteration-repair-v2/Memory.dfy",
+      "sha256": "95b49d6790f4360a7247b595b3ff68c0cc89316a9a111068dfc65dbb69ca866d",
+      "declarations": 2
+    },
+    {
+      "module": "BytecodeFoldTargetCode",
+      "source": "formal/bytecode/word-fold/target-check/Code.generated.dfy",
+      "sha256": "38903df75f407ee4d21c44780e1d47067bebc3f5d68078f4df9e8f976b00e529",
+      "declarations": 21
+    },
+    {
+      "module": "BytecodeFoldTargetErrorMemory",
+      "source": "formal/bytecode/word-fold/target-check/Memory.dfy",
+      "sha256": "7972ed720b74ab8b5ff2065e75ec38af23e5d06f5203efed224d4ad5baf7640d",
+      "declarations": 5
+    },
+    {
+      "module": "BytecodeFoldTargetRejected",
+      "source": "formal/bytecode/word-fold/target-check/Rejected.generated.dfy",
+      "sha256": "f872a9e493d702cc1feba976e43661b5ab3d4115aaa02a5b701a62bbd3df14c0",
+      "declarations": 51
+    },
+    {
+      "module": "BytecodeFoldTargetInvokeBytes",
+      "source": "formal/bytecode/word-fold/target-invocation/Bytes.generated.dfy",
+      "sha256": "3cc9c7a8d6d16252fa39e316625e857e1bb87a7e8b633415729f0106cae4df57",
+      "declarations": 21
+    },
+    {
+      "module": "BytecodeFoldTargetInvokeRange",
+      "source": "formal/bytecode/word-fold/target-invocation/Range.generated.dfy",
+      "sha256": "6d237b99e83d50e87429f71731667c782045661f3e6c3786f865d31cbe7f4e3f",
+      "declarations": 21
+    },
+    {
+      "module": "BytecodeFoldTargetInvokeWords",
+      "source": "formal/bytecode/word-fold/target-invocation/Words.generated.dfy",
+      "sha256": "bcebb6f6537dd3e8f92f3863512cd0b4320cb937aabb2a33b81fad6949db0d8a",
+      "declarations": 21
+    },
+    {
+      "module": "BytecodeFoldTemplateCopy",
+      "source": "formal/bytecode/word-fold/template-copy/Copy.generated.dfy",
+      "sha256": "b221110065c9ad78fcd768e6569b6d8c2b121fa28867a2a7fb08a6095338212f",
+      "declarations": 60
+    },
+    {
+      "module": "BytecodeFoldTemplateFrames",
+      "source": "formal/bytecode/word-fold/template-copy/Memory.dfy",
+      "sha256": "ebb608dea82397971cc90e0b9e646d649e6590eda1d3fc9c421b63ce402459ee",
+      "declarations": 5
+    }
+  ],
+  "includeOnlyFiles": [
+    "formal/bytecode/word-apply/callback-exhaustion-controls-repair-v2/Scalar.dfy",
+    "formal/bytecode/word-fold/callback-failed-repair-v2/Bindings.dfy"
+  ],
+  "scope": "Exact current transitive include inventory only. No declarations are credited by this inventory; every module requires complete same-input native provenance and the full retained gates."
+}

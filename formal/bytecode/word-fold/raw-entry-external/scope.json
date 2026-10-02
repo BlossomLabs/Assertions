@@ -1,0 +1,9 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Raw compiler decoding is pure reached execution under zero call value, assigned selector, finite calldata below2^64 and sufficient reached stack/memory/resources. Native selector/decoder leaf contracts are assumed in this selected composition.",
+    "No external observation is consumed during the proved decoding trace. Old returndata and the history cursor are arbitrary and unchanged; context address is explicitly admitted. This composition makes no claim about later fold-body callbacks or their resource availability.",
+    "Complete current included proof closure, fold body/early exits/errors/output, truthful reached external tape, finite EVM fixtures, matching semantic faults and independent retained checker remain required before public credit. No gas, deployment or performance claim."
+  ]
+}

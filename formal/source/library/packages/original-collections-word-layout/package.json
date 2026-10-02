@@ -1,0 +1,46 @@
+{
+  "id": "original-collections-word-layout",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/collections/word-layout",
+  "entry": "formal/collections/word-layout/Connection.dfy",
+  "verificationEntries": [
+    "formal/collections/word-layout/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/abi/Frames.dfy",
+      "formal/collections/word-layout/Memory.dfy",
+      "formal/collections/word-layout/Model.dfy",
+      "formal/collections/word-layout/Source.dfy",
+      "formal/collections/word-memory/Model.dfy"
+    ],
+    "execution": [
+      "formal/collections/word-layout/Control.generated.dfy",
+      "formal/collections/word-memory/Source.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/collections/word-layout/Connection.dfy",
+      "formal/collections/word-memory/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
+    "formal/collections/word-layout/Connection.dfy": "9f4dc76815990e47bffa647afefafadcd4ee7804c041f76ad6964f48ed845314",
+    "formal/collections/word-layout/Control.generated.dfy": "78d0774f8d34d87062b6c23eba049d1035172137418f5c0091cf81943054231f",
+    "formal/collections/word-layout/Memory.dfy": "fdd0981d6ad65d01d369b9fa392e5e66f056db089185bd9799c1fa2973af38d4",
+    "formal/collections/word-layout/Model.dfy": "df506fc7d151534c298e6fb01dbabea5c4382b64c3044fc0c54b8e5191947f21",
+    "formal/collections/word-layout/Source.dfy": "b1e85d51606b8cfbb3e144ed7bc598734c2c15645839427226c5ad1787c3825e",
+    "formal/collections/word-memory/Connection.dfy": "bd417efb1b4ed5843b45d1db33cd789053800db946e4f1b33bf6c2beda025f3d",
+    "formal/collections/word-memory/Model.dfy": "47c5a211c3c28737af9f6c62b5091bfb93834ec266920a7e7624fc6b568db6ba",
+    "formal/collections/word-memory/Source.generated.dfy": "f5cd81a8a45eb35483546521480caa6f0d012e38531e20fcec3806900b34e203"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

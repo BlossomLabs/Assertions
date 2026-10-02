@@ -1,0 +1,5 @@
+# Consolidated fold repair V7
+
+After actual V3eleven termination (seven whole modules passed, four connections timed out), preserve its complete snapshots/logs. The current twelve-module successor adds checked raw window stack and external frame endpoint projections and the checked public RETURN endpoint, keeping the V6 target/template, owned allocation and payload bridges. These are structural proof repairs with unchanged admissions, observations, resource scope, exact instruction maps and semantic posts. Generated files remain owned and require byte-identical reproduction.
+
+Unstarted V6 future queues are superseded before native execution; static snapshots remain preserved and no native run is restarted. Wait actual five-module array predecessor, then complete all twelve current whole native/audit modules. The193 previously current modules plus three actually completed V3 generated wrappers and twelve current modules need full208-body closure; all retained compiler, generation, physical/source/bytecode fault and independent checker gates remain mandatory before public coverage.

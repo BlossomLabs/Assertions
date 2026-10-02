@@ -1,0 +1,3 @@
+# Complete current fold retention V7
+
+The actual derived mixed V9/V8graph has210files and208distinct module owners. Preserve all predecessors; incomplete V8has no terminal native provenance and is excluded. Fresh V9checks every one of the twelve current connection/allocation/template-frame owners. Five changed transitive owners retain exact transparent template slice equality and unchanged admission, resources and external observations. Full current native closure, compiler/runtime reproduction, owned generation, zero audits,258 complete PCzero physical receipts,three matching native/physical bytecode faults,three translated native/EVM source faults and independent V7checker remain mandatory before public coverage.

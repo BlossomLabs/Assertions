@@ -1,0 +1,3 @@
+# Isolated fold connection and allocation repair V5
+
+The eight handwritten V4 connections are cloned without changing their requirements, semantic posts, observations or resource scope. The template connection imports the fresh owned allocation generator instead of the preserved failing original. Its three full modules add checked AND commutativity and terminal stack/jump-pop projections for the actual opcodes. All generated files require exact owned regeneration. Native execution must be serialized after actual V4 and its retained continuation terminate, preserving their evidence. Every current transitive body, compiler identity, physical/source/bytecode fault and independent retained checker remains required before public credit.

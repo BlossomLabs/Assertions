@@ -1,0 +1,12 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/shape-type-call/Call.generated.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "One complete generic physical shape-to-typeShape descriptor call frame. Actual raw decoder/state allocator/shape boundary, recursive parser, canonical codec loops/errors/serialization and full retained public graph remain separate; no public credit.",
+  "assumptions": [
+    "Pinned exact runtime extraction and reviewed existing scan machine/toolchain.",
+    "Fitting reached lower stack; arbitrary descriptor offset/length/return word and unchanged physical memory. Included imports require complete native closure before public retention."
+  ],
+  "formatExclusions": {}
+}

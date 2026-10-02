@@ -1,0 +1,7 @@
+# Complete physical foldWords alignment error development
+
+The generator gates the current Collections runtime and compiler foldWords selector/entry binding, then extracts all49 instructions from the decoded entry746 through actual modulo checking, error memory writes and final physical REVERT. The exact error is the declared four-byte `UnalignedWords(uint256)` selector0xa949d285 followed by the original32-byte source length. The leaf permits every nonaligned uint256 source length and arbitrary other decoded words under the fitting stack premise; its initial heap is the actual PC-zero free-pointer store.
+
+The handwritten connection composes the complete raw foldWords entry with the physical error leaf, proving exact error priority before window/target/callback handling for every raw compiler-admitted unaligned source. External-frame lifting proves no observation consumption and unchanged previous returndata/cursor. These selected development modules assume all included routing/decoder/scalar/error-memory contracts.
+
+Full successful aligned body/windows/empty/target/allocation/template copy/loop/callback/early-exit/other errors/scalar output, complete current included native graph, finite EVM cases, matching semantic faults and independent retained checker remain required before public coverage. Representation, sufficient reached resources and truthful reached observations stay explicit; no gas/deployment/performance claim.

@@ -1,0 +1,14 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/encoded-copy/Copy.generated.dfy",
+    "formal/bytecode/value-array/encoded-copy/Boundary.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "Two complete current native modules: exact55-instruction encoded-value allocation/copy/padding and its PCzero composition with every raw unpack decoder class. Full descriptor parser, canonical array/value loops, first errors and serialization/retained public graph remain open; no public credit.",
+  "assumptions": [
+    "Pinned exact runtime, reviewed physical opcode semantics and toolchain remain trusted boundaries.",
+    "Arbitrary fitting represented calldata spans, lower stack/memory frame and sufficient reached resources; no gas bound is inferred.",
+    "Included physical memory kernels require complete same-source native closure in the final retained graph; selected development proof alone does not complete imported bodies."
+  ],
+  "formatExclusions": {}
+}

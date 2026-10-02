@@ -1,0 +1,182 @@
+[
+  {
+    "name": "packArray-descriptor-empty"
+  },
+  {
+    "name": "unpackArray-descriptor-empty"
+  },
+  {
+    "name": "packArray-descriptor-first-rparen"
+  },
+  {
+    "name": "unpackArray-descriptor-first-rparen"
+  },
+  {
+    "name": "packArray-descriptor-first-comma"
+  },
+  {
+    "name": "unpackArray-descriptor-first-comma"
+  },
+  {
+    "name": "packArray-descriptor-first-bracket"
+  },
+  {
+    "name": "unpackArray-descriptor-first-bracket"
+  },
+  {
+    "name": "packArray-descriptor-first-uppercase"
+  },
+  {
+    "name": "unpackArray-descriptor-first-uppercase"
+  },
+  {
+    "name": "packArray-descriptor-first-space"
+  },
+  {
+    "name": "unpackArray-descriptor-first-space"
+  },
+  {
+    "name": "packArray-descriptor-empty-tuple"
+  },
+  {
+    "name": "unpackArray-descriptor-empty-tuple"
+  },
+  {
+    "name": "packArray-descriptor-tuple-no-close"
+  },
+  {
+    "name": "unpackArray-descriptor-tuple-no-close"
+  },
+  {
+    "name": "packArray-descriptor-tuple-first-comma"
+  },
+  {
+    "name": "unpackArray-descriptor-tuple-first-comma"
+  },
+  {
+    "name": "packArray-descriptor-tuple-last-comma"
+  },
+  {
+    "name": "unpackArray-descriptor-tuple-last-comma"
+  },
+  {
+    "name": "packArray-descriptor-tuple-space-separator"
+  },
+  {
+    "name": "unpackArray-descriptor-tuple-space-separator"
+  },
+  {
+    "name": "packArray-descriptor-tuple-bracket-separator"
+  },
+  {
+    "name": "unpackArray-descriptor-tuple-bracket-separator"
+  },
+  {
+    "name": "packArray-descriptor-tuple-extra-close"
+  },
+  {
+    "name": "unpackArray-descriptor-tuple-extra-close"
+  },
+  {
+    "name": "packArray-descriptor-tuple-second-last-comma"
+  },
+  {
+    "name": "unpackArray-descriptor-tuple-second-last-comma"
+  },
+  {
+    "name": "packArray-descriptor-tuple-nested-empty"
+  },
+  {
+    "name": "unpackArray-descriptor-tuple-nested-empty"
+  },
+  {
+    "name": "packArray-descriptor-name-stray-close"
+  },
+  {
+    "name": "unpackArray-descriptor-name-stray-close"
+  },
+  {
+    "name": "packArray-descriptor-name-stray-comma"
+  },
+  {
+    "name": "unpackArray-descriptor-name-stray-comma"
+  },
+  {
+    "name": "packArray-descriptor-name-stray-bracket"
+  },
+  {
+    "name": "unpackArray-descriptor-name-stray-bracket"
+  },
+  {
+    "name": "packArray-descriptor-suffix-open"
+  },
+  {
+    "name": "unpackArray-descriptor-suffix-open"
+  },
+  {
+    "name": "packArray-descriptor-suffix-no-close"
+  },
+  {
+    "name": "unpackArray-descriptor-suffix-no-close"
+  },
+  {
+    "name": "packArray-descriptor-suffix-first-nondigit"
+  },
+  {
+    "name": "unpackArray-descriptor-suffix-first-nondigit"
+  },
+  {
+    "name": "packArray-descriptor-suffix-after-digit-nondigit"
+  },
+  {
+    "name": "unpackArray-descriptor-suffix-after-digit-nondigit"
+  },
+  {
+    "name": "packArray-descriptor-suffix-zero"
+  },
+  {
+    "name": "unpackArray-descriptor-suffix-zero"
+  },
+  {
+    "name": "packArray-descriptor-suffix-leading-zero-zero"
+  },
+  {
+    "name": "unpackArray-descriptor-suffix-leading-zero-zero"
+  },
+  {
+    "name": "packArray-descriptor-suffix-length-large"
+  },
+  {
+    "name": "unpackArray-descriptor-suffix-length-large"
+  },
+  {
+    "name": "packArray-descriptor-suffix-scanner-large"
+  },
+  {
+    "name": "unpackArray-descriptor-suffix-scanner-large"
+  },
+  {
+    "name": "packArray-descriptor-suffix-footprint-large"
+  },
+  {
+    "name": "unpackArray-descriptor-suffix-footprint-large"
+  },
+  {
+    "name": "packArray-descriptor-tuple-footprint-large"
+  },
+  {
+    "name": "unpackArray-descriptor-tuple-footprint-large"
+  },
+  {
+    "name": "packArray-descriptor-dynamic-fixed-large"
+  },
+  {
+    "name": "unpackArray-descriptor-dynamic-fixed-large"
+  },
+  {
+    "name": "packArray-descriptor-dynamic-fixed-zero"
+  },
+  {
+    "name": "unpackArray-descriptor-dynamic-fixed-zero"
+  }
+]

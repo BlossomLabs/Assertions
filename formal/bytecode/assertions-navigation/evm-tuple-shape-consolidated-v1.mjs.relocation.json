@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/assertions-navigation/evm-tuple-shape-v2.mjs",
+  "output": "/home/sem/assertions/formal/bytecode/assertions-navigation/evm-tuple-shape-consolidated-v1.mjs",
+  "source_sha256": "bd16b7a74e9b5fab4053fdf3074583ff478fa5f33c984916db9bc92a0e4592bf",
+  "output_sha256": "bd16b7a74e9b5fab4053fdf3074583ff478fa5f33c984916db9bc92a0e4592bf",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

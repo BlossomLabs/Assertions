@@ -1,0 +1,13 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/word-rule-reference/Reference.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "Expanded finite actual wordRule-call physical coverage derived independently from649 complete PC-zero baselines. All96 canonical narrow names and twelve full-width/fallback names are represented. The universal mathematical reference remains the existing word-rule-reference owner, while full native opcode/canonical/checkWords/codec and retained independent acceptance remain open. No new native or public credit.",
+  "assumptions": [
+    "Original accepted name grammar and current pinned runtime/source/tool identities.",
+    "Existing independently specified ABI canonical-word whitelist is a mathematical reference; all current bodies require whole native verification in final closure.",
+    "Actual compiled classification/check loops, physical replays, errors, mutations and retained independent acceptance remain required."
+  ],
+  "formatExclusions": {}
+}

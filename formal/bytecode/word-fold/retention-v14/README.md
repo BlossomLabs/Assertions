@@ -1,0 +1,11 @@
+# Full current fold retention V14
+
+This fresh package preserves V13's terminal callback-fault timeout and all earlier failures. It adds an isolated exact terminal REVERT(packet) control, a complete healthy terminal owner, and a healthy bridge from every original Admitted+Good20 callback frame to the complete actual stack, memory slice and original H.Packet bytes. The candidate's only changed byte remains opcode1122:253→243. The changed entire terminal owner must fail only its ordinary semantic postcondition; the same full bytes-callback-fail EVM case must contradict the original oracle. The two scalar controls also check their entire selected methods and reject any failed assertion/precondition, timeout or parser issue.
+
+The unchanged derived native graph has208 module bodies and2 include-only forwarders, backed by263648 complete current native obligations. All source/native/tool/dependency/generator identities, zero root audits,258 complete PCzero physical receipts,three bytecode controls,three faithful translated native/EVM source controls, owner independent checker and parent independent checker remain mandatory. No ledger or public credit is assigned here.
+
+The local strict source auditor retains the original Basic+Budget admission, verifies complete healthy and changed witness methods, and forces the faithful wrong early branch before any Loop.Run callee. No failed callee precondition or skipped native obligation can count as source semantic evidence.
+
+Preflight whole bytecode controls and strict checker block passed at development/whole-bytecode-fault-smoke-v2 (actual original command paths remain /tmp provenance). Changed whole inventories:37,38,31. Healthy callback terminal31 and all-admitted packet/frame bridge35 passed. The source helper is unchanged from the strict three-control source smoke in V13; every retained source control is rerun here.
+
+Compiler/runtime extraction, reviewed interpreter semantics, represented frames, sufficient reached resources and truthful reached external observations remain explicit assumptions. Whole Collections bytecode, arrays/value traversal and other public entries remain open. No gas, performance, deployment or compiler correctness claim.

@@ -1,0 +1,13 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/value-array/descriptor-start-rejection/format-generated.py",
+  "output": "/home/sem/assertions/formal/bytecode/value-array/descriptor-start-rejection/format-generated-consolidated-v24.py",
+  "source_sha256": "6018f62b9884f4c4c83d01e51f023aa7350152d0db73eb8763286ac27da390b3",
+  "output_sha256": "0e28a4f39097a0968dfe3e8834af82fc59669d800cfb02db24bd8395015c32a3",
+  "replacements": {
+    "/tmp/assertions-dafny-4.11.0/dafny": {
+      "new": "/home/sem/assertions/proof-tools/assertions-proof-tools/dafny",
+      "count": 1
+    }
+  },
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

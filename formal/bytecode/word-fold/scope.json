@@ -1,0 +1,38 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "publicEntries": [
+    "foldRange",
+    "foldBytes",
+    "foldWords"
+  ],
+  "prefixCandidates": [
+    {
+      "name": "foldRange",
+      "signature": "foldRange(uint256,address,bytes,uint256,uint256[],bytes32,uint8)",
+      "selector": "f1d88dc8",
+      "entryPc": 1055,
+      "owner": "formal/bytecode/word-fold/prefix-range"
+    },
+    {
+      "name": "foldBytes",
+      "signature": "foldBytes(bytes,address,bytes,uint256,uint256[],bytes32,uint8)",
+      "selector": "6d24e79c",
+      "entryPc": 713,
+      "owner": "formal/bytecode/word-fold/prefix-bytes"
+    },
+    {
+      "name": "foldWords",
+      "signature": "foldWords(bytes,address,bytes,uint256,uint256[],bytes32,uint8)",
+      "selector": "6de60cb0",
+      "entryPc": 732,
+      "owner": "formal/bytecode/word-fold/prefix-words"
+    }
+  ],
+  "assumptions": [
+    "Prefix-only native admission: zero CALLVALUE, calldata length at least four and below 2^64, actual loaded selector equals the compiler-bound function selector. Every lower selector-word bit and calldata tail remains arbitrary.",
+    "Prefix execution uses reviewed exact EVM instruction semantics, fresh zero memory, fitting stack/memory and sufficient reached execution resources.",
+    "Raw decoder, enum/alignment/window admission, empty and nonempty behavior, target checking, template copy, domain element extraction, accumulator and element stamping, callback receipts and gas-exhaustion guards, early exits, errors and exact physical terminal bytes remain required before public bytecode coverage.",
+    "Current runtime/source/compiler extraction and Dafny/Boogie/Z3 are trusted boundaries; source proofs do not substitute for exact compiled instruction verification. No gas, deployment or performance claims."
+  ]
+}

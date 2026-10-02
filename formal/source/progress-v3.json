@@ -1,0 +1,111 @@
+{
+  "scope": "Migration work tracking only; source-level helper/module gates never grant bytecode entries. Candidate all-source inventory is still being reconciled with original ledgers.",
+  "candidatePackages": 134,
+  "candidateDeclarations": 3164,
+  "mappedUniqueDeclarationRecords": 659,
+  "mappedByOriginalRoot": {
+    "operations": 79,
+    "collections": 51,
+    "constraints": 26,
+    "source": 7,
+    "expressions": 22,
+    "core": 37,
+    "resolution": 50,
+    "abi": 387
+  },
+  "mappings": [
+    {
+      "path": "formal/source/concat-theorem-mapping-v2.json",
+      "sha256": "011d591568ef38cf34d08a930e8a666d0c143adcc4e5f808a33dcd5c62f934e7"
+    },
+    {
+      "path": "formal/source/replace-suite-theorem-mapping-v2.json",
+      "sha256": "81dcbdcd971aa647a7d4f6f81d52727b11d7bc43330deb02947a02d777357759"
+    },
+    {
+      "path": "formal/source/word-memory-theorem-mapping-v2.json",
+      "sha256": "22a4526e259dc5ceb1db41d5a64238be8bf0e12aece360741d41bae12516e9fe"
+    },
+    {
+      "path": "formal/source/word-windows-theorem-mapping-v2.json",
+      "sha256": "95f154e0ee6f377d7f87109c17849e2141b98341436e8ef24a4141e7737b2519"
+    },
+    {
+      "path": "formal/source/constraints-theorem-mapping-v2.json",
+      "sha256": "e03510dc71aa1d35cc564c707c68256b7c22f8d66df0808b14703d6bf9721cf9"
+    },
+    {
+      "path": "formal/source/expressions-recursive-v3-theorem-mapping-v2.json",
+      "sha256": "7d46ebc36d9949743fc786de7ec931189ebd021c29e9e04eb3857e9908081433"
+    },
+    {
+      "path": "formal/source/core-raw-v2-theorem-mapping-v2.json",
+      "sha256": "aaadbb410a64fa6adab60e7eedfc08048ac675643a328a2547ec5c9a1809a8b1"
+    },
+    {
+      "path": "formal/source/abi-memory-v2-theorem-mapping-v2.json",
+      "sha256": "e05f99708879d892c0c03f4c0cebbfc2f7be31cedb89ab44e6b5c80ca58ade01"
+    }
+  ],
+  "closures": [
+    {
+      "name": "concat",
+      "status": "coordinator-accepted-conditional-source-refactor",
+      "nativeBatches": 307,
+      "scope": "Original decoded-boundary concat entry with unchanged premises; no bytecode credit"
+    },
+    {
+      "name": "replace-suite",
+      "status": "native-complete-source-correspondence-pending",
+      "nativeBatches": 1388
+    },
+    {
+      "name": "word-memory",
+      "status": "native-complete-source-correspondence-pending",
+      "nativeBatches": 634
+    },
+    {
+      "name": "word-windows",
+      "status": "native-complete-source-correspondence-pending",
+      "nativeBatches": 1079
+    },
+    {
+      "name": "constraints",
+      "status": "native-complete-source-correspondence-pending",
+      "nativeBatches": 300
+    },
+    {
+      "name": "expressions-recursive",
+      "status": "native-complete-source-correspondence-pending",
+      "nativeBatches": 523
+    },
+    {
+      "name": "core-raw-v2",
+      "status": "native-complete-source-correspondence-pending",
+      "nativeBatches": 1220
+    },
+    {
+      "name": "abi-memory-v1",
+      "status": "native-live-complete-closure",
+      "nativeHandle": 77764,
+      "scope": "Generic replacement-span delegation, original memorymodel and all domains unchanged"
+    }
+  ],
+  "remaining": "All unlisted original source packages and their mathematical/execution/source correspondence closure remain pending; no completion claim.",
+  "mappingPolicy": "Fresh conservative complete-interface extractor handles attributes, set literal contracts, strings/chars and nested comments; meaningful domain-change fixture passed. Candidate all-source inventory still not a numerical completion denominator.",
+  "freshSourceCorrespondence": {
+    "abiAdapterGeneration": "formal/source/evidence/abi-generation-v3/results.json",
+    "abiWordsGeneration": "formal/source/evidence/abi-words-generation-v1/receipt.json",
+    "abiWords107SmtQueries": "formal/source/evidence/abi-words-smt-v1/receipt.json",
+    "wordMemorySixConcreteOracleTests": "formal/source/evidence/word-memory-edr-v1/results.json"
+  },
+  "abiSuccessor": {
+    "status": "running",
+    "handle": 79753,
+    "evidence": "formal/source/evidence/abi-memory-v2",
+    "mapping": "formal/source/abi-memory-v2-theorem-mapping-v2.json",
+    "retainedFailedNative": "formal/source/evidence/abi-memory-v1",
+    "failedBatchesVerified": 24195,
+    "failedObligations": 3
+  }
+}

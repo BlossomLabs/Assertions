@@ -1,0 +1,5 @@
+{
+  "source": "formal/bytecode/assertions-navigation/verify-modular-grammar-consolidated-v1.py",
+  "sourceSha256": "eeb4a2fac89fb1dc68591334b07022d0338629fa225d7eb00546b66f736d61fe",
+  "change": "Add private NameChildren and NameLeaf to assertion-isolation list; original30second limit preserved, same native proof obligations separated."
+}

@@ -1,0 +1,5 @@
+# Current fold retention V2 preparation
+
+This isolated successor selects the eight fresh handwritten V4 connections and preserves the original live batch, eleven-module V3 repair, array routing batch and prior retention owner. Generated wrapper files remain owned by body-invocation-repair-v2 and require byte-identical regeneration. No predecessor failure is credited. The 208 current qualified module bodies need independent whole-module native closure with identical current transitive contracts before retained gates start.
+
+The sequential driver waits actual V4 native termination and validates original/V3/V4 terminal source snapshots, evidence and tool identities. A full compiler/input/runtime reproduction, all generated owners, audits, 258 actual PC-zero EVM receipts, three ordinary native/physical bytecode contradictions and three translated native/EVM source contradictions remain mandatory. The independent V2 checker must pass before any ledger/coverage edit. This package does not assign public credit, weaken admissions or infer gas/deployment/performance/compiler-correctness claims.

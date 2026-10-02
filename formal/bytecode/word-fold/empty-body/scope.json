@@ -1,0 +1,15 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "all-empty-fold-bodies",
+      "owner": "formal/bytecode/word-fold/empty-body"
+    }
+  ],
+  "assumptions": [
+    "Pinned exact compiler runtime and assigned fold selectors with the complete physical zero-count branch after all window checks. Range count==0 or Bytes/Words source length==0; Words empty count equivalence is explicit under required32-byte alignment. Initial accumulator retains the full uint256 word.",
+    "Actual post-window stack includes original raw decoded fields, shared Fold arguments and both original continuations. Every58/59 physical instruction is retained through shared/wrapper cleanup, physical output Store at128 and exactly32-byte RETURN. Pre-allocation byte memory is actual Store([],64,128).",
+    "Raw public-entry success requires compiler fitting representation and every ordered accumulator/element window before empty return. Target may be canonical zero/no-code, but no code-size, gas or callback observation is consumed; arbitrary old returndata/cursor are preserved by exact external-frame lift.",
+    "Selected native imported contracts are assumed. Complete fresh included graph, raw/window rejection paths, all nonempty target/allocation/template/domain/stamping/callback/early-exit/error/output paths, EVM receipts, matching semantic faults and independent retained evidence remain mandatory before public coverage. No gas/deployment/performance or compiler-correctness claim."
+  ]
+}

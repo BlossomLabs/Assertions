@@ -1,0 +1,8 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Arbitrary finite physical template copy and exact32 caller-local returned bytes under explicit fitting memory/free-pointer conditions. Only free-pointer word64 changes below free; every allocated word at or above96 and wholly below free is preserved.",
+    "All six FoldRun words128..320 preserved; bytewise template protection needed for reuse. Selected native imports assumed; full public fold native/physical/mutation/independent retained closure required. No gas/deployment/performance claim."
+  ]
+}

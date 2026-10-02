@@ -1,0 +1,23 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "identical-accepted-fold-decoders-longer-module-allowance",
+      "owner": "formal/bytecode/word-fold/raw-decoder"
+    }
+  ],
+  "assumptions": [
+    "Native candidate calldata length below2^64, fitting raw seven heads and source/template/element-window tails, canonical address and exit0/1/2. Range count and initial accumulator retain full uint256 domain. No canonical tail order, tail alignment or padding restriction.",
+    "Each generated step follows actual current opcodes/immediates/jump bytes, including exact address mask, full array stride and enum validation, under explicit fitting stack and sufficient reached resources. Lower stack prefix and all byte memory are preserved.",
+    "Selected imports assume included contracts. Complete current include/declaration/native closure, complementary raw rejections, body/loop/external observations/early exits/errors/scalar terminal, physical and semantic faults and independent retained checker remain required. No gas/deployment/performance claim."
+  ],
+  "priorFailure": "accepted-native-v1: RangeAccepted whole-module watchdog1800.311s, exitCode null and no completed native inventory. SourceAccepted still live at revision preparation. Prior snapshot preserved.",
+  "wholeModuleWatchdogSeconds": 7200,
+  "unchangedNativeFlags": [
+    "verify-included-files",
+    "manual-lemma-induction",
+    "isolate-assertions",
+    "cores2",
+    "verification-time-limit30"
+  ]
+}

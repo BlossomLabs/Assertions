@@ -1,0 +1,154 @@
+// SPDX-License-Identifier: MIT
+// Decimal count/fill invariants; native proof pending.
+include "../tostring-inputs/Inputs.dfy"
+module OperationsToStringDecimal {
+  import S = BytecodeScanMachine
+  import G = BytecodeGetterMachine
+  import I = OperationsToStringInputs
+  function Steps(n:nat):nat
+    decreases n
+  { if n==0 then 0 else 1+Steps(n/10) }
+  function Pow10(n:nat):nat
+    decreases n
+  { if n==0 then 1 else 10*Pow10(n-1) }
+  lemma Quotient(n:nat)
+    requires n>0
+    ensures n/10<n && n%10<10 && n==(n/10)*10+n%10
+  {}
+  lemma Length(n:nat)
+    ensures |I.Digits(n)|==Steps(n)
+    decreases n
+  { if n>0 { Quotient(n);Length(n/10); } }
+  lemma StepsBound(n:nat,bound:nat)
+    requires n<Pow10(bound)
+    ensures Steps(n)<=bound
+    decreases bound
+  {
+    if n>0 {
+      assert bound>0;
+      assert n<10*Pow10(bound-1);
+      assert n/10<Pow10(bound-1);
+      StepsBound(n/10,bound-1);
+    }
+  }
+  lemma WordDigits(n:S.Word)
+    ensures Steps(n)<=78 && |I.Digits(n)|<=78
+  { WordBound();StepsBound(n,78);Length(n); }
+  lemma WordBound() ensures G.Modulus()<Pow10(78) {
+    assert Pow10(0)==1;
+    assert Pow10(1)==10;
+    assert Pow10(2)==100;
+    assert Pow10(3)==1000;
+    assert Pow10(4)==10000;
+    assert Pow10(5)==100000;
+    assert Pow10(6)==1000000;
+    assert Pow10(7)==10000000;
+    assert Pow10(8)==100000000;
+    assert Pow10(9)==1000000000;
+    assert Pow10(10)==10000000000;
+    assert Pow10(11)==100000000000;
+    assert Pow10(12)==1000000000000;
+    assert Pow10(13)==10000000000000;
+    assert Pow10(14)==100000000000000;
+    assert Pow10(15)==1000000000000000;
+    assert Pow10(16)==10000000000000000;
+    assert Pow10(17)==100000000000000000;
+    assert Pow10(18)==1000000000000000000;
+    assert Pow10(19)==10000000000000000000;
+    assert Pow10(20)==100000000000000000000;
+    assert Pow10(21)==1000000000000000000000;
+    assert Pow10(22)==10000000000000000000000;
+    assert Pow10(23)==100000000000000000000000;
+    assert Pow10(24)==1000000000000000000000000;
+    assert Pow10(25)==10000000000000000000000000;
+    assert Pow10(26)==100000000000000000000000000;
+    assert Pow10(27)==1000000000000000000000000000;
+    assert Pow10(28)==10000000000000000000000000000;
+    assert Pow10(29)==100000000000000000000000000000;
+    assert Pow10(30)==1000000000000000000000000000000;
+    assert Pow10(31)==10000000000000000000000000000000;
+    assert Pow10(32)==100000000000000000000000000000000;
+    assert Pow10(33)==1000000000000000000000000000000000;
+    assert Pow10(34)==10000000000000000000000000000000000;
+    assert Pow10(35)==100000000000000000000000000000000000;
+    assert Pow10(36)==1000000000000000000000000000000000000;
+    assert Pow10(37)==10000000000000000000000000000000000000;
+    assert Pow10(38)==100000000000000000000000000000000000000;
+    assert Pow10(39)==1000000000000000000000000000000000000000;
+    assert Pow10(40)==10000000000000000000000000000000000000000;
+    assert Pow10(41)==100000000000000000000000000000000000000000;
+    assert Pow10(42)==1000000000000000000000000000000000000000000;
+    assert Pow10(43)==10000000000000000000000000000000000000000000;
+    assert Pow10(44)==100000000000000000000000000000000000000000000;
+    assert Pow10(45)==1000000000000000000000000000000000000000000000;
+    assert Pow10(46)==10000000000000000000000000000000000000000000000;
+    assert Pow10(47)==100000000000000000000000000000000000000000000000;
+    assert Pow10(48)==1000000000000000000000000000000000000000000000000;
+    assert Pow10(49)==10000000000000000000000000000000000000000000000000;
+    assert Pow10(50)==100000000000000000000000000000000000000000000000000;
+    assert Pow10(51)==1000000000000000000000000000000000000000000000000000;
+    assert Pow10(52)==10000000000000000000000000000000000000000000000000000;
+    assert Pow10(53)==100000000000000000000000000000000000000000000000000000;
+    assert Pow10(54)==1000000000000000000000000000000000000000000000000000000;
+    assert Pow10(55)==10000000000000000000000000000000000000000000000000000000;
+    assert Pow10(56)==100000000000000000000000000000000000000000000000000000000;
+    assert Pow10(57)==1000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(58)==10000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(59)==100000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(60)==1000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(61)==10000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(62)==100000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(63)==1000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(64)==10000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(65)==100000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(66)==1000000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(67)==10000000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(68)==100000000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(69)==1000000000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(70)==10000000000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(71)==100000000000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(72)==1000000000000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(73)==10000000000000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(74)==100000000000000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(75)==1000000000000000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(76)==10000000000000000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(77)==100000000000000000000000000000000000000000000000000000000000000000000000000000;
+    assert Pow10(78)==1000000000000000000000000000000000000000000000000000000000000000000000000000000;
+  }
+  predicate Count(original:S.Word,current:S.Word,done:nat) {
+    current<=original && done+Steps(current)==Steps(original)
+  }
+  lemma CountBegin(original:S.Word) ensures Count(original,original,0) {}
+  lemma CountNext(original:S.Word,current:S.Word,done:nat)
+    requires Count(original,current,done) && current>0
+    ensures Count(original,current/10,done+1)
+    ensures done<78 && done+1<=78
+  { WordDigits(original);Quotient(current); }
+  lemma CountDone(original:S.Word,done:nat)
+    requires Count(original,0,done)
+    ensures done==|I.Digits(original)| && done<=78
+  { Length(original);WordDigits(original); }
+  predicate Fill(buf:seq<S.Byte>,original:S.Word,current:S.Word,left:nat) {
+    left<=|buf| && left==Steps(current) && |buf|==Steps(original) &&
+    I.Digits(current)+buf[left..]==I.Digits(original)
+  }
+  lemma FillBegin(buf:seq<S.Byte>,original:S.Word)
+    requires |buf|==Steps(original)
+    ensures Fill(buf,original,original,|buf|)
+  { Length(original); }
+  lemma FillNext(buf:seq<S.Byte>,original:S.Word,current:S.Word,left:nat)
+    requires Fill(buf,original,current,left) && current>0
+    ensures left>0 && Fill(buf[left-1:=I.Digit(current)],original,current/10,left-1)
+  {
+    Quotient(current);Length(current);Length(current/10);
+    assert left>0;
+    var next:=buf[left-1:=I.Digit(current)];
+    assert next[left-1..]==[I.Digit(current)]+buf[left..];
+    assert I.Digits(current)==I.Digits(current/10)+[I.Digit(current)];
+    assert I.Digits(current/10)+next[left-1..]==I.Digits(original);
+  }
+  lemma FillDone(buf:seq<S.Byte>,original:S.Word,left:nat)
+    requires Fill(buf,original,0,left)
+    ensures left==0 && buf==I.Digits(original)
+  {}
+}

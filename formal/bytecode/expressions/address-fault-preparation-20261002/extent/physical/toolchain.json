@@ -1,0 +1,13 @@
+{
+  "nodeVersion": "v26.10.0",
+  "nodeExecutable": "/usr/local/bin/node",
+  "nodeSha256": "ab9c8eecf9f82d6693cdc3accced17034065c8d96213b0aa76a7e803d20ae1da",
+  "hardhatEntry": "/home/sem/assertions/node_modules/.pnpm/hardhat@3.17.0/node_modules/hardhat/dist/src/index.js",
+  "hardhatEntrySha256": "871462da868d22e5750d3581d49853bdac390107376f27fa6696ff66d6150765",
+  "edrEntry": "/home/sem/assertions/node_modules/.pnpm/@nomicfoundation+edr@0.20.0/node_modules/@nomicfoundation/edr/index.js",
+  "edrEntrySha256": "0215fa961eaa13fc706aa73879081eaa3f66a2d8187372bea913038243f3b7f2",
+  "edrVersion": "0.20.0",
+  "nativeBinding": "/home/sem/assertions/node_modules/.pnpm/@nomicfoundation+edr-linux-x64-gnu@0.20.0/node_modules/@nomicfoundation/edr-linux-x64-gnu/edr.linux-x64-gnu.node",
+  "nativeBindingSha256": "a48d82186163ff4598dd71ea76612c9bffa6202e9c86a9ac6ec832aa04d2a8c6",
+  "lockfileSha256": "2f996f8e14a3d949d25df11d423384c8df51736df4682411b82e9290646a4dab"
+}

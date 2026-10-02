@@ -1,0 +1,9 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "All three assigned raw selectors, fitting compiler-admitted finite calldata with loose/overlapping tails, nonempty/aligned domain and valid ordered windows. Full range word count and arbitrary callback result words preserved.",
+    "One truthful positive CodeSize observation followed by ModelV2 finite reached memory resource schedule and actual payload/twoGAS/successful32-byte STATICCALL observations. No inferred gas/deployment/performance claim.",
+    "Selected imports assumed; complete complement outcomes/resource guards/current compiler/full included native/EVM/semantic fault/independent retained gates remain mandatory before public credit."
+  ]
+}

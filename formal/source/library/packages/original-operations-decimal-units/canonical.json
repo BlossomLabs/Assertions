@@ -1,0 +1,45 @@
+{
+  "id": "original-operations-decimal-units",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/library/src/operations/decimal-units/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/operations/decimal-units/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/operations/decimal-units/Connection.dfy",
+    "formal/source/library/src/operations/decimal-units/Control.generated.dfy",
+    "formal/source/library/src/operations/decimal-units/Model.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/library/src/operations/decimal-render/Model.dfy",
+      "formal/source/library/src/operations/decimal-units/Model.dfy"
+    ],
+    "execution": [
+      "formal/source/library/src/operations/decimal-render/Control.generated.dfy",
+      "formal/source/library/src/operations/decimal-units/Control.generated.dfy",
+      "formal/source/library/src/operations/modular/Math.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/library/src/operations/decimal-units/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/library/src/operations/decimal-units/Connection.dfy": "0e2359dd3f18d2b52e82622dee16b50095b53a168e238fa542ddb4ec5a767a47",
+    "formal/source/library/src/operations/decimal-units/Control.generated.dfy": "92e221c5efd07079e768bac7604cba099f48a754c20c37727c4f7e7294ac6519",
+    "formal/source/library/src/operations/decimal-units/Model.dfy": "0be18fcf921a78c6edd961aad26be6a367c5bbd2ba1ab0d27dd4a31350a87a5d",
+    "formal/source/library/src/operations/decimal-render/Control.generated.dfy": "ae8756850bb41d815a5ad01fac79d14a649131604b12beb93d525a777e4d7229",
+    "formal/source/library/src/operations/decimal-render/Model.dfy": "27d6579e5182c2ada4cea4d4f28d1b645312811ef3b868d415785932522de0c5",
+    "formal/source/library/src/operations/modular/Math.generated.dfy": "cfc82f034d73947fe424c9aedcc99a15b8aeb2a3ae866fe58fe0d46f86c10b8d"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

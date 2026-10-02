@@ -1,0 +1,14 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/type-complete/Parser.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "Construct classification witnesses from every input and execute exact full healthy/error type parsing when the resulting original recursive stack budget fits. No descriptor tree, error packet or internal frame is supplied as an input premise. Out-of-budget execution is explicitly unclaimed and the returned resourceFits flag is exact, not an extra semantic admission. Full native checking, original public caller resource proof, public codecs, mutation controls and retained independent checks remain open; no public credit.",
+  "assumptions": [
+    "Current runtime/tools and reviewed EVM representation/interpreter.",
+    "Original represented positions below 2^64, valid actual return destination and aligned fitting free memory.",
+    "Exact original successful/rejecting recursive stack budget is checked on the constructively derived tree. No execution claim is made for resourceFits=false; actual public caller/resource and out-of-budget behavior remain open.",
+    "All current included bodies require complete native verification and retained independent acceptance."
+  ],
+  "formatExclusions": {}
+}

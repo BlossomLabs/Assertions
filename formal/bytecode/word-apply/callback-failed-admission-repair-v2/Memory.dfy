@@ -1,0 +1,92 @@
+// SPDX-License-Identifier: MIT
+include "../callback-receipt-engine/Memory.dfy"
+include "../callback-failed-memory-repair-v3/Memory.dfy"
+module BytecodeApplyCallbackFailedReceiptAdmission {
+  import S = BytecodeScanMachine
+  import G = BytecodeGetterMachine
+  import C = BytecodeCopyMemory
+  import EM = BytecodeExternalMemory
+  import F = BytecodeApplyFullCallbackReceiptMemory
+  import R = BytecodeApplyCallbackReceiptMemory
+  import P = BytecodeApplyCallbackCopyMemory
+  import H = BytecodeApplyCallbackFailedMemory
+  import D = BytecodeApplyDynamicBytesCopyMemory
+  import W = BytecodeApplyStoreByteFrame
+  import Rep = BytecodeScanRepresentation
+  lemma Bounds(mem: seq<S.Byte>,ptr: S.Word,free: S.Word,length: S.Word,returned: seq<S.Byte>)
+    requires F.Fits(mem,ptr,free,length,returned)
+    ensures |F.Final(mem,ptr,free,length,returned)|%32 == 0 && |F.Final(mem,ptr,free,length,returned)| < R.Bound()
+    ensures ptr+32+length <= |F.Final(mem,ptr,free,length,returned)|
+    ensures ptr+32+length <= S.Load(F.Final(mem,ptr,free,length,returned),64)
+    ensures 160 <= S.Load(F.Final(mem,ptr,free,length,returned),64) && S.Load(F.Final(mem,ptr,free,length,returned),64)%32 == 0
+  {
+    hide F.Final();hide P.Packed();hide R.Complete();
+    F.Admission(mem,ptr,free,length,returned);F.PackedBounds(mem,ptr,free,length,returned);
+    C.MemorySize(mem,free,ptr+32,length);
+    Rep.StoredWord(P.Copied(mem,ptr,free,length),free+length,0);
+    var packed := P.Packed(mem,ptr,free,length);
+    assert |packed| >= |mem|;
+    if |returned| > 0 {
+      R.Bounds(packed,free,returned);R.Layout(packed,free,returned);
+      Rep.StoredWord(packed,64,R.End(free,returned));
+      Rep.StoredWord(R.Pointer(packed,free,returned),free,|returned|);
+      C.Size(R.Head(packed,free,returned),free+32,returned);
+      assert |R.Complete(packed,free,returned)| >= |packed| by { reveal R.Complete(); }
+    }
+    reveal F.Final();
+  }
+  lemma Original(mem: seq<S.Byte>,ptr: S.Word,free: S.Word,length: S.Word,returned: seq<S.Byte>,j: nat)
+    requires F.Fits(mem,ptr,free,length,returned) && ptr <= j < ptr+32+length
+    ensures ptr+32+length <= |F.Final(mem,ptr,free,length,returned)|
+    ensures F.Final(mem,ptr,free,length,returned)[j] == mem[j]
+  {
+    hide F.Final();hide P.Packed();hide R.Complete();
+    Bounds(mem,ptr,free,length,returned);
+    P.Original(mem,ptr,free,length,j);F.Admission(mem,ptr,free,length,returned);F.PackedBounds(mem,ptr,free,length,returned);
+    var packed := P.Packed(mem,ptr,free,length);
+    assert j < |packed|;
+    if |returned| > 0 {
+      R.Bounds(packed,free,returned);
+      W.Outside(packed,64,R.End(free,returned),j);
+      W.Outside(R.Pointer(packed,free,returned),free,|returned|,j);
+      C.Frame(R.Head(packed,free,returned),free+32,returned);
+      assert EM.ReturnCopy(R.Head(packed,free,returned),free+32,0,|returned|,returned) == C.Write(R.Head(packed,free,returned),free+32,returned);
+      reveal R.Complete();
+    }
+    reveal F.Final();
+  }
+  lemma Admission(mem: seq<S.Byte>,ptr: S.Word,free: S.Word,length: S.Word,payload: seq<S.Byte>,returned: seq<S.Byte>)
+    requires F.Fits(mem,ptr,free,length,returned) && |payload| == length && mem[ptr+32..ptr+32+length] == payload
+    requires S.Load(F.Final(mem,ptr,free,length,returned),64)+|payload|+|returned|+512 < D.Bound()
+    ensures H.Fits(F.Final(mem,ptr,free,length,returned),ptr,F.Receipt(free,returned),S.Load(F.Final(mem,ptr,free,length,returned),64),payload,returned)
+  {
+    hide G.BitAnd();hide S.BitNot();hide F.Final();hide P.Packed();hide R.Complete();
+    F.Admission(mem,ptr,free,length,returned);F.PackedBounds(mem,ptr,free,length,returned);F.Header(mem,ptr,free,length,returned);
+    Bounds(mem,ptr,free,length,returned);
+    var after := F.Final(mem,ptr,free,length,returned);var receipt := F.Receipt(free,returned);
+    var packed := P.Packed(mem,ptr,free,length);
+    forall j: int {:trigger after[j]} | ptr <= j < ptr+32+length
+      ensures after[j] == mem[j]
+    { Original(mem,ptr,free,length,returned,j); }
+    forall k: nat {:trigger after[ptr+k]} | k < 32
+      ensures after[ptr..ptr+32][k] == mem[ptr..ptr+32][k]
+    {}
+    assert after[ptr..ptr+32] == mem[ptr..ptr+32];
+    forall k: nat {:trigger after[ptr+32+k]} | k < length
+      ensures after[ptr+32..ptr+32+length][k] == payload[k]
+    {}
+    assert after[ptr+32..ptr+32+length] == payload;
+    G.LoadProjection(after,ptr);G.LoadProjection(mem,ptr);
+    if |returned| == 0 {
+      assert after == packed by { reveal F.Final(); }
+      assert S.Load(after,64) == free;
+      assert S.Load(after,96) == 0;
+      assert after[128..128] == returned;
+    } else {
+      R.Bounds(packed,free,returned);R.Layout(packed,free,returned);
+      assert after == R.Complete(packed,free,returned) by { reveal F.Final(); }
+      assert S.Load(after,64) == R.End(free,returned);
+      assert after[receipt+32..receipt+32+|returned|] == returned;
+    }
+  }
+}

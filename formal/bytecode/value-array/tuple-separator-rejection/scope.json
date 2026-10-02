@@ -1,0 +1,13 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/tuple-separator-rejection/Connection.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "Complete exact tuple type-entry execution through independently accepted comma-prefix children and the last accepted child, actual fitting sum update, and missing/invalid separator through InvalidTypeDescriptor(last.end) REVERT. No error frame or packet supplied as an assumption. Rejected recursive child grammar/public codec/native retention controls remain open; no public credit.",
+  "assumptions": [
+    "Current runtime/tools and reviewed EVM interpretation.",
+    "Original positions below 2^64, represented lower/recursive stack and aligned fitting free memory. Independent accepted child grammar derives partial/total fitting sums.",
+    "All included current complete native bodies and retained controls/checkers remain required."
+  ],
+  "formatExclusions": {}
+}

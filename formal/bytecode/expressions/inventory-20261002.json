@@ -1,0 +1,818 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-02T12:31:07.301476+00:00",
+  "productionSourceSha256": "dc53eb78d3550ded3d9dce3f61172a9a16e103a6be33cea95b1de04701c7124d",
+  "artifactSha256": "cbbae5a0ef077899350194bbb726d0c45e42a46d86c79ff99e549215c8bdbdf7",
+  "runtimeSha256": "1085082ba1e19b0967431c8b7b0a79ce4f60b8df851b91b6e6194324b3feade7",
+  "runtimeBytes": 17776,
+  "nativeToolSha256": {
+    "dafny": "e540b4826363afb87c326446239a682d45086905425fa6299c103eca9693846d",
+    "Dafny.dll": "3551e32edc4ad7669e2af48e2985bbfd988d20ef75ab4f1f254a16414e43b957",
+    "z3": "22214e518eed9eec867d18b485e7b2570d09cbf1d94a47c8eec6ec4de0287eff",
+    "solc": "c8d35afdddc3cd2743ee88b8f25e0fecd16e2bdd5f2120f37e52cd9cc45ae0e6"
+  },
+  "publicEntries": [
+    "evaluate",
+    "evaluateEncoded",
+    "evaluateGuarded"
+  ],
+  "retainedSourceLedgers": [
+    {
+      "ledger": "docs/verification/expression-admission-errors-source-connection.json",
+      "ledgerSha256": "77f0b3deefdb797b824fac0c676470c6b945c816df31115cd7166b5733d71a99",
+      "baseline": "formal/expressions/admission-errors/evidence/admission-error-bytes/manifest.json",
+      "exists": true,
+      "scope": "Source admission rejection serialized to exact independent ABI error frames, deriving field representability and parser rejection-offset bounds from word-sized inputs.",
+      "partialClaims": "Preserves source admission rejection order and exact structured fields through ABI serialization. Standard compiler custom-error encoding, memory/resource and source-translation projections remain explicit. No new actual-source fault campaign; the panic concrete test covers standard serialization rather than admission-overflow reachability. Remaining public entrypoint/frame and bytecode composition is separate.",
+      "status": "passed",
+      "baselineSha256": "6f9c2a3906d62aa4d689fff3ceadebaba0bc32b64b036313efbe8faf6787e54f",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/admission-errors/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Inherited source admission/parser translation, memory and resource premises remain.",
+        "Input result index, graph length, reference values and descriptor lengths fit uint256, matching their Solidity representation. Error-field representability is derived, not separately assumed.",
+        "Solidity custom errors and Panic use standard selector-plus-argument-tuple encoding. Selectors/signatures are checked against the production AST; Panic bytes are checked concretely.",
+        "The panic EVM test checks standard arithmetic-panic serialization; it does not claim a physically reachable admission overflow example.",
+        "This composes already proved source admission with error serialization and new parser bounds; no new actual-source fault campaign is claimed.",
+        "Dafny/Boogie/Z3 trusted; compiler encoder and exact-bytecode verification remain separate."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-admission-source-connection.json",
+      "ledgerSha256": "85b58d0e843ec8a176ee6aa7ad0e3798de6f21e9884ebcad70f288486270dfbf",
+      "baseline": "formal/expressions/admission/evidence/expression-admission/manifest.json",
+      "exists": true,
+      "scope": "Expressions.evaluate admission prefix only: result bounds, full descriptor pass, backward references, kind arities and probe hash check. New declarations verified afresh; complete ABI dependency closure audited for reuse. Evaluation, cache initialization/adoption/rollback, canonical node values and full entrypoints remain open.",
+      "partialClaims": {
+        "E6": "Admission proves the exact keccak comparison. Literal bytes typing additionally excludes collision with bytes among this graph\u2019s descriptors. The later canonical-value validation and no-bare-decode claim are separate evaluator obligations.",
+        "E7": "All descriptors are parsed before evaluation on admitted graphs; rejection stops at the first earlier shape/reference/arity error. Checked parser panics and local resource premises remain explicit."
+      },
+      "status": "passed",
+      "baselineSha256": "8bbc2009d5d274f29cd71c7975a6c900d2237a579750751b9f07bdbb0fcba0bd",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/admission/structure.json",
+        "formal/expressions/admission/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Pinned solc AST, structural gate, manual control-flow lowering and expression translator are trusted.",
+        "Valid typed calldata and Solidity memory projection; physical memory does not wrap or alias unexpectedly.",
+        "The hash function is actual keccak256. Admission retains hash comparison exactly; literal bytes type inference additionally excludes a collision with bytes among this graph\u2019s descriptors.",
+        "Sufficient local resources; descriptor, node and reference counts and intermediate memory arithmetic are representable. No gas/resource-failure diagnosis is claimed.",
+        "Typed error ABI serialization and call ABI selector bytes follow solc; concrete oracle checks exact bytes.",
+        "Dafny/Boogie/Z3 are trusted. New ExpressionAdmission declarations are verified; dependency proofs are reused only after source, tool, native-row and retained evidence audits."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-cache-source-connection.json",
+      "ledgerSha256": "93f18a8aa756e6bcc521baab3fc67874923a69cb445e66460cc500980235403e",
+      "baseline": "formal/expressions/cache/evidence/cache-transitions/manifest.json",
+      "exists": true,
+      "scope": "Selected cache/auth transitions only: admitted initialization, canonical cache hits, validated stores, successful adoption conditional on SuccessfulReceipt, failed temporary-cache discard, exhaustion classification and direct caller check. Full recursive evaluator invariants remain open; guarded call-site origin is covered separately by the dispatch package.",
+      "partialClaims": {
+        "E8": "Validated stores/cache hits only, under a valid-cache precondition; complete recursive evaluator composition remains open.",
+        "E11": "Local hit/store mechanics only; propagation of invariant through every node branch remains open.",
+        "E17": "Canonical successful adoption is conditional on SuccessfulReceipt, which must be established by the evaluator.",
+        "E18": "Discard relies on faithful failed-call receipts and the separate-frame/ABI-copy memory projection; actual nested failure is additionally tested by exact call counts.",
+        "E19": "Direct caller check only in this package. The historical generic self-call counterexample is now blocked by the separately verified dispatch boundary. Validity of the typed helper cache remains a recursive evaluator obligation.",
+        "C69": "Selected Expressions guarded-result handling with sampled predicate; no universal gas diagnosis or all-wrapper theorem."
+      },
+      "status": "passed",
+      "baselineSha256": "b4682955ba8f2136cd5f36c68740c8a251665d7f09f124e64afb9ae3b10a8d1b",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/cache/structure.json",
+        "formal/expressions/cache/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Pinned solc AST, structural gate, manual control-flow lowering and expression translator are trusted.",
+        "Valid typed calldata and Solidity memory projection; physical memory does not wrap or alias unexpectedly.",
+        "The hash function is actual keccak256. Admission retains hash comparison exactly; literal bytes type inference additionally excludes a collision with bytes among this graph\u2019s descriptors.",
+        "Sufficient local resources; descriptor, node and reference counts and intermediate memory arithmetic are representable. No gas/resource-failure diagnosis is claimed.",
+        "Typed error ABI serialization and call ABI selector bytes follow solc; concrete oracle checks exact bytes.",
+        "Guard receipts match actual self-call outcomes; calldata-to-memory copy and separate call-frame memory are part of the projection. SuccessfulReceipt must still be established by the recursive evaluator; adoption validity is conditional on it.",
+        "Dafny/Boogie/Z3 are trusted. New ExpressionCache declarations are verified; dependency proofs are reused only after source, tool, native-row and retained evidence audits."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-call-source-connection.json",
+      "ledgerSha256": "b41c50afc06e6cf968366330fdecc6fa164f0184fbf8ebfe05a867eff9e9196a",
+      "baseline": "formal/expressions/calls/evidence/call-control/manifest.json",
+      "exists": true,
+      "scope": "Typed source control correspondence for _call/_probe/_checkPublicCall; formal error-byte serialization and recursive receipt/entrypoint composition remain open.",
+      "partialClaims": {
+        "E19": "Helper control and exact typed errors under faithful external/code/memory/gas observations, actual guarded selector and sufficient local resources. Error ABI serialization, call-frame composition and compiled bytecode remain separate.",
+        "E22": "Helper control and exact typed errors under faithful external/code/memory/gas observations, actual guarded selector and sufficient local resources. Error ABI serialization, call-frame composition and compiled bytecode remain separate.",
+        "E23": "Helper control and exact typed errors under faithful external/code/memory/gas observations, actual guarded selector and sufficient local resources. Error ABI serialization, call-frame composition and compiled bytecode remain separate.",
+        "E26": "Helper control and exact typed errors under faithful external/code/memory/gas observations, actual guarded selector and sufficient local resources. Error ABI serialization, call-frame composition and compiled bytecode remain separate.",
+        "E27": "Helper control and exact typed errors under faithful external/code/memory/gas observations, actual guarded selector and sufficient local resources. Error ABI serialization, call-frame composition and compiled bytecode remain separate.",
+        "C69": "Helper control and exact typed errors under faithful external/code/memory/gas observations, actual guarded selector and sufficient local resources. Error ABI serialization, call-frame composition and compiled bytecode remain separate."
+      },
+      "status": "passed",
+      "baselineSha256": "ad109812fce3b2c4ff70cb759b2b3e20536e28d6f467a3c53ed36a47f98973c2",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/calls/structure.json",
+        "formal/expressions/calls/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Pinned solc AST, restricted generator and manual control lowering are trusted.",
+        "Faithful Solidity byte-memory projection and representable lengths/indices; sufficient local resources.",
+        "External observations are actual code-presence, staticcall success/data and caller gas samples. The environment is history dependent; caller and static context must be faithful.",
+        "Error results retain exact typed fields. Formal error ABI serialization and recursive E.Raw receipt composition remain open; EVM tests check selected exact bytes.",
+        "In-range AbiCodec.slice is projected to sequence slicing. Its bytecode and allocation behavior are not established by this package.",
+        "The guarded selector parameter equals the deployed evaluateGuarded selector; current source checks are gated.",
+        "Dependencies are reused only after complete identical source/tool/artifact/native declaration audits.",
+        "Dafny/Boogie/Z3 are trusted; no exact compiled-bytecode claim."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-codec-error-source-connection.json",
+      "ledgerSha256": "d80ab0ac804453793e1b257d0eeb97537789326a576a17e050f668f7b9287363",
+      "baseline": "formal/expressions/codec-errors/evidence/codec-receipts/manifest.json",
+      "exists": true,
+      "scope": "Exact codec error field serialization and validation/tuple source receipt adapters; actual validation offset preserved, not a new all-input offset-specification theorem.",
+      "partialClaims": "Standard compiler ABI encoding and inherited source/memory/resource premises. Field round-trips require representable words; callback operation is uint32 and target uint160. Full evaluator oracle, unique invalid-value offset characterization and exact bytecode remain open.",
+      "status": "passed",
+      "baselineSha256": "c0c598bb4ed448820fb79c62d4377ce84b8a9d091dba0fa3bcc412fc54dbb612",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/codec-errors/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Inherited source-control, codec, translation/memory/resource and ABI representation premises remain.",
+        "Solidity custom errors and Panic use the standard selector plus argument-tuple encoding; no compiled-encoder verification is asserted.",
+        "Error fields fit their declared EVM widths. Callback operation is the uint32 selector, encoded left-aligned; target is a uint160 address.",
+        "Selectors and error signatures are bound to production solc AST; the standard Panic selector is checked concretely.",
+        "The cached validator supplies its actual Outcome. This package preserves its exact offset/code without proving a unique rejection-offset function for all invalid inputs.",
+        "Full evaluator oracle and entrypoint composition remain open; Dafny/Boogie/Z3 are trusted."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-compound-source-connection.json",
+      "ledgerSha256": "c44cabed68f8cc7fa3f2eebbdc280fc536f3bd514ab2815706f67b926824409a",
+      "baseline": "formal/expressions/compound/evidence/compound-adapters/manifest.json",
+      "exists": true,
+      "scope": "Compound source adapters over evaluated children; recursive order, final node validation, codec failure bytes and entrypoint composition remain separate.",
+      "partialClaims": "Arbitrary finite values/descriptors under the inherited codec parser, memory, representability, cursor and resource assumptions. Array non-panic verdict equivalence and exact success encoding; tuple first-failure fields come from the strengthened codec theorem. Final node validation and exact error-byte composition remain separate.",
+      "status": "passed",
+      "baselineSha256": "78ad983181d1957fc97155f45f82d22f19c54fdb5e1332f0e96d2b86d8486794",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/compound/structure.json",
+        "formal/expressions/compound/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Pinned solc AST, restricted generator and manual source lowering are trusted.",
+        "Standard abi.encode(bytes) and uint256 word encoding, bytes concatenation, faithful memory projection, sufficient local resources and representable sizes.",
+        "ABI source proofs supply parsing, tuple planning, first-component failures and pack construction; their cursor-room and arithmetic premises are retained.",
+        "These adapters consume already evaluated child values; recursive evaluation order, final node-type validation, exact codec error serialization and full entrypoint composition are separate.",
+        "Dafny/Boogie/Z3 are trusted; no compiled-bytecode claim."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-context-source-connection.json",
+      "ledgerSha256": "6a0ecd0dc38d4a4316a285735a76aed37a7f0926425d7ac0193f9852521b5cc9",
+      "baseline": "formal/expressions/context/evidence/history-sensitive-composition/manifest.json",
+      "exists": true,
+      "scope": "Full-result history rebasing for arbitrary history-sensitive oracles; exact preservation of primitive observations, valid receipt suffixes and canonical resumed execution.",
+      "partialClaims": "Modeled history and frame observations are preserved without assuming history-insensitivity. Receipt suffixes require a covered valid outer trace and its prefix; proving each reached entry completes within that trace is separate. EVM caller/static transitions, exact validation rejection bytes, source/ABI/memory/resource projections and graph/tree determinism remain open. No new EVM or source-fault campaign.",
+      "status": "passed",
+      "baselineSha256": "6c2016a0814d6b2e393f535c791c090d3e78b16a69466b73d3643cc09ab2952e",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/context/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Inherited source translation, codec/decoder/ABI/memory and sufficient-resource projections remain explicit.",
+        "History is rebased by prefix concatenation, never erased. Values, errors, memos, lazy branches, failed attempts and request ordering are preserved for arbitrary history-dependent oracle functions; no history-insensitivity or graph/tree determinism is assumed.",
+        "The rebased configuration selects the original frame at prefix plus local history. Each external environment, external history, boundary gas sample and failure payload is unchanged by that selection. This is modeled-context preservation, not an EVM caller/static-frame transition theorem.",
+        "Receipt suffixes require an actual covered valid outer trace and its prefix. Connecting each dynamically reached frame to the end of that complete outer trace remains a separate trace-bound obligation.",
+        "Canonical resumed execution uses generated dispatcher receipts. Primitive source correspondence requires Covered; outside-prefix values of the constructed Resume oracle are mathematical fallback only.",
+        "Exact validation rejection bytes and physical gas behavior retain their prior observation/resource assumptions. No new EVM or source-fault campaign is claimed. Dafny/Boogie/Z3 trusted."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-encoded-source-connection.json",
+      "ledgerSha256": "432861058006ed03a83c33d20e07ec259d4aa0d8498cb8960822f0f1bca0b13f",
+      "baseline": "formal/expressions/encoded/evidence/encoded-entry-complete/manifest.json",
+      "exists": true,
+      "scope": "Source-gated evaluateEncoded decoder projection, nested ABI self-call calldata, exact wrapper result/error/exhaustion routing and raw-return memory composition.",
+      "partialClaims": "Actual decoder and self-call observations, faithful static/caller/history context, ABI encoding and memory/resource projections remain explicit. Inner-call result provenance from complete recursive evaluation and guarded-cache ABI remain open. E37 covers the Expressions wrapper, not the Collections callback wrapper. Full compiled bytecode is separate.",
+      "status": "passed",
+      "baselineSha256": "d5d6ef64c7b73088f8fb64720931aeea34c0f5941ca95d8c03c8262b8e25ea8d",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/encoded/structure.json",
+        "formal/expressions/encoded/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Pinned AST/manual source lowering, faithful memory/decoder/ABI projection and sufficient local resources remain explicit.",
+        "The Decode observation is the actual Solidity abi.decode(Expression) outcome, including accepted noncanonical encodings; malformed inputs revert bare before a self-call.",
+        "Standard abi.encodeCall(evaluate) agrees with independent nested ABI frames for the decoded graph and supplied parameters. Enum/member order and both selectors are AST-bound; word values, selectors and encoded lengths satisfy Wire.",
+        "Call observations and gas samples are actual outcomes in the correct self/static/history context. The source-proved CallReceipt classifies success, missing code, ordinary failure and sampled exhaustion; graph results are not invented.",
+        "The successful output pointer denotes the returned bytes-memory object. Raw return is composed with the existing source-gated memory theorem.",
+        "This closes wrapper routing conditional on actual decoder/inner-call observations, not their provenance from the complete recursive entrypoint execution. Compiler bytecode and physical gas/resource adequacy remain separate; Dafny/Boogie/Z3 trusted."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-entry-source-connection.json",
+      "ledgerSha256": "a08b0b52a3a4ef78de790e794070ebe8625aafa3659c006f681d58d0da640fcb",
+      "baseline": "formal/expressions/entry/evidence/canonical-admission/manifest.json",
+      "exists": true,
+      "scope": "Source admission and cold-cache initialization composed with generated execution specialized to canonical ABI values, descriptor identity, cache extension, warm-cache identity and mathematical raw-result projection.",
+      "partialClaims": "Cache properties inherit the recursive source refinement. Source primitive correspondence requires Covered on the generated trace. Actual validation rejection bytes, external/guarded frame provenance, concrete raw-return memory, admission-error encoding and guarded/encoded entrypoint ABI boundaries remain separate. No new EVM or source-fault campaign.",
+      "status": "passed",
+      "baselineSha256": "01be3a49c6ab67eb260918fc8564c04fc52cef8c52e3b2efe8ba70ecb04aa063",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/entry/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "All source/parser/ABI/decoder/external-context and memory/resource premises of the audited adapters remain.",
+        "External Call/Probe/Resolve and guard classification are composed through the exact pure summaries already proved for their source adapters, not by executing those non-ghost methods inside ghost dispatch.",
+        "Inputs obey the recorded shape, representability, clean address, canonical Probe bytes and boundary gas/data conditions.",
+        "Constructor helpers supply their actual codec result witnesses; unique all-input rejection-offset functions are not introduced.",
+        "A request that fails dispatcher eligibility receives a mathematical bare-error fallback; source primitive correspondence is claimed only when Covered is true. Actual validation rejection bytes remain represented by the supplied reject function. This package composes source-proved admission and canonical cache execution, but does not verify the assembly raw-return memory operation or encode admission errors, guarded tuple returns, or evaluateEncoded calldata.",
+        "No new EVM or actual-source mutation campaign is claimed; existing source tests/fault evidence is reused only with its original scope.",
+        "Dafny/Boogie/Z3 trusted; exact compiled bytecode remains separate."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-execution-source-connection.json",
+      "ledgerSha256": "b6bd2845ec259c717bc69ff02b1b7d211b6e5c963212374b30192756ed379ff8",
+      "baseline": "formal/expressions/execution/evidence/generated-traces/manifest.json",
+      "exists": true,
+      "scope": "Construct request and receipt traces during recursive evaluation; establish exact replay alignment without a supplied matching trace, and reuse source-control cache/value invariants.",
+      "partialClaims": "Primitive source correspondence requires Covered on the generated trace. Ineligible requests use explicit mathematical totalization and never support a source outcome claim. E8 specializes valid to the existing canonical predicate. Actual validation rejection bytes, decoder/external/guard frame provenance, admission/entrypoint composition and compiled bytecode remain separate. No new EVM or source-fault campaign.",
+      "status": "passed",
+      "baselineSha256": "a1d560d50239625eab8443088407f7414997f2d894c8a96f7c5c1be7358bcb99",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/execution/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "All source/parser/ABI/decoder/external-context and memory/resource premises of the audited adapters remain.",
+        "External Call/Probe/Resolve and guard classification are composed through the exact pure summaries already proved for their source adapters, not by executing those non-ghost methods inside ghost dispatch.",
+        "Inputs obey the recorded shape, representability, clean address, canonical Probe bytes and boundary gas/data conditions.",
+        "Constructor helpers supply their actual codec result witnesses; unique all-input rejection-offset functions are not introduced.",
+        "A request that fails dispatcher eligibility receives a mathematical bare-error fallback; the returned Covered flag is false if any such fallback occurs, including in a caught attempt. Source primitive correspondence is claimed only when Covered is true. This excludes all totalization fallbacks. Eligibility retains decoder/resource/context conditions; actual frame provenance and public entrypoints remain open.",
+        "No new EVM or actual-source mutation campaign is claimed; existing source tests/fault evidence is reused only with its original scope.",
+        "Dafny/Boogie/Z3 trusted; exact compiled bytecode remains separate."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-frame-source-connection.json",
+      "ledgerSha256": "5dc35cbded5db587a46e34095029ec34a80554d33307db4e31af6de35300f4d0",
+      "baseline": "formal/expressions/frames/evidence/recursive-cache-provenance/manifest.json",
+      "exists": true,
+      "scope": "Complete independent recursive-entry trace, control-preserving source instrumentation, and canonical cache provenance at every recursive and typed guarded entry from public admission.",
+      "partialClaims": "Logical cache provenance is derived for all recorded entries, including failed attempts and warm hits, and the trace is proved complete against its independent specification. EVM self-call transitions and frame-specific caller/static/history observations, validation rejection bytes, primitive Covered eligibility and source/ABI/memory/resource projections remain explicit. No new EVM or production source fault campaign is claimed.",
+      "status": "passed",
+      "baselineSha256": "80b3011f3cee08aa150c877b450b19fbb7b3d0e05318e966b9f316abac3c9960",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/frames/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Inherited source translation, faithful primitive/codec/decoder/memory and resource projections remain explicit.",
+        "An independently defined trace records every recursive entry, including cache hits, failed guarded attempts and only the selected lazy branches. Instrumentation erases exactly to the audited recursive source adapter.",
+        "Every recorded cache is reified from its actual abstract entry memo and preserves initial metadata and ready values. Descriptor identity and canonical validity come from public admission; they are not assumed separately at nested guarded entries.",
+        "This discharges logical cache provenance. EVM self-call calldata/returndata transitions, frame-specific caller/static/history observations and exact validation rejection receipts remain open.",
+        "Primitive correspondence requires Covered on the generated request trace. Gas classification uses actual supplied observations, not a physical gas theorem. Graph/tree equivalence remains subject to determinism.",
+        "Proof-only composition. No new EVM test or production source fault campaign is claimed. Dafny/Boogie/Z3 and the explicit instrumentation erasure check are trusted."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-guard-receipt-source-connection.json",
+      "ledgerSha256": "a513a952e84ea5666f57dff23818de28553b0b28d68a6e55081d15e09aecdb1d",
+      "baseline": "formal/expressions/guard-receipts/evidence/reached-guard-receipts/manifest.json",
+      "exists": true,
+      "scope": "Canonical guarded attempt receipts, exact cache/memo adoption and rollback, and failure classification from the derived next guard event in the actual outer receipt trace.",
+      "partialClaims": "Root trace, canonical reached-entry caches and containment are established by the prior public-entry/window packages. The exact failure boundary and its recorded classification are derived; no separate attempt observation is assumed. Supplied validation rejection functions, faithful EVM caller/static and ABI/memory/resource projections remain explicit. No physical-OOG, graph/tree determinism or compiled-bytecode claim; no new EVM/source-fault campaign.",
+      "status": "passed",
+      "baselineSha256": "d88439971c49e48b13e949dd61fdbaeb11f89d438cf80cf314545c09a32e67b5",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/guard-receipts/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Inherited source translation, faithful external observations, ABI/memory projections and sufficient resources remain explicit.",
+        "The root has the previously proved complete entry trace, canonical per-entry caches and trace containment. FromRoot derives guard failure events from this trace; no separate per-attempt classification receipt is assumed.",
+        "Canonical attempt execution replays the exact local receipt window using the source request-control theorem. Success adopts that attempt cache; failure discards its partial cache and uses the exact following recorded guard-boundary receipt.",
+        "Failure classification preserves the recorded boundary gas samples and revert bytes, including the exact reserved SubcallOutOfGas signal. It is not a universal physical-OOG claim.",
+        "Successful guarded return encoding can use the existing GuardedEncoding theorem under its Fits condition. EVM caller/static transition and compiler ABI correctness remain projection assumptions.",
+        "The supplied node rejection function still needs source-validator receipt instantiation. No graph/tree determinism is assumed, and compiled bytecode is separate.",
+        "No new production source fault or EVM campaign is claimed for this proof-only composition. Dafny/Boogie/Z3 trusted."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-guarded-source-connection.json",
+      "ledgerSha256": "cc70183eeb2f60ef7fb714c0d74c641f9199feddf7781d070e7348beab9821a8",
+      "baseline": "formal/expressions/guarded/evidence/guarded-entry-complete/manifest.json",
+      "exists": true,
+      "scope": "AST-gated evaluateGuarded authentication and cache copy, canonical attempt execution, exact successful result/cache ABI round trip and typed _tryEvaluate adoption/discard.",
+      "partialClaims": "Valid incoming self-cache, matching metadata and backward-reference graph are premises. Primitive correspondence requires Covered. Actual recursive call frames, validation rejection observations, compiler ABI and memory/resource projections remain explicit. No full compiled-bytecode or physical-OOG claim.",
+      "status": "passed",
+      "baselineSha256": "32e0dc3cf5f805fb75243a24d7d44e2a9eb5af644ddb27fb76e8f0816b9ca7bf",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/guarded/structure.json",
+        "formal/expressions/guarded/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Inherited source/parser/recursive translation and faithful decoder/memory/resource projections remain explicit.",
+        "Self callers supply a valid canonical cache, matching descriptor metadata and backward-reference graph. Origin from typed internal guards is established separately by the dispatch-boundary proof; arbitrary self-frame provenance is not assumed solved here.",
+        "External guarded return parameters use standard ABI argument-frame encoding. RoundTrip uses the explicit recursive Fits representability condition and preserves all cache arrays. No compiler ABI bytecode proof is claimed.",
+        "Source primitive correspondence requires Covered on the generated attempt. Actual validation rejection and inner external/guarded frame observations remain explicit.",
+        "Caller gas samples are actual observations; failure classification follows the source predicate, not a universal physical-OOG theorem.",
+        "Dafny/Boogie/Z3 trusted. Concrete self-entry tests use Forge prank; public typed-guard tests also exercise real internal self-calls."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-oracle-source-connection.json",
+      "ledgerSha256": "09cec8d6efe4b76760e8b52ebad1a19da7f31b28d0d4c75ea0aa3e4721a99a3e",
+      "baseline": "formal/expressions/oracle/evidence/trace-composition/manifest.json",
+      "exists": true,
+      "scope": "Finite receipt trace construction by proved primitive dispatch and conditional recursive replay with invariant preservation.",
+      "partialClaims": "Each supplied trace receipt is constructed by the dispatcher. Complete stage correspondence requires resulting evaluator history to equal that trace. E8 canonicality specializes the abstract valid predicate to the proved canonical ABI predicate; exact rejection offsets, trace generation/alignment, faithful decoder and frame observations, resource conditions, guarded frame provenance and public entrypoints remain outstanding. Cache guarantees inherit the recursive specification. No new EVM or actual-source fault campaign.",
+      "status": "passed",
+      "baselineSha256": "c74f74a62bdad14c025008cf26904f218d1aea379cd8a637e12ee7ade02ed262",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/oracle/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "All source/parser/ABI/decoder/external-context and memory/resource premises of the audited adapters remain.",
+        "External Call/Probe/Resolve and guard classification are composed through the exact pure summaries already proved for their source adapters, not by executing those non-ghost methods inside ghost dispatch.",
+        "Inputs obey the recorded shape, representability, clean address, canonical Probe bytes and boundary gas/data conditions.",
+        "Constructor helpers supply their actual codec result witnesses; unique all-input rejection-offset functions are not introduced.",
+        "Every supplied finite trace entry is constructed by the proved dispatcher. Full-run primitive composition is conditional on exact replay history matching that trace. Trace generation/alignment, actual frame provenance and entrypoints remain open. Off-trace bare errors only totalize the mathematical oracle and are not source behavior claims.",
+        "No new EVM or actual-source mutation campaign is claimed; existing source tests/fault evidence is reused only with its original scope.",
+        "Dafny/Boogie/Z3 trusted; exact compiled bytecode remains separate."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-oracle-stability-source-connection.json",
+      "ledgerSha256": "3a5bd6cb6acba090e48718e6390a67fc1abdd7407bdb5c0cd9b3e9c49d31d60d",
+      "baseline": "formal/expressions/oracle-stability/evidence/trace-extension/manifest.json",
+      "exists": true,
+      "scope": "Exact recursive result preservation under agreement on executed requests, and dispatcher-backed receipt append preserving previous evaluations.",
+      "partialClaims": "Preservation under explicit request/history agreement, including histories of failed attempts whose caches are discarded. This is not yet recursive construction of a full matching trace or actual guarded-frame provenance. No new EVM or source-fault campaign.",
+      "status": "passed",
+      "baselineSha256": "bced414c559bd9d0f44d482b472e66536343f65939c80ba30ceb66e3bbe02283",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/oracle-stability/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "All source/parser/ABI/decoder/external-context and memory/resource premises of the audited adapters remain.",
+        "External Call/Probe/Resolve and guard classification are composed through the exact pure summaries already proved for their source adapters, not by executing those non-ghost methods inside ghost dispatch.",
+        "Inputs obey the recorded shape, representability, clean address, canonical Probe bytes and boundary gas/data conditions.",
+        "Constructor helpers supply their actual codec result witnesses; unique all-input rejection-offset functions are not introduced.",
+        "Agreement is required only on trace requests paired with their exact history prefixes. The old evaluator history must be a prefix of that trace. Appended receipts are constructed by the proved dispatcher under its explicit eligibility conditions. Recursive trace generation/alignment, actual frame provenance and entrypoints remain open; this is a preservation theorem, not yet the complete operational evaluator.",
+        "No new EVM or actual-source mutation campaign is claimed; existing source tests/fault evidence is reused only with its original scope.",
+        "Dafny/Boogie/Z3 trusted; exact compiled bytecode remains separate."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-primitive-source-connection.json",
+      "ledgerSha256": "54fe589abc679fd715cbb334f218f5540b7223e6108b0c11677e659cc5214232",
+      "baseline": "formal/expressions/primitives/evidence/primitive-dispatch/manifest.json",
+      "exists": true,
+      "scope": "Combined ghost dispatcher over source-proved helper summaries with per-stage semantic postconditions and recursive request/receipt contract lifting.",
+      "partialClaims": "Pointwise dispatcher relation only. Explicit decoder/ABI/resource/external-context conditions and actual codec result witnesses remain; full history-dependent oracle, actual frame provenance and graph entrypoints are not yet proved.",
+      "status": "passed",
+      "baselineSha256": "6c5db710baa769a38d162e1c674e94613d26ce4710cd50cb5993de90bdd1d714",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/primitives/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "All source/parser/ABI/decoder/external-context and memory/resource premises of the audited adapters remain.",
+        "External Call/Probe/Resolve and guard classification are composed through the exact pure summaries already proved for their source adapters, not by executing those non-ghost methods inside ghost dispatch.",
+        "Inputs obey the recorded shape, representability, clean address, canonical Probe bytes and boundary gas/data conditions.",
+        "Constructor helpers supply their actual codec result witnesses; unique all-input rejection-offset functions are not introduced.",
+        "This proves a dispatcher relation and pointwise request/receipt contract lifting. It does not yet instantiate one complete history-dependent oracle over an entire evaluator run or discharge actual frame provenance.",
+        "No new EVM or actual-source mutation campaign is claimed; existing source tests/fault evidence is reused only with its original scope.",
+        "Dafny/Boogie/Z3 trusted; exact compiled bytecode remains separate."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-probe-input-source-connection.json",
+      "ledgerSha256": "cf08b97f22f79048d4278b9bb18402cb952a5aed09cbe847ddd290e4d5fb42d8",
+      "baseline": "formal/expressions/probe-input/evidence/probe-decoding/manifest.json",
+      "exists": true,
+      "scope": "Admitted ProbeCall operand type, canonical bytes payload decoding and connection to source probe receipts.",
+      "partialClaims": "Finite-graph bytes-hash preimage condition and standard compiler decoder projection are explicit. Input/output allocation bounds and external-frame premises retained; full oracle and entrypoints remain open.",
+      "status": "passed",
+      "baselineSha256": "fef714fcfa54cb466375c4969c066e383c929cf3c0f85187f2d156e09d59c6ec",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/probe-input/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Inherited admission/parser/ABI/recursive request and call receipt proof premises remain.",
+        "For descriptors occurring in this graph, equality with the bytes-type hash implies equality with the bytes descriptor. This explicit finite-graph hash premise is not a universal injectivity theorem.",
+        "Solidity abi.decode(bytes) on canonical valid data uses the standard envelope payload projection; compiler decoder bytecode is not verified here.",
+        "Input bytes and output envelopes fit the recorded allocation/word bounds; actual target/caller/static context and gas observations are faithful.",
+        "The clean target address is supplied after the already-proved address stage. Full primitive oracle, graph entrypoints and call-frame composition remain open.",
+        "Dafny/Boogie/Z3 trusted; no additional actual-source fault campaign is claimed."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-public-source-connection.json",
+      "ledgerSha256": "29774c830afc043c4d5c6dec76d6504df482c75f0c7be3c940d90061430cb79d",
+      "baseline": "formal/expressions/public/evidence/public-entrypoints/manifest.json",
+      "exists": true,
+      "scope": "Public evaluate, evaluateEncoded and evaluateGuarded composition with exact admission/evaluation outcomes, complete validator and guarded receipts, and explicit return projections.",
+      "partialClaims": "Complete direct evidence is constructed exactly for Covered generated traces satisfying the per-reached-body Room resource predicate. It contains every actual validator completion and typed guarded attempt. Guarded callers authenticate before cache access or rejection-function binding. Encoded composition explicitly installs the inner result at one modeled self-call site. Faithful source/EVM caller/static/decoder/ABI/memory/resource projections, return memory objects and guarded-return Fits remain premises. Uncovered or resource-limited modeled outcomes are not source-certified. Conditional graph/tree equivalence and compiled bytecode remain separate. No new EVM/source-fault campaign or physical-gas claim.",
+      "status": "passed",
+      "baselineSha256": "c6b478dc5d0ecffdebc59389512caca20203c0c1175ab77e3aafeb154b8e6a14",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/public/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Inherited source translation, ABI/memory projection and sufficient-resource assumptions remain explicit.",
+        "Entry adapters bind the exact source-validator rejection function after descriptor admission or guarded caller authentication; no caller-supplied rejection function remains.",
+        "Complete evidence is constructed exactly when the generated primitive trace is Covered and every reached successful body meets the explicit representability/CursorRoom predicate. Uncovered and resource-limited modeled executions are not promoted to source-certified runs.",
+        "Complete direct evidence includes every validator receipt and every typed guarded attempt, with exact cache adoption/rollback and classification at the derived outer boundary.",
+        "Encoded self-call linking installs the actual inner result at one modeled call site. Faithful EVM caller/static/decoder/gas projections are premises; sampled exhaustion is not a universal physical-OOG theorem.",
+        "Return memory objects and guarded return Fits remain explicit premises. The raw direct/encoded bytes and guarded value/cache ABI projection are proved without conflating the return formats.",
+        "Graph/tree equivalence and exact compiled bytecode remain separate. No new EVM or production source-fault campaign. Dafny/Boogie/Z3 trusted."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-receipt-source-connection.json",
+      "ledgerSha256": "f7401ee9983b835ba99b90d0c508dbe909a225153e7df02fa4737a640e7837a4",
+      "baseline": "formal/expressions/receipts/evidence/encoded-receipts-complete/manifest.json",
+      "exists": true,
+      "scope": "Exact ABI error-frame projection and call/probe E.Raw adapters; source-control dependency assumptions retained. Complete evaluator oracle and call-frame composition remain open.",
+      "partialClaims": "The compiler custom-error encoder follows the standard ABI frame projection. Actual indices, lengths, offsets, guarded selector and external observations must satisfy the recorded EVM memory/resource/context premises; no exact compiled-bytecode or full evaluator theorem is asserted.",
+      "status": "passed",
+      "baselineSha256": "e2035722294febc5e084e8505cfd1a259cf8a2f6110bb536e0c40c6556dd2de4",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/receipts/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Source-control dependencies and their translation/memory/resource premises are retained.",
+        "Solidity custom-error ABI encoding follows selector plus the standard argument-tuple frame; the compiler ABI encoder is not proved as compiled bytecode here.",
+        "Actual uint256 indices, address values, payload lengths and all allocated frame offsets fit their EVM words; local resources suffice.",
+        "Selector and error signature constants are bound to pinned solc AST output.",
+        "External observations and guarded selector are faithful to the actual call frame; no determinism is assumed.",
+        "This proves reusable E.Raw receipt adapters, not their complete instantiation into the recursive evaluator oracle or external call-frame semantics.",
+        "Dafny/Boogie/Z3 are trusted."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-recursive-source-connection.json",
+      "ledgerSha256": "d35ba2fc77c353d743b2c51fc83d71da31076bc6b3825d6b60b8be72aa8936a3",
+      "baseline": "formal/expressions/recursive/evidence/recursive-control-source/manifest.json",
+      "exists": true,
+      "scope": "Conditional source control refinement, canonical values, memo extension and discard; primitive/error/truth receipts and local resource assumptions remain explicit.",
+      "partialClaims": {
+        "E8": "Canonical successful values and preservation of valid ready entries, with actual cached validator projected under CursorRoom; full exact rejection payload bridge remains open.",
+        "E10": "Recursive control over actual backward references; primitive effects are explicit receipts. No claim of zero cost for admission of unused nodes.",
+        "E11": "Ready hits return exact stored values with unchanged primitive history; full primitive payload/serialization correspondence remains separate.",
+        "E12": "Correct branch indices conditional on truth being the actual first-word predicate; first-word adapter remains open.",
+        "E13": "Exact functional-control refinement selects only one branch; typed first-word adapter remains open.",
+        "E15": "Attempt/fallback/Boolean/GuardFailure ordering with faithful receipts; ABI Boolean and actual gas/marker receipt adapters remain open.",
+        "E17": "Successful recursive result supplies the cache receipt invariant, with faithful ABI copy/frame projection.",
+        "E18": "Failed attempt retains observation history while discarding memo changes; enclosing failure/cache observability follows the stated frame projection."
+      },
+      "status": "passed",
+      "baselineSha256": "30042839f8142137e8d48a184d46b578aee2937cbe7dbda478a9abf06ac6c1b8",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/recursive/structure.json",
+        "formal/expressions/recursive/validation.json",
+        "formal/expressions/recursive/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Pinned compiler AST, restricted generator and manually reviewed recursive lowering are trusted.",
+        "Faithful Solidity memory projection, separate call frames and ABI copying; admitted graph and valid parsed cache.",
+        "Primitive oracle retains actual node data, parameters, caller and chain context. Address/encoding/call/probe/guard receipts match the concrete source subcomputations; their full payload proofs remain open.",
+        "Truth is the actual first-word-nonzero predicate, and reject is the actual failed validation payload. Their adapters are separate obligations.",
+        "All encountered byte lengths and arithmetic are representable; cached validation has CursorRoom and sufficient local memory/gas. External outcomes are explicit receipts, not assumed successful or context independent.",
+        "Dafny/Boogie/Z3 trusted. Identical complete dependency results audited before reuse."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-rejection-source-connection.json",
+      "ledgerSha256": "06a034a2fb92b5d8479a233beff842bebe7d13083b9c9a48031dd80a99b65e49",
+      "baseline": "formal/expressions/rejections/evidence/whole-trace-validation/manifest.json",
+      "exists": true,
+      "scope": "One exact source-validator rejection function across the complete recursive entry trace, with actual receipts for every cold completion and canonical cache correspondence.",
+      "partialClaims": "The root theorem derives the complete reached-entry trace, including lazy branches and failed attempts, and all canonical entry caches. Every cold completion uses the same deterministic descriptor/value rejection function; the earlier per-pair agreement premise is removed. Covered/ValidTrace, matching root completion history, representability and per-successful-body CursorRoom remain explicit. Public admission/entrypoint composition and faithful EVM/ABI/memory/resource projections remain separate. No graph/tree determinism, physical-gas or compiled-bytecode claim; no new EVM/source-fault campaign.",
+      "status": "passed",
+      "baselineSha256": "be62e43c6143cc6ef11b6fefb97e6e55ab1f7b2caacf1ce745486857250c4bea",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/rejections/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Inherited source/ABI/memory/resource projections remain explicit.",
+        "Exact ABI outcome correspondence supplies one deterministic rejection function of descriptor and value bytes. Non-byte or out-of-range arguments have a total fallback that is not used at actual cold completion.",
+        "Complete entry traces and canonical entry caches come from source recursion and frame provenance; every cold entry is instantiated with an actual source validator completion, including repeated work after failed attempts.",
+        "Covered/ValidTrace and equality of the outer completion history to the given trace remain explicit. Per-reached-body descriptor/value representability and CursorRoom are resource premises, not physical gas bounds.",
+        "Previously proved source-control composition is preserved by generated contract/import/module edits. Whole public-entry composition, EVM caller/static projection, graph/tree determinism and exact bytecode remain separate.",
+        "No new EVM or production source-fault campaign. Dafny/Boogie/Z3 trusted."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-request-source-connection.json",
+      "ledgerSha256": "f9a062f01a80733e99d1e349f37a41189db799581b551694a175dca3749ad5e7",
+      "baseline": "formal/expressions/requests/evidence/request-contracts-complete/manifest.json",
+      "exists": true,
+      "scope": "Recursive primitive request contracts with mechanically retained source control, conditional on byte-valued rejection/error receipts and successful address-check semantics.",
+      "partialClaims": "Every primitive request is typed and ordered; children are valid, guard errors are bytes, Call/Probe addresses are clean before finish. The primitive oracle still needs complete instantiation; no new EVM or source mutation campaign or exact-bytecode proof is asserted.",
+      "status": "passed",
+      "baselineSha256": "15ac751fa6cb441cac01f9a0ae7f8259a001aa3d364fb9c6efbd05adaf8bb968",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/requests/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Inherited recursive source gate/manual lowering and dependency premises remain.",
+        "The supplied valid predicate implies byte-valued canonical results; validator rejection payloads are bytes.",
+        "Primitive receipts at typed requests emit byte-valued errors and successful address checks establish the actual scalar address specification. The scalar source adapter proves that address contract.",
+        "The abstract primitive oracle still requires complete instantiation; allocation/resource budgets, Probe bytes-decoder binding and full call-frame composition are not discharged here.",
+        "This strengthens ghost proof contracts with mechanically retained control statements; no new EVM test or source mutation is claimed.",
+        "Dafny/Boogie/Z3 trusted."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-resolve-source-connection.json",
+      "ledgerSha256": "6ac4ab98fd8f6e737a433390d55d817057e3f3ced1bb6a721ac79a34bbd571d0",
+      "baseline": "formal/expressions/resolve/evidence/resolve-adapter-complete/manifest.json",
+      "exists": true,
+      "scope": "Resolve source receipt and conditional core constraint bridge with explicit decoder, ABI, external context and resource premises.",
+      "partialClaims": {
+        "E22": "Exact node index and code-less target outcome through the source call dependency.",
+        "E23": "Actual core failure bytes follow source gas/marker classification and exact call-error wrapping; independent core error serialization is separate.",
+        "E24": "All fetchers and arbitrary finite constraints under CoreObservation, actual decoder outcome and standard ABI projection; caller/history contexts are explicit, final node validation separate.",
+        "E25": "Malformed actual decoder outcome produces bare revert before external lookup. No standalone solc decoder bytecode theorem."
+      },
+      "status": "passed",
+      "baselineSha256": "13c02bb385094037d7ea8f2878276bac8e28c0c58fafd755c5a325219293c7b7",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/resolve/structure.json",
+        "formal/expressions/resolve/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Pinned AST/manual lowering, faithful memory, representable lengths/offsets and sufficient resources.",
+        "The explicit InputParam decoder observation is the actual Solidity decoder outcome, including noncanonical encodings it accepts; malformed outcome reverts bare.",
+        "Standard abi.encodeCall InputParam projection equals selector plus ParamEncoding. Production enums, struct signatures and resolve selector must agree; concrete tests cover all enum IDs and dynamic geometry.",
+        "Call observations and gas samples are actual outcomes in the evaluator frame; core observations execute the proved Assertions resolver in its own correct sender/static/history context.",
+        "CoreObservation is an explicit cross-contract premise, not a proof of deployed code identity, decoder bytecode, physical resource availability or complete trace flattening.",
+        "Arbitrary core failure bytes are the actual observation and are wrapped/classified by the proved call adapter. Their independent serialization and final node validation remain separate.",
+        "Dafny/Boogie/Z3 are trusted; full graph entrypoint and exact-bytecode composition remain open."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-return-source-connection.json",
+      "ledgerSha256": "e9fd6612c89e89d2e29fe75ae91390c0928174a73aa498a591fb8a39c7065b54",
+      "baseline": "formal/expressions/returns/evidence/raw-returns/manifest.json",
+      "exists": true,
+      "scope": "AST-gated evaluate/evaluateEncoded raw-return tails under valid bytes-memory object, nonwrapping pointer and resource premises; exact payload return and canonical encoding preservation.",
+      "partialClaims": "Only successful raw-return memory tails are closed here. evaluateEncoded decoding/self-call/error wrapping, admission-error encoding, guarded tuple ABI and actual frame provenance remain separate. Manual source-to-memory/opcode projection and resources are explicit; exact bytecode is not proved.",
+      "status": "passed",
+      "baselineSha256": "10cbabbb7fe6d30fb66a8988b5e56f6bea937a1d384f4656ae4d168d04b30ae0",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/returns/structure.json",
+        "formal/expressions/returns/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Pinned solc AST and explicit manual lowering of mload, add and return to mathematical byte memory; compiler/opcode equivalence is not proved.",
+        "The result pointer designates a valid Solidity bytes-memory object, memory lengths/pointers do not wrap, and local execution has sufficient resources. Surrounding memory contents are arbitrary.",
+        "Canonical input values come from the separate admission/evaluation theorem. This package proves both return tails, not evaluateEncoded decoding/self-call outcomes or guarded external ABI returns.",
+        "Dafny/Boogie/Z3 trusted; compiled bytecode and physical resource bounds remain separate."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-scalar-source-connection.json",
+      "ledgerSha256": "64b814191c5a11c5aa665728ce534b7c4b6f49e133feb548aabf2c3423cb5742",
+      "baseline": "formal/expressions/scalars/evidence/scalar-adapters/manifest.json",
+      "exists": true,
+      "scope": "Selected scalar source adapters and first-word instantiation of recursive control. Resolve, compound/external/error adapters and entrypoints remain separate.",
+      "partialClaims": {
+        "E2": "Arbitrary finite parameter lists and 256-bit decoded indices under valid memory/ABI projection and representable lengths. Later value validation is separate. Error selectors bound to solc AST and index words proved round-trip.",
+        "E3": "Exact 32-byte prerequisite and error before lookup; uint256 decoding of that word uses the standard ABI projection.",
+        "E12": "Actual first-word reader and concrete total truth function, instantiated into recursive source control. Other primitive/error receipts remain explicit.",
+        "E14": "All well-formed canonical ABI values, including arbitrary finite nested types. Overall graph success relies on the proved recursive canonical/cache invariant and its stated source/memory/resource premises.",
+        "E15": "Boolean ABI result and sampled guard-failure classification only; full attempt/fallback orchestration uses the recursive theorem and remaining call/frame adapters.",
+        "E21": "Shared _address helper for Call/Probe: exact 32-byte length and complete clean uint160 range, exact InvalidNode index. Remaining call/probe semantics are separate.",
+        "C69": "Expressions sampled predicate and exact four-byte marker only; no universal OOG diagnosis or all-wrapper/exact-bytecode theorem."
+      },
+      "status": "passed",
+      "baselineSha256": "40f43aabea57db2653ac27189c0b7c455acde08e091080a357b9323e76235d76",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/scalars/structure.json",
+        "formal/expressions/scalars/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Pinned solc AST, restricted generator and manual lowering are trusted.",
+        "Faithful Solidity memory projection, valid calldata and representable lengths/indices; sufficient local resources.",
+        "Solidity uint256 ABI decoding of exactly 32 bytes and bool/error ABI encoding follow their standard word projection. Exact selector bytes are independently pinned by EVM tests.",
+        "Gas samples and revert bytes are actual observations; the guard theorem classifies its predicate, not all physical causes of failure.",
+        "Existing ABI, admission, cache and recursive-control proofs are reused only after complete current source/tool/artifact and native declaration audits.",
+        "Dafny/Boogie/Z3 trusted. Remaining primitive receipts, guard boundary observation composition and exact-bytecode verification are not discharged here."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-self-call-source-connection.json",
+      "ledgerSha256": "4dabaad00647b43a5275e0f6bfdb7f3dfffd213776cdd86cc19b0aac0e46c945",
+      "baseline": "formal/expressions/self-call/evidence/inner-result-composition/manifest.json",
+      "exists": true,
+      "scope": "Construct the known encoded self-call observation from the proved inner admission/recursive result and explicit caller gas samples, preserving exact canonical success, admission errors and wrapper failure routing.",
+      "partialClaims": "Source-summary substitution with code present at the known self-call; success/data are computed from inner evaluation rather than freely observed. Covered must hold for recursive primitive source correspondence. Standard ABI/call-transition/memory/resource premises, inner external/guarded frames and validation rejection observations remain explicit. E37 does not cover Collections callback wrapping. No new EVM/source-fault campaign; exact bytecode and graph/tree determinism remain separate.",
+      "status": "passed",
+      "baselineSha256": "1548f075f1bc9ad1724bba92fce01d62852258f45831542ebe31aa5390a26fb0",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/self-call/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Inherited source translation, ABI decoder/encoder, valid memory objects and sufficient local resources remain explicit.",
+        "Decoded graph, core, nodes, result and parameters are tied to the same evaluator configuration. Source primitive correspondence requires Covered for the generated inner execution.",
+        "The known self-call is interpreted by the proved inner evaluation summary with code present; its success and returndata are derived from that result. Other environment observations remain unchanged. This is source summary composition, not a deployed-bytecode identity or EVM call-transition proof.",
+        "Gas samples are actual caller-boundary measurements. No gas consumption is predicted and sampled exhaustion is not equated with physical out-of-gas in all contexts.",
+        "Inner external/guarded frame observations and validation rejection bytes remain explicit in the recursive configuration. No graph/tree determinism assumption is discharged.",
+        "No new EVM or source-fault campaign is claimed for this proof-only composition; identical dependency evidence is audited. Dafny/Boogie/Z3 trusted."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-trace-bounds-source-connection.json",
+      "ledgerSha256": "8f5ff51cc953b35dd992226cbc7d7f968256b8a7f6736b8617efc8c7d9ce47a0",
+      "baseline": "formal/expressions/trace-bounds/evidence/recursive-receipt-windows/manifest.json",
+      "exists": true,
+      "scope": "Complete recursive trace containment and exact valid local receipt windows, derived from public admission and generated outer execution with canonical entry caches.",
+      "partialClaims": "When the outer execution is Covered, local eligibility, exact receipt windows and completion-within-outer-trace are derived for every reached recursive entry. Modeled histories and full results are preserved. EVM caller/static transitions, validation rejection provenance, inherited source/ABI/memory/resource assumptions and graph/tree determinism remain open. Proof-only composition; no new EVM or source-fault campaign.",
+      "status": "passed",
+      "baselineSha256": "d13e9c0713b3c3394754df801f9452bc1f4c66c799775d8d0e242ad51187db17",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/trace-bounds/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Inherited source/ABI/decoder/memory translation and sufficient-resource premises remain explicit.",
+        "Recursive trace containment covers cache hits, selected lazy branches, failed attempts, failure classification, fallbacks and address-check short circuits. It bounds both entry and completion histories of every recorded evaluation.",
+        "From public admission and generated recursive execution, canonical entry caches and complete frame traces are derived. Covered outer traces supply exact valid local receipt windows; no independent local eligibility or completion-within-outer-trace premise is needed for those entries.",
+        "Local histories are rebased onto their original prefixes, preserving all modeled external and boundary observations. EVM caller/static transitions and exact validation rejection bytes retain their existing correspondence obligations.",
+        "Canonical window evaluation preserves the complete result under the actual replay oracle. This package does not claim independent fresh execution produces the same receipts under changed contexts or gas budgets.",
+        "No new EVM or source-fault campaign is claimed. Dafny/Boogie/Z3 trusted; graph/tree determinism and compiled bytecode remain separate."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-tree-source-connection.json",
+      "ledgerSha256": "ff8aa8ab894027604861f7388d137d14f8debbfe148236a61c053986ea8ec4f7",
+      "baseline": "formal/expressions/tree/evidence/conditional-unfolding/manifest.json",
+      "exists": true,
+      "scope": "Memoized graph and reference-unfolding tree outcomes coincide under explicit history-independent source-observation determinism, with original node identities retained.",
+      "partialClaims": "StableConfig is an explicit universal premise for eligible source primitive receipts, covering call context, gas-sensitive behavior and guard classification; view alone is insufficient. Complete public source evidence supplies the empty memo and exact validation rejection function. Outcome equality preserves original node identities; it does not equate request traces, call counts, gas, or arbitrary physical renumbering of error indices. Inherited source/EVM/ABI/memory/resource premises remain. No new EVM/source-fault campaign or compiled-bytecode claim.",
+      "status": "passed",
+      "baselineSha256": "7e7205e94f6ca01502f8c8051aaba94b66ffa52c84f50292f91de686b41d492c",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/tree/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "All inherited public source translation, ABI/memory/resource and coverage premises remain explicit.",
+        "The independent tree evaluator unfolds each reference occurrence without memoization, retaining original node identities in primitive requests and errors.",
+        "The memo-consistency invariant states that every stored entry equals a successful tree evaluation; it holds initially for the public empty memo and is proved preserved on all branches, including discarded failed attempts.",
+        "StableConfig universally constrains eligible source primitive receipts to a history-independent request function. It includes caller/static context, gas-sensitive outcomes and guard classification; the Solidity view modifier does not establish it.",
+        "The source connection reuses exact trace agreement and complete public evaluation evidence. Outcome equality includes errors with original node identities. It does not claim equal call counts, traces, gas, or error indices after arbitrary physical graph renumbering.",
+        "No new EVM or production source-fault campaign. Exact compiled bytecode remains separate. Dafny/Boogie/Z3 trusted."
+      ]
+    },
+    {
+      "ledger": "docs/verification/expression-validation-source-connection.json",
+      "ledgerSha256": "120c3dfafef825533655029b4db58ce9d2f839bcef5790cf033f75069c3b6e51",
+      "baseline": "formal/expressions/validation/evidence/cold-node-completion/manifest.json",
+      "exists": true,
+      "scope": "Byte-valued pre-validation bodies and actual source-validator completion for one cold node, with exact rejection bytes and canonical cache storage.",
+      "partialClaims": "Single cold-node completion only. Child rejection functions remain abstract; equality with the earlier evaluator requires agreement at the actual rejected node/value pair. Whole-run compatible validation receipt construction remains open. Descriptor/value representability, CursorRoom and inherited source/EVM/ABI/memory projections remain explicit. No graph/tree determinism, physical-OOG or compiled-bytecode claim; no new EVM/source-fault campaign.",
+      "status": "passed",
+      "baselineSha256": "fbf4466daa0deda015c0c9c4ca863ba90efbafda71354f6f2bc4460162717e18",
+      "ledgerBaselineMatches": true,
+      "toolMatches": true,
+      "sourceDrift": [
+        "formal/constraints/verify.py",
+        "formal/expressions/validation/verify.py"
+      ],
+      "evidenceDrift": [],
+      "assumptions": [
+        "Inherited source/ABI/decoder/memory translation and sufficient-resource assumptions remain explicit.",
+        "Covered/ValidTrace supplies source-backed primitive replies; their values and error payloads are proved byte sequences. Recursive byte flow includes node bodies before canonical validation, lazy branches and failed attempts.",
+        "The source-control body is unchanged: removing the declared contract/include/module edits recovers the audited recursive source adapter exactly. Cold-body memo validity, extension and current-node absence are established by the strengthened source theorem.",
+        "Cold completion executes the cached source validator receipt adapter with matching descriptor metadata. Descriptor/value length representability and CursorRoom exclude arithmetic panic; they are explicit resource premises, not a physical gas theorem.",
+        "Actual error bytes are propagated from the source receipt. No new independent all-input rejection-offset function or offset-bound theorem is claimed.",
+        "Completion supplies a rejection-function instance for this one checked node/value. Equality with a previously supplied rejection function is conditional only at that actual rejected pair. Constructing compatible actual validation receipts for a whole recursive run remains open.",
+        "Child rejection payloads in the input body retain their existing abstraction until whole-run validation composition is completed. EVM caller/static projections, graph/tree determinism and compiled bytecode remain separate.",
+        "No new EVM or production source fault campaign is claimed. Dafny/Boogie/Z3 trusted."
+      ]
+    }
+  ],
+  "exactBytecodeCompletedPublicEntries": [],
+  "policy": "Source composition is conditional correspondence and receives no exact-bytecode public-entry credit. This inventory verifies hashes, not replayed proofs. Runtime artifact must be reproduced before new bytecode credit.",
+  "remainingObligations": [
+    "Exact runtime reproduction and physical dispatcher/ABI decoding",
+    "Admission, descriptor/ABI canonical validation and allocation closure",
+    "Recursive node/cache control and all primitive bodies",
+    "Resolver integration with current Assertions",
+    "Self-call context, authentication, guard rollback and resource signal",
+    "Physical return/error serialization and complete public composition",
+    "Complete native declaration closure, zero-finding audit, full physical replay and matching native/physical semantic faults, independently checked by coordinator"
+  ]
+}

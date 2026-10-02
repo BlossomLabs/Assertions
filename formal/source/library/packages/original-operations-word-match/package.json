@@ -1,0 +1,34 @@
+{
+  "id": "original-operations-word-match",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/operations/word-match",
+  "entry": "formal/operations/word-match/Connection.dfy",
+  "verificationEntries": [
+    "formal/operations/word-match/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/operations/word-match/Model.dfy"
+    ],
+    "execution": [
+      "formal/operations/word-match/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/operations/word-match/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/operations/word-match/Connection.dfy": "9a40f05ee1c0114e1e1ac093de5e7d1be34b972d8822e1080dd139d1107ffba2",
+    "formal/operations/word-match/Control.generated.dfy": "4aafac9e3851fcbcceb80166a5e54b806f9c2146e3fa6ee742941f88311e672a",
+    "formal/operations/word-match/Model.dfy": "637d9c8fe24f727eb8ca1d949d72a7bc99452d828bb5721fad1533f24c065bdb"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

@@ -1,0 +1,524 @@
+[
+  {
+    "contract": "Expressions",
+    "identicalRuntime": true,
+    "runtimeBytes": 17776,
+    "runtimeSha256": "1085082ba1e19b0967431c8b7b0a79ce4f60b8df851b91b6e6194324b3feade7",
+    "artifactSha256": "cbbae5a0ef077899350194bbb726d0c45e42a46d86c79ff99e549215c8bdbdf7",
+    "buildInfoId": "solc-0_8_36-b6a58ef8ef988b265e8f9decbd23cc20496a658f",
+    "buildInfoSha256": "5ea8dcedf2db54985b3e9e5718a9f8ab984ba0f1334d2806ad2cf7fde287fc60",
+    "sourceSha256": {
+      "node_modules/@openzeppelin/contracts/utils/math/Math.sol": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+      "node_modules/@openzeppelin/contracts/utils/math/SafeCast.sol": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+      "node_modules/@openzeppelin/contracts/utils/Panic.sol": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec",
+      "contracts/Assertions.sol": "8fa122e5e5750ca115c66898c22186e076eac9d95e7c91c228928a5b09ad273a",
+      "contracts/Collections.sol": "0fb54250a53bceb5c8d1e530144ae5c46eb499ce4456051914b5ff95af9d9ba4",
+      "contracts/Expressions.sol": "dc53eb78d3550ded3d9dce3f61172a9a16e103a6be33cea95b1de04701c7124d",
+      "contracts/lib/AbiCodec.sol": "485f0d49f35528cc4c9be7767c631be6903ff57b5cb95bcbb25d6cd04ce5fed6",
+      "contracts/lib/ERC8211.sol": "ee9211f31543ab43667c94cf30f3651adc37690b2e743477ef66a06d5c0e9788",
+      "contracts/Operations.sol": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce",
+      "contracts/tests/BiconomyERC8211Runtime.sol": "501bcda0d887350e6226998200b1e5dc392f72bfe50b1a3ba6eaa8a1df18035d",
+      "contracts/tests/ERC8211ReferenceHarness.sol": "ff261e9b0d6cb804204293e0298b752de23fe821ab82c322ad2b16fbe05c5d9c",
+      "contracts/tests/Mocks.sol": "d88a1cbd9af7f6ee90703dda2f9c8792144c45b5c6673fb73addf71fa7a64f9b"
+    },
+    "refreshedJobInputs": [],
+    "compilerSettings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode.linkReferences",
+            "evm.bytecode.object",
+            "evm.bytecode.opcodes",
+            "evm.bytecode.sourceMap",
+            "evm.deployedBytecode.immutableReferences",
+            "evm.deployedBytecode.linkReferences",
+            "evm.deployedBytecode.object",
+            "evm.deployedBytecode.opcodes",
+            "evm.deployedBytecode.sourceMap",
+            "evm.methodIdentifiers"
+          ]
+        }
+      },
+      "remappings": [
+        "project/:@openzeppelin/contracts/=npm/@openzeppelin/contracts@5.6.1/"
+      ]
+    },
+    "methodIdentifiers": {
+      "evaluate((address,(uint8,string,bytes,uint256[],bytes4,string)[],uint256),bytes[])": "0d93beea",
+      "evaluateEncoded(bytes,bytes[])": "8f1ea4ef",
+      "evaluateGuarded((address,(uint8,string,bytes,uint256[],bytes4,string)[],uint256),bytes[],uint256,(bytes[],bool[],bool[],uint256[]))": "fdf54763"
+    },
+    "abi": [
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "expected",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "actual",
+            "type": "uint256"
+          }
+        ],
+        "name": "ComponentCountMismatch",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "callData",
+            "type": "bytes"
+          }
+        ],
+        "name": "DidNotRevert",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "GuardedCallForbidden",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes4",
+            "name": "operation",
+            "type": "bytes4"
+          },
+          {
+            "internalType": "uint256",
+            "name": "index",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "other",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          }
+        ],
+        "name": "InvalidCallbackResult",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "index",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "length",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "head",
+            "type": "bytes32"
+          }
+        ],
+        "name": "InvalidComponentEnvelope",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "index",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expectedBytes",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "actualBytes",
+            "type": "uint256"
+          }
+        ],
+        "name": "InvalidComponentLength",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "index",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "offset",
+            "type": "uint256"
+          }
+        ],
+        "name": "InvalidComponentValue",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "node",
+            "type": "uint256"
+          }
+        ],
+        "name": "InvalidNode",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "node",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ref",
+            "type": "uint256"
+          }
+        ],
+        "name": "InvalidReference",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "node",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          }
+        ],
+        "name": "InvalidTarget",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "position",
+            "type": "uint256"
+          }
+        ],
+        "name": "InvalidTypeDescriptor",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "offset",
+            "type": "uint256"
+          }
+        ],
+        "name": "InvalidValue",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "node",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "callData",
+            "type": "bytes"
+          },
+          {
+            "internalType": "bytes",
+            "name": "reason",
+            "type": "bytes"
+          }
+        ],
+        "name": "NodeCallFailed",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "caller",
+            "type": "address"
+          }
+        ],
+        "name": "NotSelf",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "SubcallOutOfGas",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes4",
+            "name": "expected",
+            "type": "bytes4"
+          },
+          {
+            "internalType": "bytes4",
+            "name": "actual",
+            "type": "bytes4"
+          }
+        ],
+        "name": "UnexpectedRevertData",
+        "type": "error"
+      },
+      {
+        "inputs": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "core",
+                "type": "address"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "enum Expressions.Kind",
+                    "name": "kind",
+                    "type": "uint8"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "valueType",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
+                  },
+                  {
+                    "internalType": "uint256[]",
+                    "name": "refs",
+                    "type": "uint256[]"
+                  },
+                  {
+                    "internalType": "bytes4",
+                    "name": "selector",
+                    "type": "bytes4"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "arguments",
+                    "type": "string"
+                  }
+                ],
+                "internalType": "struct Expressions.Node[]",
+                "name": "nodes",
+                "type": "tuple[]"
+              },
+              {
+                "internalType": "uint256",
+                "name": "result",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Expressions.Expression",
+            "name": "expression",
+            "type": "tuple"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "parameters",
+            "type": "bytes[]"
+          }
+        ],
+        "name": "evaluate",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes",
+            "name": "expression",
+            "type": "bytes"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "parameters",
+            "type": "bytes[]"
+          }
+        ],
+        "name": "evaluateEncoded",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "core",
+                "type": "address"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "enum Expressions.Kind",
+                    "name": "kind",
+                    "type": "uint8"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "valueType",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
+                  },
+                  {
+                    "internalType": "uint256[]",
+                    "name": "refs",
+                    "type": "uint256[]"
+                  },
+                  {
+                    "internalType": "bytes4",
+                    "name": "selector",
+                    "type": "bytes4"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "arguments",
+                    "type": "string"
+                  }
+                ],
+                "internalType": "struct Expressions.Node[]",
+                "name": "nodes",
+                "type": "tuple[]"
+              },
+              {
+                "internalType": "uint256",
+                "name": "result",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Expressions.Expression",
+            "name": "expression",
+            "type": "tuple"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "parameters",
+            "type": "bytes[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "index",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes[]",
+                "name": "values",
+                "type": "bytes[]"
+              },
+              {
+                "internalType": "bool[]",
+                "name": "ready",
+                "type": "bool[]"
+              },
+              {
+                "internalType": "bool[]",
+                "name": "dynamic",
+                "type": "bool[]"
+              },
+              {
+                "internalType": "uint256[]",
+                "name": "words",
+                "type": "uint256[]"
+              }
+            ],
+            "internalType": "struct Expressions.Cache",
+            "name": "initial",
+            "type": "tuple"
+          }
+        ],
+        "name": "evaluateGuarded",
+        "outputs": [
+          {
+            "internalType": "bytes",
+            "name": "result",
+            "type": "bytes"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes[]",
+                "name": "values",
+                "type": "bytes[]"
+              },
+              {
+                "internalType": "bool[]",
+                "name": "ready",
+                "type": "bool[]"
+              },
+              {
+                "internalType": "bool[]",
+                "name": "dynamic",
+                "type": "bool[]"
+              },
+              {
+                "internalType": "uint256[]",
+                "name": "words",
+                "type": "uint256[]"
+              }
+            ],
+            "internalType": "struct Expressions.Cache",
+            "name": "updated",
+            "type": "tuple"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ]
+  }
+]

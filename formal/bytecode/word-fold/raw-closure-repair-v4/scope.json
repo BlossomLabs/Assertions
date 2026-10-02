@@ -1,0 +1,81 @@
+{
+  "status": "isolated-handwritten-connection-repairs-not-public-evidence",
+  "rootProofs": [
+    "formal/bytecode/word-fold/raw-closure-repair-v4/public-entry-repair-v2/Connection.dfy"
+  ],
+  "substitutions": [
+    {
+      "original": "formal/bytecode/word-fold/body-invocation/Bytes.generated.dfy",
+      "originalSha256": "33faa1af9b31fe84bb948802dd31673a2a5b4e4a69ff800e7c3ef947bc65cc6a",
+      "replacement": "formal/bytecode/word-fold/body-invocation-repair-v2/Bytes.generated.dfy"
+    },
+    {
+      "original": "formal/bytecode/word-fold/body-invocation/Range.generated.dfy",
+      "originalSha256": "173181c6f9f6afd57d5be8bfa0623fca5dab23f3e0098fcf4bd2a89a700c0875",
+      "replacement": "formal/bytecode/word-fold/body-invocation-repair-v2/Range.generated.dfy"
+    },
+    {
+      "original": "formal/bytecode/word-fold/body-invocation/Words.generated.dfy",
+      "originalSha256": "dcdad9ec573b5dac61c8c18e170bac30da30f89176d568fc87566731e9152c73",
+      "replacement": "formal/bytecode/word-fold/body-invocation-repair-v2/Words.generated.dfy"
+    },
+    {
+      "original": "formal/bytecode/word-fold/empty-body/Connection.dfy",
+      "originalSha256": "eb7351859a4ad90e5e22a49dcd29e47e4bc3cfe17d7d7017a80d4b9db10442d2",
+      "replacement": "formal/bytecode/word-fold/raw-closure-repair-v4/empty-body/Connection.dfy"
+    },
+    {
+      "original": "formal/bytecode/word-fold/first-failure-raw-repair-v3/Raw.dfy",
+      "originalSha256": "7ae036ab04bc132213eb5431155ae270e4fbb45a7e838a8bc9a969d8fed6712a",
+      "replacement": "formal/bytecode/word-fold/raw-closure-repair-v4/first-failure-raw-repair-v3/Raw.dfy"
+    },
+    {
+      "original": "formal/bytecode/word-fold/public-entry-repair-v2/Connection.dfy",
+      "originalSha256": "4a3b535779ceb2c2afd4561c6002fef59eaf89694fd9ab3fa2dc2c6d68ceb974",
+      "replacement": "formal/bytecode/word-fold/raw-closure-repair-v4/public-entry-repair-v2/Connection.dfy"
+    },
+    {
+      "original": "formal/bytecode/word-fold/raw-loop-connection-repair-v3/Connection.dfy",
+      "originalSha256": "30b6220f387781299a4de82295356ccd54ac6c9b7bc9e3e10cb8209a2bc00014",
+      "replacement": "formal/bytecode/word-fold/raw-closure-repair-v4/raw-loop-connection-repair-v3/Connection.dfy"
+    },
+    {
+      "original": "formal/bytecode/word-fold/raw-loop-ready-repair-v2/Memory.dfy",
+      "originalSha256": "82548e80275540deab8eea083ab183d3e2e3252a0f28b625a722c10d80cb3a17",
+      "replacement": "formal/bytecode/word-fold/raw-closure-repair-v4/raw-loop-ready-repair-v2/Memory.dfy"
+    },
+    {
+      "original": "formal/bytecode/word-fold/raw-target/Connection.dfy",
+      "originalSha256": "5fdf48f6ccb9a8d5699d189123d2598b41febf1218cc01b324031dcd6ad29510",
+      "replacement": "formal/bytecode/word-fold/raw-closure-repair-v4/raw-target/Connection.dfy"
+    },
+    {
+      "original": "formal/bytecode/word-fold/raw-template/Connection.dfy",
+      "originalSha256": "286afb3a2c646fde0ddbd5b9d2e7626780345c269406da09810df4f29a6515d5",
+      "replacement": "formal/bytecode/word-fold/raw-closure-repair-v4/raw-template/Connection.dfy"
+    },
+    {
+      "original": "formal/bytecode/word-fold/raw-windows/Connection.dfy",
+      "originalSha256": "2991e4963a62435683bd2c9346f8afaad2549b502e17ae78661a189bf32936af",
+      "replacement": "formal/bytecode/word-fold/raw-closure-repair-v4/raw-windows/Connection.dfy"
+    }
+  ],
+  "scope": "Eight fresh complete current handwritten connections after isolated target/template endpoint projection repairs. Preserved V3 generated wrapper owners stay unchanged; reuse only their actual complete whole-module evidence. Native, retained and public checker gates remain mandatory.",
+  "selectedSources": [
+    "formal/bytecode/word-fold/raw-closure-repair-v4/empty-body/Connection.dfy",
+    "formal/bytecode/word-fold/raw-closure-repair-v4/first-failure-raw-repair-v3/Raw.dfy",
+    "formal/bytecode/word-fold/raw-closure-repair-v4/public-entry-repair-v2/Connection.dfy",
+    "formal/bytecode/word-fold/raw-closure-repair-v4/raw-loop-connection-repair-v3/Connection.dfy",
+    "formal/bytecode/word-fold/raw-closure-repair-v4/raw-loop-ready-repair-v2/Memory.dfy",
+    "formal/bytecode/word-fold/raw-closure-repair-v4/raw-target/Connection.dfy",
+    "formal/bytecode/word-fold/raw-closure-repair-v4/raw-template/Connection.dfy",
+    "formal/bytecode/word-fold/raw-closure-repair-v4/raw-windows/Connection.dfy"
+  ],
+  "selectedModuleCount": 8,
+  "assumptions": [
+    "Pinned exact compiler runtime and reviewed machine semantics; unchanged raw decoder admissions and public contracts.",
+    "Each fresh whole-module run assumes included contracts; complete retained graph still required. Actual memory, finite resources and truthful reached observations remain explicit.",
+    "Generated wrappers require owned byte-identical regeneration; historical failed evidence preserved. No bytecode coverage until full retention/checker, and no gas/deployment/performance claim."
+  ],
+  "formatExclusions": {}
+}

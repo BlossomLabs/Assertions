@@ -1,0 +1,39 @@
+{
+  "id": "original-operations-binary-log",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/library/src/operations/binary-log/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/library/src/operations/binary-log/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/library/src/operations/binary-log/Connection.dfy",
+    "formal/source/library/src/operations/binary-log/Control.generated.dfy",
+    "formal/source/library/src/operations/binary-log/Model.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/library/src/operations/binary-log/Model.dfy"
+    ],
+    "execution": [
+      "formal/source/library/src/operations/binary-log/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/library/src/operations/binary-log/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/library/src/operations/binary-log/Connection.dfy": "8594c44f6816e38809ea4addfe6a6c904ad0c60ce9aa2e2f5812b2aaa37ac805",
+    "formal/source/library/src/operations/binary-log/Control.generated.dfy": "0df721883a8efe7a1f26a18f6c207d12519d8497b063187200fb42c1cbde9eed",
+    "formal/source/library/src/operations/binary-log/Model.dfy": "aaf63b8efc1db2c1f34b0f4c4489773029351e909e60473bbc1596d48f0d30d2"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

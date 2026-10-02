@@ -1,0 +1,7 @@
+# Fold domain and physical stamping connection development
+
+`Connection.dfy` composes the actual count/domain trace beginning16484, the complete18-instruction stamp invocation and the accumulator-first supplied-order stamp engine ending16536. It carries the full caller stack and exact physical byte memory, including duplicate/partially overlapping windows with last-write behavior. Complete old memory words before the template pointer remain unchanged. Its pure external lift preserves arbitrary old returndata and observation cursor.
+
+The raw offset array count is independent of the Range element count; full uint256 Range index/count remain admitted. `WindowBridge` connects the fold scanner's valid-window predicate to the common physical stamp representation. The physical byte-domain element is still SHR248(CALLDATALOAD); its separate mathematical first-byte bridge remains open.
+
+Finish all owner files before snapshotting. The development driver checks the complete selected module with full native/declaration inventory and zero escape audit, while imports remain assumed. Complete raw/template admission, callback/guards/errors, early exit, scalar terminal, fresh included native closure, physical fixtures, matching semantic mutations and independent retained checker remain mandatory before public coverage. Explicit representation, reached resources and observations apply. No gas, deployment, performance or compiler-correctness claim.

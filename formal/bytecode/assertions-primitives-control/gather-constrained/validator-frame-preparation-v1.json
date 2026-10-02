@@ -1,0 +1,13 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/Success.dfy",
+  "sourceSha256": "96ce511fc54dfa5a7fb91869b7a8c8a99792559a155174facd1f9561e06d8c3d",
+  "output": "formal/bytecode/assertions-primitives-control/gather-constrained/ValidatorFrame.dfy",
+  "outputSha256": "18ca9d394fad852c055b30fd4d35071c13fdde9bcfb8bdf32752dcbb10e3c365",
+  "scope": "Fresh owned constructive physical validator composition with byte-window preservation. Original physical admission and judgments retained; additional window bounds concern only the frame claim. No production/shared source edit or public credit.",
+  "changes": [
+    "Single frozen Success include and new owned module name",
+    "start/size window parameters and bounds",
+    "DecoderFacts.OldBytes after concrete Construct",
+    "same window preserved by arbitrary-count loop invariant"
+  ]
+}

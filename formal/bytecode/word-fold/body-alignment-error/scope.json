@@ -1,0 +1,14 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-words-unaligned-physical-error",
+      "owner": "formal/bytecode/word-fold/body-alignment-error"
+    }
+  ],
+  "assumptions": [
+    "Error leaf admits every uint256 source length not divisible by32 and every other word argument, with fitting lower stack prefix. Its exact initial memory is the compiler PC-zero header store, with free pointer128. Raw public connection additionally requires the actual selector/zero-value/frame and complete accepted seven-head compiler input.",
+    "All49 reached alignment/modulo/error stores and jumps are preserved through actual REVERT with exact4-byte UnalignedWords selector and32-byte original source length. Raw connection proves this error precedes windows, target checking and callbacks, preserving old returndata and observation cursor.",
+    "Selected imports assume included contracts. Current complete graph, successful alignment/windows/empty/target/allocation/template/loop/callback/early exit/other errors/output, complete physical fixtures, semantic faults and independent retained checker remain required. No gas/deployment/performance claim."
+  ]
+}

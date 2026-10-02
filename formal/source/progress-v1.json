@@ -1,0 +1,78 @@
+{
+  "scope": "Migration work tracking only; source-level helper/module gates never grant bytecode entries. Candidate all-source inventory is still being reconciled with original ledgers.",
+  "candidatePackages": 134,
+  "candidateDeclarations": 3164,
+  "mappedUniqueDeclarationRecords": 182,
+  "mappedByOriginalRoot": {
+    "operations": 79,
+    "collections": 51,
+    "constraints": 24,
+    "original-generated-adapter": 7,
+    "expressions": 21
+  },
+  "mappings": [
+    {
+      "path": "formal/source/theorem-mapping.json",
+      "sha256": "1b1f22f0465067b06450a14adf46718a2c3f070a5ce44d93e14364616039ab2d"
+    },
+    {
+      "path": "formal/source/replace-suite-theorem-mapping.json",
+      "sha256": "7545528ce3eda930070451c3fce4ad05e06fffadef88661e2eeceeb355fe710e"
+    },
+    {
+      "path": "formal/source/word-memory-theorem-mapping.json",
+      "sha256": "50387d8217bfe5931c84e98f0152810527bbeef7420ffbce6cf79e32f68447af"
+    },
+    {
+      "path": "formal/source/word-windows-theorem-mapping.json",
+      "sha256": "eebf7bf6422c81c5a98ce09444bb2ec4766e1c1ddc321fc93f8956ea8c02fd35"
+    },
+    {
+      "path": "formal/source/constraints-theorem-mapping.json",
+      "sha256": "4eb39da88499885a14120690a45e3527767791273462cdbfb2b9f8b937f311b6"
+    },
+    {
+      "path": "formal/source/expressions-recursive-v3-theorem-mapping.json",
+      "sha256": "768439cf1be235d1763b6e6fde66a88b9bd0e3c94b5b0792e7aadb9ad6f3e3fd"
+    }
+  ],
+  "closures": [
+    {
+      "name": "concat",
+      "status": "coordinator-accepted-conditional-source-refactor",
+      "nativeBatches": 307,
+      "scope": "Original decoded-boundary concat entry with unchanged premises; no bytecode credit"
+    },
+    {
+      "name": "replace-suite",
+      "status": "native-complete-source-correspondence-pending",
+      "nativeBatches": 1388
+    },
+    {
+      "name": "word-memory",
+      "status": "native-complete-source-correspondence-pending",
+      "nativeBatches": 634
+    },
+    {
+      "name": "word-windows",
+      "status": "native-complete-source-correspondence-pending",
+      "nativeBatches": 1079
+    },
+    {
+      "name": "constraints",
+      "status": "native-complete-source-correspondence-pending",
+      "nativeBatches": 300
+    },
+    {
+      "name": "expressions-recursive",
+      "status": "native-complete-source-correspondence-pending",
+      "nativeBatches": 523
+    },
+    {
+      "name": "core-raw-v2",
+      "status": "live-fresh-complete-closure",
+      "nativeHandle": 20481
+    }
+  ],
+  "remaining": "All unlisted original source packages and their mathematical/execution/source correspondence closure remain pending; no completion claim."
+}

@@ -1,0 +1,10 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "The exact allocated FoldRun physical memory geometry320<=length and length divisible32 makes actual run-field MLOAD expansion a no-op; inherited from revised loop/control admissions and raw template allocation, with no separate Range count bound.",
+    "Actual loop header16484 with run pointer128/return12157 and exact physical run count/domain slots. Index<count; canonical domain0..2. Range total/index full uint256; Byte/Word total exact fitting source length/word count.",
+    "Complete reached count branch invokes domain helper19299 and returns16512 with index, byte SHR248(CALLDATALOAD) or full word CALLDATALOAD. Lower stack/memory preserved. No observation consumed and arbitrary old returndata/cursor unchanged under pure external lift.",
+    "Selected native imports assumed. Separate first-byte representation bridge, complete raw iteration/stamping/callback/guards/errors/early-exit/scalar RETURN, full included native closure, finite physical fixtures, matching semantic mutation and independent retained checking mandatory before public credit. Representation, sufficient reached resources and truthful observations explicit; no gas/deployment/performance/compiler correctness claim."
+  ]
+}

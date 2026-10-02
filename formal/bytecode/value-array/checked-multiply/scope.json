@@ -1,0 +1,13 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/checked-multiply/Scalar.dfy",
+    "formal/bytecode/value-array/checked-multiply/Multiply.generated.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "Complete generic exact nonoverflowing checked-multiplication routine and constructive arithmetic scalar helper, arbitrary lower stack/memory and valid return JUMPDEST; zero operands included. Overflow/panic serialization, full descriptor parser/codec and retained public graph remain open; no public coverage.",
+  "assumptions": [
+    "Pinned exact Collections runtime and reviewed scan machine/toolchain.",
+    "Actual uint256 operands with product below2^256, fitting stack and actual valid caller return JUMPDEST; imported dependencies require complete final native closure."
+  ],
+  "formatExclusions": {}
+}

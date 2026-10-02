@@ -1,0 +1,42 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "selectedModules": [
+    "RangeArrayCountLarge",
+    "RangeArrayHeaderShort",
+    "RangeArrayOffsetLarge",
+    "RangeArrayTailShort",
+    "RangeBadAddress",
+    "RangeBadExit",
+    "RangeHeadShort",
+    "RangeTemplateHeaderShort",
+    "RangeTemplateLengthLarge",
+    "RangeTemplateOffsetLarge",
+    "RangeTemplateTailShort",
+    "SourceArrayCountLarge",
+    "SourceArrayHeaderShort",
+    "SourceArrayOffsetLarge",
+    "SourceArrayTailShort",
+    "SourceBadAddress",
+    "SourceBadExit",
+    "SourceHeadShort",
+    "SourceSourceHeaderShort",
+    "SourceSourceLengthLarge",
+    "SourceSourceOffsetLarge",
+    "SourceSourceTailShort",
+    "SourceTemplateHeaderShort",
+    "SourceTemplateLengthLarge",
+    "SourceTemplateOffsetLarge",
+    "SourceTemplateTailShort"
+  ],
+  "prefixCandidates": [
+    {
+      "name": "all-fold-raw-rejections",
+      "owner": "formal/bytecode/word-fold/raw-rejections"
+    }
+  ],
+  "assumptions": [
+    "Raw calldata length at least4 and below2^64. Ordered complementary rejection premises follow actual compiler validation order. Range count and accumulator retain full uint256 domain; no canonical tail placement, alignment or padding restriction.",
+    "Every generated step retains actual current opcode/immediate/jump bytes, under explicit fitting stack and sufficient reached resources. Arbitrary lower stack prefix and byte memory are preserved until exact empty REVERT.",
+    "Selected native imports assume included contracts. Exhaustive decoder partition/composition, successful paths and complete fold body, external observations, errors, output and independently checked retained evidence are still required. No gas, deployment or performance claim."
+  ]
+}

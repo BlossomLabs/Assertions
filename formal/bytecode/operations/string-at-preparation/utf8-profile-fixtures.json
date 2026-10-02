@@ -1,0 +1,210 @@
+[
+  {
+    "name": "Entry",
+    "sample": ""
+  },
+  {
+    "name": "Done",
+    "sample": ""
+  },
+  {
+    "name": "Ascii",
+    "sample": "41"
+  },
+  {
+    "name": "BadLeadLow",
+    "sample": "80"
+  },
+  {
+    "name": "BadLeadHigh",
+    "sample": "f5"
+  },
+  {
+    "name": "Truncated2",
+    "sample": "c2"
+  },
+  {
+    "name": "Truncated3",
+    "sample": "e0a0"
+  },
+  {
+    "name": "Truncated4",
+    "sample": "f09090"
+  },
+  {
+    "name": "GoodTwo",
+    "sample": "c280"
+  },
+  {
+    "name": "BadTwoAt1Low",
+    "sample": "c200"
+  },
+  {
+    "name": "BadTwoAt1High",
+    "sample": "c2c0"
+  },
+  {
+    "name": "GoodE0",
+    "sample": "e0a080"
+  },
+  {
+    "name": "BadE0At1Low",
+    "sample": "e00080"
+  },
+  {
+    "name": "BadE0At1High",
+    "sample": "e0c080"
+  },
+  {
+    "name": "BadE0At2Low",
+    "sample": "e0a000"
+  },
+  {
+    "name": "BadE0At2High",
+    "sample": "e0a0c0"
+  },
+  {
+    "name": "GoodE1EC",
+    "sample": "e18080"
+  },
+  {
+    "name": "BadE1ECAt1Low",
+    "sample": "e10080"
+  },
+  {
+    "name": "BadE1ECAt1High",
+    "sample": "e1c080"
+  },
+  {
+    "name": "BadE1ECAt2Low",
+    "sample": "e18000"
+  },
+  {
+    "name": "BadE1ECAt2High",
+    "sample": "e180c0"
+  },
+  {
+    "name": "GoodED",
+    "sample": "ed8080"
+  },
+  {
+    "name": "BadEDAt1Low",
+    "sample": "ed0080"
+  },
+  {
+    "name": "BadEDAt1High",
+    "sample": "eda080"
+  },
+  {
+    "name": "BadEDAt2Low",
+    "sample": "ed8000"
+  },
+  {
+    "name": "BadEDAt2High",
+    "sample": "ed80c0"
+  },
+  {
+    "name": "GoodEEEF",
+    "sample": "ee8080"
+  },
+  {
+    "name": "BadEEEFAt1Low",
+    "sample": "ee0080"
+  },
+  {
+    "name": "BadEEEFAt1High",
+    "sample": "eec080"
+  },
+  {
+    "name": "BadEEEFAt2Low",
+    "sample": "ee8000"
+  },
+  {
+    "name": "BadEEEFAt2High",
+    "sample": "ee80c0"
+  },
+  {
+    "name": "GoodF0",
+    "sample": "f0908080"
+  },
+  {
+    "name": "BadF0At1Low",
+    "sample": "f0008080"
+  },
+  {
+    "name": "BadF0At1High",
+    "sample": "f0c08080"
+  },
+  {
+    "name": "BadF0At2Low",
+    "sample": "f0900080"
+  },
+  {
+    "name": "BadF0At2High",
+    "sample": "f090c080"
+  },
+  {
+    "name": "BadF0At3Low",
+    "sample": "f0908000"
+  },
+  {
+    "name": "BadF0At3High",
+    "sample": "f09080c0"
+  },
+  {
+    "name": "GoodF1F3",
+    "sample": "f1808080"
+  },
+  {
+    "name": "BadF1F3At1Low",
+    "sample": "f1008080"
+  },
+  {
+    "name": "BadF1F3At1High",
+    "sample": "f1c08080"
+  },
+  {
+    "name": "BadF1F3At2Low",
+    "sample": "f1800080"
+  },
+  {
+    "name": "BadF1F3At2High",
+    "sample": "f180c080"
+  },
+  {
+    "name": "BadF1F3At3Low",
+    "sample": "f1808000"
+  },
+  {
+    "name": "BadF1F3At3High",
+    "sample": "f18080c0"
+  },
+  {
+    "name": "GoodF4",
+    "sample": "f4808080"
+  },
+  {
+    "name": "BadF4At1Low",
+    "sample": "f4008080"
+  },
+  {
+    "name": "BadF4At1High",
+    "sample": "f4908080"
+  },
+  {
+    "name": "BadF4At2Low",
+    "sample": "f4800080"
+  },
+  {
+    "name": "BadF4At2High",
+    "sample": "f480c080"
+  },
+  {
+    "name": "BadF4At3Low",
+    "sample": "f4808000"
+  },
+  {
+    "name": "BadF4At3High",
+    "sample": "f48080c0"
+  }
+]

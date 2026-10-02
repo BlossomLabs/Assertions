@@ -1,0 +1,10 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Same finite successful receipt/resource schedule from native-passed ModelV2, actualself/value/calldata and truthful observations. No independent range total cap, result-word restriction or omitted canonical stop case.",
+    "Full caller lower stack at most970 words, derived reachable initial public caller state. Byte element lemma includes last source byte with zero-filled calldata tail.",
+    "Selected imported bodies assumed during development until full included retained graph. This reached loop theorem does not replace raw admission/scalar public RETURN/error/resource guards; complete EVM/fault/independent gates still required."
+  ],
+  "repair": "Same-scope explicit checked physical representation/payload bridge and endpoint equalities; original four native timeouts preserved; no increased solver limit."
+}

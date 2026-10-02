@@ -1,0 +1,31 @@
+[
+  {
+    "input": "formal/bytecode/assertions-primitives/FirstWord.generated.dfy",
+    "inputSha256": "080be10e153046080231a91d4534bb422dd729b46cba91e5168aa74f190a429b",
+    "output": "FirstWord.generated.dfy",
+    "changes": [
+      "module/include routing",
+      "scanned caller inventory",
+      "all reached frame instruction bounds"
+    ]
+  },
+  {
+    "input": "formal/bytecode/assertions-primitives/FirstWordShort.generated.dfy",
+    "inputSha256": "68739539bd4cb52aed48b2df3531f559fdbc20a787efe268cbdab8f81198d1f1",
+    "output": "FirstWordShort.generated.dfy",
+    "changes": [
+      "module/include routing",
+      "scanned caller inventory",
+      "all reached frame instruction bounds"
+    ]
+  },
+  {
+    "input": "formal/bytecode/assertions-primitives-control/CondFalseReturn.generated.dfy",
+    "inputSha256": "1bbf5cdaab8a3e72661067f3daf630edeb1a6528fe816dfa5bb077f27b3826ab",
+    "output": "FalseReturn.generated.dfy",
+    "changes": [
+      "module/include routing",
+      "independent physical last operand slot"
+    ]
+  }
+]

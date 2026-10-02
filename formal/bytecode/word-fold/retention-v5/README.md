@@ -1,0 +1,5 @@
+# Current complete fold retention V5 preparation
+
+Select the V7 raw public graph with all twelve current endpoint/window/return/allocation/payload repairs. Full original68 and V3eleven actual terminal source snapshots, evidence and tool identities are independently validated; only complete current module bodies may be reused. Failed/timeout modules and all unstarted superseded V4/V5/V6 native queues give no evidence. Require complete208 current bodies before retained gates.
+
+All current compiler/runtime reproduction, owned generation, audits,258 complete actual PC-zero EVM receipts,three ordinary native/physical bytecode faults andthree translated native/EVM source faults remain mandatory. The separate current-input V5 checker must pass before public ledger or coverage. All package files are finished before retained snapshotting. Explicit reached resources, representation, actual external observations and reviewed compiler/interpreter assumptions remain; no gas/deployment/performance/compiler-correctness claim is inferred.

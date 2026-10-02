@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/check-nonempty-item-consolidated-v1.py",
+  "sourceSha256": "3eb9849826bf2f381db02f06c679b665fc52e43ec6945aef1599d86379e56a58",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/check-nonempty-item-consolidated-v2.py",
+  "scope": "Eight mixed reference lengths, two decodedchildren perreceipt"
+}

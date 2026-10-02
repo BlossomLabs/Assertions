@@ -1,0 +1,5 @@
+# Compiled unsigned integer-power generic loop candidate
+
+Prepared14-module graph; native verification queued with no public credit. Five generated paths retain all118 actual instruction occurrences for setup, final-product frontier, even/odd iteration and complete square-overflow Panic17 packet. Engine composes finite exponent-halving iterations into a continuous actual opcode trace. A successful frontier carries two fitting words whose unbounded product equals the independent ideal power; the actual final product guard and physical RETURN remain separate open controls.
+
+The independent positive-accumulator invariant derives fitting odd and square multiplications from the actual square guard. Complete public raw admission, shortcut paths, final overflow checking, byte serialization, retained mutation campaign and independent checker are required before public credit. Runtime instruction boundaries/immediates/destinations, finite fitting representation, reached stack bound, fresh memory, faithful world observations and sufficient resources remain explicit. No real-valued exponential, gas or performance claim follows. Never edit generated files.

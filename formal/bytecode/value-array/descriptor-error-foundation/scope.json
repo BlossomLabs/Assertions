@@ -1,0 +1,15 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/descriptor-error-foundation/Memory.dfy",
+    "formal/bytecode/value-array/descriptor-error-foundation/Scalar.dfy",
+    "formal/bytecode/value-array/descriptor-error-foundation/NameEmpty.generated.dfy"
+  ],
+  "selectedModuleCount": 3,
+  "scope": "Three complete prepared owners for exact actual empty-name rejection from q=p scanner return through complete InvalidTypeDescriptor(p) REVERT in arbitrary represented aligned memory, exact compiler selector SHL and full lower frames. Preceding universal scanner/recursive descriptor rejection connection, every other error class and final retained codec closure remain open. No public coverage.",
+  "assumptions": [
+    "Current pinned runtime and tools, reviewed actual instruction/memory model.",
+    "Every current included proof body requires complete final native closure; no assumed error packet or selected failed callee preconditions.",
+    "Original represented lower stack capacity and aligned free memory with fitting writes remain explicit; final public composition must derive them from raw inputs."
+  ],
+  "formatExclusions": {}
+}

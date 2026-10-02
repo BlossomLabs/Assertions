@@ -1,0 +1,9 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Finite physical memory and successful32-byte receipt schedule; each exact reached callback completion fits the same memory representation. No independent range-count cap or callback value restriction.",
+    "Truthful two GAS plus STATICCALL observations bind the actual accumulator-first and supplied-order stamped payload. Same canonical FoldExit first-stop semantics.",
+    "Imported bodies assumed for selected development. This model is not the complete physical loop trace or retained public bytecode evidence; full included graph, raw admission/return/failure guards, physical fixtures, semantic faults and independent checker remain required."
+  ]
+}

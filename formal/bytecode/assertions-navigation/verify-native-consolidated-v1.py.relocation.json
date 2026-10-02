@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/assertions-navigation/verify-native.py",
+  "output": "/home/sem/assertions/formal/bytecode/assertions-navigation/verify-native-consolidated-v1.py",
+  "source_sha256": "1d9e82cd913b1884295e71e4fd4876e1aac9e0c553b6bdeeda8947632a234e64",
+  "output_sha256": "1d9e82cd913b1884295e71e4fd4876e1aac9e0c553b6bdeeda8947632a234e64",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

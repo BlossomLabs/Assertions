@@ -1,0 +1,15 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-callback-invocation-load-frame-v2",
+      "owner": "formal/bytecode/word-fold/callback-invocation-repair-v2"
+    }
+  ],
+  "assumptions": [
+    "Actual allocated FoldRun memory contains320 bytes and is32-byte aligned. This explicit physical geometry makes every run-field MLOAD expansion a no-op; it follows from raw allocation/template copying and does not bound Range count. Previous symbolic unchanged-memory owner omitted this premise; failed invocation evidence is preserved.",
+    "Pinned current Collections runtime and three fold selectors. Actual16536 complete11 loop words plus selected element, run pointer128/return12157 and target MLOAD192. Index/count/element full Words; target canonicality remains caller premise for external-call connection.",
+    "Exact actual caller cleanup/callback invoke16905, return16553, target/call-pointer/current loop index, helper scratch initialization and stop16908 before first GAS. Arbitrary lower caller stack and physical memory retained; no external observation consumed.",
+    "Selected native imports assumed. Full callback input/STATICCALL/returndata, all failed/successful resource guards and custom errors, update/early exit/iteration/scalar RETURN, complete raw domain/stamping, fresh included native closure, physical fixtures, matching semantic mutation and independent retained checking remain mandatory before public credit. Representation/resources/truthful observations explicit. No gas/deployment/performance/compiler-correctness claim."
+  ]
+}

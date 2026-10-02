@@ -1,0 +1,9 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Compiler-admitted fitting finite calldata and assigned fold selector; nonempty source/range, word alignment and valid ordered accumulator/element windows. No range total bound or canonical tail placement imposed.",
+    "Actual copied physical memory and all six FoldRun words are derived; recursive reached callback completion/resources and truthful external observations remain explicit in ModelV2.",
+    "Selected imported bodies assumed until full included retained graph and complete raw/return/failure/physical/fault/independent gates. No public credit or gas/deployment/performance/compiler correctness claim."
+  ]
+}

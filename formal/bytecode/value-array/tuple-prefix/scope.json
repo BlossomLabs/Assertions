@@ -1,0 +1,14 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/tuple-prefix/Bounds.dfy",
+    "formal/bytecode/value-array/tuple-prefix/Loop.dfy"
+  ],
+  "selectedModuleCount": 2,
+  "scope": "Complete actual tuple initialization and any finite accepted comma-separated child prefix, through the next child type-entry frame. The next child may be at the descriptor limit or reject. Independent disjoint input spans derive fitting partial sums, no supplied sum bound. Complete rejected-child/separator/public codec/native retention controls remain open; no public credit.",
+  "assumptions": [
+    "Pinned runtime/tools and reviewed EVM model.",
+    "Original represented tuple frame, positions below 2^64 and recursive stack budget for accepted previous children. No success or nonempty input is assumed for the next child.",
+    "Native proof must establish every included current complete owner before use."
+  ],
+  "formatExclusions": {}
+}

@@ -1,0 +1,23 @@
+{
+  "status": "preparation-not-native-not-retained",
+  "nextEntries": [
+    "packArray(string,bytes[])",
+    "unpackArray(string,bytes)"
+  ],
+  "priorOwnerInputs": {
+    "formal/bytecode/word-fold/prefix-bytes/generate.py": "54dbc37ddf32dbd65d4b9ba431233c6337337bdf27a14beff2aea4fe2171325e",
+    "formal/bytecode/word-fold/prefix-bytes/ShiftKernel.dfy": "d028df56c4be2c4fa498f7b9b5790d83e5aceb698b02ff5f825fca1a48f8b558",
+    "formal/bytecode/word-fold/prefix-bytes/format-generated.py": "6018f62b9884f4c4c83d01e51f023aa7350152d0db73eb8763286ac27da390b3",
+    "formal/bytecode/word-zip/decoder/generate.py": "d936e2f1fd66f5beb6d928729f718cf1d3d7cf0bc8bd96e0b679f6661f73a4e7",
+    "formal/bytecode/word-zip/decoder/format-generated.py": "6018f62b9884f4c4c83d01e51f023aa7350152d0db73eb8763286ac27da390b3"
+  },
+  "nativeProofs": [],
+  "remaining": [
+    "Complete native routing/decoder inventories and zero audits",
+    "Exhaustive raw decoder malformed partition",
+    "Physical descriptor copying and parser correspondence",
+    "Canonical array pack/unpack loops and first errors",
+    "Complete physical return and semantic mutation evidence",
+    "Independent retained checker before any coverage update"
+  ]
+}

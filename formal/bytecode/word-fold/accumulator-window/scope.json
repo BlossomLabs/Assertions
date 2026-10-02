@@ -1,0 +1,15 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "accumulator-window",
+      "owner": "formal/bytecode/word-fold/accumulator-window"
+    }
+  ],
+  "assumptions": [
+    "Pinned exact current Collections runtime and all reached instructions, including helper jumps, physical stores and terminal error bytes. Input words retain their full unsigned256-bit values; represented element-array spans derive from accepted raw calldata, independently of the full-width range element count.",
+    "Ordered window validation admits duplicate, overlapping and misaligned windows that fit. Template shorter than32 or an invalid accumulator offset rejects before any element window, empty-domain behavior, target observation or callback. Only after valid accumulator does the first failed supplied element offset determine LambdaOffsetOutOfBounds.",
+    "Successful finite loop decreases count-index without fuel/case cutoffs; first-bad search and prefix loop terminate for arbitrary finite supplied arrays. Successful window admission preserves arbitrary memory/lower stack. Actual pre-allocation error entry memory is Store([],64,128).",
+    "Selected development native checks assume imported contracts. Complete fresh included graph, physical receipts, matching semantic mutations and independent retained checking remain mandatory before public coverage. Sufficient reached resources and truthful observations remain explicit. No gas/deployment/performance or compiler-correctness claim."
+  ]
+}

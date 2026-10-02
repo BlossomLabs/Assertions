@@ -1,0 +1,42 @@
+{
+  "id": "original-operations-parse-units",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/operations/parse-units",
+  "entry": "formal/operations/parse-units/Connection.dfy",
+  "verificationEntries": [
+    "formal/operations/parse-units/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/operations/decimal-render/Model.dfy",
+      "formal/operations/decimal-units/Model.dfy",
+      "formal/operations/parse-units/Model.dfy"
+    ],
+    "execution": [
+      "formal/operations/decimal-render/Control.generated.dfy",
+      "formal/operations/modular/Math.generated.dfy",
+      "formal/operations/parse-units/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/operations/parse-units/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/operations/decimal-render/Control.generated.dfy": "ae8756850bb41d815a5ad01fac79d14a649131604b12beb93d525a777e4d7229",
+    "formal/operations/decimal-render/Model.dfy": "27d6579e5182c2ada4cea4d4f28d1b645312811ef3b868d415785932522de0c5",
+    "formal/operations/decimal-units/Model.dfy": "0be18fcf921a78c6edd961aad26be6a367c5bbd2ba1ab0d27dd4a31350a87a5d",
+    "formal/operations/modular/Math.generated.dfy": "cfc82f034d73947fe424c9aedcc99a15b8aeb2a3ae866fe58fe0d46f86c10b8d",
+    "formal/operations/parse-units/Connection.dfy": "f5034bb8b4a17293a2180b41a0aef62ab897b964dbb5f9989df00d30f3399418",
+    "formal/operations/parse-units/Control.generated.dfy": "03416aabe0b391fa8326dea7d271295790797c7dccabd123bf69df3b65777b4d",
+    "formal/operations/parse-units/Model.dfy": "e01ec102ba1e7fc8fe51746e43bbb10032aff41a0b0854d2f5815995048d03f2"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

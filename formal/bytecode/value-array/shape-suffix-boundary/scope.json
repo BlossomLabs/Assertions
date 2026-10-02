@@ -1,0 +1,14 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/shape-suffix-boundary/Open.generated.dfy",
+    "formal/bytecode/value-array/shape-suffix-boundary/End.generated.dfy",
+    "formal/bytecode/value-array/shape-suffix-boundary/Other.generated.dfy"
+  ],
+  "selectedModuleCount": 3,
+  "scope": "Three complete exact arbitrary typeShape suffix opening and exhaustive no-suffix return blocks. Actual bracket BYTE, checked end+1 and full return cleanup preserved. Decimal/tuple/suffix loop/error/codec/public retained graph remain open; no public credit.",
+  "assumptions": [
+    "Pinned exact runtime extraction, reviewed BYTE/scan/copy interpreter and toolchain remain trusted.",
+    "Arbitrary represented calldata/memory/lower stack and admitted descriptor bounds, with reached fitting stack and exact complete caller frame. Imported bodies require final complete native closure."
+  ],
+  "formatExclusions": {}
+}

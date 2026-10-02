@@ -1,0 +1,8 @@
+{
+  "status": "passed-independent-native-closure-review",
+  "publicCredit": false,
+  "scope": "Independent recursive per-node decimal spelling, semantic tuple geometry, exact child calldata spans and physical tuple-loop admission; physical recursive constructor and public composition remain separate",
+  "modules": 45,
+  "nativeBatches": 1945,
+  "manifestSha256": "2ed494d644681af9122b8530d60d02b80c16604249c5029a6914ed070fde6687"
+}

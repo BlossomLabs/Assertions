@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/generate-empty.py",
+  "sourceSha256": "2d39f5c1a5f9acf45d0ed914446bbeab327dae1c5d73c26e3652bca26a12ca27",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-start-consolidated-v1.py",
+  "scope": "Fresh private generator adapted for arbitrary positive child count and stop before decoder loop19590; no retained source changed"
+}

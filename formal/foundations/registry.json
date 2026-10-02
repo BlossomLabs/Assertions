@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "owner": "coordinator",
+  "exactBytecodeCredit": false,
+  "packages": [
+    {
+      "name": "memory-copy-v3",
+      "status": "verified-mathematical-foundation",
+      "manifest": "formal/foundations/evidence/memory-copy-v3/manifest.json",
+      "manifestSha256": "5c1dc17a161a6eb633bb43f879184015b5804d53cd447b7e87759164f3ccbe3c",
+      "entries": [
+        "formal/foundations/v3/MemoryFrames.dfy",
+        "formal/foundations/v1/ExpansionBridge.dfy"
+      ],
+      "nativeBatches": 90
+    },
+    {
+      "name": "word-totals-v1",
+      "status": "verified-mathematical-foundation",
+      "manifest": "formal/foundations/evidence/word-totals-v1/manifest.json",
+      "manifestSha256": "23934085562a09be570aa0ca403baf3740440ad74dd1b0505de36bd856eef0a0",
+      "entries": [
+        "formal/foundations/v1/SequenceTotals.dfy",
+        "formal/foundations/v1/WordArithmetic.dfy"
+      ],
+      "nativeBatches": 39
+    },
+    {
+      "name": "store-extent-v1",
+      "status": "verified-mathematical-foundation",
+      "manifest": "formal/foundations/evidence/store-extent-v1/manifest.json",
+      "manifestSha256": "cb9908c36e7d3954954c2d2b080dbaae46b410ec9f03cc89eb36ec180e0f30f8",
+      "entries": [
+        "formal/foundations/v1/StoreExtent.dfy"
+      ],
+      "nativeBatches": 63
+    },
+    {
+      "name": "environment-step-v4b",
+      "status": "verified-model-profile",
+      "manifest": "formal/foundations/evidence/environment-step-v4b/manifest.json",
+      "manifestSha256": "522b8bdb5ba8d4f85d961b42a286456774425afa624896898db7060c2e8f05ce",
+      "entries": [
+        "formal/foundations/v4/EnvironmentStep.dfy"
+      ],
+      "nativeBatches": 73,
+      "scope": "Additive ADDRESS/CALLER profile over unchanged Scan State/Fetch/Step, explicit account bounds supplied by consumer bridge, legacy-step equality and trace lift/extend/join; no automatic physical opcode or entry credit"
+    },
+    {
+      "name": "product-order-v5",
+      "status": "verified-mathematical-foundation",
+      "manifest": "formal/foundations/evidence/product-order-v5/manifest.json",
+      "manifestSha256": "fa97979199bac05407968a4d1b47cf45d9be4dbd5828434c4a966b09a4431eba",
+      "entries": [
+        "formal/foundations/v5/ProductOrder.dfy"
+      ],
+      "nativeBatches": 2,
+      "scope": "Natural-number product nonnegativity and monotonicity; consumers derive their existing word bounds without narrowing admission domains"
+    }
+  ],
+  "pendingBridges": [
+    "Operations independent Machine representation",
+    "Collections child-span projection",
+    "Expressions composite Context allocation progression"
+  ]
+}

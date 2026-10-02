@@ -1,0 +1,10 @@
+{
+  "status": "terminal-exit1-preserved-incomplete",
+  "manifest": "formal/bytecode/operations/comparison-retention/evidence/raw-entries-v1/manifest.json",
+  "manifestSha256": "003b324d8339041b4234508fb5bd4594fc3f18a3c6401a889f88c30e78979390",
+  "nativeRows": 70310,
+  "declarations": 2172,
+  "zeroAudits": 25,
+  "failure": "Three baseline final serialization timeouts, two mutation final serialization timeouts, then mandatory baseline gate refused the LtU semantic mutation because its baseline declaration failed. No retained pass or public coverage.",
+  "log": "/tmp/operations-comparison-retained-v1.log"
+}

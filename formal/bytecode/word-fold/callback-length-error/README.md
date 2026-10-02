@@ -1,0 +1,5 @@
+# Exact wrong-length fold callback result
+
+The generator binds all three compiler fold selectors and extracts the actual successful-callback wrong-length path through exact132-byte WrongCallbackResult REVERT. The checked scalar bridge names each current operation word, and the packet retains the actual operation/index/zero/target. The engine composes the physical full empty/nonempty receipt with the actual fold continuation16553 and this serializer. All returned lengths except32 are represented under the same finite-memory premises; empty receipts remain covered.
+
+Fitting physical memory/resources and truthful successful STATICCALL observations are explicit. Selected imports are assumed until full included native retention. Ordinary callback failure and exhaustion guards, full raw first-failure loop, compiler identity, EVM fixtures, matching semantic faults and independent retained checker remain required before public credit. No gas/deployment/performance/compiler correctness claim. All files finish before capture and generated files are never hand-edited.

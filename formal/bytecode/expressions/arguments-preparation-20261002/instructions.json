@@ -1,0 +1,338 @@
+{
+  "entry": 6091,
+  "runtimeSha256": "1085082ba1e19b0967431c8b7b0a79ce4f60b8df851b91b6e6194324b3feade7",
+  "scope": "Initial disassembly inventory only, no native or physical credit",
+  "source": "contracts/Expressions.sol:_arguments",
+  "instructions": [
+    {
+      "pc": 6091,
+      "opcode": 91,
+      "immediate": 0,
+      "next": 6092
+    },
+    {
+      "pc": 6092,
+      "opcode": 96,
+      "immediate": 96,
+      "next": 6094
+    },
+    {
+      "pc": 6094,
+      "opcode": 95,
+      "immediate": 0,
+      "next": 6095
+    },
+    {
+      "pc": 6095,
+      "opcode": 96,
+      "immediate": 2,
+      "next": 6097
+    },
+    {
+      "pc": 6097,
+      "opcode": 132,
+      "immediate": 0,
+      "next": 6098
+    },
+    {
+      "pc": 6098,
+      "opcode": 20,
+      "immediate": 0,
+      "next": 6099
+    },
+    {
+      "pc": 6099,
+      "opcode": 128,
+      "immediate": 0,
+      "next": 6100
+    },
+    {
+      "pc": 6100,
+      "opcode": 21,
+      "immediate": 0,
+      "next": 6101
+    },
+    {
+      "pc": 6101,
+      "opcode": 97,
+      "immediate": 6150,
+      "next": 6104
+    },
+    {
+      "pc": 6104,
+      "opcode": 87,
+      "immediate": 0,
+      "next": 6105
+    },
+    {
+      "pc": 6105,
+      "opcode": 80,
+      "immediate": 0,
+      "next": 6106
+    },
+    {
+      "pc": 6106,
+      "opcode": 132,
+      "immediate": 0,
+      "next": 6107
+    },
+    {
+      "pc": 6107,
+      "opcode": 132,
+      "immediate": 0,
+      "next": 6108
+    },
+    {
+      "pc": 6108,
+      "opcode": 95,
+      "immediate": 0,
+      "next": 6109
+    },
+    {
+      "pc": 6109,
+      "opcode": 129,
+      "immediate": 0,
+      "next": 6110
+    },
+    {
+      "pc": 6110,
+      "opcode": 129,
+      "immediate": 0,
+      "next": 6111
+    },
+    {
+      "pc": 6111,
+      "opcode": 16,
+      "immediate": 0,
+      "next": 6112
+    },
+    {
+      "pc": 6112,
+      "opcode": 97,
+      "immediate": 6123,
+      "next": 6115
+    },
+    {
+      "pc": 6115,
+      "opcode": 87,
+      "immediate": 0,
+      "next": 6116
+    },
+    {
+      "pc": 6116,
+      "opcode": 97,
+      "immediate": 6123,
+      "next": 6119
+    },
+    {
+      "pc": 6119,
+      "opcode": 97,
+      "immediate": 13182,
+      "next": 6122
+    },
+    {
+      "pc": 6122,
+      "opcode": 86,
+      "immediate": 0,
+      "next": 6123
+    },
+    {
+      "pc": 6123,
+      "opcode": 91,
+      "immediate": 0,
+      "next": 6124
+    },
+    {
+      "pc": 6124,
+      "opcode": 144,
+      "immediate": 0,
+      "next": 6125
+    },
+    {
+      "pc": 6125,
+      "opcode": 80,
+      "immediate": 0,
+      "next": 6126
+    },
+    {
+      "pc": 6126,
+      "opcode": 1,
+      "immediate": 0,
+      "next": 6127
+    },
+    {
+      "pc": 6127,
+      "opcode": 53,
+      "immediate": 0,
+      "next": 6128
+    },
+    {
+      "pc": 6128,
+      "opcode": 96,
+      "immediate": 248,
+      "next": 6130
+    },
+    {
+      "pc": 6130,
+      "opcode": 28,
+      "immediate": 0,
+      "next": 6131
+    },
+    {
+      "pc": 6131,
+      "opcode": 96,
+      "immediate": 248,
+      "next": 6133
+    },
+    {
+      "pc": 6133,
+      "opcode": 27,
+      "immediate": 0,
+      "next": 6134
+    },
+    {
+      "pc": 6134,
+      "opcode": 96,
+      "immediate": 1,
+      "next": 6136
+    },
+    {
+      "pc": 6136,
+      "opcode": 96,
+      "immediate": 1,
+      "next": 6138
+    },
+    {
+      "pc": 6138,
+      "opcode": 96,
+      "immediate": 248,
+      "next": 6140
+    },
+    {
+      "pc": 6140,
+      "opcode": 27,
+      "immediate": 0,
+      "next": 6141
+    },
+    {
+      "pc": 6141,
+      "opcode": 3,
+      "immediate": 0,
+      "next": 6142
+    },
+    {
+      "pc": 6142,
+      "opcode": 25,
+      "immediate": 0,
+      "next": 6143
+    },
+    {
+      "pc": 6143,
+      "opcode": 22,
+      "immediate": 0,
+      "next": 6144
+    },
+    {
+      "pc": 6144,
+      "opcode": 96,
+      "immediate": 5,
+      "next": 6146
+    },
+    {
+      "pc": 6146,
+      "opcode": 96,
+      "immediate": 251,
+      "next": 6148
+    },
+    {
+      "pc": 6148,
+      "opcode": 27,
+      "immediate": 0,
+      "next": 6149
+    },
+    {
+      "pc": 6149,
+      "opcode": 20,
+      "immediate": 0,
+      "next": 6150
+    },
+    {
+      "pc": 6150,
+      "opcode": 91,
+      "immediate": 0,
+      "next": 6151
+    },
+    {
+      "pc": 6151,
+      "opcode": 128,
+      "immediate": 0,
+      "next": 6152
+    },
+    {
+      "pc": 6152,
+      "opcode": 21,
+      "immediate": 0,
+      "next": 6153
+    },
+    {
+      "pc": 6153,
+      "opcode": 97,
+      "immediate": 6203,
+      "next": 6156
+    },
+    {
+      "pc": 6156,
+      "opcode": 87,
+      "immediate": 0,
+      "next": 6157
+    },
+    {
+      "pc": 6157,
+      "opcode": 80,
+      "immediate": 0,
+      "next": 6158
+    },
+    {
+      "pc": 6158,
+      "opcode": 132,
+      "immediate": 0,
+      "next": 6159
+    },
+    {
+      "pc": 6159,
+      "opcode": 132,
+      "immediate": 0,
+      "next": 6160
+    },
+    {
+      "pc": 6160,
+      "opcode": 96,
+      "immediate": 1,
+      "next": 6162
+    },
+    {
+      "pc": 6162,
+      "opcode": 129,
+      "immediate": 0,
+      "next": 6163
+    },
+    {
+      "pc": 6163,
+      "opcode": 129,
+      "immediate": 0,
+      "next": 6164
+    },
+    {
+      "pc": 6164,
+      "opcode": 16,
+      "immediate": 0,
+      "next": 6165
+    },
+    {
+      "pc": 6165,
+      "opcode": 97,
+      "immediate": 6176,
+      "next": 6168
+    }
+  ]
+}

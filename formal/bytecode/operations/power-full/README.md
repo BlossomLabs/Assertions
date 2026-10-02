@@ -1,0 +1,7 @@
+# Complete raw integer exponent candidate
+
+Prepared53-module graph for both Operations.exp(uint256,uint256) and Operations.exp(int256,uint256), with native development unlaunched and no public coverage. All paths begin atPCzero, preserve complete continuous actual opcode traces through compiler wrappers, finite arithmetic loops, every reached checked helper and physical ABI serialization, and end in empty REVERT, exact36-byte Panic17 or exact32-byte RETURN.
+
+Unsigned success and overflow connect to unbounded ideal integer power. Signed outcomes connect to the independent source checked-intermediate trace; successful results equal ideal signed integer power. Complete two-function compiler AST gates, exact current runtime bytes/boundaries/immediates/destinations, byte memory/header and physical packets are included.
+
+Native development, full retained graph, fresh compiler identity/regeneration/audits/physical fixtures, matching semantic fault campaign and independent parent checker remain required before a ledger. Finite fitting representation, raw calldata under2^64, faithful call value/calldata observations, sufficient reached stack/memory/instruction resources, reviewed extraction/interpreter and native verifier trust remain explicit. There is no real-valued exp/log accuracy, gas, deployment, performance or cryptographic claim. Failed preparation snapshots remain preserved. Never hand-edit generated files.

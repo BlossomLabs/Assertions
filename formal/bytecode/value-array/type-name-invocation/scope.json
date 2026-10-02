@@ -1,0 +1,12 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/type-name-invocation/Invocation.generated.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "One complete exact reached valid-bounds non-tuple typeShape guard and generic scanName invocation owner. Non-tuple includes every byte except LPAREN; name validation follows in its arbitrary scanner. Other guard errors/tuple recursion/suffix parsing/codec loops/errors/serialization/full retained public graph remain open; no public credit.",
+  "assumptions": [
+    "Pinned exact runtime extraction, reviewed BYTE/scan/copy machine and toolchain remain trusted.",
+    "Fitting lower stack and arbitrary represented descriptor offsets/length/p/limit/byte, unchanged physical memory; imported bodies need complete final closure."
+  ],
+  "formatExclusions": {}
+}

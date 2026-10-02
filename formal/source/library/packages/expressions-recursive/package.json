@@ -1,0 +1,34 @@
+{
+  "id": "expressions-recursive",
+  "status": "native-passed-correspondence-pending",
+  "entry": "formal/source/migration-v3/expressions/recursive/Source.generated.dfy",
+  "verificationEntries": [
+    "formal/source/migration-v3/expressions/recursive/Source.generated.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/migration-v3/expressions/evaluation/Control.dfy",
+      "formal/source/migration-v3/expressions/recursive/Spec.dfy"
+    ],
+    "execution": [
+      "formal/source/migration-v3/expressions/recursive/Source.generated.dfy"
+    ],
+    "correspondence": [],
+    "foundations": [
+      "formal/source/foundations/v3/MemoOrder.dfy"
+    ]
+  },
+  "closureSha256": {
+    "formal/source/foundations/v3/MemoOrder.dfy": "157c39da57e26a43abd6052d585deca8e5d039cfbe363cab0e0a63f0d32ebb1d",
+    "formal/source/migration-v3/expressions/evaluation/Control.dfy": "cb4e79ee821d1b61b06ba5d85c1b0c2f8409fab37689aca1611a917d4f489881",
+    "formal/source/migration-v3/expressions/recursive/Source.generated.dfy": "bdd06d709b0322877fa2b770177834d40f03d67390e88b2723d8b959349d51ec",
+    "formal/source/migration-v3/expressions/recursive/Spec.dfy": "8cddfe997b95016af3b6de8d3b7ccc90acb81f3460bfa81b0cdd339b0decbc96"
+  },
+  "verificationScope": "Native closure only; generation, source correspondence, faults and independent acceptance are separate gates."
+}

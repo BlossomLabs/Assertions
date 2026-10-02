@@ -1,0 +1,14 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/name-representation/Five.generated.dfy",
+    "formal/bytecode/value-array/name-representation/Six.generated.dfy",
+    "formal/bytecode/value-array/name-representation/Representation.dfy"
+  ],
+  "selectedModuleCount": 3,
+  "scope": "Three complete owners for constructive integer/bitvector top-five/six-byte shifts and their exact equivalence to independent complete bytes/string literal sequences for arbitrary represented calldata including zero-filled tails. Actual parser connections, rejected descriptors, tuples and codec retention remain required. No public credit.",
+  "assumptions": [
+    "Reviewed pinned runtime/interpreter and current tools remain trusted.",
+    "All constructive bitvector/conversion and memory helpers require the complete current final native dependency closure. No name-classification correctness is assumed."
+  ],
+  "formatExclusions": {}
+}

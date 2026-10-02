@@ -1,0 +1,14 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-decoder-invocation",
+      "owner": "formal/bytecode/word-fold/decoder-invocation"
+    }
+  ],
+  "assumptions": [
+    "Native wrapper entry has arbitrary lower stack prefix and byte memory, fitting derived stack capacity and calldata length below 2^256. These exact instructions preserve the lower stack and all memory and pass the actual calldata size and offset4 to the compiler decoder.",
+    "The full PC-zero selectors are separate checked development modules. Raw decoder success and rejection, enum/alignment/window admission, empty/nonempty behavior, all loop/callback/error paths and scalar terminal remain required before public coverage.",
+    "Reviewed EVM step semantics, sufficient reached resources and toolchain are explicit trusted boundaries. No gas, deployment or performance claims."
+  ]
+}

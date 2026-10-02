@@ -1,0 +1,18 @@
+{
+  "status": "prepared-native-unlaunched-no-public-credit",
+  "pc": 9399,
+  "baselineOpcode": 9,
+  "candidateOpcode": 8,
+  "candidateSha256": "89264416208120dd3eeab87a7670ee339815b38b779f85b191d485a94b0109c7",
+  "baselineFixtureOrdinal": 5,
+  "baselineFixture": "UU-5",
+  "intendedValue": 2,
+  "candidateValue": 3,
+  "scope": "Baseline-covered actual result update; both opcodes normatively interpreted. Complete physical candidate and native matching fault still pending.",
+  "physicalReceipts": 122,
+  "wrongIntendedOutcomes": 42,
+  "physicalPreflight": "/tmp/operations-modexp-semantic-fault-preflight-v1",
+  "independentReplayPassed": true,
+  "staticWitnessChecks": "/tmp/operations-modexp-semantic-witness-static-v1/checks.json",
+  "preservedHarnessFailure": "/tmp/operations-modexp-semantic-independent-v1-failed/diagnostic.json"
+}

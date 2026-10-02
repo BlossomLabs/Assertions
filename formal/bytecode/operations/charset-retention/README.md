@@ -1,0 +1,3 @@
+# Charset preparation
+
+Prepared, unlaunched complete 32-module charset retained proof driver. Requires every native declaration and assertion, zero audits, exact source/compiler/runtime/tool closure, byte-identical generation, independently replayed complete 81-fixture baseline and matching AND fault, and unchanged input/tool hashes. The independent owner checker accepts --manifest; its main retained validation is not yet executed. Public coverage remains unchanged. Output should be a fresh evidence subdirectory under this owner. Reached stack/memory/instruction resources, finite calldata below 2^64 and reviewed integer-word interpreter remain explicit; no gas/deployment/performance theorem.

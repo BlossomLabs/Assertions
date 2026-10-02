@@ -1,0 +1,32 @@
+{
+  "id": "original-operations-fixed-point-muldiv-regenerated",
+  "status": "blocked-missing-inputs",
+  "originalRoot": "formal/operations/fixed-point/muldiv-regenerated",
+  "entry": "formal/operations/fixed-point/muldiv-regenerated/Control.generated.dfy",
+  "verificationEntries": [
+    "formal/operations/fixed-point/muldiv-regenerated/Control.generated.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [],
+    "execution": [
+      "formal/operations/fixed-point/muldiv-regenerated/Control.generated.dfy",
+      "formal/operations/fixed-point/muldiv-regenerated/Helpers.generated.dfy"
+    ],
+    "correspondence": [],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/operations/fixed-point/muldiv-regenerated/Control.generated.dfy": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29",
+    "formal/operations/fixed-point/muldiv-regenerated/Helpers.generated.dfy": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a"
+  },
+  "missingInputs": [
+    "formal/operations/fixed-point/muldiv-regenerated/Memory.dfy"
+  ],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

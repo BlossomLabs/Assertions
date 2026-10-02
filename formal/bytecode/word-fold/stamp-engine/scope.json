@@ -1,0 +1,27 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-stamp-loop",
+      "owner": "formal/bytecode/word-fold/stamp-loop",
+      "generatedNames": [
+        "Iteration",
+        "Exit"
+      ]
+    },
+    {
+      "name": "fold-stamp-outer",
+      "owner": "formal/bytecode/word-fold/stamp-outer",
+      "generatedNames": [
+        "Entry",
+        "Exit"
+      ]
+    }
+  ],
+  "assumptions": [
+    "Exact physical19449 accumulator Store then original supplied-order element writes through16850 and actual11291 cleanup/16536 return. Full lower caller stack preserved. Arbitrary accumulator and element uint256 words; duplicate and partly overlapping admitted offsets allowed.",
+    "Raw independent offset-array representation count bound derives from fitting bytes. No extra Range element-count or index bound introduced. Loop decreases arrayCount-index without a fixture/fuel cutoff. Enough allocated memory for the whole admitted template and sufficient reached resources.",
+    "Exact byte-level LastByte recursion gives the original byte outside all writes, accumulator bytes first, and every supplied element word in order; later overlapping bytes overwrite earlier ones. All original complete words before the template pointer are preserved, including actual run fields when pointer320.",
+    "Static format/resolve/audit and selected native verification remain separate. Selected imported contracts assumed. Full raw iteration/domain/stamp/callback/guards/errors/early exits/scalar terminal, complete fresh included graph, EVM fixtures, matching semantic mutations and independent retained checker mandatory before public coverage. Truthful observations explicit where reached; no gas/deployment/performance/compiler-correctness claim."
+  ]
+}

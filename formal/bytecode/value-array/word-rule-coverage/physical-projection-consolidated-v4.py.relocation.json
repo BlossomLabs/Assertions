@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/value-array/word-rule-coverage/physical-projection-consolidated-v3.py",
+  "output": "/home/sem/assertions/formal/bytecode/value-array/word-rule-coverage/physical-projection-consolidated-v4.py",
+  "source_sha256": "77d1913cd9d7fc9ef03d4ace7c8ce8d23a27aceae233e39e4e0d33f6bd0c5fc2",
+  "output_sha256": "77d1913cd9d7fc9ef03d4ace7c8ce8d23a27aceae233e39e4e0d33f6bd0c5fc2",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

@@ -1,0 +1,7 @@
+# Fold template allocation and physical copy development
+
+The generated control retains the exact shared fold-loop entry16426 through first loop header16484, including physical template allocation/header, CALLDATACOPY and32-byte zero write immediately after the declared payload. The original lower Fold stack, return12157, run/source/template/window arguments and loop index0 are retained. This copy imposes no fold count or output-allocation count bound.
+
+The handwritten memory support connects the physical copied payload to the exact original raw calldata slice and proves disjoint prior word frames. In the raw FoldRun context, heap length and initial free pointer are both320, so each of the six run fields remains unchanged, including the full unsigned256-bit range count and initial accumulator.
+
+Generated files are produced only by generate.py and its formatter. All package files finish before snapshot. Static checks and selected native evidence remain separate; imported contracts are assumed in selected native checks. Raw/target/allocation/copy connection, domain/stamping/callback/guards/early exits/errors/scalar output, full current included graph, EVM cases, matching semantic faults and independently checked retention remain mandatory before public coverage. Representation, sufficient reached resources and truthful observations stay explicit. No gas/deployment/performance or compiler-correctness claim.

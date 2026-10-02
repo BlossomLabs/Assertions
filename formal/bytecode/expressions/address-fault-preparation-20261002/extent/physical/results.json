@@ -1,0 +1,174 @@
+[
+  {
+    "name": "target-tuple-2",
+    "kernel": "AddressLength",
+    "trace": "target-tuple-2.json",
+    "expectedFailed": true,
+    "actualFailed": true,
+    "expectedBytes": "64a424930000000000000000000000000000000000000000000000000000000000000001",
+    "actualBytes": "64a4249300000000000000000000000000000000000000000000000000000000000000",
+    "receiptPassed": false,
+    "kernelPassed": true,
+    "physical": {
+      "passed": true,
+      "states": 39,
+      "failures": [],
+      "initial": {
+        "ptr": "640",
+        "length": "64",
+        "index": "1",
+        "free": "896",
+        "ret": "3694",
+        "prefix": [
+          "227786474",
+          "86",
+          "68",
+          "1124",
+          "0",
+          "2",
+          "128",
+          "0",
+          "1641",
+          "68",
+          "1124",
+          "0",
+          "128",
+          "1",
+          "96",
+          "676",
+          "0"
+        ]
+      }
+    },
+    "passed": false
+  },
+  {
+    "name": "target-tuple-3",
+    "kernel": "AddressLength",
+    "trace": "target-tuple-3.json",
+    "expectedFailed": true,
+    "actualFailed": true,
+    "expectedBytes": "64a424930000000000000000000000000000000000000000000000000000000000000001",
+    "actualBytes": "64a4249300000000000000000000000000000000000000000000000000000000000000",
+    "receiptPassed": false,
+    "kernelPassed": true,
+    "physical": {
+      "passed": true,
+      "states": 39,
+      "failures": [],
+      "initial": {
+        "ptr": "640",
+        "length": "96",
+        "index": "1",
+        "free": "928",
+        "ret": "3694",
+        "prefix": [
+          "227786474",
+          "86",
+          "68",
+          "1156",
+          "0",
+          "2",
+          "128",
+          "0",
+          "1641",
+          "68",
+          "1156",
+          "0",
+          "128",
+          "1",
+          "96",
+          "708",
+          "0"
+        ]
+      }
+    },
+    "passed": false
+  },
+  {
+    "name": "target-tuple-8",
+    "kernel": "AddressLength",
+    "trace": "target-tuple-8.json",
+    "expectedFailed": true,
+    "actualFailed": true,
+    "expectedBytes": "64a424930000000000000000000000000000000000000000000000000000000000000001",
+    "actualBytes": "64a4249300000000000000000000000000000000000000000000000000000000000000",
+    "receiptPassed": false,
+    "kernelPassed": true,
+    "physical": {
+      "passed": true,
+      "states": 39,
+      "failures": [],
+      "initial": {
+        "ptr": "640",
+        "length": "256",
+        "index": "1",
+        "free": "1088",
+        "ret": "3694",
+        "prefix": [
+          "227786474",
+          "86",
+          "68",
+          "1316",
+          "0",
+          "2",
+          "128",
+          "0",
+          "1641",
+          "68",
+          "1316",
+          "0",
+          "128",
+          "1",
+          "96",
+          "868",
+          "0"
+        ]
+      }
+    },
+    "passed": false
+  },
+  {
+    "name": "target-tuple-33",
+    "kernel": "AddressLength",
+    "trace": "target-tuple-33.json",
+    "expectedFailed": true,
+    "actualFailed": true,
+    "expectedBytes": "64a424930000000000000000000000000000000000000000000000000000000000000001",
+    "actualBytes": "64a4249300000000000000000000000000000000000000000000000000000000000000",
+    "receiptPassed": false,
+    "kernelPassed": true,
+    "physical": {
+      "passed": true,
+      "states": 39,
+      "failures": [],
+      "initial": {
+        "ptr": "640",
+        "length": "1056",
+        "index": "1",
+        "free": "1888",
+        "ret": "3694",
+        "prefix": [
+          "227786474",
+          "86",
+          "68",
+          "2116",
+          "0",
+          "2",
+          "128",
+          "0",
+          "1641",
+          "68",
+          "2116",
+          "0",
+          "128",
+          "1",
+          "96",
+          "1668",
+          "0"
+        ]
+      }
+    },
+    "passed": false
+  }
+]

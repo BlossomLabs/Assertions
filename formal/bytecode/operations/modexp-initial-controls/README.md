@@ -1,0 +1,3 @@
+# Modular-power initialization/threshold gate preparation
+
+Two complementary exact paths from helper PC9244: nonzero modulus initializes result=1%modulus and reduces base, then dispatches exponent below2^32 to the loop frontier9367 or exponent at least2^32 to request preparation9283. Return continuation, outer stack, memory and external frame history remain parameterized. Complete current source ASTs and exact runtime instruction boundaries are generated; zero-modulus physical Panic, request preparation, loop, wrapper, inverse and physical return connections remain separate open proofs. No public coverage credit.

@@ -1,0 +1,12 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/checked-add/Add.generated.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "One complete generic exact nonoverflowing checked-add routine owner, with arbitrary lower stack/memory and valid return JUMPDEST. This is only the reached no-overflow arithmetic branch; overflow serialization, full descriptor parser/codec and retained public graph remain open; no public coverage.",
+  "assumptions": [
+    "Pinned exact Collections runtime and reviewed scan machine/toolchain.",
+    "Actual nonoverflowing word operands, fitting stack, valid reached return JUMPDEST; imported dependencies require complete final native closure."
+  ],
+  "formatExclusions": {}
+}

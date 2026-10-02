@@ -1,0 +1,26 @@
+{
+  "source": "contracts/Operations.sol",
+  "sourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce",
+  "buildInfoId": "solc-0_8_36-ac0eef8f2a0c22be618862258c50c9c272597da3",
+  "selectors": [
+    "6900a3ae",
+    "a322c40e"
+  ],
+  "functions": [
+    {
+      "name": "uint256",
+      "bodySha256": "656e83930283bfd1aad1abd746f7308530020887d2d773648d95a718b495d203",
+      "exactNormalizedBody": "functiontoString(uint256v)publicpurereturns(stringmemory){if(v==0)return\"0\";uint256digits;for(uint256t=v;t>0;t/=10){digits++;}bytesmemorybuf=newbytes(digits);for(uint256t=v;t>0;t/=10){digits--;buf[digits]=bytes1(uint8(48+(t%10)));}returnstring(buf);}"
+    },
+    {
+      "name": "int256",
+      "bodySha256": "d273e337ef07a262b8f843ef04b0187f3c66c81bac98912625f8f9fafcbe22a5",
+      "exactNormalizedBody": "functiontoString(int256value)externalpurereturns(stringmemory){returnstring.concat(value<0?\"-\":\"\",toString(_magnitude(value)));}"
+    },
+    {
+      "name": "_magnitude",
+      "bodySha256": "bb188a021b6ef3add7c20507e987e67cd914791c0ff514d7b8bc91fcc6b2908b",
+      "exactNormalizedBody": "function_magnitude(int256value)privatepurereturns(uint256){unchecked{returnvalue<0?uint256(-(value+1))+1:uint256(value);}}"
+    }
+  ]
+}

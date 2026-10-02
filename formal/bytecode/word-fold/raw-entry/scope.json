@@ -1,0 +1,14 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-raw-entry-compositions",
+      "owner": "formal/bytecode/word-fold/raw-entry"
+    }
+  ],
+  "assumptions": [
+    "PC-zero caller has zero value, at least4 and below2^64 calldata bytes and the compiler-bound assigned selector. Calldata heads/tails are otherwise arbitrary, including loose/shared/misaligned tail positions; range count and initial accumulator stay full uint256.",
+    "Checked partition separates fitting seven-head input from every complementary ordered empty compiler REVERT case. Success ends at actual decoded fold-body entry with exact nine/ten stack fields; body and resource/external behavior remain open.",
+    "Selected composition assumes imported leaf contracts. Fresh complete included graph, all fold body/loop/early exits/callback/errors/output, finite EVM fixtures, matching semantic faults and independent retained checker remain required. No gas, deployment or performance claim."
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/word-bound/Scalar.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "Complete exact uint32 bound for actual EVM bitwise OR used by the static-array length/footprint guard. No parser/native/public credit until complete retained closure. All full-width word operands are preserved under explicit two uint32 bounds.",
+  "assumptions": [
+    "Reviewed actual getter bitwise definition, existing constructive word conversions and current proof tools remain trusted. All imported current bodies require final complete native closure."
+  ],
+  "formatExclusions": {}
+}

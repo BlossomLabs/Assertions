@@ -6,8 +6,9 @@ import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {network} from 'hardhat';
 const out=resolve(process.argv[2]);mkdirSync(out,{recursive:true});
-const candidate=process.argv[3]??null,only=process.argv[4]??null,onlyKind=process.argv[5]??null;
-if(Boolean(candidate)!==Boolean(only)||Boolean(candidate)!==Boolean(onlyKind))throw new Error('Incomplete candidate arguments');
+const candidate=process.argv[3]&&process.argv[3]!=='-'?process.argv[3]:null,only=process.argv[4]??null,onlyKind=process.argv[5]??null;
+if(candidate&&(!only||!onlyKind)||!candidate&&onlyKind)throw new Error('Incomplete candidate arguments');
+if(only&&!['Assertions','Expressions','Collections'].includes(only))throw new Error('Unknown contract');
 const sha=x=>createHash('sha256').update(x).digest('hex');const frozen=JSON.parse(readFileSync(new URL('../dispatch/inventory.json',import.meta.url)));
 const connection=await network.connect('hardhatMainnet'),provider=connection.provider,accounts=await provider.request({method:'eth_accounts'}),results=[];
 for(const [ordinal,contract] of ['Assertions','Expressions','Collections'].entries()){

@@ -1,0 +1,34 @@
+{
+  "id": "original-operations-ascii",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/operations/ascii",
+  "entry": "formal/operations/ascii/Connection.dfy",
+  "verificationEntries": [
+    "formal/operations/ascii/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/operations/ascii/Model.dfy"
+    ],
+    "execution": [
+      "formal/operations/ascii/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/operations/ascii/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/operations/ascii/Connection.dfy": "516bba85b7c15ca66ccf45bc27262ae3931312ff684a85fbdc39edae1c3a8659",
+    "formal/operations/ascii/Control.generated.dfy": "97f3fc1dabfe4274c6968673c23deed3aebe83658b65bc9463cc5ed03dbad51b",
+    "formal/operations/ascii/Model.dfy": "773268f878639208a80be491952bcf3d0dce73e3cbbe32c8b4858637e137bbf0"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

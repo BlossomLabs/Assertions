@@ -1,0 +1,50 @@
+[
+  {
+    "name": "packArray-empty-uint8"
+  },
+  {
+    "name": "unpackArray-empty-uint8"
+  },
+  {
+    "name": "packArray-narrow-boundaries"
+  },
+  {
+    "name": "unpackArray-narrow-boundaries"
+  },
+  {
+    "name": "packArray-full-words"
+  },
+  {
+    "name": "unpackArray-full-words"
+  },
+  {
+    "name": "packArray-bytes32"
+  },
+  {
+    "name": "unpackArray-bytes32"
+  },
+  {
+    "name": "packArray-byte-padding"
+  },
+  {
+    "name": "unpackArray-byte-padding"
+  },
+  {
+    "name": "packArray-strings"
+  },
+  {
+    "name": "unpackArray-strings"
+  },
+  {
+    "name": "packArray-fixed-arrays"
+  },
+  {
+    "name": "unpackArray-fixed-arrays"
+  },
+  {
+    "name": "packArray-nested-dynamic-arrays"
+  },
+  {
+    "name": "unpackArray-nested-dynamic-arrays"
+  }
+]

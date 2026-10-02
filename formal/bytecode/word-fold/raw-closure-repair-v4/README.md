@@ -1,0 +1,3 @@
+# Isolated raw fold connection repair V4
+
+All eight handwritten parent connections are cloned from the preserved V3 owner. Target and template joins now hide unrelated external/copy step traces while using explicit checked sequence-frame endpoint and stack-associativity lemmas. Requirements, reached observations, resource scope, bytecode instructions and semantic posts are unchanged. No generated file is edited. Native execution waits for actual prior pipeline termination; audit/resolution provide zero proof/public credit. All current native closures and retained fault/checker gates remain required.

@@ -1,0 +1,18 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-scalar-return",
+      "owner": "formal/bytecode/word-fold/scalar-return",
+      "generatedNames": [
+        "Range",
+        "Bytes",
+        "Words"
+      ]
+    }
+  ],
+  "assumptions": [
+    "Current compiler-bound decoded raw caller fields, fitting finite raw calldata with loose tails, unrestricted output word and actual arbitrary fitting free pointer loaded from physical memory. No empty count or initial-accumulator restriction.",
+    "Fitting finite aligned memory and reached resources; trace starts at12157 after independently proven loop cleanup. Selected imported bodies assumed until full included raw/loop/failure/physical/fault/independent retained graph. No public credit or gas/deployment/performance/compiler correctness claim."
+  ]
+}

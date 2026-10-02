@@ -1,0 +1,5 @@
+# Consolidated raw fold connection repair V6
+
+The original68-module batch actually terminated with ten failed modules. V3's eleven-module native stack/empty repair remains live; no native job is restarted. Unstarted V4/V5 queues and their unused retained continuations were explicitly superseded before any native/retained snapshot, preserving their static owners/results. This complete successor includes their checked endpoint joins plus owned allocation mask/stack and copied-payload slice bridges.
+
+Verify all twelve complete selected modules after the live V3 and five-module array routing batch terminate. All generated allocation files are produced only by their generator and must reproduce byte-identically. Admissions, resources, observations, exact PCs and semantic posts remain unchanged. Every208 current transitive body, compiler/runtime identity, physical/source/bytecode fault and independent retained checker still needs completion before public credit. Source and bytecode tracks remain separate; no gas/deployment/performance/compiler-correctness claim follows.

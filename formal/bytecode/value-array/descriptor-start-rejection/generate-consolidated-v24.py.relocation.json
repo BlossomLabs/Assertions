@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/value-array/descriptor-start-rejection/generate.py",
+  "output": "/home/sem/assertions/formal/bytecode/value-array/descriptor-start-rejection/generate-consolidated-v24.py",
+  "source_sha256": "57cd33371cac3a38a438e058207db5c3319877b090569042d00bc13150428b73",
+  "output_sha256": "57cd33371cac3a38a438e058207db5c3319877b090569042d00bc13150428b73",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

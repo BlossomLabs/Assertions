@@ -1,0 +1,8 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [],
+  "assumptions": [
+    "Same all-word machine SHR248 quotient and each actual existing calldata byte, including final byte with zero-filled tail. No32-byte-fit or value-domain narrowing.",
+    "Imports the complete native-passed V8 arithmetic bridge199 obligations unchanged; actual machine definition is established in a separate lemma before quotient facts are introduced. Imported bodies assumed until complete included retained fold graph passes."
+  ]
+}

@@ -1,0 +1,51 @@
+[
+  {
+    "input": "formal/bytecode/assertions-primitives/RawWordPositive.generated.dfy",
+    "inputSha256": "e3dc5a5e170196df02804aa53d044a57f2cbbe400cd4a36756a73519ade9caa6",
+    "output": "RawWordPositive.generated.dfy",
+    "changes": [
+      "module/include routing",
+      "scanned caller inventory",
+      "all reached frame instruction bounds"
+    ]
+  },
+  {
+    "input": "formal/bytecode/assertions-primitives/RawWordNegative.generated.dfy",
+    "inputSha256": "9dd13eedf32659306a92ba52a13dad579aaddd3957be82263636a2b30851f72f",
+    "output": "RawWordNegative.generated.dfy",
+    "changes": [
+      "module/include routing",
+      "scanned caller inventory",
+      "all reached frame instruction bounds"
+    ]
+  },
+  {
+    "input": "formal/bytecode/assertions-primitives/RawWordPositiveOob.generated.dfy",
+    "inputSha256": "0e75845fe9f844351b790179229afb020d50e22c6fb67cc3e5bc9b6a82a43127",
+    "output": "RawWordPositiveOob.generated.dfy",
+    "changes": [
+      "module/include routing",
+      "scanned caller inventory",
+      "all reached frame instruction bounds"
+    ]
+  },
+  {
+    "input": "formal/bytecode/assertions-primitives/RawWordNegativeOob.generated.dfy",
+    "inputSha256": "053a612325bc75cea686ac6ae5405247827803899c6aa015aea5e01f1863cfd0",
+    "output": "RawWordNegativeOob.generated.dfy",
+    "changes": [
+      "module/include routing",
+      "scanned caller inventory",
+      "all reached frame instruction bounds"
+    ]
+  },
+  {
+    "input": "formal/bytecode/assertions-primitives-control/PickExit.generated.dfy",
+    "inputSha256": "deb4878d0fb7506dcd82f15df111ef2a495c5a6b2ae95ddbcbf2812660267062",
+    "output": "Exit.generated.dfy",
+    "changes": [
+      "module/include routing",
+      "scanned caller inventory"
+    ]
+  }
+]

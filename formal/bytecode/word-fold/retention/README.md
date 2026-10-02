@@ -1,0 +1,13 @@
+# Complete fold bytecode retention preparation
+
+The prospective root is the complete public-entry outcome theorem. Its transitive included graph contains raw rejections, empty returns, target checks, full successful/first-stop return and arbitrary successful prefix to first callback failure, with all physical memory and error helpers.
+
+`plan.py` inventories exact current module owners and include-only files. `reuse-native.py` checks terminal whole-module native logs, CSVs, declaration inventories, tool identities and identical current transitive contracts, including recursively retained provenance. Failed whole drivers contribute only complete individual modules. `native-sources.json` lists the candidate origins; missing or incompatible modules require fresh full native verification with the standard 30-second, two-core settings.
+
+`verify.py` captures one complete source/compiler/tool input set, regenerates each generated owner, closes all 208 module bodies, audits the public root, recompiles the exact runtime, replays all 258 physical fixtures, and requires three translated native/EVM source faults plus three matching ordinary native/physical bytecode faults. The diagnostic candidate parsers keep the original semantic postconditions and reproduce all baseline output bytes exactly. Parser refusal, precondition failure, timeout and inconclusive verification never count as semantic fault evidence.
+
+The independent checker is `/home/sem/Projects/Assertions/scripts/check-fold-words-bytecode-evidence.py`. Its `--manifest` argument checks a concrete retained run before a ledger exists. It rechecks provenance and every declaration, reproduces current generated owners and compiler identity, and independently replays all physical fixtures and bytecode counterexamples. Only a complete retained pass and a successful independent check permit a ledger and the original coverage increment from 12/49 to 15/49.
+
+These package files are still preparation: no retained source snapshot has been launched. Finish all files and the native origin list before launching. Every current compiler/runtime/source/tool identity and required gate in `proof-spec.json` must pass; selected development imports remain assumptions until then. The exact hashed handwritten dependency listed in `formatExclusions` is exempt only from formatter style checking to preserve previously captured bytes. Every one of its native declarations and its audit remains required; no generated or semantic proof exclusion is permitted.
+
+Preserve captured predecessors, generated owners and all uncommitted work. Generated files are emitted only by their owned generators. No public coverage, gas, deployment, performance or compiler-correctness claim is made here.

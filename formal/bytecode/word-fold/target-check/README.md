@@ -1,0 +1,7 @@
+# Fold target check development
+
+Selected exact fold positive/no-code target observation leaves only, including physical36-byte InvalidCallbackTarget before any allocation; no range-count bound. Imported contracts assumed; raw connection and full nonempty body/retention remain open.
+
+The exact nonempty invocation retains11 actual instructions per domain and enters shared target helper15859 with the actual fold continuation12052. Successful code admission retains16 instructions and consumes exactly one truthful positive code-size observation; no-code rejection retains43 instructions and writes the physical36-byte InvalidCallbackTarget(address) error. Fold rejection occurs before any allocation, so its memory model is actual Store([],64,128), with no dependency on or bound on the full-width range count. Old returndata is preserved.
+
+Generated files are produced only by owned generators and formatter; shared supports remain immutable. All owner files finish before snapshot. Static preflight is separate from native proofs, and selected native imports are assumed. Complete raw/ordered-window/target connections, FoldRun allocation/template copy/domain/stamping/callback/early-exit/error/scalar output, full fresh included graph, EVM cases, matching semantic faults and independently checked retained evidence remain required before public coverage. Representation, sufficient reached resources and truthful observations are explicit. No gas/deployment/performance or compiler-correctness claim.

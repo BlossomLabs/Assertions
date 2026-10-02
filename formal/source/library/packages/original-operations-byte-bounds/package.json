@@ -1,0 +1,34 @@
+{
+  "id": "original-operations-byte-bounds",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/operations/byte-bounds",
+  "entry": "formal/operations/byte-bounds/Connection.dfy",
+  "verificationEntries": [
+    "formal/operations/byte-bounds/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/operations/byte-bounds/Model.dfy"
+    ],
+    "execution": [
+      "formal/operations/byte-bounds/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/operations/byte-bounds/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/operations/byte-bounds/Connection.dfy": "8914f9e0fcd0a7efb3e2203d7e60f77729aca7a7b77d5a6a96174b4e69644a30",
+    "formal/operations/byte-bounds/Control.generated.dfy": "3605e281e802d58c74ba34a56ff6698e87c828c952503411f0c3f17ed2103743",
+    "formal/operations/byte-bounds/Model.dfy": "2766b268945894a245d28a7aba0f37885de3b272a5991d9e77a2ecdfff68692d"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

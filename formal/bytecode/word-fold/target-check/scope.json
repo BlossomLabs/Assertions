@@ -1,0 +1,16 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "target-check",
+      "owner": "formal/bytecode/word-fold/target-check"
+    }
+  ],
+  "assumptions": [
+    "Pinned exact current compiler runtime, fold selectors and complete reached target invocation/helper/control/error bytes. Nonempty range count retains full uint256 domain; independent finite source/array spans derive from raw ABI fitting admission. No output-array bound is imposed on range count.",
+    "Fold target check occurs after ordered window validation and nonempty count test, before FoldRun allocation or template copying. Actual helper entry15859 has continuation12052 and pre-allocation memory Store([],64,128).",
+    "Target address is canonical below2^160. Exactly one truthful reached EXTCODESIZE observation decides code-size-zero rejection or positive-code admission. Old returndata is preserved; cursor advances by exactly one observation in target leaves and zero during invocation.",
+    "Code-less rejection writes exact36-byte InvalidCallbackTarget(address) using initial free pointer128 and physical REVERT. Successful admission preserves the lower full Fold stack and byte memory; further body/allocation/template/callback/early-exit/errors/scalar output remain open.",
+    "Selected native imported contracts are assumed. Static preflight, complete current included graph, EVM cases, matching semantic mutations and independent retained checking remain mandatory before public coverage. Sufficient reached resources and truthful reached observations are explicit. No gas/deployment/performance or compiler-correctness claim."
+  ]
+}

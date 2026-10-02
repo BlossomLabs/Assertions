@@ -1,0 +1,15 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/type-classification/Mathematics.dfy",
+    "formal/bytecode/value-array/type-classification/Suffixes.dfy",
+    "formal/bytecode/value-array/type-classification/Parser.dfy"
+  ],
+  "selectedModuleCount": 3,
+  "scope": "Constructive universal finite independent descriptor grammar classification: derive either an accepted recursive descriptor or a finite independent rejection tree for every represented input at p<=limit<2^64. Successful prefixes, decimal stops, and tuple partial sums are constructed and fitting is derived. Native verification, actual caller resource admission/execution and public codecs/retained controls remain open; no public credit.",
+  "assumptions": [
+    "Current source/tool identities and reviewed descriptor/EVM representation remain explicit.",
+    "Original positions within the represented descriptor limit below 2^64. No finite descriptor tree, error packet, success or rejection witness is supplied as an input premise.",
+    "These are unverified whole native preparations; complete current include-closure verification and execution/caller/fault/retained independent acceptance are still required."
+  ],
+  "formatExclusions": {}
+}

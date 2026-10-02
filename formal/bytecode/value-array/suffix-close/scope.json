@@ -1,0 +1,14 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/suffix-close/Empty.generated.dfy",
+    "formal/bytecode/value-array/suffix-close/Dynamic.generated.dfy",
+    "formal/bytecode/value-array/suffix-close/Static.generated.dfy"
+  ],
+  "selectedModuleCount": 3,
+  "scope": "Three complete exact successful suffix-closing owners covering empty [], fixed dynamic and fixed static arrays, including actual checked routines and full-width OR footprint guard derived from mathematical uint32 bounds. Complete scalar/native closure, arbitrary suffix composition, all rejecting branches, tuples, codec and retained public graph remain required. No public credit.",
+  "assumptions": [
+    "Pinned runtime, reviewed scan/copy/BYTE machine and current tools remain trusted.",
+    "Arbitrary represented calldata/memory/lower frame and reached fitting resources. Mathematical valid-branch bounds preserve arbitrary array k and static footprint within actual accepted uint32 range. Imported current bodies require complete final native closure."
+  ],
+  "formatExclusions": {}
+}

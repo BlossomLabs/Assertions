@@ -1,0 +1,12 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/checked-increment/Increment.generated.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "One complete generic exact nonoverflowing checked-increment routine owner, with arbitrary lower stack/memory and valid return JUMPDEST. Overflow/panic serialization, full arbitrary descriptor parser/codec and retained public graph remain open; no public coverage.",
+  "assumptions": [
+    "Pinned exact Collections runtime and reviewed scan machine/toolchain.",
+    "Actual word+1 below2^256, fitting stack and actual valid caller return JUMPDEST; imported dependencies require complete final native closure."
+  ],
+  "formatExclusions": {}
+}

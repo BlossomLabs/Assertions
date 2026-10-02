@@ -1,0 +1,17 @@
+{
+  "status": "isolated-handwritten-connection-repairs-not-public-evidence",
+  "rootProofs": [
+    "formal/bytecode/word-fold/raw-closure-repair-v9/public-entry-repair-v2/Connection.dfy"
+  ],
+  "scope": "Fresh complete unchanged raw Windows module after actual V9 process termination. V9 Run correctness batch124timed out30seconds; V8prior selected native passed254but its whole driver was interrupted and excluded. Preserve sources/admissions/contracts and all failed/interrupted evidence. Same30second limit, one two-core worker; only complete native module can fill current retained provenance, and no public credit follows alone.",
+  "selectedSources": [
+    "formal/bytecode/word-fold/raw-closure-repair-v8/raw-windows/Connection.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "assumptions": [
+    "Pinned exact compiler runtime and reviewed machine semantics; unchanged raw decoder admissions and public contracts.",
+    "Each fresh whole-module run assumes included contracts; complete retained graph still required. Actual memory, finite resources and truthful reached observations remain explicit.",
+    "Generated wrappers require owned byte-identical regeneration; historical failed evidence preserved. No bytecode coverage until full retention/checker, and no gas/deployment/performance claim."
+  ],
+  "formatExclusions": {}
+}

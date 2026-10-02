@@ -1,0 +1,15 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-stamp-invocation-load-frame-v2",
+      "owner": "formal/bytecode/word-fold/stamp-invocation-repair-v2"
+    }
+  ],
+  "assumptions": [
+    "Actual allocated FoldRun memory contains320 bytes and is32-byte aligned. This explicit physical geometry makes every run-field MLOAD expansion a no-op; it follows from raw allocation/template copying and does not bound Range count. Previous symbolic unchanged-memory owner omitted this premise; failed invocation evidence is preserved.",
+    "Pinned current Collections runtime and foldRange/foldBytes/foldWords selectors. Full11 loop words plus actual zero scratch and element at16512; run pointer128 and return12157. Arbitrary accumulator offset/value and element words, exact physical MLOAD224/256.",
+    "Every18 actual instruction through19449 stamp helper entry retained; resulting full caller frame plus element, return16536, call pointer, accumulator offset/value, array offset/count and element. Memory unchanged, arbitrary lower stack preserved and no external observation consumed.",
+    "Selected native imports assumed. Full domain/stamping/callback/guard/error/early-exit/raw scalar terminal and fresh included closure, physical replay, semantic mutation and independent retained checking remain mandatory before public credit. Representation, sufficient reached resources and truthful observations explicit; no gas/deployment/performance/compiler-correctness claim."
+  ]
+}

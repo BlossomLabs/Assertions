@@ -1,0 +1,15 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/shape-return/Success.generated.dfy",
+    "formal/bytecode/value-array/shape-return/Trailing.generated.dfy",
+    "formal/bytecode/value-array/shape-return/Connection.dfy"
+  ],
+  "selectedModuleCount": 3,
+  "scope": "Three complete prepared owners for actual descriptor shape completeness check: generic successful return, complete trailing-descriptor InvalidTypeDescriptor(end) REVERT, and arbitrary complete valid recursive descriptor shape call through final caller return. Original full lower frames and unchanged successful memory are preserved. Universal preceding rejecting parser/raw public connection, complete codecs and all final retention remain open. No public credit.",
+  "assumptions": [
+    "Current pinned runtime/tools and reviewed reached EVM model.",
+    "Successful complete independent descriptor syntax and full represented recursive stack budget, original offset/length below 2^64. Its mathematical word bound is derived by complete TypeBounds, not assumed.",
+    "Trailing rejection admits the exact returned incomplete end and fitting aligned free memory; raw public composition must derive the caller frame and memory. Every included current body needs full final native closure."
+  ],
+  "formatExclusions": {}
+}

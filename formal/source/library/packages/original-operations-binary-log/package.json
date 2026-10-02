@@ -1,0 +1,34 @@
+{
+  "id": "original-operations-binary-log",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/operations/binary-log",
+  "entry": "formal/operations/binary-log/Connection.dfy",
+  "verificationEntries": [
+    "formal/operations/binary-log/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/operations/binary-log/Model.dfy"
+    ],
+    "execution": [
+      "formal/operations/binary-log/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/operations/binary-log/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/operations/binary-log/Connection.dfy": "8594c44f6816e38809ea4addfe6a6c904ad0c60ce9aa2e2f5812b2aaa37ac805",
+    "formal/operations/binary-log/Control.generated.dfy": "0df721883a8efe7a1f26a18f6c207d12519d8497b063187200fb42c1cbde9eed",
+    "formal/operations/binary-log/Model.dfy": "aaf63b8efc1db2c1f34b0f4c4489773029351e909e60473bbc1596d48f0d30d2"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

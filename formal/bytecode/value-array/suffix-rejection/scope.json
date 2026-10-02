@@ -1,0 +1,17 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/suffix-rejection/Scalar.dfy",
+    "formal/bytecode/value-array/suffix-rejection/AtLimit.generated.dfy",
+    "formal/bytecode/value-array/suffix-rejection/WrongClose.generated.dfy",
+    "formal/bytecode/value-array/suffix-rejection/Wide.generated.dfy",
+    "formal/bytecode/value-array/suffix-rejection/Zero.generated.dfy"
+  ],
+  "selectedModuleCount": 5,
+  "scope": "Five complete prepared owners for independent mathematical uint32 OR overflow and all four compiled suffix rejection guards, from the actual post-footprint guard frame through exact complete InvalidTypeDescriptor(q) REVERT. Four guards cover missing closing byte at limit, wrong closing byte, length/footprint uint32 overflow, and nonempty zero length. Preceding footprint calculation/recursive rejecting parser connection, codecs and final retention remain open. No public credit.",
+  "assumptions": [
+    "Pinned current runtime/tools and reviewed reached EVM model.",
+    "The caller must derive the exact post-footprint frame, original offset/length and cursor below 2^64, lower stack budget, fitting aligned memory and free pointer.",
+    "Invalidity is independent actual byte or mathematical length/footprint bound or nonempty zero; complete current included native closure and all final acceptance gates remain required."
+  ],
+  "formatExclusions": {}
+}

@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/value-array/suffix-footprint/generate.py",
+  "output": "/home/sem/assertions/formal/bytecode/value-array/suffix-footprint/generate-consolidated-v24.py",
+  "source_sha256": "8b114090d26b1b368f532c1ef2c4b413f694cdde70f1980ddedf61a8ebd00662",
+  "output_sha256": "8b114090d26b1b368f532c1ef2c4b413f694cdde70f1980ddedf61a8ebd00662",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

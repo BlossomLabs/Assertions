@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "owner": "formal/operations/fixed-point-accuracy",
+  "status": "prepared-native-unverified",
+  "existingSourceCoverage": {
+    "entries": 92,
+    "total": 92,
+    "changed": false
+  },
+  "publicCoverageAdded": 0,
+  "analyticCoverageAdded": 0,
+  "baseline": "formal/operations/fixed-point/evidence/conditional-source-v1/manifest.json",
+  "nativeJobsAuthorizedForThisStage": false,
+  "allowedChecks": [
+    "resolve",
+    "format",
+    "audit",
+    "lightweight exact-fraction point diagnostics"
+  ],
+  "files": [
+    "Series.dfy",
+    "Bridge.dfy",
+    "Spec.dfy",
+    "Intervals.dfy",
+    "Kernel.dfy"
+  ],
+  "budgets": "absolute integer-WAD output units and relative exponential error are parameters; no numeric uniform budget claimed",
+  "openObligations": [
+    "Every new native well-formedness and lemma obligation",
+    "Series limit existence/positivity/real-function identification and algebra",
+    "Whole admitted-domain numerator/Horner/final scaling no-wrap certificates",
+    "Uniform exp/ln rational polynomial approximation certificates",
+    "Input normalization and constant/range-reduction/rescaling perturbation",
+    "Underflow cutoff analytic bound and overflow-domain separation",
+    "Positive-domain inverse bound with logarithm perturbation/real inverse identity",
+    "Retained native proofs, semantic sensitivity and independent analytic evidence checker"
+  ],
+  "assumptions": [
+    "Inherited conditional source/AST/primitive/compiler-ABI and resource premises remain separate.",
+    "No new analytic function axiom, assumption or universal approximation postcondition is introduced.",
+    "Conditional limit/finite-tail and no-wrap certificate preconditions are explicit open obligations, not verified domain facts.",
+    "Static success and concrete rational samples do not certify analytical bounds."
+  ],
+  "next": "After parent assigns native capacity, verify the new series and bridge modules, then discharge whole-domain certificates; do not touch existing retained source or bytecode graph."
+}

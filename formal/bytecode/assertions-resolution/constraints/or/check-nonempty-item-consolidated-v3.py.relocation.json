@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/check-nonempty-item-consolidated-v2.py",
+  "sourceSha256": "0dfaa2b1f250be43292600e0c56564f4924980cad5e1cee767d86d82225d83f6",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/check-nonempty-item-consolidated-v3.py",
+  "correction": "Skip supplementary boundary-only arrays; retain full trace fixtures"
+}

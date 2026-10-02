@@ -1,0 +1,12 @@
+{
+  "selectedSources": [
+    "formal/bytecode/value-array/named-parser/Parser.dfy"
+  ],
+  "selectedModuleCount": 1,
+  "scope": "One complete owner for the exact arbitrary successful non-tuple named-type parser, actual scanning/name classification/all suffixes/final return, against independent ASCII name bytes and complete bracket/digit/footprint semantics. No compiled name result is assumed. Rejecting name/suffix branches, tuple recursion and complete codecs/retention remain required. No public credit.",
+  "assumptions": [
+    "Pinned runtime, reviewed interpreter, current tools and adequate represented execution resources remain explicit.",
+    "All imported whole proof bodies require complete same-source native closure. Independent accepted descriptor semantics allow leading-zero lengths and repeated suffixes; no error or tuple behavior is inferred."
+  ],
+  "formatExclusions": {}
+}

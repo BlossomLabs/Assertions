@@ -1,0 +1,30 @@
+{
+  "id": "original-signed-mod",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/signed-mod",
+  "entry": "formal/signed-mod/Reference.dfy",
+  "verificationEntries": [
+    "formal/signed-mod/Reference.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/signed-mod/Reference.dfy",
+      "formal/signed-mod/SignedMod.dfy"
+    ],
+    "execution": [],
+    "correspondence": [],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/signed-mod/Reference.dfy": "0c0b7f376dc4c6f6dcdac9dbf9774ac5ae1828b158bfc741bb162597b2eb14fc",
+    "formal/signed-mod/SignedMod.dfy": "8f34b64f014de533b333e54f9b657605fad72b839309f4d127e0b0c0fe88b6b7"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/operations/identity.py",
+  "output": "/home/sem/assertions/formal/bytecode/operations/identity-consolidated-v1.py",
+  "source_sha256": "13d02b66931aa7ab6903fcd09bf54303dc0287c7fc30f3c814f1ef5b2a8a8891",
+  "output_sha256": "13d02b66931aa7ab6903fcd09bf54303dc0287c7fc30f3c814f1ef5b2a8a8891",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

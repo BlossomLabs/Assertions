@@ -1,0 +1,36 @@
+{
+  "id": "original-collections-preparation",
+  "status": "original-unrecertified",
+  "originalRoot": "formal/collections/preparation",
+  "entry": "formal/collections/preparation/Connection.dfy",
+  "verificationEntries": [
+    "formal/collections/preparation/Connection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/abi/Frames.dfy",
+      "formal/collections/preparation/Model.dfy"
+    ],
+    "execution": [
+      "formal/collections/preparation/Source.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/collections/preparation/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
+    "formal/collections/preparation/Connection.dfy": "6f78cbffadd998daa4c8c152e81a87685282a9bc121578d9a1107a188293b02d",
+    "formal/collections/preparation/Model.dfy": "fe987b75c7ad60773b12840a0736839af6868da55068ceb1c73eeebaf7f533a6",
+    "formal/collections/preparation/Source.generated.dfy": "0516fdc764b9b59b88475ad61cd0d2e2444d1899265045e6f6fa91861c91d133"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source closure selected for library navigation; historical acceptance is not freshly recertified. Native/source correspondence/fault gates remain separate."
+}

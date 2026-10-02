@@ -1,0 +1,615 @@
+{
+  "schemaVersion": 1,
+  "status": "prepared-static-passed-native-unlaunched",
+  "nativeProofLaunched": false,
+  "nativeVerified": false,
+  "publicCredit": false,
+  "preparedAt": "2026-10-02T04:53:42.299221+00:00",
+  "scope": "Generic exact PC11583-to-return or InvalidUtf8 validator for all finite fitting calldata windows, with full 52-class unit partition and decreasing outer induction. StringAt/StringSlice public raw wrappers remain separate and incomplete.",
+  "entry": {
+    "pc": 11583,
+    "stack": "prefix+[ret,payloadOffset,payloadLength]",
+    "frameReturned": [],
+    "frameObservationCursor": 0
+  },
+  "validOutput": "ret,prefix,unchanged memory",
+  "invalidOutput": "REVERT 41972036 + uint256 first offending relative byte",
+  "proofFiles": [
+    "formal/bytecode/copy/Execution.dfy",
+    "formal/bytecode/copy/Machine.dfy",
+    "formal/bytecode/copy/Memory.dfy",
+    "formal/bytecode/external-calls/Execution.dfy",
+    "formal/bytecode/external-calls/Machine.dfy",
+    "formal/bytecode/external-calls/Memory.dfy",
+    "formal/bytecode/getters/Machine.dfy",
+    "formal/bytecode/operations/casefold-inputs/Inputs.dfy",
+    "formal/bytecode/operations/casefold-machine/Binary.generated.dfy",
+    "formal/bytecode/operations/casefold-machine/Execution.dfy",
+    "formal/bytecode/operations/casefold-machine/Machine.dfy",
+    "formal/bytecode/operations/charset-inputs/Inputs.dfy",
+    "formal/bytecode/operations/utf8-shared/Ascii.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadE0At1High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadE0At1Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadE0At2High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadE0At2Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadE1ECAt1High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadE1ECAt1Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadE1ECAt2High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadE1ECAt2Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadEDAt1High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadEDAt1Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadEDAt2High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadEDAt2Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadEEEFAt1High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadEEEFAt1Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadEEEFAt2High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadEEEFAt2Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF0At1High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF0At1Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF0At2High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF0At2Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF0At3High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF0At3Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF1F3At1High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF1F3At1Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF1F3At2High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF1F3At2Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF1F3At3High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF1F3At3Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF4At1High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF4At1Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF4At2High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF4At2Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF4At3High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadF4At3Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadLeadHigh.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadLeadLow.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadTwoAt1High.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/BadTwoAt1Low.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/Done.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/Entry.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/Execution.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/GoodE0.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/GoodE1EC.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/GoodED.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/GoodEEEF.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/GoodF0.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/GoodF1F3.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/GoodF4.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/GoodTwo.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/Kernel.dfy",
+    "formal/bytecode/operations/utf8-shared/Spec.dfy",
+    "formal/bytecode/operations/utf8-shared/Truncated2.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/Truncated3.generated.dfy",
+    "formal/bytecode/operations/utf8-shared/Truncated4.generated.dfy",
+    "formal/bytecode/scans/Execution.dfy",
+    "formal/bytecode/scans/Fetch.dfy",
+    "formal/bytecode/scans/Machine.dfy",
+    "formal/bytecode/scans/Representation.dfy",
+    "formal/bytecode/word-apply/word-conversion/Conversion.generated.dfy",
+    "formal/bytecode/word-fold/byte-representation-repair-v8/Shift.generated.dfy",
+    "formal/bytecode/word-fold/byte-representation-repair-v9/Representation.dfy"
+  ],
+  "wholeOwners": {
+    "OperationsUtf8Execution": "formal/bytecode/operations/utf8-shared/Execution.generated.dfy",
+    "OperationsUtf8Entry": "formal/bytecode/operations/utf8-shared/Entry.generated.dfy",
+    "OperationsUtf8Kernel": "formal/bytecode/operations/utf8-shared/Kernel.dfy",
+    "OperationsUtf8Inputs": "formal/bytecode/operations/utf8-shared/Spec.dfy",
+    "BytecodeScanMachine": "formal/bytecode/scans/Machine.dfy",
+    "BytecodeGetterMachine": "formal/bytecode/getters/Machine.dfy",
+    "BytecodeScanRepresentation": "formal/bytecode/scans/Representation.dfy",
+    "BytecodeFoldByteRepresentationV9": "formal/bytecode/word-fold/byte-representation-repair-v9/Representation.dfy",
+    "BytecodeFoldByteShiftV8": "formal/bytecode/word-fold/byte-representation-repair-v8/Shift.generated.dfy",
+    "BytecodeApplyWordConversion": "formal/bytecode/word-apply/word-conversion/Conversion.generated.dfy",
+    "OperationsCaseFoldBinary": "formal/bytecode/operations/casefold-machine/Binary.generated.dfy",
+    "OperationsCaseFoldMachine": "formal/bytecode/operations/casefold-machine/Machine.dfy",
+    "BytecodeExternalMachine": "formal/bytecode/external-calls/Machine.dfy",
+    "BytecodeExternalMemory": "formal/bytecode/external-calls/Memory.dfy",
+    "BytecodeCopyMemory": "formal/bytecode/copy/Memory.dfy",
+    "BytecodeCopyMachine": "formal/bytecode/copy/Machine.dfy",
+    "OperationsCaseFoldInputs": "formal/bytecode/operations/casefold-inputs/Inputs.dfy",
+    "OperationsCharsetInputs": "formal/bytecode/operations/charset-inputs/Inputs.dfy",
+    "OperationsCaseFoldExecution": "formal/bytecode/operations/casefold-machine/Execution.dfy",
+    "BytecodeExternalExecution": "formal/bytecode/external-calls/Execution.dfy",
+    "BytecodeCopyExecution": "formal/bytecode/copy/Execution.dfy",
+    "BytecodeScanExecution": "formal/bytecode/scans/Execution.dfy",
+    "BytecodeScanFetch": "formal/bytecode/scans/Fetch.dfy",
+    "OperationsUtf8Done": "formal/bytecode/operations/utf8-shared/Done.generated.dfy",
+    "OperationsUtf8Ascii": "formal/bytecode/operations/utf8-shared/Ascii.generated.dfy",
+    "OperationsUtf8BadLeadLow": "formal/bytecode/operations/utf8-shared/BadLeadLow.generated.dfy",
+    "OperationsUtf8BadLeadHigh": "formal/bytecode/operations/utf8-shared/BadLeadHigh.generated.dfy",
+    "OperationsUtf8Truncated2": "formal/bytecode/operations/utf8-shared/Truncated2.generated.dfy",
+    "OperationsUtf8Truncated3": "formal/bytecode/operations/utf8-shared/Truncated3.generated.dfy",
+    "OperationsUtf8Truncated4": "formal/bytecode/operations/utf8-shared/Truncated4.generated.dfy",
+    "OperationsUtf8GoodTwo": "formal/bytecode/operations/utf8-shared/GoodTwo.generated.dfy",
+    "OperationsUtf8BadTwoAt1Low": "formal/bytecode/operations/utf8-shared/BadTwoAt1Low.generated.dfy",
+    "OperationsUtf8BadTwoAt1High": "formal/bytecode/operations/utf8-shared/BadTwoAt1High.generated.dfy",
+    "OperationsUtf8GoodE0": "formal/bytecode/operations/utf8-shared/GoodE0.generated.dfy",
+    "OperationsUtf8BadE0At1Low": "formal/bytecode/operations/utf8-shared/BadE0At1Low.generated.dfy",
+    "OperationsUtf8BadE0At1High": "formal/bytecode/operations/utf8-shared/BadE0At1High.generated.dfy",
+    "OperationsUtf8BadE0At2Low": "formal/bytecode/operations/utf8-shared/BadE0At2Low.generated.dfy",
+    "OperationsUtf8BadE0At2High": "formal/bytecode/operations/utf8-shared/BadE0At2High.generated.dfy",
+    "OperationsUtf8GoodE1EC": "formal/bytecode/operations/utf8-shared/GoodE1EC.generated.dfy",
+    "OperationsUtf8BadE1ECAt1Low": "formal/bytecode/operations/utf8-shared/BadE1ECAt1Low.generated.dfy",
+    "OperationsUtf8BadE1ECAt1High": "formal/bytecode/operations/utf8-shared/BadE1ECAt1High.generated.dfy",
+    "OperationsUtf8BadE1ECAt2Low": "formal/bytecode/operations/utf8-shared/BadE1ECAt2Low.generated.dfy",
+    "OperationsUtf8BadE1ECAt2High": "formal/bytecode/operations/utf8-shared/BadE1ECAt2High.generated.dfy",
+    "OperationsUtf8GoodED": "formal/bytecode/operations/utf8-shared/GoodED.generated.dfy",
+    "OperationsUtf8BadEDAt1Low": "formal/bytecode/operations/utf8-shared/BadEDAt1Low.generated.dfy",
+    "OperationsUtf8BadEDAt1High": "formal/bytecode/operations/utf8-shared/BadEDAt1High.generated.dfy",
+    "OperationsUtf8BadEDAt2Low": "formal/bytecode/operations/utf8-shared/BadEDAt2Low.generated.dfy",
+    "OperationsUtf8BadEDAt2High": "formal/bytecode/operations/utf8-shared/BadEDAt2High.generated.dfy",
+    "OperationsUtf8GoodEEEF": "formal/bytecode/operations/utf8-shared/GoodEEEF.generated.dfy",
+    "OperationsUtf8BadEEEFAt1Low": "formal/bytecode/operations/utf8-shared/BadEEEFAt1Low.generated.dfy",
+    "OperationsUtf8BadEEEFAt1High": "formal/bytecode/operations/utf8-shared/BadEEEFAt1High.generated.dfy",
+    "OperationsUtf8BadEEEFAt2Low": "formal/bytecode/operations/utf8-shared/BadEEEFAt2Low.generated.dfy",
+    "OperationsUtf8BadEEEFAt2High": "formal/bytecode/operations/utf8-shared/BadEEEFAt2High.generated.dfy",
+    "OperationsUtf8GoodF0": "formal/bytecode/operations/utf8-shared/GoodF0.generated.dfy",
+    "OperationsUtf8BadF0At1Low": "formal/bytecode/operations/utf8-shared/BadF0At1Low.generated.dfy",
+    "OperationsUtf8BadF0At1High": "formal/bytecode/operations/utf8-shared/BadF0At1High.generated.dfy",
+    "OperationsUtf8BadF0At2Low": "formal/bytecode/operations/utf8-shared/BadF0At2Low.generated.dfy",
+    "OperationsUtf8BadF0At2High": "formal/bytecode/operations/utf8-shared/BadF0At2High.generated.dfy",
+    "OperationsUtf8BadF0At3Low": "formal/bytecode/operations/utf8-shared/BadF0At3Low.generated.dfy",
+    "OperationsUtf8BadF0At3High": "formal/bytecode/operations/utf8-shared/BadF0At3High.generated.dfy",
+    "OperationsUtf8GoodF1F3": "formal/bytecode/operations/utf8-shared/GoodF1F3.generated.dfy",
+    "OperationsUtf8BadF1F3At1Low": "formal/bytecode/operations/utf8-shared/BadF1F3At1Low.generated.dfy",
+    "OperationsUtf8BadF1F3At1High": "formal/bytecode/operations/utf8-shared/BadF1F3At1High.generated.dfy",
+    "OperationsUtf8BadF1F3At2Low": "formal/bytecode/operations/utf8-shared/BadF1F3At2Low.generated.dfy",
+    "OperationsUtf8BadF1F3At2High": "formal/bytecode/operations/utf8-shared/BadF1F3At2High.generated.dfy",
+    "OperationsUtf8BadF1F3At3Low": "formal/bytecode/operations/utf8-shared/BadF1F3At3Low.generated.dfy",
+    "OperationsUtf8BadF1F3At3High": "formal/bytecode/operations/utf8-shared/BadF1F3At3High.generated.dfy",
+    "OperationsUtf8GoodF4": "formal/bytecode/operations/utf8-shared/GoodF4.generated.dfy",
+    "OperationsUtf8BadF4At1Low": "formal/bytecode/operations/utf8-shared/BadF4At1Low.generated.dfy",
+    "OperationsUtf8BadF4At1High": "formal/bytecode/operations/utf8-shared/BadF4At1High.generated.dfy",
+    "OperationsUtf8BadF4At2Low": "formal/bytecode/operations/utf8-shared/BadF4At2Low.generated.dfy",
+    "OperationsUtf8BadF4At2High": "formal/bytecode/operations/utf8-shared/BadF4At2High.generated.dfy",
+    "OperationsUtf8BadF4At3Low": "formal/bytecode/operations/utf8-shared/BadF4At3Low.generated.dfy",
+    "OperationsUtf8BadF4At3High": "formal/bytecode/operations/utf8-shared/BadF4At3High.generated.dfy"
+  },
+  "wholeOwnerCount": 74,
+  "sourceSha256": {
+    "formal/bytecode/copy/Execution.dfy": "392542072d1b116bd66b1f3d86acff2dcf43cd3b21ac5907fb0e689012f13067",
+    "formal/bytecode/copy/Machine.dfy": "724e1346c5f2f090cfa5f8642a7d064a89fe2820345c00856d54fa2db0ede138",
+    "formal/bytecode/copy/Memory.dfy": "fdc0d30ae3d1ade6ec995af4c31b9a33bd1de66e22633fea29bd0af75388c215",
+    "formal/bytecode/external-calls/Execution.dfy": "ec018233baa7e54821b55bbf743c7747a74052faf3ecd574204226242322675c",
+    "formal/bytecode/external-calls/Machine.dfy": "f1ac6fe630aebb1dcdc6569432581748a745a6c23104f6f324913bf00151b984",
+    "formal/bytecode/external-calls/Memory.dfy": "0a88db28cec1660b1921a62f0e24204c64dcd19ed6ccdf3161f9767e12e03383",
+    "formal/bytecode/getters/Machine.dfy": "580ed7e6adb650de585aa990a30839380a5f977deb9d1bb8451d780c5aae8c20",
+    "formal/bytecode/operations/casefold-inputs/Inputs.dfy": "4426f63365f1d5d5ea6021d3e1fe53ef420b002e6de40368e48354aa6a049747",
+    "formal/bytecode/operations/casefold-machine/Binary.generated.dfy": "e98bb1876f35e20fb9ec9b4b6e1322202e825fe4bcc14192ec32579105790e9a",
+    "formal/bytecode/operations/casefold-machine/Execution.dfy": "52e11de41c03243d1bef29b67193e12fb5f95fd50b1d24560e503a75f4caa9a5",
+    "formal/bytecode/operations/casefold-machine/Machine.dfy": "847cf84820ff9355327388f73bd0d8aa6d49205914d9b7c2e83fcf1b5cb95776",
+    "formal/bytecode/operations/charset-inputs/Inputs.dfy": "aebfb1a8032a4a465c5ef8cccb9a5b4de9bd5425f8212ad77e0710d06472b7dc",
+    "formal/bytecode/operations/utf8-shared/Ascii.generated.dfy": "43d9ff6610f03731d4f4b64ceacccbc9701dd319dca240a81dc9c5ffdc71591f",
+    "formal/bytecode/operations/utf8-shared/BadE0At1High.generated.dfy": "fb243bd420a68cfd78f226c82abdc85f30ee3748c353a6a82910574b72daa03d",
+    "formal/bytecode/operations/utf8-shared/BadE0At1Low.generated.dfy": "c5cb60e145d1dcc50d849ec98b784773a0f54ee8036d85160bc3b3fb2873a7e7",
+    "formal/bytecode/operations/utf8-shared/BadE0At2High.generated.dfy": "bbd809fde0abce673474fd1be3528b4151f93ea05f557e363f871cb39e609dab",
+    "formal/bytecode/operations/utf8-shared/BadE0At2Low.generated.dfy": "43ad1b43a589e2d0643a2b3d5609020fba9e7654e5e83087cce10a797742033c",
+    "formal/bytecode/operations/utf8-shared/BadE1ECAt1High.generated.dfy": "4a2ab34f1c503cfa20fab6dea81098eec0f7fcbb7d8d6498affe7c292ce61452",
+    "formal/bytecode/operations/utf8-shared/BadE1ECAt1Low.generated.dfy": "4b89c58fea5142e5f3331f93154a61f8ab5211d48e9d7af6984c4e47ada4478a",
+    "formal/bytecode/operations/utf8-shared/BadE1ECAt2High.generated.dfy": "12a43117fd7895f2092d4c3147b1abfa66ec1f6c36406ba2056ef6f4edece01f",
+    "formal/bytecode/operations/utf8-shared/BadE1ECAt2Low.generated.dfy": "57a96e89575d21300210b8a05ca2381caecb572eb05ee615f55568adca97fd94",
+    "formal/bytecode/operations/utf8-shared/BadEDAt1High.generated.dfy": "c90d34fdab489ba2306481a1952e3409650c66b5d043eea30b36e88679a66825",
+    "formal/bytecode/operations/utf8-shared/BadEDAt1Low.generated.dfy": "0c5c5437e67441c222200468f5809c1157e1422ecb5d5bc3c52102f2ce6940b9",
+    "formal/bytecode/operations/utf8-shared/BadEDAt2High.generated.dfy": "8fb2bdc990d60610099115950919c888cc79244f7ba241676e38fd869d061c4a",
+    "formal/bytecode/operations/utf8-shared/BadEDAt2Low.generated.dfy": "9114740641e82fe2e7650453d85eb723712fe3b01a5451a579542ad4c9268fee",
+    "formal/bytecode/operations/utf8-shared/BadEEEFAt1High.generated.dfy": "662d9ae044ec8a62450e6cb3a4ba3c1b1faf9100e20f6c76e890d46048472cc4",
+    "formal/bytecode/operations/utf8-shared/BadEEEFAt1Low.generated.dfy": "717f1b6d6304729cc00479b68ce87cd4116d8a0cddf03d5b53ea244396f329a3",
+    "formal/bytecode/operations/utf8-shared/BadEEEFAt2High.generated.dfy": "70b53152d5775860f05aab88d354b1d9f6e044ca988659c5f0e45e0147f79437",
+    "formal/bytecode/operations/utf8-shared/BadEEEFAt2Low.generated.dfy": "5ee81e9630a7f73cb74400619176153e388aad5ed66ed926f9e5b0313f9d8975",
+    "formal/bytecode/operations/utf8-shared/BadF0At1High.generated.dfy": "1e38de721e6668f19ae10ab95e4a77fcf0fa17d1522ac398d6a987515254ae02",
+    "formal/bytecode/operations/utf8-shared/BadF0At1Low.generated.dfy": "dc813f6d058f69f0d8e1b0281ada8d9cda08eb2eea1e046b7acee1d05c700a69",
+    "formal/bytecode/operations/utf8-shared/BadF0At2High.generated.dfy": "fa3d8b8df4da7d7ef6f37ec619be692c160f367ffca02bf4ddf5286dbaea2fa6",
+    "formal/bytecode/operations/utf8-shared/BadF0At2Low.generated.dfy": "762093026b8fdb8b8b0ff024a3788907690cb34efd76993fcdae3b68db4d3851",
+    "formal/bytecode/operations/utf8-shared/BadF0At3High.generated.dfy": "f3785c9e7cff5dc7ba1f9608480894caf6b6258a3860f4a881697f6899835250",
+    "formal/bytecode/operations/utf8-shared/BadF0At3Low.generated.dfy": "d204395ac1a08361164874f5e0367a1c18b7eca4cfa95cc7667c72551fe2a73c",
+    "formal/bytecode/operations/utf8-shared/BadF1F3At1High.generated.dfy": "e79cce61414c09d98501ae8def03d687c0c04f502eeafbd8b014e300a553028b",
+    "formal/bytecode/operations/utf8-shared/BadF1F3At1Low.generated.dfy": "de90fc94ae3ddc2e8d9b126ee591f43372d9947bfa2a2433fca5c6fe2de98838",
+    "formal/bytecode/operations/utf8-shared/BadF1F3At2High.generated.dfy": "93ba0fba2bfbac5969526fb3b5bdacd5877969abeaa8a379750865c91627e91a",
+    "formal/bytecode/operations/utf8-shared/BadF1F3At2Low.generated.dfy": "cd94f1d4c207f3288e65093f3968fbd577650b01d4dd89cc4ded38b29056c334",
+    "formal/bytecode/operations/utf8-shared/BadF1F3At3High.generated.dfy": "f6b7df790c996f08a6c373271b37aa9121078a984a080903f4e9c28514c0f16b",
+    "formal/bytecode/operations/utf8-shared/BadF1F3At3Low.generated.dfy": "20d2d67c45d427b56083cfe194b16e192e8e767b4029216130a327d0c7313615",
+    "formal/bytecode/operations/utf8-shared/BadF4At1High.generated.dfy": "2b58621e23029fd1670afdb7e91441460066f8521e0a16a42e04a57cd6abf76f",
+    "formal/bytecode/operations/utf8-shared/BadF4At1Low.generated.dfy": "5f57ac5382f008fa58d98733ba146c540550470959624fdca975e7ee6888c138",
+    "formal/bytecode/operations/utf8-shared/BadF4At2High.generated.dfy": "61f1f56de5c5c5aa7ed6521d93286c70332b34eda33d49cb4ec79b1ae18112bc",
+    "formal/bytecode/operations/utf8-shared/BadF4At2Low.generated.dfy": "da61780653d855ce1d7a53c472a29c232c379a7d9123a245913261e63934cbfb",
+    "formal/bytecode/operations/utf8-shared/BadF4At3High.generated.dfy": "d6c752b5b763739cd4266672cd4b58f4a346e48151d68845efa549803190b46f",
+    "formal/bytecode/operations/utf8-shared/BadF4At3Low.generated.dfy": "e367343b57c9136be921c7969067da96d105320e32b77f0b37d2b2255aa4cff3",
+    "formal/bytecode/operations/utf8-shared/BadLeadHigh.generated.dfy": "c42cad02da958f68524d97387db7ab10e62057fbc35a94954d4d252d05a9ae3b",
+    "formal/bytecode/operations/utf8-shared/BadLeadLow.generated.dfy": "c269ed831c6e304aff8022bfc3a9412e0732bc8645023f9b42d2954d31696768",
+    "formal/bytecode/operations/utf8-shared/BadTwoAt1High.generated.dfy": "ead3aa908c9f75d97bdb2c4df7d6c2400422e15ff2dbdffc2a9cce63db426932",
+    "formal/bytecode/operations/utf8-shared/BadTwoAt1Low.generated.dfy": "9f78a701e4f032ea8163a180fe2aa857eccef8dfe727e3b778f06a27b39f95de",
+    "formal/bytecode/operations/utf8-shared/Done.generated.dfy": "da92921ba2b556ab2046294d8b81ca3b8edfe05a22c72d98364b6c8ed7ab0e7f",
+    "formal/bytecode/operations/utf8-shared/Entry.generated.dfy": "1ef718cc2059d8f03fbcc460ccbf8565a6470e1053d06cc031d816923fccc841",
+    "formal/bytecode/operations/utf8-shared/Execution.generated.dfy": "94057d1835bc76631f0bcffe128bdfa5c403d4db34718450507d3bac25421fbe",
+    "formal/bytecode/operations/utf8-shared/GoodE0.generated.dfy": "2f32519a3b3b7be3bf8144d71b8522be95625dc4057c8b2cdd8776042d0f5dc5",
+    "formal/bytecode/operations/utf8-shared/GoodE1EC.generated.dfy": "d51d27f7ace665aca1349327b2846917ea18d2d360036151dcb578ebc6f40619",
+    "formal/bytecode/operations/utf8-shared/GoodED.generated.dfy": "090cdf12f59cef665f634f06bef8f8b4cd700a7b154605b3faaef10fb9b01ccf",
+    "formal/bytecode/operations/utf8-shared/GoodEEEF.generated.dfy": "cecc732dc2b95b52e0ee3c7df38b67f17ca1cefc1cf65b246a4233edcbd43ae1",
+    "formal/bytecode/operations/utf8-shared/GoodF0.generated.dfy": "10c8176aabd4d32c7453ef858f88e50391e18ffc6d1ce6b245a08352dcb72aa7",
+    "formal/bytecode/operations/utf8-shared/GoodF1F3.generated.dfy": "18aca0055cf7cb0f8fd1cd84e0c8a3430d467512cb5335fd9ec8e54c1b1c2cc1",
+    "formal/bytecode/operations/utf8-shared/GoodF4.generated.dfy": "9581ff25abb1d17a874a359a3dd705a7afa75b30178ad585fb9c85cc582647b1",
+    "formal/bytecode/operations/utf8-shared/GoodTwo.generated.dfy": "e56a4a2dc01ac5330775082632abd725f4f31cbe35bc8a39f0edaf0cc272bc5e",
+    "formal/bytecode/operations/utf8-shared/Kernel.dfy": "a40638c5cac88deec7d888cb548847da0271f3dc54300f09c65ee9e832e5acb5",
+    "formal/bytecode/operations/utf8-shared/Spec.dfy": "65da1511ad8a594abf8410540815f4af5caeb9c84a34acba8706fc3201225360",
+    "formal/bytecode/operations/utf8-shared/Truncated2.generated.dfy": "67cf1dc14b36b7ef680e6e6a0f7c85e161963075245205f5c5fea3b88a75cef1",
+    "formal/bytecode/operations/utf8-shared/Truncated3.generated.dfy": "8a80a20202fa6a51f18a015c0068335520604d3e199612d3dd14c1de2428ff5f",
+    "formal/bytecode/operations/utf8-shared/Truncated4.generated.dfy": "e7f9b0e02ef33e50e73c3f326337c3df11b43823bb7f7b09923c5ceeecea21e5",
+    "formal/bytecode/operations/utf8-shared/check-controls.py": "f4141f1c45c21b3bf03f2ede2a295406a80240b5440584a3ffb33a05990abc72",
+    "formal/bytecode/operations/utf8-shared/controls.mapping.json": "f80575d5de221f3f880a1d00aaed6378e0830c3923237e3e62dc4ef95d7a0c9a",
+    "formal/bytecode/operations/utf8-shared/generate-controls.py": "143bc54321864812859458f518f31af8a5dd124ef8d7a23493d431b6ac22b73b",
+    "formal/bytecode/operations/utf8-shared/generate-engine.py": "7535ef9f7782e31ee53ddf2ba2cc2e5af1a6d96b5f85165963f576b5cae33b12",
+    "formal/bytecode/scans/Execution.dfy": "b4326de16c5fe07cd4e74c73e315003cdf090d2423e5421c79ec44750c2362cc",
+    "formal/bytecode/scans/Fetch.dfy": "fa4751dbcb8bf1b9f326e79ed9eeefd6731c6e8564b66cdd4d11e05ea2533285",
+    "formal/bytecode/scans/Machine.dfy": "c8d37efffab0207606458218612a1ac97874d102cebf0e6a2f09e6de09689b07",
+    "formal/bytecode/scans/Representation.dfy": "234e786e0e3a75b79f5fb111544979cb032901541fe203b64dc7d70f520d542b",
+    "formal/bytecode/word-apply/word-conversion/Conversion.generated.dfy": "7e3af0226cfb345f8cc169a6c39ea559137dbaf6e6e6c40965c6b6330d7c2015",
+    "formal/bytecode/word-fold/byte-representation-repair-v8/Shift.generated.dfy": "645eecfed759f068ad566d37d726d5cb66d1e5b1e7335aec9c9330aa78329c76",
+    "formal/bytecode/word-fold/byte-representation-repair-v9/Representation.dfy": "8251163f141e2026bff23a36d080d9a125e246a10454f73f10d0fb05212d2cea"
+  },
+  "stateInstructions": 17709,
+  "profiles": 52,
+  "physicalMapping": {
+    "status": "prepared-physical-mapping-passed-native-pending",
+    "runtimeSha256": "5d69cebc087813f4fe85c1fd371ca4d826a582077a29d6318199bc19cb1b1ae8",
+    "mappingSha256": "f80575d5de221f3f880a1d00aaed6378e0830c3923237e3e62dc4ef95d7a0c9a",
+    "receipts": 405,
+    "validatorInvocations": 389,
+    "macros": 3547,
+    "completeStackMemoryStates": 303038,
+    "profiles": {
+      "Entry": 389,
+      "Done": 249,
+      "Ascii": 2488,
+      "BadLeadLow": 10,
+      "BadLeadHigh": 6,
+      "Truncated2": 6,
+      "Truncated3": 10,
+      "Truncated4": 10,
+      "GoodTwo": 123,
+      "BadTwoAt1Low": 4,
+      "BadTwoAt1High": 4,
+      "GoodE0": 26,
+      "BadE0At1Low": 4,
+      "BadE0At1High": 2,
+      "BadE0At2Low": 2,
+      "BadE0At2High": 2,
+      "GoodE1EC": 18,
+      "BadE1ECAt1Low": 2,
+      "BadE1ECAt1High": 4,
+      "BadE1ECAt2Low": 2,
+      "BadE1ECAt2High": 4,
+      "GoodED": 26,
+      "BadEDAt1Low": 2,
+      "BadEDAt1High": 6,
+      "BadEDAt2Low": 2,
+      "BadEDAt2High": 2,
+      "GoodEEEF": 18,
+      "BadEEEFAt1Low": 2,
+      "BadEEEFAt1High": 2,
+      "BadEEEFAt2Low": 2,
+      "BadEEEFAt2High": 2,
+      "GoodF0": 26,
+      "BadF0At1Low": 4,
+      "BadF0At1High": 2,
+      "BadF0At2Low": 2,
+      "BadF0At2High": 2,
+      "BadF0At3Low": 2,
+      "BadF0At3High": 2,
+      "GoodF1F3": 18,
+      "BadF1F3At1Low": 2,
+      "BadF1F3At1High": 4,
+      "BadF1F3At2Low": 2,
+      "BadF1F3At2High": 4,
+      "BadF1F3At3Low": 2,
+      "BadF1F3At3High": 4,
+      "GoodF4": 26,
+      "BadF4At1Low": 2,
+      "BadF4At1High": 6,
+      "BadF4At2Low": 2,
+      "BadF4At2High": 2,
+      "BadF4At3Low": 2,
+      "BadF4At3High": 2
+    },
+    "unobservedProfiles": [],
+    "nativeVerified": false,
+    "publicCredit": false
+  },
+  "premises": [
+    "Actual finite calldata offset+length<=|data|<2^64, no restriction to canonical ABI offsets or clean tail padding.",
+    "Aligned initial memory at least96 bytes, memory length<=actual Load64 free pointer, free+64<2^256, prefix at most980 words, actual dynamic return destination is an allowed JUMPDEST.",
+    "Exact current runtime instructions and all actually used destinations; adequate reached instruction/stack/memory resources. No gas cost, deployment, compiler-correctness shortcut, or external-call premise.",
+    "Reviewed machine representations and Dafny/Boogie/Z3/toolchain remain explicit trust assumptions. Physical receipts do not substitute for universal native proof."
+  ],
+  "remaining": [
+    "Actual whole-owner native verification/audit CSV and declaration coverage for all74 current owners.",
+    "Exact matching native fault and complete source/compiler/tool/evidence hashes, regeneration, fresh independent acceptance.",
+    "Separate StringAt raw decoder, strict signed index, selected non-ASCII rejection and complete returned byte packet connection; parent owns StringSlice wrapper."
+  ],
+  "currentWholeGraphAudit": {
+    "exitCode": 0,
+    "findings": 0,
+    "log": "/tmp/operations-utf8-full-audit-v2.log",
+    "sha256": "c40b7394c6b9c33baae94cdd718de528c1db1ce60d663d1601a016c2aa00d9ed"
+  },
+  "historicalV1WholeResolve": {
+    "exitCode": 0,
+    "log": "/tmp/operations-utf8-full-resolve-v1.log",
+    "note": "Current V2 audit also resolved all74 current owners; historical V1 sources are preserved in the workspace."
+  },
+  "byteIdenticalRegeneration": [
+    {
+      "file": "Ascii.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "43d9ff6610f03731d4f4b64ceacccbc9701dd319dca240a81dc9c5ffdc71591f"
+    },
+    {
+      "file": "BadE0At1High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "fb243bd420a68cfd78f226c82abdc85f30ee3748c353a6a82910574b72daa03d"
+    },
+    {
+      "file": "BadE0At1Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "c5cb60e145d1dcc50d849ec98b784773a0f54ee8036d85160bc3b3fb2873a7e7"
+    },
+    {
+      "file": "BadE0At2High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "bbd809fde0abce673474fd1be3528b4151f93ea05f557e363f871cb39e609dab"
+    },
+    {
+      "file": "BadE0At2Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "43ad1b43a589e2d0643a2b3d5609020fba9e7654e5e83087cce10a797742033c"
+    },
+    {
+      "file": "BadE1ECAt1High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "4a2ab34f1c503cfa20fab6dea81098eec0f7fcbb7d8d6498affe7c292ce61452"
+    },
+    {
+      "file": "BadE1ECAt1Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "4b89c58fea5142e5f3331f93154a61f8ab5211d48e9d7af6984c4e47ada4478a"
+    },
+    {
+      "file": "BadE1ECAt2High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "12a43117fd7895f2092d4c3147b1abfa66ec1f6c36406ba2056ef6f4edece01f"
+    },
+    {
+      "file": "BadE1ECAt2Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "57a96e89575d21300210b8a05ca2381caecb572eb05ee615f55568adca97fd94"
+    },
+    {
+      "file": "BadEDAt1High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "c90d34fdab489ba2306481a1952e3409650c66b5d043eea30b36e88679a66825"
+    },
+    {
+      "file": "BadEDAt1Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "0c5c5437e67441c222200468f5809c1157e1422ecb5d5bc3c52102f2ce6940b9"
+    },
+    {
+      "file": "BadEDAt2High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "8fb2bdc990d60610099115950919c888cc79244f7ba241676e38fd869d061c4a"
+    },
+    {
+      "file": "BadEDAt2Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "9114740641e82fe2e7650453d85eb723712fe3b01a5451a579542ad4c9268fee"
+    },
+    {
+      "file": "BadEEEFAt1High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "662d9ae044ec8a62450e6cb3a4ba3c1b1faf9100e20f6c76e890d46048472cc4"
+    },
+    {
+      "file": "BadEEEFAt1Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "717f1b6d6304729cc00479b68ce87cd4116d8a0cddf03d5b53ea244396f329a3"
+    },
+    {
+      "file": "BadEEEFAt2High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "70b53152d5775860f05aab88d354b1d9f6e044ca988659c5f0e45e0147f79437"
+    },
+    {
+      "file": "BadEEEFAt2Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "5ee81e9630a7f73cb74400619176153e388aad5ed66ed926f9e5b0313f9d8975"
+    },
+    {
+      "file": "BadF0At1High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "1e38de721e6668f19ae10ab95e4a77fcf0fa17d1522ac398d6a987515254ae02"
+    },
+    {
+      "file": "BadF0At1Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "dc813f6d058f69f0d8e1b0281ada8d9cda08eb2eea1e046b7acee1d05c700a69"
+    },
+    {
+      "file": "BadF0At2High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "fa3d8b8df4da7d7ef6f37ec619be692c160f367ffca02bf4ddf5286dbaea2fa6"
+    },
+    {
+      "file": "BadF0At2Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "762093026b8fdb8b8b0ff024a3788907690cb34efd76993fcdae3b68db4d3851"
+    },
+    {
+      "file": "BadF0At3High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "f3785c9e7cff5dc7ba1f9608480894caf6b6258a3860f4a881697f6899835250"
+    },
+    {
+      "file": "BadF0At3Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "d204395ac1a08361164874f5e0367a1c18b7eca4cfa95cc7667c72551fe2a73c"
+    },
+    {
+      "file": "BadF1F3At1High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "e79cce61414c09d98501ae8def03d687c0c04f502eeafbd8b014e300a553028b"
+    },
+    {
+      "file": "BadF1F3At1Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "de90fc94ae3ddc2e8d9b126ee591f43372d9947bfa2a2433fca5c6fe2de98838"
+    },
+    {
+      "file": "BadF1F3At2High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "93ba0fba2bfbac5969526fb3b5bdacd5877969abeaa8a379750865c91627e91a"
+    },
+    {
+      "file": "BadF1F3At2Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "cd94f1d4c207f3288e65093f3968fbd577650b01d4dd89cc4ded38b29056c334"
+    },
+    {
+      "file": "BadF1F3At3High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "f6b7df790c996f08a6c373271b37aa9121078a984a080903f4e9c28514c0f16b"
+    },
+    {
+      "file": "BadF1F3At3Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "20d2d67c45d427b56083cfe194b16e192e8e767b4029216130a327d0c7313615"
+    },
+    {
+      "file": "BadF4At1High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "2b58621e23029fd1670afdb7e91441460066f8521e0a16a42e04a57cd6abf76f"
+    },
+    {
+      "file": "BadF4At1Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "5f57ac5382f008fa58d98733ba146c540550470959624fdca975e7ee6888c138"
+    },
+    {
+      "file": "BadF4At2High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "61f1f56de5c5c5aa7ed6521d93286c70332b34eda33d49cb4ec79b1ae18112bc"
+    },
+    {
+      "file": "BadF4At2Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "da61780653d855ce1d7a53c472a29c232c379a7d9123a245913261e63934cbfb"
+    },
+    {
+      "file": "BadF4At3High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "d6c752b5b763739cd4266672cd4b58f4a346e48151d68845efa549803190b46f"
+    },
+    {
+      "file": "BadF4At3Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "e367343b57c9136be921c7969067da96d105320e32b77f0b37d2b2255aa4cff3"
+    },
+    {
+      "file": "BadLeadHigh.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "c42cad02da958f68524d97387db7ab10e62057fbc35a94954d4d252d05a9ae3b"
+    },
+    {
+      "file": "BadLeadLow.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "c269ed831c6e304aff8022bfc3a9412e0732bc8645023f9b42d2954d31696768"
+    },
+    {
+      "file": "BadTwoAt1High.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "ead3aa908c9f75d97bdb2c4df7d6c2400422e15ff2dbdffc2a9cce63db426932"
+    },
+    {
+      "file": "BadTwoAt1Low.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "9f78a701e4f032ea8163a180fe2aa857eccef8dfe727e3b778f06a27b39f95de"
+    },
+    {
+      "file": "Done.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "da92921ba2b556ab2046294d8b81ca3b8edfe05a22c72d98364b6c8ed7ab0e7f"
+    },
+    {
+      "file": "Entry.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "1ef718cc2059d8f03fbcc460ccbf8565a6470e1053d06cc031d816923fccc841"
+    },
+    {
+      "file": "Execution.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "94057d1835bc76631f0bcffe128bdfa5c403d4db34718450507d3bac25421fbe"
+    },
+    {
+      "file": "GoodE0.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "2f32519a3b3b7be3bf8144d71b8522be95625dc4057c8b2cdd8776042d0f5dc5"
+    },
+    {
+      "file": "GoodE1EC.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "d51d27f7ace665aca1349327b2846917ea18d2d360036151dcb578ebc6f40619"
+    },
+    {
+      "file": "GoodED.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "090cdf12f59cef665f634f06bef8f8b4cd700a7b154605b3faaef10fb9b01ccf"
+    },
+    {
+      "file": "GoodEEEF.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "cecc732dc2b95b52e0ee3c7df38b67f17ca1cefc1cf65b246a4233edcbd43ae1"
+    },
+    {
+      "file": "GoodF0.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "10c8176aabd4d32c7453ef858f88e50391e18ffc6d1ce6b245a08352dcb72aa7"
+    },
+    {
+      "file": "GoodF1F3.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "18aca0055cf7cb0f8fd1cd84e0c8a3430d467512cb5335fd9ec8e54c1b1c2cc1"
+    },
+    {
+      "file": "GoodF4.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "9581ff25abb1d17a874a359a3dd705a7afa75b30178ad585fb9c85cc582647b1"
+    },
+    {
+      "file": "GoodTwo.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "e56a4a2dc01ac5330775082632abd725f4f31cbe35bc8a39f0edaf0cc272bc5e"
+    },
+    {
+      "file": "Truncated2.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "67cf1dc14b36b7ef680e6e6a0f7c85e161963075245205f5c5fea3b88a75cef1"
+    },
+    {
+      "file": "Truncated3.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "8a80a20202fa6a51f18a015c0068335520604d3e199612d3dd14c1de2428ff5f"
+    },
+    {
+      "file": "Truncated4.generated.dfy",
+      "byteIdentical": true,
+      "sha256": "e7f9b0e02ef33e50e73c3f326337c3df11b43823bb7f7b09923c5ceeecea21e5"
+    },
+    {
+      "file": "controls.mapping.json",
+      "byteIdentical": true,
+      "sha256": "f80575d5de221f3f880a1d00aaed6378e0830c3923237e3e62dc4ef95d7a0c9a"
+    }
+  ],
+  "inputsUnchanged": true,
+  "staticCompletedAt": "2026-10-02T04:57:22.023182+00:00",
+  "sourcesStableForWrapperPreparation": true
+}

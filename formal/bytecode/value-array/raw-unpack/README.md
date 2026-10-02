@@ -1,0 +1,3 @@
+# Exhaustive unpackArray raw admission preparation
+
+Nine ordered malformed two-span raw decoder classes and the complementary fitting accepted class. Each generated class extracts every actual instruction from the unpackArray wrapper PC960 through exact empty REVERT. Admission classifies arbitrary fitting raw calldata; Boundary connects actual PCzero physical routing to empty rejection or body PC7262 with exact decoded stack and initialized memory. Loose, shared and overlapping accepted spans remain admitted. Canonical descriptor/value validation, arbitrary finite array loops, exact library errors/returns, native inventories and independent retention remain open. Generated files are reproduced only by generate.py. No public credit.

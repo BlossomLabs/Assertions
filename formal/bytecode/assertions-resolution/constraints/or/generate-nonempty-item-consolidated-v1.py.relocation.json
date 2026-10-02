@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-start-consolidated-v2.py",
+  "sourceSha256": "4f5100e1c961b31354bb26e7687f8c3197e64fa031e47b07c4f543bec6d1e969",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-item-consolidated-v1.py",
+  "scope": "Private child decoder generator with physical memory copy and explicit independent wire bounds"
+}

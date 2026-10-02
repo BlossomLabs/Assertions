@@ -1,0 +1,17 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-callback-pack-control",
+      "owner": "formal/bytecode/word-fold/callback-pack-control",
+      "generatedNames": [
+        "Before",
+        "After"
+      ]
+    }
+  ],
+  "assumptions": [
+    "Pinned current runtime/all threefold selectors; arbitrary full caller stack, canonical target and finite aligned allocated memory/free-pointer bounds. Fold actual return16553 retained through shared helper packing controls.",
+    "Native selected imports assumed; full callback observed GAS/STATICCALL, guards/errors, finite iteration and retained closure remain required. No gas/deployment/performance claims."
+  ]
+}

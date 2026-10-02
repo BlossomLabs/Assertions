@@ -1,0 +1,15 @@
+{
+  "status": "development-preparation-not-public-evidence",
+  "prefixCandidates": [
+    {
+      "name": "fold-template-copy",
+      "owner": "formal/bytecode/word-fold/template-copy"
+    }
+  ],
+  "assumptions": [
+    "Exact current shared fold-loop entry16426 through first loop header16484. Actual return12157, run pointer128, original source/template/window raw fields and lower prefix are preserved. The copy has no fold-count or output-count bound.",
+    "Physical memory is represented/aligned with initial free pointer fp and finite template span below2^64. Raw FoldRun allocation derives fp320 and initial heap length320; generic copy helpers permit larger represented aligned memories/free pointers where stated.",
+    "Actual MSTORE allocation header, CALLDATACOPY of exact template payload and32-byte zero write after the declared payload are retained. Copied payload equals original raw calldata slice, and disjoint prior FoldRun words preserve the original full-width range count and accumulator.",
+    "Selected native imported contracts are assumed. Full raw routing/windows/empty/target/allocation/copy connection, domain/stamping/callback/guards/early exits/errors/physical scalar return, current fresh included graph, EVM receipts, matching semantic mutations and independent retained checking remain mandatory before public coverage. Sufficient reached resources and truthful observations remain explicit. No gas/deployment/performance or compiler-correctness claim."
+  ]
+}

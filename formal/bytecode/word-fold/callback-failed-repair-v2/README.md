@@ -1,0 +1,9 @@
+# Exact ordinary failed fold callback
+
+The owned generator gates the current Collections runtime and all three fold selectors, extracts all three actual CallbackFailed serializer segments at17017 and24352/24370, and preserves the actual fold continuation16553. The checked scalar bridge uses each fold operation word. Shared complete dynamic bytes copies and generic packet/frame memory are reused unchanged.
+
+The engine composes both physical byte-copy loops and all three segments through exact CallbackFailed REVERT with the actual operation/index/zero/target/payload/full reason. The connection includes the full empty/nonempty failed STATICCALL receipt, every exhaustion-guard branch and its checked nonrefused admission, then ordinary serialization. Exhaustion itself remains an independently checked branch. Every represented payload/reason and all three domain selectors are admitted under explicit finite memory/resources and truthful reached GAS/STATICCALL observations.
+
+Selected imported bodies are assumed until full included native retention. Full first-failure loop/raw composition, complete current compiler identity, fresh EVM fixtures, matching semantic source/bytecode faults and independent retained evidence checker remain required. No public coverage or gas/deployment/performance/compiler correctness claim. Generated files are never hand-edited; all package files finish before snapshot capture.
+
+The V2 repair explicitly proves both operand orders of the actual low160 target AND. The original failed Advance63 and its captured graph remain unchanged. The generated proof uses the checked TargetMask contract; no generated file is hand-edited and no public input is narrowed.

@@ -1,0 +1,6 @@
+{
+  "source": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-item-consolidated-v2.py",
+  "sourceSha256": "9d8a1f995f34351d189c8709a2ef661ce68c25d1a89c4e9197d95f02b5c464f4",
+  "fresh": "formal/bytecode/assertions-resolution/constraints/or/generate-nonempty-item-consolidated-v3.py",
+  "correction": "19734 is sourceheader+length before19735adds32, not source; arbitrary length native exposed the groundlength32 alias"
+}

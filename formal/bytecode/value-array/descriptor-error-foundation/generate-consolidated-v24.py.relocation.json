@@ -1,0 +1,8 @@
+{
+  "source": "/home/sem/assertions/formal/bytecode/value-array/descriptor-error-foundation/generate.py",
+  "output": "/home/sem/assertions/formal/bytecode/value-array/descriptor-error-foundation/generate-consolidated-v24.py",
+  "source_sha256": "771b65f5b84afa3bafcc2cb993f0897f64bc111d6888477db4173ecd54c3e464",
+  "output_sha256": "771b65f5b84afa3bafcc2cb993f0897f64bc111d6888477db4173ecd54c3e464",
+  "replacements": {},
+  "policy": "Fresh runner only. Historical receipts unchanged; use new evidence directories and revalidate full dependencies."
+}

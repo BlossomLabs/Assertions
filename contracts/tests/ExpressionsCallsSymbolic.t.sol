@@ -14,7 +14,9 @@ contract Reflector {
     }
 }
 
-/** @dev Returns its first argument word as-is, whatever type the caller declares */
+/**
+ * @dev Returns its first argument word as-is, whatever type the caller declares
+ */
 contract WordSource {
     function get(bytes32 w) external pure returns (bytes32) {
         return w;
@@ -25,7 +27,9 @@ contract WordSource {
     }
 }
 
-/** @dev Reverts with exactly the calldata it receives */
+/**
+ * @dev Reverts with exactly the calldata it receives
+ */
 contract ProbeReverter {
     fallback() external {
         assembly {
@@ -64,10 +68,13 @@ contract ExpressionsCallsSymbolicTest is Test {
      * @dev A Call node sends selector ++ abi.encode(args) from Expressions,
      *      and accepts exactly the arguments solc would decode
      */
-    function check_callBuildsSolcCalldata(bytes32 small, bytes32 word, uint8 lengthCase, bytes32 payload, bytes4 selector)
-        public
-        view
-    {
+    function check_callBuildsSolcCalldata(
+        bytes32 small,
+        bytes32 word,
+        uint8 lengthCase,
+        bytes32 payload,
+        bytes4 selector
+    ) public view {
         vm.assume(lengthCase < 3);
         uint256 len = lengthCase == 0 ? 0 : lengthCase == 1 ? 5 : 32;
         bytes memory str = new bytes(len);
@@ -117,17 +124,25 @@ contract ExpressionsCallsSymbolicTest is Test {
             assertEq(out, abi.encodeWithSelector(Expressions.InvalidTarget.selector, uint256(2), address(0xE0A)));
         } else if (caseId == 2) {
             assertFalse(ok, "a reverting call succeeds");
-            assertEq(out, abi.encodeWithSelector(
-                Expressions.NodeCallFailed.selector, uint256(2), address(source),
-                abi.encodeCall(WordSource.boom, (w)), abi.encodeWithSignature("Error(string)", "boom")
-            ));
+            assertEq(
+                out,
+                abi.encodeWithSelector(
+                    Expressions.NodeCallFailed.selector,
+                    uint256(2),
+                    address(source),
+                    abi.encodeCall(WordSource.boom, (w)),
+                    abi.encodeWithSignature("Error(string)", "boom")
+                )
+            );
         } else {
             assertTrue(ok, "a clean call is refused");
             assertEq(out, abi.encode(w));
         }
     }
 
-    /** @dev A Call's result is validated against the node's own valueType */
+    /**
+     * @dev A Call's result is validated against the node's own valueType
+     */
     function check_callResultIsValidated(bytes32 w) public view {
         bytes[] memory params = new bytes[](1);
         params[0] = abi.encode(w);
@@ -147,7 +162,9 @@ contract ExpressionsCallsSymbolicTest is Test {
 
     // ============ ProbeCall ============
 
-    /** @dev ProbeCall follows the core's revertData: whole reason, stripped selector, or UnexpectedRevertData */
+    /**
+     * @dev ProbeCall follows the core's revertData: whole reason, stripped selector, or UnexpectedRevertData
+     */
     function check_probeCallMatchesRevertData(uint8 lengthCase, bytes32 d0, bytes32 d1, bytes4 expected) public view {
         vm.assume(lengthCase < 5);
         uint256 length = lengthCase == 0 ? 0 : lengthCase == 1 ? 3 : lengthCase == 2 ? 4 : lengthCase == 3 ? 36 : 64;
@@ -177,7 +194,9 @@ contract ExpressionsCallsSymbolicTest is Test {
         }
     }
 
-    /** @dev A call that succeeds is DidNotRevert; a code-less target meets only a zero expectation */
+    /**
+     * @dev A call that succeeds is DidNotRevert; a code-less target meets only a zero expectation
+     */
     function check_probeCallRefusals(bool codeless, bytes4 expected, bytes32 w) public view {
         address target = codeless ? address(0xE0A) : address(source);
         bytes memory data = abi.encodeCall(WordSource.get, (w));
@@ -201,7 +220,9 @@ contract ExpressionsCallsSymbolicTest is Test {
 
     // ============ Resolve ============
 
-    /** @dev A Resolve node's value is what the core resolves, validated as the node's type */
+    /**
+     * @dev A Resolve node's value is what the core resolves, validated as the node's type
+     */
     function check_resolveGoesThroughTheCore(bytes32 w) public view {
         InputParam memory p =
             InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, abi.encode(w), new Constraint[](0));
@@ -234,11 +255,13 @@ contract ExpressionsCallsSymbolicTest is Test {
         e.result = n - 1;
     }
 
-    function node(Expressions.Kind kind, string memory valueType, bytes memory data, uint256[] memory refs, string memory arguments)
-        internal
-        pure
-        returns (Expressions.Node memory)
-    {
+    function node(
+        Expressions.Kind kind,
+        string memory valueType,
+        bytes memory data,
+        uint256[] memory refs,
+        string memory arguments
+    ) internal pure returns (Expressions.Node memory) {
         return Expressions.Node(kind, valueType, data, refs, bytes4(0), arguments);
     }
 
@@ -290,5 +313,4 @@ contract ExpressionsCallsSymbolicTest is Test {
     function outOfGasArtifact(bool ok, bytes memory out) internal pure returns (bool) {
         return !ok && keccak256(out) == keccak256(abi.encodeWithSelector(Expressions.SubcallOutOfGas.selector));
     }
-
 }

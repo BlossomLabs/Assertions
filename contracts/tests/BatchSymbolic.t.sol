@@ -4,7 +4,9 @@ import "forge-std/Test.sol";
 import "../Assertions.sol";
 import "../lib/ERC8211.sol";
 
-/** @dev Returns exactly the calldata it receives */
+/**
+ * @dev Returns exactly the calldata it receives
+ */
 contract Returner {
     fallback() external {
         assembly {
@@ -14,7 +16,9 @@ contract Returner {
     }
 }
 
-/** @dev A token whose balances are a fixed function of the account */
+/**
+ * @dev A token whose balances are a fixed function of the account
+ */
 contract Token {
     function balanceOf(address account) external pure returns (uint256) {
         return uint256(keccak256(abi.encode(account)));
@@ -56,23 +60,34 @@ contract BatchSymbolicTest is Test {
 
     // ============ Fetchers ============
 
-    /** @dev STATIC_CALL resolves to exactly the target's returndata */
+    /**
+     * @dev STATIC_CALL resolves to exactly the target's returndata
+     */
     function check_staticCallResolvesToReturndata(uint8 lengthCase, bytes32[2] memory w) public view {
         vm.assume(lengthCase < 4);
-        bytes memory data = truncate(abi.encodePacked(w), lengthCase == 0 ? 0 : lengthCase == 1 ? 5 : lengthCase == 2 ? 32 : 64);
-        (bool ok, bytes memory out) = address(core).staticcall(
-            abi.encodeCall(Assertions.resolve, (param(InputParamFetcherType.STATIC_CALL, abi.encode(address(returner), data))))
-        );
+        bytes memory data =
+            truncate(abi.encodePacked(w), lengthCase == 0 ? 0 : lengthCase == 1 ? 5 : lengthCase == 2 ? 32 : 64);
+        (bool ok, bytes memory out) = address(core)
+            .staticcall(
+                abi.encodeCall(
+                    Assertions.resolve, (param(InputParamFetcherType.STATIC_CALL, abi.encode(address(returner), data)))
+                )
+            );
         assertTrue(ok, "a STATIC_CALL to a live target reverts");
         assertEq(out, data);
     }
 
-    /** @dev A code-less STATIC_CALL target reverts CallFailed(target, callData) */
+    /**
+     * @dev A code-less STATIC_CALL target reverts CallFailed(target, callData)
+     */
     function check_staticCallToEmptyAccountFails(bytes32 w) public view {
         bytes memory data = abi.encode(w);
-        (bool ok, bytes memory out) = address(core).staticcall(
-            abi.encodeCall(Assertions.resolve, (param(InputParamFetcherType.STATIC_CALL, abi.encode(address(0xE0A), data))))
-        );
+        (bool ok, bytes memory out) = address(core)
+            .staticcall(
+                abi.encodeCall(
+                    Assertions.resolve, (param(InputParamFetcherType.STATIC_CALL, abi.encode(address(0xE0A), data)))
+                )
+            );
         assertFalse(ok);
         assertEq(out, abi.encodeWithSelector(CallFailed.selector, address(0xE0A), data));
     }
@@ -127,13 +142,18 @@ contract BatchSymbolicTest is Test {
         }
         ComposableExecution[] memory batch = new ComposableExecution[](1);
         batch[0] = ComposableExecution(bytes4(0xAABBCCDD), params, new OutputParam[](0));
-        (bool ok,) = address(core).staticcall(abi.encodeWithSignature(
-            "assertBatch((bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[],(uint8,bytes)[])[])", batch
-        ));
+        (bool ok,) = address(core)
+            .staticcall(
+                abi.encodeWithSignature(
+                    "assertBatch((bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[],(uint8,bytes)[])[])", batch
+                )
+            );
         assertEq(ok, b != type(uint256).max && a == b + 1, "the batch verdict is not the gate's");
     }
 
-    /** @dev A failing constraint names its entry, parameter and constraint */
+    /**
+     * @dev A failing constraint names its entry, parameter and constraint
+     */
     function check_batchErrorNamesTheOperand(bytes32 actual, bytes32 ref) public view {
         vm.assume(actual != ref);
         ComposableExecution[] memory batch = new ComposableExecution[](2);
@@ -144,16 +164,31 @@ contract BatchSymbolicTest is Test {
         batch[1].inputParams[1] = param(InputParamFetcherType.RAW_BYTES, abi.encode(actual));
         batch[1].inputParams[1].constraints = new Constraint[](1);
         batch[1].inputParams[1].constraints[0] = Constraint(ConstraintType.EQ, abi.encode(ref));
-        (bool ok, bytes memory out) = address(core).staticcall(abi.encodeWithSignature(
-            "assertBatch((bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[],(uint8,bytes)[])[])", batch
-        ));
+        (bool ok, bytes memory out) = address(core)
+            .staticcall(
+                abi.encodeWithSignature(
+                    "assertBatch((bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[],(uint8,bytes)[])[])", batch
+                )
+            );
         assertFalse(ok, "a violated constraint passes");
-        assertEq(out, abi.encodeWithSelector(
-            ConstraintFailed.selector, "COMPOSABLE", uint256(1), uint256(1), uint256(0), ConstraintType.EQ, actual, abi.encode(ref)
-        ));
+        assertEq(
+            out,
+            abi.encodeWithSelector(
+                ConstraintFailed.selector,
+                "COMPOSABLE",
+                uint256(1),
+                uint256(1),
+                uint256(0),
+                ConstraintType.EQ,
+                actual,
+                abi.encode(ref)
+            )
+        );
     }
 
-    /** @dev The structural refusals, each naming its entry and parameter */
+    /**
+     * @dev The structural refusals, each naming its entry and parameter
+     */
     function check_batchStructuralRefusals(uint8 caseId) public view {
         vm.assume(caseId < 4);
         ComposableExecution[] memory batch = new ComposableExecution[](2);
@@ -177,9 +212,12 @@ contract BatchSymbolicTest is Test {
             batch[1].inputParams[1].fetcherType = InputParamFetcherType.BALANCE;
             want = abi.encodeWithSelector(Assertions.BalanceCannotBeTarget.selector, uint256(1), uint256(1));
         }
-        (bool ok, bytes memory out) = address(core).staticcall(abi.encodeWithSignature(
-            "assertBatch((bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[],(uint8,bytes)[])[])", batch
-        ));
+        (bool ok, bytes memory out) = address(core)
+            .staticcall(
+                abi.encodeWithSignature(
+                    "assertBatch((bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[],(uint8,bytes)[])[])", batch
+                )
+            );
         assertFalse(ok, "a structural refusal passes");
         assertEq(out, want);
     }

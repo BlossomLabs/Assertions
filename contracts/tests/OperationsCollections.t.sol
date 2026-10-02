@@ -9,8 +9,10 @@ contract OperationsCollectionsTest is Test {
     Operations ops;
     Collections cols;
 
-    function setUp() public { ops = new Operations();
-        cols = new Collections(); }
+    function setUp() public {
+        ops = new Operations();
+        cols = new Collections();
+    }
 
     function testSplitPreservesEmptySegments() public view {
         bytes[] memory parts = ops.split(bytes(",a,,b,"), bytes(","));
@@ -39,12 +41,16 @@ contract OperationsCollectionsTest is Test {
     }
 
     function testUniqueUnorderedStable() public view {
-        assertEq(cols.uniqueWords(abi.encode(uint256(2), uint256(1), uint256(2), uint256(0), uint256(1)), false),
-            abi.encode(uint256(2), uint256(1), uint256(0)));
+        assertEq(
+            cols.uniqueWords(abi.encode(uint256(2), uint256(1), uint256(2), uint256(0), uint256(1)), false),
+            abi.encode(uint256(2), uint256(1), uint256(0))
+        );
         assertEq(cols.uniqueWords(bytes(""), false), bytes(""));
         // Existing adjacent operation still keeps nonadjacent duplicates.
-        assertEq(cols.uniqueWords(abi.encode(uint256(2), uint256(1), uint256(2)), true),
-            abi.encode(uint256(2), uint256(1), uint256(2)));
+        assertEq(
+            cols.uniqueWords(abi.encode(uint256(2), uint256(1), uint256(2)), true),
+            abi.encode(uint256(2), uint256(1), uint256(2))
+        );
     }
 
     function testUniqueUnorderedRejectsPartialWord() public {
@@ -59,8 +65,8 @@ contract OperationsCollectionsTest is Test {
         values[2] = abi.encode(hex"abcd");
         bytes memory result = ops.encodeBytes("(uint256,string,bytes)", values);
         assertEq(result, abi.encode(uint256(19), "non-word-aligned", hex"abcd"));
-        (bool ok, bytes memory raw) = address(ops).staticcall(abi.encodeCall(ops.encode,
-            ("(uint256,string,bytes)", values)));
+        (bool ok, bytes memory raw) =
+            address(ops).staticcall(abi.encodeCall(ops.encode, ("(uint256,string,bytes)", values)));
         assertTrue(ok);
         assertEq(raw, result);
     }

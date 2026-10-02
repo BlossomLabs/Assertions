@@ -107,16 +107,14 @@ contract CoreExtensionsTest is Test {
             args[i] = _string();
         }
         vm.expectCall(address(target), abi.encodeCall(MockTarget.getString, ()), uint64(6));
-        (bool ok, bytes memory ret) = _get(
-            address(target), MockTarget.join6.selector, "(string,string,string,string,string,string)", args
-        );
+        (bool ok, bytes memory ret) =
+            _get(address(target), MockTarget.join6.selector, "(string,string,string,string,string,string)", args);
         assertTrue(ok);
         assertEq(abi.decode(ret, (string)), "hellohellohellohellohellohello");
     }
 
     function test_get_emptyDescriptor() public view {
-        (bool ok, bytes memory ret) =
-            _get(address(target), MockTarget.getValue.selector, "()", new InputParam[](0));
+        (bool ok, bytes memory ret) = _get(address(target), MockTarget.getValue.selector, "()", new InputParam[](0));
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), 42);
     }
@@ -128,8 +126,9 @@ contract CoreExtensionsTest is Test {
         args[0] = _string();
         args[1] = _raw(abi.encode("-"));
         args[2] = _string();
-        InputParam memory joined =
-            _call(address(assertions), _getData(address(target), MockTarget.join3.selector, "(string,string,string)", args));
+        InputParam memory joined = _call(
+            address(assertions), _getData(address(target), MockTarget.join3.selector, "(string,string,string)", args)
+        );
         (bool ok, bytes memory ret) = _nav(joined, "(string)", _path2(0, assertions.LEN()));
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), 11);
@@ -145,7 +144,8 @@ contract CoreExtensionsTest is Test {
         (bool ok, bytes memory ret) = _get(address(target), MockTarget.join3.selector, "(string,string)", args);
         assertFalse(ok);
         assertEq(bytes4(ret), ConstraintFailed.selector);
-        (, uint256 entryIndex, uint256 paramIndex,,) = abi.decode(_body(ret), (string, uint256, uint256, uint256, uint256));
+        (, uint256 entryIndex, uint256 paramIndex,,) =
+            abi.decode(_body(ret), (string, uint256, uint256, uint256, uint256));
         assertEq(entryIndex, 0);
         assertEq(paramIndex, 2);
     }
@@ -161,9 +161,7 @@ contract CoreExtensionsTest is Test {
         InputParam[] memory args = new InputParam[](2);
         args[0] = _raw(abi.encode("a"));
         args[1] = _raw(abi.encode(uint256(5))); // a word where a string is declared
-        vm.expectRevert(
-            abi.encodeWithSelector(AbiCodec.InvalidComponentEnvelope.selector, 1, 32, bytes32(uint256(5)))
-        );
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidComponentEnvelope.selector, 1, 32, bytes32(uint256(5))));
         this.getExternal(address(target), MockTarget.join3.selector, "(string,string)", args);
     }
 
@@ -245,9 +243,10 @@ contract CoreExtensionsTest is Test {
 
     function test_caller_coreForReadAndGet() public {
         InputParam[] memory none = new InputParam[](0);
-        (bool ok, bytes memory ret) = address(assertions).staticcall(
-            abi.encodeCall(Assertions.read, (_raw(abi.encode(address(target))), MockTarget.caller.selector, none))
-        );
+        (bool ok, bytes memory ret) = address(assertions)
+            .staticcall(
+                abi.encodeCall(Assertions.read, (_raw(abi.encode(address(target))), MockTarget.caller.selector, none))
+            );
         assertTrue(ok);
         assertEq(abi.decode(ret, (address)), address(assertions));
 

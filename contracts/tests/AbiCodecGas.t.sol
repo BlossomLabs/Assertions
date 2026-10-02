@@ -106,7 +106,9 @@ contract AbiCodecGasTest is Test {
             bytes memory d = abi.encodeCall(Expressions.evaluate, (_literals(n), new bytes[](0)));
             costs[n - 1] = _cost(address(xp), d);
             emit log_named_uint(string.concat("evaluate ", vm.toString(n), " Literal nodes, calldata bytes"), d.length);
-            emit log_named_uint(string.concat("evaluate ", vm.toString(n), " Literal nodes, gas          "), costs[n - 1]);
+            emit log_named_uint(
+                string.concat("evaluate ", vm.toString(n), " Literal nodes, gas          "), costs[n - 1]
+            );
         }
         Expressions.Expression memory q = _literals(2);
         Expressions.Node[] memory nodes = new Expressions.Node[](3);

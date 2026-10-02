@@ -4,7 +4,9 @@ import "forge-std/Test.sol";
 import "../Collections.sol";
 import "../lib/AbiCodec.sol";
 
-/** @dev Exposes the internal descriptor parser */
+/**
+ * @dev Exposes the internal descriptor parser
+ */
 contract ShapeHarness {
     function shape(string calldata t) external pure returns (bool, uint256) {
         return AbiCodec.shape(bytes(t));

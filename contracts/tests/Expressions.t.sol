@@ -182,7 +182,8 @@ contract ExpressionsTest is Test {
     function testGuardedEvaluationRejectsOutsideCallers() public {
         Expressions.Expression memory p = selectGraph("uint256", abi.encode(uint256(1)), false);
         uint256 n = p.nodes.length;
-        Expressions.Cache memory cache = Expressions.Cache(new bytes[](n), new bool[](n), new bool[](n), new uint256[](n));
+        Expressions.Cache memory cache =
+            Expressions.Cache(new bytes[](n), new bool[](n), new bool[](n), new uint256[](n));
         vm.expectRevert(abi.encodeWithSelector(Expressions.NotSelf.selector, address(this)));
         expressions.evaluateGuarded(p, new bytes[](0), p.result, cache);
     }
@@ -401,7 +402,9 @@ contract ExpressionsTest is Test {
     uint256 constant GENEROUS = 5_000_000;
     uint256 constant SQUEEZED = 1_000_000;
 
-    /** @dev Node 0 resolves GasHungry.work through the core */
+    /**
+     * @dev Node 0 resolves GasHungry.work through the core
+     */
     function hungryGraph(uint256 size) private returns (Expressions.Expression memory p) {
         p.core = address(core);
         p.nodes = new Expressions.Node[](size);
@@ -415,7 +418,11 @@ contract ExpressionsTest is Test {
         p.nodes[0] = node(Expressions.Kind.Resolve, "uint256", abi.encode(call));
     }
 
-    function evaluateWith(uint256 gas, Expressions.Expression memory p) private view returns (bool ok, bytes memory out) {
+    function evaluateWith(uint256 gas, Expressions.Expression memory p)
+        private
+        view
+        returns (bool ok, bytes memory out)
+    {
         (ok, out) = address(expressions).staticcall{gas: gas}(abi.encodeCall(Expressions.evaluate, (p, new bytes[](0))));
     }
 
@@ -451,7 +458,9 @@ contract ExpressionsTest is Test {
         assertEq(out, refused());
     }
 
-    /** @dev ProbeCall refuses to report an out-of-gas as a revert */
+    /**
+     * @dev ProbeCall refuses to report an out-of-gas as a revert
+     */
     function testProbeCallRefusesOutOfGas() public {
         Expressions.Expression memory p;
         p.nodes = new Expressions.Node[](3);
@@ -485,7 +494,9 @@ contract ExpressionsTest is Test {
         }
     }
 
-    /** @dev No false alarm: an attempt that simply reverts still takes the fallback when squeezed */
+    /**
+     * @dev No false alarm: an attempt that simply reverts still takes the fallback when squeezed
+     */
     function testTryOrElseOrdinaryRevertStillFallsBack() public view {
         Expressions.Expression memory p;
         p.core = address(core);
@@ -522,9 +533,7 @@ contract ExpressionsTest is Test {
         p.result = 2;
         p.nodes[0] = node(Expressions.Kind.Literal, "address", abi.encode(address(this)));
         p.nodes[1] =
-            node(
-            Expressions.Kind.Literal, "bytes", abi.encode(abi.encodeCall(this.failWith, ("dynamic reason")))
-        );
+            node(Expressions.Kind.Literal, "bytes", abi.encode(abi.encodeCall(this.failWith, ("dynamic reason"))));
         p.nodes[2] = node(Expressions.Kind.ProbeCall, "bytes", "");
         p.nodes[2].refs = refs2(0, 1);
         p.nodes[2].selector = ProbeReason.selector;

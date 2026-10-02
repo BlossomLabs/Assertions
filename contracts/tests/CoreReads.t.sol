@@ -94,7 +94,8 @@ contract CoreReadsTest is Test {
      * @dev A BALANCE operand
      */
     function _bal(address tok, address account) internal pure returns (InputParam memory) {
-        return InputParam(InputParamType.CALL_DATA, InputParamFetcherType.BALANCE, abi.encodePacked(tok, account), _none());
+        return
+            InputParam(InputParamType.CALL_DATA, InputParamFetcherType.BALANCE, abi.encodePacked(tok, account), _none());
     }
 
     function _calls1(bytes memory a) internal pure returns (bytes[] memory calls) {
@@ -131,17 +132,17 @@ contract CoreReadsTest is Test {
 
     function test_resolve_staticCall_passthrough() public view {
         // resolving through the core is byte-identical to calling directly
-        (bool ok, bytes memory ret) = address(assertions).staticcall(
-            abi.encodeCall(Assertions.resolve, (_call(address(target), abi.encodeCall(MockTarget.getString, ()))))
-        );
+        (bool ok, bytes memory ret) = address(assertions)
+            .staticcall(
+                abi.encodeCall(Assertions.resolve, (_call(address(target), abi.encodeCall(MockTarget.getString, ()))))
+            );
         assertTrue(ok);
         assertEq(ret, abi.encode("hello"));
     }
 
     function test_resolve_balance() public view {
-        (bool ok, bytes memory ret) = address(assertions).staticcall(
-            abi.encodeCall(Assertions.resolve, (_bal(address(token), TEST_EOA)))
-        );
+        (bool ok, bytes memory ret) =
+            address(assertions).staticcall(abi.encodeCall(Assertions.resolve, (_bal(address(token), TEST_EOA))));
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), 1000);
     }
@@ -149,7 +150,7 @@ contract CoreReadsTest is Test {
     function test_resolve_constraint_holds_and_reverts() public {
         InputParam memory p = _call(address(target), abi.encodeCall(MockTarget.getValue, ()));
         p.constraints = _c1(ConstraintType.GTE, abi.encode(uint256(1)));
-        (bool ok, ) = address(assertions).staticcall(abi.encodeCall(Assertions.resolve, (p)));
+        (bool ok,) = address(assertions).staticcall(abi.encodeCall(Assertions.resolve, (p)));
         assertTrue(ok);
 
         p.constraints = _c1(ConstraintType.GTE, abi.encode(uint256(1000)));
@@ -236,9 +237,7 @@ contract CoreReadsTest is Test {
 
     function test_nav_tupleWord() public view {
         (bool ok, bytes memory ret) = _nav(
-            _call(address(target), abi.encodeCall(MockTarget.getTuple, ())),
-            "(uint256,address,bool,bytes32)",
-            _path1(1)
+            _call(address(target), abi.encodeCall(MockTarget.getTuple, ())), "(uint256,address,bool,bytes32)", _path1(1)
         );
         assertTrue(ok);
         assertEq(abi.decode(ret, (address)), address(0xBEEF));
@@ -440,9 +439,8 @@ contract CoreReadsTest is Test {
         // same frame that navigates to it, and an outer nav claims the
         // payload's encoding with an ordinary descriptor
         InputParam memory report = _call(address(token), abi.encodeCall(MockToken.wrappedReport, ()));
-        InputParam memory payload = _nested(
-            abi.encodeCall(Assertions.nav, (report, "(uint256,bytes)", _path2(1, assertions.PAYLOAD())))
-        );
+        InputParam memory payload =
+            _nested(abi.encodeCall(Assertions.nav, (report, "(uint256,bytes)", _path2(1, assertions.PAYLOAD()))));
         (bool ok, bytes memory ret) = _nav(payload, "(uint256,uint256)", _path1(0));
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), 100);
@@ -471,9 +469,8 @@ contract CoreReadsTest is Test {
         // the blob's payload carries its own dynamic member; offsets are
         // payload-relative, so the re-entered frame navigates them honestly
         InputParam memory blob = _call(address(token), abi.encodeCall(MockToken.wrappedString, ()));
-        InputParam memory payload = _nested(
-            abi.encodeCall(Assertions.nav, (blob, "(bytes)", _path2(0, assertions.PAYLOAD())))
-        );
+        InputParam memory payload =
+            _nested(abi.encodeCall(Assertions.nav, (blob, "(bytes)", _path2(0, assertions.PAYLOAD()))));
         (bool ok, bytes memory ret) = _nav(payload, "(uint256,string)", _path1(1));
         assertTrue(ok);
         assertEq(ret, abi.encode("hello"));
@@ -500,12 +497,8 @@ contract CoreReadsTest is Test {
     }
 
     function test_nav_payload_emptyBytes() public view {
-        InputParam memory p = InputParam(
-            InputParamType.CALL_DATA,
-            InputParamFetcherType.RAW_BYTES,
-            abi.encode(bytes("")),
-            _none()
-        );
+        InputParam memory p =
+            InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, abi.encode(bytes("")), _none());
         (bool ok, bytes memory ret) = _nav(p, "(bytes)", _path2(0, assertions.PAYLOAD()));
         assertTrue(ok);
         assertEq(ret.length, 0);
@@ -554,12 +547,9 @@ contract CoreReadsTest is Test {
         // the re-entry expression rides a constrained fetcher: assert the
         // blob's first payload word through the core
         InputParam memory report = _call(address(token), abi.encodeCall(MockToken.wrappedReport, ()));
-        bytes memory innerNav = abi.encodeCall(
-            Assertions.nav, (report, "(uint256,bytes)", _path2(1, assertions.PAYLOAD()))
-        );
-        bytes memory outerNav = abi.encodeCall(
-            Assertions.nav, (_nested(innerNav), "(uint256,uint256)", _path1(0))
-        );
+        bytes memory innerNav =
+            abi.encodeCall(Assertions.nav, (report, "(uint256,bytes)", _path2(1, assertions.PAYLOAD())));
+        bytes memory outerNav = abi.encodeCall(Assertions.nav, (_nested(innerNav), "(uint256,uint256)", _path1(0)));
         InputParam memory judged = InputParam(
             InputParamType.CALL_DATA,
             InputParamFetcherType.STATIC_CALL,
@@ -608,7 +598,9 @@ contract CoreReadsTest is Test {
     function test_nav_operandFailure_identified() public {
         InputParam memory bad = _call(address(target), abi.encodeCall(MockTarget.revertingFunction, ()));
         vm.expectRevert(
-            abi.encodeWithSelector(CallFailed.selector, address(target), abi.encodeCall(MockTarget.revertingFunction, ()))
+            abi.encodeWithSelector(
+                CallFailed.selector, address(target), abi.encodeCall(MockTarget.revertingFunction, ())
+            )
         );
         assertions.nav(bad, "(uint256)", _path1(0));
     }
@@ -646,12 +638,12 @@ contract CoreReadsTest is Test {
         // a core nav nests as an operand of a read-spliced computation:
         // proposals[1].votes + 1 = 100
         InputParam memory props = _call(address(token), abi.encodeCall(MockToken.proposals, ()));
-        InputParam memory votes = _nested(
-            abi.encodeCall(Assertions.nav, (props, "((address,uint256,bool)[])", _path3(0, 1, 1)))
-        );
-        (bool ok, bytes memory ret) = address(assertions).staticcall(
-            abi.encodeCall(Assertions.read, (_lit(uint256(uint160(address(ops)))), ADD_U, _args2(votes, _lit(1))))
-        );
+        InputParam memory votes =
+            _nested(abi.encodeCall(Assertions.nav, (props, "((address,uint256,bool)[])", _path3(0, 1, 1))));
+        (bool ok, bytes memory ret) = address(assertions)
+            .staticcall(
+                abi.encodeCall(Assertions.read, (_lit(uint256(uint160(address(ops)))), ADD_U, _args2(votes, _lit(1))))
+            );
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), 100);
     }
@@ -660,27 +652,23 @@ contract CoreReadsTest is Test {
 
     function test_chain_twoHops() public view {
         // target.token() -> token.decimals(): the mid-hop address is runtime-resolved
-        InputParam memory start = InputParam(
-            InputParamType.CALL_DATA,
-            InputParamFetcherType.RAW_BYTES,
-            abi.encode(address(target)),
-            _none()
-        );
-        (bool ok, bytes memory ret) = address(assertions).staticcall(
-            abi.encodeCall(
-                Assertions.chain,
-                (start, _calls2(abi.encodeCall(MockTarget.token, ()), abi.encodeCall(MockToken.decimals, ())))
-            )
-        );
+        InputParam memory start =
+            InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, abi.encode(address(target)), _none());
+        (bool ok, bytes memory ret) = address(assertions)
+            .staticcall(
+                abi.encodeCall(
+                    Assertions.chain,
+                    (start, _calls2(abi.encodeCall(MockTarget.token, ()), abi.encodeCall(MockToken.decimals, ())))
+                )
+            );
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), 18);
     }
 
     function test_chain_singleHop_stringReturn() public view {
         InputParam memory start = _call(address(target), abi.encodeCall(MockTarget.token, ()));
-        (bool ok, bytes memory ret) = address(assertions).staticcall(
-            abi.encodeCall(Assertions.chain, (start, _calls1(abi.encodeCall(MockToken.symbol, ()))))
-        );
+        (bool ok, bytes memory ret) = address(assertions)
+            .staticcall(abi.encodeCall(Assertions.chain, (start, _calls1(abi.encodeCall(MockToken.symbol, ())))));
         assertTrue(ok);
         assertEq(abi.decode(ret, (string)), "WETH");
     }
@@ -692,44 +680,40 @@ contract CoreReadsTest is Test {
 
     function test_chain_dirtyStartWord() public {
         bytes32 dirty = bytes32(uint256(1) << 200);
-        InputParam memory start = InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, abi.encode(dirty), _none());
+        InputParam memory start =
+            InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, abi.encode(dirty), _none());
         vm.expectRevert(abi.encodeWithSelector(InvalidAddressWord.selector, 0, dirty));
         assertions.chain(start, _calls1(abi.encodeCall(MockTarget.getValue, ())));
     }
 
     function test_chain_midHopReverts() public {
-        InputParam memory start = InputParam(
-            InputParamType.CALL_DATA,
-            InputParamFetcherType.RAW_BYTES,
-            abi.encode(address(token)),
-            _none()
-        );
+        InputParam memory start =
+            InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, abi.encode(address(token)), _none());
         bytes memory hop = abi.encodeCall(MockToken.revertingHop, ());
         vm.expectRevert(abi.encodeWithSelector(CallFailed.selector, address(token), hop));
         assertions.chain(start, _calls2(hop, abi.encodeCall(MockToken.decimals, ())));
     }
 
     function test_chain_midHopEmptyReturn() public {
-        InputParam memory start = InputParam(
-            InputParamType.CALL_DATA,
-            InputParamFetcherType.RAW_BYTES,
-            abi.encode(address(token)),
-            _none()
-        );
+        InputParam memory start =
+            InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, abi.encode(address(token)), _none());
         vm.expectRevert(abi.encodeWithSelector(ReturnDataOutOfBounds.selector, 0, 0));
-        assertions.chain(start, _calls2(abi.encodeCall(MockToken.emptyReturn, ()), abi.encodeCall(MockToken.decimals, ())));
+        assertions.chain(
+            start, _calls2(abi.encodeCall(MockToken.emptyReturn, ()), abi.encodeCall(MockToken.decimals, ()))
+        );
     }
 
     // ============ Read ============
 
     function test_read_literalTargetAndArg() public view {
         // checkValue(42) constructed at judge time from a literal word segment
-        (bool ok, bytes memory ret) = address(assertions).staticcall(
-            abi.encodeCall(
-                Assertions.read,
-                (_lit(uint256(uint160(address(target)))), MockTarget.checkValue.selector, _args1(_lit(42)))
-            )
-        );
+        (bool ok, bytes memory ret) = address(assertions)
+            .staticcall(
+                abi.encodeCall(
+                    Assertions.read,
+                    (_lit(uint256(uint160(address(target)))), MockTarget.checkValue.selector, _args1(_lit(42)))
+                )
+            );
         assertTrue(ok);
         assertEq(ret.length, 0);
     }
@@ -742,17 +726,19 @@ contract CoreReadsTest is Test {
 
     function test_read_computedArgs() public view {
         // checkPair(40 + 2, getAddress()): one computed segment, one live read segment
-        InputParam memory computed = _call(
-            address(ops),
-            abi.encodeWithSelector(ADD_U, uint256(40), uint256(2))
-        );
+        InputParam memory computed = _call(address(ops), abi.encodeWithSelector(ADD_U, uint256(40), uint256(2)));
         InputParam memory liveAddress = _call(address(target), abi.encodeCall(MockTarget.getAddress, ()));
-        (bool ok, ) = address(assertions).staticcall(
-            abi.encodeCall(
-                Assertions.read,
-                (_lit(uint256(uint160(address(target)))), MockTarget.checkPair.selector, _args2(computed, liveAddress))
-            )
-        );
+        (bool ok,) = address(assertions)
+            .staticcall(
+                abi.encodeCall(
+                    Assertions.read,
+                    (
+                        _lit(uint256(uint160(address(target)))),
+                        MockTarget.checkPair.selector,
+                        _args2(computed, liveAddress)
+                    )
+                )
+            );
         assertTrue(ok);
     }
 
@@ -760,24 +746,25 @@ contract CoreReadsTest is Test {
         // balanceOf on whatever token target.token() reports — computed args
         // against a computed target, which chain alone cannot express
         InputParam memory tokenAddr = _call(address(target), abi.encodeCall(MockTarget.token, ()));
-        (bool ok, bytes memory ret) = address(assertions).staticcall(
-            abi.encodeCall(
-                Assertions.read,
-                (tokenAddr, MockToken.balanceOf.selector, _args1(_lit(uint256(uint160(TEST_EOA)))))
-            )
-        );
+        (bool ok, bytes memory ret) = address(assertions)
+            .staticcall(
+                abi.encodeCall(
+                    Assertions.read, (tokenAddr, MockToken.balanceOf.selector, _args1(_lit(uint256(uint160(TEST_EOA)))))
+                )
+            );
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), 1000);
     }
 
     function test_read_emptyArgs_rawReturnPassthrough() public view {
         // selector-only call; the raw return is byte-identical to calling directly
-        (bool ok, bytes memory ret) = address(assertions).staticcall(
-            abi.encodeCall(
-                Assertions.read,
-                (_lit(uint256(uint160(address(token)))), MockToken.symbol.selector, new InputParam[](0))
-            )
-        );
+        (bool ok, bytes memory ret) = address(assertions)
+            .staticcall(
+                abi.encodeCall(
+                    Assertions.read,
+                    (_lit(uint256(uint160(address(token)))), MockToken.symbol.selector, new InputParam[](0))
+                )
+            );
         assertTrue(ok);
         assertEq(ret, abi.encode("WETH"));
     }
@@ -790,12 +777,8 @@ contract CoreReadsTest is Test {
 
     function test_read_dirtyTargetWord() public {
         bytes32 dirty = bytes32(uint256(1) << 200);
-        InputParam memory targetParam = InputParam(
-            InputParamType.CALL_DATA,
-            InputParamFetcherType.RAW_BYTES,
-            abi.encode(dirty),
-            _none()
-        );
+        InputParam memory targetParam =
+            InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, abi.encode(dirty), _none());
         vm.expectRevert(abi.encodeWithSelector(InvalidAddressWord.selector, 0, dirty));
         assertions.read(targetParam, MockTarget.getValue.selector, new InputParam[](0));
     }
@@ -836,15 +819,15 @@ contract CoreReadsTest is Test {
         // read(balanceOf, [nav(signers, path [0,-1])]): the last signer's
         // balance, the nav selection spliced as the read's argument
         InputParam memory signers = _call(address(token), abi.encodeCall(MockToken.signers, ()));
-        InputParam memory lastSigner = _nested(
-            abi.encodeCall(Assertions.nav, (signers, "(address[],address)", _path2(0, -1)))
-        );
-        (bool ok, bytes memory ret) = address(assertions).staticcall(
-            abi.encodeCall(
-                Assertions.read,
-                (_lit(uint256(uint160(address(token)))), MockToken.balanceOf.selector, _args1(lastSigner))
-            )
-        );
+        InputParam memory lastSigner =
+            _nested(abi.encodeCall(Assertions.nav, (signers, "(address[],address)", _path2(0, -1))));
+        (bool ok, bytes memory ret) = address(assertions)
+            .staticcall(
+                abi.encodeCall(
+                    Assertions.read,
+                    (_lit(uint256(uint160(address(token)))), MockToken.balanceOf.selector, _args1(lastSigner))
+                )
+            );
         assertTrue(ok);
         assertEq(abi.decode(ret, (uint256)), 1000);
     }
@@ -853,10 +836,8 @@ contract CoreReadsTest is Test {
         // assertParam judges a read whose result routes through resolve —
         // three self-frames deep, constraints validated at the leaf
         InputParam memory tokenAddr = _call(address(target), abi.encodeCall(MockTarget.token, ()));
-        bytes memory readCalldata = abi.encodeCall(
-            Assertions.read,
-            (tokenAddr, MockToken.decimals.selector, new InputParam[](0))
-        );
+        bytes memory readCalldata =
+            abi.encodeCall(Assertions.read, (tokenAddr, MockToken.decimals.selector, new InputParam[](0)));
         bytes memory resolveCalldata = abi.encodeCall(Assertions.resolve, (_nested(readCalldata)));
         InputParam memory judged = InputParam(
             InputParamType.CALL_DATA,
@@ -911,11 +892,8 @@ contract CoreReadsTest is Test {
 
     function test_cond_dynamicWinnerPassthrough() public view {
         // a string-returning winner passes through as the canonical envelope
-        (bool ok_, bytes memory ret) = _cond(
-            _lit(1),
-            _call(address(target), abi.encodeCall(MockTarget.getString, ())),
-            _lit(0)
-        );
+        (bool ok_, bytes memory ret) =
+            _cond(_lit(1), _call(address(target), abi.encodeCall(MockTarget.getString, ())), _lit(0));
         assertTrue(ok_);
         assertEq(ret, abi.encode("hello"));
     }
@@ -945,26 +923,15 @@ contract CoreReadsTest is Test {
         then_.constraints = _c1(ConstraintType.EQ, abi.encode(uint256(41)));
         vm.expectRevert(
             abi.encodeWithSelector(
-                ConstraintFailed.selector,
-                "",
-                0,
-                1,
-                0,
-                ConstraintType.EQ,
-                bytes32(uint256(42)),
-                abi.encode(uint256(41))
+                ConstraintFailed.selector, "", 0, 1, 0, ConstraintType.EQ, bytes32(uint256(42)), abi.encode(uint256(41))
             )
         );
         assertions.cond(_lit(1), then_, _lit(7));
     }
 
     function test_cond_shortConditionReverts() public {
-        InputParam memory shortRaw = InputParam(
-            InputParamType.CALL_DATA,
-            InputParamFetcherType.RAW_BYTES,
-            hex"c0",
-            _none()
-        );
+        InputParam memory shortRaw =
+            InputParam(InputParamType.CALL_DATA, InputParamFetcherType.RAW_BYTES, hex"c0", _none());
         vm.expectRevert(abi.encodeWithSelector(ReturnDataOutOfBounds.selector, 0, 1));
         assertions.cond(shortRaw, _lit(5), _lit(7));
     }
@@ -974,19 +941,13 @@ contract CoreReadsTest is Test {
     /**
      * @dev Raw staticcall into orElse (its result comes via assembly return)
      */
-    function _orElse(InputParam memory a, InputParam memory b)
-        internal
-        view
-        returns (bool ok_, bytes memory ret)
-    {
+    function _orElse(InputParam memory a, InputParam memory b) internal view returns (bool ok_, bytes memory ret) {
         (ok_, ret) = address(assertions).staticcall(abi.encodeCall(Assertions.orElse, (a, b)));
     }
 
     function test_orElse_successPassesThrough() public view {
-        (bool ok_, bytes memory ret) = _orElse(
-            _call(address(target), abi.encodeCall(MockTarget.getString, ())),
-            _lit(0)
-        );
+        (bool ok_, bytes memory ret) =
+            _orElse(_call(address(target), abi.encodeCall(MockTarget.getString, ())), _lit(0));
         assertTrue(ok_);
         assertEq(ret, abi.encode("hello"));
     }
@@ -1001,10 +962,7 @@ contract CoreReadsTest is Test {
     }
 
     function test_orElse_codelessTargetSelectsFallback() public view {
-        (bool ok_, bytes memory ret) = _orElse(
-            _call(TEST_EOA, abi.encodeCall(MockTarget.getValue, ())),
-            _lit(7)
-        );
+        (bool ok_, bytes memory ret) = _orElse(_call(TEST_EOA, abi.encodeCall(MockTarget.getValue, ())), _lit(7));
         assertTrue(ok_);
         assertEq(abi.decode(ret, (uint256)), 7);
     }
@@ -1193,8 +1151,11 @@ contract CoreReadsTest is Test {
             if (ok_) assertEq(abi.decode(ret, (uint256)), 1, string.concat("isValid read 0 at gas ", vm.toString(g)));
             else assertTrue(ret.length == 0 || keccak256(ret) == keccak256(refused), "isValid: unexpected failure");
             (ok_, ret) = address(assertions).staticcall{gas: g}(fallback_);
-            if (ok_) assertEq(abi.decode(ret, (uint256)), 1, string.concat("orElse fell back at gas ", vm.toString(g)));
-            else assertTrue(ret.length == 0 || keccak256(ret) == keccak256(refused), "orElse: unexpected failure");
+            if (ok_) {
+                assertEq(abi.decode(ret, (uint256)), 1, string.concat("orElse fell back at gas ", vm.toString(g)));
+            } else {
+                assertTrue(ret.length == 0 || keccak256(ret) == keccak256(refused), "orElse: unexpected failure");
+            }
         }
     }
 
@@ -1235,11 +1196,7 @@ contract CoreReadsTest is Test {
      * @dev Raw staticcall into revertData (its result comes via assembly
      *      return, so it cannot be called through the typed interface)
      */
-    function _revertData(InputParam memory a, bytes4 sel)
-        internal
-        view
-        returns (bool ok_, bytes memory ret)
-    {
+    function _revertData(InputParam memory a, bytes4 sel) internal view returns (bool ok_, bytes memory ret) {
         (ok_, ret) = address(assertions).staticcall(abi.encodeCall(Assertions.revertData, (a, sel)));
     }
 
@@ -1257,10 +1214,8 @@ contract CoreReadsTest is Test {
     }
 
     function test_revertData_zeroSelectorReturnsWholeBlob() public view {
-        (bool ok_, bytes memory ret) = _revertData(
-            _call(address(target), abi.encodeCall(MockTarget.revertsWithArgs, ())),
-            bytes4(0)
-        );
+        (bool ok_, bytes memory ret) =
+            _revertData(_call(address(target), abi.encodeCall(MockTarget.revertsWithArgs, ())), bytes4(0));
         assertTrue(ok_);
         assertEq(ret, abi.encodeWithSelector(MockTarget.InsufficientBalance.selector, uint256(7), uint256(100)));
     }
@@ -1268,18 +1223,15 @@ contract CoreReadsTest is Test {
     function test_revertData_capturesRequireReason() public view {
         // Error(string) is just another selector: strip it and the payload
         // is the ABI-encoded reason string.
-        (bool ok_, bytes memory ret) = _revertData(
-            _call(address(target), abi.encodeCall(MockTarget.revertingFunction, ())),
-            ERROR_STRING
-        );
+        (bool ok_, bytes memory ret) =
+            _revertData(_call(address(target), abi.encodeCall(MockTarget.revertingFunction, ())), ERROR_STRING);
         assertTrue(ok_);
         assertEq(abi.decode(ret, (string)), "MockTarget: intentional revert");
     }
 
     function test_revertData_selectorOnlyError() public view {
         (bool ok_, bytes memory ret) = _revertData(
-            _call(address(target), abi.encodeCall(MockTarget.revertsUnauthorized, ())),
-            MockTarget.Unauthorized.selector
+            _call(address(target), abi.encodeCall(MockTarget.revertsUnauthorized, ())), MockTarget.Unauthorized.selector
         );
         assertTrue(ok_);
         assertEq(ret.length, 0);
@@ -1296,8 +1248,7 @@ contract CoreReadsTest is Test {
             )
         );
         assertions.revertData(
-            _call(address(target), abi.encodeCall(MockTarget.revertsWithArgs, ())),
-            MockTarget.Unauthorized.selector
+            _call(address(target), abi.encodeCall(MockTarget.revertsWithArgs, ())), MockTarget.Unauthorized.selector
         );
     }
 
@@ -1306,63 +1257,47 @@ contract CoreReadsTest is Test {
         // expectation fails.
         vm.expectRevert(
             abi.encodeWithSelector(
-                Assertions.UnexpectedRevertData.selector,
-                MockTarget.Unauthorized.selector,
-                bytes4(0)
+                Assertions.UnexpectedRevertData.selector, MockTarget.Unauthorized.selector, bytes4(0)
             )
         );
         assertions.revertData(
-            _call(address(target), abi.encodeCall(MockTarget.revertsBare, ())),
-            MockTarget.Unauthorized.selector
+            _call(address(target), abi.encodeCall(MockTarget.revertsBare, ())), MockTarget.Unauthorized.selector
         );
     }
 
     function test_revertData_bareRevertPassesWithZeroSelector() public view {
-        (bool ok_, bytes memory ret) = _revertData(
-            _call(address(target), abi.encodeCall(MockTarget.revertsBare, ())),
-            bytes4(0)
-        );
+        (bool ok_, bytes memory ret) =
+            _revertData(_call(address(target), abi.encodeCall(MockTarget.revertsBare, ())), bytes4(0));
         assertTrue(ok_);
         assertEq(ret.length, 0);
     }
 
     function test_revertData_successReverts() public {
         bytes memory cd = abi.encodeCall(MockTarget.getValue, ());
-        vm.expectRevert(
-            abi.encodeWithSelector(Assertions.DidNotRevert.selector, address(target), cd)
-        );
+        vm.expectRevert(abi.encodeWithSelector(Assertions.DidNotRevert.selector, address(target), cd));
         assertions.revertData(_call(address(target), cd), bytes4(0));
     }
 
     function test_revertData_codelessTargetHasNoReason() public {
         // Agrees with isValid() that a code-less target is a failure, but there
         // is no reason to report, so an expectation cannot be met.
-        (bool ok_, bytes memory ret) = _revertData(
-            _call(TEST_EOA, abi.encodeCall(MockTarget.getValue, ())),
-            bytes4(0)
-        );
+        (bool ok_, bytes memory ret) = _revertData(_call(TEST_EOA, abi.encodeCall(MockTarget.getValue, ())), bytes4(0));
         assertTrue(ok_);
         assertEq(ret.length, 0);
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                Assertions.UnexpectedRevertData.selector,
-                MockTarget.Unauthorized.selector,
-                bytes4(0)
+                Assertions.UnexpectedRevertData.selector, MockTarget.Unauthorized.selector, bytes4(0)
             )
         );
         assertions.revertData(
-            _call(TEST_EOA, abi.encodeCall(MockTarget.getValue, ())),
-            MockTarget.Unauthorized.selector
+            _call(TEST_EOA, abi.encodeCall(MockTarget.getValue, ())), MockTarget.Unauthorized.selector
         );
     }
 
     function test_revertData_rejectsNonCallOperand() public {
         vm.expectRevert(
-            abi.encodeWithSelector(
-                Assertions.RevertProbeNotACall.selector,
-                uint8(InputParamFetcherType.RAW_BYTES)
-            )
+            abi.encodeWithSelector(Assertions.RevertProbeNotACall.selector, uint8(InputParamFetcherType.RAW_BYTES))
         );
         assertions.revertData(_lit(5), bytes4(0));
     }
@@ -1417,9 +1352,7 @@ contract CoreReadsTest is Test {
 
         // Continue reading from the selected address: chain(start, calls)
         // resolves the navigated word as the first hop's target.
-        InputParam memory start = _nested(
-            abi.encodeCall(Assertions.nav, (probe, "(address,address[])", _path2(1, 0)))
-        );
+        InputParam memory start = _nested(abi.encodeCall(Assertions.nav, (probe, "(address,address[])", _path2(1, 0))));
         bytes[] memory calls = new bytes[](1);
         calls[0] = abi.encodeCall(MockTarget.getValue, ());
         (bool chained, bytes memory value) =

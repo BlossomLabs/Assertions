@@ -5,7 +5,10 @@ import {Operations} from "../Operations.sol";
 
 contract OperationsNumericTest is Test {
     Operations ops;
-    function setUp() public { ops = new Operations(); }
+
+    function setUp() public {
+        ops = new Operations();
+    }
 
     function test_signedModBoundaries() public view {
         int256 low = type(int256).min;
@@ -52,13 +55,18 @@ contract OperationsNumericTest is Test {
         assertEq(ops.mulDiv(int256(-7), 1, 3, Operations.Rounding.Ceil), -2);
         assertEq(ops.mulDiv(int256(7), 1, -3, Operations.Rounding.Floor), -3);
         assertEq(ops.mulDiv(type(int256).min, 1, 1, Operations.Rounding.Trunc), type(int256).min);
-        assertEq(ops.mulDiv(type(int256).min, type(int256).min, type(int256).min, Operations.Rounding.Floor), type(int256).min);
+        assertEq(
+            ops.mulDiv(type(int256).min, type(int256).min, type(int256).min, Operations.Rounding.Floor),
+            type(int256).min
+        );
         vm.expectRevert(stdError.arithmeticError);
         ops.mulDiv(type(int256).min, -1, 1, Operations.Rounding.Trunc);
         vm.expectRevert(stdError.divisionError);
         ops.mulDiv(int256(0), 1, 0, Operations.Rounding.Ceil);
         vm.expectRevert(stdError.arithmeticError);
-        ops.mulDiv(uint256(type(uint256).max - 1), type(uint256).max - 1, type(uint256).max - 2, Operations.Rounding.Ceil);
+        ops.mulDiv(
+            uint256(type(uint256).max - 1), type(uint256).max - 1, type(uint256).max - 2, Operations.Rounding.Ceil
+        );
     }
 
     function test_signedRoundingOverflowAfterTruncationFits() public {
@@ -79,8 +87,14 @@ contract OperationsNumericTest is Test {
         bool remainder = product % d != 0;
         bool negative = (product < 0) != (d < 0);
         assertEq(ops.mulDiv(int256(a), int256(b), d, Operations.Rounding.Trunc), trunc);
-        assertEq(ops.mulDiv(int256(a), int256(b), d, Operations.Rounding.Floor), trunc - (remainder && negative ? int256(1) : int256(0)));
-        assertEq(ops.mulDiv(int256(a), int256(b), d, Operations.Rounding.Ceil), trunc + (remainder && !negative ? int256(1) : int256(0)));
+        assertEq(
+            ops.mulDiv(int256(a), int256(b), d, Operations.Rounding.Floor),
+            trunc - (remainder && negative ? int256(1) : int256(0))
+        );
+        assertEq(
+            ops.mulDiv(int256(a), int256(b), d, Operations.Rounding.Ceil),
+            trunc + (remainder && !negative ? int256(1) : int256(0))
+        );
     }
 
     function test_signedPower() public {
@@ -99,7 +113,10 @@ contract OperationsNumericTest is Test {
         assertEq(ops.parseUnitsUnsigned("+.001", 2, Operations.Rounding.Ceil), 1);
         assertEq(ops.parseUnitsUnsigned("12.", 2, Operations.Rounding.Floor), 1200);
         assertEq(ops.formatUnits(int256(-10020), 4), "-1.002");
-        assertEq(ops.formatUnits(uint256(1), 77), "0.00000000000000000000000000000000000000000000000000000000000000000000000000001");
+        assertEq(
+            ops.formatUnits(uint256(1), 77),
+            "0.00000000000000000000000000000000000000000000000000000000000000000000000000001"
+        );
         vm.expectRevert();
         ops.parseUnitsUnsigned("-0", 0, Operations.Rounding.Trunc);
         vm.expectRevert();
@@ -121,6 +138,9 @@ contract OperationsNumericTest is Test {
         assertEq(ops.parseInt(bytes(ops.toString(value))), value);
         assertEq(ops.parseUnits(bytes(ops.formatUnits(value, precision)), precision, Operations.Rounding.Trunc), value);
         uint256 unsigned = uint256(value);
-        assertEq(ops.parseUnitsUnsigned(bytes(ops.formatUnits(unsigned, precision)), precision, Operations.Rounding.Trunc), unsigned);
+        assertEq(
+            ops.parseUnitsUnsigned(bytes(ops.formatUnits(unsigned, precision)), precision, Operations.Rounding.Trunc),
+            unsigned
+        );
     }
 }

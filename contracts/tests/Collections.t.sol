@@ -202,11 +202,7 @@ contract CollectionsTest is Test {
         Collections.Callback memory c = cb(this.malformed.selector, "(string)", 1);
         vm.expectRevert(
             abi.encodeWithSelector(
-                AbiCodec.InvalidCallbackResult.selector,
-                ops.mapValues.selector,
-                uint256(0),
-                uint256(0),
-                address(this)
+                AbiCodec.InvalidCallbackResult.selector, ops.mapValues.selector, uint256(0), uint256(0), address(this)
             )
         );
         ops.mapValues("string", "string", strings(), c);
@@ -234,6 +230,7 @@ contract CollectionsTest is Test {
         assertEq(u[1], abi.encode(b));
         assertEq(ops.packArray("uint256", u), abi.encode(v));
     }
+
     function testEmptyValidatesDescriptorsAndCallback() public {
         bytes[] memory empty = new bytes[](0);
         Collections.Callback memory c = cb(this.nonempty.selector, "(string)", 1);
@@ -289,22 +286,32 @@ contract CollectionsTest is Test {
         assertEq(ops.uniqueValues("string", values, eq, false)[0], values[0]);
     }
 
-    function nonCanonicalWord(uint256) external pure returns (uint256) { return 2; }
-    function extraWord(uint256) external pure returns (uint256, uint256) { return (1, 2); }
+    function nonCanonicalWord(uint256) external pure returns (uint256) {
+        return 2;
+    }
+
+    function extraWord(uint256) external pure returns (uint256, uint256) {
+        return (1, 2);
+    }
 
     function testWordCallbacksRejectMalformedResults() public {
         uint256[] memory offsets = new uint256[](1);
         offsets[0] = 4;
         bytes memory template = abi.encodeCall(this.nonCanonicalWord, (0));
-        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
-            ops.filterWords.selector, 0, 0, address(this)));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AbiCodec.InvalidCallbackResult.selector, ops.filterWords.selector, 0, 0, address(this)
+            )
+        );
         ops.filterWords(abi.encode(uint256(42)), address(this), template, offsets);
         template = abi.encodeCall(this.extraWord, (0));
-        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
-            ops.mapWords.selector, 0, 0, address(this)));
+        vm.expectRevert(
+            abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector, ops.mapWords.selector, 0, 0, address(this))
+        );
         ops.mapWords(abi.encode(uint256(42)), address(this), template, offsets);
-        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
-            ops.foldRange.selector, 0, 0, address(this)));
+        vm.expectRevert(
+            abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector, ops.foldRange.selector, 0, 0, address(this))
+        );
         ops.foldRange(1, address(this), template, 4, offsets, bytes32(0), Collections.FoldExit.Full);
     }
 
@@ -335,12 +342,16 @@ contract CollectionsTest is Test {
     }
 
     function surround(string memory prefix, string memory value, string memory suffix)
-        external pure returns (string memory)
+        external
+        pure
+        returns (string memory)
     {
         return string.concat(prefix, value, suffix);
     }
 
-    function invalidBool(string memory) external pure returns (uint256) { return 2; }
+    function invalidBool(string memory) external pure returns (uint256) {
+        return 2;
+    }
 
     function invalidComparator(Record memory, Record memory) external pure returns (int256, int256) {
         return (0, 0);
@@ -359,15 +370,25 @@ contract CollectionsTest is Test {
 
     function testMalformedPredicateAndComparatorAreRejected() public {
         Collections.Callback memory c = cb(this.invalidBool.selector, "(string)", 1);
-        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
-            ops.filterValues.selector, uint256(0), uint256(0), address(this)));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AbiCodec.InvalidCallbackResult.selector,
+                ops.filterValues.selector,
+                uint256(0),
+                uint256(0),
+                address(this)
+            )
+        );
         ops.filterValues("string", strings(), c);
         bytes[] memory records = new bytes[](2);
         records[0] = abi.encode(Record(1, "one"));
         records[1] = abi.encode(Record(2, "two"));
         c = cb(this.invalidComparator.selector, "((uint256,string),(uint256,string))", 2);
-        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
-            ops.sortValues.selector, uint256(0), uint256(1), address(this)));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AbiCodec.InvalidCallbackResult.selector, ops.sortValues.selector, uint256(0), uint256(1), address(this)
+            )
+        );
         ops.sortValues("(uint256,string)", records, c);
     }
 
@@ -377,8 +398,9 @@ contract CollectionsTest is Test {
         for (uint256 i; i < n; i++) {
             values[i] = abi.encode(Record(uint256(keccak256(abi.encode(seed, i))) % 4, string(abi.encode(i))));
         }
-        bytes[] memory sorted = ops.sortValues("(uint256,string)", values,
-            cb(this.compare.selector, "((uint256,string),(uint256,string))", 2));
+        bytes[] memory sorted = ops.sortValues(
+            "(uint256,string)", values, cb(this.compare.selector, "((uint256,string),(uint256,string))", 2)
+        );
         bool[] memory seen = new bool[](n);
         uint256 previousKey;
         uint256 previousIndex;

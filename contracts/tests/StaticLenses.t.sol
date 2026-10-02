@@ -141,7 +141,9 @@ contract StaticLensesTest is Test {
 
     // ============ Canonical words in returned values ============
 
-    /** @dev Byte offset of the first word equal to `sentinel` at or after `from` */
+    /**
+     * @dev Byte offset of the first word equal to `sentinel` at or after `from`
+     */
     function _find(bytes memory data, uint256 sentinel, uint256 from) internal pure returns (uint256 p) {
         for (p = from; p + 32 <= data.length; p += 32) {
             uint256 w;
@@ -151,9 +153,13 @@ contract StaticLensesTest is Test {
         revert("sentinel not found");
     }
 
-    function _expectInvalidValue(bytes memory data, string memory types, int256[] memory path, uint256 sentinel, uint256 from)
-        internal
-    {
+    function _expectInvalidValue(
+        bytes memory data,
+        string memory types,
+        int256[] memory path,
+        uint256 sentinel,
+        uint256 from
+    ) internal {
         vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, _find(data, sentinel, from)));
         assertions.nav(_raw(data), types, path);
     }

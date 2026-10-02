@@ -26,22 +26,22 @@ contract OperationsSymbolicTest is Test {
 
     function check_mulDivZeroDenominatorPanics(uint256 a, uint256 b, uint8 rounding) public view {
         vm.assume(rounding < 3);
-        (bool ok, bytes memory out) = address(ops).staticcall(
-            abi.encodeWithSignature("mulDiv(uint256,uint256,uint256,uint8)", a, b, uint256(0), rounding)
-        );
+        (bool ok, bytes memory out) = address(ops)
+            .staticcall(abi.encodeWithSignature("mulDiv(uint256,uint256,uint256,uint8)", a, b, uint256(0), rounding));
         assertFalse(ok);
         assertEq(out, abi.encodeWithSignature("Panic(uint256)", uint256(0x12)));
     }
 
     // ============ Signed modular arithmetic ============
 
-    /** @dev int256.min operands are supported, per the NatSpec */
+    /**
+     * @dev int256.min operands are supported, per the NatSpec
+     */
     function check_signedModAtIntMin(int256 other, uint8 which) public view {
         vm.assume(other != 0 && which < 2);
         int256 m = which == 0 ? type(int256).min : other;
         int256 a = which == 0 ? other : type(int256).min;
-        (bool ok,) =
-            address(ops).staticcall(abi.encodeWithSignature("mulMod(int256,int256,int256)", a, int256(1), m));
+        (bool ok,) = address(ops).staticcall(abi.encodeWithSignature("mulMod(int256,int256,int256)", a, int256(1), m));
         assertTrue(ok, "signed mulMod reverted on int256.min");
         (ok,) = address(ops).staticcall(abi.encodeWithSignature("addMod(int256,int256,int256)", a, int256(0), m));
         assertTrue(ok, "signed addMod reverted on int256.min");
@@ -71,11 +71,15 @@ contract OperationsSymbolicTest is Test {
             vm.assume(d[i] < 10);
         }
         uint256 decimals;
-        if (decimalsCase == 0) decimals = 0;
-        else if (decimalsCase == 1) decimals = 1;
-        else if (decimalsCase == 2) decimals = 2;
-        else if (decimalsCase == 3) decimals = 3;
-        else {
+        if (decimalsCase == 0) {
+            decimals = 0;
+        } else if (decimalsCase == 1) {
+            decimals = 1;
+        } else if (decimalsCase == 2) {
+            decimals = 2;
+        } else if (decimalsCase == 3) {
+            decimals = 3;
+        } else {
             vm.assume(decimalsCase == 4);
             decimals = 4;
         }
@@ -91,9 +95,8 @@ contract OperationsSymbolicTest is Test {
         uint256 n = uint256(d[0]) * 10000 + uint256(d[1]) * 1000 + uint256(d[2]) * 100 + uint256(d[3]) * 10 + d[4];
         uint256 scaled = n * 10 ** decimals;
 
-        (bool ok, bytes memory out) = address(ops).staticcall(
-            abi.encodeCall(Operations.parseUnits, (text, decimals, Operations.Rounding(mode)))
-        );
+        (bool ok, bytes memory out) =
+            address(ops).staticcall(abi.encodeCall(Operations.parseUnits, (text, decimals, Operations.Rounding(mode))));
         assertTrue(ok, "parseUnits refused a well-formed number");
         int256 result = abi.decode(out, (int256));
         // The sign follows the text; zero carries none.

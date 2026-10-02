@@ -8,7 +8,9 @@ import "../lib/AbiCodec.sol";
 import "../Assertions.sol";
 import "../lib/ERC8211.sol";
 
-/** @dev Callback targets for the gap tests */
+/**
+ * @dev Callback targets for the gap tests
+ */
 contract GapLambdas {
     function id(uint256 x) external pure returns (uint256) {
         return x;
@@ -28,7 +30,9 @@ contract GapLambdas {
         return a == b;
     }
 
-    /** @dev A predicate that answers with two words */
+    /**
+     * @dev A predicate that answers with two words
+     */
     function wide(uint256 x) external pure returns (uint256, uint256) {
         return (x & 1, 0);
     }
@@ -75,7 +79,9 @@ contract MutationGapsTest is Test {
 
     // ============ Codec: range checks through nesting (AbiCodec #216, #237) ============
 
-    /** @dev A tuple array inside a tuple: the component after it sits past both copies */
+    /**
+     * @dev A tuple array inside a tuple: the component after it sits past both copies
+     */
     function test_rangeCheckAfterNestedTupleArray() public {
         bytes[] memory values = new bytes[](1);
         values[0] = abi.encode(uint256(1), uint256(2), DIRTY);
@@ -83,7 +89,9 @@ contract MutationGapsTest is Test {
         collections.packArray("((uint8)[2],uint8)", values);
     }
 
-    /** @dev A two-digit fixed size: the dirty word is the tenth */
+    /**
+     * @dev A two-digit fixed size: the dirty word is the tenth
+     */
     function test_rangeCheckInTwoDigitFixedArray() public {
         uint256[10] memory words;
         words[9] = DIRTY;
@@ -122,7 +130,9 @@ contract MutationGapsTest is Test {
         v[1] = abi.encode(DIRTY);
     }
 
-    /** @dev Collections #435, #437, #426, #618, #537, #605: a dirty uint8 input is refused everywhere */
+    /**
+     * @dev Collections #435, #437, #426, #618, #537, #605: a dirty uint8 input is refused everywhere
+     */
     function test_traversalsValidateNarrowInputs() public {
         bytes memory invalid = abi.encodeWithSelector(AbiCodec.InvalidValue.selector, uint256(0));
         vm.expectRevert(invalid);
@@ -139,7 +149,9 @@ contract MutationGapsTest is Test {
         collections.sliceValues("uint8", dirtyList(), 1, 2);
     }
 
-    /** @dev Collections #415, #535, #575, #778: a malformed descriptor is refused even with nothing to traverse */
+    /**
+     * @dev Collections #415, #535, #575, #778: a malformed descriptor is refused even with nothing to traverse
+     */
     function test_emptyTraversalsStillParseTheDescriptor() public {
         bytes memory bad = abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(5));
         bytes[] memory none = new bytes[](0);
@@ -167,7 +179,9 @@ contract MutationGapsTest is Test {
 
     // ============ Collections: unzip envelope (#786) ============
 
-    /** @dev A dynamic pair must carry the 0x20 envelope; a bare body is refused at offset 0 */
+    /**
+     * @dev A dynamic pair must carry the 0x20 envelope; a bare body is refused at offset 0
+     */
     function test_unzipRequiresTheEnvelope() public {
         bytes[] memory pairs = new bytes[](1);
         pairs[0] = abi.encode(uint256(7), string("hi"));
@@ -198,7 +212,9 @@ contract MutationGapsTest is Test {
         xp.evaluate(e, new bytes[](0));
     }
 
-    /** @dev AbiCodec #294: a node's value is validated through the cached-shape overload, dynamic types included */
+    /**
+     * @dev AbiCodec #294: a node's value is validated through the cached-shape overload, dynamic types included
+     */
     function test_nodeValidatesDynamicValues() public {
         Expressions.Expression memory e;
         e.nodes = new Expressions.Node[](1);
@@ -238,7 +254,9 @@ contract MutationGapsTest is Test {
         p[1] = b;
     }
 
-    /** @dev The word index of the first word equal to `sentinel` */
+    /**
+     * @dev The word index of the first word equal to `sentinel`
+     */
     function wordOf(bytes memory data, uint256 sentinel) internal pure returns (int256) {
         for (uint256 p; p + 32 <= data.length; p += 32) {
             uint256 w;
@@ -263,21 +281,27 @@ contract MutationGapsTest is Test {
         core.nav(raw(data), "(uint256,uint256[])", path2(1, 0));
     }
 
-    /** @dev #743, #745, #752, #755: an element offset past the data names its offset word */
+    /**
+     * @dev #743, #745, #752, #755: an element offset past the data names its offset word
+     */
     function test_navElementOffsetNamesItsWord() public {
         bytes memory data = abi.encodePacked(uint256(7), uint256(0x40), uint256(1), type(uint256).max);
         expectOutOfBounds(data, type(uint256).max);
         core.nav(raw(data), "(uint256,bytes[])", path2(1, 0));
     }
 
-    /** @dev #544, #555, #562, #572-574: a static-element array terminal too long for the data */
+    /**
+     * @dev #544, #555, #562, #572-574: a static-element array terminal too long for the data
+     */
     function test_navStaticArrayTerminalBounded() public {
         bytes memory data = abi.encodePacked(uint256(7), uint256(0x40), uint256(2), uint256(0xE0));
         expectOutOfBounds(data, 2);
         core.nav(raw(data), "(uint256,uint256[])", path1(1));
     }
 
-    /** @dev #422, #442, #444: a bytes terminal whose length overruns the data */
+    /**
+     * @dev #422, #442, #444: a bytes terminal whose length overruns the data
+     */
     function test_navBytesTerminalBounded() public {
         bytes memory data = abi.encodePacked(uint256(7), uint256(0x40), uint256(100), bytes32("x"));
         expectOutOfBounds(data, 100);
@@ -294,7 +318,9 @@ contract MutationGapsTest is Test {
         core.nav(raw(data), "(uint256,bytes)", path1(1));
     }
 
-    /** @dev #332, #333, #364, #365: LEN bounds the value it measures and names its length word */
+    /**
+     * @dev #332, #333, #364, #365: LEN bounds the value it measures and names its length word
+     */
     function test_navLengthBounded() public {
         bytes memory arrayData = abi.encodePacked(uint256(7), uint256(0x40), uint256(5));
         expectOutOfBounds(arrayData, 5);
@@ -304,7 +330,9 @@ contract MutationGapsTest is Test {
         core.nav(raw(bytesData), "(uint256,bytes)", path2(1, LEN));
     }
 
-    /** @dev #394, #405: PAYLOAD never reads past the data */
+    /**
+     * @dev #394, #405: PAYLOAD never reads past the data
+     */
     function test_navPayloadBounded() public {
         bytes memory data = abi.encodePacked(uint256(7), uint256(0x40), uint256(100), bytes32("x"));
         expectOutOfBounds(data, 100);
@@ -319,7 +347,9 @@ contract MutationGapsTest is Test {
         collections.packArray(t, values);
     }
 
-    /** @dev #404, #406, #416, #417: an element count the data cannot hold is refused at the array's base */
+    /**
+     * @dev #404, #406, #416, #417: an element count the data cannot hold is refused at the array's base
+     */
     function test_bodyBoundsElementCount() public {
         vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, uint256(64)));
         packOne("uint256[]", abi.encodePacked(uint256(32), uint256(2), uint256(5)));
@@ -328,7 +358,9 @@ contract MutationGapsTest is Test {
         packOne("(uint256,uint256)[]", abi.encodePacked(uint256(32), uint256(2), uint256(5), uint256(6), uint256(7)));
     }
 
-    /** @dev #934, #936, #946, #947: unpack bounds the count the same way */
+    /**
+     * @dev #934, #936, #946, #947: unpack bounds the count the same way
+     */
     function test_unpackBoundsElementCount() public {
         vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, uint256(64)));
         collections.unpackArray(
@@ -336,20 +368,26 @@ contract MutationGapsTest is Test {
         );
     }
 
-    /** @dev #505, #507, #517: a tuple head that overruns the data is refused at the tuple */
+    /**
+     * @dev #505, #507, #517: a tuple head that overruns the data is refused at the tuple
+     */
     function test_bodyBoundsTupleHead() public {
         vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, uint256(32)));
         packOne("((uint256,uint256),string)", abi.encodePacked(uint256(32), uint256(1)));
     }
 
-    /** @dev #575: a non-tight offset names its own head word */
+    /**
+     * @dev #575: a non-tight offset names its own head word
+     */
     function test_bodyNamesTheBadOffset() public {
         bytes memory value = abi.encodePacked(uint256(32), uint256(7), uint256(0x60), uint256(0), uint256(0));
         vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, uint256(64)));
         packOne("(uint256,string)", value);
     }
 
-    /** @dev #704, #705, #707: dirty padding names its first dirty byte */
+    /**
+     * @dev #704, #705, #707: dirty padding names its first dirty byte
+     */
     function test_bodyNamesTheDirtyPaddingByte() public {
         bytes memory value = abi.encodePacked(uint256(32), uint256(3), bytes32("abc"));
         value[64 + 5] = 0x01;
@@ -369,7 +407,11 @@ contract MutationGapsTest is Test {
         assertEq(ops.encodeBytes("(uint256[40])", args).length, 40 * 32);
         // Wrong length for a large representable footprint: a component length error, not a descriptor one.
         args[0] = new bytes(39 * 32);
-        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidComponentLength.selector, uint256(0), uint256(40 * 32), uint256(39 * 32)));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AbiCodec.InvalidComponentLength.selector, uint256(0), uint256(40 * 32), uint256(39 * 32)
+            )
+        );
         ops.encodeBytes("(uint256[40])", args);
     }
 
@@ -397,11 +439,19 @@ contract MutationGapsTest is Test {
         assertWadClose(ops.expWad(2000000000000000000), 7389056098930650227, 19);
         assertWadClose(ops.expWad(10000000000000000000), 22026465794806716516957, 19);
         assertWadClose(ops.expWad(50000000000000000000), 5184705528587072464087453322933485384827, 19);
-        assertWadClose(ops.expWad(100000000000000000000), 26881171418161354484126255515800135873611118773741922415191608, 19);
-        assertWadClose(ops.expWad(135305999368893231588), 57896044618658097649816762928942336782129491980154662247847962410455084893091, 19);
+        assertWadClose(
+            ops.expWad(100000000000000000000), 26881171418161354484126255515800135873611118773741922415191608, 19
+        );
+        assertWadClose(
+            ops.expWad(135305999368893231588),
+            57896044618658097649816762928942336782129491980154662247847962410455084893091,
+            19
+        );
     }
 
-    /** @dev #379, #381: at and below the underflow cutoff the result is exactly 0 */
+    /**
+     * @dev #379, #381: at and below the underflow cutoff the result is exactly 0
+     */
     function test_expWadUnderflowsToZero() public view {
         assertEq(ops.expWad(-42139678854452767551), 0);
         assertEq(ops.expWad(-100e18), 0);
@@ -420,10 +470,16 @@ contract MutationGapsTest is Test {
         assertWadClose(ops.lnWad(2718281828459045235), 999999999999999999, 0);
         assertWadClose(ops.lnWad(1000000000000000000000), 6907755278982137052, 0);
         assertWadClose(ops.lnWad(1000000000000000000000000000000000000), 41446531673892822312, 0);
-        assertWadClose(ops.lnWad(57896044618658097711785492504343953926634992332820282019728792003956564819967), 135305999368893231589, 0);
+        assertWadClose(
+            ops.lnWad(57896044618658097711785492504343953926634992332820282019728792003956564819967),
+            135305999368893231589,
+            0
+        );
     }
 
-    /** @dev |got - want| <= |want| / 10^relDigits + 1 (relDigits 0: one wei) */
+    /**
+     * @dev |got - want| <= |want| / 10^relDigits + 1 (relDigits 0: one wei)
+     */
     function assertWadClose(int256 got, int256 want, uint256 relDigits) internal pure {
         uint256 diff = got > want ? uint256(got - want) : uint256(want - got);
         uint256 magnitude = want < 0 ? uint256(-want) : uint256(want);
@@ -438,7 +494,9 @@ contract MutationGapsTest is Test {
         ops.stringSlice(data, 0, 0);
     }
 
-    /** @dev #1767: only C2-F4 lead a sequence; any other non-ASCII lead is refused at itself */
+    /**
+     * @dev #1767: only C2-F4 lead a sequence; any other non-ASCII lead is refused at itself
+     */
     function test_utf8RefusesInvalidLeads() public {
         expectUtf8Error(hex"61f5808080", 1);
         expectUtf8Error(hex"61ff", 1);
@@ -462,18 +520,24 @@ contract MutationGapsTest is Test {
         }
     }
 
-    /** @dev #1803, #1815, #1816: a bad continuation byte is refused at itself */
+    /**
+     * @dev #1803, #1815, #1816: a bad continuation byte is refused at itself
+     */
     function test_utf8RefusesBadContinuation() public {
         expectUtf8Error(hex"616263e4b828", 5);
     }
 
-    /** @dev #1086: stringAt validates the whole string, not just the selected byte */
+    /**
+     * @dev #1086: stringAt validates the whole string, not just the selected byte
+     */
     function test_stringAtValidatesTheWholeString() public {
         vm.expectRevert(abi.encodeWithSelector(Operations.InvalidUtf8.selector, uint256(1)));
         ops.stringAt(hex"61ff", 0);
     }
 
-    /** @dev #1066, #1083, #1084: an empty range is empty; a boundary inside a character is refused */
+    /**
+     * @dev #1066, #1083, #1084: an empty range is empty; a boundary inside a character is refused
+     */
     function test_stringSliceRangesAndBoundaries() public {
         assertEq(ops.stringSlice("abc", 2, 1).length, 0);
         // "x" then U+00E9 (C3 A9): ending at 2 cuts the character after its lead byte.
@@ -481,19 +545,25 @@ contract MutationGapsTest is Test {
         ops.stringSlice(hex"78c3a9", 0, 2);
     }
 
-    /** @dev #1104: contains is false when the needle is absent */
+    /**
+     * @dev #1104: contains is false when the needle is absent
+     */
     function test_containsFalseWhenAbsent() public view {
         assertFalse(ops.contains("abcdef", "xy"));
         assertTrue(ops.contains("abcdef", "cd"));
     }
 
-    /** @dev #1894: a precision past 77 decimals is refused, not overflowed */
+    /**
+     * @dev #1894: a precision past 77 decimals is refused, not overflowed
+     */
     function test_parseUnitsRefusesExcessPrecision() public {
         vm.expectRevert(abi.encodeWithSelector(Operations.InvalidPrecision.selector, uint256(78)));
         ops.parseUnits("1", 78, Operations.Rounding.Trunc);
     }
 
-    /** @dev #1745: byteAt names an index outside the data */
+    /**
+     * @dev #1745: byteAt names an index outside the data
+     */
     function test_byteAtNamesOutOfRangeIndex() public {
         vm.expectRevert(abi.encodeWithSelector(Operations.InvalidByteIndex.selector, int256(3), uint256(3)));
         ops.byteAt("abc", 3);
@@ -501,7 +571,9 @@ contract MutationGapsTest is Test {
         ops.byteAt("abc", -4);
     }
 
-    /** @dev #1335, #1587: zero decimals format plainly; a modulus of one yields 0 even for inverse powers */
+    /**
+     * @dev #1335, #1587: zero decimals format plainly; a modulus of one yields 0 even for inverse powers
+     */
     function test_formatZeroDecimalsAndInverseModOne() public view {
         assertEq(ops.formatUnits(uint256(123), 0), "123");
         assertEq(ops.powMod(uint256(5), int256(-3), uint256(1)), 0);
@@ -509,13 +581,17 @@ contract MutationGapsTest is Test {
 
     // ============ Second sweep: residue of the first gap tests ============
 
-    /** @dev AbiCodec #640-649: the padded payload must fit even when the value is not word-aligned */
+    /**
+     * @dev AbiCodec #640-649: the padded payload must fit even when the value is not word-aligned
+     */
     function test_bodyBoundsPaddedPayloadOnUnalignedValue() public {
         vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, uint256(32)));
         packOne("string", abi.encodePacked(uint256(32), uint256(5), bytes5("hello")));
     }
 
-    /** @dev AbiCodec #363 and Assertions #668: two-digit fixed sizes of dynamic elements, in body and in nav */
+    /**
+     * @dev AbiCodec #363 and Assertions #668: two-digit fixed sizes of dynamic elements, in body and in nav
+     */
     function test_twoDigitFixedSizes() public {
         string[10] memory strings;
         bytes[] memory values = new bytes[](1);
@@ -525,19 +601,23 @@ contract MutationGapsTest is Test {
         assertEq(collections.packArray("string[10]", values), abi.encode(outer));
         uint256[12] memory words;
         words[11] = 0xBEEF;
-        (bool ok, bytes memory out) =
-            address(core).staticcall(abi.encodeCall(Assertions.nav, (raw(abi.encode(words)), "(uint256[12])", path2(0, 11))));
+        (bool ok, bytes memory out) = address(core)
+            .staticcall(abi.encodeCall(Assertions.nav, (raw(abi.encode(words)), "(uint256[12])", path2(0, 11))));
         assertTrue(ok, "a two-digit fixed size is misread");
         assertEq(out, abi.encode(uint256(0xBEEF)));
     }
 
-    /** @dev AbiCodec #511: a head that fits after one component but not the next */
+    /**
+     * @dev AbiCodec #511: a head that fits after one component but not the next
+     */
     function test_bodyBoundsHeadAfterAComponent() public {
         vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, uint256(32)));
         packOne("(uint256,(uint256,uint256),string)", abi.encodePacked(uint256(32), uint256(1), uint256(2)));
     }
 
-    /** @dev AbiCodec #781: nothing may follow a tuple's last component */
+    /**
+     * @dev AbiCodec #781: nothing may follow a tuple's last component
+     */
     function test_tupleRefusesTrailingComponentText() public {
         bytes[] memory args = new bytes[](1);
         args[0] = abi.encode(uint256(1));
@@ -547,7 +627,9 @@ contract MutationGapsTest is Test {
         ops.encodeBytes("((uint8)uint8)", args);
     }
 
-    /** @dev AbiCodec #146, #147: after an unrecognised name the walk still checks the next component */
+    /**
+     * @dev AbiCodec #146, #147: after an unrecognised name the walk still checks the next component
+     */
     function test_rangeCheckAfterUnrecognisedName() public {
         vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, uint256(64)));
         packOne("(foo[2],uint8)", abi.encodePacked(uint256(5), uint256(DIRTY), uint256(DIRTY)));
@@ -555,14 +637,18 @@ contract MutationGapsTest is Test {
         packOne("(foo,(uint8,bool))", abi.encodePacked(uint256(5), uint256(DIRTY), uint256(0)));
     }
 
-    /** @dev AbiCodec #1019, #1020: trailing bytes after an unpacked array are named at their offset */
+    /**
+     * @dev AbiCodec #1019, #1020: trailing bytes after an unpacked array are named at their offset
+     */
     function test_unpackNamesTrailingBytes() public {
         bytes memory data = abi.encodePacked(uint256(32), uint256(1), uint256(7), uint256(0));
         vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, uint256(96)));
         collections.unpackArray("uint256", data);
     }
 
-    /** @dev Collections #802-#871: unzip refuses non-canonical dynamic pairs, naming the offending word */
+    /**
+     * @dev Collections #802-#871: unzip refuses non-canonical dynamic pairs, naming the offending word
+     */
     function test_unzipRefusesNonCanonicalPairs() public {
         bytes[] memory pairs = new bytes[](1);
         // A loose offset for the string.
@@ -583,7 +669,9 @@ contract MutationGapsTest is Test {
         collections.unzipValues("uint256", "uint256", pairs, 0);
     }
 
-    /** @dev Collections #640: unzip validates each part against its declared type */
+    /**
+     * @dev Collections #640: unzip validates each part against its declared type
+     */
     function test_unzipValidatesParts() public {
         bytes[] memory pairs = new bytes[](1);
         pairs[0] = abi.encode(DIRTY, uint256(1));
@@ -591,7 +679,9 @@ contract MutationGapsTest is Test {
         collections.unzipValues("uint8", "uint256", pairs, 1);
     }
 
-    /** @dev Collections #898, #901: multi-word static sides zip and unzip exactly */
+    /**
+     * @dev Collections #898, #901: multi-word static sides zip and unzip exactly
+     */
     function test_zipMultiWordStaticSides() public view {
         bytes[] memory left = new bytes[](1);
         bytes[] memory right = new bytes[](1);
@@ -602,7 +692,9 @@ contract MutationGapsTest is Test {
         assertEq(collections.unzipValues("(uint256,uint256)", "uint256[3]", zipped, 1)[0], right[0]);
     }
 
-    /** @dev Collections #93, #101: each side of zipWords is checked for alignment on its own */
+    /**
+     * @dev Collections #93, #101: each side of zipWords is checked for alignment on its own
+     */
     function test_zipWordsChecksEachSide() public {
         bytes memory aligned = abi.encode(uint256(1));
         bytes memory odd = hex"01";
@@ -612,7 +704,9 @@ contract MutationGapsTest is Test {
         collections.zipWords(aligned, odd);
     }
 
-    /** @dev Collections #700, #703: the accumulator window must fit the template */
+    /**
+     * @dev Collections #700, #703: the accumulator window must fit the template
+     */
     function test_foldAccumulatorWindowBounded() public {
         bytes memory template = abi.encodeCall(GapLambdas.add, (0, 0));
         uint256[] memory elem = new uint256[](1);
@@ -644,9 +738,15 @@ contract MutationGapsTest is Test {
         // A fold result that is not a canonical accumulatorType names its element.
         bytes[] memory big = new bytes[](1);
         big[0] = abi.encode(uint256(300));
-        vm.expectRevert(abi.encodeWithSelector(
-            AbiCodec.InvalidCallbackResult.selector, Collections.foldValues.selector, uint256(0), uint256(0), address(lambdas)
-        ));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AbiCodec.InvalidCallbackResult.selector,
+                Collections.foldValues.selector,
+                uint256(0),
+                uint256(0),
+                address(lambdas)
+            )
+        );
         collections.foldValues("uint256", "uint8", big, abi.encode(uint256(0)), binary(GapLambdas.add.selector));
         // No match: find returns the sentinel instead of scanning forever.
         bytes[] memory evens = new bytes[](2);
@@ -666,7 +766,9 @@ contract MutationGapsTest is Test {
         collections.mapValues("uint256", "uint256", none, cb);
     }
 
-    /** @dev Expressions #20, #24, #26: every kind is held to its exact reference count */
+    /**
+     * @dev Expressions #20, #24, #26: every kind is held to its exact reference count
+     */
     function test_nodeReferenceCounts() public {
         Expressions.Expression memory e;
         e.nodes = new Expressions.Node[](4);
@@ -690,7 +792,9 @@ contract MutationGapsTest is Test {
         xp.evaluate(e, new bytes[](0));
     }
 
-    /** @dev Assertions #826, #831-#842, #751, #759, #618, #619, #425, #348: nav errors with nonzero positions */
+    /**
+     * @dev Assertions #826, #831-#842, #751, #759, #618, #619, #425, #348: nav errors with nonzero positions
+     */
     function test_navErrorsAtNonzeroPositions() public {
         // A tuple's dynamic component offset past the data, behind two static words.
         bytes memory data = abi.encodePacked(uint256(7), uint256(8), type(uint256).max);
@@ -714,7 +818,9 @@ contract MutationGapsTest is Test {
         core.nav(raw(data), "(uint256[0][])", path2(0, LEN));
     }
 
-    /** @dev Operations #1780, #1782, #1100, #1109, #1332, #357, #1549, #1897, #1302, #1937 */
+    /**
+     * @dev Operations #1780, #1782, #1100, #1109, #1332, #357, #1549, #1897, #1302, #1937
+     */
     function test_remainingOperationsEdges() public {
         expectUtf8Error(hex"61e4b8", 1);
         assertTrue(ops.contains("abc", ""));
@@ -733,45 +839,57 @@ contract MutationGapsTest is Test {
 
     // ============ Third sweep: the final residue ============
 
-    /** @dev Operations #1738: a start far before the beginning clamps to 0 */
+    /**
+     * @dev Operations #1738: a start far before the beginning clamps to 0
+     */
     function test_stringSliceClampsFarNegativeStart() public view {
         assertEq(ops.stringSlice("abc", -4, 3), bytes("abc"));
         assertEq(ops.stringSlice("abc", type(int256).min, 3), bytes("abc"));
     }
 
-    /** @dev Assertions #627: nav refuses a descriptor with text after the type */
+    /**
+     * @dev Assertions #627: nav refuses a descriptor with text after the type
+     */
     function test_navRefusesTrailingDescriptorText() public {
         vm.expectRevert(abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(9)));
         core.nav(raw(abi.encode(uint256(1))), "(uint256)x", path1(0));
     }
 
-    /** @dev Assertions #601: an array of multi-word elements returns every word of every element */
+    /**
+     * @dev Assertions #601: an array of multi-word elements returns every word of every element
+     */
     function test_navReturnsMultiWordElementArrays() public view {
         // Three two-word elements: 3 * 2 words, which no other combination of the two numbers gives.
         uint256[2][] memory pairs = new uint256[2][](3);
         pairs[0] = [uint256(1), 2];
         pairs[1] = [uint256(3), 4];
         pairs[2] = [uint256(5), 6];
-        (bool ok, bytes memory out) =
-            address(core).staticcall(abi.encodeCall(Assertions.nav, (raw(abi.encode(pairs)), "(uint256[2][])", path1(0))));
+        (bool ok, bytes memory out) = address(core)
+            .staticcall(abi.encodeCall(Assertions.nav, (raw(abi.encode(pairs)), "(uint256[2][])", path1(0))));
         assertTrue(ok);
         assertEq(out, abi.encode(pairs));
     }
 
-    /** @dev Assertions #388: PAYLOAD refuses a length just past the data */
+    /**
+     * @dev Assertions #388: PAYLOAD refuses a length just past the data
+     */
     function test_navPayloadRefusesLengthJustPast() public {
         bytes memory data = abi.encodePacked(uint256(7), uint256(0x40), uint256(90), bytes32("x"), bytes32("y"));
         expectOutOfBounds(data, 90);
         core.nav(raw(data), "(uint256,bytes)", path2(1, PAYLOAD));
     }
 
-    /** @dev Assertions #788: a negative tuple index reports the tuple's full component count */
+    /**
+     * @dev Assertions #788: a negative tuple index reports the tuple's full component count
+     */
     function test_navNegativeTupleIndexCountsComponents() public {
         vm.expectRevert(abi.encodeWithSelector(ElementIndexOutOfBounds.selector, int256(-1), uint256(3)));
         core.nav(raw(abi.encode(uint256(1), uint256(2), uint256(3))), "(uint256,uint256,uint256)", path1(-1));
     }
 
-    /** @dev AbiCodec #770: text between components is named where it starts */
+    /**
+     * @dev AbiCodec #770: text between components is named where it starts
+     */
     function test_tupleNamesTextBetweenComponents() public {
         bytes[] memory args = new bytes[](2);
         args[0] = abi.encode(uint256(1));
@@ -780,7 +898,9 @@ contract MutationGapsTest is Test {
         ops.encodeBytes("(uint256(uint8),uint8)", args);
     }
 
-    /** @dev Collections #628, #629, #779: zip and find validate their elements */
+    /**
+     * @dev Collections #628, #629, #779: zip and find validate their elements
+     */
     function test_zipAndFindValidateElements() public {
         bytes memory invalid = abi.encodeWithSelector(AbiCodec.InvalidValue.selector, uint256(0));
         bytes[] memory dirty = new bytes[](1);
@@ -795,17 +915,27 @@ contract MutationGapsTest is Test {
         collections.findValues("uint8", dirty, unary(GapLambdas.odd.selector));
     }
 
-    /** @dev Collections #941: a predicate must answer with exactly one word */
+    /**
+     * @dev Collections #941: a predicate must answer with exactly one word
+     */
     function test_predicateNeedsOneWord() public {
         bytes[] memory values = new bytes[](1);
         values[0] = abi.encode(uint256(1));
-        vm.expectRevert(abi.encodeWithSelector(
-            AbiCodec.InvalidCallbackResult.selector, Collections.filterValues.selector, uint256(0), uint256(0), address(lambdas)
-        ));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AbiCodec.InvalidCallbackResult.selector,
+                Collections.filterValues.selector,
+                uint256(0),
+                uint256(0),
+                address(lambdas)
+            )
+        );
         collections.filterValues("uint256", values, unary(GapLambdas.wide.selector));
     }
 
-    /** @dev Expressions #93, #28: a Parameter's data is one word; a Call needs its target reference */
+    /**
+     * @dev Expressions #93, #28: a Parameter's data is one word; a Call needs its target reference
+     */
     function test_parameterDataAndCallTarget() public {
         Expressions.Expression memory e;
         e.nodes = new Expressions.Node[](1);

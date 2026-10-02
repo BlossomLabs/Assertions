@@ -117,7 +117,9 @@ contract ExpressionsSymbolicTest is Test {
 
     // ============ References ============
 
-    /** @dev A reference is accepted exactly when it points strictly backwards */
+    /**
+     * @dev A reference is accepted exactly when it points strictly backwards
+     */
     function check_referencesMustPointBackwards(uint8 refCase) public view {
         // A symbolic index is a symbolic array offset in the contract: case-split it.
         vm.assume(refCase < 4);
@@ -135,7 +137,9 @@ contract ExpressionsSymbolicTest is Test {
         }
     }
 
-    /** @dev A Parameter index is accepted exactly when it is in range */
+    /**
+     * @dev A Parameter index is accepted exactly when it is in range
+     */
     function check_parameterIndexBounded(uint8 indexCase, bytes32 p0, bytes32 p1) public view {
         vm.assume(indexCase < 4);
         uint256 index = indexCase == 0 ? 0 : indexCase == 1 ? 1 : indexCase == 2 ? 2 : type(uint256).max;
@@ -170,11 +174,13 @@ contract ExpressionsSymbolicTest is Test {
         e.result = n - 1;
     }
 
-    function node(Expressions.Kind kind, string memory valueType, bytes memory data, uint256[] memory refs, string memory arguments)
-        internal
-        pure
-        returns (Expressions.Node memory)
-    {
+    function node(
+        Expressions.Kind kind,
+        string memory valueType,
+        bytes memory data,
+        uint256[] memory refs,
+        string memory arguments
+    ) internal pure returns (Expressions.Node memory) {
         return Expressions.Node(kind, valueType, data, refs, bytes4(0), arguments);
     }
 
@@ -186,7 +192,9 @@ contract ExpressionsSymbolicTest is Test {
         return node(Expressions.Kind.Literal, valueType, value, new uint256[](0), "");
     }
 
-    /** @dev A condition literal of 1 or 2 words, declared with the static type of that footprint */
+    /**
+     * @dev A condition literal of 1 or 2 words, declared with the static type of that footprint
+     */
     function literalRaw(bytes memory value) internal pure returns (Expressions.Node memory) {
         return literal(value.length == 32 ? "bytes32" : "(bytes32,bytes32)", value);
     }
@@ -226,5 +234,4 @@ contract ExpressionsSymbolicTest is Test {
     function outOfGasArtifact(bool ok, bytes memory out) internal pure returns (bool) {
         return !ok && keccak256(out) == keccak256(abi.encodeWithSelector(Expressions.SubcallOutOfGas.selector));
     }
-
 }

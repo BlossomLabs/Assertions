@@ -42,15 +42,17 @@ contract OperationsGasTest is Test {
         cols = new Collections();
     }
 
-
-    /** One-element elemOffsets array — the N=1 shape every pre-C caller uses. */
+    /**
+     * One-element elemOffsets array — the N=1 shape every pre-C caller uses.
+     */
     function _offs(uint256 o) internal pure returns (uint256[] memory a) {
         a = new uint256[](1);
         a[0] = o;
     }
 
-
-    /** Gas consumed by one staticcall, the unit both shapes are billed in. */
+    /**
+     * Gas consumed by one staticcall, the unit both shapes are billed in.
+     */
     function _cost(address target, bytes memory data) internal view returns (uint256) {
         uint256 before = gasleft();
         (bool okCall,) = target.staticcall(data);
@@ -189,8 +191,7 @@ contract OperationsGasTest is Test {
         );
         InputParam[] memory one = new InputParam[](1);
         one[0] = sorted;
-        uint256 composed =
-            _cost(address(assertions), _opsRead(bytes4(keccak256("hash(bytes)")), one));
+        uint256 composed = _cost(address(assertions), _opsRead(bytes4(keccak256("hash(bytes)")), one));
 
         emit log_named_uint("hashPairSorted native  /level", native);
         emit log_named_uint("hashPairSorted composed/level", composed);
@@ -245,7 +246,15 @@ contract OperationsGasTest is Test {
             address(cols),
             abi.encodeCall(
                 Collections.foldWords,
-                (payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, _offs(SDK_ELEM_OFFSET), bytes32(0), Collections.FoldExit.Any)
+                (
+                    payload,
+                    core_,
+                    SDK_TEMPLATE,
+                    SDK_ELEM_OFFSET,
+                    _offs(SDK_ELEM_OFFSET),
+                    bytes32(0),
+                    Collections.FoldExit.Any
+                )
             )
         );
 
@@ -255,8 +264,7 @@ contract OperationsGasTest is Test {
         uint256 direct = _cost(
             address(cols),
             abi.encodeCall(
-                Collections.foldWords,
-                (payload, address(ops), tiny, 4, _offs(4), bytes32(0), Collections.FoldExit.Any)
+                Collections.foldWords, (payload, address(ops), tiny, 4, _offs(4), bytes32(0), Collections.FoldExit.Any)
             )
         );
 

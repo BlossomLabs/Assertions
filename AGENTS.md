@@ -371,12 +371,10 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
 
 ## Release
 
-- **Bundle formatting cleanup into the next address recalculation.** At the user's
-  request, fix the 31 pre-existing Solidity test-file formatting violations listed
-  in `docs/verification/abi-codec-final/checks.json` when next re-cutting the
-  deployment candidate. Finish formatting and review comment preservation before
-  compilation, salt mining and the fresh proof baseline; require the full
-  `forge fmt --check` to pass. Keep this cleanup deferred until that re-cut.
+- Finish Solidity formatting and review comment preservation before compilation,
+  salt mining and a fresh proof baseline; require the full `forge fmt --check`
+  to pass. Formatting may add braces around single-statement control bodies;
+  review those changes as well as whitespace and comments.
 - Canonical salts are 32-byte values mined with `cast create2` for a vanity prefix
   (a55e47, 09e4a7e, c011ec7, e5594e55: the contract names in hex; see
   `website/scripts/mine-salt.mjs`) and live in `website/scripts/export-deploy-artifact.mjs`. The zero salt in Ignition

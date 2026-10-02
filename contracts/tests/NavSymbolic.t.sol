@@ -78,8 +78,11 @@ contract NavSymbolicTest is Test {
         uint256 i = pick(index, [uint256(0), 1, 2, 3, 4, 4]);
         (bool ok, bytes memory out) = nav(data, "(uint8,address,bool,int8,bytes4)", path1(int256(i)));
         bytes4[5] memory decoders = [
-            this.decodeUint8.selector, this.decodeAddress.selector, this.decodeBool.selector,
-            this.decodeInt8.selector, this.decodeBytes4.selector
+            this.decodeUint8.selector,
+            this.decodeAddress.selector,
+            this.decodeBool.selector,
+            this.decodeInt8.selector,
+            this.decodeBytes4.selector
         ];
         if (ok) sound(decoders[i], out);
         (bool solcOk,) = address(this).staticcall(abi.encodeCall(this.decodeStatics, (data)));
@@ -234,7 +237,9 @@ contract NavSymbolicTest is Test {
         }
     }
 
-    /** @dev Completeness for check_arrayOfBytes, on canonical data only */
+    /**
+     * @dev Completeness for check_arrayOfBytes, on canonical data only
+     */
     function completeBytesArray(bytes memory data, uint8 pathCase, bool ok, bytes memory out) internal view {
         (bool solcOk, bytes memory raw) = address(this).staticcall(abi.encodeCall(this.decodeBytesArray, (data)));
         if (!solcOk) return;
@@ -296,7 +301,9 @@ contract NavSymbolicTest is Test {
         p[1] = b;
     }
 
-    /** @dev A concrete candidate per path: returning `c` itself would stay symbolic */
+    /**
+     * @dev A concrete candidate per path: returning `c` itself would stay symbolic
+     */
     function pick(uint8 c, uint256[6] memory candidates) internal pure returns (uint256) {
         if (c == 0) return candidates[0];
         if (c == 1) return candidates[1];

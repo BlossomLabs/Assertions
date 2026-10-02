@@ -17,8 +17,10 @@ contract AbiCodecTest is Test {
     function assertRejected(bytes memory value, string memory descriptor) private view {
         bytes[] memory args = new bytes[](1);
         args[0] = value;
-        (bool rawOK, bytes memory rawError) = address(ops).staticcall(abi.encodeCall(Operations.encode, (descriptor, args)));
-        (bool bytesOK, bytes memory bytesError) = address(ops).staticcall(abi.encodeCall(Operations.encodeBytes, (descriptor, args)));
+        (bool rawOK, bytes memory rawError) =
+            address(ops).staticcall(abi.encodeCall(Operations.encode, (descriptor, args)));
+        (bool bytesOK, bytes memory bytesError) =
+            address(ops).staticcall(abi.encodeCall(Operations.encodeBytes, (descriptor, args)));
         assertFalse(rawOK);
         assertFalse(bytesOK);
         assertEq(rawError, bytesError);
@@ -74,25 +76,34 @@ contract AbiCodecTest is Test {
         bytes[] memory values = new bytes[](2);
         values[0] = abi.encode(uint256(0));
         values[1] = abi.encode(uint256(1));
-        Collections.Callback memory cb = Collections.Callback(
-            address(this), this.extremeResult.selector, "(uint256)", new bytes[](1), 0, 0, ""
+        Collections.Callback memory cb =
+            Collections.Callback(address(this), this.extremeResult.selector, "(uint256)", new bytes[](1), 0, 0, "");
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AbiCodec.InvalidCallbackResult.selector,
+                collections.mapValues.selector,
+                uint256(1),
+                uint256(0),
+                address(this)
+            )
         );
-        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector,
-            collections.mapValues.selector, uint256(1), uint256(0), address(this)));
         collections.mapValues("uint256", "bytes", values, cb);
     }
 
     function testEncodingAcceptsWordBoundaryPayloadsAndNestedFixedArrays() public view {
         for (uint256 n = 31; n <= 33; n++) {
             bytes memory payload = new bytes(n);
-            for (uint256 i; i < n; i++) payload[i] = bytes1(uint8(i + 1));
+            for (uint256 i; i < n; i++) {
+                payload[i] = bytes1(uint8(i + 1));
+            }
             bytes[2] memory pair = [payload, bytes("")];
             bytes[] memory args = new bytes[](2);
             args[0] = abi.encode(uint256(9));
             args[1] = abi.encode(pair);
             bytes memory expected = abi.encode(uint256(9), pair);
             assertEq(ops.encodeBytes("(uint256,bytes[2])", args), expected);
-            (bool ok, bytes memory raw) = address(ops).staticcall(abi.encodeCall(Operations.encode, ("(uint256,bytes[2])", args)));
+            (bool ok, bytes memory raw) =
+                address(ops).staticcall(abi.encodeCall(Operations.encode, ("(uint256,bytes[2])", args)));
             assertTrue(ok);
             assertEq(raw, expected);
         }
@@ -100,20 +111,61 @@ contract AbiCodecTest is Test {
 
     // ============ Canonical words for narrow static types ============
 
-    function decodeUint8(bytes calldata e) external pure returns (uint8) { return abi.decode(e, (uint8)); }
-    function decodeUint64(bytes calldata e) external pure returns (uint64) { return abi.decode(e, (uint64)); }
-    function decodeUint248(bytes calldata e) external pure returns (uint248) { return abi.decode(e, (uint248)); }
-    function decodeUint256(bytes calldata e) external pure returns (uint256) { return abi.decode(e, (uint256)); }
-    function decodeInt8(bytes calldata e) external pure returns (int8) { return abi.decode(e, (int8)); }
-    function decodeInt64(bytes calldata e) external pure returns (int64) { return abi.decode(e, (int64)); }
-    function decodeInt248(bytes calldata e) external pure returns (int248) { return abi.decode(e, (int248)); }
-    function decodeInt256(bytes calldata e) external pure returns (int256) { return abi.decode(e, (int256)); }
-    function decodeAddress(bytes calldata e) external pure returns (address) { return abi.decode(e, (address)); }
-    function decodeBool(bytes calldata e) external pure returns (bool) { return abi.decode(e, (bool)); }
-    function decodeBytes1(bytes calldata e) external pure returns (bytes1) { return abi.decode(e, (bytes1)); }
-    function decodeBytes20(bytes calldata e) external pure returns (bytes20) { return abi.decode(e, (bytes20)); }
-    function decodeBytes31(bytes calldata e) external pure returns (bytes31) { return abi.decode(e, (bytes31)); }
-    function decodeBytes32(bytes calldata e) external pure returns (bytes32) { return abi.decode(e, (bytes32)); }
+    function decodeUint8(bytes calldata e) external pure returns (uint8) {
+        return abi.decode(e, (uint8));
+    }
+
+    function decodeUint64(bytes calldata e) external pure returns (uint64) {
+        return abi.decode(e, (uint64));
+    }
+
+    function decodeUint248(bytes calldata e) external pure returns (uint248) {
+        return abi.decode(e, (uint248));
+    }
+
+    function decodeUint256(bytes calldata e) external pure returns (uint256) {
+        return abi.decode(e, (uint256));
+    }
+
+    function decodeInt8(bytes calldata e) external pure returns (int8) {
+        return abi.decode(e, (int8));
+    }
+
+    function decodeInt64(bytes calldata e) external pure returns (int64) {
+        return abi.decode(e, (int64));
+    }
+
+    function decodeInt248(bytes calldata e) external pure returns (int248) {
+        return abi.decode(e, (int248));
+    }
+
+    function decodeInt256(bytes calldata e) external pure returns (int256) {
+        return abi.decode(e, (int256));
+    }
+
+    function decodeAddress(bytes calldata e) external pure returns (address) {
+        return abi.decode(e, (address));
+    }
+
+    function decodeBool(bytes calldata e) external pure returns (bool) {
+        return abi.decode(e, (bool));
+    }
+
+    function decodeBytes1(bytes calldata e) external pure returns (bytes1) {
+        return abi.decode(e, (bytes1));
+    }
+
+    function decodeBytes20(bytes calldata e) external pure returns (bytes20) {
+        return abi.decode(e, (bytes20));
+    }
+
+    function decodeBytes31(bytes calldata e) external pure returns (bytes31) {
+        return abi.decode(e, (bytes31));
+    }
+
+    function decodeBytes32(bytes calldata e) external pure returns (bytes32) {
+        return abi.decode(e, (bytes32));
+    }
 
     function packs(string memory descriptor, uint256 w) private view returns (bool ok) {
         bytes[] memory values = new bytes[](1);
@@ -132,20 +184,57 @@ contract AbiCodecTest is Test {
      */
     function testStaticWordsMatchSolcDecoder() public view {
         uint256[16] memory words = [
-            uint256(0), 1, 2, 0x7f, 0x80, 0xff, 0x100, type(uint64).max, uint256(type(uint64).max) + 1,
-            type(uint160).max, uint256(type(uint160).max) + 1, type(uint248).max, uint256(type(uint248).max) + 1,
-            type(uint256).max, uint256(type(uint256).max) << 248, uint256(type(uint256).max) - 0x7f
+            uint256(0),
+            1,
+            2,
+            0x7f,
+            0x80,
+            0xff,
+            0x100,
+            type(uint64).max,
+            uint256(type(uint64).max) + 1,
+            type(uint160).max,
+            uint256(type(uint160).max) + 1,
+            type(uint248).max,
+            uint256(type(uint248).max) + 1,
+            type(uint256).max,
+            uint256(type(uint256).max) << 248,
+            uint256(type(uint256).max) - 0x7f
         ];
         string[16] memory names = [
-            "uint8", "uint64", "uint248", "uint256", "int8", "int64", "int248", "int256",
-            "address", "bool", "bytes1", "bytes20", "bytes31", "bytes32", "uint", "int"
+            "uint8",
+            "uint64",
+            "uint248",
+            "uint256",
+            "int8",
+            "int64",
+            "int248",
+            "int256",
+            "address",
+            "bool",
+            "bytes1",
+            "bytes20",
+            "bytes31",
+            "bytes32",
+            "uint",
+            "int"
         ];
         bytes4[16] memory decoders = [
-            this.decodeUint8.selector, this.decodeUint64.selector, this.decodeUint248.selector,
-            this.decodeUint256.selector, this.decodeInt8.selector, this.decodeInt64.selector,
-            this.decodeInt248.selector, this.decodeInt256.selector, this.decodeAddress.selector,
-            this.decodeBool.selector, this.decodeBytes1.selector, this.decodeBytes20.selector,
-            this.decodeBytes31.selector, this.decodeBytes32.selector, this.decodeUint256.selector,
+            this.decodeUint8.selector,
+            this.decodeUint64.selector,
+            this.decodeUint248.selector,
+            this.decodeUint256.selector,
+            this.decodeInt8.selector,
+            this.decodeInt64.selector,
+            this.decodeInt248.selector,
+            this.decodeInt256.selector,
+            this.decodeAddress.selector,
+            this.decodeBool.selector,
+            this.decodeBytes1.selector,
+            this.decodeBytes20.selector,
+            this.decodeBytes31.selector,
+            this.decodeBytes32.selector,
+            this.decodeUint256.selector,
             this.decodeInt256.selector
         ];
         uint256 rejections;
@@ -165,7 +254,9 @@ contract AbiCodecTest is Test {
         assertFalse(packs("function", 1 << 63));
     }
 
-    /** @dev Byte offset of the first word equal to `sentinel` at or after `from` */
+    /**
+     * @dev Byte offset of the first word equal to `sentinel` at or after `from`
+     */
     function find(bytes memory data, uint256 sentinel, uint256 from) private pure returns (uint256 p) {
         for (p = from; p + 32 <= data.length; p += 32) {
             uint256 w;
@@ -216,7 +307,9 @@ contract AbiCodecTest is Test {
 
         // validateComponent: a static word inside a dynamic component
         one[0] = abi.encodePacked(uint256(32), uint256(1), dirty);
-        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidComponentValue.selector, uint256(0), find(one[0], dirty, 64)));
+        vm.expectRevert(
+            abi.encodeWithSelector(AbiCodec.InvalidComponentValue.selector, uint256(0), find(one[0], dirty, 64))
+        );
         ops.encodeBytes("(uint8[])", one);
     }
 

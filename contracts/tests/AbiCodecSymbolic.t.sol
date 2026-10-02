@@ -87,9 +87,12 @@ contract AbiCodecSymbolicTest is Test {
         return abi.decode(encoded, (uint8[]));
     }
 
-    /** @dev packArray that must succeed: Halmos discards a reverting path, so a revert fails explicitly */
+    /**
+     * @dev packArray that must succeed: Halmos discards a reverting path, so a revert fails explicitly
+     */
     function packs(string memory t, bytes[] memory values) internal view returns (bytes memory) {
-        (bool ok, bytes memory out) = address(collections).staticcall(abi.encodeCall(Collections.packArray, (t, values)));
+        (bool ok, bytes memory out) =
+            address(collections).staticcall(abi.encodeCall(Collections.packArray, (t, values)));
         assertTrue(ok, "packArray reverted on valid values");
         return abi.decode(out, (bytes));
     }
@@ -113,18 +116,53 @@ contract AbiCodecSymbolicTest is Test {
 
     // ============ Every word, every narrow type ============
 
-    function solcUint8(bytes calldata d) external pure returns (uint8) { return abi.decode(d, (uint8)); }
-    function solcUint64(bytes calldata d) external pure returns (uint64) { return abi.decode(d, (uint64)); }
-    function solcUint248(bytes calldata d) external pure returns (uint248) { return abi.decode(d, (uint248)); }
-    function solcInt8(bytes calldata d) external pure returns (int8) { return abi.decode(d, (int8)); }
-    function solcInt64(bytes calldata d) external pure returns (int64) { return abi.decode(d, (int64)); }
-    function solcInt248(bytes calldata d) external pure returns (int248) { return abi.decode(d, (int248)); }
-    function solcAddress(bytes calldata d) external pure returns (address) { return abi.decode(d, (address)); }
-    function solcBool(bytes calldata d) external pure returns (bool) { return abi.decode(d, (bool)); }
-    function solcBytes1(bytes calldata d) external pure returns (bytes1) { return abi.decode(d, (bytes1)); }
-    function solcBytes4(bytes calldata d) external pure returns (bytes4) { return abi.decode(d, (bytes4)); }
-    function solcBytes31(bytes calldata d) external pure returns (bytes31) { return abi.decode(d, (bytes31)); }
-    function solcUint256(bytes calldata d) external pure returns (uint256) { return abi.decode(d, (uint256)); }
+    function solcUint8(bytes calldata d) external pure returns (uint8) {
+        return abi.decode(d, (uint8));
+    }
+
+    function solcUint64(bytes calldata d) external pure returns (uint64) {
+        return abi.decode(d, (uint64));
+    }
+
+    function solcUint248(bytes calldata d) external pure returns (uint248) {
+        return abi.decode(d, (uint248));
+    }
+
+    function solcInt8(bytes calldata d) external pure returns (int8) {
+        return abi.decode(d, (int8));
+    }
+
+    function solcInt64(bytes calldata d) external pure returns (int64) {
+        return abi.decode(d, (int64));
+    }
+
+    function solcInt248(bytes calldata d) external pure returns (int248) {
+        return abi.decode(d, (int248));
+    }
+
+    function solcAddress(bytes calldata d) external pure returns (address) {
+        return abi.decode(d, (address));
+    }
+
+    function solcBool(bytes calldata d) external pure returns (bool) {
+        return abi.decode(d, (bool));
+    }
+
+    function solcBytes1(bytes calldata d) external pure returns (bytes1) {
+        return abi.decode(d, (bytes1));
+    }
+
+    function solcBytes4(bytes calldata d) external pure returns (bytes4) {
+        return abi.decode(d, (bytes4));
+    }
+
+    function solcBytes31(bytes calldata d) external pure returns (bytes31) {
+        return abi.decode(d, (bytes31));
+    }
+
+    function solcUint256(bytes calldata d) external pure returns (uint256) {
+        return abi.decode(d, (uint256));
+    }
 
     /**
      * @dev For every word and every narrow type, the codec accepts exactly
@@ -142,7 +180,9 @@ contract AbiCodecSymbolicTest is Test {
         if (ok) assertEq(abi.decode(out, (bytes)), abi.encodePacked(uint256(32), uint256(1), w));
     }
 
-    /** @dev A literal per path: indexing an array by `c` would be a symbolic offset */
+    /**
+     * @dev A literal per path: indexing an array by `c` would be a symbolic offset
+     */
     function wordType(uint8 c) internal pure returns (string memory, bytes4) {
         if (c == 0) return ("uint8", this.solcUint8.selector);
         if (c == 1) return ("uint64", this.solcUint64.selector);
@@ -162,7 +202,9 @@ contract AbiCodecSymbolicTest is Test {
         return abi.decode(d, (uint8, bool, address, bytes4));
     }
 
-    /** @dev Operations.encode accepts exactly the components solc decodes */
+    /**
+     * @dev Operations.encode accepts exactly the components solc decodes
+     */
     function check_encodeMatchesSolc(bytes32[4] memory w) public view {
         bytes[] memory args = new bytes[](4);
         for (uint256 i; i < 4; i++) {
@@ -180,7 +222,9 @@ contract AbiCodecSymbolicTest is Test {
         return abi.decode(d, (Pair[2]));
     }
 
-    /** @dev A fixed array of static tuples: every copy's words are held to their types */
+    /**
+     * @dev A fixed array of static tuples: every copy's words are held to their types
+     */
     function check_fixedArrayOfTuplesMatchesSolc(bytes32[4] memory w) public view {
         bytes memory value = abi.encodePacked(w);
         (bool solcOk,) = address(this).staticcall(abi.encodeCall(this.solcPairs, (value)));

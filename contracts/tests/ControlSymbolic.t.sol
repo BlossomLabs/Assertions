@@ -4,7 +4,9 @@ import "forge-std/Test.sol";
 import "../Assertions.sol";
 import "../lib/ERC8211.sol";
 
-/** @dev Reverts with exactly the calldata it receives */
+/**
+ * @dev Reverts with exactly the calldata it receives
+ */
 contract Reverter {
     fallback() external {
         assembly {
@@ -14,7 +16,9 @@ contract Reverter {
     }
 }
 
-/** @dev Returns successfully, whatever the call */
+/**
+ * @dev Returns successfully, whatever the call
+ */
 contract Quiet {
     fallback() external {}
 }
@@ -52,9 +56,8 @@ contract ControlSymbolicTest is Test {
         bool truthy = length >= 32 && c0 != bytes32(0);
         InputParam memory good = raw(abi.encode(v));
         InputParam memory bomb = failing();
-        (bool ok, bytes memory out) = address(core).staticcall(
-            abi.encodeCall(Assertions.cond, (raw(condition), truthy ? good : bomb, truthy ? bomb : good))
-        );
+        (bool ok, bytes memory out) = address(core)
+            .staticcall(abi.encodeCall(Assertions.cond, (raw(condition), truthy ? good : bomb, truthy ? bomb : good)));
         if (length < 32) {
             assertFalse(ok, "a short condition selects");
             assertEq(out, abi.encodeWithSelector(ReturnDataOutOfBounds.selector, int256(0), length));
@@ -66,7 +69,9 @@ contract ControlSymbolicTest is Test {
 
     // ============ orElse / isValid ============
 
-    /** @dev orElse yields `a` exactly when its constraint holds; isValid reports exactly that */
+    /**
+     * @dev orElse yields `a` exactly when its constraint holds; isValid reports exactly that
+     */
     function check_orElseAndIsValidAgree(bytes32 value, bytes32 ref, bytes32 fallbackValue) public view {
         InputParam memory a = raw(abi.encode(value));
         a.constraints = new Constraint[](1);
@@ -122,7 +127,9 @@ contract ControlSymbolicTest is Test {
         return !ok && keccak256(out) == keccak256(abi.encodeWithSelector(Assertions.SubcallOutOfGas.selector));
     }
 
-    /** @dev The probe's structural refusals, each with its own error */
+    /**
+     * @dev The probe's structural refusals, each with its own error
+     */
     function check_revertDataRefusals(uint8 caseId, bytes4 expected, bytes32 w) public view {
         vm.assume(caseId < 4);
         bytes memory callData = abi.encode(w);
@@ -133,7 +140,8 @@ contract ControlSymbolicTest is Test {
             want = abi.encodeWithSelector(Assertions.DidNotRevert.selector, address(quiet), callData);
         } else if (caseId == 1) {
             p = raw(callData);
-            want = abi.encodeWithSelector(Assertions.RevertProbeNotACall.selector, uint8(InputParamFetcherType.RAW_BYTES));
+            want =
+                abi.encodeWithSelector(Assertions.RevertProbeNotACall.selector, uint8(InputParamFetcherType.RAW_BYTES));
         } else if (caseId == 2) {
             p = call(address(reverter), callData);
             p.constraints = new Constraint[](1);
@@ -142,7 +150,9 @@ contract ControlSymbolicTest is Test {
         } else {
             // A code-less target reverts nothing: only a zero expectation is met, with empty data.
             p = call(address(0xC0DE1E55), callData);
-            want = expected == bytes4(0) ? bytes("") : abi.encodeWithSelector(Assertions.UnexpectedRevertData.selector, expected, bytes4(0));
+            want = expected == bytes4(0)
+                ? bytes("")
+                : abi.encodeWithSelector(Assertions.UnexpectedRevertData.selector, expected, bytes4(0));
         }
         (bool ok, bytes memory out) = address(core).staticcall(abi.encodeCall(Assertions.revertData, (p, expected)));
         if (caseId == 3 && expected == bytes4(0)) assertTrue(ok, "an empty account with no expectation is refused");
@@ -159,9 +169,17 @@ contract ControlSymbolicTest is Test {
     function check_pickSelectsFullWords(uint8 lengthCase, uint8 indexCase, bytes32[4] memory w) public view {
         vm.assume(lengthCase < 5 && indexCase < 9);
         uint256 length = lengthCase == 0 ? 0 : lengthCase == 1 ? 32 : lengthCase == 2 ? 63 : lengthCase == 3 ? 96 : 128;
-        int256 index = indexCase == 0 ? int256(0) : indexCase == 1 ? int256(1) : indexCase == 2 ? int256(3)
-            : indexCase == 3 ? int256(4) : indexCase == 4 ? -1 : indexCase == 5 ? -3 : indexCase == 6 ? -4
-            : indexCase == 7 ? -5 : type(int256).min;
+        int256 index = indexCase == 0
+            ? int256(0)
+            : indexCase == 1
+                ? int256(1)
+                : indexCase == 2
+                    ? int256(3)
+                    : indexCase == 3
+                        ? int256(4)
+                        : indexCase == 4
+                            ? -1
+                            : indexCase == 5 ? -3 : indexCase == 6 ? -4 : indexCase == 7 ? -5 : type(int256).min;
         bytes memory data = truncate(abi.encodePacked(w), length);
         uint256 words = length / 32;
         (bool ok, bytes memory out) = address(core).staticcall(abi.encodeCall(Assertions.pick, (raw(data), index)));
@@ -178,7 +196,9 @@ contract ControlSymbolicTest is Test {
 
     // ============ gather ============
 
-    /** @dev Each operand's raw bytes, once each, as a canonical bytes[] */
+    /**
+     * @dev Each operand's raw bytes, once each, as a canonical bytes[]
+     */
     function check_gatherReturnsRawValues(uint8 aCase, uint8 bCase, bytes32[2] memory wa, bytes32[2] memory wb)
         public
         view
@@ -209,7 +229,9 @@ contract ControlSymbolicTest is Test {
         );
     }
 
-    /** @dev An operand that always fails: an EQ constraint over no bytes at all */
+    /**
+     * @dev An operand that always fails: an EQ constraint over no bytes at all
+     */
     function failing() internal pure returns (InputParam memory p) {
         p = raw("");
         p.constraints = new Constraint[](1);

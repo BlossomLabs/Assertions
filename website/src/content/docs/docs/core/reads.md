@@ -61,6 +61,11 @@ Typed navigation is self-describing calldata: `nav(param, "(address[][],address)
 
 Every terminal returns its canonical single-value encoding. Static words, fixed arrays and static tuples return their complete bounded encoding without an offset or length prefix. Dynamic values return: `[0x20][length][payload]` for string, bytes and arrays of statically encoded elements, `abi.encode(value)` for dynamic tuples and arrays of dynamic elements (re-encoded from a canonical-form walk of their extent, so malformed nested data reverts with `AbiCodec`'s `InvalidValue` at the offending offset). `nav(param, "(uint256,int256[2])", [1])`, for example, returns exactly the two signed words. An empty path is a byte-for-byte passthrough (`nav` degenerates to `resolve`). An encoded `bytes` value's *content* is reachable too, through [the `PAYLOAD` sentinel](#typed-re-entry-the-payload-sentinel) below.
 
+Validation covers the selected value. Unvisited siblings and the enclosing
+frame's tight offset layout are not checked, so successful navigation does not
+validate the entire returndata. An empty path also skips descriptor validation;
+the operand's own fetch and constraints still have to succeed.
+
 ## Raw word extraction
 
 `pick(getReservesParam, 1)` returns reserve1 as a word. It is raw-word extraction for static-layout returns, **not** an ABI decoder.
@@ -93,6 +98,11 @@ or array element heads fit in the returndata before returning the length. For
 arrays of dynamic elements, it checks the offset-word region but does not
 recursively validate each element's tail. A length check is not a full ABI
 validation of every array element.
+
+Static values, fixed arrays and tuples do not support `LEN`. For a dynamic tuple
+or a fixed array of dynamic elements, truncated data can raise
+`ReturnDataOutOfBounds` before the unsupported-type `InvalidNavigation` error.
+`PAYLOAD` rejects these non-byte types before reading a length word.
 
 ## Typed re-entry: the PAYLOAD sentinel
 

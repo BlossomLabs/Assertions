@@ -45,12 +45,13 @@ contract CoreTargetLambdaTest is Test {
 
     // ============ Test Helpers ============
 
-    /** One-element elemOffsets array — the N=1 shape every pre-C caller uses. */
+    /**
+     * One-element elemOffsets array — the N=1 shape every pre-C caller uses.
+     */
     function _offs(uint256 o) internal pure returns (uint256[] memory a) {
         a = new uint256[](1);
         a[0] = o;
     }
-
 
     function _none() internal pure returns (Constraint[] memory cs) {
         cs = new Constraint[](0);
@@ -142,14 +143,30 @@ contract CoreTargetLambdaTest is Test {
         // element offset — the convention the SDK's foldParam uses.
         assertEq(
             uint256(
-                cols.foldWords(payload, address(assertions), template, elemOffset, _offs(elemOffset), bytes32(0), Collections.FoldExit.Any)
+                cols.foldWords(
+                    payload,
+                    address(assertions),
+                    template,
+                    elemOffset,
+                    _offs(elemOffset),
+                    bytes32(0),
+                    Collections.FoldExit.Any
+                )
             ),
             1,
             "one element beats the live floor"
         );
         assertEq(
             uint256(
-                cols.foldWords(payload, address(assertions), template, elemOffset, _offs(elemOffset), bytes32(0), Collections.FoldExit.All)
+                cols.foldWords(
+                    payload,
+                    address(assertions),
+                    template,
+                    elemOffset,
+                    _offs(elemOffset),
+                    bytes32(0),
+                    Collections.FoldExit.All
+                )
             ),
             0,
             "not every element beats the live floor"
@@ -171,7 +188,15 @@ contract CoreTargetLambdaTest is Test {
         bytes memory payload = abi.encodePacked(uint256(10), uint256(20), uint256(30));
         assertEq(
             uint256(
-                cols.foldWords(payload, address(assertions), template, accOffset, _offs(elemOffset), bytes32(uint256(5)), Collections.FoldExit.Full)
+                cols.foldWords(
+                    payload,
+                    address(assertions),
+                    template,
+                    accOffset,
+                    _offs(elemOffset),
+                    bytes32(uint256(5)),
+                    Collections.FoldExit.Full
+                )
             ),
             65,
             "5 + 10 + 20 + 30 through the core"
@@ -244,8 +269,7 @@ contract CoreTargetLambdaTest is Test {
         // mul(<element>, 3). pick ABI-returns one bytes32, so the
         // first-return-word convention the engine relies on holds for it
         // too — the shape the SDK accepts for pick-wrapped operands.
-        InputParam memory picked =
-            _call(address(ops), abi.encodeWithSelector(MUL_U, uint256(MARKER), uint256(3)));
+        InputParam memory picked = _call(address(ops), abi.encodeWithSelector(MUL_U, uint256(MARKER), uint256(3)));
         bytes memory template = abi.encodeCall(Assertions.pick, (picked, int256(0)));
         uint256 elemOffset = _window(template, MARKER);
 
@@ -287,22 +311,37 @@ contract CoreTargetLambdaTest is Test {
         InputParam[] memory args = new InputParam[](2);
         args[0] = _litB32(MARKER);
         args[1] = _call(tgt_, abi.encodeCall(MockTarget.getValue, ()));
-        bytes memory handBuilt =
-            abi.encodeCall(Assertions.read, (_lit(uint256(uint160(ops_))), GT_U, args));
+        bytes memory handBuilt = abi.encodeCall(Assertions.read, (_lit(uint256(uint160(ops_))), GT_U, args));
         assertEq(_window(handBuilt, MARKER), SDK_ELEM_OFFSET, "scanned offset matches the SDK's");
         assertEq(keccak256(handBuilt), keccak256(SDK_TEMPLATE), "solc and the SDK encode identical templates");
 
         bytes memory payload = abi.encodePacked(uint256(10), uint256(200), uint256(30));
         assertEq(
             uint256(
-                cols.foldWords(payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, _offs(SDK_ELEM_OFFSET), bytes32(0), Collections.FoldExit.Any)
+                cols.foldWords(
+                    payload,
+                    core_,
+                    SDK_TEMPLATE,
+                    SDK_ELEM_OFFSET,
+                    _offs(SDK_ELEM_OFFSET),
+                    bytes32(0),
+                    Collections.FoldExit.Any
+                )
             ),
             1,
             "the SDK-compiled predicate finds 200 > 100"
         );
         assertEq(
             uint256(
-                cols.foldWords(payload, core_, SDK_TEMPLATE, SDK_ELEM_OFFSET, _offs(SDK_ELEM_OFFSET), bytes32(0), Collections.FoldExit.All)
+                cols.foldWords(
+                    payload,
+                    core_,
+                    SDK_TEMPLATE,
+                    SDK_ELEM_OFFSET,
+                    _offs(SDK_ELEM_OFFSET),
+                    bytes32(0),
+                    Collections.FoldExit.All
+                )
             ),
             0,
             "10 and 30 do not beat the floor"

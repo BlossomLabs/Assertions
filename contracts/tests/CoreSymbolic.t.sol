@@ -6,7 +6,9 @@ import "../Collections.sol";
 import "../lib/ERC8211.sol";
 import "../lib/AbiCodec.sol";
 
-/** @dev Returns its caller as one word followed by the exact calldata it received */
+/**
+ * @dev Returns its caller as one word followed by the exact calldata it received
+ */
 contract Echo {
     fallback() external {
         assembly {
@@ -17,7 +19,9 @@ contract Echo {
     }
 }
 
-/** @dev Returns its single word argument unchanged: a chain hop with a chosen result */
+/**
+ * @dev Returns its single word argument unchanged: a chain hop with a chosen result
+ */
 contract Hop {
     function hop(bytes32 w) external pure returns (bytes32) {
         return w;
@@ -55,9 +59,12 @@ contract CoreSymbolicTest is Test {
         for (uint256 i; i < 4; i++) {
             args[i] = raw(abi.encode(w[i]));
         }
-        (bool ok, bytes memory out) = address(core).staticcall(
-            abi.encodeCall(Assertions.get, (raw(abi.encode(address(echo))), selector, "(uint8,address,bool,bytes4)", args))
-        );
+        (bool ok, bytes memory out) = address(core)
+            .staticcall(
+                abi.encodeCall(
+                    Assertions.get, (raw(abi.encode(address(echo))), selector, "(uint8,address,bool,bytes4)", args)
+                )
+            );
         (bool solcOk,) = address(this).staticcall(abi.encodeCall(this.solcStatics, (abi.encodePacked(w))));
         assertEq(ok, solcOk, "get and solc disagree on the arguments");
         if (ok) {
@@ -93,9 +100,12 @@ contract CoreSymbolicTest is Test {
         args[0] = raw(abi.encode(w0));
         args[1] = raw(str);
         args[2] = raw(arr);
-        (bool ok, bytes memory out) = address(core).staticcall(
-            abi.encodeCall(Assertions.get, (raw(abi.encode(address(echo))), selector, "(uint256,string,uint8[])", args))
-        );
+        (bool ok, bytes memory out) = address(core)
+            .staticcall(
+                abi.encodeCall(
+                    Assertions.get, (raw(abi.encode(address(echo))), selector, "(uint256,string,uint8[])", args)
+                )
+            );
         // The canonical tuple solc would build from the same three values, if it accepts them.
         bytes memory tuple = bytes.concat(abi.encode(w0, uint256(0x60), uint256(0x60 + str.length - 32)));
         tuple = bytes.concat(tuple, slice(str, 32), slice(arr, 32));
@@ -111,14 +121,19 @@ contract CoreSymbolicTest is Test {
 
     // ============ read: raw segments in order ============
 
-    /** @dev A segment of 0, 5, 32 or 33 bytes cut from two symbolic words (a literal length per case) */
+    /**
+     * @dev A segment of 0, 5, 32 or 33 bytes cut from two symbolic words (a literal length per case)
+     */
     function segment(uint8 c, bytes32 a, bytes32 b) internal pure returns (bytes memory out) {
         out = abi.encodePacked(a, b);
         uint256 length;
-        if (c == 0) length = 0;
-        else if (c == 1) length = 5;
-        else if (c == 2) length = 32;
-        else {
+        if (c == 0) {
+            length = 0;
+        } else if (c == 1) {
+            length = 5;
+        } else if (c == 2) {
+            length = 32;
+        } else {
             vm.assume(c == 3);
             length = 33;
         }
@@ -149,13 +164,16 @@ contract CoreSymbolicTest is Test {
 
     // ============ Address words ============
 
-    /** @dev get, read and chain take a target word only when its upper 96 bits are clear */
+    /**
+     * @dev get, read and chain take a target word only when its upper 96 bits are clear
+     */
     function check_targetWordMustBeClean(uint96 upper, uint8 primitive) public view {
         vm.assume(primitive < 3);
         bytes32 word = bytes32(uint256(uint160(address(echo))) | (uint256(upper) << 160));
         bytes memory call;
         if (primitive == 0) {
-            call = abi.encodeCall(Assertions.get, (raw(abi.encode(word)), bytes4(0x12345678), "()", new InputParam[](0)));
+            call =
+                abi.encodeCall(Assertions.get, (raw(abi.encode(word)), bytes4(0x12345678), "()", new InputParam[](0)));
         } else if (primitive == 1) {
             call = abi.encodeCall(Assertions.read, (raw(abi.encode(word)), bytes4(0x12345678), new InputParam[](0)));
         } else {
@@ -172,15 +190,16 @@ contract CoreSymbolicTest is Test {
         }
     }
 
-    /** @dev A mid-chain hop's address word is held to the same rule, reported at hop index + 1 */
+    /**
+     * @dev A mid-chain hop's address word is held to the same rule, reported at hop index + 1
+     */
     function check_chainHopWordMustBeClean(uint96 upper) public view {
         bytes32 word = bytes32(uint256(uint160(address(echo))) | (uint256(upper) << 160));
         bytes[] memory calls = new bytes[](2);
         calls[0] = abi.encodeCall(Hop.hop, (word));
         calls[1] = hex"12345678";
-        (bool ok, bytes memory out) = address(core).staticcall(
-            abi.encodeCall(Assertions.chain, (raw(abi.encode(address(hopper))), calls))
-        );
+        (bool ok, bytes memory out) =
+            address(core).staticcall(abi.encodeCall(Assertions.chain, (raw(abi.encode(address(hopper))), calls)));
         if (upper == 0) {
             assertTrue(ok, "a clean hop word is refused");
             assertEq(out, bytes.concat(bytes32(uint256(uint160(address(core)))), hex"12345678"));
@@ -199,9 +218,8 @@ contract CoreSymbolicTest is Test {
     function check_errorOffsetNamesFirstBadWord(bytes32[4] memory w) public view {
         bytes[] memory values = new bytes[](1);
         values[0] = abi.encodePacked(w);
-        (bool ok, bytes memory out) = address(collections).staticcall(
-            abi.encodeCall(Collections.packArray, ("(uint8,bool,int8,address)", values))
-        );
+        (bool ok, bytes memory out) = address(collections)
+            .staticcall(abi.encodeCall(Collections.packArray, ("(uint8,bool,int8,address)", values)));
         bool[4] memory good = [
             uint256(w[0]) < 256,
             uint256(w[1]) < 2,

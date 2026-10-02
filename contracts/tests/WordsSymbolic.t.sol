@@ -67,7 +67,9 @@ contract WordsSymbolicTest is Test {
         assertEq(out, abi.encodeWithSelector(Collections.InvalidLane.selector, lane));
     }
 
-    /** @dev An odd count leaves the extra word in lane 0 */
+    /**
+     * @dev An odd count leaves the extra word in lane 0
+     */
     function check_unzipLanes(uint8 countCase, bytes32[4] memory w) public view {
         (bytes memory s, uint256 n) = payload(countCase, w);
         bytes memory lane0 = ok(abi.encodeCall(Collections.unzipWords, (s, 0)));
@@ -92,7 +94,10 @@ contract WordsSymbolicTest is Test {
         assertEq(out.length, k * 32, "duplicates kept");
         // Declared ordered, a sorted payload gives the same answer.
         bytes memory sorted = ok(abi.encodeCall(Collections.sortWords, (s)));
-        assertEq(ok(abi.encodeCall(Collections.uniqueWords, (sorted, true))), ok(abi.encodeCall(Collections.uniqueWords, (sorted, false))));
+        assertEq(
+            ok(abi.encodeCall(Collections.uniqueWords, (sorted, true))),
+            ok(abi.encodeCall(Collections.uniqueWords, (sorted, false)))
+        );
     }
 
     function check_wordIndexOfIsLeastIndex(uint8 countCase, bytes32[4] memory w, bytes32 needle) public view {
@@ -125,7 +130,9 @@ contract WordsSymbolicTest is Test {
         }
     }
 
-    /** @dev Every word operation refuses a payload that is not whole words */
+    /**
+     * @dev Every word operation refuses a payload that is not whole words
+     */
     function check_unalignedPayloadsRevert(uint8 lengthCase, bytes32[4] memory w, uint8 op) public view {
         vm.assume(lengthCase < 4 && op < 7);
         uint256 length = lengthCase == 0 ? 1 : lengthCase == 1 ? 31 : lengthCase == 2 ? 33 : 127;
@@ -147,7 +154,8 @@ contract WordsSymbolicTest is Test {
     function check_iotaWords(uint8 countCase) public view {
         vm.assume(countCase < 5);
         uint256 n = countCase;
-        bytes memory out = ok(abi.encodeCall(Collections.iotaWords, (n == 0 ? 0 : n == 1 ? 1 : n == 2 ? 2 : n == 3 ? 3 : 4)));
+        bytes memory out =
+            ok(abi.encodeCall(Collections.iotaWords, (n == 0 ? 0 : n == 1 ? 1 : n == 2 ? 2 : n == 3 ? 3 : 4)));
         assertEq(out.length, n * 32);
         for (uint256 i; i < n; i++) {
             assertEq(uint256(at(out, i)), i);
@@ -156,19 +164,25 @@ contract WordsSymbolicTest is Test {
 
     // ============ Harness ============
 
-    /** @dev The raw returndata of a call that must succeed */
+    /**
+     * @dev The raw returndata of a call that must succeed
+     */
     function call(bytes memory data) internal view returns (bytes memory out) {
         bool success;
         (success, out) = address(collections).staticcall(data);
         assertTrue(success, "reverted on a valid payload");
     }
 
-    /** @dev The decoded bytes result of a call that must succeed */
+    /**
+     * @dev The decoded bytes result of a call that must succeed
+     */
     function ok(bytes memory data) internal view returns (bytes memory) {
         return abi.decode(call(data), (bytes));
     }
 
-    /** @dev The first 0..4 words of `w` as a payload, the count a literal per path */
+    /**
+     * @dev The first 0..4 words of `w` as a payload, the count a literal per path
+     */
     function payload(uint8 countCase, bytes32[4] memory w) internal pure returns (bytes memory s, uint256 n) {
         vm.assume(countCase < 5);
         n = countCase == 0 ? 0 : countCase == 1 ? 1 : countCase == 2 ? 2 : countCase == 3 ? 3 : 4;

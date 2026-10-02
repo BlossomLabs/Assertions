@@ -72,9 +72,14 @@ contract ERC8211SymbolicTest is Test {
      *      of a word, one to three words. Canonical is a word for the leaves,
      *      two words for IN and IN_SIGNED, empty for SKIP.
      */
-    function check_referenceLengths(uint256 value, uint8 constraintType, uint8 lengthCase, bytes32 a, bytes32 b, bytes32 c)
-        public
-    {
+    function check_referenceLengths(
+        uint256 value,
+        uint8 constraintType,
+        uint8 lengthCase,
+        bytes32 a,
+        bytes32 b,
+        bytes32 c
+    ) public {
         uint256 length = pick(lengthCase, [uint256(0), 31, 32, 33, 64, 96]);
         vm.assume(constraintType != OR || length == 0);
         bytes memory ref = truncate(abi.encodePacked(a, b, c), length);
@@ -89,9 +94,7 @@ contract ERC8211SymbolicTest is Test {
      *      when some branch holds, and an empty OR or a malformed branch
      *      rejects whatever the others say
      */
-    function check_orOfWordBranches(uint256 value, uint8 count, uint8[3] memory types, uint256[3] memory refs)
-        public
-    {
+    function check_orOfWordBranches(uint256 value, uint8 count, uint8[3] memory types, uint256[3] memory refs) public {
         uint256 n = pick(count, [uint256(0), 1, 2, 3, 3, 3]);
         RawConstraint[] memory branches = new RawConstraint[](n);
         bool canonical = n > 0;
@@ -104,7 +107,9 @@ contract ERC8211SymbolicTest is Test {
         agree(ours, theirs, canonical);
     }
 
-    /** @dev OR mixing a range branch, a SKIP and a word branch */
+    /**
+     * @dev OR mixing a range branch, a SKIP and a word branch
+     */
     function check_orWithRangeAndSkip(uint256 value, uint8 rangeType, uint256 lo, uint256 hi, uint8 t, uint256 ref)
         public
     {
@@ -117,7 +122,9 @@ contract ERC8211SymbolicTest is Test {
         agree(ours, theirs, isLeaf(t));
     }
 
-    /** @dev A nested OR is rejected wherever it sits, even after a true branch */
+    /**
+     * @dev A nested OR is rejected wherever it sits, even after a true branch
+     */
     function check_nestedOrRejected(uint256 value, uint8 t, uint256 ref, bool nestedFirst) public {
         vm.assume(t != OR);
         RawConstraint[] memory inner = one(t, abi.encode(ref));
@@ -129,7 +136,9 @@ contract ERC8211SymbolicTest is Test {
         assertEq(ours, theirs, "verdicts differ on a nested OR");
     }
 
-    /** @dev Constraint i judges word i */
+    /**
+     * @dev Constraint i judges word i
+     */
     function check_positionalWords(uint256 v0, uint256 v1, uint8 t0, uint256 r0, uint8 t1, uint256 r1) public {
         vm.assume(t0 != OR && t1 != OR);
         RawConstraint[] memory cs = new RawConstraint[](2);
@@ -139,7 +148,9 @@ contract ERC8211SymbolicTest is Test {
         agree(ours, theirs, isLeaf(t0) && isLeaf(t1));
     }
 
-    /** @dev Every constraint needs its complete word, SKIP included */
+    /**
+     * @dev Every constraint needs its complete word, SKIP included
+     */
     function check_paramLengths(uint8 lengthCase, bytes32 w0, bytes32 w1, uint8 t, uint256 ref, bool skipSecond)
         public
     {
@@ -154,7 +165,9 @@ contract ERC8211SymbolicTest is Test {
 
     // ============ Harness ============
 
-    /** @dev A concrete candidate per path: returning `c` itself would stay symbolic */
+    /**
+     * @dev A concrete candidate per path: returning `c` itself would stay symbolic
+     */
     function pick(uint8 c, uint256[6] memory candidates) internal pure returns (uint256) {
         if (c == 0) return candidates[0];
         if (c == 1) return candidates[1];
@@ -192,11 +205,19 @@ contract ERC8211SymbolicTest is Test {
         cs[0] = RawConstraint(constraintType, referenceData);
     }
 
-    /** @dev Both verdicts on a RAW_BYTES CALL_DATA parameter */
-    function judge(bytes memory paramData, RawConstraint[] memory constraints) internal returns (bool ours, bool theirs) {
-        RawParam memory p = RawParam(uint8(InputParamType.CALL_DATA), uint8(InputParamFetcherType.RAW_BYTES), paramData, constraints);
+    /**
+     * @dev Both verdicts on a RAW_BYTES CALL_DATA parameter
+     */
+    function judge(bytes memory paramData, RawConstraint[] memory constraints)
+        internal
+        returns (bool ours, bool theirs)
+    {
+        RawParam memory p = RawParam(
+            uint8(InputParamType.CALL_DATA), uint8(InputParamFetcherType.RAW_BYTES), paramData, constraints
+        );
         bytes memory args = abi.encode(p);
-        (ours,) = address(core).call(bytes.concat(bytes4(keccak256("assertParam((uint8,uint8,bytes,(uint8,bytes)[]))")), args));
+        (ours,) = address(core)
+            .call(bytes.concat(bytes4(keccak256("assertParam((uint8,uint8,bytes,(uint8,bytes)[]))")), args));
         (theirs,) = address(host).call(bytes.concat(ERC8211ReferenceHarness.judge.selector, args));
     }
 }

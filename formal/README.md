@@ -7,6 +7,7 @@ reusable memory, sequence and cache facts. Every package has a complete import
 closure and an explicit native verification policy.
 
 ```sh
+python3 formal/tools/bootstrap_adapters.py --fetch
 python3 formal/tools/check.py
 python3 formal/tools/query.py --contract Assertions --kind lemma --show
 python3 formal/tools/status.py
@@ -101,3 +102,16 @@ do not create public claims. Halmos properties stay under `contracts/tests/` and
 provide separate EVM evidence with their recorded bounds and exclusions. Source
 theorems, exact-runtime correspondence, Halmos runs, concrete tests and mutation
 results must remain separately identifiable.
+
+## Ignored generated adapters
+
+The 126 `*.generated.dfy` adapters are untracked. Before checking or verifying a
+clean checkout, run `python3 formal/tools/bootstrap_adapters.py --fetch`. The
+manifest pins their historical save commit and both archived and relocated
+SHA-256 hashes. Bootstrap restores those artifacts and rewrites only includes;
+it refuses edited files and verifies every expected byte. The historical save
+must be available on the remote branch before a fresh clone can fetch it.
+
+Artifact bootstrap is distinct from production AST generation. Thirteen
+Operations families support fresh compiler/generator replay; other families still
+need that generation coverage. Restoring an adapter grants no proof credit.

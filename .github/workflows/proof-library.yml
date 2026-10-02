@@ -12,6 +12,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - run: python3 formal/tools/bootstrap_adapters.py --fetch
       - run: python3 formal/tools/check.py
       - run: python3 formal/tools/status.py
       - run: python3 formal/tools/readiness.py

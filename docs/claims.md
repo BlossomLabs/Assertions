@@ -1,5 +1,7 @@
 # Functional claims
 
+The [source proof library](../formal/README.md) maintains canonical specifications and shared foundations. Its declaration inventory does not create new public claims or transfer historical proof acceptance. Library verification status and claim readiness are available through `formal/tools/status.py` and `formal/tools/readiness.py`; the labels below retain their separately recorded evidence and scope.
+
 <!-- claim-coverage -->
 | | Formally verified | Partially verified | Tested | Partially tested | Scope limitation | Environment assumption | Unverified |
 |---|---|---|---|---|---|---|---|

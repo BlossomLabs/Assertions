@@ -12,6 +12,30 @@ sys.path.insert(0,str(LIBRARY/'tools'))
 from declarations import declarations
 
 class LibraryTests(unittest.TestCase):
+    def test_bootstrap_restores_all_adapters_from_missing_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            target=root/'formal'
+            shutil.copytree(LIBRARY,target,ignore=shutil.ignore_patterns('*.generated.dfy','evidence','__pycache__'))
+            subprocess.run(['git','init',str(root)],capture_output=True,check=True)
+            objects=Path(subprocess.check_output(['git','rev-parse','--git-path','objects'],cwd=ROOT,text=True).strip())
+            if not objects.is_absolute():objects=ROOT/objects
+            (root/'.git/objects/info/alternates').write_text(str(objects.resolve())+'\n')
+            self.assertFalse(list(target.rglob('*.generated.dfy')))
+            result=subprocess.run([sys.executable,str(target/'tools/bootstrap_adapters.py')],capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,result.stderr)
+            result=subprocess.run([sys.executable,str(target/'tools/check.py')],capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,result.stderr)
+            adapters=list(target.rglob('*.generated.dfy'))
+            self.assertEqual(len(adapters),126)
+            changed=adapters[0]
+            changed.write_text(changed.read_text()+'// local edit\n')
+            result=subprocess.run([sys.executable,str(target/'tools/bootstrap_adapters.py')],capture_output=True,text=True)
+            self.assertNotEqual(result.returncode,0)
+            self.assertIn('Refusing to overwrite edited adapter',result.stderr)
+            self.assertTrue(changed.read_text().endswith('// local edit\n'))
+
+
     def test_import_does_not_become_part_of_previous_proof(self):
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/'Example.dfy'

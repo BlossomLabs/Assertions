@@ -1,0 +1,1234 @@
+{
+  "scope": "Deterministic adapter bootstrap from the pinned historical canonical save, with include relocation only. This restores artifacts; it does not regenerate production AST translations or grant source acceptance.",
+  "archiveCommit": "4e53bac7104a3deef96e33ef9f6cc7a9ae872672",
+  "archiveBranch": "codex/formal-proofs-pr",
+  "pathMapping": {
+    "formal/source/library/src/abi/Frames.dfy": "formal/source/abi/Frames.dfy",
+    "formal/source/library/src/abi/Validation.dfy": "formal/source/abi/Validation.dfy",
+    "formal/source/library/src/abi/Examples.dfy": "formal/source/abi/Examples.dfy",
+    "formal/source/library/src/abi/Encoding.dfy": "formal/source/abi/Encoding.dfy",
+    "formal/source/library/src/foundations/SourceSequenceCellV4.dfy": "formal/foundations/SourceSequenceCellV4.dfy",
+    "formal/source/library/src/foundations/SourceConstraintFactsV1.dfy": "formal/foundations/SourceConstraintFactsV1.dfy",
+    "formal/source/library/src/foundations/SourceFlattenV6.dfy": "formal/foundations/SourceFlattenV6.dfy",
+    "formal/source/library/src/foundations/SourceNaturalProductV8.dfy": "formal/foundations/SourceNaturalProductV8.dfy",
+    "formal/source/library/src/foundations/SourceReplacementSpanV7.dfy": "formal/foundations/SourceReplacementSpanV7.dfy",
+    "formal/source/library/src/foundations/SourceMemoOrderV3.dfy": "formal/foundations/SourceMemoOrderV3.dfy",
+    "formal/source/library/src/foundations/SourceTotalMemoryV1.dfy": "formal/foundations/SourceTotalMemoryV1.dfy",
+    "formal/source/library/src/foundations/SourceSequenceMemoryV1.dfy": "formal/foundations/SourceSequenceMemoryV1.dfy",
+    "formal/source/library/src/assertions/resolution/Model.dfy": "formal/source/assertions/resolution/Model.dfy",
+    "formal/source/library/src/assertions/resolution/Words.dfy": "formal/source/assertions/resolution/Words.dfy",
+    "formal/source/library/src/assertions/resolution/Source.generated.dfy": "formal/source/assertions/resolution/Source.generated.dfy",
+    "formal/source/library/src/assertions/composition/Model.dfy": "formal/source/assertions/composition/Model.dfy",
+    "formal/source/library/src/assertions/composition/Source.generated.dfy": "formal/source/assertions/composition/Source.generated.dfy",
+    "formal/source/library/src/assertions/arguments/Model.dfy": "formal/source/assertions/arguments/Model.dfy",
+    "formal/source/library/src/assertions/arguments/Tuple.generated.dfy": "formal/source/assertions/arguments/Tuple.generated.dfy",
+    "formal/source/library/src/assertions/arguments/Source.generated.dfy": "formal/source/assertions/arguments/Source.generated.dfy",
+    "formal/source/library/src/assertions/navigation/Terminals.dfy": "formal/source/assertions/navigation/Terminals.dfy",
+    "formal/source/library/src/assertions/navigation/Modes.dfy": "formal/source/assertions/navigation/Modes.dfy",
+    "formal/source/library/src/assertions/navigation/ReturnMemory.generated.dfy": "formal/source/assertions/navigation/ReturnMemory.generated.dfy",
+    "formal/source/library/src/assertions/navigation/DynamicSource.generated.dfy": "formal/source/assertions/navigation/DynamicSource.generated.dfy",
+    "formal/source/library/src/assertions/navigation/Model.dfy": "formal/source/assertions/navigation/Model.dfy",
+    "formal/source/library/src/assertions/navigation/ValueSource.generated.dfy": "formal/source/assertions/navigation/ValueSource.generated.dfy",
+    "formal/source/library/src/assertions/navigation/NavSource.generated.dfy": "formal/source/assertions/navigation/NavSource.generated.dfy",
+    "formal/source/library/src/assertions/navigation/Correspondence.dfy": "formal/source/assertions/navigation/Correspondence.dfy",
+    "formal/source/library/src/assertions/navigation/CanonicalSource.dfy": "formal/source/assertions/navigation/CanonicalSource.dfy",
+    "formal/source/library/src/assertions/navigation/Traversal.dfy": "formal/source/assertions/navigation/Traversal.dfy",
+    "formal/source/library/src/assertions/navigation/TerminalSource.generated.dfy": "formal/source/assertions/navigation/TerminalSource.generated.dfy",
+    "formal/source/library/src/assertions/navigation/Layout.dfy": "formal/source/assertions/navigation/Layout.dfy",
+    "formal/source/library/src/assertions/navigation/Canonical.dfy": "formal/source/assertions/navigation/Canonical.dfy",
+    "formal/source/library/src/assertions/navigation/Traverse.generated.dfy": "formal/source/assertions/navigation/Traverse.generated.dfy",
+    "formal/source/library/src/assertions/navigation/ModesSource.generated.dfy": "formal/source/assertions/navigation/ModesSource.generated.dfy",
+    "formal/source/library/src/assertions/navigation/Cursor.generated.dfy": "formal/source/assertions/navigation/Cursor.generated.dfy",
+    "formal/source/library/src/assertions/navigation/Runtime.dfy": "formal/source/assertions/navigation/Runtime.dfy",
+    "formal/source/library/src/assertions/navigation/Kernels.generated.dfy": "formal/source/assertions/navigation/Kernels.generated.dfy",
+    "formal/source/library/src/assertions/navigation/CursorSpec.dfy": "formal/source/assertions/navigation/CursorSpec.dfy",
+    "formal/source/library/src/assertions/navigation/Entry.dfy": "formal/source/assertions/navigation/Entry.dfy",
+    "formal/source/library/src/assertions/core/Model.dfy": "formal/source/assertions/core/Model.dfy",
+    "formal/source/library/src/assertions/core/Words.dfy": "formal/source/assertions/core/Words.dfy",
+    "formal/source/library/src/assertions/core/Source.generated.dfy": "formal/source/assertions/core/Source.generated.dfy",
+    "formal/source/library/src/assertions/constraints/Model.dfy": "formal/source/assertions/constraints/Model.dfy",
+    "formal/source/library/src/assertions/constraints/Engine.generated.dfy": "formal/source/assertions/constraints/Engine.generated.dfy",
+    "formal/source/library/src/assertions/control/Probe.dfy": "formal/source/assertions/control/Probe.dfy",
+    "formal/source/library/src/assertions/control/GuardSource.generated.dfy": "formal/source/assertions/control/GuardSource.generated.dfy",
+    "formal/source/library/src/assertions/control/Source.dfy": "formal/source/assertions/control/Source.dfy",
+    "formal/source/library/src/assertions/control/ProbeSource.generated.dfy": "formal/source/assertions/control/ProbeSource.generated.dfy",
+    "formal/source/library/src/assertions/control/Guard.dfy": "formal/source/assertions/control/Guard.dfy",
+    "formal/source/library/src/assertions/core/public-boundary/Connection.dfy": "formal/source/assertions/core/public-boundary/Connection.dfy",
+    "formal/source/library/src/assertions/core/public-boundary/Getters.generated.dfy": "formal/source/assertions/core/public-boundary/Getters.generated.dfy",
+    "formal/source/library/src/assertions/core/recursive/Invocation.dfy": "formal/source/assertions/core/recursive/Invocation.dfy",
+    "formal/source/library/src/assertions/core/recursive/Dispatch.dfy": "formal/source/assertions/core/recursive/Dispatch.dfy",
+    "formal/source/library/src/assertions/core/serialization/Errors.dfy": "formal/source/assertions/core/serialization/Errors.dfy",
+    "formal/source/library/src/assertions/core/serialization/Encoding.dfy": "formal/source/assertions/core/serialization/Encoding.dfy",
+    "formal/source/library/src/assertions/core/serialization/Connection.dfy": "formal/source/assertions/core/serialization/Connection.dfy",
+    "formal/source/library/src/assertions/core/serialization/Signatures.generated.dfy": "formal/source/assertions/core/serialization/Signatures.generated.dfy",
+    "formal/source/library/src/assertions/core/serialization/Bounds.dfy": "formal/source/assertions/core/serialization/Bounds.dfy",
+    "formal/source/library/src/assertions/core/completion/Connection.dfy": "formal/source/assertions/core/completion/Connection.dfy",
+    "formal/source/library/src/assertions/core/frame-tree/Tree.dfy": "formal/source/assertions/core/frame-tree/Tree.dfy",
+    "formal/source/library/src/assertions/core/frame-tree/Connection.dfy": "formal/source/assertions/core/frame-tree/Connection.dfy",
+    "formal/source/library/src/assertions/core/frame-tree/Wire.dfy": "formal/source/assertions/core/frame-tree/Wire.dfy",
+    "formal/source/library/src/assertions/core/raw-tree/Tree.dfy": "formal/source/assertions/core/raw-tree/Tree.dfy",
+    "formal/source/library/src/assertions/core/raw-tree/Connection.dfy": "formal/source/assertions/core/raw-tree/Connection.dfy",
+    "formal/source/library/src/collections/value-sort-trace/Model.dfy": "formal/source/collections/value-sort-trace/Model.dfy",
+    "formal/source/library/src/collections/value-sort-trace/Properties.dfy": "formal/source/collections/value-sort-trace/Properties.dfy",
+    "formal/source/library/src/collections/value-sort-trace/Source.generated.dfy": "formal/source/collections/value-sort-trace/Source.generated.dfy",
+    "formal/source/library/src/collections/value-sort-trace/Connection.dfy": "formal/source/collections/value-sort-trace/Connection.dfy",
+    "formal/source/library/src/collections/codec-state/Model.dfy": "formal/source/collections/codec-state/Model.dfy",
+    "formal/source/library/src/collections/codec-state/Connection.dfy": "formal/source/collections/codec-state/Connection.dfy",
+    "formal/source/library/src/collections/value-unique/FlowReplay.dfy": "formal/source/collections/value-unique/FlowReplay.dfy",
+    "formal/source/library/src/collections/value-unique/Facts.dfy": "formal/source/collections/value-unique/Facts.dfy",
+    "formal/source/library/src/collections/value-unique/Model.dfy": "formal/source/collections/value-unique/Model.dfy",
+    "formal/source/library/src/collections/value-unique/Compare.dfy": "formal/source/collections/value-unique/Compare.dfy",
+    "formal/source/library/src/collections/value-unique/Source.dfy": "formal/source/collections/value-unique/Source.dfy",
+    "formal/source/library/src/collections/value-unique/Decisions.dfy": "formal/source/collections/value-unique/Decisions.dfy",
+    "formal/source/library/src/collections/value-unique/Classes.dfy": "formal/source/collections/value-unique/Classes.dfy",
+    "formal/source/library/src/collections/value-unique/EntryModel.dfy": "formal/source/collections/value-unique/EntryModel.dfy",
+    "formal/source/library/src/collections/value-unique/Environment.dfy": "formal/source/collections/value-unique/Environment.dfy",
+    "formal/source/library/src/collections/value-unique/Engine.dfy": "formal/source/collections/value-unique/Engine.dfy",
+    "formal/source/library/src/collections/value-unique/Spec.dfy": "formal/source/collections/value-unique/Spec.dfy",
+    "formal/source/library/src/collections/value-unique/Connection.dfy": "formal/source/collections/value-unique/Connection.dfy",
+    "formal/source/library/src/collections/value-unique/Control.generated.dfy": "formal/source/collections/value-unique/Control.generated.dfy",
+    "formal/source/library/src/collections/value-unique/Flow.dfy": "formal/source/collections/value-unique/Flow.dfy",
+    "formal/source/library/src/collections/value-unique/Entry.dfy": "formal/source/collections/value-unique/Entry.dfy",
+    "formal/source/library/src/collections/callback-results/Model.dfy": "formal/source/collections/callback-results/Model.dfy",
+    "formal/source/library/src/collections/callback-results/Source.generated.dfy": "formal/source/collections/callback-results/Source.generated.dfy",
+    "formal/source/library/src/collections/callback-results/Connection.dfy": "formal/source/collections/callback-results/Connection.dfy",
+    "formal/source/library/src/collections/repeated-call/Model.dfy": "formal/source/collections/repeated-call/Model.dfy",
+    "formal/source/library/src/collections/repeated-call/Connection.dfy": "formal/source/collections/repeated-call/Connection.dfy",
+    "formal/source/library/src/collections/word-unique/Model.dfy": "formal/source/collections/word-unique/Model.dfy",
+    "formal/source/library/src/collections/word-unique/Source.dfy": "formal/source/collections/word-unique/Source.dfy",
+    "formal/source/library/src/collections/word-unique/Connection.dfy": "formal/source/collections/word-unique/Connection.dfy",
+    "formal/source/library/src/collections/word-unique/Control.generated.dfy": "formal/source/collections/word-unique/Control.generated.dfy",
+    "formal/source/library/src/collections/iteration/Model.dfy": "formal/source/collections/iteration/Model.dfy",
+    "formal/source/library/src/collections/iteration/Connection.dfy": "formal/source/collections/iteration/Connection.dfy",
+    "formal/source/library/src/collections/constants/Model.dfy": "formal/source/collections/constants/Model.dfy",
+    "formal/source/library/src/collections/constants/Connection.dfy": "formal/source/collections/constants/Connection.dfy",
+    "formal/source/library/src/collections/word-memory/Model.dfy": "formal/source/collections/word-memory/Model.dfy",
+    "formal/source/library/src/collections/word-memory/Source.generated.dfy": "formal/source/collections/word-memory/Source.generated.dfy",
+    "formal/source/library/src/collections/word-memory/Connection.dfy": "formal/source/collections/word-memory/Connection.dfy",
+    "formal/source/library/src/collections/word-scans/Model.dfy": "formal/source/collections/word-scans/Model.dfy",
+    "formal/source/library/src/collections/word-scans/Source.dfy": "formal/source/collections/word-scans/Source.dfy",
+    "formal/source/library/src/collections/word-scans/Connection.dfy": "formal/source/collections/word-scans/Connection.dfy",
+    "formal/source/library/src/collections/word-scans/Control.generated.dfy": "formal/source/collections/word-scans/Control.generated.dfy",
+    "formal/source/library/src/collections/word-fold-entry/Model.dfy": "formal/source/collections/word-fold-entry/Model.dfy",
+    "formal/source/library/src/collections/word-fold-entry/Selectors.generated.dfy": "formal/source/collections/word-fold-entry/Selectors.generated.dfy",
+    "formal/source/library/src/collections/word-fold-entry/Source.generated.dfy": "formal/source/collections/word-fold-entry/Source.generated.dfy",
+    "formal/source/library/src/collections/word-fold-entry/Ready.dfy": "formal/source/collections/word-fold-entry/Ready.dfy",
+    "formal/source/library/src/collections/word-fold-entry/Connection.dfy": "formal/source/collections/word-fold-entry/Connection.dfy",
+    "formal/source/library/src/collections/sort-admission/Model.dfy": "formal/source/collections/sort-admission/Model.dfy",
+    "formal/source/library/src/collections/sort-admission/Properties.dfy": "formal/source/collections/sort-admission/Properties.dfy",
+    "formal/source/library/src/collections/sort-admission/Source.generated.dfy": "formal/source/collections/sort-admission/Source.generated.dfy",
+    "formal/source/library/src/collections/sort-admission/Connection.dfy": "formal/source/collections/sort-admission/Connection.dfy",
+    "formal/source/library/src/collections/environment/Model.dfy": "formal/source/collections/environment/Model.dfy",
+    "formal/source/library/src/collections/environment/Connection.dfy": "formal/source/collections/environment/Connection.dfy",
+    "formal/source/library/src/collections/value-codec/Model.dfy": "formal/source/collections/value-codec/Model.dfy",
+    "formal/source/library/src/collections/value-codec/Pack.generated.dfy": "formal/source/collections/value-codec/Pack.generated.dfy",
+    "formal/source/library/src/collections/value-codec/Unpack.generated.dfy": "formal/source/collections/value-codec/Unpack.generated.dfy",
+    "formal/source/library/src/collections/value-codec/Connection.dfy": "formal/source/collections/value-codec/Connection.dfy",
+    "formal/source/library/src/collections/value-codec/Control.generated.dfy": "formal/source/collections/value-codec/Control.generated.dfy",
+    "formal/source/library/src/collections/word-windows/Model.dfy": "formal/source/collections/word-windows/Model.dfy",
+    "formal/source/library/src/collections/word-windows/Properties.dfy": "formal/source/collections/word-windows/Properties.dfy",
+    "formal/source/library/src/collections/word-windows/Source.generated.dfy": "formal/source/collections/word-windows/Source.generated.dfy",
+    "formal/source/library/src/collections/word-windows/Connection.dfy": "formal/source/collections/word-windows/Connection.dfy",
+    "formal/source/library/src/collections/word-fold-loop/Memory.dfy": "formal/source/collections/word-fold-loop/Memory.dfy",
+    "formal/source/library/src/collections/word-fold-loop/Model.dfy": "formal/source/collections/word-fold-loop/Model.dfy",
+    "formal/source/library/src/collections/word-fold-loop/Source.generated.dfy": "formal/source/collections/word-fold-loop/Source.generated.dfy",
+    "formal/source/library/src/collections/word-fold-loop/Connection.dfy": "formal/source/collections/word-fold-loop/Connection.dfy",
+    "formal/source/library/src/collections/wire/Model.dfy": "formal/source/collections/wire/Model.dfy",
+    "formal/source/library/src/collections/wire/Connection.dfy": "formal/source/collections/wire/Connection.dfy",
+    "formal/source/library/src/collections/wire/Signatures.generated.dfy": "formal/source/collections/wire/Signatures.generated.dfy",
+    "formal/source/library/src/collections/codec-errors/Encoding.dfy": "formal/source/collections/codec-errors/Encoding.dfy",
+    "formal/source/library/src/collections/codec-errors/Connection.dfy": "formal/source/collections/codec-errors/Connection.dfy",
+    "formal/source/library/src/collections/codec-errors/Signatures.generated.dfy": "formal/source/collections/codec-errors/Signatures.generated.dfy",
+    "formal/source/library/src/collections/word-call/Model.dfy": "formal/source/collections/word-call/Model.dfy",
+    "formal/source/library/src/collections/word-call/Source.generated.dfy": "formal/source/collections/word-call/Source.generated.dfy",
+    "formal/source/library/src/collections/word-call/Connection.dfy": "formal/source/collections/word-call/Connection.dfy",
+    "formal/source/library/src/collections/calls/Model.dfy": "formal/source/collections/calls/Model.dfy",
+    "formal/source/library/src/collections/calls/Source.generated.dfy": "formal/source/collections/calls/Source.generated.dfy",
+    "formal/source/library/src/collections/calls/Connection.dfy": "formal/source/collections/calls/Connection.dfy",
+    "formal/source/library/src/collections/value-sort-execution/Replay.dfy": "formal/source/collections/value-sort-execution/Replay.dfy",
+    "formal/source/library/src/collections/value-sort-execution/Model.dfy": "formal/source/collections/value-sort-execution/Model.dfy",
+    "formal/source/library/src/collections/value-sort-execution/Records.dfy": "formal/source/collections/value-sort-execution/Records.dfy",
+    "formal/source/library/src/collections/value-sort-execution/Connection.dfy": "formal/source/collections/value-sort-execution/Connection.dfy",
+    "formal/source/library/src/collections/iteration-chain/Model.dfy": "formal/source/collections/iteration-chain/Model.dfy",
+    "formal/source/library/src/collections/iteration-chain/Step.dfy": "formal/source/collections/iteration-chain/Step.dfy",
+    "formal/source/library/src/collections/iteration-chain/Connection.dfy": "formal/source/collections/iteration-chain/Connection.dfy",
+    "formal/source/library/src/collections/call-results/Model.dfy": "formal/source/collections/call-results/Model.dfy",
+    "formal/source/library/src/collections/call-results/Connection.dfy": "formal/source/collections/call-results/Connection.dfy",
+    "formal/source/library/src/collections/prepared-entry/Model.dfy": "formal/source/collections/prepared-entry/Model.dfy",
+    "formal/source/library/src/collections/prepared-entry/Connection.dfy": "formal/source/collections/prepared-entry/Connection.dfy",
+    "formal/source/library/src/collections/sort-comparator/Model.dfy": "formal/source/collections/sort-comparator/Model.dfy",
+    "formal/source/library/src/collections/sort-comparator/Source.generated.dfy": "formal/source/collections/sort-comparator/Source.generated.dfy",
+    "formal/source/library/src/collections/sort-comparator/Connection.dfy": "formal/source/collections/sort-comparator/Connection.dfy",
+    "formal/source/library/src/collections/completion/Boundary.generated.dfy": "formal/source/collections/completion/Boundary.generated.dfy",
+    "formal/source/library/src/collections/preparation/Model.dfy": "formal/source/collections/preparation/Model.dfy",
+    "formal/source/library/src/collections/preparation/Source.generated.dfy": "formal/source/collections/preparation/Source.generated.dfy",
+    "formal/source/library/src/collections/preparation/Connection.dfy": "formal/source/collections/preparation/Connection.dfy",
+    "formal/source/library/src/collections/bound-call/Model.dfy": "formal/source/collections/bound-call/Model.dfy",
+    "formal/source/library/src/collections/bound-call/Connection.dfy": "formal/source/collections/bound-call/Connection.dfy",
+    "formal/source/library/src/collections/admission/Model.dfy": "formal/source/collections/admission/Model.dfy",
+    "formal/source/library/src/collections/admission/Connection.dfy": "formal/source/collections/admission/Connection.dfy",
+    "formal/source/library/src/collections/admission/Signatures.generated.dfy": "formal/source/collections/admission/Signatures.generated.dfy",
+    "formal/source/library/src/collections/value-loops/Source.generated.dfy": "formal/source/collections/value-loops/Source.generated.dfy",
+    "formal/source/library/src/collections/value-loops/Connection.dfy": "formal/source/collections/value-loops/Connection.dfy",
+    "formal/source/library/src/collections/value-search/Model.dfy": "formal/source/collections/value-search/Model.dfy",
+    "formal/source/library/src/collections/value-search/Source.dfy": "formal/source/collections/value-search/Source.dfy",
+    "formal/source/library/src/collections/value-search/EntryModel.dfy": "formal/source/collections/value-search/EntryModel.dfy",
+    "formal/source/library/src/collections/value-search/Environment.dfy": "formal/source/collections/value-search/Environment.dfy",
+    "formal/source/library/src/collections/value-search/Engine.dfy": "formal/source/collections/value-search/Engine.dfy",
+    "formal/source/library/src/collections/value-search/Spec.dfy": "formal/source/collections/value-search/Spec.dfy",
+    "formal/source/library/src/collections/value-search/Connection.dfy": "formal/source/collections/value-search/Connection.dfy",
+    "formal/source/library/src/collections/value-search/Control.generated.dfy": "formal/source/collections/value-search/Control.generated.dfy",
+    "formal/source/library/src/collections/value-search/Entry.dfy": "formal/source/collections/value-search/Entry.dfy",
+    "formal/source/library/src/collections/word-layout/Memory.dfy": "formal/source/collections/word-layout/Memory.dfy",
+    "formal/source/library/src/collections/word-layout/Model.dfy": "formal/source/collections/word-layout/Model.dfy",
+    "formal/source/library/src/collections/word-layout/Source.dfy": "formal/source/collections/word-layout/Source.dfy",
+    "formal/source/library/src/collections/word-layout/Connection.dfy": "formal/source/collections/word-layout/Connection.dfy",
+    "formal/source/library/src/collections/word-layout/Control.generated.dfy": "formal/source/collections/word-layout/Control.generated.dfy",
+    "formal/source/library/src/collections/traversal/Model.dfy": "formal/source/collections/traversal/Model.dfy",
+    "formal/source/library/src/collections/traversal/Loops.dfy": "formal/source/collections/traversal/Loops.dfy",
+    "formal/source/library/src/collections/traversal/Properties.dfy": "formal/source/collections/traversal/Properties.dfy",
+    "formal/source/library/src/collections/traversal/Connection.dfy": "formal/source/collections/traversal/Connection.dfy",
+    "formal/source/library/src/collections/validation/Model.dfy": "formal/source/collections/validation/Model.dfy",
+    "formal/source/library/src/collections/validation/Source.generated.dfy": "formal/source/collections/validation/Source.generated.dfy",
+    "formal/source/library/src/collections/validation/Connection.dfy": "formal/source/collections/validation/Connection.dfy",
+    "formal/source/library/src/collections/value-pairs/Inverses.dfy": "formal/source/collections/value-pairs/Inverses.dfy",
+    "formal/source/library/src/collections/value-pairs/Facts.dfy": "formal/source/collections/value-pairs/Facts.dfy",
+    "formal/source/library/src/collections/value-pairs/Model.dfy": "formal/source/collections/value-pairs/Model.dfy",
+    "formal/source/library/src/collections/value-pairs/Source.dfy": "formal/source/collections/value-pairs/Source.dfy",
+    "formal/source/library/src/collections/value-pairs/Reconstruction.dfy": "formal/source/collections/value-pairs/Reconstruction.dfy",
+    "formal/source/library/src/collections/value-pairs/EntryModel.dfy": "formal/source/collections/value-pairs/EntryModel.dfy",
+    "formal/source/library/src/collections/value-pairs/Success.dfy": "formal/source/collections/value-pairs/Success.dfy",
+    "formal/source/library/src/collections/value-pairs/Properties.dfy": "formal/source/collections/value-pairs/Properties.dfy",
+    "formal/source/library/src/collections/value-pairs/Connection.dfy": "formal/source/collections/value-pairs/Connection.dfy",
+    "formal/source/library/src/collections/value-pairs/Control.generated.dfy": "formal/source/collections/value-pairs/Control.generated.dfy",
+    "formal/source/library/src/collections/value-pairs/Entry.dfy": "formal/source/collections/value-pairs/Entry.dfy",
+    "formal/source/library/src/collections/word-apply/Memory.dfy": "formal/source/collections/word-apply/Memory.dfy",
+    "formal/source/library/src/collections/word-apply/Model.dfy": "formal/source/collections/word-apply/Model.dfy",
+    "formal/source/library/src/collections/word-apply/Output.dfy": "formal/source/collections/word-apply/Output.dfy",
+    "formal/source/library/src/collections/word-apply/Source.dfy": "formal/source/collections/word-apply/Source.dfy",
+    "formal/source/library/src/collections/word-apply/LoopConnection.dfy": "formal/source/collections/word-apply/LoopConnection.dfy",
+    "formal/source/library/src/collections/word-apply/EntryModel.dfy": "formal/source/collections/word-apply/EntryModel.dfy",
+    "formal/source/library/src/collections/word-apply/Properties.dfy": "formal/source/collections/word-apply/Properties.dfy",
+    "formal/source/library/src/collections/word-apply/EntryReady.dfy": "formal/source/collections/word-apply/EntryReady.dfy",
+    "formal/source/library/src/collections/word-apply/Engine.dfy": "formal/source/collections/word-apply/Engine.dfy",
+    "formal/source/library/src/collections/word-apply/Connection.dfy": "formal/source/collections/word-apply/Connection.dfy",
+    "formal/source/library/src/collections/word-apply/Control.generated.dfy": "formal/source/collections/word-apply/Control.generated.dfy",
+    "formal/source/library/src/collections/value-sort-entry/Model.dfy": "formal/source/collections/value-sort-entry/Model.dfy",
+    "formal/source/library/src/collections/value-sort-entry/Connection.dfy": "formal/source/collections/value-sort-entry/Connection.dfy",
+    "formal/source/library/src/collections/word-sort/Representation.dfy": "formal/source/collections/word-sort/Representation.dfy",
+    "formal/source/library/src/collections/word-sort/Model.dfy": "formal/source/collections/word-sort/Model.dfy",
+    "formal/source/library/src/collections/word-sort/Source.generated.dfy": "formal/source/collections/word-sort/Source.generated.dfy",
+    "formal/source/library/src/collections/word-sort/Connection.dfy": "formal/source/collections/word-sort/Connection.dfy",
+    "formal/source/library/src/collections/sort-core/Merge.dfy": "formal/source/collections/sort-core/Merge.dfy",
+    "formal/source/library/src/collections/sort-core/Model.dfy": "formal/source/collections/sort-core/Model.dfy",
+    "formal/source/library/src/collections/sort-core/Ranges.dfy": "formal/source/collections/sort-core/Ranges.dfy",
+    "formal/source/library/src/collections/sort-core/Connection.dfy": "formal/source/collections/sort-core/Connection.dfy",
+    "formal/source/library/src/collections/value-structure/Model.dfy": "formal/source/collections/value-structure/Model.dfy",
+    "formal/source/library/src/collections/value-structure/Source.dfy": "formal/source/collections/value-structure/Source.dfy",
+    "formal/source/library/src/collections/value-structure/Connection.dfy": "formal/source/collections/value-structure/Connection.dfy",
+    "formal/source/library/src/collections/value-structure/Control.generated.dfy": "formal/source/collections/value-structure/Control.generated.dfy",
+    "formal/source/library/src/collections/value-entry/Model.dfy": "formal/source/collections/value-entry/Model.dfy",
+    "formal/source/library/src/collections/value-entry/Selectors.generated.dfy": "formal/source/collections/value-entry/Selectors.generated.dfy",
+    "formal/source/library/src/collections/value-entry/Connection.dfy": "formal/source/collections/value-entry/Connection.dfy",
+    "formal/source/library/src/collections/value-entry/Admission.dfy": "formal/source/collections/value-entry/Admission.dfy",
+    "formal/source/library/src/abi/parser/Completeness.dfy": "formal/source/abi/parser/Completeness.dfy",
+    "formal/source/library/src/abi/parser/Parser.generated.dfy": "formal/source/abi/parser/Parser.generated.dfy",
+    "formal/source/library/src/abi/parser/Spec.dfy": "formal/source/abi/parser/Spec.dfy",
+    "formal/source/library/src/abi/tuples/CheckWords.generated.dfy": "formal/source/abi/tuples/CheckWords.generated.dfy",
+    "formal/source/library/src/abi/tuples/Words.dfy": "formal/source/abi/tuples/Words.dfy",
+    "formal/source/library/src/abi/tuples/Names.generated.dfy": "formal/source/abi/tuples/Names.generated.dfy",
+    "formal/source/library/src/abi/tuples/Refinement.dfy": "formal/source/abi/tuples/Refinement.dfy",
+    "formal/source/library/src/abi/tuples/Semantics.dfy": "formal/source/abi/tuples/Semantics.dfy",
+    "formal/source/library/src/abi/aggregate/Refinement.dfy": "formal/source/abi/aggregate/Refinement.dfy",
+    "formal/source/library/src/abi/aggregate/CursorSemantics.dfy": "formal/source/abi/aggregate/CursorSemantics.dfy",
+    "formal/source/library/src/abi/aggregate/Cursors.generated.dfy": "formal/source/abi/aggregate/Cursors.generated.dfy",
+    "formal/source/library/src/abi/outcomes/Cached.generated.dfy": "formal/source/abi/outcomes/Cached.generated.dfy",
+    "formal/source/library/src/abi/outcomes/Static.generated.dfy": "formal/source/abi/outcomes/Static.generated.dfy",
+    "formal/source/library/src/abi/outcomes/Dynamic.generated.dfy": "formal/source/abi/outcomes/Dynamic.generated.dfy",
+    "formal/source/library/src/abi/outcomes/Receipt.generated.dfy": "formal/source/abi/outcomes/Receipt.generated.dfy",
+    "formal/source/library/src/abi/outcomes/Body.generated.dfy": "formal/source/abi/outcomes/Body.generated.dfy",
+    "formal/source/library/src/abi/outcomes/Spec.dfy": "formal/source/abi/outcomes/Spec.dfy",
+    "formal/source/library/src/abi/outcomes/Connection.dfy": "formal/source/abi/outcomes/Connection.dfy",
+    "formal/source/library/src/abi/shape/TypeShape.generated.dfy": "formal/source/abi/shape/TypeShape.generated.dfy",
+    "formal/source/library/src/abi/shape/Refinement.dfy": "formal/source/abi/shape/Refinement.dfy",
+    "formal/source/library/src/abi/shape/Semantics.dfy": "formal/source/abi/shape/Semantics.dfy",
+    "formal/source/library/src/abi/layout/Soundness.dfy": "formal/source/abi/layout/Soundness.dfy",
+    "formal/source/library/src/abi/layout/Layout.generated.dfy": "formal/source/abi/layout/Layout.generated.dfy",
+    "formal/source/library/src/abi/layout/Count.generated.dfy": "formal/source/abi/layout/Count.generated.dfy",
+    "formal/source/library/src/abi/layout/Scan.dfy": "formal/source/abi/layout/Scan.dfy",
+    "formal/source/library/src/abi/layout/Canonical.dfy": "formal/source/abi/layout/Canonical.dfy",
+    "formal/source/library/src/abi/layout/Spec.dfy": "formal/source/abi/layout/Spec.dfy",
+    "formal/source/library/src/abi/construction/Inverses.dfy": "formal/source/abi/construction/Inverses.dfy",
+    "formal/source/library/src/abi/construction/Memory.dfy": "formal/source/abi/construction/Memory.dfy",
+    "formal/source/library/src/abi/construction/Model.dfy": "formal/source/abi/construction/Model.dfy",
+    "formal/source/library/src/abi/construction/Pack.generated.dfy": "formal/source/abi/construction/Pack.generated.dfy",
+    "formal/source/library/src/abi/construction/Unpack.generated.dfy": "formal/source/abi/construction/Unpack.generated.dfy",
+    "formal/source/library/src/abi/construction/Endpoints.dfy": "formal/source/abi/construction/Endpoints.dfy",
+    "formal/source/library/src/abi/construction/Splitting.dfy": "formal/source/abi/construction/Splitting.dfy",
+    "formal/source/library/src/abi/construction/Assembly.generated.dfy": "formal/source/abi/construction/Assembly.generated.dfy",
+    "formal/source/library/src/abi/construction/Tuple.generated.dfy": "formal/source/abi/construction/Tuple.generated.dfy",
+    "formal/source/library/src/abi/construction/Component.generated.dfy": "formal/source/abi/construction/Component.generated.dfy",
+    "formal/source/library/src/abi/construction/Context.generated.dfy": "formal/source/abi/construction/Context.generated.dfy",
+    "formal/source/library/src/abi/construction/Validation.dfy": "formal/source/abi/construction/Validation.dfy",
+    "formal/source/library/src/abi/source/Correspondence.dfy": "formal/source/abi/source/Correspondence.dfy",
+    "formal/source/library/src/abi/source/ByteSemantics.dfy": "formal/source/abi/source/ByteSemantics.dfy",
+    "formal/source/library/src/abi/source/BytesBody.generated.dfy": "formal/source/abi/source/BytesBody.generated.dfy",
+    "formal/source/library/src/abi/connection/Model.dfy": "formal/source/abi/connection/Model.dfy",
+    "formal/source/library/src/abi/connection/Descriptor.dfy": "formal/source/abi/connection/Descriptor.dfy",
+    "formal/source/library/src/abi/connection/Refinement.dfy": "formal/source/abi/connection/Refinement.dfy",
+    "formal/source/library/src/abi/connection/Bridge.generated.dfy": "formal/source/abi/connection/Bridge.generated.dfy",
+    "formal/source/library/src/abi/connection/Static.dfy": "formal/source/abi/connection/Static.dfy",
+    "formal/source/library/src/abi/words/Refinement.dfy": "formal/source/abi/words/Refinement.dfy",
+    "formal/source/library/src/abi/words/Scanners.generated.dfy": "formal/source/abi/words/Scanners.generated.dfy",
+    "formal/source/library/src/abi/words/Semantics.dfy": "formal/source/abi/words/Semantics.dfy",
+    "formal/source/library/src/abi/dynamic/Validation.generated.dfy": "formal/source/abi/dynamic/Validation.generated.dfy",
+    "formal/source/library/src/abi/dynamic/Zero.dfy": "formal/source/abi/dynamic/Zero.dfy",
+    "formal/source/library/src/abi/dynamic/Body.generated.dfy": "formal/source/abi/dynamic/Body.generated.dfy",
+    "formal/source/library/src/abi/dynamic/Semantics.dfy": "formal/source/abi/dynamic/Semantics.dfy",
+    "formal/source/library/src/abi/descriptor/Suffixes.generated.dfy": "formal/source/abi/descriptor/Suffixes.generated.dfy",
+    "formal/source/library/src/abi/descriptor/Refinement.dfy": "formal/source/abi/descriptor/Refinement.dfy",
+    "formal/source/library/src/abi/descriptor/Semantics.dfy": "formal/source/abi/descriptor/Semantics.dfy",
+    "formal/source/library/src/expressions/guarded/Model.dfy": "formal/source/expressions/guarded/Model.dfy",
+    "formal/source/library/src/expressions/guarded/Source.generated.dfy": "formal/source/expressions/guarded/Source.generated.dfy",
+    "formal/source/library/src/expressions/guarded/Encoding.dfy": "formal/source/expressions/guarded/Encoding.dfy",
+    "formal/source/library/src/expressions/guarded/Connection.dfy": "formal/source/expressions/guarded/Connection.dfy",
+    "formal/source/library/src/expressions/compound/Source.generated.dfy": "formal/source/expressions/compound/Source.generated.dfy",
+    "formal/source/library/src/expressions/execution/Model.dfy": "formal/source/expressions/execution/Model.dfy",
+    "formal/source/library/src/expressions/execution/Run.dfy": "formal/source/expressions/execution/Run.dfy",
+    "formal/source/library/src/expressions/execution/Connection.dfy": "formal/source/expressions/execution/Connection.dfy",
+    "formal/source/library/src/expressions/primitives/Model.dfy": "formal/source/expressions/primitives/Model.dfy",
+    "formal/source/library/src/expressions/primitives/Dispatch.dfy": "formal/source/expressions/primitives/Dispatch.dfy",
+    "formal/source/library/src/expressions/primitives/Connection.dfy": "formal/source/expressions/primitives/Connection.dfy",
+    "formal/source/library/src/expressions/returns/Model.dfy": "formal/source/expressions/returns/Model.dfy",
+    "formal/source/library/src/expressions/returns/Source.generated.dfy": "formal/source/expressions/returns/Source.generated.dfy",
+    "formal/source/library/src/expressions/returns/Connection.dfy": "formal/source/expressions/returns/Connection.dfy",
+    "formal/source/library/src/expressions/probe-input/Connection.dfy": "formal/source/expressions/probe-input/Connection.dfy",
+    "formal/source/library/src/expressions/frames/Model.dfy": "formal/source/expressions/frames/Model.dfy",
+    "formal/source/library/src/expressions/frames/Source.generated.dfy": "formal/source/expressions/frames/Source.generated.dfy",
+    "formal/source/library/src/expressions/frames/Connection.dfy": "formal/source/expressions/frames/Connection.dfy",
+    "formal/source/library/src/expressions/dispatch/Model.dfy": "formal/source/expressions/dispatch/Model.dfy",
+    "formal/source/library/src/expressions/context/Shift.dfy": "formal/source/expressions/context/Shift.dfy",
+    "formal/source/library/src/expressions/context/Connection.dfy": "formal/source/expressions/context/Connection.dfy",
+    "formal/source/library/src/expressions/public/Encoded.dfy": "formal/source/expressions/public/Encoded.dfy",
+    "formal/source/library/src/expressions/public/Model.dfy": "formal/source/expressions/public/Model.dfy",
+    "formal/source/library/src/expressions/public/Guarded.generated.dfy": "formal/source/expressions/public/Guarded.generated.dfy",
+    "formal/source/library/src/expressions/public/Entry.generated.dfy": "formal/source/expressions/public/Entry.generated.dfy",
+    "formal/source/library/src/expressions/public/Guards.dfy": "formal/source/expressions/public/Guards.dfy",
+    "formal/source/library/src/expressions/public/Connection.dfy": "formal/source/expressions/public/Connection.dfy",
+    "formal/source/library/src/expressions/public/Guarded.dfy": "formal/source/expressions/public/Guarded.dfy",
+    "formal/source/library/src/expressions/scalars/Model.dfy": "formal/source/expressions/scalars/Model.dfy",
+    "formal/source/library/src/expressions/scalars/Source.generated.dfy": "formal/source/expressions/scalars/Source.generated.dfy",
+    "formal/source/library/src/expressions/scalars/Connection.dfy": "formal/source/expressions/scalars/Connection.dfy",
+    "formal/source/library/src/expressions/codec-errors/Encoding.dfy": "formal/source/expressions/codec-errors/Encoding.dfy",
+    "formal/source/library/src/expressions/codec-errors/Connection.dfy": "formal/source/expressions/codec-errors/Connection.dfy",
+    "formal/source/library/src/expressions/recursive/Source.generated.dfy": "formal/source/expressions/recursive/Source.generated.dfy",
+    "formal/source/library/src/expressions/recursive/Spec.dfy": "formal/source/expressions/recursive/Spec.dfy",
+    "formal/source/library/src/expressions/recursive/Connection.dfy": "formal/source/expressions/recursive/Connection.dfy",
+    "formal/source/library/src/expressions/self-call/Connection.dfy": "formal/source/expressions/self-call/Connection.dfy",
+    "formal/source/library/src/expressions/calls/Model.dfy": "formal/source/expressions/calls/Model.dfy",
+    "formal/source/library/src/expressions/calls/Source.generated.dfy": "formal/source/expressions/calls/Source.generated.dfy",
+    "formal/source/library/src/expressions/trace-bounds/Connection.dfy": "formal/source/expressions/trace-bounds/Connection.dfy",
+    "formal/source/library/src/expressions/trace-bounds/Bounds.dfy": "formal/source/expressions/trace-bounds/Bounds.dfy",
+    "formal/source/library/src/expressions/evaluation/Control.dfy": "formal/source/expressions/evaluation/Control.dfy",
+    "formal/source/library/src/expressions/evaluation/CacheBridge.dfy": "formal/source/expressions/evaluation/CacheBridge.dfy",
+    "formal/source/library/src/expressions/encoded/Model.dfy": "formal/source/expressions/encoded/Model.dfy",
+    "formal/source/library/src/expressions/encoded/Source.generated.dfy": "formal/source/expressions/encoded/Source.generated.dfy",
+    "formal/source/library/src/expressions/encoded/Connection.dfy": "formal/source/expressions/encoded/Connection.dfy",
+    "formal/source/library/src/expressions/receipts/Encoding.dfy": "formal/source/expressions/receipts/Encoding.dfy",
+    "formal/source/library/src/expressions/receipts/Connection.dfy": "formal/source/expressions/receipts/Connection.dfy",
+    "formal/source/library/src/expressions/tree/Equivalence.dfy": "formal/source/expressions/tree/Equivalence.dfy",
+    "formal/source/library/src/expressions/tree/Spec.dfy": "formal/source/expressions/tree/Spec.dfy",
+    "formal/source/library/src/expressions/tree/Connection.dfy": "formal/source/expressions/tree/Connection.dfy",
+    "formal/source/library/src/expressions/cache/Model.dfy": "formal/source/expressions/cache/Model.dfy",
+    "formal/source/library/src/expressions/cache/Source.generated.dfy": "formal/source/expressions/cache/Source.generated.dfy",
+    "formal/source/library/src/expressions/resolve/Model.dfy": "formal/source/expressions/resolve/Model.dfy",
+    "formal/source/library/src/expressions/resolve/Source.generated.dfy": "formal/source/expressions/resolve/Source.generated.dfy",
+    "formal/source/library/src/expressions/resolve/Connection.dfy": "formal/source/expressions/resolve/Connection.dfy",
+    "formal/source/library/src/expressions/admission/Model.dfy": "formal/source/expressions/admission/Model.dfy",
+    "formal/source/library/src/expressions/admission/Source.generated.dfy": "formal/source/expressions/admission/Source.generated.dfy",
+    "formal/source/library/src/expressions/validation/Completion.dfy": "formal/source/expressions/validation/Completion.dfy",
+    "formal/source/library/src/expressions/validation/Control.dfy": "formal/source/expressions/validation/Control.dfy",
+    "formal/source/library/src/expressions/validation/Bytes.dfy": "formal/source/expressions/validation/Bytes.dfy",
+    "formal/source/library/src/expressions/validation/Body.generated.dfy": "formal/source/expressions/validation/Body.generated.dfy",
+    "formal/source/library/src/expressions/validation/Connection.dfy": "formal/source/expressions/validation/Connection.dfy",
+    "formal/source/library/src/expressions/entry/Connection.dfy": "formal/source/expressions/entry/Connection.dfy",
+    "formal/source/library/src/expressions/requests/Model.dfy": "formal/source/expressions/requests/Model.dfy",
+    "formal/source/library/src/expressions/requests/Source.dfy": "formal/source/expressions/requests/Source.dfy",
+    "formal/source/library/src/expressions/requests/Connection.dfy": "formal/source/expressions/requests/Connection.dfy",
+    "formal/source/library/src/expressions/rejections/Model.dfy": "formal/source/expressions/rejections/Model.dfy",
+    "formal/source/library/src/expressions/rejections/Cold.generated.dfy": "formal/source/expressions/rejections/Cold.generated.dfy",
+    "formal/source/library/src/expressions/rejections/Completion.generated.dfy": "formal/source/expressions/rejections/Completion.generated.dfy",
+    "formal/source/library/src/expressions/rejections/Connection.dfy": "formal/source/expressions/rejections/Connection.dfy",
+    "formal/source/library/src/expressions/oracle/Model.dfy": "formal/source/expressions/oracle/Model.dfy",
+    "formal/source/library/src/expressions/oracle/Connection.dfy": "formal/source/expressions/oracle/Connection.dfy",
+    "formal/source/library/src/expressions/oracle-stability/Append.dfy": "formal/source/expressions/oracle-stability/Append.dfy",
+    "formal/source/library/src/expressions/oracle-stability/Connection.dfy": "formal/source/expressions/oracle-stability/Connection.dfy",
+    "formal/source/library/src/expressions/guard-receipts/Events.dfy": "formal/source/expressions/guard-receipts/Events.dfy",
+    "formal/source/library/src/expressions/guard-receipts/Connection.dfy": "formal/source/expressions/guard-receipts/Connection.dfy",
+    "formal/source/library/src/expressions/admission-errors/Encoding.dfy": "formal/source/expressions/admission-errors/Encoding.dfy",
+    "formal/source/library/src/expressions/admission-errors/Connection.dfy": "formal/source/expressions/admission-errors/Connection.dfy",
+    "formal/source/library/src/expressions/admission-errors/Bounds.dfy": "formal/source/expressions/admission-errors/Bounds.dfy",
+    "formal/source/library/src/operations/byte-replace/Model.dfy": "formal/source/operations/byte-replace/Model.dfy",
+    "formal/source/library/src/operations/byte-replace/Matcher.generated.dfy": "formal/source/operations/byte-replace/Matcher.generated.dfy",
+    "formal/source/library/src/operations/byte-replace/Connection.dfy": "formal/source/operations/byte-replace/Connection.dfy",
+    "formal/source/library/src/operations/byte-replace/Control.generated.dfy": "formal/source/operations/byte-replace/Control.generated.dfy",
+    "formal/source/library/src/operations/tuple-encode/Model.dfy": "formal/source/operations/tuple-encode/Model.dfy",
+    "formal/source/library/src/operations/tuple-encode/Connection.dfy": "formal/source/operations/tuple-encode/Connection.dfy",
+    "formal/source/library/src/operations/tuple-encode/Control.generated.dfy": "formal/source/operations/tuple-encode/Control.generated.dfy",
+    "formal/source/library/src/operations/occurrence-index/Model.dfy": "formal/source/operations/occurrence-index/Model.dfy",
+    "formal/source/library/src/operations/occurrence-index/Connection.dfy": "formal/source/operations/occurrence-index/Connection.dfy",
+    "formal/source/library/src/operations/occurrence-index/Control.generated.dfy": "formal/source/operations/occurrence-index/Control.generated.dfy",
+    "formal/source/library/src/operations/fixed-point/Model.dfy": "formal/source/operations/fixed-point/Model.dfy",
+    "formal/source/library/src/operations/fixed-point/Connection.dfy": "formal/source/operations/fixed-point/Connection.dfy",
+    "formal/source/library/src/operations/fixed-point/Control.generated.dfy": "formal/source/operations/fixed-point/Control.generated.dfy",
+    "formal/source/library/src/operations/fixed-point/Bounds.dfy": "formal/source/operations/fixed-point/Bounds.dfy",
+    "formal/source/library/src/operations/signed-mod/SignedMod.dfy": "formal/source/operations/signed-mod/SignedMod.dfy",
+    "formal/source/library/src/operations/signed-mod/Reference.dfy": "formal/source/operations/signed-mod/Reference.dfy",
+    "formal/source/library/src/operations/modular-power/Memory.dfy": "formal/source/operations/modular-power/Memory.dfy",
+    "formal/source/library/src/operations/modular-power/Model.dfy": "formal/source/operations/modular-power/Model.dfy",
+    "formal/source/library/src/operations/modular-power/InverseConnection.dfy": "formal/source/operations/modular-power/InverseConnection.dfy",
+    "formal/source/library/src/operations/modular-power/Euclid.dfy": "formal/source/operations/modular-power/Euclid.dfy",
+    "formal/source/library/src/operations/modular-power/Power.dfy": "formal/source/operations/modular-power/Power.dfy",
+    "formal/source/library/src/operations/modular-power/Inverse.generated.dfy": "formal/source/operations/modular-power/Inverse.generated.dfy",
+    "formal/source/library/src/operations/modular-power/World.dfy": "formal/source/operations/modular-power/World.dfy",
+    "formal/source/library/src/operations/modular-power/Connection.dfy": "formal/source/operations/modular-power/Connection.dfy",
+    "formal/source/library/src/operations/modular-power/InverseModel.dfy": "formal/source/operations/modular-power/InverseModel.dfy",
+    "formal/source/library/src/operations/modular-power/Control.generated.dfy": "formal/source/operations/modular-power/Control.generated.dfy",
+    "formal/source/library/src/operations/modular/Connection.dfy": "formal/source/operations/modular/Connection.dfy",
+    "formal/source/library/src/operations/modular/Control.generated.dfy": "formal/source/operations/modular/Control.generated.dfy",
+    "formal/source/library/src/operations/modular/Math.generated.dfy": "formal/source/operations/modular/Math.generated.dfy",
+    "formal/source/library/src/operations/environment/Model.dfy": "formal/source/operations/environment/Model.dfy",
+    "formal/source/library/src/operations/environment/Connection.dfy": "formal/source/operations/environment/Connection.dfy",
+    "formal/source/library/src/operations/environment/Control.generated.dfy": "formal/source/operations/environment/Control.generated.dfy",
+    "formal/source/library/src/operations/byte-bounds/Model.dfy": "formal/source/operations/byte-bounds/Model.dfy",
+    "formal/source/library/src/operations/byte-bounds/Connection.dfy": "formal/source/operations/byte-bounds/Connection.dfy",
+    "formal/source/library/src/operations/byte-bounds/Control.generated.dfy": "formal/source/operations/byte-bounds/Control.generated.dfy",
+    "formal/source/library/src/operations/byte-split/Model.dfy": "formal/source/operations/byte-split/Model.dfy",
+    "formal/source/library/src/operations/byte-split/Connection.dfy": "formal/source/operations/byte-split/Connection.dfy",
+    "formal/source/library/src/operations/byte-split/Control.generated.dfy": "formal/source/operations/byte-split/Control.generated.dfy",
+    "formal/source/library/src/operations/raw-call/Model.dfy": "formal/source/operations/raw-call/Model.dfy",
+    "formal/source/library/src/operations/raw-call/Connection.dfy": "formal/source/operations/raw-call/Connection.dfy",
+    "formal/source/library/src/operations/raw-call/Control.generated.dfy": "formal/source/operations/raw-call/Control.generated.dfy",
+    "formal/source/library/src/operations/parse-units/Model.dfy": "formal/source/operations/parse-units/Model.dfy",
+    "formal/source/library/src/operations/parse-units/Connection.dfy": "formal/source/operations/parse-units/Connection.dfy",
+    "formal/source/library/src/operations/parse-units/Control.generated.dfy": "formal/source/operations/parse-units/Control.generated.dfy",
+    "formal/source/library/src/operations/utf8/Model.dfy": "formal/source/operations/utf8/Model.dfy",
+    "formal/source/library/src/operations/utf8/Connection.dfy": "formal/source/operations/utf8/Connection.dfy",
+    "formal/source/library/src/operations/utf8/Control.generated.dfy": "formal/source/operations/utf8/Control.generated.dfy",
+    "formal/source/library/src/operations/full-mul-div/Memory.dfy": "formal/source/operations/full-mul-div/Memory.dfy",
+    "formal/source/library/src/operations/full-mul-div/Model.dfy": "formal/source/operations/full-mul-div/Model.dfy",
+    "formal/source/library/src/operations/full-mul-div/Helpers.generated.dfy": "formal/source/operations/full-mul-div/Helpers.generated.dfy",
+    "formal/source/library/src/operations/full-mul-div/Product.dfy": "formal/source/operations/full-mul-div/Product.dfy",
+    "formal/source/library/src/operations/full-mul-div/Inverse.dfy": "formal/source/operations/full-mul-div/Inverse.dfy",
+    "formal/source/library/src/operations/full-mul-div/Connection.dfy": "formal/source/operations/full-mul-div/Connection.dfy",
+    "formal/source/library/src/operations/full-mul-div/Control.generated.dfy": "formal/source/operations/full-mul-div/Control.generated.dfy",
+    "formal/source/library/src/operations/full-mul-div/Recombine.dfy": "formal/source/operations/full-mul-div/Recombine.dfy",
+    "formal/source/library/src/operations/full-mul-div/Bits.dfy": "formal/source/operations/full-mul-div/Bits.dfy",
+    "formal/source/library/src/operations/scalars/Model.dfy": "formal/source/operations/scalars/Model.dfy",
+    "formal/source/library/src/operations/scalars/Connection.dfy": "formal/source/operations/scalars/Connection.dfy",
+    "formal/source/library/src/operations/scalars/Control.generated.dfy": "formal/source/operations/scalars/Control.generated.dfy",
+    "formal/source/library/src/operations/concat/Model.dfy": "formal/source/operations/concat/Model.dfy",
+    "formal/source/library/src/operations/concat/Connection.dfy": "formal/source/operations/concat/Connection.dfy",
+    "formal/source/library/src/operations/concat/Control.generated.dfy": "formal/source/operations/concat/Control.generated.dfy",
+    "formal/source/library/src/operations/word-match/Model.dfy": "formal/source/operations/word-match/Model.dfy",
+    "formal/source/library/src/operations/word-match/Connection.dfy": "formal/source/operations/word-match/Connection.dfy",
+    "formal/source/library/src/operations/word-match/Control.generated.dfy": "formal/source/operations/word-match/Control.generated.dfy",
+    "formal/source/library/src/operations/binary-log/Model.dfy": "formal/source/operations/binary-log/Model.dfy",
+    "formal/source/library/src/operations/binary-log/Connection.dfy": "formal/source/operations/binary-log/Connection.dfy",
+    "formal/source/library/src/operations/binary-log/Control.generated.dfy": "formal/source/operations/binary-log/Control.generated.dfy",
+    "formal/source/library/src/operations/scaled-power/Model.dfy": "formal/source/operations/scaled-power/Model.dfy",
+    "formal/source/library/src/operations/scaled-power/Connection.dfy": "formal/source/operations/scaled-power/Connection.dfy",
+    "formal/source/library/src/operations/scaled-power/Control.generated.dfy": "formal/source/operations/scaled-power/Control.generated.dfy",
+    "formal/source/library/src/operations/checked-power/Model.dfy": "formal/source/operations/checked-power/Model.dfy",
+    "formal/source/library/src/operations/checked-power/Connection.dfy": "formal/source/operations/checked-power/Connection.dfy",
+    "formal/source/library/src/operations/checked-power/Control.generated.dfy": "formal/source/operations/checked-power/Control.generated.dfy",
+    "formal/source/library/src/operations/decimal-units/Model.dfy": "formal/source/operations/decimal-units/Model.dfy",
+    "formal/source/library/src/operations/decimal-units/Connection.dfy": "formal/source/operations/decimal-units/Connection.dfy",
+    "formal/source/library/src/operations/decimal-units/Control.generated.dfy": "formal/source/operations/decimal-units/Control.generated.dfy",
+    "formal/source/library/src/operations/fixed-point-accuracy/Kernel.dfy": "formal/source/operations/fixed-point-accuracy/Kernel.dfy",
+    "formal/source/library/src/operations/fixed-point-accuracy/Bridge.dfy": "formal/source/operations/fixed-point-accuracy/Bridge.dfy",
+    "formal/source/library/src/operations/fixed-point-accuracy/Series.dfy": "formal/source/operations/fixed-point-accuracy/Series.dfy",
+    "formal/source/library/src/operations/fixed-point-accuracy/Intervals.dfy": "formal/source/operations/fixed-point-accuracy/Intervals.dfy",
+    "formal/source/library/src/operations/fixed-point-accuracy/Spec.dfy": "formal/source/operations/fixed-point-accuracy/Spec.dfy",
+    "formal/source/library/src/operations/decimal-render/Model.dfy": "formal/source/operations/decimal-render/Model.dfy",
+    "formal/source/library/src/operations/decimal-render/Connection.dfy": "formal/source/operations/decimal-render/Connection.dfy",
+    "formal/source/library/src/operations/decimal-render/Control.generated.dfy": "formal/source/operations/decimal-render/Control.generated.dfy",
+    "formal/source/library/src/operations/decimal-digits/Model.dfy": "formal/source/operations/decimal-digits/Model.dfy",
+    "formal/source/library/src/operations/decimal-digits/Connection.dfy": "formal/source/operations/decimal-digits/Connection.dfy",
+    "formal/source/library/src/operations/decimal-digits/Control.generated.dfy": "formal/source/operations/decimal-digits/Control.generated.dfy",
+    "formal/source/library/src/operations/integer-root/Model.dfy": "formal/source/operations/integer-root/Model.dfy",
+    "formal/source/library/src/operations/integer-root/Convergence.dfy": "formal/source/operations/integer-root/Convergence.dfy",
+    "formal/source/library/src/operations/integer-root/Seed.dfy": "formal/source/operations/integer-root/Seed.dfy",
+    "formal/source/library/src/operations/integer-root/Connection.dfy": "formal/source/operations/integer-root/Connection.dfy",
+    "formal/source/library/src/operations/integer-root/Control.generated.dfy": "formal/source/operations/integer-root/Control.generated.dfy",
+    "formal/source/library/src/operations/ascii/Model.dfy": "formal/source/operations/ascii/Model.dfy",
+    "formal/source/library/src/operations/ascii/Connection.dfy": "formal/source/operations/ascii/Connection.dfy",
+    "formal/source/library/src/operations/ascii/Control.generated.dfy": "formal/source/operations/ascii/Control.generated.dfy",
+    "formal/source/library/src/operations/scaled-power/muldiv-regenerated/Helpers.generated.dfy": "formal/source/operations/scaled-power/muldiv-regenerated/Helpers.generated.dfy",
+    "formal/source/library/src/operations/scaled-power/muldiv-regenerated/Control.generated.dfy": "formal/source/operations/scaled-power/muldiv-regenerated/Control.generated.dfy",
+    "formal/source/library/src/operations/modular-power/muldiv-regenerated/Helpers.generated.dfy": "formal/source/operations/modular-power/muldiv-regenerated/Helpers.generated.dfy",
+    "formal/source/library/src/operations/modular-power/muldiv-regenerated/Control.generated.dfy": "formal/source/operations/modular-power/muldiv-regenerated/Control.generated.dfy",
+    "formal/source/library/src/operations/fixed-point/muldiv-regenerated/Helpers.generated.dfy": "formal/source/operations/fixed-point/muldiv-regenerated/Helpers.generated.dfy",
+    "formal/source/library/src/operations/fixed-point/muldiv-regenerated/Control.generated.dfy": "formal/source/operations/fixed-point/muldiv-regenerated/Control.generated.dfy",
+    "formal/source/library/src/operations/tuple-encode/compiler/Helpers.generated.dfy": "formal/source/operations/tuple-encode/compiler/Helpers.generated.dfy",
+    "formal/source/library/src/operations/tuple-encode/compiler/Control.generated.dfy": "formal/source/operations/tuple-encode/compiler/Control.generated.dfy"
+  },
+  "files": [
+    {
+      "path": "formal/source/abi/aggregate/Cursors.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/aggregate/Cursors.generated.dfy",
+      "archiveSha256": "d65257b9377425de6e0472363c13a8fd1e898d50b69a82e63b80a5cc4d854f36",
+      "sha256": "d65257b9377425de6e0472363c13a8fd1e898d50b69a82e63b80a5cc4d854f36"
+    },
+    {
+      "path": "formal/source/abi/connection/Bridge.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/connection/Bridge.generated.dfy",
+      "archiveSha256": "4675f0b35566e925f53d1dd0f21b8c225d9776a1179282acc7d2675b63ff6e70",
+      "sha256": "4675f0b35566e925f53d1dd0f21b8c225d9776a1179282acc7d2675b63ff6e70"
+    },
+    {
+      "path": "formal/source/abi/construction/Assembly.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/construction/Assembly.generated.dfy",
+      "archiveSha256": "3f0fb63c273b2864b4c3a13fc18cd739355fa2c6c197775131b5d8e9109a8686",
+      "sha256": "3f0fb63c273b2864b4c3a13fc18cd739355fa2c6c197775131b5d8e9109a8686"
+    },
+    {
+      "path": "formal/source/abi/construction/Component.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/construction/Component.generated.dfy",
+      "archiveSha256": "d000140a6843ceeb12f369757cee0977abd9eab278e2d220bac9ee10c6cd0c8b",
+      "sha256": "d000140a6843ceeb12f369757cee0977abd9eab278e2d220bac9ee10c6cd0c8b"
+    },
+    {
+      "path": "formal/source/abi/construction/Context.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/construction/Context.generated.dfy",
+      "archiveSha256": "9f085cd3dba6bbdf6d38110470925c57335e1bc670e3c9b0b47fcd0fd2b3da8b",
+      "sha256": "9f085cd3dba6bbdf6d38110470925c57335e1bc670e3c9b0b47fcd0fd2b3da8b"
+    },
+    {
+      "path": "formal/source/abi/construction/Pack.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/construction/Pack.generated.dfy",
+      "archiveSha256": "cb4d771ee8fd4fcbc53406e77896d56263d875d0211a0786ff20ff57e8bcfe79",
+      "sha256": "cb4d771ee8fd4fcbc53406e77896d56263d875d0211a0786ff20ff57e8bcfe79"
+    },
+    {
+      "path": "formal/source/abi/construction/Tuple.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/construction/Tuple.generated.dfy",
+      "archiveSha256": "d078024b5b537eb380f8e808c98a37e7d66f78c6228d88d42bab5cf482aed6c6",
+      "sha256": "d078024b5b537eb380f8e808c98a37e7d66f78c6228d88d42bab5cf482aed6c6"
+    },
+    {
+      "path": "formal/source/abi/construction/Unpack.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/construction/Unpack.generated.dfy",
+      "archiveSha256": "7744b4eee088838f791370da4b2f682b1014b906e3cf8dc189e37ab9b24e9eec",
+      "sha256": "7744b4eee088838f791370da4b2f682b1014b906e3cf8dc189e37ab9b24e9eec"
+    },
+    {
+      "path": "formal/source/abi/descriptor/Suffixes.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/descriptor/Suffixes.generated.dfy",
+      "archiveSha256": "9ac9c0c05886870f6b9960400969f70eccb7af9759d1d00a9430d20dafcbff61",
+      "sha256": "9ac9c0c05886870f6b9960400969f70eccb7af9759d1d00a9430d20dafcbff61"
+    },
+    {
+      "path": "formal/source/abi/dynamic/Body.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/dynamic/Body.generated.dfy",
+      "archiveSha256": "985e44ca8fac4bfa09e42ad02c4f39fd3da664ab63fcf382b2a917846251e075",
+      "sha256": "985e44ca8fac4bfa09e42ad02c4f39fd3da664ab63fcf382b2a917846251e075"
+    },
+    {
+      "path": "formal/source/abi/dynamic/Validation.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/dynamic/Validation.generated.dfy",
+      "archiveSha256": "c07a020fd88d838cb5973c3fe1c7e666b40cbb33f3064ab2f560dcd230c3229f",
+      "sha256": "c07a020fd88d838cb5973c3fe1c7e666b40cbb33f3064ab2f560dcd230c3229f"
+    },
+    {
+      "path": "formal/source/abi/layout/Count.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/layout/Count.generated.dfy",
+      "archiveSha256": "696e3d2052cf4c74c424562074d988657c7fdc43979e2e8caf7ac9385f756964",
+      "sha256": "696e3d2052cf4c74c424562074d988657c7fdc43979e2e8caf7ac9385f756964"
+    },
+    {
+      "path": "formal/source/abi/layout/Layout.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/layout/Layout.generated.dfy",
+      "archiveSha256": "3cc7239be1f94af3ea1832de5b966b3ddc223505aa5dc68d186e7fa7d09d4cde",
+      "sha256": "3cc7239be1f94af3ea1832de5b966b3ddc223505aa5dc68d186e7fa7d09d4cde"
+    },
+    {
+      "path": "formal/source/abi/outcomes/Body.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/outcomes/Body.generated.dfy",
+      "archiveSha256": "9ecd9bd75396391209afdbc17543e667ae7e26717c06a2344a5c9460a105bbcc",
+      "sha256": "9ecd9bd75396391209afdbc17543e667ae7e26717c06a2344a5c9460a105bbcc"
+    },
+    {
+      "path": "formal/source/abi/outcomes/Cached.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/outcomes/Cached.generated.dfy",
+      "archiveSha256": "a4f988e44ef5aa26b960dd5245808dfe407a13a28051652385ca88073780b7c6",
+      "sha256": "a4f988e44ef5aa26b960dd5245808dfe407a13a28051652385ca88073780b7c6"
+    },
+    {
+      "path": "formal/source/abi/outcomes/Dynamic.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/outcomes/Dynamic.generated.dfy",
+      "archiveSha256": "a2540dea0f70fe9ae7ce954c46bf54226ae44bed19df4854bdaf89f1e79435ca",
+      "sha256": "a2540dea0f70fe9ae7ce954c46bf54226ae44bed19df4854bdaf89f1e79435ca"
+    },
+    {
+      "path": "formal/source/abi/outcomes/Receipt.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/outcomes/Receipt.generated.dfy",
+      "archiveSha256": "c1682b4926c74dedd168f27ace84a70e30953ad58963325f0a735dd5486c4c6d",
+      "sha256": "c1682b4926c74dedd168f27ace84a70e30953ad58963325f0a735dd5486c4c6d"
+    },
+    {
+      "path": "formal/source/abi/outcomes/Static.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/outcomes/Static.generated.dfy",
+      "archiveSha256": "704b9938247e9736f044e54f15914d6c2f4234210863045ebb74fd88273753ad",
+      "sha256": "704b9938247e9736f044e54f15914d6c2f4234210863045ebb74fd88273753ad"
+    },
+    {
+      "path": "formal/source/abi/parser/Parser.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/parser/Parser.generated.dfy",
+      "archiveSha256": "935c894ac952270156cb86c71f830b9999c487de043b4343241b438e35e419db",
+      "sha256": "935c894ac952270156cb86c71f830b9999c487de043b4343241b438e35e419db"
+    },
+    {
+      "path": "formal/source/abi/shape/TypeShape.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/shape/TypeShape.generated.dfy",
+      "archiveSha256": "1f271ea6c76ad648814bb5dc9907bd3c06e28481887680ec55c0e452c5e81e58",
+      "sha256": "1f271ea6c76ad648814bb5dc9907bd3c06e28481887680ec55c0e452c5e81e58"
+    },
+    {
+      "path": "formal/source/abi/source/BytesBody.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/source/BytesBody.generated.dfy",
+      "archiveSha256": "37e17ff062dc2b32e6be99d262f84593baeda3a9604a62ae947b3160d8c29666",
+      "sha256": "37e17ff062dc2b32e6be99d262f84593baeda3a9604a62ae947b3160d8c29666"
+    },
+    {
+      "path": "formal/source/abi/tuples/CheckWords.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/tuples/CheckWords.generated.dfy",
+      "archiveSha256": "9c7cb2e118c3dd43cc6c37e5227e6b54c0e0d0ec21ac63fd21830e3a06364d41",
+      "sha256": "9c7cb2e118c3dd43cc6c37e5227e6b54c0e0d0ec21ac63fd21830e3a06364d41"
+    },
+    {
+      "path": "formal/source/abi/tuples/Names.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/tuples/Names.generated.dfy",
+      "archiveSha256": "04335f3177becc1bf1788410c6d58d799ca9cf0ed9e44cc94179395181b9afb1",
+      "sha256": "04335f3177becc1bf1788410c6d58d799ca9cf0ed9e44cc94179395181b9afb1"
+    },
+    {
+      "path": "formal/source/abi/words/Scanners.generated.dfy",
+      "archivePath": "formal/source/library/src/abi/words/Scanners.generated.dfy",
+      "archiveSha256": "a57834c59f65a2a84cfe61bb81d95f466eabfdc50dbd6fdebfeb9bd1dd98d619",
+      "sha256": "a57834c59f65a2a84cfe61bb81d95f466eabfdc50dbd6fdebfeb9bd1dd98d619"
+    },
+    {
+      "path": "formal/source/assertions/arguments/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/arguments/Source.generated.dfy",
+      "archiveSha256": "5e5679166b2a828635d46cb12ea774cc61a89b04d29159a6688a8568640f7206",
+      "sha256": "5e5679166b2a828635d46cb12ea774cc61a89b04d29159a6688a8568640f7206"
+    },
+    {
+      "path": "formal/source/assertions/arguments/Tuple.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/arguments/Tuple.generated.dfy",
+      "archiveSha256": "808bff43b0e61065b69f2ae7a668c5880a32a38b2eeab676c2670bdcc5a9765d",
+      "sha256": "808bff43b0e61065b69f2ae7a668c5880a32a38b2eeab676c2670bdcc5a9765d"
+    },
+    {
+      "path": "formal/source/assertions/composition/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/composition/Source.generated.dfy",
+      "archiveSha256": "9859d4500090cb3a3012faa2070a4de17b3d3c914c04b3393a523601c11ce23d",
+      "sha256": "9859d4500090cb3a3012faa2070a4de17b3d3c914c04b3393a523601c11ce23d"
+    },
+    {
+      "path": "formal/source/assertions/constraints/Engine.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/constraints/Engine.generated.dfy",
+      "archiveSha256": "6a09b1d699f451bd1278b6411b87d19c884e47a98d539f7a356bbc525dedcd24",
+      "sha256": "5b5efbec4cdffe9739027b4fb0eee872f1db1f03d5512bca088b3fc6a1ba1339"
+    },
+    {
+      "path": "formal/source/assertions/control/GuardSource.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/control/GuardSource.generated.dfy",
+      "archiveSha256": "edfb1cfae2adc65ffb8301acb0d44578980d6a5100202ce34e2f44b7ec794af7",
+      "sha256": "edfb1cfae2adc65ffb8301acb0d44578980d6a5100202ce34e2f44b7ec794af7"
+    },
+    {
+      "path": "formal/source/assertions/control/ProbeSource.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/control/ProbeSource.generated.dfy",
+      "archiveSha256": "a8c1cb6bd6fa817976e08d0ae7ba698aa371203612118730e2f7930f264afd3f",
+      "sha256": "a8c1cb6bd6fa817976e08d0ae7ba698aa371203612118730e2f7930f264afd3f"
+    },
+    {
+      "path": "formal/source/assertions/core/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/core/Source.generated.dfy",
+      "archiveSha256": "32466606f732e3ec27d900729e8223d7869451d5e95f5341b043a6343537176e",
+      "sha256": "32466606f732e3ec27d900729e8223d7869451d5e95f5341b043a6343537176e"
+    },
+    {
+      "path": "formal/source/assertions/core/public-boundary/Getters.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/core/public-boundary/Getters.generated.dfy",
+      "archiveSha256": "ec9da27d656a0177ce47292b87c8f84d60e5e53af509678207432904d2a1187e",
+      "sha256": "ec9da27d656a0177ce47292b87c8f84d60e5e53af509678207432904d2a1187e"
+    },
+    {
+      "path": "formal/source/assertions/core/serialization/Signatures.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/core/serialization/Signatures.generated.dfy",
+      "archiveSha256": "68e04f9d7d44e215177079bd4f1de276de49b6eeb9d3ca61dd35c2f824efa4b0",
+      "sha256": "68e04f9d7d44e215177079bd4f1de276de49b6eeb9d3ca61dd35c2f824efa4b0"
+    },
+    {
+      "path": "formal/source/assertions/navigation/Cursor.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/navigation/Cursor.generated.dfy",
+      "archiveSha256": "d2a1832267046e8c78487a0820d25e77fed23cc4732aae4391342dc3d56a7094",
+      "sha256": "d2a1832267046e8c78487a0820d25e77fed23cc4732aae4391342dc3d56a7094"
+    },
+    {
+      "path": "formal/source/assertions/navigation/DynamicSource.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/navigation/DynamicSource.generated.dfy",
+      "archiveSha256": "519d6513c7dfa352e19c8a7630d2ac80bcaa741f17321f05344fd0d4ef91d3a2",
+      "sha256": "519d6513c7dfa352e19c8a7630d2ac80bcaa741f17321f05344fd0d4ef91d3a2"
+    },
+    {
+      "path": "formal/source/assertions/navigation/Kernels.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/navigation/Kernels.generated.dfy",
+      "archiveSha256": "9016bb55b02955d1aae60ad9f1928dc34546eb7c73559b192686db24cca27c97",
+      "sha256": "9016bb55b02955d1aae60ad9f1928dc34546eb7c73559b192686db24cca27c97"
+    },
+    {
+      "path": "formal/source/assertions/navigation/ModesSource.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/navigation/ModesSource.generated.dfy",
+      "archiveSha256": "eafcec2d11fe9fcbbf8910e2f65dbcee689d27b6dac56e043e4298319f08382b",
+      "sha256": "eafcec2d11fe9fcbbf8910e2f65dbcee689d27b6dac56e043e4298319f08382b"
+    },
+    {
+      "path": "formal/source/assertions/navigation/NavSource.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/navigation/NavSource.generated.dfy",
+      "archiveSha256": "5898f0ab058d448fab30631c6dcaf5790d300b8242eb5c533fa11ca21bf1423c",
+      "sha256": "5898f0ab058d448fab30631c6dcaf5790d300b8242eb5c533fa11ca21bf1423c"
+    },
+    {
+      "path": "formal/source/assertions/navigation/ReturnMemory.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/navigation/ReturnMemory.generated.dfy",
+      "archiveSha256": "5b60b0d8ad574217555c9867f89da8eb8bbbca769215ff2ea60c4fa2a84a53d9",
+      "sha256": "5b60b0d8ad574217555c9867f89da8eb8bbbca769215ff2ea60c4fa2a84a53d9"
+    },
+    {
+      "path": "formal/source/assertions/navigation/TerminalSource.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/navigation/TerminalSource.generated.dfy",
+      "archiveSha256": "92df8c8f16ecd70961ea0d52f306531bf6298f9f3c6e5c1830e105a411cc3504",
+      "sha256": "92df8c8f16ecd70961ea0d52f306531bf6298f9f3c6e5c1830e105a411cc3504"
+    },
+    {
+      "path": "formal/source/assertions/navigation/Traverse.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/navigation/Traverse.generated.dfy",
+      "archiveSha256": "0f72d0f2c8ae0a91660c506e8c7923d34bac5de80aba97cd4e7d7f9a3eb45707",
+      "sha256": "0f72d0f2c8ae0a91660c506e8c7923d34bac5de80aba97cd4e7d7f9a3eb45707"
+    },
+    {
+      "path": "formal/source/assertions/navigation/ValueSource.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/navigation/ValueSource.generated.dfy",
+      "archiveSha256": "9ca778a51928d68d64ce91858163de339f2e1f94a00cef760a06baef94b36f3c",
+      "sha256": "9ca778a51928d68d64ce91858163de339f2e1f94a00cef760a06baef94b36f3c"
+    },
+    {
+      "path": "formal/source/assertions/resolution/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/assertions/resolution/Source.generated.dfy",
+      "archiveSha256": "187e408ca567e5ad816590669841a1b31d4a00408789215e79cf3448bd767dfa",
+      "sha256": "187e408ca567e5ad816590669841a1b31d4a00408789215e79cf3448bd767dfa"
+    },
+    {
+      "path": "formal/source/collections/admission/Signatures.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/admission/Signatures.generated.dfy",
+      "archiveSha256": "09ec95fca33867fbec5b99a767f61419cf0ecbd882295848eafe0a26d594d945",
+      "sha256": "09ec95fca33867fbec5b99a767f61419cf0ecbd882295848eafe0a26d594d945"
+    },
+    {
+      "path": "formal/source/collections/callback-results/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/callback-results/Source.generated.dfy",
+      "archiveSha256": "5ed18983bdd94c0c3864258a26cf448a0f1f4a82b51e31d9f12466b0127af966",
+      "sha256": "5ed18983bdd94c0c3864258a26cf448a0f1f4a82b51e31d9f12466b0127af966"
+    },
+    {
+      "path": "formal/source/collections/calls/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/calls/Source.generated.dfy",
+      "archiveSha256": "876c0baeacc42637e0bc7b3716b2d80d95ce2d982a1fb6ea5a6b7794b0e2ef58",
+      "sha256": "876c0baeacc42637e0bc7b3716b2d80d95ce2d982a1fb6ea5a6b7794b0e2ef58"
+    },
+    {
+      "path": "formal/source/collections/codec-errors/Signatures.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/codec-errors/Signatures.generated.dfy",
+      "archiveSha256": "108d093c1e03634af2200bc9e4adec3f4999aa0d828ba2556315d7a8e7b26f2f",
+      "sha256": "108d093c1e03634af2200bc9e4adec3f4999aa0d828ba2556315d7a8e7b26f2f"
+    },
+    {
+      "path": "formal/source/collections/completion/Boundary.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/completion/Boundary.generated.dfy",
+      "archiveSha256": "93d175dc1b62994b9b31a290aca1448e8038e10382b8d94551b101a95b2f4d48",
+      "sha256": "93d175dc1b62994b9b31a290aca1448e8038e10382b8d94551b101a95b2f4d48"
+    },
+    {
+      "path": "formal/source/collections/preparation/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/preparation/Source.generated.dfy",
+      "archiveSha256": "0516fdc764b9b59b88475ad61cd0d2e2444d1899265045e6f6fa91861c91d133",
+      "sha256": "0516fdc764b9b59b88475ad61cd0d2e2444d1899265045e6f6fa91861c91d133"
+    },
+    {
+      "path": "formal/source/collections/sort-admission/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/sort-admission/Source.generated.dfy",
+      "archiveSha256": "dcdbaf38e9b7bcc4d3dea79adb200de3e564e301b5823fad5c890573829fe326",
+      "sha256": "dcdbaf38e9b7bcc4d3dea79adb200de3e564e301b5823fad5c890573829fe326"
+    },
+    {
+      "path": "formal/source/collections/sort-comparator/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/sort-comparator/Source.generated.dfy",
+      "archiveSha256": "107ffb243b90fb81d0677cfb759616fbef07b70315ce6a89039d97479360e26b",
+      "sha256": "107ffb243b90fb81d0677cfb759616fbef07b70315ce6a89039d97479360e26b"
+    },
+    {
+      "path": "formal/source/collections/validation/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/validation/Source.generated.dfy",
+      "archiveSha256": "7d9e58e348f4fca0092fe2b4794af6602c0e05ad0bc3c8a9f9066c7d394e5e3e",
+      "sha256": "7d9e58e348f4fca0092fe2b4794af6602c0e05ad0bc3c8a9f9066c7d394e5e3e"
+    },
+    {
+      "path": "formal/source/collections/value-codec/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/value-codec/Control.generated.dfy",
+      "archiveSha256": "30801978ef1f2c4a604cf0d5e5530fc6de3f40468fb8f3ad49933bdc91d6b389",
+      "sha256": "30801978ef1f2c4a604cf0d5e5530fc6de3f40468fb8f3ad49933bdc91d6b389"
+    },
+    {
+      "path": "formal/source/collections/value-codec/Pack.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/value-codec/Pack.generated.dfy",
+      "archiveSha256": "394a6fdb50e3e41b6ebf3e9feeff94252ffe8dc6072088d195bf9f80f161ab89",
+      "sha256": "394a6fdb50e3e41b6ebf3e9feeff94252ffe8dc6072088d195bf9f80f161ab89"
+    },
+    {
+      "path": "formal/source/collections/value-codec/Unpack.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/value-codec/Unpack.generated.dfy",
+      "archiveSha256": "4c320178e7cea902d2144f5490048005aed8c8af4ece814320f8693b65c56fa3",
+      "sha256": "4c320178e7cea902d2144f5490048005aed8c8af4ece814320f8693b65c56fa3"
+    },
+    {
+      "path": "formal/source/collections/value-entry/Selectors.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/value-entry/Selectors.generated.dfy",
+      "archiveSha256": "f5a7c10aec29a49507edeba081768deb6bde182a0fd4ced13cea9052ee0a4495",
+      "sha256": "f5a7c10aec29a49507edeba081768deb6bde182a0fd4ced13cea9052ee0a4495"
+    },
+    {
+      "path": "formal/source/collections/value-loops/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/value-loops/Source.generated.dfy",
+      "archiveSha256": "0311e517cef2bc1450c861c687affb60632acc4f2aea39b1e81c3a3dbb0f2125",
+      "sha256": "0311e517cef2bc1450c861c687affb60632acc4f2aea39b1e81c3a3dbb0f2125"
+    },
+    {
+      "path": "formal/source/collections/value-pairs/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/value-pairs/Control.generated.dfy",
+      "archiveSha256": "31169b414e7ad71229000fe41bbd1879d9d94e90cc2f2976505aa77df7f1f52f",
+      "sha256": "31169b414e7ad71229000fe41bbd1879d9d94e90cc2f2976505aa77df7f1f52f"
+    },
+    {
+      "path": "formal/source/collections/value-search/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/value-search/Control.generated.dfy",
+      "archiveSha256": "d714b96602947c1105b96063fc0bc319d61db79d8d5dfa5e172a8051c001c2d2",
+      "sha256": "d714b96602947c1105b96063fc0bc319d61db79d8d5dfa5e172a8051c001c2d2"
+    },
+    {
+      "path": "formal/source/collections/value-sort-trace/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/value-sort-trace/Source.generated.dfy",
+      "archiveSha256": "5484ce6f0fdfa0ee742a60a7fbb5fe1cb7f35076018a9ae25f45cd622bfa6663",
+      "sha256": "5484ce6f0fdfa0ee742a60a7fbb5fe1cb7f35076018a9ae25f45cd622bfa6663"
+    },
+    {
+      "path": "formal/source/collections/value-structure/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/value-structure/Control.generated.dfy",
+      "archiveSha256": "b48b833991eeee3cc6299a5ab4ab11cac040b460f46f1bd6f0261d41f8d2d292",
+      "sha256": "b48b833991eeee3cc6299a5ab4ab11cac040b460f46f1bd6f0261d41f8d2d292"
+    },
+    {
+      "path": "formal/source/collections/value-unique/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/value-unique/Control.generated.dfy",
+      "archiveSha256": "09239bb5ba2cbfade362211288e475aa112b0a6f71ba9d2ded291282c7ff978b",
+      "sha256": "09239bb5ba2cbfade362211288e475aa112b0a6f71ba9d2ded291282c7ff978b"
+    },
+    {
+      "path": "formal/source/collections/wire/Signatures.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/wire/Signatures.generated.dfy",
+      "archiveSha256": "f2e7251c22279a06998ef7a9a57f723eb38d2184a4cceb117e898ccf83c56c69",
+      "sha256": "f2e7251c22279a06998ef7a9a57f723eb38d2184a4cceb117e898ccf83c56c69"
+    },
+    {
+      "path": "formal/source/collections/word-apply/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/word-apply/Control.generated.dfy",
+      "archiveSha256": "ba6dbf0cfa9d84f193a9cbbe65dbf79400f776a78035f91af245d5924b7ce174",
+      "sha256": "ba6dbf0cfa9d84f193a9cbbe65dbf79400f776a78035f91af245d5924b7ce174"
+    },
+    {
+      "path": "formal/source/collections/word-call/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/word-call/Source.generated.dfy",
+      "archiveSha256": "69ba2fe82aee99f9bfe0fe43a74938cc96aaeb2761cf2b0f915382ed426e2b7a",
+      "sha256": "69ba2fe82aee99f9bfe0fe43a74938cc96aaeb2761cf2b0f915382ed426e2b7a"
+    },
+    {
+      "path": "formal/source/collections/word-fold-entry/Selectors.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/word-fold-entry/Selectors.generated.dfy",
+      "archiveSha256": "2fb44f172f2d0f2dcc14ef5d1222ec264540c57e01a5a3978194aa914439cb8e",
+      "sha256": "2fb44f172f2d0f2dcc14ef5d1222ec264540c57e01a5a3978194aa914439cb8e"
+    },
+    {
+      "path": "formal/source/collections/word-fold-entry/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/word-fold-entry/Source.generated.dfy",
+      "archiveSha256": "4e7246335c49a3c9d096be855b3cb63ee3198b885534b205faa04549e103b335",
+      "sha256": "4e7246335c49a3c9d096be855b3cb63ee3198b885534b205faa04549e103b335"
+    },
+    {
+      "path": "formal/source/collections/word-fold-loop/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/word-fold-loop/Source.generated.dfy",
+      "archiveSha256": "558450df820a90db718df4f84c6304030f73d813eaaaec0cf240d54005bb0c87",
+      "sha256": "558450df820a90db718df4f84c6304030f73d813eaaaec0cf240d54005bb0c87"
+    },
+    {
+      "path": "formal/source/collections/word-layout/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/word-layout/Control.generated.dfy",
+      "archiveSha256": "78d0774f8d34d87062b6c23eba049d1035172137418f5c0091cf81943054231f",
+      "sha256": "78d0774f8d34d87062b6c23eba049d1035172137418f5c0091cf81943054231f"
+    },
+    {
+      "path": "formal/source/collections/word-memory/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/word-memory/Source.generated.dfy",
+      "archiveSha256": "f5cd81a8a45eb35483546521480caa6f0d012e38531e20fcec3806900b34e203",
+      "sha256": "f5cd81a8a45eb35483546521480caa6f0d012e38531e20fcec3806900b34e203"
+    },
+    {
+      "path": "formal/source/collections/word-scans/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/word-scans/Control.generated.dfy",
+      "archiveSha256": "cdc406c7ec071333ab3581cfded28eae5b9a9b6c8b51384dbef883104bd976e3",
+      "sha256": "cdc406c7ec071333ab3581cfded28eae5b9a9b6c8b51384dbef883104bd976e3"
+    },
+    {
+      "path": "formal/source/collections/word-sort/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/word-sort/Source.generated.dfy",
+      "archiveSha256": "818334ad07bb3739534de6550b576c3663ccc8d164ae5a5a1f4ff9c405472b5a",
+      "sha256": "818334ad07bb3739534de6550b576c3663ccc8d164ae5a5a1f4ff9c405472b5a"
+    },
+    {
+      "path": "formal/source/collections/word-unique/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/word-unique/Control.generated.dfy",
+      "archiveSha256": "d6efd9db70c061449d4a449d6e3253b930b3818ad936210add7676f6e91c28d0",
+      "sha256": "d6efd9db70c061449d4a449d6e3253b930b3818ad936210add7676f6e91c28d0"
+    },
+    {
+      "path": "formal/source/collections/word-windows/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/collections/word-windows/Source.generated.dfy",
+      "archiveSha256": "0c5fa6072a246c71312a98651b43ea7c5610aaa330fd1228f62cf99ff925da55",
+      "sha256": "0c5fa6072a246c71312a98651b43ea7c5610aaa330fd1228f62cf99ff925da55"
+    },
+    {
+      "path": "formal/source/expressions/admission/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/admission/Source.generated.dfy",
+      "archiveSha256": "e24734bd64098348cfa89f46a96c966c332f9d8ec965d35787ca44d6a72d304f",
+      "sha256": "e24734bd64098348cfa89f46a96c966c332f9d8ec965d35787ca44d6a72d304f"
+    },
+    {
+      "path": "formal/source/expressions/cache/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/cache/Source.generated.dfy",
+      "archiveSha256": "0fd30c7ab040030e8fc654f8b31009fa2c5135f2d822aa2b2f5ff7d7bb40a2fa",
+      "sha256": "0fd30c7ab040030e8fc654f8b31009fa2c5135f2d822aa2b2f5ff7d7bb40a2fa"
+    },
+    {
+      "path": "formal/source/expressions/calls/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/calls/Source.generated.dfy",
+      "archiveSha256": "e56647aa09fb30abe17fe9ed145f6cdea4882845f5dfef56ddd3d947e5d51f31",
+      "sha256": "e56647aa09fb30abe17fe9ed145f6cdea4882845f5dfef56ddd3d947e5d51f31"
+    },
+    {
+      "path": "formal/source/expressions/compound/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/compound/Source.generated.dfy",
+      "archiveSha256": "bb503629c6ecbb61947a5f9c099eb876668f9ff94e99adea8750ac2471de5b88",
+      "sha256": "bb503629c6ecbb61947a5f9c099eb876668f9ff94e99adea8750ac2471de5b88"
+    },
+    {
+      "path": "formal/source/expressions/encoded/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/encoded/Source.generated.dfy",
+      "archiveSha256": "51c96ba41031005d3466b486184acf7298d5ee98246c4a9b43de6e11cd654a92",
+      "sha256": "51c96ba41031005d3466b486184acf7298d5ee98246c4a9b43de6e11cd654a92"
+    },
+    {
+      "path": "formal/source/expressions/frames/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/frames/Source.generated.dfy",
+      "archiveSha256": "66357fe12add45f3de391d37dfddb9e74b327ad6e66406d5ea04dce48120ae7f",
+      "sha256": "66357fe12add45f3de391d37dfddb9e74b327ad6e66406d5ea04dce48120ae7f"
+    },
+    {
+      "path": "formal/source/expressions/guarded/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/guarded/Source.generated.dfy",
+      "archiveSha256": "53b04476cf05af9dc65b9e7dce8b2bfe0ac4f63921d846ca65b6254bfb138a59",
+      "sha256": "53b04476cf05af9dc65b9e7dce8b2bfe0ac4f63921d846ca65b6254bfb138a59"
+    },
+    {
+      "path": "formal/source/expressions/public/Entry.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/public/Entry.generated.dfy",
+      "archiveSha256": "27184acbb739a637661500841371aaa56062809d5dc576b2f9b9e10989e92272",
+      "sha256": "27184acbb739a637661500841371aaa56062809d5dc576b2f9b9e10989e92272"
+    },
+    {
+      "path": "formal/source/expressions/public/Guarded.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/public/Guarded.generated.dfy",
+      "archiveSha256": "912cb708186df4ae2d763c2a2eb4fbb8fc4d6816eaf594b5716ce65fe7e7d817",
+      "sha256": "912cb708186df4ae2d763c2a2eb4fbb8fc4d6816eaf594b5716ce65fe7e7d817"
+    },
+    {
+      "path": "formal/source/expressions/recursive/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/recursive/Source.generated.dfy",
+      "archiveSha256": "bdd06d709b0322877fa2b770177834d40f03d67390e88b2723d8b959349d51ec",
+      "sha256": "bdd06d709b0322877fa2b770177834d40f03d67390e88b2723d8b959349d51ec"
+    },
+    {
+      "path": "formal/source/expressions/rejections/Cold.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/rejections/Cold.generated.dfy",
+      "archiveSha256": "81e4fad65d11f3fd52911582fede245984e6921056c248d124e4262707ccb3e2",
+      "sha256": "81e4fad65d11f3fd52911582fede245984e6921056c248d124e4262707ccb3e2"
+    },
+    {
+      "path": "formal/source/expressions/rejections/Completion.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/rejections/Completion.generated.dfy",
+      "archiveSha256": "1f0803702ad33283f03b3f4c84fedfc757df088e80e003a341799210b4c8d27c",
+      "sha256": "1f0803702ad33283f03b3f4c84fedfc757df088e80e003a341799210b4c8d27c"
+    },
+    {
+      "path": "formal/source/expressions/resolve/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/resolve/Source.generated.dfy",
+      "archiveSha256": "4b42f00b3fc43daf0a312008aa07a3e87bf4c2a14181989fa603a3ef71de4dca",
+      "sha256": "4b42f00b3fc43daf0a312008aa07a3e87bf4c2a14181989fa603a3ef71de4dca"
+    },
+    {
+      "path": "formal/source/expressions/returns/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/returns/Source.generated.dfy",
+      "archiveSha256": "fc51694ff18f23b92de64e2142f304523a7471526bb38aeabf3c431aa1ac6471",
+      "sha256": "fc51694ff18f23b92de64e2142f304523a7471526bb38aeabf3c431aa1ac6471"
+    },
+    {
+      "path": "formal/source/expressions/scalars/Source.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/scalars/Source.generated.dfy",
+      "archiveSha256": "962e1f567c3ec8ef7c443d387e92e87c2ec03c0701198e3527468f3548b9364a",
+      "sha256": "962e1f567c3ec8ef7c443d387e92e87c2ec03c0701198e3527468f3548b9364a"
+    },
+    {
+      "path": "formal/source/expressions/validation/Body.generated.dfy",
+      "archivePath": "formal/source/library/src/expressions/validation/Body.generated.dfy",
+      "archiveSha256": "d30b2bba3a6dd6b5d90ee8551f332c8bd269e55bf832df9ba817f0da6064e837",
+      "sha256": "d30b2bba3a6dd6b5d90ee8551f332c8bd269e55bf832df9ba817f0da6064e837"
+    },
+    {
+      "path": "formal/source/operations/ascii/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/ascii/Control.generated.dfy",
+      "archiveSha256": "97f3fc1dabfe4274c6968673c23deed3aebe83658b65bc9463cc5ed03dbad51b",
+      "sha256": "97f3fc1dabfe4274c6968673c23deed3aebe83658b65bc9463cc5ed03dbad51b"
+    },
+    {
+      "path": "formal/source/operations/binary-log/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/binary-log/Control.generated.dfy",
+      "archiveSha256": "0df721883a8efe7a1f26a18f6c207d12519d8497b063187200fb42c1cbde9eed",
+      "sha256": "0df721883a8efe7a1f26a18f6c207d12519d8497b063187200fb42c1cbde9eed"
+    },
+    {
+      "path": "formal/source/operations/byte-bounds/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/byte-bounds/Control.generated.dfy",
+      "archiveSha256": "3605e281e802d58c74ba34a56ff6698e87c828c952503411f0c3f17ed2103743",
+      "sha256": "3605e281e802d58c74ba34a56ff6698e87c828c952503411f0c3f17ed2103743"
+    },
+    {
+      "path": "formal/source/operations/byte-replace/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/byte-replace/Control.generated.dfy",
+      "archiveSha256": "f93a4dac967ea8472f126fda8d9f351148456faadb5059845fb226e701058085",
+      "sha256": "f93a4dac967ea8472f126fda8d9f351148456faadb5059845fb226e701058085"
+    },
+    {
+      "path": "formal/source/operations/byte-replace/Matcher.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/byte-replace/Matcher.generated.dfy",
+      "archiveSha256": "1aa588c1f3288a74a1dd867199969b1dee86f9f4c968c3f5348d74ddcda6e103",
+      "sha256": "1aa588c1f3288a74a1dd867199969b1dee86f9f4c968c3f5348d74ddcda6e103"
+    },
+    {
+      "path": "formal/source/operations/byte-split/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/byte-split/Control.generated.dfy",
+      "archiveSha256": "8d4a361f49c74c38552664dfe9b307f9cb9ff9fe2e17db5a4ba8b5d415984b87",
+      "sha256": "8d4a361f49c74c38552664dfe9b307f9cb9ff9fe2e17db5a4ba8b5d415984b87"
+    },
+    {
+      "path": "formal/source/operations/checked-power/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/checked-power/Control.generated.dfy",
+      "archiveSha256": "cd560605ff4778e8fa37b3e07af99bc99ed0eeb36860a6a9f327be024628d5cc",
+      "sha256": "cd560605ff4778e8fa37b3e07af99bc99ed0eeb36860a6a9f327be024628d5cc"
+    },
+    {
+      "path": "formal/source/operations/concat/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/concat/Control.generated.dfy",
+      "archiveSha256": "dc860f0f6c7be46c2aed43b61d50005e529ed8217c898c9d3ccc22c0797138ab",
+      "sha256": "dc860f0f6c7be46c2aed43b61d50005e529ed8217c898c9d3ccc22c0797138ab"
+    },
+    {
+      "path": "formal/source/operations/decimal-digits/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/decimal-digits/Control.generated.dfy",
+      "archiveSha256": "345b36f09c5e96e0c0250bfaa3bf1dad65c759d54be44433853e0eb1833d9e4b",
+      "sha256": "345b36f09c5e96e0c0250bfaa3bf1dad65c759d54be44433853e0eb1833d9e4b"
+    },
+    {
+      "path": "formal/source/operations/decimal-render/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/decimal-render/Control.generated.dfy",
+      "archiveSha256": "ae8756850bb41d815a5ad01fac79d14a649131604b12beb93d525a777e4d7229",
+      "sha256": "ae8756850bb41d815a5ad01fac79d14a649131604b12beb93d525a777e4d7229"
+    },
+    {
+      "path": "formal/source/operations/decimal-units/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/decimal-units/Control.generated.dfy",
+      "archiveSha256": "92e221c5efd07079e768bac7604cba099f48a754c20c37727c4f7e7294ac6519",
+      "sha256": "92e221c5efd07079e768bac7604cba099f48a754c20c37727c4f7e7294ac6519"
+    },
+    {
+      "path": "formal/source/operations/environment/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/environment/Control.generated.dfy",
+      "archiveSha256": "26637100091a1da9c195474a0c1c05a25d91001f5b65bb93c0e7b2117259ca2a",
+      "sha256": "26637100091a1da9c195474a0c1c05a25d91001f5b65bb93c0e7b2117259ca2a"
+    },
+    {
+      "path": "formal/source/operations/fixed-point/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/fixed-point/Control.generated.dfy",
+      "archiveSha256": "41ebb08d6ebe9a2fc93eaf67237207317e3064ebad61759f61f7943a356e3461",
+      "sha256": "41ebb08d6ebe9a2fc93eaf67237207317e3064ebad61759f61f7943a356e3461"
+    },
+    {
+      "path": "formal/source/operations/fixed-point/muldiv-regenerated/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/fixed-point/muldiv-regenerated/Control.generated.dfy",
+      "archiveSha256": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29",
+      "sha256": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29"
+    },
+    {
+      "path": "formal/source/operations/fixed-point/muldiv-regenerated/Helpers.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/fixed-point/muldiv-regenerated/Helpers.generated.dfy",
+      "archiveSha256": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a",
+      "sha256": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a"
+    },
+    {
+      "path": "formal/source/operations/full-mul-div/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/full-mul-div/Control.generated.dfy",
+      "archiveSha256": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29",
+      "sha256": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29"
+    },
+    {
+      "path": "formal/source/operations/full-mul-div/Helpers.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/full-mul-div/Helpers.generated.dfy",
+      "archiveSha256": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a",
+      "sha256": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a"
+    },
+    {
+      "path": "formal/source/operations/integer-root/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/integer-root/Control.generated.dfy",
+      "archiveSha256": "5c29f0691ea5e7dd00e2405c58d8c49677113a568df81fa43d8c7efb01076726",
+      "sha256": "5c29f0691ea5e7dd00e2405c58d8c49677113a568df81fa43d8c7efb01076726"
+    },
+    {
+      "path": "formal/source/operations/modular-power/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/modular-power/Control.generated.dfy",
+      "archiveSha256": "e20aa627fd9235267ec150eaeb9dd45c9cd3d4ae8b66461153fa369d66007389",
+      "sha256": "e20aa627fd9235267ec150eaeb9dd45c9cd3d4ae8b66461153fa369d66007389"
+    },
+    {
+      "path": "formal/source/operations/modular-power/Inverse.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/modular-power/Inverse.generated.dfy",
+      "archiveSha256": "716fb8b374de8d8f0186f59bb10804482a1c9afd1627ee5f3bacdee9353b956e",
+      "sha256": "716fb8b374de8d8f0186f59bb10804482a1c9afd1627ee5f3bacdee9353b956e"
+    },
+    {
+      "path": "formal/source/operations/modular-power/muldiv-regenerated/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/modular-power/muldiv-regenerated/Control.generated.dfy",
+      "archiveSha256": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29",
+      "sha256": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29"
+    },
+    {
+      "path": "formal/source/operations/modular-power/muldiv-regenerated/Helpers.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/modular-power/muldiv-regenerated/Helpers.generated.dfy",
+      "archiveSha256": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a",
+      "sha256": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a"
+    },
+    {
+      "path": "formal/source/operations/modular/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/modular/Control.generated.dfy",
+      "archiveSha256": "41bb652f155af021be0805bf0f8d2b0c8c645cdf866f0c69062f16be966d8647",
+      "sha256": "41bb652f155af021be0805bf0f8d2b0c8c645cdf866f0c69062f16be966d8647"
+    },
+    {
+      "path": "formal/source/operations/modular/Math.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/modular/Math.generated.dfy",
+      "archiveSha256": "cfc82f034d73947fe424c9aedcc99a15b8aeb2a3ae866fe58fe0d46f86c10b8d",
+      "sha256": "cfc82f034d73947fe424c9aedcc99a15b8aeb2a3ae866fe58fe0d46f86c10b8d"
+    },
+    {
+      "path": "formal/source/operations/occurrence-index/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/occurrence-index/Control.generated.dfy",
+      "archiveSha256": "778195e4a4437fb158d860f135121369020bd52cbfbdc11976c73d0c96992b1f",
+      "sha256": "778195e4a4437fb158d860f135121369020bd52cbfbdc11976c73d0c96992b1f"
+    },
+    {
+      "path": "formal/source/operations/parse-units/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/parse-units/Control.generated.dfy",
+      "archiveSha256": "03416aabe0b391fa8326dea7d271295790797c7dccabd123bf69df3b65777b4d",
+      "sha256": "03416aabe0b391fa8326dea7d271295790797c7dccabd123bf69df3b65777b4d"
+    },
+    {
+      "path": "formal/source/operations/raw-call/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/raw-call/Control.generated.dfy",
+      "archiveSha256": "ad3336bd516a329a47585d1e22e721e9d2959df9aa859787ab5e8b51a738f82e",
+      "sha256": "ad3336bd516a329a47585d1e22e721e9d2959df9aa859787ab5e8b51a738f82e"
+    },
+    {
+      "path": "formal/source/operations/scalars/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/scalars/Control.generated.dfy",
+      "archiveSha256": "8bdcbe45b1d42fd5f12f2d924b9464b2d111c185031fb3006294e28278e8dc97",
+      "sha256": "8bdcbe45b1d42fd5f12f2d924b9464b2d111c185031fb3006294e28278e8dc97"
+    },
+    {
+      "path": "formal/source/operations/scaled-power/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/scaled-power/Control.generated.dfy",
+      "archiveSha256": "63f03e1890454ef45bebe45fce9d30839ce1a93df7b4e6f52c867c86eb199ed6",
+      "sha256": "63f03e1890454ef45bebe45fce9d30839ce1a93df7b4e6f52c867c86eb199ed6"
+    },
+    {
+      "path": "formal/source/operations/scaled-power/muldiv-regenerated/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/scaled-power/muldiv-regenerated/Control.generated.dfy",
+      "archiveSha256": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29",
+      "sha256": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29"
+    },
+    {
+      "path": "formal/source/operations/scaled-power/muldiv-regenerated/Helpers.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/scaled-power/muldiv-regenerated/Helpers.generated.dfy",
+      "archiveSha256": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a",
+      "sha256": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a"
+    },
+    {
+      "path": "formal/source/operations/tuple-encode/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/tuple-encode/Control.generated.dfy",
+      "archiveSha256": "2a7073d179250ae19771776fa33cedccae2543abf114a58851854c655f278c53",
+      "sha256": "2a7073d179250ae19771776fa33cedccae2543abf114a58851854c655f278c53"
+    },
+    {
+      "path": "formal/source/operations/tuple-encode/compiler/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/tuple-encode/compiler/Control.generated.dfy",
+      "archiveSha256": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29",
+      "sha256": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29"
+    },
+    {
+      "path": "formal/source/operations/tuple-encode/compiler/Helpers.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/tuple-encode/compiler/Helpers.generated.dfy",
+      "archiveSha256": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a",
+      "sha256": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a"
+    },
+    {
+      "path": "formal/source/operations/utf8/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/utf8/Control.generated.dfy",
+      "archiveSha256": "480a38261993f69bc28479ee27e3d2e248bb2b03929ed7a848b7215a1e08a663",
+      "sha256": "480a38261993f69bc28479ee27e3d2e248bb2b03929ed7a848b7215a1e08a663"
+    },
+    {
+      "path": "formal/source/operations/word-match/Control.generated.dfy",
+      "archivePath": "formal/source/library/src/operations/word-match/Control.generated.dfy",
+      "archiveSha256": "4aafac9e3851fcbcceb80166a5e54b806f9c2146e3fa6ee742941f88311e672a",
+      "sha256": "4aafac9e3851fcbcceb80166a5e54b806f9c2146e3fa6ee742941f88311e672a"
+    }
+  ]
+}

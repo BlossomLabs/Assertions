@@ -50,3 +50,6 @@
 
 # Local historical proof files retained during the library transition
 /.proof-history/
+
+# Canonical adapter artifacts restored with formal/tools/bootstrap_adapters.py
+/formal/**/*.generated.dfy

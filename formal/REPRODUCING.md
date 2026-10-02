@@ -111,3 +111,21 @@ The formatter processes tracked JSON under `formal/`, preserves object order and
 checks that parsing its output produces the original data. It changes formatting,
 never gate expectations. Native evidence still binds exact input-file hashes;
 use fresh receipts after formatting rather than reusing old input bindings.
+
+## Shared verification tools
+
+Dependency reuse checks live in `formal/constraints/verify.py`; each package keeps
+its own explicit dependency list, declaration inventory and include closure.
+The shared routine preserves the original source/tool/artifact hash, native-result
+and declaration checks. Run its rejection tests with:
+
+```sh
+python -B -m unittest discover -s scripts/tests -p test_formal_dependencies.py
+```
+
+Identical formatter scripts and word-apply retention assets share their original
+implementations through relative links. Snapshot copying dereferences those links,
+so evidence retains the complete implementation bytes at each package path.
+The full and reuse retention drivers retain their distinct package contexts.
+Shared verifier changes also alter evidence input hashes; fresh receipts are
+required before claiming current coverage.

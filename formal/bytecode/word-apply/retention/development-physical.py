@@ -9,7 +9,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent
+HERE = Path(__file__).parent.resolve()
 ROOT = HERE.parents[3]
 spec = importlib.util.spec_from_file_location('retainer', HERE / 'verify.py')
 v = importlib.util.module_from_spec(spec)

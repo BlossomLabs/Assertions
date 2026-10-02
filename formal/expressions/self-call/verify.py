@@ -25,47 +25,8 @@ def inventory(paths):
 
 def check_dependencies(dafny,solc,sources,out):
     paths=['formal/expressions/entry/evidence/canonical-admission/manifest.json', 'formal/expressions/admission-errors/evidence/admission-error-bytes/manifest.json', 'formal/expressions/encoded/evidence/encoded-entry-complete/manifest.json', 'formal/expressions/returns/evidence/raw-returns/manifest.json', 'formal/expressions/execution/evidence/generated-traces/manifest.json', 'formal/expressions/oracle-stability/evidence/trace-extension/manifest.json', 'formal/expressions/oracle/evidence/trace-composition/manifest.json', 'formal/expressions/primitives/evidence/primitive-dispatch/manifest.json', 'formal/abi/evidence/production-abi-correspondence/manifest.json', 'formal/expressions/admission/evidence/expression-admission/manifest.json', 'formal/resolution/evidence/resolution-judge/manifest.json', 'formal/expressions/cache/evidence/cache-transitions/manifest.json', 'formal/expressions/evaluation/evidence/recursive-control/manifest.json', 'formal/expressions/recursive/evidence/recursive-control-source/manifest.json', 'formal/expressions/scalars/evidence/scalar-adapters/manifest.json', 'formal/expressions/calls/evidence/call-control/manifest.json', 'formal/core/evidence/core-raw-primitives/manifest.json', 'formal/arguments/evidence/get-arguments/manifest.json', 'formal/expressions/receipts/evidence/encoded-receipts-complete/manifest.json', 'formal/expressions/compound/evidence/compound-adapters/manifest.json', 'formal/expressions/codec-errors/evidence/codec-receipts/manifest.json', 'formal/expressions/resolve/evidence/resolve-adapter-complete/manifest.json', 'formal/expressions/requests/evidence/request-contracts-complete/manifest.json', 'formal/expressions/probe-input/evidence/probe-decoding/manifest.json']
-    tools={'dafny':sha(dafny),'Dafny.dll':sha(dafny.parent/'Dafny.dll'),
-           'z3':sha(dafny.parent/'z3/bin/z3-4.12.1'),'solc':sha(solc)}
-    checked=[]; candidates=[]
-    for relative in paths:
-        path=ROOT/relative; prior=json.loads(path.read_text())
-        if prior['status']!='passed':raise ValueError('Unproved dependency '+relative)
-        native=prior.get('nativeResults')
-        declarations=prior.get('declarationResults')
-        if native is None:
-            proof=next(c for c in prior['checks'] if c.get('name')=='proof')
-            native=proof['nativeResults'];declarations=proof['declarations']
-            if not proof['passed']:raise ValueError('Dependency proof not passed')
-        if not native or any(r['TestResult.Outcome']!='Passed' for r in native):raise ValueError('Dependency native failures')
-        previous=prior['executableSha256']
-        if 'dafnyLauncher' in previous:
-            previous={new:previous[old] for new,old in [('dafny','dafnyLauncher'),('Dafny.dll','dafnyAssembly'),('z3','solver'),('solc','solc')]}
-        if tools!=previous:raise ValueError('Dependency tool drift')
-        for artifact,digest in prior['evidenceSha256'].items():
-            if sha(path.parent/artifact)!=digest:raise ValueError('Dependency artifact drift '+artifact)
-        for source,digest in prior['sourceSha256'].items():
-            if sha(ROOT/source)!=digest:raise ValueError('Dependency source drift '+source)
-        rows={}
-        for row in native:rows.setdefault(row['TestResult.DisplayName'].split(' (')[0],[]).append(row)
-        for declaration in declarations:
-            if declaration['kind'] in {'lemma','method'} and (declaration['status']!='passed' or not rows.get(declaration['name'])):
-                raise ValueError('Unproved dependency declaration '+declaration['name'])
-        retained='dependency-'+path.parent.name+'.json';shutil.copy2(path,out/retained)
-        checked.append({'manifest':relative,'sha256':sha(path),'retainedManifest':retained,'nativeRows':len(native)})
-        candidates.append((prior,{d['name']:d for d in declarations}))
-    reused=[]
-    for source in sorted(sources):
-        if source.parent==HERE:continue
-        key=str(source.relative_to(ROOT)); required=inventory({source})
-        for prior,declarations in candidates:
-            if not all(prior['sourceSha256'].get(str(p.relative_to(ROOT)))==sha(p) for p in closure(source)):continue
-            if not all(d['name'] in declarations and declarations[d['name']]['file']==key for d in required if d['kind']!='type'):continue
-            if not all(declarations[d['name']]['status']=='passed' for d in required if d['kind'] in {'method','lemma'}):continue
-            reused.append(key);break
-        else:raise ValueError('No complete identical dependency proof '+key)
-    return {'name':'dependency-closure','passed':True,'dependencies':checked,'reusedModules':reused,
-            'policy':'Identical transitive source/tool hashes; all retained artifact hashes and successful native/declaration results checked. Original proof arguments and logs retained in linked baseline manifests.'}
+    return common.check_dependencies(dafny, solc, sources, out, root=ROOT, here=HERE,
+                                     paths=paths, inventory=inventory, closure=closure, hash_file=sha)
 
 
 def inputs():

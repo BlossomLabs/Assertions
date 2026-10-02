@@ -1,7 +1,8 @@
 # Reproducing verification evidence
 
-Git retains proof definitions, generator templates and gates, instruction/source
-bindings, fixtures and verification/checker programs. Run output, logs, snapshots,
+Git retains handwritten proof definitions, generator templates, frozen AST gates,
+specifications, fixtures and verification/checker programs. Generated Dafny models
+and instruction/source mapping JSON are recreated locally. Run output, logs, snapshots,
 compiler caches and local evidence ledgers are intentionally ignored. A checkout
 contains the machinery to rerun proofs, not a retained record that they passed.
 Existing package READMEs describe their exact premises and verification commands.
@@ -40,9 +41,40 @@ An interrupted or timed-out baseline remains incomplete; retain it for diagnosis
 
 ## Package regeneration and checking
 
+Before running package verifiers in a fresh checkout, recreate their generated
+inputs from the repository root:
+
+```sh
+python scripts/regenerate-formal.py --solc /path/to/solc --jobs 4
+```
+
+Use a Python environment with `z3-solver==4.12.6.0`. Existing generators invoke
+the Dafny formatter at `/tmp/assertions-dafny-4.11.0/dafny/dafny`; unpack the pinned
+Dafny distribution there. Install locked dependencies and run `pnpm compile`
+first so runtime generators can check the canonical Hardhat artifacts.
+
+`formal/generated-files.json` inventories the reproduction commands and SHA-256
+hashes of the removed outputs. The regeneration script checks every recreated
+file against those pins and stops on missing files, generator failures or drift.
+The pins hash Dafny bytes exactly. JSON mappings use canonical JSON (sorted object
+keys and compact separators) so Python dictionary ordering does not cause drift;
+every key, value and array order remains checked.
+It never passes `--bootstrap`: frozen `structure.json`, entry inventories,
+mathematical input hashes and proof specifications remain committed review inputs.
+An intentional model change requires reviewing its generator/gates and explicitly
+updating the affected output hashes. Hash agreement establishes reproduction;
+it does not establish native verification or a passing evidence baseline.
+
+Use `python scripts/regenerate-formal.py --list` to list package names.
+`--package formal/abi/source` (repeatable) regenerates selected packages together
+with their generated dependencies. Packages run in dependency order; `--jobs`
+controls concurrency for independent packages (the default is one).
+Outputs are ignored by Git. CI should upload resulting evidence, logs
+and receipts as artifacts rather than commit them.
+
 Each package's `generate.py` recreates compiler requests/output and translated
-models from the current contracts. Regenerate in a fresh directory and compare
-against the committed proof/binding files as its verifier specifies; never edit
+models from the current contracts. Verifiers still regenerate in fresh directories
+and compare against these locally recreated models and bindings; never edit
 generated models by hand. Missing generated compiler caches are expected.
 
 Run prerequisites before dependent package verifiers. Where a verifier requires

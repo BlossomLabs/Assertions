@@ -30,6 +30,10 @@
 /cache_forge
 
 # Formal verification output (regenerated locally; not retained in Git)
+/formal/**/*.generated.dfy
+/formal/**/*.mapping.json
+/formal/**/mapping.json
+/formal/**/inverse-mapping.json
 /TestResults/
 /formal/**/evidence/
 /formal/**/development/

@@ -251,6 +251,11 @@ export const OPERATIONS_ABI = [
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "SubcallOutOfGas",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "int256",

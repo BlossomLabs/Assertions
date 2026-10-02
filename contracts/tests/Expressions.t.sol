@@ -6,6 +6,7 @@ import "../Expressions.sol";
 import "../Collections.sol";
 import "../Operations.sol";
 import "../lib/ERC8211.sol";
+import {GasHungry} from "./CoreReads.t.sol";
 
 contract ExpressionsTest is Test {
     Expressions expressions;
@@ -120,7 +121,8 @@ contract ExpressionsTest is Test {
         Expressions.Expression memory p;
         p.nodes = new Expressions.Node[](2);
         p.result = 1;
-        p.nodes[0] = node(Expressions.Kind.Literal, "address", abi.encode(type(uint256).max));
+        // A canonical uint256 that is no address, so only the Call node's target check can reject it.
+        p.nodes[0] = node(Expressions.Kind.Literal, "uint256", abi.encode(type(uint256).max));
         p.nodes[1] = callNode("string", this.source.selector, "()", refs2(0, 1));
         vm.expectRevert(abi.encodeWithSelector(Expressions.InvalidReference.selector, 1, 1));
         this.externalRun(p);
@@ -128,6 +130,10 @@ contract ExpressionsTest is Test {
         r[0] = 0;
         p.nodes[1].refs = r;
         vm.expectRevert(abi.encodeWithSelector(Expressions.InvalidNode.selector, 1));
+        this.externalRun(p);
+        // Declared as an address, the same word is not canonical and fails its own node first.
+        p.nodes[0].valueType = "address";
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, 0));
         this.externalRun(p);
     }
 
@@ -171,12 +177,6 @@ contract ExpressionsTest is Test {
         assertEq(abi.decode(run(p, new bytes[](0)), (string)), "else");
         p.nodes[3].data = abi.encode(uint256(7), uint256(0));
         assertEq(abi.decode(run(p, new bytes[](0)), (string)), "then");
-    }
-
-    function testSelectRejectsConditionShorterThanOneWord() public {
-        Expressions.Expression memory p = selectGraph("uint256[0]", "", false);
-        vm.expectRevert(abi.encodeWithSelector(Expressions.InvalidNode.selector, 4));
-        this.externalRun(p);
     }
 
     function testGuardedEvaluationRejectsOutsideCallers() public {
@@ -389,6 +389,131 @@ contract ExpressionsTest is Test {
 
     function failEmpty() external pure {
         revert EmptyProbeReason();
+    }
+
+    // ============ The out-of-gas guard ============
+
+    /**
+     * @dev GasHungry.work costs about 1.9M: 5M covers it through every hop
+     *      (evaluate, the guarded self-call, the core, the target), 1M leaves
+     *      it far short
+     */
+    uint256 constant GENEROUS = 5_000_000;
+    uint256 constant SQUEEZED = 1_000_000;
+
+    /** @dev Node 0 resolves GasHungry.work through the core */
+    function hungryGraph(uint256 size) private returns (Expressions.Expression memory p) {
+        p.core = address(core);
+        p.nodes = new Expressions.Node[](size);
+        p.result = size - 1;
+        InputParam memory call = InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.STATIC_CALL,
+            abi.encode(address(new GasHungry()), abi.encodeCall(GasHungry.work, ())),
+            new Constraint[](0)
+        );
+        p.nodes[0] = node(Expressions.Kind.Resolve, "uint256", abi.encode(call));
+    }
+
+    function evaluateWith(uint256 gas, Expressions.Expression memory p) private view returns (bool ok, bytes memory out) {
+        (ok, out) = address(expressions).staticcall{gas: gas}(abi.encodeCall(Expressions.evaluate, (p, new bytes[](0))));
+    }
+
+    function refused() private pure returns (bytes memory) {
+        return abi.encodeWithSelector(Expressions.SubcallOutOfGas.selector);
+    }
+
+    /**
+     * @dev TryOrElse and IsValid over an attempt that would succeed: the
+     *      answer with enough gas, and SubcallOutOfGas (never the fallback,
+     *      never false) when squeezed, the signal crossing the core
+     */
+    function testTryOrElseAndIsValidRefuseOutOfGas() public {
+        Expressions.Expression memory p = hungryGraph(3);
+        p.nodes[1] = node(Expressions.Kind.Literal, "uint256", abi.encode(uint256(7)));
+        p.nodes[2] = node(Expressions.Kind.TryOrElse, "uint256", "");
+        p.nodes[2].refs = refs2(0, 1);
+        (bool ok, bytes memory out) = evaluateWith(GENEROUS, p);
+        assertTrue(ok);
+        assertEq(abi.decode(out, (uint256)), 1);
+        (ok, out) = evaluateWith(SQUEEZED, p);
+        assertFalse(ok);
+        assertEq(out, refused());
+
+        p = hungryGraph(2);
+        p.nodes[1] = node(Expressions.Kind.IsValid, "bool", "");
+        p.nodes[1].refs = new uint256[](1);
+        (ok, out) = evaluateWith(GENEROUS, p);
+        assertTrue(ok);
+        assertTrue(abi.decode(out, (bool)));
+        (ok, out) = evaluateWith(SQUEEZED, p);
+        assertFalse(ok);
+        assertEq(out, refused());
+    }
+
+    /** @dev ProbeCall refuses to report an out-of-gas as a revert */
+    function testProbeCallRefusesOutOfGas() public {
+        Expressions.Expression memory p;
+        p.nodes = new Expressions.Node[](3);
+        p.result = 2;
+        p.nodes[0] = node(Expressions.Kind.Literal, "address", abi.encode(address(new GasHungry())));
+        p.nodes[1] = node(Expressions.Kind.Literal, "bytes", abi.encode(abi.encodeCall(GasHungry.work, ())));
+        p.nodes[2] = node(Expressions.Kind.ProbeCall, "bytes", "");
+        p.nodes[2].refs = refs2(0, 1);
+        (bool ok, bytes memory out) = evaluateWith(GENEROUS, p);
+        assertFalse(ok);
+        assertEq(bytes4(out), Expressions.DidNotRevert.selector);
+        (ok, out) = evaluateWith(SQUEEZED, p);
+        assertFalse(ok);
+        assertEq(out, refused());
+    }
+
+    /**
+     * @dev No gas limit from 100k to 3M makes TryOrElse take the fallback for
+     *      an attempt that would succeed: it answers, refuses, or runs out
+     *      itself (an empty revert, which fails closed)
+     */
+    function testTryOrElseNoGasLimitTakesTheFallback() public {
+        Expressions.Expression memory p = hungryGraph(3);
+        p.nodes[1] = node(Expressions.Kind.Literal, "uint256", abi.encode(uint256(7)));
+        p.nodes[2] = node(Expressions.Kind.TryOrElse, "uint256", "");
+        p.nodes[2].refs = refs2(0, 1);
+        for (uint256 g = 100_000; g <= 3_000_000; g += 50_000) {
+            (bool ok, bytes memory out) = evaluateWith(g, p);
+            if (ok) assertEq(abi.decode(out, (uint256)), 1, string.concat("fell back at gas ", vm.toString(g)));
+            else assertTrue(out.length == 0 || keccak256(out) == keccak256(refused()), "unexpected failure");
+        }
+    }
+
+    /** @dev No false alarm: an attempt that simply reverts still takes the fallback when squeezed */
+    function testTryOrElseOrdinaryRevertStillFallsBack() public view {
+        Expressions.Expression memory p;
+        p.core = address(core);
+        p.nodes = new Expressions.Node[](3);
+        p.result = 2;
+        p.nodes[0] = node(Expressions.Kind.Resolve, "string", abi.encode(live(abi.encodeCall(this.bomb, ()))));
+        p.nodes[1] = node(Expressions.Kind.Literal, "string", abi.encode("fallback"));
+        p.nodes[2] = node(Expressions.Kind.TryOrElse, "string", "");
+        p.nodes[2].refs = refs2(0, 1);
+        (bool ok, bytes memory out) = evaluateWith(SQUEEZED, p);
+        assertTrue(ok);
+        assertEq(abi.decode(out, (string)), "fallback");
+    }
+
+    function testProbeCallRequiresBytesCalldata() public {
+        Expressions.Expression memory p;
+        p.nodes = new Expressions.Node[](3);
+        p.result = 2;
+        p.nodes[0] = node(Expressions.Kind.Literal, "address", abi.encode(address(this)));
+        // A well-typed operand of the wrong type: decoding it as bytes once reverted without data.
+        p.nodes[1] = node(Expressions.Kind.Literal, "uint256", abi.encode(uint256(5)));
+        p.nodes[2] = node(Expressions.Kind.ProbeCall, "bytes", "");
+        p.nodes[2].refs = refs2(0, 1);
+        vm.expectRevert(abi.encodeWithSelector(Expressions.InvalidNode.selector, uint256(2)));
+        this.externalRun(p);
+        p.nodes[1] = node(Expressions.Kind.Literal, "string", abi.encode("abc"));
+        vm.expectRevert(abi.encodeWithSelector(Expressions.InvalidNode.selector, uint256(2)));
+        this.externalRun(p);
     }
 
     function testProbeCallPreservesUnderlyingDynamicReason() public {

@@ -10,7 +10,7 @@ export const addressLine = (c) =>
   `${c.name.padEnd(12)} v${c.version.padEnd(5)} ${c.address}   (${c.description}${c.released ? '' : ', unreleased'})`;
 export const gasList = manifest.contracts.map((c) => `${c.name} ${fmtGas(c.deployGas)}`).join(', ');
 
-Each contract has the same deterministic address on every supported chain where its artifact is deployed. This page renders `website/src/lib/deployments.json`, the manifest `pnpm sync:artifact` writes from a fresh compile (solc {manifest.compiler.solcLongVersion}, optimizer {manifest.compiler.optimizer.runs} runs, evmVersion <code>{manifest.compiler.evmVersion}</code>). Listing an address here is not itself proof of a deployment on any given chain: use the [interactive deployments page](/deployments) to see which chains actually carry the code. A contract marked unreleased is an artifact candidate the SDK does not compile against yet.
+Each contract has the same deterministic address on every supported chain where its artifact is deployed. This page renders `website/src/lib/deployments.json`, the manifest `pnpm sync:artifact` writes from a fresh compile (solc {manifest.compiler.solcLongVersion}, optimizer {manifest.compiler.optimizer.runs} runs, evmVersion <code>{manifest.compiler.evmVersion}</code>). Listing an address here is not itself proof of a deployment on any given chain: use the [interactive deployments page](/deployments) to see which chains actually carry the code. The release flag records SDK adoption, not observed public-chain deployment; an unreleased candidate has no SDK consumer yet.
 
 <pre><code>{manifest.contracts.map(addressLine).join('\n')}</code></pre>
 
@@ -42,7 +42,7 @@ Deployment goes through [Arachnid's deterministic-deployment proxy](https://gith
 address = keccak256(0xff ++ 0x4e59b448...956C ++ salt ++ keccak256(initCode))[12:]
 ```
 
-Same proxy, same salt, same init code on every chain: same address. The salts are random 32-byte values that never change; an address moves only when the bytecode does. The four contracts call each other through interfaces at runtime addresses, never through source imports, so each one's address moves only for its own changes. The exception is `AbiCodec`, the descriptor grammar and value validator all four compile in: an edit there moves all four addresses at once.
+Same proxy, same salt, same init code on every chain: same address. Each artifact candidate pins a mined 32-byte salt. When bytecode changes, replacement vanity salts and addresses are mined together; comment changes also affect Solidity metadata and therefore the address. The four contracts call each other through interfaces at runtime addresses, never through source imports, so each one's address moves only for its own changes. The exception is `AbiCodec`, the descriptor grammar and value validator all four compile in: an edit there moves all four addresses at once.
 
 ## Deploying to a new chain
 
@@ -62,5 +62,5 @@ The canonical salts live in `website/scripts/export-deploy-artifact.mjs`; `pnpm 
 :::
 
 :::note[Chain requirements]
-The bytecode targets <code>{manifest.compiler.evmVersion}</code>. The deployment uses `PUSH0`, and blob-related Operations require Cancun opcode support; use Cancun-compatible chains for the full vocabulary. The exact compiler settings in `hardhat.config.ts` (solc {manifest.compiler.solcLongVersion}, optimizer {manifest.compiler.optimizer.runs} runs, evmVersion <code>{manifest.compiler.evmVersion}</code>) must not change, or the CREATE2 addresses change with the bytecode.
+The bytecode targets <code>{manifest.compiler.evmVersion}</code>. The current artifacts require a Cancun-compatible EVM, including `MCOPY`; deployment also uses `PUSH0`, and blob-related Operations require the corresponding Cancun context opcodes. Check matching runtime code on the selected chain before use; a predicted address alone does not establish availability. The exact compiler settings in `hardhat.config.ts` (solc {manifest.compiler.solcLongVersion}, optimizer {manifest.compiler.optimizer.runs} runs, evmVersion <code>{manifest.compiler.evmVersion}</code>) must not change, or the CREATE2 addresses change with the bytecode.
 :::

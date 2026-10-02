@@ -14,6 +14,8 @@ The core (judge + primitives) has the same CREATE2 address on every chain; the c
 
 The judge consumes the **unmodified ERC-8211 wire format**, so canonical predicate constraints follow Biconomy's reference semantics, subject to the view restrictions and canonical payload lengths documented below. Being view, it is also itself an operand: a `STATIC_CALL` parameter encoding an `assertBatch` self-call makes a whole batch probeable with `isValid`, `orElse` and `revertData` ([a batch as an operand](/docs/core/control#a-batch-as-an-operand)). Being view-only, it rejects what a view context cannot express: output parameters (Storage writes) revert with `OutputParamsNotSupported`, `VALUE` parameters with `ValueParamNotSupported`, a second `TARGET` parameter with `DuplicateTargetParam`, and a `BALANCE`-fetched target with `BalanceCannotBeTarget`.
 
+An empty batch succeeds. An empty constraint list adds no value predicate, even for empty RAW_BYTES. Constructed batch calls are judged by call success and their returndata is ignored: a returned `false` does not fail the batch. Likewise, `isValid` of an unconstrained call returning false is 1. To assert boolean truth, fetch the result and constrain its first word to `EQ 1`.
+
 ## Wire format
 
 ```solidity
@@ -41,7 +43,7 @@ struct ComposableExecution {
 | Fetcher | `paramData` | Resolves to |
 |---------|-------------|-------------|
 | `RAW_BYTES` | the value itself | the literal bytes, unchanged |
-| `STATIC_CALL` | `abi.encode(target, callData)` | the raw returndata of the staticcall (reverting or code-less targets fail with `CallFailed`) |
+| `STATIC_CALL` | `abi.encode(target, callData)` | the raw returndata of the staticcall (ordinarily reverting or code-less targets fail with `CallFailed`; exhaustion propagates `SubcallOutOfGas`) |
 | `BALANCE` | `abi.encodePacked(token, account)` (40 bytes) | native balance when `token == address(0)`, else `IERC20(token).balanceOf(account)` |
 
 ### Constraint types
@@ -76,10 +78,12 @@ The primitives live on the core alongside the judge because they hold operands u
 | `read` | Construct a staticcall at judge time: resolve the target and concatenate the selector with each argument segment's full resolved bytes (ERC-8211 CALL_DATA routing), then return the call's raw returndata; the composition socket that splices operand expressions into plain calldata for Operations, Collections or any other view/pure contract |
 | `get` | The same constructed call from WHOLE canonical values instead of calldata segments: each argument resolves exactly once and the tuple is laid out under an `argumentTypes` descriptor through the shared `AbiCodec`. The host for a call carrying several dynamic arguments, where segment splicing would re-resolve earlier values to compute later offsets |
 | `cond` | Resolve the condition (first word nonzero = true), then resolve and return ONLY the winning branch; the losing branch is never resolved |
-| `orElse` | Resolve the attempt behind a self-staticcall boundary; ANY failure (revert, code-less target, violated constraint) selects and resolves the fallback instead |
+| `orElse` | Resolve the attempt behind a self-staticcall boundary; Any ordinary failure (revert, code-less target, violated constraint; exhaustion and the reserved signal propagate) selects and resolves the fallback instead |
 | `isValid` | 1 when the operand resolves and passes its constraints, else 0; the failure probe, judged `EQ 1` / `EQ 0` or fed to `cond` |
 | `revertData` | the revert data of a call that MUST fail; a non-zero expected selector must match and is stripped, leaving the error's arguments word-aligned for `pick`/`nav` |
 
 A path may also select a whole static value: a fixed array or a static tuple terminal returns its complete `abi.encode(value)`, with no offset or length prefix.
 
 The two sentinels are public constants: `LEN` is `type(int256).min` and `PAYLOAD` is `type(int256).min + 1`; both are only meaningful as the last entry of a `nav` path.
+
+The failure probes preserve the reserved `SubcallOutOfGas()` signal; see the [supported call paths and gas limits](/docs/core/control#the-staticcall-boundary-and-the-oog-caveat).

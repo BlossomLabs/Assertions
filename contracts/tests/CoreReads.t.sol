@@ -9,6 +9,21 @@ import "../lib/AbiCodec.sol";
 import "./Mocks.sol";
 
 /**
+ * @notice Succeeds only with enough gas: about 1.9 million of hashing
+ *         (measured), then the word 1. Pins the out-of-gas guard of orElse,
+ *         isValid and revertData.
+ */
+contract GasHungry {
+    function work() external pure returns (uint256) {
+        bytes32 acc;
+        for (uint256 i; i < 6_000; i++) {
+            acc = keccak256(abi.encode(acc, i));
+        }
+        return acc == bytes32(0) ? 0 : 1;
+    }
+}
+
+/**
  * @notice The single-batch judge surface by itself: abi.encodeCall cannot
  *         disambiguate the assertBatch overloads, so the batch-as-
  *         operand helpers name it through this one-function interface
@@ -1063,6 +1078,124 @@ contract CoreReadsTest is Test {
             )
         );
         assertions.assertParam(judged);
+    }
+
+    // ============ The out-of-gas guard ============
+
+    /**
+     * @dev GasHungry.work costs about 1.9M: 5M covers it through two
+     *      self-call hops, 1M leaves the innermost frame under 1M
+     */
+    uint256 constant GENEROUS = 5_000_000;
+    uint256 constant SQUEEZED = 1_000_000;
+
+    function _hungry() internal returns (InputParam memory) {
+        return _call(address(new GasHungry()), abi.encodeCall(GasHungry.work, ()));
+    }
+
+    function _squeezed(bytes memory data) internal view returns (bool ok_, bytes memory ret) {
+        (ok_, ret) = address(assertions).staticcall{gas: SQUEEZED}(data);
+    }
+
+    /**
+     * @dev A call that succeeds with enough gas and runs out when squeezed:
+     *      isValid answers 1, and squeezed it refuses to answer (a failure it
+     *      cannot tell from the gas limit's choice) rather than reading 0
+     */
+    function test_isValid_outOfGasInsideTheAttemptReverts() public {
+        bytes memory data = abi.encodeCall(Assertions.isValid, (_hungry()));
+        (bool ok_, bytes memory ret) = address(assertions).staticcall{gas: GENEROUS}(data);
+        assertTrue(ok_);
+        assertEq(abi.decode(ret, (uint256)), 1);
+        (ok_, ret) = _squeezed(data);
+        assertFalse(ok_);
+        assertEq(ret, abi.encodeWithSelector(Assertions.SubcallOutOfGas.selector));
+    }
+
+    /**
+     * @dev "This call fails", asserted as isValid(...) EQ 0 through the core,
+     *      can no longer be satisfied by squeezing the gas limit: the signal
+     *      crosses assertParam, isValid, resolve and the target
+     */
+    function test_isValid_gasLimitCannotSatisfyAFailureAssertion() public {
+        InputParam memory judged = InputParam(
+            InputParamType.CALL_DATA,
+            InputParamFetcherType.STATIC_CALL,
+            abi.encode(address(assertions), abi.encodeCall(Assertions.isValid, (_hungry()))),
+            _c1(ConstraintType.EQ, abi.encode(uint256(0)))
+        );
+        bytes memory data = abi.encodeWithSignature("assertParam((uint8,uint8,bytes,(uint8,bytes)[]))", judged);
+        (bool ok_, bytes memory ret) = address(assertions).staticcall{gas: GENEROUS}(data);
+        assertFalse(ok_);
+        assertEq(bytes4(ret), ConstraintFailed.selector);
+        (ok_, ret) = _squeezed(data);
+        assertFalse(ok_, "squeezing must not make the failure assertion pass");
+        assertEq(ret, abi.encodeWithSelector(Assertions.SubcallOutOfGas.selector));
+    }
+
+    /**
+     * @dev orElse refuses to take the fallback for an attempt that ran out of gas
+     */
+    function test_orElse_outOfGasInsideTheAttemptReverts() public {
+        bytes memory data = abi.encodeCall(Assertions.orElse, (_hungry(), _lit(7)));
+        (bool ok_, bytes memory ret) = address(assertions).staticcall{gas: GENEROUS}(data);
+        assertTrue(ok_);
+        assertEq(abi.decode(ret, (uint256)), 1);
+        (ok_, ret) = _squeezed(data);
+        assertFalse(ok_);
+        assertEq(ret, abi.encodeWithSelector(Assertions.SubcallOutOfGas.selector));
+    }
+
+    /**
+     * @dev revertData refuses to report an out-of-gas as a revert, with or
+     *      without a required selector
+     */
+    function test_revertData_outOfGasReverts() public {
+        InputParam memory hungry = _hungry();
+        bytes memory anyRevert = abi.encodeCall(Assertions.revertData, (hungry, bytes4(0)));
+        (bool ok_, bytes memory ret) = address(assertions).staticcall{gas: GENEROUS}(anyRevert);
+        assertFalse(ok_);
+        assertEq(bytes4(ret), Assertions.DidNotRevert.selector);
+        (ok_, ret) = _squeezed(anyRevert);
+        assertFalse(ok_);
+        assertEq(ret, abi.encodeWithSelector(Assertions.SubcallOutOfGas.selector));
+    }
+
+    /**
+     * @dev No false alarm: a target that simply reverts is still a failure
+     *      under the same tight gas limit
+     */
+    function test_outOfGasGuard_ordinaryRevertsStillReadAsFailure() public view {
+        InputParam memory bomb = _call(address(target), abi.encodeCall(MockTarget.revertingFunction, ()));
+        (bool ok_, bytes memory ret) = _squeezed(abi.encodeCall(Assertions.isValid, (bomb)));
+        assertTrue(ok_);
+        assertEq(abi.decode(ret, (uint256)), 0);
+        (ok_, ret) = _squeezed(abi.encodeCall(Assertions.orElse, (bomb, _lit(7))));
+        assertTrue(ok_);
+        assertEq(abi.decode(ret, (uint256)), 7);
+        (ok_, ret) = _squeezed(abi.encodeCall(Assertions.revertData, (bomb, bytes4(0))));
+        assertTrue(ok_);
+    }
+
+    /**
+     * @dev No gas limit makes a call that would succeed read as failed:
+     *      across limits from 100k to 3M, isValid answers 1, refuses with
+     *      SubcallOutOfGas, or runs out itself (an empty revert, which fails
+     *      closed); orElse never yields the fallback
+     */
+    function test_outOfGasGuard_noGasLimitReadsSuccessAsFailure() public {
+        InputParam memory hungry = _hungry();
+        bytes memory valid = abi.encodeCall(Assertions.isValid, (hungry));
+        bytes memory fallback_ = abi.encodeCall(Assertions.orElse, (hungry, _lit(7)));
+        bytes memory refused = abi.encodeWithSelector(Assertions.SubcallOutOfGas.selector);
+        for (uint256 g = 100_000; g <= 3_000_000; g += 50_000) {
+            (bool ok_, bytes memory ret) = address(assertions).staticcall{gas: g}(valid);
+            if (ok_) assertEq(abi.decode(ret, (uint256)), 1, string.concat("isValid read 0 at gas ", vm.toString(g)));
+            else assertTrue(ret.length == 0 || keccak256(ret) == keccak256(refused), "isValid: unexpected failure");
+            (ok_, ret) = address(assertions).staticcall{gas: g}(fallback_);
+            if (ok_) assertEq(abi.decode(ret, (uint256)), 1, string.concat("orElse fell back at gas ", vm.toString(g)));
+            else assertTrue(ret.length == 0 || keccak256(ret) == keccak256(refused), "orElse: unexpected failure");
+        }
     }
 
     function test_isValid_feedsCond() public view {

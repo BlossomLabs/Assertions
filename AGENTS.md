@@ -40,7 +40,9 @@ fix it in the same change that falsified it.
   LTE, IN, GTE_SIGNED, LTE_SIGNED, OR, SKIP, IN_SIGNED; never add private
   extension IDs or reorder these. Constraint i checks resolved word i;
   SKIP still requires a complete word. OR leaves check the same word and
-  nested OR is rejected before short-circuiting. Canonical encodings are
+  nested OR is rejected before short-circuiting. Nested ORs stay refused: every
+  leaf judges the same word, so OR of ORs flattens to one OR (the SDK can do it),
+  and accepting them would break parity with the reference. Canonical encodings are
   tested against pinned deployed Biconomy bytecode offline; exact 64-byte
   range references remain a deliberate stricter rejection in Assertions.
 - **Raw `InputParam` is a tree; `Expressions` adds a graph alternative.**
@@ -57,9 +59,13 @@ fix it in the same change that falsified it.
   Repeated input entries are still independent; graph references share evaluated
   nodes. Graphs bind whole canonical ABI values, support lazy branches and guarded
   evaluation, and memoize per evaluation (per callback invocation in Collections),
-  not across collection iterations. `Select` judges truth like the core's `cond`:
-  the first word of a condition of at least 32 bytes, nonzero selects `refs[1]`,
-  zero `refs[2]`, and a shorter condition reverts `InvalidNode`;
+  not across collection iterations. Failed guarded attempts discard cache changes,
+  so their work may execute again. Replacing repeated external reads by sharing
+  preserves values only when the reads are deterministic in their call context;
+  even view targets can depend on gasleft or msg.sender. `Select` judges truth like the core's `cond`:
+  the first word of the condition, nonzero selects `refs[1]`, zero `refs[2]`
+  (every node validates against its type and no type is shorter than a word, so
+  a condition is never short);
   `Collections._predicate` still demands a canonical 0/1 word from callback
   RESULTS, a different concern. Keep word-window folds for word-only workloads; a
   32-byte overwrite changes no dynamic ABI offsets. Specialized math such as
@@ -70,8 +76,17 @@ fix it in the same change that falsified it.
   `t[i]` calldata indexing or parse a descriptor more than once per call. A graph
   carries real fixed overhead, so it only wins when the resolutions it saves cost
   more than the nodes it adds: over an expensive leaf a graph beats the equivalent
-  tree, over a cheap one it loses badly. The thresholds live in `AbiCodecGas.t.sol`
+  tree, over a cheap one it loses badly. Loops in this inline assembly cost over
+  100 gas per iteration (`scanName` is about 900 gas over `uint256`), so the
+  canonical-word check matches names as one word, returns loop-free for
+  `uint256`/`bytes32`/`int256`, and walks each descriptor once with checking
+  folded into the parse; a separate re-parse per component cost 4.6k more on
+  `(uint256,uint256)`. Measure with `forge test --decode-internal -vvvv`, which
+  prints gas per internal library call. The thresholds live in `AbiCodecGas.t.sol`
   and `ExpressionsGas.t.sol`; read them there rather than quoting a number here.
+  A full-word name match must fit inside the descriptor before selecting its
+  rule: Solidity accepts nonzero calldata padding, and `bytes3` followed by an
+  out-of-span ASCII `2` once matched `bytes32` and lost its narrow-word check.
 - **No contract is frozen.** A release flag records SDK adoption; it does not
   prohibit source changes, and all four contracts version the same way. Any source
   edit, comments included, moves the CREATE2 address: regenerate addresses and
@@ -82,7 +97,14 @@ fix it in the same change that falsified it.
   elements and dynamic tuples come back as `abi.encode(value)` (their extent from
   `AbiCodec.body`'s canonical-form walk, malformed data reverting `InvalidValue`);
   the earlier `InvalidNavigation` for them is gone. `PAYLOAD` is still string/bytes
-  only, and `LEN` still refuses fixed arrays and tuples.
+  only, and `LEN` still refuses fixed arrays and tuples. Every word `nav` RETURNS
+  is range-checked for its type like the codec's (static terminals, elements of
+  static-element arrays, and nested words through `body`), reverting
+  `InvalidValue` at the offset in the resolved data; siblings the path skips are
+  not checked, since they never reach the consumer. A whole `bytes`/`string`
+  terminal is returned canonical too: nonzero padding reverts `InvalidValue` at
+  the first dirty byte (Halmos found `nav` copying dirty padding through), while
+  `PAYLOAD` and `LEN`, which never emit the padding, are unaffected.
 - **Sentinels ride the path**: `LEN` (`type(int256).min`) and `PAYLOAD` (min + 1)
   are nav path entries because no real index bound can ever admit them, and the
   path is where selection intent lives. This kept the descriptor grammar pure ABI
@@ -93,7 +115,23 @@ fix it in the same change that falsified it.
 - **Descriptors and type lists are the author's claim** about an encoder, like an
   inline ABI. A wrong claim reverts loudly in almost all cases, but a
   shape-compatible wrong claim reads the wrong value. This class is documented,
-  not defended against.
+  not defended against. What a claim CAN be held to, `AbiCodec` enforces the way
+  solc's decoder does: every static word must be in range for its base name
+  (uintN/address/bool high bits clear, intN sign-extended, bytesN/function low
+  bits clear), so `unpackArray("uint8", ...)` no longer passes `0x1234` through
+  as a uint8. The 256-bit names and anything that is not a well-formed narrow
+  ABI type (`uint7`, `uint08`, `foo`) still admit every word. Fixed lengths
+  and static fixed-array footprints are capped at 2^32 - 1 (InvalidTypeDescriptor
+  at the length), since no real encoding is that long and an unbounded multiply
+  panicked. Bare static tuples retain the sum of their component widths.
+  `T[0]` is refused too, as solc refuses to declare it: a zero-width
+  type let `unpackArray` materialise 2^40 empty values from a count word, and
+  every value now spans at least one word, which retired the zero-width guards
+  in `body`, `unpack` and `nav`'s `LEN` and `Select`'s short-condition check.
+  The grammar has no empty-tuple production: `AbiCodec.tupleLayout("()")`
+  reverts `InvalidTypeDescriptor(1)`, and the
+  core's `get` and Expressions' `_arguments` special-case `"()"` with no values
+  before ever calling it.
 - **No wrong-answer machines**: silent truncation is always a bug
   (`UnalignedWords`, `WordCountMismatch` exist for this). At the raw Solidity boundary,
   splicing an ARRAY return directly into `hash`/`byteLen` silently digests N bytes
@@ -198,7 +236,133 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   static count of `function test` declarations across `contracts/tests/*.t.sol`);
   checkout modules `bun test ./test/integration` (anvil auto-starts, Gnosis fork,
   needs `VITE_DRPC_API_KEY` in `.env`), `packages/sdk` `bun test ./test/unit`,
-  root `bun run validate-docs`.
+  root `bun run validate-docs`. `pnpm test:forge` runs the same `test*` suites
+  under Foundry; Hardhat stays the build of record (forge's executable code is
+  byte-identical, its metadata trailer is not, so never deploy from `out/`).
+  Foundry's cache is `cache_forge/` because Hardhat owns `cache/`.
+- **Halmos** (`uv tool install halmos`, then `pnpm halmos`) explores `check_*`
+  functions, which neither test runner executes. Three traps, all hit once:
+  Halmos DISCARDS reverting paths, so an oracle that reverts must be caught and
+  turned into an explicit assertion failure or the property passes vacuously,
+  and the same holds for the code under test: a direct call expected to succeed
+  hides any bug that makes it revert on valid input (an unzip lane bug survived
+  exactly this way), so route such calls through `staticcall` + `assertTrue(ok)`;
+  a symbolic ABI offset or length ends in `NotConcreteError`, so case-split head
+  words into literal candidates (returning the case argument itself stays
+  symbolic) and keep body words symbolic; and the oracle is solc's
+  `abi.encode`/`abi.decode`, never a pack/unpack round-trip, since both share
+  AbiCodec's validation. The default loop bound (2) silently cuts paths: the
+  script passes `--loop 70`, and a run must show no `loop-bound` warning. A
+  command-line `--loop` OVERRIDES per-function `@custom:halmos` annotations, so
+  raise the global bound rather than annotating. Completeness against solc
+  ("solc decodes it, so nav must too") holds only on CANONICAL data (equal to
+  `abi.encode` of what solc decoded): solc tolerates dirty bytes padding and loose
+  offsets that this repo rejects by doctrine. Case-split offsets must land on a
+  concrete length word, never on a symbolic content word, and restrict each case
+  variable to its distinct candidates: an unconstrained uint8 multiplied one
+  property past ten minutes. Indexing a memory array by a symbolic case is a
+  symbolic offset too: select per case with a literal if-chain. A
+  symbolic word that some decoder reads as an ABI offset (an OR payload) is the
+  same `NotConcreteError`: give that case its own property with concrete
+  structure. `ERC8211Symbolic.t.sol` proves constraint verdicts against the
+  pinned Biconomy bytecode, inlined in `BiconomyERC8211Runtime.sol` because Halmos
+  cannot read files; a test pins that copy to the fixture's `runtimeHash`, so
+  regenerate it from `test/fixtures/biconomy-erc8211.json`. Planted bugs in
+  `_checkConstraints` were each caught; a mutant that only changes WHICH error
+  rejects is invisible there, because the properties compare verdicts. Halmos
+  does not decide Operations' arithmetic: value properties of `mulDiv`, signed
+  `addMod`/`mulMod`, signed `exp`, `sqrt` and `powMod` all hit the 300s solver
+  limit even with int16/uint64 operands (measured 2026-09-25, `halmos --contract
+  OperationsSymbolicTest --function <name> --solver-timeout-assertion 300000`),
+  because the code multiplies, divides and reduces at 256/512 bits whatever the
+  operand width. That arithmetic stays with `test/math-fuzz.test.ts`. Halmos
+  also prefixes `^` to `--function`, so an anchored `^name$` matches nothing
+  and reports "No tests" rather than failing loudly. Halmos has no gas model
+  either: `gasleft()` is a fresh symbol each time, so the core's out-of-gas
+  guard (`SubcallOutOfGas`) can fire on any failed subcall, a path no real
+  execution takes. Properties over failing subcalls discard that outcome
+  (`outOfGasArtifact` in `ControlSymbolic`, `ExpressionsSymbolic` and
+  `ExpressionsCallsSymbolic`); the concrete sweeps in `CoreReads`, `Expressions.t.sol` and
+  `GasPropagation.t.sol` pin the guard at real gas values. Every cooperating
+  wrapper, including Operations.rawCall and both Collections callback paths,
+  must detect exhaustion and rethrow the exact signal BEFORE wrapping ordinary
+  errors. External targets that swallow failures or branch on gas are outside
+  this guarantee. Adding a wrapper without that guard once made EQ 0 pass by
+  lowering gas alone. Unbounded recursion is
+  out of reach too (a path Halmos cannot finish is dropped, not failed): an
+  Expressions self-reference is pinned by the concrete `Expressions.t.sol` test. A
+  property over `uint256`/`bytes32` elements cannot see missing type
+  validation, because every word is valid there: a flatten mutant that
+  skipped validation survived exactly this way. Exercise validation through a
+  narrow type (`uint8`) whose dirty words must be refused. Symbolic LENGTHS
+  belong in the parser only (`NoPanicSymbolic`): a walker that consumes an
+  accepted length copies and iterates by it, so a symbolic one there is a
+  NotConcreteError or a loop past the bound, and two symbolic lengths multiply
+  nonlinearly (nine minutes for one configuration). Sweep the walkers
+  concretely instead (`NoPanic.t.sol`), with a fixed gas budget per call, since
+  Halmos does not model gas and an out-of-gas revert is empty data. Keep every
+  digit run under the loop bound: a path past it is dropped, not failed. State
+  a numeric reference with constant multiplications, not a symbolic division:
+  `parseUnits` rounding as "N * 10^d / 1000" ran past eleven minutes, the same
+  claim as bracketing inequalities (`m * 1000 <= scaled < (m + 1) * 1000`)
+  proves in four. A property that still needs more than the default solver
+  limit takes a per-function `@custom:halmos --solver-timeout-assertion`: the
+  script sets no solver timeout, so nothing overrides it (unlike `--loop`). The
+  same split holds in Operations: index arithmetic is proved
+  (`OperationsNoPanicSymbolic`, each index either symbolic and out of range or
+  a literal boundary, since an in-range symbolic index is a symbolic copy
+  offset), byte scanners are fuzzed with a gas budget (`OperationsNoPanic`).
+  That budget found search at 170 gas per compared byte (a near-miss 32-byte
+  needle cost 5.3M gas over 964 bytes); `_matchesAt` now compares words. A
+  budget judges the algorithm, not the output: skip inputs whose OUTPUT alone
+  exhausts it (concat of 1.66 MB costs 28.6M in memory expansion). An
+  out-of-range enum argument (`Rounding`, `FoldExit`) never reaches the code:
+  solc's ABI decoder reverts with empty data, not Panic(0x21). Collections
+  follows the same split (`CollectionsNoPanic`), with a target per way a lambda
+  or callback can misbehave; each fails declared, a gas burner included
+  (SubcallOutOfGas, never an ordinary CallbackFailed). `iotaWords(n)` is the
+  deliberate exception: its cost is its output's, so an absurd n panics or runs
+  out of gas, documented rather than bounded (a cap would not stop the
+  out-of-gas and costs Collections bytes). Encode a raw-enum call whole with
+  `abi.encodeWithSelector`: a head spliced onto a separately encoded tail
+  shifts every offset, and the decoder's bare revert then looks like a finding.
+  `forge fmt` expands a one-line `/** @dev ... */` and drops the text before
+  any ` * ` inside it (`n * 32`): write such comments multi-line.
+  The core and Expressions (`CoreNoPanic`, `ExpressionsNoPanic`) fuzz through
+  uint8-enum mirror structs, which encode identically to the real ones. Wire
+  bytes solc cannot decode (a STATIC_CALL paramData, an OR referenceData, a
+  Resolve node's data, an evaluateEncoded payload, an out-of-range enum)
+  revert WITHOUT data, as in the Biconomy reference: documented, not
+  pre-validated, since a canonical check would reject what the reference
+  accepts and tax every STATIC_CALL. The suites accept a bare revert only when
+  they injected such bytes, and half their runs inject none: with junk in
+  most runs a real bare revert hides behind the excuse. A WELL-TYPED graph
+  must never reach a bare decode: ProbeCall once decoded any calldata
+  operand as bytes, so a `uint256` operand reverted without data; `evaluate`
+  now requires that node typed `bytes` (InvalidNode).
+- **Mutation testing** (`docs/mutation-testing.md`): Gambit 0.2.1 (`cargo install
+  --git https://github.com/Certora/gambit.git`) against forge tests, then the
+  Halmos suites and Node fuzzers, then `MutationGaps.t.sol`; every survivor is
+  killed or recorded as equivalent with its reason. What the pass taught: tests
+  and properties over `uint256` alone cannot see missing type validation; pick
+  test numbers that no operator swap maps onto each other (`2 * 2 == 2 ** 2` hid
+  a mutant); a revert-only test does not pin WHICH error or offset, and dozens of
+  error-detail mutants survived until the exact revert data was asserted; and a
+  test only counts once the mutant it targets fails it. Run mutants in scratch
+  worktrees, never in a shared tree.
+- Claims require run provenance: a check_* declaration alone is not a proof.
+  Keep property inventory, source hashes, tool versions, commands, exclusions
+  and pass/fail/incomplete results with the ledger. Halmos has no gas model.
+  The baseline (`scripts/verify-claims.py`, then `scripts/refresh-claims.py`)
+  hashes every `contracts/**/*.sol`, tests and comments included, and the
+  refresh refuses any drift, so finish every edit before starting the run
+  (a comment fix afterwards costs the whole rerun) and run the concrete gates
+  first: `foundry.toml` sets no fuzz seed, so a `forge test` that passed once
+  can still surface a counterexample later (a 284-element fold over 253
+  windows exhausted the no-panic budget honestly on 2026-09-29), and a fix
+  to that test invalidates a baseline already running.
+  Atomic rollback requires a mandatory assertion in the same transaction and
+  an executor that propagates its failure; a caught failure cannot promise it.
 - Record measured numbers with the command that produced them; never state an
   a-priori estimate with a measurement's confidence (gas multipliers have been
   misquoted exactly this way).
@@ -207,6 +371,12 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
 
 ## Release
 
+- **Bundle formatting cleanup into the next address recalculation.** At the user's
+  request, fix the 31 pre-existing Solidity test-file formatting violations listed
+  in `docs/verification/abi-codec-final/checks.json` when next re-cutting the
+  deployment candidate. Finish formatting and review comment preservation before
+  compilation, salt mining and the fresh proof baseline; require the full
+  `forge fmt --check` to pass. Keep this cleanup deferred until that re-cut.
 - Canonical salts are 32-byte values mined with `cast create2` for a vanity prefix
   (a55e47, 09e4a7e, c011ec7, e5594e55: the contract names in hex; see
   `website/scripts/mine-salt.mjs`) and live in `website/scripts/export-deploy-artifact.mjs`. The zero salt in Ignition
@@ -225,6 +395,14 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   minute, e5594e55 is 32 bits and takes minutes. Regenerate and verify deployment
   artifacts, fixtures and SDK addresses together; the SDK lives in the vendored
   checkout, so an address move is not finished until the pin is bumped.
+- Operations' `mulDiv`, `sqrt`, `log2` (also inside `lnWad`) and the inverse behind
+  negative `powMod` exponents call OpenZeppelin's `Math`, pinned to an exact
+  `@openzeppelin/contracts` version in `package.json` (and remapped in
+  `foundry.toml`). A bump of that pin changes the imported source, so it moves the
+  Operations address like any edit and needs the same re-mine. `Math.modExp` is
+  deliberately not used: it trusts a successful call to `0x05` without checking
+  the return size, so on a chain without the precompile it returns stale memory;
+  `_powMod` checks `returndatasize` and falls back to its loop.
 - Bytecode size: `test/bytecode-size.test.ts` checks `(len(deployedBytecode) - 2) / 2`
   against 24,576 for every production artifact under `pnpm test` and pins the
   artifact set.

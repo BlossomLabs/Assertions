@@ -108,7 +108,7 @@ contract Collections {
     /**
      * @notice Thrown when a lambda or callback application reverts: an
      *         assertion failure inside the loop, reported with the revert
-     *         reason preserved
+     *         reason preserved, except exhaustion and SubcallOutOfGas
      * @param operation The selector of the Collections operation that ran
      *        the callback
      * @param index The element the callback was applied to
@@ -119,6 +119,15 @@ contract Collections {
      */
     error CallbackFailed(bytes4 operation, uint256 index, uint256 other, address target, bytes callData, bytes reason);
 
+    /**
+     * @notice A failed callback exhausted its gas, or propagated this signal
+     * @dev Shares the core's selector and bypasses CallbackFailed so outer
+     *      probes cannot read exhaustion as false or select a fallback.
+     *      External callbacks that swallow failures or branch on gas are
+     *      outside this guarantee.
+     */
+    error SubcallOutOfGas();
+
     // ============ Types ============
 
     /**
@@ -126,7 +135,7 @@ contract Collections {
      * @dev ABI-encoded as uint8: Full = 0 (scan every element), Any = 1
      *      (stop at the first nonzero accumulator: exists), All = 2 (stop
      *      at the first zero accumulator: forall). An out-of-range value
-     *      reverts with Panic(0x21).
+     *      is refused by the ABI decoder, which reverts without data.
      */
     enum FoldExit {
         Full,
@@ -227,8 +236,9 @@ contract Collections {
      *      accumulator, `All` at the first zero, `Full` scans everything;
      *      the final accumulator is returned either way. An empty domain
      *      validates the template windows, then returns `init` without
-     *      inspecting or calling the target. A lambda revert is an
-     *      assertion failure: it reverts the fold with CallbackFailed
+     *      inspecting or calling the target. Exhaustion and exact
+     *      SubcallOutOfGas signals are rethrown unchanged. Other lambda
+     *      reverts fail the fold with CallbackFailed
      *      carrying the operation, element, calldata and revert reason.
      *      Offsets must leave room for a word inside the template
      *      (LambdaOffsetOutOfBounds), a code-less target reverts with
@@ -307,7 +317,8 @@ contract Collections {
      *      the mapped element. An empty payload validates the template
      *      windows, then returns empty without inspecting the target. A
      *      code-less target reverts with InvalidCallbackTarget, a
-     *      reverting application with CallbackFailed preserving calldata
+     *      exhausted application with SubcallOutOfGas, and other reverting
+     *      applications with CallbackFailed preserving calldata
      *      and reason, and a return other than one word with
      *      InvalidCallbackResult. One call per word.
      * @param s The word payload to map
@@ -346,6 +357,9 @@ contract Collections {
     /**
      * @notice The payload 0, 1, 2, ..., n-1: the index generator that
      *         pairs with zipWords for enumerations
+     * @dev The cost is the output's: an n whose n * 32 bytes memory cannot
+     *      hold runs out of gas, and past about 2^59 the allocation panics
+     *      (0x41, or 0x11 once n * 32 overflows). No bound is enforced.
      */
     function iotaWords(uint256 n) external pure returns (bytes memory out) {
         out = new bytes(n * 32);
@@ -546,8 +560,9 @@ contract Collections {
      *      InvalidValue), and the target's code checked lazily before the
      *      first application (InvalidCallbackTarget), so an empty input
      *      never touches the target. Each application is one staticcall
-     *      with the element bound into slot `first`; a revert surfaces as
-     *      CallbackFailed with the reason preserved, and a result that is
+     *      with the element bound into slot `first`; exhaustion and exact
+     *      SubcallOutOfGas signals propagate unchanged. Other reverts surface
+     *      as CallbackFailed with the reason preserved, and a result that is
      *      not a canonical `outputType` as InvalidCallbackResult.
      * @param inputType The input element type descriptor
      * @param outputType The result element type descriptor
@@ -1093,8 +1108,12 @@ contract Collections {
      *      word came back
      */
     function _callWord(address target, bytes memory callData, uint256 index) private view returns (bytes32 word) {
+        uint256 gasBefore = gasleft();
         (bool success, bytes memory ret) = target.staticcall(callData);
-        if (!success) revert CallbackFailed(msg.sig, index, 0, target, callData, ret);
+        if (!success) {
+            _rejectOutOfGas(gasBefore, ret);
+            revert CallbackFailed(msg.sig, index, 0, target, callData, ret);
+        }
         if (ret.length != 32) revert AbiCodec.InvalidCallbackResult(msg.sig, index, 0, target);
         assembly ("memory-safe") { word := mload(add(ret, 32)) }
     }
@@ -1279,7 +1298,8 @@ contract Collections {
      *      either a direct call of `selector` over the assembled argument
      *      tuple, or `Expressions.evaluateEncoded` over the slots when the
      *      Callback carries an expression. Returns the raw result; a revert
-     *      surfaces as CallbackFailed with the reason.
+     *      surfaces as CallbackFailed with the reason, except exhaustion and
+     *      exact SubcallOutOfGas signals, which are rethrown unchanged.
      */
     function _callValue(
         Callback calldata cb,
@@ -1308,8 +1328,28 @@ contract Collections {
             data = abi.encodeCall(IExpressions.evaluateEncoded, (cb.expression, prepared.args));
         }
         bool ok;
+        uint256 gasBefore = gasleft();
         (ok, out) = cb.target.staticcall(data);
-        if (!ok) revert CallbackFailed(msg.sig, i, j, cb.target, data, out);
+        if (!ok) {
+            _rejectOutOfGas(gasBefore, out);
+            revert CallbackFailed(msg.sig, i, j, cb.target, data, out);
+        }
+    }
+
+    /**
+     * @dev Mirrors the core's conservative exhaustion guard. Exact four-byte
+     *      signals survive nesting; near-exhausting ordinary reverts can also
+     *      be refused. External targets that transform failures are outside
+     *      this guarantee.
+     */
+    function _rejectOutOfGas(uint256 gasBefore, bytes memory ret) private view {
+        bytes4 head;
+        if (ret.length == 4) {
+            assembly ("memory-safe") {
+                head := mload(add(ret, 32))
+            }
+        }
+        if (gasleft() <= gasBefore / 63 || head == SubcallOutOfGas.selector) revert SubcallOutOfGas();
     }
 
     /**

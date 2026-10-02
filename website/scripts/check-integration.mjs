@@ -46,6 +46,7 @@ try {
   const { wrapEntriesFor } = await load("/src/components/builder/expr/catalog.ts");
   const sdk = await load("@evmcrispr/sdk/onchain");
   const fixtures = await load(`${evmcrisprSrc}/packages/test-utils/src/onchain/assertions-bytecode.ts`);
+  const { VERIFICATION_INPUTS } = await load("/src/lib/verification-inputs.ts");
   const core = await load("/src/lib/assertions-deployment.ts");
   assert.equal(core.CREATE2_PROXY, manifest.create2Proxy, "manifest proxy drift");
 
@@ -66,6 +67,19 @@ try {
     assert.equal(exports[`${prefix}_ADDRESS`], contract.address, `${name}: deployment module address drift`);
     assert.equal(exports[`${prefix}_SALT`], contract.salt, `${name}: deployment module salt drift`);
     assert.equal(exports[`${prefix}_CREATION_BYTECODE`], artifact.bytecode, `${name}: stale deployment bytecode`);
+    assert.equal(exports[`${prefix}_INIT_CODE_HASH`], contract.initCodeHash, `${name}: deployment init-code hash drift`);
+    assert.equal(exports[`${prefix}_DEPLOY_GAS`], contract.deployGas, `${name}: deployment gas drift`);
+    const abi = await load(`/${contract.abiModule}`);
+    assert.deepEqual(abi[`${prefix}_ABI`], artifact.abi, `${name}: stale ABI module`);
+    const build = JSON.parse(readFileSync(`../artifacts/build-info/${artifact.buildInfoId}.json`, "utf8"));
+    const verification = VERIFICATION_INPUTS[contract.key];
+    assert.equal(verification.contractName, `${artifact.inputSourceName}:${name}`, `${name}: verification entry drift`);
+    assert.equal(verification.compilerVersion, `v${build.solcLongVersion}`, `${name}: verification compiler drift`);
+    assert.deepEqual(verification.input.settings, build.input.settings, `${name}: verification settings drift`);
+    assert.ok(verification.input.sources[artifact.inputSourceName], `${name}: missing verification entry source`);
+    for (const [path, source] of Object.entries(verification.input.sources)) {
+      assert.deepEqual(source, build.input.sources[path], `${name}: verification source drift at ${path}`);
+    }
     assert.ok(size <= 24576, `${name}: EIP-170 limit exceeded`);
     if (contract.released) {
       assert.equal(sdk[contract.sdkAddressExport], contract.address, `${name}: compiler address drift (${contract.sdkAddressExport})`);
@@ -73,7 +87,7 @@ try {
       assert.equal(fixtures[`${prefix}_RUNTIME_BYTECODE`], artifact.deployedBytecode, `${name}: stale EVM test fixture bytecode`);
     }
     console.log(
-      `${name}: ${size} runtime bytes; manifest, artifact and deployment module agree` +
+      `${name}: ${size} runtime bytes; manifest, artifact, deployment module, ABI and verification inputs agree` +
         (contract.released ? "; SDK and fixture agree" : " (unreleased: no SDK or fixture check)"),
     );
   }

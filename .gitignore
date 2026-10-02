@@ -24,3 +24,7 @@
 
 # Astro generated types (when astro runs from the repo root)
 /.astro
+
+# Foundry output
+/out
+/cache_forge

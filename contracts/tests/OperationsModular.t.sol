@@ -33,6 +33,9 @@ contract OperationsModularTest is Test {
         assertEq(ops.powMod(low, uint256(2), -7), 1);
         assertEq(ops.powMod(uint256(2), high, 7), 1);
         assertEq(ops.powMod(int256(3), int256(-1), low), int256((uint256(1) << 255) / 3 + 1));
+        // Modulo 1 the inverse exists and is 0, the value Math.invMod also uses for "none".
+        assertEq(ops.powMod(uint256(5), int256(-1), 1), 0);
+        assertEq(ops.powMod(int256(-5), int256(-1), -1), 0);
     }
 
     function test_powModFailures() public {

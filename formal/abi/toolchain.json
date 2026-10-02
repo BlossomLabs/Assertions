@@ -1,0 +1,11 @@
+{
+  "dafnyVersion": "4.11.0+fcb2042d6d043a2634f0854338c08feeaaaf4ae2",
+  "solverVersion": "4.12.1",
+  "distribution": "https://github.com/dafny-lang/dafny/releases/download/v4.11.0/dafny-4.11.0-x64-ubuntu-22.04.zip",
+  "distributionSha256": "a46a9ff7cdd720f7955854c78e95df13f4cfe6b80691b05f8654fe19e8267179",
+  "solverRelativePath": "z3/bin/z3-4.12.1",
+  "verificationTimeLimitSeconds": 30,
+  "cores": 2,
+  "automaticLemmaInduction": false,
+  "verifyIncludedFiles": true
+}

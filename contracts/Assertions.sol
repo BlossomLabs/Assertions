@@ -44,7 +44,8 @@ interface IERC20Balance {
  *         literals) and validate them against inline constraints. Batch
  *         assertion calls alongside the transactions they guard (DAO
  *         proposals, Safe batches, upgrades): if any constraint fails, the
- *         entire transaction reverts, atomically. Beyond the judge, this
+ *         enclosing execution reverts atomically when its executor propagates
+ *         the mandatory assertion failure in the same transaction. Beyond the judge, this
  *         contract owns every primitive that speaks the ERC-8211 wire
  *         format: selection (`resolve`, `gather`, `pick`, `nav`),
  *         call construction (`chain`, `read`, `get`) and resolution
@@ -165,13 +166,25 @@ contract Assertions {
      */
     error UnexpectedRevertData(bytes4 expected, bytes4 actual);
 
+    /**
+     * @notice Thrown when a subcall failed after burning all the gas it was
+     *         given, so its failure cannot be told from an out-of-gas that
+     *         the transaction's gas limit chose. Rethrown unchanged through
+     *         nested core frames, so orElse, isValid and revertData never
+     *         read it as "the attempt failed". Operations and Collections preserve
+     *         the same signal. External targets that swallow failures or branch
+     *         on available gas are outside this guarantee.
+     */
+    error SubcallOutOfGas();
+
     // ============ Composable Batch Assertions ============
 
     /**
      * @notice Assert that an ERC-8211 composable batch passes under
      *         view-mode evaluation: every input parameter resolves, every
      *         constraint holds, and every constructed call succeeds as a
-     *         staticcall
+     *         staticcall. Constructed-call returndata is ignored, including a
+     *         returned false. An empty batch succeeds.
      * @param executions The ERC-8211 batch entries (standard wire format)
      */
     function assertBatch(ComposableExecution[] calldata executions) external view {
@@ -193,7 +206,8 @@ contract Assertions {
     /**
      * @notice Assert one ERC-8211 input parameter: resolve its value via
      *         the fetcher and validate its inline constraints, the
-     *         single-check shorthand for a one-parameter predicate entry
+     *         single-check shorthand for a one-parameter predicate entry.
+     *         Empty constraints impose no value predicate.
      * @param param The input parameter (paramType is ignored; nothing is routed)
      */
     function assertParam(InputParam calldata param) external view {
@@ -332,14 +346,20 @@ contract Assertions {
      *        (nav degenerates to resolve);
      *      - static terminal (word, fixed array or static tuple): its full
      *        abi.encode(value), with no offset or length prefix. The complete
-     *        static footprint must fit in the resolved data;
+     *        static footprint must fit in the resolved data, and every word
+     *        of it must be in range for its type as solc's decoder requires
+     *        (a uint8 word below 256, an int8 sign-extended, and so on);
      *      - dynamic terminal (string/bytes/array/dynamic tuple): the
      *        canonical single-value encoding, [0x20][length][payload] for
-     *        string/bytes and abi.encode(value) for arrays and tuples.
+     *        string/bytes (nonzero padding reverts with AbiCodec's
+     *        InvalidValue at the first dirty byte) and abi.encode(value) for
+     *        arrays and tuples.
      *        Arrays of dynamic elements and dynamic tuples are re-encoded
      *        from a canonical-form walk of their extent (AbiCodec.body), so
      *        malformed nested data reverts with AbiCodec's InvalidValue at
-     *        the offending offset;
+     *        the offending offset. Every static word returned, at any
+     *        depth, is held to its type's range the same way. Only the
+     *        returned value is checked, not the siblings the path skips;
      *      - a path ending in the LEN sentinel: the decoded length of the
      *        dynamic value the preceding steps navigate to, as a uint256
      *        word (element count for arrays, byte length for string/bytes,
@@ -362,7 +382,8 @@ contract Assertions {
      *      outside its tuple or array with ElementIndexOutOfBounds, and
      *      data that does not match the declared shape (truncated
      *      returndata, out-of-range offsets) with ReturnDataOutOfBounds
-     *      (AbiCodec.InvalidValue for a re-encoded array or tuple terminal).
+     *      (AbiCodec.InvalidValue for a re-encoded array or tuple terminal,
+     *      and for any returned word outside its type's range).
      * @param a The input parameter whose resolved bytes are navigated
      * @param retTypes The resolved value's type as a parenthesized tuple
      * @param path The navigation path (see modes above)
@@ -401,6 +422,7 @@ contract Assertions {
             if (pos > result.length || c.words > (result.length - pos) / 32) {
                 revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
             }
+            _checkWords(result, t, c.ts, c.te, 1, pos);
             uint256 size = c.words * 32;
             assembly ("memory-safe") {
                 return(add(add(result, 32), pos), size)
@@ -589,10 +611,10 @@ contract Assertions {
      *      ALL failures of `a` select the fallback: a reverting or
      *      code-less call target, a violated constraint (constraints
      *      double as guards here), malformed data, even out-of-gas inside
-     *      the subframe. The 63/64 rule makes a genuine OOG usually
-     *      re-revert in the outer frame, but with a large gas limit and a
-     *      cheap `b` an OOG deep inside `a` can masquerade as "a failed":
-     *      do not use orElse to distinguish failure causes. On success the
+     *      the subframe, EXCEPT an attempt that burned all the gas it was
+     *      given: that one reverts SubcallOutOfGas instead of taking `b`,
+     *      because the transaction's gas limit could have chosen it. Do not
+     *      use orElse to distinguish other failure causes. On success the
      *      attempt's bytes pass through byte-identically. `b` resolves
      *      in-frame: its failures propagate; chain further orElse operands
      *      for more fallbacks. In resolution errors `b` is operand 1.
@@ -600,8 +622,10 @@ contract Assertions {
      * @param b The fallback, resolved only when the attempt failed
      */
     function orElse(InputParam calldata a, InputParam calldata b) external view {
+        uint256 gasBefore = gasleft();
         (bool success, bytes memory value) = address(this).staticcall(abi.encodeCall(this.resolve, (a)));
         if (!success) {
+            _rejectOutOfGas(gasBefore, value);
             value = _resolve(b, "", 0, 1);
         }
         assembly ("memory-safe") {
@@ -617,16 +641,20 @@ contract Assertions {
      *      code-less target, malformed data all count as invalid) and any
      *      inline constraints passing (they double as guards here). The
      *      attempt runs behind the same external self-staticcall boundary
-     *      as orElse, with the same all-reverts-count caveat including the
-     *      subframe-OOG edge. Point a constrained fetcher here to assert
+     *      as orElse, with the same all-reverts-count rule and the same
+     *      out-of-gas exception (SubcallOutOfGas, never 0). Point a constrained fetcher here to assert
      *      that a call succeeds (EQ 1) or that it fails (EQ 0), or feed it
      *      to cond to branch on resolvability. Compose it over
      *      `revertData` to get "reverted with this reason" as a word.
+     * @dev A successful call returning false is valid unless a constraint
+     *      requires its returned word to be true.
      * @param a The attempt to probe
      * @return 1 if `a` resolved (constraints included), else 0
      */
     function isValid(InputParam calldata a) external view returns (uint256) {
-        (bool success,) = address(this).staticcall(abi.encodeCall(this.resolve, (a)));
+        uint256 gasBefore = gasleft();
+        (bool success, bytes memory reason) = address(this).staticcall(abi.encodeCall(this.resolve, (a)));
+        if (!success) _rejectOutOfGas(gasBefore, reason);
         return success ? 1 : 0;
     }
 
@@ -645,8 +673,8 @@ contract Assertions {
      *      error, not the inner target's, which is why reason MATCHING
      *      only makes sense on a direct target call; composers must keep
      *      the operand direct when expectedSelector is non-zero. An OOG
-     *      inside the probed frame counts as a revert here too (63/64
-     *      caveat, as with orElse), with no reason to match.
+     *      inside the probed frame is never reported as a revert: it
+     *      reverts SubcallOutOfGas, as with orElse.
      *
      *      With `expectedSelector` non-zero the first four bytes of the
      *      revert data must match, and THE SELECTOR IS STRIPPED from the
@@ -694,8 +722,10 @@ contract Assertions {
             }
         }
 
+        uint256 gasBefore = gasleft();
         (bool success, bytes memory ret) = target.staticcall(callData);
         if (success) revert DidNotRevert(target, callData);
+        _rejectOutOfGas(gasBefore, ret);
 
         if (expectedSelector == bytes4(0)) {
             assembly ("memory-safe") {
@@ -805,9 +835,33 @@ contract Assertions {
      */
     function _staticCall(address target, bytes memory callData) internal view returns (bytes memory) {
         if (target.code.length == 0) revert CallFailed(target, callData);
+        uint256 gasBefore = gasleft();
         (bool success, bytes memory result) = target.staticcall(callData);
-        if (!success) revert CallFailed(target, callData);
+        if (!success) {
+            _rejectOutOfGas(gasBefore, result);
+            revert CallFailed(target, callData);
+        }
         return result;
+    }
+
+    /**
+     * @dev After a failed subcall: reverts SubcallOutOfGas when the callee
+     *      burned all it was given (this frame keeps 1/64 of the gas across
+     *      a call and gets back only what the callee left, so at most
+     *      gasBefore / 63 remaining is the out-of-gas signature, and a normal
+     *      revert leaves more unless it used over 98% of its gas too), or
+     *      when the callee reverted with exactly SubcallOutOfGas, so the
+     *      signal survives nesting. A callee that cannot tell a revert from
+     *      an out-of-gas cannot be judged failed.
+     */
+    function _rejectOutOfGas(uint256 gasBefore, bytes memory ret) private view {
+        bytes4 head;
+        if (ret.length == 4) {
+            assembly ("memory-safe") {
+                head := mload(add(ret, 32))
+            }
+        }
+        if (gasleft() <= gasBefore / 63 || head == SubcallOutOfGas.selector) revert SubcallOutOfGas();
     }
 
     /**
@@ -894,7 +948,9 @@ contract Assertions {
     /**
      * @dev Evaluate one non-OR constraint against one word. Scalar lengths
      *      are exact; range bounds use the comparison's signedness. The
-     *      caller validates OR structure before passing its leaves here.
+     *      caller validates OR structure before passing its leaves here, so
+     *      no OR ever arrives: nested ORs are refused first, as in the
+     *      Biconomy reference, and OR of ORs flattens to one OR anyway.
      */
     function _checkConstraint(
         bytes32 actual,
@@ -928,8 +984,8 @@ contract Assertions {
         if (kind == ConstraintType.GTE) return actual >= bound;
         if (kind == ConstraintType.LTE) return actual <= bound;
         if (kind == ConstraintType.GTE_SIGNED) return int256(uint256(actual)) >= int256(uint256(bound));
-        if (kind == ConstraintType.LTE_SIGNED) return int256(uint256(actual)) <= int256(uint256(bound));
-        revert InvalidOrConstraint(entryIndex, paramIndex, index);
+        // LTE_SIGNED is the only kind left: OR never reaches here.
+        return int256(uint256(actual)) <= int256(uint256(bound));
     }
 
     // ============ Internal Read Helpers ============
@@ -979,7 +1035,6 @@ contract Assertions {
             uint256 suffix = AbiCodec.suffixStart(t, ts, te);
             if (suffix + 1 != te - 1) revert InvalidNavigation(ts);
             (,, uint256 elemWords) = AbiCodec.typeShape(t, ts, suffix);
-            if (elemWords == 0) revert InvalidNavigation(ts);
             // Divide before multiplying: hostile counts/descriptor sizes
             // must not overflow before the bounds check. Dynamic elements
             // occupy one offset word; static elements may span many words.
@@ -1030,9 +1085,11 @@ contract Assertions {
     /**
      * @dev Returns a navigated dynamic terminal re-encoded as a canonical
      *      single-value return, indistinguishable from a contract returning
-     *      that value directly: [0x20][length][payload] for string/bytes and
-     *      arrays of statically encoded elements (bounds-checked in place),
-     *      abi.encode(value) for arrays of dynamic elements and dynamic
+     *      that value directly: [0x20][length][payload] for string/bytes
+     *      (dirty padding reverts AbiCodec.InvalidValue at its first nonzero
+     *      byte) and
+     *      arrays of statically encoded elements (bounds- and range-checked
+     *      in place), abi.encode(value) for arrays of dynamic elements and dynamic
      *      tuples, whose extent comes from AbiCodec.body's canonical-form
      *      walk (tight offsets, zero padding; malformed data reverts with
      *      AbiCodec.InvalidValue at the offending offset). Offsets inside
@@ -1052,6 +1109,7 @@ contract Assertions {
                 if (len > (result.length - pos - 32) / (elemWords * 32)) {
                     revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
                 }
+                _checkWords(result, t, ts, suffix, len, pos + 32);
                 size = 32 + len * elemWords * 32;
             }
         } else if (t[ts] == "(") {
@@ -1069,6 +1127,15 @@ contract Assertions {
             if (payloadBytes > result.length - pos - 32) {
                 revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
             }
+            // The value is returned canonical: its padding must be zero, as
+            // AbiCodec.body requires of the same value nested in an array.
+            uint256 padding = payloadBytes - len;
+            if (padding != 0 && _navWord(result, pos + payloadBytes) & (type(uint256).max >> ((32 - padding) * 8)) != 0)
+            {
+                for (uint256 i = pos + 32 + len;; i++) {
+                    if (result[i] != 0) revert AbiCodec.InvalidValue(i);
+                }
+            }
             size = 32 + payloadBytes;
         }
         assembly ("memory-safe") {
@@ -1080,6 +1147,20 @@ contract Assertions {
             }
             return(out, add(32, size))
         }
+    }
+
+    /**
+     * @dev Holds `count` consecutive static values of type `t[ts:te]`,
+     *      encoded from `pos` of `result`, to their base names' word ranges
+     *      (AbiCodec.InvalidValue at the offending offset). The caller has
+     *      bounded the footprint.
+     */
+    function _checkWords(bytes memory result, bytes calldata t, uint256 ts, uint256 te, uint256 count, uint256 pos)
+        private
+        pure
+    {
+        AbiCodec.Context memory context;
+        AbiCodec.checkWords(t, ts, te, count, result, pos, context);
     }
 
     /**

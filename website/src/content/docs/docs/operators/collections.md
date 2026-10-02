@@ -11,7 +11,7 @@ Each `bytes[]` element is one canonical `abi.encode(value)`, not packed bytes an
 
 `packArray(elementType, values)` returns the canonical encoding of the complete array inside a bytes return envelope. `unpackArray(elementType, encodedArray)` reverses that operation and rebases dynamic element offsets. Both validate their inputs. To check a single encoded value without keeping the result, pass it as the only element of `packArray(elementType, values)` and discard the returned array encoding.
 
-The codec checks descriptor structure, canonical offsets, bounds, exact lengths and zero padding of bytes and strings. It is a shape validator, not a scalar type checker: a shape-compatible incorrect scalar claim remains the caller's responsibility, as with `nav` descriptors. It does not turn a word into a checked `uint8` or validate an address's upper bits. Predicate callbacks separately require canonical booleans.
+The codec checks descriptor structure, canonical offsets, bounds, exact lengths and zero padding of bytes and strings, and range-checks every static word for its type the way solc's decoder does: a `uint8` above 255, an address with dirty upper bits, an `intN` that is not sign-extended or a `bytesN` with dirty low bytes is refused with `InvalidValue`. The 256-bit types admit every word. What the codec cannot check is the type claim itself: a shape-compatible wrong descriptor (`uint256` where the value is really an address) still reads the wrong value, as with `nav` descriptors. Predicate callbacks separately require canonical booleans.
 
 ## Callback specification
 
@@ -33,7 +33,7 @@ Calldata is rebuilt from these values on every invocation, so variable-length st
 
 **Expression callbacks.** With a non-empty `expression`, the callback is `abi.encode(Expressions.Expression)`: the slots are bound exactly as above, and the invocation is `target.evaluateEncoded(expression, boundArguments)` instead of a selector call (`selector` is ignored, and `target` is the [Expressions](/docs/operators/expressions) contract). Inside the graph, `Parameter` nodes read the bound slots, so an element can be referenced any number of times, arguments may be dynamic and multi-word, and live reads compose without byte-offset substitution. Memoisation inside the graph lasts one invocation, not the whole traversal. Collections reaches Expressions through an `IExpressions` interface at the address the callback names, not through a source import, so the two contracts version independently.
 
-Predicates must return exactly 32 bytes containing zero or one. Comparators return exactly one `int256` word: negative, zero, or positive. `CallbackFailed` carries the operation selector, element indexes, target, calldata and revert data. `InvalidCallbackResult` identifies malformed callback results without silently truncating them. Comparators and equality predicates must be consistent.
+Predicates must return exactly 32 bytes containing zero or one. Comparators return exactly one `int256` word: negative, zero, or positive. `CallbackFailed` carries the operation selector, element indexes, target, calldata and ordinary revert data. Exhaustion and exact `SubcallOutOfGas()` signals propagate unchanged instead. `InvalidCallbackResult` identifies malformed callback results without silently truncating them. Comparators and equality predicates must be consistent.
 
 ## Traversals
 
@@ -62,6 +62,6 @@ These routines perform finite loops over supplied inputs; transaction gas bounds
 
 Callbacks must target an address containing EVM bytecode; precompiles are not accepted. The target is checked only when a callback is needed, so empty inputs and callback-free singleton cases do not inspect it.
 
-Predicates must return exactly one ABI boolean (0 or 1). Word mapping and folding require exactly 32 return bytes; generic mapping and folding validate the full declared ABI result. `CallbackFailed` identifies the operation and callback indices, and preserves both calldata and revert data.
+Predicates must return exactly one ABI boolean (0 or 1). Word mapping and folding require exactly 32 return bytes; generic mapping and folding validate the full declared ABI result. `CallbackFailed` identifies the operation and callback indices, and preserves calldata and ordinary revert data. Exhaustion and exact `SubcallOutOfGas()` signals bypass this wrapper.
 
 Typed callbacks prepare their argument layout and validate constants once per operation, then validate each substituted value and result. Word-template operations live alongside them on Collections: their fixed-width windows can reach nested calldata, while typed callbacks rebuild complete argument slots when encoded sizes change.

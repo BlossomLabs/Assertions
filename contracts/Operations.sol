@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {AbiCodec} from "./lib/AbiCodec.sol";
 
 /**
@@ -42,7 +43,7 @@ contract Operations {
      * @dev ABI-encoded as uint8: Trunc = 0 rounds toward zero, Floor = 1
      *      toward negative infinity, Ceil = 2 toward positive infinity. For
      *      non-negative results Trunc and Floor agree. An out-of-range
-     *      value reverts with Panic(0x21).
+     *      value is refused by the ABI decoder, which reverts without data.
      */
     enum Rounding {
         Trunc,
@@ -132,11 +133,20 @@ contract Operations {
     error LogarithmUndefined(int256 x);
 
     /**
-     * @notice Thrown when a rawCall staticcall reverts
+     * @notice Thrown when a rawCall staticcall reverts without exhaustion
      * @param target The called address
      * @param data The calldata that was sent
      */
     error RawCallFailed(address target, bytes data);
+
+    /**
+     * @notice A failed subcall exhausted its gas, or propagated this signal
+     * @dev Shares the core's selector. Rethrown before RawCallFailed so a
+     *      surrounding probe cannot accept exhaustion as an ordinary failure.
+     *      External targets that swallow failures or branch on gas are outside
+     *      this guarantee.
+     */
+    error SubcallOutOfGas();
 
     // ============ Arithmetic ============
 
@@ -285,15 +295,16 @@ contract Operations {
      * @notice a * b / denominator over the full 512-bit product, rounded
      *         once as `rounding` says (Trunc and Floor agree here): the
      *         overflow-free mul-then-div for token math
-     * @dev A zero denominator reverts with Panic(0x12); a rounded result
-     *      that does not fit uint256 with Panic(0x11)
+     * @dev OpenZeppelin's Math.mulDiv, then the Ceil adjustment. A zero
+     *      denominator reverts with Panic(0x12); a rounded result that does
+     *      not fit uint256 with Panic(0x11)
      */
     function mulDiv(uint256 a, uint256 b, uint256 denominator, Rounding rounding)
         external
         pure
         returns (uint256 result)
     {
-        result = _mulDiv(a, b, denominator);
+        result = Math.mulDiv(a, b, denominator);
         if (rounding == Rounding.Ceil && mulmod(a, b, denominator) != 0) result += 1;
     }
 
@@ -311,7 +322,7 @@ contract Operations {
         uint256 x = _magnitude(a);
         uint256 y = _magnitude(b);
         uint256 d = _magnitude(denominator);
-        uint256 result = _mulDiv(x, y, d);
+        uint256 result = Math.mulDiv(x, y, d);
         if (
             mulmod(x, y, d) != 0
                 && ((negative && rounding == Rounding.Floor) || (!negative && rounding == Rounding.Ceil))
@@ -420,23 +431,10 @@ contract Operations {
     /**
      * @notice floor(sqrt(x)): canonical use is AMM invariant checks, e.g.
      *         sqrt(mulDiv(x, y, 1e18, Trunc))
-     * @dev Babylonian method seeded by a bit scan: seven Newton
-     *      iterations are exact for the full uint256 range
+     * @dev OpenZeppelin's Math.sqrt
      */
     function sqrt(uint256 x) external pure returns (uint256) {
-        if (x == 0) return 0;
-        unchecked {
-            uint256 r = 1 << (_log2(x) >> 1);
-            r = (r + x / r) >> 1;
-            r = (r + x / r) >> 1;
-            r = (r + x / r) >> 1;
-            r = (r + x / r) >> 1;
-            r = (r + x / r) >> 1;
-            r = (r + x / r) >> 1;
-            r = (r + x / r) >> 1;
-            uint256 r1 = x / r;
-            return r < r1 ? r : r1;
-        }
+        return Math.sqrt(x);
     }
 
     /**
@@ -464,11 +462,11 @@ contract Operations {
         uint256 result = base;
         while (n > 0) {
             if (n & 1 == 1) {
-                result = _mulDiv(result, x, base);
+                result = Math.mulDiv(result, x, base);
             }
             n >>= 1;
             if (n > 0) {
-                x = _mulDiv(x, x, base);
+                x = Math.mulDiv(x, x, base);
             }
         }
         return result;
@@ -528,7 +526,7 @@ contract Operations {
             if (x <= 0) revert LogarithmUndefined(x);
 
             // Normalize to [1, 2) in a 2^96 base, remembering the shift.
-            int256 k = int256(_log2(uint256(x))) - 96;
+            int256 k = int256(Math.log2(uint256(x))) - 96;
             x <<= uint256(159 - k);
             x = int256(uint256(x) >> 159);
 
@@ -562,11 +560,12 @@ contract Operations {
      * @dev Earns its slot as a calldata-exponential composition: the
      *      composed form is eight nested conds that each duplicate their
      *      operand's calldata subtree. Reverts with LogarithmUndefined for
-     *      x = 0, where the logarithm is undefined.
+     *      x = 0, where the logarithm is undefined; OpenZeppelin's Math.log2
+     *      otherwise.
      */
     function log2(uint256 x) external pure returns (uint256) {
         if (x == 0) revert LogarithmUndefined(0);
-        return _log2(x);
+        return Math.log2(x);
     }
 
     // ============ Comparisons ============
@@ -825,7 +824,8 @@ contract Operations {
      *      their entire input. The caveat is the flip side: a staticcall
      *      to a code-less non-precompile address "succeeds" with empty
      *      returndata, so pin the result with byteLen or a constraint when
-     *      that matters. A revert is wrapped as RawCallFailed carrying the
+     *      that matters. Exhaustion and exact SubcallOutOfGas signals are
+     *      rethrown unchanged. Other reverts are wrapped as RawCallFailed carrying the
      *      calldata (the target's reason is lost; Expressions' ProbeCall
      *      and the core's revertData are the reason-carrying probes).
      * @param target The address to staticcall (precompiles included)
@@ -833,9 +833,29 @@ contract Operations {
      * @return The raw returndata as a bytes value
      */
     function rawCall(address target, bytes calldata data) external view returns (bytes memory) {
+        uint256 gasBefore = gasleft();
         (bool success, bytes memory result) = target.staticcall(data);
-        if (!success) revert RawCallFailed(target, data);
+        if (!success) {
+            _rejectOutOfGas(gasBefore, result);
+            revert RawCallFailed(target, data);
+        }
         return result;
+    }
+
+    /**
+     * @dev Mirrors the core's conservative exhaustion guard. Exact four-byte
+     *      signals survive nesting; near-exhausting ordinary reverts can also
+     *      be refused. External targets that transform failures are outside
+     *      this guarantee.
+     */
+    function _rejectOutOfGas(uint256 gasBefore, bytes memory ret) private view {
+        bytes4 head;
+        if (ret.length == 4) {
+            assembly ("memory-safe") {
+                head := mload(add(ret, 32))
+            }
+        }
+        if (gasleft() <= gasBefore / 63 || head == SubcallOutOfGas.selector) revert SubcallOutOfGas();
     }
 
     /**
@@ -1370,56 +1390,6 @@ contract Operations {
     }
 
     /**
-     * @dev floor(a * b / denominator) over the 512-bit product
-     *      [prod1 prod0], the classic Remco Bloemen construction: subtract
-     *      the remainder, factor powers of two out of the denominator,
-     *      then multiply by its inverse mod 2^256 (Newton doubles the
-     *      correct low bits each step: 6 steps from a 4-bit seed cover
-     *      all 256). Reverts with Panic(0x12) when denominator == 0 and
-     *      Panic(0x11) when the result needs more than 256 bits.
-     */
-    function _mulDiv(uint256 a, uint256 b, uint256 denominator) private pure returns (uint256 result) {
-        unchecked {
-            uint256 prod0;
-            uint256 prod1;
-            assembly ("memory-safe") {
-                let mm := mulmod(a, b, not(0))
-                prod0 := mul(a, b)
-                prod1 := sub(sub(mm, prod0), lt(mm, prod0))
-            }
-            if (prod1 == 0) {
-                // Plain division: Panic(0x12) on a zero denominator.
-                return prod0 / denominator;
-            }
-            if (denominator <= prod1) {
-                _panic(denominator == 0 ? 0x12 : 0x11);
-            }
-            uint256 remainder;
-            assembly ("memory-safe") {
-                remainder := mulmod(a, b, denominator)
-                prod1 := sub(prod1, gt(remainder, prod0))
-                prod0 := sub(prod0, remainder)
-            }
-            uint256 twos = denominator & (0 - denominator);
-            assembly ("memory-safe") {
-                denominator := div(denominator, twos)
-                prod0 := div(prod0, twos)
-                // 2^256 / twos: flip the divided-out factor to the high side
-                twos := add(div(sub(0, twos), twos), 1)
-            }
-            prod0 |= prod1 * twos;
-            uint256 inverse = (3 * denominator) ^ 2;
-            inverse *= 2 - denominator * inverse;
-            inverse *= 2 - denominator * inverse;
-            inverse *= 2 - denominator * inverse;
-            inverse *= 2 - denominator * inverse;
-            inverse *= 2 - denominator * inverse;
-            inverse *= 2 - denominator * inverse;
-            result = prod0 * inverse;
-        }
-    }
-
-    /**
      * @dev base ** exponent % modulus. Reverts with Panic(0x12) when the
      *      modulus is zero. Exponents below POW_MOD_PRECOMPILE_THRESHOLD
      *      run square-and-multiply over MULMOD (about 45 gas per exponent
@@ -1457,56 +1427,15 @@ contract Operations {
     }
 
     /**
-     * @dev The inverse of `base` modulo `modulus` by the extended Euclidean
-     *      algorithm with coefficients kept reduced modulo `modulus`
-     *      (MULMOD keeps q * t from overflowing even for a full-word
-     *      modulus). Reverts with ModularInverseDoesNotExist unless the two
-     *      are coprime, and with Panic(0x12) when the modulus is zero.
+     * @dev The inverse of `base` modulo `modulus`: OpenZeppelin's
+     *      Math.invMod, whose 0 means "no inverse" except modulo 1, where 0
+     *      is the inverse. Reverts with ModularInverseDoesNotExist unless
+     *      the two are coprime, and with Panic(0x12) when the modulus is
+     *      zero (the `1 % modulus` check).
      */
-    function _inverseMod(uint256 base, uint256 modulus) private pure returns (uint256) {
-        uint256 r = modulus;
-        uint256 nextR = base % modulus;
-        uint256 t;
-        uint256 nextT = 1 % modulus;
-        while (nextR != 0) {
-            uint256 q = r / nextR;
-            (r, nextR) = (nextR, r % nextR);
-            uint256 product = mulmod(q, nextT, modulus);
-            uint256 next = t >= product ? t - product : modulus - (product - t);
-            (t, nextT) = (nextT, next);
-        }
-        if (r != 1) revert ModularInverseDoesNotExist(base, modulus);
-        return t;
-    }
-
-    /**
-     * @dev floor(log2(x)) by a binary bit scan; returns 0 for x = 0 (the
-     *      public entry rejects that input)
-     */
-    function _log2(uint256 x) private pure returns (uint256 r) {
-        unchecked {
-            r = x >= 1 << 128 ? 128 : 0;
-            x >>= r;
-            uint256 s = x >= 1 << 64 ? 64 : 0;
-            x >>= s;
-            r |= s;
-            s = x >= 1 << 32 ? 32 : 0;
-            x >>= s;
-            r |= s;
-            s = x >= 1 << 16 ? 16 : 0;
-            x >>= s;
-            r |= s;
-            s = x >= 1 << 8 ? 8 : 0;
-            x >>= s;
-            r |= s;
-            s = x >= 1 << 4 ? 4 : 0;
-            x >>= s;
-            r |= s;
-            s = x >= 1 << 2 ? 2 : 0;
-            x >>= s;
-            r |= s;
-            r |= x >= 1 << 1 ? 1 : 0;
-        }
+    function _inverseMod(uint256 base, uint256 modulus) private pure returns (uint256 inverse) {
+        inverse = Math.invMod(base, modulus);
+        if (inverse == 0 && 1 % modulus != 0) revert ModularInverseDoesNotExist(base, modulus);
     }
 
     // ============ Internal Bytes Helpers ============
@@ -1580,13 +1509,31 @@ contract Operations {
 
     /**
      * @dev Whether `needle` occurs in `s` at byte position `pos` (caller
-     *      bounds-checks)
+     *      bounds-checks). Compares a word at a time, masking the tail word
+     *      to the needle's remaining bytes: a byte loop over bounds-checked
+     *      calldata cost about 170 gas per byte, so a near-miss needle made
+     *      every search O(n * m) at that price.
      */
-    function _matchesAt(bytes calldata s, bytes calldata needle, uint256 pos) private pure returns (bool) {
-        for (uint256 j = 0; j < needle.length; j++) {
-            if (s[pos + j] != needle[j]) return false;
+    function _matchesAt(bytes calldata s, bytes calldata needle, uint256 pos) private pure returns (bool equal) {
+        assembly ("memory-safe") {
+            equal := 1
+            let n := needle.length
+            let a := add(s.offset, pos)
+            for { let j := 0 } lt(j, n) { j := add(j, 32) } {
+                let x := calldataload(add(a, j))
+                let y := calldataload(add(needle.offset, j))
+                let left := sub(n, j)
+                if lt(left, 32) {
+                    let drop := shl(3, sub(32, left))
+                    x := shr(drop, x)
+                    y := shr(drop, y)
+                }
+                if iszero(eq(x, y)) {
+                    equal := 0
+                    break
+                }
+            }
         }
-        return true;
     }
 
     /**

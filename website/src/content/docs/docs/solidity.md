@@ -3,7 +3,7 @@ title: Using assertions from Solidity
 description: Complete patterns for DAO proposals, Safe batches, upgrades and every assertion family.
 ---
 
-An assertion is one external view call to the judge: `assertParam(param[, message])`, where the `InputParam` says how to **fetch** a live value and which inline **constraints** it must satisfy. Batch the assertion calls around the actions they guard; a failing constraint reverts the whole transaction with `ConstraintFailed`.
+An assertion is one external view call to the judge: `assertParam(param[, message])`, where the `InputParam` says how to **fetch** a live value and which inline **constraints** it must satisfy. Batch the assertion calls around the actions they guard; a failing constraint reverts with `ConstraintFailed`. Rollback of the guarded actions requires a mandatory assertion in the same transaction whose failure propagates through their enclosing executor. Catching the error, ignoring a low-level call failure or allowing the assertion action to fail can preserve earlier changes. Put preconditions before the guarded actions and postconditions after them.
 
 ## Building parameters
 

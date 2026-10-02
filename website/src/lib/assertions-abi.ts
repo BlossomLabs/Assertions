@@ -409,6 +409,11 @@ export const ASSERTIONS_ABI = [
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "SubcallOutOfGas",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes4",

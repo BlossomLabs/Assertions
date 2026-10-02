@@ -38,7 +38,9 @@ enum InputParamType {
  *      returndata of the staticcall is the value), BALANCE = 2 (paramData
  *      is abi.encodePacked(address token, address account), exactly 40
  *      bytes; token == address(0) reads the native balance, otherwise
- *      IERC20(token).balanceOf(account); the result is abi.encode(uint256))
+ *      IERC20(token).balanceOf(account); the result is abi.encode(uint256)).
+ *      STATIC_CALL paramData that solc cannot decode reverts without data,
+ *      as solc's decoder and the Biconomy reference do.
  */
 enum InputParamFetcherType {
     RAW_BYTES,
@@ -68,6 +70,8 @@ enum OutputParamFetcherType {
  *      OR 6 (abi.encode(Constraint[]) of non-OR leaves), SKIP 7 (empty
  *      referenceData), and IN_SIGNED 8 (two signed bounds). Signed kinds
  *      reinterpret complete words as int256; unsigned kinds use uint256.
+ *      OR referenceData that solc cannot decode as Constraint[] reverts
+ *      without data, as solc's decoder and the Biconomy reference do.
  */
 enum ConstraintType {
     EQ,

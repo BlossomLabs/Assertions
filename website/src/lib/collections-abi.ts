@@ -202,6 +202,11 @@ export const COLLECTIONS_ABI = [
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "SubcallOutOfGas",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",

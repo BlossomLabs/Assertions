@@ -22,13 +22,17 @@ interface ICore {
  * @notice Typed expression graphs for the Assertions core. A raw ERC-8211
  *         operand is a tree: it cannot name a subterm, so a value used
  *         twice is encoded and resolved twice. An `Expression` is a graph:
- *         nodes reference earlier nodes by index, every node evaluates at
- *         most once per evaluation, and every node's value is validated
+ *         nodes reference earlier nodes by index, successfully cached values
+ *         are reused, and every node's value is validated
  *         against its declared type. Lazy branches (`Select`) and guarded
  *         evaluation (`TryOrElse`, `IsValid`, `ProbeCall`) mirror the
  *         core's `cond`, `orElse`, `isValid` and `revertData` over graph
  *         nodes instead of unresolved operands.
- * @dev Stateless and view-only, like the core. Values are canonical
+ * @dev Stateless and view-only, like the core. Work inside a failed guarded
+ *      attempt loses its cache and may execute again. Sharing external reads
+ *      preserves values only when reads are deterministic under their call
+ *      context; view calls may still depend on gasleft or msg.sender.
+ *      Values are canonical
  *      single-value ABI encodings throughout (see AbiCodec): a Call node's
  *      arguments, a Tuple node's components and an Array node's elements
  *      all arrive that way, and each node's result must be one for its
@@ -52,7 +56,7 @@ contract Expressions {
      *      Literal (`data` is the value); Parameter (`data` is
      *      abi.encode(uint256 index) into the evaluation's parameters);
      *      Resolve (`data` is abi.encode(InputParam), resolved through the
-     *      expression's core); Call (`refs[0]` is the target address word,
+     *      expression's core; data solc cannot decode reverts without data); Call (`refs[0]` is the target address word,
      *      `refs[1..]` the arguments encoded as the tuple `arguments`
      *      describes, prefixed by `selector`); Select (`refs` are condition,
      *      then-branch, else-branch); Wrap (`refs[0]`'s value wrapped as a
@@ -124,8 +128,9 @@ contract Expressions {
     /**
      * @notice Thrown when a node is structurally invalid: the wrong number
      *         of refs for its kind, a result index past the last node, a
-     *         Parameter whose data is not one word, a Select condition
-     *         shorter than a word, or an address word with dirty upper bytes
+     *         Parameter whose data is not one word, a ProbeCall whose calldata
+     *         node is not typed bytes, or an address word with dirty upper
+     *         bytes
      * @param node The offending node's index (the result index when it is
      *        out of range)
      */
@@ -186,6 +191,18 @@ contract Expressions {
      */
     error UnexpectedRevertData(bytes4 expected, bytes4 actual);
 
+    /**
+     * @notice Thrown when a call the graph made failed after burning all the
+     *         gas it was given, so the failure cannot be told from an
+     *         out-of-gas the transaction's gas limit chose
+     * @dev Shares the core's SubcallOutOfGas selector and is rethrown
+     *      unchanged, so TryOrElse, IsValid and ProbeCall never read an
+     *      out-of-gas as a failure through supported core, Operations and
+     *      Collections frames. External targets that swallow failures or
+     *      deliberately branch on gas are outside this guarantee
+     */
+    error SubcallOutOfGas();
+
     // ============ Evaluate ============
 
     /**
@@ -194,16 +211,17 @@ contract Expressions {
      * @dev Every node is checked up front (reference direction, ref count
      *      per kind, descriptor shape); then evaluation proceeds from the
      *      result node on demand, so only reachable nodes execute and a
-     *      node shared by several references evaluates once. Select judges
-     *      truth like the core's `cond`: the first word of a condition of
-     *      at least 32 bytes, nonzero evaluates refs[1] and zero refs[2],
-     *      and only the chosen branch executes (a shorter condition reverts
-     *      with InvalidNode). TryOrElse and IsValid run their attempt in an
-     *      external self-call so that ANY failure inside it, a reverting
-     *      target, a type mismatch or an out-of-gas in the subframe, rolls
-     *      back and selects the fallback (the same 63/64 caveat as the
-     *      core's `orElse` applies: do not use them to distinguish failure
-     *      causes). Values memoized inside a successful attempt are kept.
+     *      node shared by several references reuses its cached value (work in a
+     *      failed guarded attempt may execute again). Select judges
+     *      truth like the core's `cond`: the first word of the condition
+     *      (every value is at least one word, since no type is shorter),
+     *      nonzero evaluates refs[1] and zero refs[2], and only the chosen
+     *      branch executes. TryOrElse and IsValid run their attempt in an
+     *      external self-call so that a failure inside it, a reverting
+     *      target or a type mismatch, rolls back and selects the fallback,
+     *      except an attempt that burned all its gas, which reverts
+     *      SubcallOutOfGas like the core's `orElse` (do not use them to
+     *      distinguish other failure causes). Values memoized inside a successful attempt are kept.
      *      Every node's value is validated against its `valueType` and a
      *      mismatch reverts with AbiCodec's InvalidValue at the offending
      *      offset. The result is returned via a
@@ -229,6 +247,11 @@ contract Expressions {
                 if (node.refs.length != 3) revert InvalidNode(i);
             } else if (node.kind == Kind.TryOrElse || node.kind == Kind.ProbeCall) {
                 if (node.refs.length != 2) revert InvalidNode(i);
+                // ProbeCall decodes its calldata operand as bytes, so it must be typed so.
+                if (
+                    node.kind == Kind.ProbeCall
+                        && keccak256(bytes(expression.nodes[node.refs[1]].valueType)) != keccak256("bytes")
+                ) revert InvalidNode(i);
             } else if (node.kind == Kind.Wrap || node.kind == Kind.IsValid) {
                 if (node.refs.length != 1) revert InvalidNode(i);
             } else if (node.kind != Kind.Array && node.kind != Kind.Tuple && node.refs.length != 0) {
@@ -274,7 +297,8 @@ contract Expressions {
      *      slots as `parameters`. Evaluation happens through an external
      *      self-call, so a failure inside the graph surfaces as
      *      NodeCallFailed(0, this, callData, reason) with the inner error as
-     *      the reason. Returns the same raw value as `evaluate`.
+     *      the reason. Returns the same raw value as `evaluate`. An
+     *      `expression` solc cannot decode reverts without data.
      * @param expression abi.encode(Expression)
      * @param parameters The values Parameter nodes read
      */
@@ -310,7 +334,6 @@ contract Expressions {
             result = _call(p.core, abi.encodeCall(ICore.resolve, (source)), index);
         } else if (node.kind == Kind.Select) {
             bytes memory condition = _evaluate(p, parameters, cache, node.refs[0]);
-            if (condition.length < 32) revert InvalidNode(index);
             result = _evaluate(p, parameters, cache, node.refs[AbiCodec.word(condition, 0) != 0 ? 1 : 2]);
         } else if (node.kind == Kind.TryOrElse || node.kind == Kind.IsValid) {
             (bool success, bytes memory attempted) = _tryEvaluate(p, parameters, cache, node.refs[0]);
@@ -360,13 +383,15 @@ contract Expressions {
         Cache memory cache,
         uint256 index
     ) private view returns (bool success, bytes memory result) {
+        uint256 gasBefore = gasleft();
         try this.evaluateGuarded(expression, parameters, index, cache) returns (
             bytes memory value, Cache memory updated
         ) {
             cache.values = updated.values;
             cache.ready = updated.ready;
             return (true, value);
-        } catch {
+        } catch (bytes memory reason) {
+            _rejectOutOfGas(gasBefore, reason);
             return (false, "");
         }
     }
@@ -406,8 +431,10 @@ contract Expressions {
             return "";
         }
         bool success;
+        uint256 gasBefore = gasleft();
         (success, reason) = target.staticcall(callData);
         if (success) revert DidNotRevert(target, callData);
+        _rejectOutOfGas(gasBefore, reason);
         if (expected == bytes4(0)) return reason;
         bytes4 actual;
         if (reason.length >= 4) {
@@ -434,7 +461,28 @@ contract Expressions {
     function _call(address target, bytes memory data, uint256 index) private view returns (bytes memory result) {
         if (target.code.length == 0) revert InvalidTarget(index, target);
         bool ok;
+        uint256 gasBefore = gasleft();
         (ok, result) = target.staticcall(data);
-        if (!ok) revert NodeCallFailed(index, target, data, result);
+        if (!ok) {
+            _rejectOutOfGas(gasBefore, result);
+            revert NodeCallFailed(index, target, data, result);
+        }
+    }
+
+    /**
+     * @dev After a failed call: reverts SubcallOutOfGas when the callee
+     *      burned all it was given (at most gasBefore / 63 left here is the
+     *      out-of-gas signature), or when it reverted with exactly
+     *      SubcallOutOfGas, so the signal survives nesting. The core's guard,
+     *      mirrored.
+     */
+    function _rejectOutOfGas(uint256 gasBefore, bytes memory ret) private view {
+        bytes4 head;
+        if (ret.length == 4) {
+            assembly ("memory-safe") {
+                head := mload(add(ret, 32))
+            }
+        }
+        if (gasleft() <= gasBefore / 63 || head == SubcallOutOfGas.selector) revert SubcallOutOfGas();
     }
 }

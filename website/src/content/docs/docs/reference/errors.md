@@ -20,19 +20,21 @@ Defined once in `ERC8211.sol`, the standard's shared vocabulary, thrown by the c
 | `InvalidOrConstraint(uint256, uint256, uint256)` | empty OR or nested OR; identifies entry, operand and outer constraint/word index |
 | `InvalidConstraintRange(uint256, uint256, uint256)` | range lower bound exceeds upper bound under its signedness; identifies entry, operand and outer constraint/word index |
 
+Wire bytes that solc's decoder cannot read revert **without data**, exactly as they do in Biconomy's reference: a `STATIC_CALL` fetcher's `paramData` that is not `abi.encode(address, bytes)`, an `OR` constraint's `referenceData` that is not `abi.encode(Constraint[])`, and, on Expressions, a Resolve node's `data` or an `evaluateEncoded` payload. The SDK always encodes these correctly; a bare revert here means hand-built calldata.
+
 ## AbiCodec (shared ABI machinery)
 
 `InvalidTypeDescriptor` is declared at file level in `AbiCodec.sol` and the rest inside the library; all four contracts share its descriptor grammar and canonical-value validation. `ElementIndexOutOfBounds` is declared at file level in `Assertions.sol` for navigation:
 
 | Error | Description |
 |-------|-------------|
-| `InvalidTypeDescriptor(uint256)` | a type descriptor cannot be parsed: empty or non-tuple, an unknown character where a type was expected, an unterminated array suffix, or trailing garbage (the argument is the byte position where parsing failed) |
+| `InvalidTypeDescriptor(uint256)` | a type descriptor cannot be parsed: empty, non-tuple where a tuple is required, an unknown character where a type was expected, an unterminated array suffix, a fixed length of 0 or above 2^32 − 1 (or a static fixed-array footprint above 2^32 − 1 words), or trailing garbage (the argument is the byte position where parsing failed) |
 | `ElementIndexOutOfBounds(int256, uint256)` | a path or component index is outside the tuple or array it steps into, in either direction for negative array indices (arguments: requested index as given, and the component/element count) |
-| `InvalidValue(uint256)` | a canonical value or array encoding is malformed at the given byte offset: `packArray`/`unpackArray`, every Collections element check, `unzipValues`' pair envelopes, every Expressions node result and the array or tuple terminals `nav` re-encodes go through this validation |
+| `InvalidValue(uint256)` | a canonical value or array encoding is malformed at the given byte offset: `packArray`/`unpackArray`, every Collections element check, `unzipValues`' pair envelopes, every Expressions node result and the array or tuple terminals `nav` re-encodes go through this validation; trailing data is reported at its first byte |
 | `ComponentCountMismatch(uint256, uint256)` | a tuple encoder received a `values` array whose length differs from the descriptor's component count (`encode`, `encodeBytes`, the core's `get`, the arguments of an Expressions `Call` or a `Tuple` node) |
 | `InvalidComponentLength(uint256, uint256, uint256)` | a static tuple component's value is not exactly its head footprint (arguments: component index, expected bytes, actual bytes) |
 | `InvalidComponentEnvelope(uint256, uint256, bytes32)` | a dynamic tuple component's value is not a canonical `[0x20][tail]` envelope (arguments: component index, value length, first word) |
-| `InvalidComponentValue(uint256, uint256)` | a nested component value is malformed (component index and byte offset within its single-value encoding) |
+| `InvalidComponentValue(uint256, uint256)` | a nested component value is malformed (component index and byte offset within its single-value encoding); trailing data is reported at its first byte |
 | `InvalidCallbackResult(bytes4, uint256, uint256, address)` | a Collections callback returned the wrong shape: a word lambda returned other than 32 bytes, a predicate other than a 0/1 word, a comparator other than one word, or a generic map/fold result that is not canonical for its declared type (arguments: the operation selector, the element indices and the callback target) |
 
 ## Assertions (core)
@@ -51,6 +53,7 @@ View-mode batch restrictions from the judge, plus the primitives' own errors:
 | `RevertProbeConstrained(uint256)` | `revertData`'s operand carries constraints; the call itself is the subject, so its value is never validated |
 | `DidNotRevert(address, bytes)` | the call `revertData` (or an Expressions `ProbeCall`) probed succeeded; an assertion that a call fails is not satisfied by it working (identifies the offending call) |
 | `UnexpectedRevertData(bytes4, bytes4)` | the probed call reverted, but its data does not start with the expected error selector (arguments: expected, actual; a `0x00000000` actual means the revert carried fewer than four bytes, or the target had no code) |
+| `SubcallOutOfGas()` | a call the core made failed after burning all the gas it was given, so the failure cannot be told from an out-of-gas the transaction's gas limit chose; raised instead of letting `isValid` read 0, `orElse` take its fallback or `revertData` report a revert, and rethrown through nested core frames |
 
 ## Operations
 
@@ -62,7 +65,8 @@ View-mode batch restrictions from the judge, plus the primitives' own errors:
 | `EmptyNumber()` | `parseUint`, `parseInt` or `parseUnits` received no digits (0 would be a silent wrong answer) |
 | `InvalidDecimalDigit(uint256, bytes1)` | a decimal parser met a byte outside `0-9` where a digit was required (arguments: byte position, offending byte); `parseUnitsUnsigned` reports a leading minus sign this way |
 | `InvalidPrecision(uint256)` | `parseUnits`, `parseUnitsUnsigned` or `formatUnits` received a `decimals` above 77 |
-| `RawCallFailed(address, bytes)` | a `rawCall` staticcall reverted (arguments: the called address and the calldata that was sent) |
+| `RawCallFailed(address, bytes)` | a `rawCall` staticcall reverted without exhaustion (arguments: the called address and the calldata that was sent) |
+| `SubcallOutOfGas()` | a failed subcall exhausted its forwarded gas or returned this exact four-byte signal; rethrown before ordinary error wrapping, with the core's conservative exhaustion semantics |
 | `EmptyNeedle()` | `replace` or `split` received an empty needle or delimiter (it would match everywhere) |
 | `ModularInverseDoesNotExist(uint256, uint256)` | a negative `powMod` exponent has no inverse because the base and modulus magnitudes are not coprime (arguments: base magnitude, modulus magnitude) |
 | `LogarithmUndefined(int256)` | `log2(0)`, or `lnWad` of zero or a negative value: the logarithm is undefined there (argument: the input, zero for `log2`) |
@@ -80,19 +84,21 @@ Arithmetic failures in Operations surface as Solidity panics: overflow/underflow
 | `InvalidLane(uint256)` | `unzipWords` or `unzipValues` received a lane other than 0 or 1 |
 | `InvalidCallback()` | a `Callback` is malformed: `first` (or `second` for binary operations) is not a slot of `constants`, the two slots coincide, `arguments` is not a parenthesized tuple, or `constants` has a different length than the descriptor's component count |
 | `InvalidCallbackTarget(address)` | a callback or lambda target has no bytecode; precompiles are excluded |
-| `CallbackFailed(bytes4, uint256, uint256, address, bytes, bytes)` | a callback or lambda reverted; carries the operation selector, the element indices, the target, the calldata and the revert data |
+| `CallbackFailed(bytes4, uint256, uint256, address, bytes, bytes)` | a callback or lambda reverted without exhaustion; carries the operation selector, the element indices, the target, the calldata and the revert data |
+| `SubcallOutOfGas()` | a failed subcall exhausted its forwarded gas or returned this exact four-byte signal; rethrown before ordinary error wrapping, with the core's conservative exhaustion semantics |
 
-A malformed callback result reverts with `AbiCodec.InvalidCallbackResult` (above). An out-of-range `FoldExit` surfaces as `Panic(0x21)`, and `sumWords` overflow as `Panic(0x11)`.
+A malformed callback result reverts with `AbiCodec.InvalidCallbackResult` (above). An out-of-range `FoldExit` (like an out-of-range `Rounding` on Operations) is refused by the ABI decoder, which reverts without data, and `sumWords` overflow as `Panic(0x11)`.
 
 ## Expressions
 
 | Error | Description |
 |-------|-------------|
-| `InvalidNode(uint256)` | a malformed node: the `result` index out of range, the wrong reference count for the node's kind, a `Parameter` whose data is not one word, a `Select` condition shorter than 32 bytes, a target word that is not a clean address |
+| `InvalidNode(uint256)` | a malformed node: the `result` index out of range, the wrong reference count for the node's kind, a `Parameter` whose data is not one word, a `ProbeCall` whose calldata node is not typed `bytes`, a target word that is not a clean address |
 | `NotSelf(address)` | `evaluateGuarded` was called by anyone other than the Expressions contract itself |
 | `InvalidReference(uint256, uint256)` | a node references itself or a later node, or a `Parameter` index is past the supplied parameters |
 | `InvalidTarget(uint256, address)` | a `Call`, a `Resolve` or the `evaluateEncoded` self-call targets an address without code (the argument is the node index) |
-| `NodeCallFailed(uint256, address, bytes, bytes)` | the staticcall a node made reverted; carries the node index, the target, the calldata and the reason. A different error from the core's two-argument `CallFailed` |
+| `NodeCallFailed(uint256, address, bytes, bytes)` | the staticcall a node made reverted without exhaustion or the reserved signal; carries the node index, the target, the calldata and the reason. A different error from the core's two-argument `CallFailed` |
+| `SubcallOutOfGas()` | a call the graph made failed after burning all the gas it was given; raised instead of letting `TryOrElse` fall back, `IsValid` read false or `ProbeCall` report a revert. Shares the core's selector and propagates unchanged through all four contracts |
 
 `ProbeCall` reuses the core's `DidNotRevert` and `UnexpectedRevertData`; descriptor and value validation raise the `AbiCodec` errors. See [Expressions](/docs/operators/expressions).
 

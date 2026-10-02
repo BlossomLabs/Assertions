@@ -66,8 +66,8 @@ const CONTRACTS = [
     artifact: "artifacts/contracts/Assertions.sol/Assertions.json",
     output: "src/lib/assertions-deployment.ts",
     // Vanity salt for the 2.0 release.
-    salt: "0x701300821f7dc4d9511874c56dfffa4b84d33eccc191ca5840daeb002c7ec439",
-    expectedAddress: "0xA55e479Cfb10A70BA33560ecAf5dd29C3fDE8531",
+    salt: "0x70d03cef338b40b5f77a051a796ca7770cf9ddc0322d0901cee1fbc49c283efb",
+    expectedAddress: "0xa55e471cE89f66FaACF21E7E7cC22F2E9E2facab",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -81,8 +81,8 @@ const CONTRACTS = [
     artifact: "artifacts/contracts/Operations.sol/Operations.json",
     output: "src/lib/operations-deployment.ts",
     // Vanity salt for the 2.0 release.
-    salt: "0x4b123c4d7b7581d183be92a28c56b467d37f1cde8a08a5cab6518e939c9555af",
-    expectedAddress: "0x09E4A7Ef72b44d3E16466Ca3517Af567eA7D8aDA",
+    salt: "0x986eccda3c8e38a832036e410657b1b5aef8bf9b7555c7d2a40aa0653d5e258a",
+    expectedAddress: "0x09e4a7E60e349232CC2B87296692F613eB216184",
     prefix: "OPERATIONS",
     description: "Operations plain-value vocabulary contract",
     includeProxyConstants: false,
@@ -97,8 +97,8 @@ const CONTRACTS = [
     output: "src/lib/collections-deployment.ts",
     // Vanity salt for the 2.0 release. The callback interface is local, so
     // Expressions source edits do not move this address.
-    salt: "0xd05e880804757a5f5a4dad693f62ebb488cda0f5ef2a4cc2757d2963e8ca6eaf",
-    expectedAddress: "0xC011ec718c89903c3c5348837877f0FFCa67B500",
+    salt: "0xfece70700b91dff83ae8fc733ffd59f1bf0ab1a7cda729c4bbc4aca1bfa138da",
+    expectedAddress: "0xC011Ec7d80189d7425976eC7B338e32129fc2E43",
     prefix: "COLLECTIONS",
     description: "generic ABI collection vocabulary contract",
     includeProxyConstants: false,
@@ -113,8 +113,8 @@ const CONTRACTS = [
     output: "src/lib/expressions-deployment.ts",
     // Vanity salt for the 2.0 release. The core interface is local, so core
     // source edits do not move this address.
-    salt: "0x4852b74e55f554c8614e24a7024785d16d3bf4e39787841c1ebbe88396dee43d",
-    expectedAddress: "0xe5594E555dF45DbF1a5622ED73e282EDb42e7930",
+    salt: "0xb8c166f9f834cfc8d1d605b5491942160da436eaf8f9d8f75c355558f669aa43",
+    expectedAddress: "0xe5594e5561557B43ef3041F149C20A4cb849C64E",
     prefix: "EXPRESSIONS",
     description: "typed expression graphs contract",
     includeProxyConstants: false,
@@ -165,9 +165,9 @@ if (args.length) {
 
 // Predict every selected address before measuring anything: the CREATE2 math
 // must reproduce the canonical address, or the compiled bytecode no longer
-// matches the deployed contract. A refusal lists every predicted address so a
-// deliberate re-export can copy them into CONTRACTS (and move the retired
-// ones into HISTORY) in one step.
+// matches the canonical artifact candidate. A refusal lists every predicted address so a
+// deliberate re-export can replace the candidate addresses in CONTRACTS.
+// HISTORY contains publicly deployed releases only.
 const loaded = selectedContracts.map((c) => {
   const artifactPath = join(repoRoot, c.artifact);
   const artifact = JSON.parse(readFileSync(artifactPath, "utf8"));
@@ -186,11 +186,11 @@ const loaded = selectedContracts.map((c) => {
 const mismatches = loaded.filter((c) => c.predicted !== c.expectedAddress);
 if (mismatches.length) {
   throw new Error(
-    "CREATE2 address mismatch: the local artifact differs from the deployed contract, do not export it.\n" +
+    "CREATE2 address mismatch: the local artifact differs from the canonical artifact candidate, do not export it.\n" +
       mismatches
         .map((c) => `  ${c.name}: compiled bytecode predicts ${c.predicted}, expected ${c.expectedAddress}`)
         .join("\n") +
-      "\nIf the change is deliberate, copy the predicted addresses into CONTRACTS and move the retired ones into HISTORY.",
+      "\nIf the change is deliberate, mine replacement vanity salts and update CONTRACTS; keep public-release HISTORY unchanged.",
   );
 }
 
@@ -226,7 +226,7 @@ const deployGas = JSON.parse(gasLine.slice("DEPLOY_GAS_JSON ".length));
 // Resolves the import closure of `entry` within a standard-JSON `sources`
 // map, so the verification bundle only ships the files the contract needs
 // (dropping unrelated sources like the test mocks from the same compile job).
-function importClosure(sources, entry) {
+function importClosure(sources, entry, remappings) {
   const closure = new Set();
   const queue = [entry];
   while (queue.length > 0) {
@@ -238,7 +238,21 @@ function importClosure(sources, entry) {
     const importRe = /import\s[^;]*?["']([^"']+)["']\s*;/g;
     for (const [, path] of source.content.matchAll(importRe)) {
       if (!path.startsWith(".")) {
-        queue.push(path);
+        // Hardhat 3 uses versioned npm source names. Resolve the compiler's
+        // own context-specific remappings instead of assuming import text
+        // is a key in the standard-JSON sources map.
+        const candidates = remappings.map((mapping) => {
+          const [from, to] = mapping.split("=");
+          const colon = from.indexOf(":");
+          return {
+            context: colon < 0 ? "" : from.slice(0, colon),
+            prefix: from.slice(colon + 1),
+            to,
+          };
+        }).filter((m) => name.startsWith(m.context) && path.startsWith(m.prefix))
+          .sort((a, b) => b.context.length - a.context.length || b.prefix.length - a.prefix.length);
+        const mapping = candidates[0];
+        queue.push(mapping ? mapping.to + path.slice(mapping.prefix.length) : path);
         continue;
       }
       const base = name.split("/").slice(0, -1);
@@ -264,9 +278,9 @@ for (const c of loaded) {
 
   const output = `// Generated by scripts/export-deploy-artifact.mjs, do not edit by hand.
 // Contains everything needed to deploy the ${c.description} to its
-// canonical address on any EVM chain via the Arachnid CREATE2 proxy.
+// predicted canonical address on compatible EVM chains via the Arachnid CREATE2 proxy.
 
-/** Canonical deployment address of the ${c.name} contract on every chain. */
+/** Predicted CREATE2 address; verify matching code on the selected chain before use. */
 export const ${c.prefix}_ADDRESS =
   "${c.expectedAddress}" as const;
 
@@ -324,7 +338,7 @@ export const ${c.prefix}_CREATION_BYTECODE =
     compilerVersion: `v${buildInfo.solcLongVersion}`,
     input: {
       language: buildInfo.input.language,
-      sources: importClosure(buildInfo.input.sources, entrySource),
+      sources: importClosure(buildInfo.input.sources, entrySource, buildInfo.input.settings.remappings ?? []),
       settings: buildInfo.input.settings,
     },
   });
@@ -364,7 +378,7 @@ export const ${c.prefix}_CREATION_BYTECODE =
 
 const verificationModule = `// Generated by scripts/export-deploy-artifact.mjs, do not edit by hand.
 // The exact solc standard-JSON inputs that produced the canonical bytecode of
-// each deployed contract, for explorer source verification on any chain.
+// each artifact candidate, for explorer verification after deployment.
 // Import lazily (dynamic import): the embedded sources are large.
 
 export interface VerificationInput {

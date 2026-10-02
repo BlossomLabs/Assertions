@@ -47,3 +47,6 @@
 
 # Local pinned proof tool installation
 /proof-tools
+
+# Local historical proof files retained during the library transition
+/.proof-history/

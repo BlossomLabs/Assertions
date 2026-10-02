@@ -17,7 +17,7 @@ def main():
     owners = [args.contract] if args.contract else ['Assertions','Operations','Collections','Expressions','SharedABI','SharedFoundations']
     seen = set()
     for owner in owners:
-        path = LIBRARY/'source/claims'/owner/'claims.json'
+        path = LIBRARY/'source/declarations'/owner/'declarations.json'
         records = json.loads(path.read_text())['records'] if path.exists() else []
         helpers = json.loads((LIBRARY/'helper-interfaces.json').read_text())['records']
         records += [r for r in helpers if r['contract'] == owner]

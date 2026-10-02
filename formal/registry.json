@@ -11,11 +11,7 @@
   "packages": [
     {
       "id": "concat",
-      "mapping": {
-        "path": "formal/source/concat-theorem-mapping-v2.json",
-        "sha256": "011d591568ef38cf34d08a930e8a666d0c143adcc4e5f808a33dcd5c62f934e7"
-      },
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/source/operations/concat/v1/Connection.dfy",
         "formal/source/operations/concat/v1/Model.dfy"
@@ -24,17 +20,11 @@
       "bytecodeCredit": false,
       "descriptor": "formal/packages/concat/canonical.json",
       "canonicalDescriptor": "formal/packages/concat/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/concat/package.json",
-      "historicalStatus": "accepted-conditional-source"
+      "selectionRole": "proof-package"
     },
     {
       "id": "replace-suite",
-      "mapping": {
-        "path": "formal/source/replace-suite-theorem-mapping-v2.json",
-        "sha256": "81dcbdcd971aa647a7d4f6f81d52727b11d7bc43330deb02947a02d777357759"
-      },
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/source/operations/replace-suite-v1/byte-replace/Connection.dfy",
         "formal/source/operations/replace-suite-v1/byte-replace/Control.generated.dfy",
@@ -54,17 +44,11 @@
       "bytecodeCredit": false,
       "descriptor": "formal/packages/replace-suite/canonical.json",
       "canonicalDescriptor": "formal/packages/replace-suite/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/replace-suite/package.json",
-      "historicalStatus": "native-passed-correspondence-pending"
+      "selectionRole": "proof-package"
     },
     {
       "id": "word-memory",
-      "mapping": {
-        "path": "formal/source/word-memory-theorem-mapping-v2.json",
-        "sha256": "22a4526e259dc5ceb1db41d5a64238be8bf0e12aece360741d41bae12516e9fe"
-      },
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/source/migration-v1/collections/word-memory/Connection.dfy",
         "formal/source/migration-v1/collections/word-memory/Model.dfy",
@@ -74,17 +58,11 @@
       "bytecodeCredit": false,
       "descriptor": "formal/packages/word-memory/canonical.json",
       "canonicalDescriptor": "formal/packages/word-memory/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/word-memory/package.json",
-      "historicalStatus": "native-passed-correspondence-pending"
+      "selectionRole": "proof-package"
     },
     {
       "id": "word-windows",
-      "mapping": {
-        "path": "formal/source/word-windows-theorem-mapping-v2.json",
-        "sha256": "95f154e0ee6f377d7f87109c17849e2141b98341436e8ef24a4141e7737b2519"
-      },
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/source/migration-v1/collections/word-windows/Connection.dfy",
         "formal/source/migration-v1/collections/word-windows/Model.dfy",
@@ -95,17 +73,11 @@
       "bytecodeCredit": false,
       "descriptor": "formal/packages/word-windows/canonical.json",
       "canonicalDescriptor": "formal/packages/word-windows/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/word-windows/package.json",
-      "historicalStatus": "native-passed-correspondence-pending"
+      "selectionRole": "proof-package"
     },
     {
       "id": "constraints",
-      "mapping": {
-        "path": "formal/source/constraints-theorem-mapping-v2.json",
-        "sha256": "e03510dc71aa1d35cc564c707c68256b7c22f8d66df0808b14703d6bf9721cf9"
-      },
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/source/migration-v1/constraints/Engine.generated.dfy",
         "formal/source/migration-v1/constraints/Model.dfy"
@@ -114,17 +86,11 @@
       "bytecodeCredit": false,
       "descriptor": "formal/packages/constraints/canonical.json",
       "canonicalDescriptor": "formal/packages/constraints/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/constraints/package.json",
-      "historicalStatus": "native-passed-correspondence-pending"
+      "selectionRole": "proof-package"
     },
     {
       "id": "expressions-recursive",
-      "mapping": {
-        "path": "formal/source/expressions-recursive-v3-theorem-mapping-v2.json",
-        "sha256": "7d46ebc36d9949743fc786de7ec931189ebd021c29e9e04eb3857e9908081433"
-      },
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/source/migration-v3/expressions/evaluation/Control.dfy",
         "formal/source/migration-v3/expressions/recursive/Source.generated.dfy",
@@ -134,17 +100,11 @@
       "bytecodeCredit": false,
       "descriptor": "formal/packages/expressions-recursive/canonical.json",
       "canonicalDescriptor": "formal/packages/expressions-recursive/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/expressions-recursive/package.json",
-      "historicalStatus": "native-passed-correspondence-pending"
+      "selectionRole": "proof-package"
     },
     {
       "id": "core-raw",
-      "mapping": {
-        "path": "formal/source/core-raw-v2-theorem-mapping-v2.json",
-        "sha256": "aaadbb410a64fa6adab60e7eedfc08048ac675643a328a2547ec5c9a1809a8b1"
-      },
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/source/migration-v2/core/Model.dfy",
         "formal/source/migration-v2/core/Source.generated.dfy",
@@ -157,17 +117,11 @@
       "bytecodeCredit": false,
       "descriptor": "formal/packages/core-raw/canonical.json",
       "canonicalDescriptor": "formal/packages/core-raw/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/core-raw/package.json",
-      "historicalStatus": "native-passed-correspondence-pending"
+      "selectionRole": "proof-package"
     },
     {
       "id": "abi",
-      "mapping": {
-        "path": "formal/source/abi-memory-v3-theorem-mapping-v2.json",
-        "sha256": "04c3d554f82e0594a7989e957546c7448a34a694998154288b1769a32ea141d9"
-      },
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/source/migration-v4/abi/Encoding.dfy",
         "formal/source/migration-v4/abi/Examples.dfy",
@@ -226,14 +180,12 @@
       "nativeEvidence": "formal/source/evidence/abi-memory-v3/manifest.json",
       "independentNativeReview": "formal/evidence/abi-selection/native-review.json",
       "canonicalDescriptor": "formal/packages/abi/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/abi/package.json",
-      "historicalStatus": "native-passed-correspondence-pending"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-abi",
       "descriptor": "formal/packages/original-abi/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/abi/Encoding.dfy",
         "formal/abi/Examples.dfy",
@@ -244,14 +196,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-abi/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-abi/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-abi-aggregate",
       "descriptor": "formal/packages/original-abi-aggregate/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/abi/aggregate/CursorSemantics.dfy",
         "formal/abi/aggregate/Cursors.generated.dfy",
@@ -261,14 +211,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-abi-aggregate/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-abi-aggregate/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-abi-connection",
       "descriptor": "formal/packages/original-abi-connection/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/abi/connection/Bridge.generated.dfy",
         "formal/abi/connection/Descriptor.dfy",
@@ -280,14 +228,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-abi-connection/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-abi-connection/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-abi-construction",
       "descriptor": "formal/packages/original-abi-construction/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/abi/construction/Assembly.generated.dfy",
         "formal/abi/construction/Component.generated.dfy",
@@ -306,14 +252,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-abi-construction/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-abi-construction/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-abi-descriptor",
       "descriptor": "formal/packages/original-abi-descriptor/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/abi/descriptor/Refinement.dfy",
         "formal/abi/descriptor/Semantics.dfy",
@@ -323,14 +267,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-abi-descriptor/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-abi-descriptor/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-abi-dynamic",
       "descriptor": "formal/packages/original-abi-dynamic/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/abi/dynamic/Body.generated.dfy",
         "formal/abi/dynamic/Semantics.dfy",
@@ -341,14 +283,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-abi-dynamic/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-abi-dynamic/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-abi-layout",
       "descriptor": "formal/packages/original-abi-layout/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/abi/layout/Canonical.dfy",
         "formal/abi/layout/Count.generated.dfy",
@@ -361,14 +301,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-abi-layout/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-abi-layout/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-abi-outcomes",
       "descriptor": "formal/packages/original-abi-outcomes/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/abi/outcomes/Body.generated.dfy",
         "formal/abi/outcomes/Cached.generated.dfy",
@@ -382,14 +320,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-abi-outcomes/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-abi-outcomes/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-abi-parser",
       "descriptor": "formal/packages/original-abi-parser/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/abi/parser/Completeness.dfy",
         "formal/abi/parser/Parser.generated.dfy",
@@ -399,14 +335,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-abi-parser/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-abi-parser/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-abi-shape",
       "descriptor": "formal/packages/original-abi-shape/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/abi/shape/Refinement.dfy",
         "formal/abi/shape/Semantics.dfy",
@@ -416,14 +350,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-abi-shape/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-abi-shape/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-abi-source",
       "descriptor": "formal/packages/original-abi-source/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/abi/source/ByteSemantics.dfy",
         "formal/abi/source/BytesBody.generated.dfy",
@@ -433,14 +365,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-abi-source/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-abi-source/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-abi-tuples",
       "descriptor": "formal/packages/original-abi-tuples/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/abi/tuples/CheckWords.generated.dfy",
         "formal/abi/tuples/Names.generated.dfy",
@@ -452,14 +382,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-abi-tuples/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-abi-tuples/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-abi-words",
       "descriptor": "formal/packages/original-abi-words/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/abi/words/Refinement.dfy",
         "formal/abi/words/Scanners.generated.dfy",
@@ -469,14 +397,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-abi-words/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-abi-words/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-arguments",
       "descriptor": "formal/packages/original-arguments/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/arguments/Model.dfy",
         "formal/arguments/Source.generated.dfy",
@@ -486,14 +412,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-arguments/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-arguments/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-admission",
       "descriptor": "formal/packages/original-collections-admission/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/admission/Connection.dfy",
         "formal/collections/admission/Model.dfy",
@@ -503,14 +427,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-admission/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-admission/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-bound-call",
       "descriptor": "formal/packages/original-collections-bound-call/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/bound-call/Connection.dfy",
         "formal/collections/bound-call/Model.dfy"
@@ -519,14 +441,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-bound-call/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-bound-call/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-call-results",
       "descriptor": "formal/packages/original-collections-call-results/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/call-results/Connection.dfy",
         "formal/collections/call-results/Model.dfy"
@@ -535,14 +455,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-call-results/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-call-results/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-callback-results",
       "descriptor": "formal/packages/original-collections-callback-results/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/callback-results/Connection.dfy",
         "formal/collections/callback-results/Model.dfy",
@@ -552,14 +470,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-callback-results/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-callback-results/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-calls",
       "descriptor": "formal/packages/original-collections-calls/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/calls/Connection.dfy",
         "formal/collections/calls/Model.dfy",
@@ -569,14 +485,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-calls/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-calls/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-codec-errors",
       "descriptor": "formal/packages/original-collections-codec-errors/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/codec-errors/Connection.dfy",
         "formal/collections/codec-errors/Encoding.dfy",
@@ -586,14 +500,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-codec-errors/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-codec-errors/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-codec-state",
       "descriptor": "formal/packages/original-collections-codec-state/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/codec-state/Connection.dfy",
         "formal/collections/codec-state/Model.dfy"
@@ -602,14 +514,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-codec-state/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-codec-state/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-completion",
       "descriptor": "formal/packages/original-collections-completion/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/completion/Boundary.generated.dfy"
       ],
@@ -617,14 +527,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-completion/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-completion/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-constants",
       "descriptor": "formal/packages/original-collections-constants/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/constants/Connection.dfy",
         "formal/collections/constants/Model.dfy"
@@ -633,14 +541,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-constants/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-constants/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-environment",
       "descriptor": "formal/packages/original-collections-environment/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/environment/Connection.dfy",
         "formal/collections/environment/Model.dfy"
@@ -649,14 +555,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-environment/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-environment/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-iteration",
       "descriptor": "formal/packages/original-collections-iteration/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/iteration/Connection.dfy",
         "formal/collections/iteration/Model.dfy"
@@ -665,14 +569,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-iteration/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-iteration/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-iteration-chain",
       "descriptor": "formal/packages/original-collections-iteration-chain/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/iteration-chain/Connection.dfy",
         "formal/collections/iteration-chain/Model.dfy",
@@ -682,14 +584,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-iteration-chain/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-iteration-chain/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-preparation",
       "descriptor": "formal/packages/original-collections-preparation/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/preparation/Connection.dfy",
         "formal/collections/preparation/Model.dfy",
@@ -699,14 +599,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-preparation/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-preparation/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-prepared-entry",
       "descriptor": "formal/packages/original-collections-prepared-entry/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/prepared-entry/Connection.dfy",
         "formal/collections/prepared-entry/Model.dfy"
@@ -715,14 +613,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-prepared-entry/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-prepared-entry/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-repeated-call",
       "descriptor": "formal/packages/original-collections-repeated-call/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/repeated-call/Connection.dfy",
         "formal/collections/repeated-call/Model.dfy"
@@ -731,14 +627,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-repeated-call/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-repeated-call/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-sort-admission",
       "descriptor": "formal/packages/original-collections-sort-admission/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/sort-admission/Connection.dfy",
         "formal/collections/sort-admission/Model.dfy",
@@ -749,14 +643,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-sort-admission/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-sort-admission/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-sort-comparator",
       "descriptor": "formal/packages/original-collections-sort-comparator/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/sort-comparator/Connection.dfy",
         "formal/collections/sort-comparator/Model.dfy",
@@ -766,14 +658,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-sort-comparator/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-sort-comparator/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-sort-core",
       "descriptor": "formal/packages/original-collections-sort-core/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/sort-core/Connection.dfy",
         "formal/collections/sort-core/Merge.dfy",
@@ -784,14 +674,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-sort-core/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-sort-core/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-traversal",
       "descriptor": "formal/packages/original-collections-traversal/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/traversal/Connection.dfy",
         "formal/collections/traversal/Loops.dfy",
@@ -802,14 +690,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-traversal/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-traversal/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-validation",
       "descriptor": "formal/packages/original-collections-validation/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/validation/Connection.dfy",
         "formal/collections/validation/Model.dfy",
@@ -819,14 +705,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-validation/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-validation/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-value-codec",
       "descriptor": "formal/packages/original-collections-value-codec/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/value-codec/Connection.dfy",
         "formal/collections/value-codec/Control.generated.dfy",
@@ -838,14 +722,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-value-codec/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-value-codec/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-value-entry",
       "descriptor": "formal/packages/original-collections-value-entry/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/value-entry/Admission.dfy",
         "formal/collections/value-entry/Connection.dfy",
@@ -856,14 +738,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-value-entry/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-value-entry/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-value-loops",
       "descriptor": "formal/packages/original-collections-value-loops/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/value-loops/Connection.dfy",
         "formal/collections/value-loops/Source.generated.dfy"
@@ -872,14 +752,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-value-loops/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-value-loops/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-value-pairs",
       "descriptor": "formal/packages/original-collections-value-pairs/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/value-pairs/Connection.dfy",
         "formal/collections/value-pairs/Control.generated.dfy",
@@ -897,14 +775,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-value-pairs/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-value-pairs/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-value-search",
       "descriptor": "formal/packages/original-collections-value-search/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/value-search/Connection.dfy",
         "formal/collections/value-search/Control.generated.dfy",
@@ -920,14 +796,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-value-search/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-value-search/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-value-sort-entry",
       "descriptor": "formal/packages/original-collections-value-sort-entry/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/value-sort-entry/Connection.dfy",
         "formal/collections/value-sort-entry/Model.dfy"
@@ -936,14 +810,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-value-sort-entry/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-value-sort-entry/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-value-sort-execution",
       "descriptor": "formal/packages/original-collections-value-sort-execution/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/value-sort-execution/Connection.dfy",
         "formal/collections/value-sort-execution/Model.dfy",
@@ -954,14 +826,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-value-sort-execution/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-value-sort-execution/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-value-sort-trace",
       "descriptor": "formal/packages/original-collections-value-sort-trace/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/value-sort-trace/Connection.dfy",
         "formal/collections/value-sort-trace/Model.dfy",
@@ -972,14 +842,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-value-sort-trace/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-value-sort-trace/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-value-structure",
       "descriptor": "formal/packages/original-collections-value-structure/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/value-structure/Connection.dfy",
         "formal/collections/value-structure/Control.generated.dfy",
@@ -990,14 +858,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-value-structure/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-value-structure/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-value-unique",
       "descriptor": "formal/packages/original-collections-value-unique/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/value-unique/Classes.dfy",
         "formal/collections/value-unique/Compare.dfy",
@@ -1019,14 +885,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-value-unique/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-value-unique/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-wire",
       "descriptor": "formal/packages/original-collections-wire/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/wire/Connection.dfy",
         "formal/collections/wire/Model.dfy",
@@ -1036,14 +900,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-wire/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-wire/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-word-apply",
       "descriptor": "formal/packages/original-collections-word-apply/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/word-apply/Connection.dfy",
         "formal/collections/word-apply/Control.generated.dfy",
@@ -1061,14 +923,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-word-apply/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-word-apply/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-word-call",
       "descriptor": "formal/packages/original-collections-word-call/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/word-call/Connection.dfy",
         "formal/collections/word-call/Model.dfy",
@@ -1078,14 +938,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-word-call/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-word-call/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-word-fold-entry",
       "descriptor": "formal/packages/original-collections-word-fold-entry/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/word-fold-entry/Connection.dfy",
         "formal/collections/word-fold-entry/Model.dfy",
@@ -1097,14 +955,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-word-fold-entry/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-word-fold-entry/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-word-fold-loop",
       "descriptor": "formal/packages/original-collections-word-fold-loop/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/word-fold-loop/Connection.dfy",
         "formal/collections/word-fold-loop/Memory.dfy",
@@ -1115,14 +971,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-word-fold-loop/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-word-fold-loop/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-word-layout",
       "descriptor": "formal/packages/original-collections-word-layout/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/word-layout/Connection.dfy",
         "formal/collections/word-layout/Control.generated.dfy",
@@ -1134,14 +988,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-word-layout/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-word-layout/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-word-memory",
       "descriptor": "formal/packages/original-collections-word-memory/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/word-memory/Connection.dfy",
         "formal/collections/word-memory/Model.dfy",
@@ -1151,14 +1003,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-word-memory/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-word-memory/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-word-scans",
       "descriptor": "formal/packages/original-collections-word-scans/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/word-scans/Connection.dfy",
         "formal/collections/word-scans/Control.generated.dfy",
@@ -1169,14 +1019,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-word-scans/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-word-scans/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-word-sort",
       "descriptor": "formal/packages/original-collections-word-sort/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/word-sort/Connection.dfy",
         "formal/collections/word-sort/Model.dfy",
@@ -1187,14 +1035,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-word-sort/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-word-sort/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-word-unique",
       "descriptor": "formal/packages/original-collections-word-unique/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/word-unique/Connection.dfy",
         "formal/collections/word-unique/Control.generated.dfy",
@@ -1205,14 +1051,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-word-unique/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-word-unique/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-collections-word-windows",
       "descriptor": "formal/packages/original-collections-word-windows/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/collections/word-windows/Connection.dfy",
         "formal/collections/word-windows/Model.dfy",
@@ -1223,14 +1067,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-collections-word-windows/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-collections-word-windows/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-composition",
       "descriptor": "formal/packages/original-composition/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/composition/Model.dfy",
         "formal/composition/Source.generated.dfy"
@@ -1239,14 +1081,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-composition/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-composition/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-constraints",
       "descriptor": "formal/packages/original-constraints/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/constraints/Engine.generated.dfy",
         "formal/constraints/Model.dfy"
@@ -1255,14 +1095,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-constraints/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-constraints/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-control",
       "descriptor": "formal/packages/original-control/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/control/Guard.dfy",
         "formal/control/GuardSource.generated.dfy",
@@ -1274,14 +1112,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-control/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-control/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-core",
       "descriptor": "formal/packages/original-core/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/core/Model.dfy",
         "formal/core/Source.generated.dfy",
@@ -1291,14 +1127,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-core/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-core/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-core-completion",
       "descriptor": "formal/packages/original-core-completion/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/core/completion/Connection.dfy"
       ],
@@ -1306,14 +1140,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-core-completion/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-core-completion/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-core-frame-tree",
       "descriptor": "formal/packages/original-core-frame-tree/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/core/frame-tree/Connection.dfy",
         "formal/core/frame-tree/Tree.dfy",
@@ -1323,14 +1155,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-core-frame-tree/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-core-frame-tree/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-core-public-boundary",
       "descriptor": "formal/packages/original-core-public-boundary/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/core/public-boundary/Connection.dfy",
         "formal/core/public-boundary/Getters.generated.dfy"
@@ -1339,14 +1169,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-core-public-boundary/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-core-public-boundary/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-core-raw-tree",
       "descriptor": "formal/packages/original-core-raw-tree/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/core/raw-tree/Connection.dfy",
         "formal/core/raw-tree/Tree.dfy"
@@ -1355,14 +1183,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-core-raw-tree/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-core-raw-tree/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-core-recursive",
       "descriptor": "formal/packages/original-core-recursive/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/core/recursive/Dispatch.dfy",
         "formal/core/recursive/Invocation.dfy"
@@ -1371,14 +1197,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-core-recursive/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-core-recursive/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-core-serialization",
       "descriptor": "formal/packages/original-core-serialization/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/core/serialization/Bounds.dfy",
         "formal/core/serialization/Connection.dfy",
@@ -1390,14 +1214,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-core-serialization/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-core-serialization/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-admission",
       "descriptor": "formal/packages/original-expressions-admission/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/admission/Model.dfy",
         "formal/expressions/admission/Source.generated.dfy"
@@ -1406,14 +1228,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-admission/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-admission/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-admission-errors",
       "descriptor": "formal/packages/original-expressions-admission-errors/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/admission-errors/Bounds.dfy",
         "formal/expressions/admission-errors/Connection.dfy",
@@ -1423,14 +1243,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-admission-errors/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-admission-errors/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-cache",
       "descriptor": "formal/packages/original-expressions-cache/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/cache/Model.dfy",
         "formal/expressions/cache/Source.generated.dfy"
@@ -1439,14 +1257,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-cache/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-cache/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-calls",
       "descriptor": "formal/packages/original-expressions-calls/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/calls/Model.dfy",
         "formal/expressions/calls/Source.generated.dfy"
@@ -1455,14 +1271,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-calls/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-calls/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-codec-errors",
       "descriptor": "formal/packages/original-expressions-codec-errors/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/codec-errors/Connection.dfy",
         "formal/expressions/codec-errors/Encoding.dfy"
@@ -1471,14 +1285,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-codec-errors/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-codec-errors/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-compound",
       "descriptor": "formal/packages/original-expressions-compound/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/compound/Source.generated.dfy"
       ],
@@ -1486,14 +1298,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-compound/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-compound/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-context",
       "descriptor": "formal/packages/original-expressions-context/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/context/Connection.dfy",
         "formal/expressions/context/Shift.dfy"
@@ -1502,14 +1312,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-context/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-context/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-dispatch",
       "descriptor": "formal/packages/original-expressions-dispatch/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/dispatch/Model.dfy"
       ],
@@ -1517,14 +1325,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-dispatch/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-dispatch/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-encoded",
       "descriptor": "formal/packages/original-expressions-encoded/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/encoded/Connection.dfy",
         "formal/expressions/encoded/Model.dfy",
@@ -1534,14 +1340,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-encoded/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-encoded/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-entry",
       "descriptor": "formal/packages/original-expressions-entry/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/entry/Connection.dfy"
       ],
@@ -1549,14 +1353,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-entry/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-entry/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-evaluation",
       "descriptor": "formal/packages/original-expressions-evaluation/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/evaluation/CacheBridge.dfy",
         "formal/expressions/evaluation/Control.dfy"
@@ -1565,14 +1367,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-evaluation/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-evaluation/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-execution",
       "descriptor": "formal/packages/original-expressions-execution/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/execution/Connection.dfy",
         "formal/expressions/execution/Model.dfy",
@@ -1582,14 +1382,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-execution/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-execution/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-frames",
       "descriptor": "formal/packages/original-expressions-frames/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/frames/Connection.dfy",
         "formal/expressions/frames/Model.dfy",
@@ -1599,14 +1397,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-frames/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-frames/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-guard-receipts",
       "descriptor": "formal/packages/original-expressions-guard-receipts/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/guard-receipts/Connection.dfy",
         "formal/expressions/guard-receipts/Events.dfy"
@@ -1615,14 +1411,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-guard-receipts/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-guard-receipts/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-guarded",
       "descriptor": "formal/packages/original-expressions-guarded/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/guarded/Connection.dfy",
         "formal/expressions/guarded/Encoding.dfy",
@@ -1633,14 +1427,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-guarded/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-guarded/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-oracle",
       "descriptor": "formal/packages/original-expressions-oracle/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/oracle/Connection.dfy",
         "formal/expressions/oracle/Model.dfy"
@@ -1649,14 +1441,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-oracle/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-oracle/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-oracle-stability",
       "descriptor": "formal/packages/original-expressions-oracle-stability/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/oracle-stability/Append.dfy",
         "formal/expressions/oracle-stability/Connection.dfy"
@@ -1665,14 +1455,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-oracle-stability/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-oracle-stability/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-primitives",
       "descriptor": "formal/packages/original-expressions-primitives/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/primitives/Connection.dfy",
         "formal/expressions/primitives/Dispatch.dfy",
@@ -1682,14 +1470,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-primitives/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-primitives/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-probe-input",
       "descriptor": "formal/packages/original-expressions-probe-input/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/probe-input/Connection.dfy"
       ],
@@ -1697,14 +1483,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-probe-input/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-probe-input/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-public",
       "descriptor": "formal/packages/original-expressions-public/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/public/Connection.dfy",
         "formal/expressions/public/Encoded.dfy",
@@ -1718,14 +1502,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-public/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-public/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-receipts",
       "descriptor": "formal/packages/original-expressions-receipts/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/receipts/Connection.dfy",
         "formal/expressions/receipts/Encoding.dfy"
@@ -1734,14 +1516,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-receipts/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-receipts/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-recursive",
       "descriptor": "formal/packages/original-expressions-recursive/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/recursive/Connection.dfy",
         "formal/expressions/recursive/Source.generated.dfy",
@@ -1751,14 +1531,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-recursive/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-recursive/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-rejections",
       "descriptor": "formal/packages/original-expressions-rejections/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/rejections/Cold.generated.dfy",
         "formal/expressions/rejections/Completion.generated.dfy",
@@ -1769,14 +1547,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-rejections/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-rejections/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-requests",
       "descriptor": "formal/packages/original-expressions-requests/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/requests/Connection.dfy",
         "formal/expressions/requests/Model.dfy",
@@ -1786,14 +1562,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-requests/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-requests/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-resolve",
       "descriptor": "formal/packages/original-expressions-resolve/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/resolve/Connection.dfy",
         "formal/expressions/resolve/Model.dfy",
@@ -1803,14 +1577,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-resolve/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-resolve/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-returns",
       "descriptor": "formal/packages/original-expressions-returns/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/returns/Connection.dfy",
         "formal/expressions/returns/Model.dfy",
@@ -1820,14 +1592,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-returns/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-returns/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-scalars",
       "descriptor": "formal/packages/original-expressions-scalars/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/scalars/Connection.dfy",
         "formal/expressions/scalars/Model.dfy",
@@ -1837,14 +1607,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-scalars/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-scalars/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-self-call",
       "descriptor": "formal/packages/original-expressions-self-call/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/self-call/Connection.dfy"
       ],
@@ -1852,14 +1620,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-self-call/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-self-call/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-trace-bounds",
       "descriptor": "formal/packages/original-expressions-trace-bounds/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/trace-bounds/Bounds.dfy",
         "formal/expressions/trace-bounds/Connection.dfy"
@@ -1868,14 +1634,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-trace-bounds/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-trace-bounds/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-tree",
       "descriptor": "formal/packages/original-expressions-tree/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/tree/Connection.dfy",
         "formal/expressions/tree/Equivalence.dfy",
@@ -1885,14 +1649,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-tree/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-tree/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-expressions-validation",
       "descriptor": "formal/packages/original-expressions-validation/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/expressions/validation/Body.generated.dfy",
         "formal/expressions/validation/Bytes.dfy",
@@ -1904,14 +1666,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-expressions-validation/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-expressions-validation/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-navigation",
       "descriptor": "formal/packages/original-navigation/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/navigation/Canonical.dfy",
         "formal/navigation/CanonicalSource.dfy",
@@ -1938,14 +1698,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-navigation/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-navigation/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-ascii",
       "descriptor": "formal/packages/original-operations-ascii/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/ascii/Connection.dfy",
         "formal/operations/ascii/Control.generated.dfy",
@@ -1955,14 +1713,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-ascii/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-ascii/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-binary-log",
       "descriptor": "formal/packages/original-operations-binary-log/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/binary-log/Connection.dfy",
         "formal/operations/binary-log/Control.generated.dfy",
@@ -1972,14 +1728,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-binary-log/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-binary-log/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-byte-bounds",
       "descriptor": "formal/packages/original-operations-byte-bounds/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/byte-bounds/Connection.dfy",
         "formal/operations/byte-bounds/Control.generated.dfy",
@@ -1989,14 +1743,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-byte-bounds/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-byte-bounds/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-byte-replace",
       "descriptor": "formal/packages/original-operations-byte-replace/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/byte-replace/Connection.dfy",
         "formal/operations/byte-replace/Control.generated.dfy",
@@ -2007,14 +1759,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-byte-replace/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-byte-replace/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-byte-split",
       "descriptor": "formal/packages/original-operations-byte-split/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/byte-split/Connection.dfy",
         "formal/operations/byte-split/Control.generated.dfy",
@@ -2024,14 +1774,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-byte-split/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-byte-split/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-checked-power",
       "descriptor": "formal/packages/original-operations-checked-power/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/checked-power/Connection.dfy",
         "formal/operations/checked-power/Control.generated.dfy",
@@ -2041,14 +1789,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-checked-power/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-checked-power/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-concat",
       "descriptor": "formal/packages/original-operations-concat/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/concat/Connection.dfy",
         "formal/operations/concat/Control.generated.dfy",
@@ -2058,14 +1804,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-concat/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-concat/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-decimal-digits",
       "descriptor": "formal/packages/original-operations-decimal-digits/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/decimal-digits/Connection.dfy",
         "formal/operations/decimal-digits/Control.generated.dfy",
@@ -2075,14 +1819,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-decimal-digits/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-decimal-digits/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-decimal-render",
       "descriptor": "formal/packages/original-operations-decimal-render/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/decimal-render/Connection.dfy",
         "formal/operations/decimal-render/Control.generated.dfy",
@@ -2092,14 +1834,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-decimal-render/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-decimal-render/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-decimal-units",
       "descriptor": "formal/packages/original-operations-decimal-units/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/decimal-units/Connection.dfy",
         "formal/operations/decimal-units/Control.generated.dfy",
@@ -2109,14 +1849,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-decimal-units/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-decimal-units/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-environment",
       "descriptor": "formal/packages/original-operations-environment/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/environment/Connection.dfy",
         "formal/operations/environment/Control.generated.dfy",
@@ -2126,14 +1864,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-environment/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-environment/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-fixed-point",
       "descriptor": "formal/packages/original-operations-fixed-point/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/fixed-point/Bounds.dfy",
         "formal/operations/fixed-point/Connection.dfy",
@@ -2144,14 +1880,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-fixed-point/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-fixed-point/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-fixed-point-accuracy",
       "descriptor": "formal/packages/original-operations-fixed-point-accuracy/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/fixed-point-accuracy/Bridge.dfy",
         "formal/operations/fixed-point-accuracy/Intervals.dfy",
@@ -2163,14 +1897,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-fixed-point-accuracy/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-fixed-point-accuracy/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-fixed-point-muldiv-regenerated",
       "descriptor": "formal/packages/original-operations-fixed-point-muldiv-regenerated/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/fixed-point/muldiv-regenerated/Control.generated.dfy",
         "formal/operations/fixed-point/muldiv-regenerated/Helpers.generated.dfy"
@@ -2184,14 +1916,12 @@
         "generator": "formal/operations/fixed-point/generate.py",
         "sha256": "67d962d05a0117cb588a3f25dab0b22d38f5f23044aca94ef97a9b4ca39b3f52",
         "reason": "Parent source generator emits this helper/compiler directory as an intermediate; its standalone local import closure is incomplete. Keep for provenance, not as a separately runnable proof package."
-      },
-      "historicalDescriptor": "formal/packages/original-operations-fixed-point-muldiv-regenerated/package.json",
-      "historicalStatus": "blocked-missing-inputs"
+      }
     },
     {
       "id": "original-operations-full-mul-div",
       "descriptor": "formal/packages/original-operations-full-mul-div/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/full-mul-div/Bits.dfy",
         "formal/operations/full-mul-div/Connection.dfy",
@@ -2207,14 +1937,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-full-mul-div/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-full-mul-div/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-integer-root",
       "descriptor": "formal/packages/original-operations-integer-root/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/integer-root/Connection.dfy",
         "formal/operations/integer-root/Control.generated.dfy",
@@ -2226,14 +1954,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-integer-root/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-integer-root/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-modular",
       "descriptor": "formal/packages/original-operations-modular/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/modular/Connection.dfy",
         "formal/operations/modular/Control.generated.dfy",
@@ -2243,14 +1969,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-modular/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-modular/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-modular-power",
       "descriptor": "formal/packages/original-operations-modular-power/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/modular-power/Connection.dfy",
         "formal/operations/modular-power/Control.generated.dfy",
@@ -2267,14 +1991,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-modular-power/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-modular-power/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-modular-power-muldiv-regenerated",
       "descriptor": "formal/packages/original-operations-modular-power-muldiv-regenerated/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/modular-power/muldiv-regenerated/Control.generated.dfy",
         "formal/operations/modular-power/muldiv-regenerated/Helpers.generated.dfy"
@@ -2288,14 +2010,12 @@
         "generator": "formal/operations/modular-power/generate-inverse.py",
         "sha256": "b747a3c320312684a3f26236ce72fb5caf9668a6047636862be1cdef5d981343",
         "reason": "Parent source generator emits this helper/compiler directory as an intermediate; its standalone local import closure is incomplete. Keep for provenance, not as a separately runnable proof package."
-      },
-      "historicalDescriptor": "formal/packages/original-operations-modular-power-muldiv-regenerated/package.json",
-      "historicalStatus": "blocked-missing-inputs"
+      }
     },
     {
       "id": "original-operations-occurrence-index",
       "descriptor": "formal/packages/original-operations-occurrence-index/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/occurrence-index/Connection.dfy",
         "formal/operations/occurrence-index/Control.generated.dfy",
@@ -2305,14 +2025,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-occurrence-index/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-occurrence-index/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-parse-units",
       "descriptor": "formal/packages/original-operations-parse-units/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/parse-units/Connection.dfy",
         "formal/operations/parse-units/Control.generated.dfy",
@@ -2322,14 +2040,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-parse-units/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-parse-units/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-raw-call",
       "descriptor": "formal/packages/original-operations-raw-call/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/raw-call/Connection.dfy",
         "formal/operations/raw-call/Control.generated.dfy",
@@ -2339,14 +2055,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-raw-call/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-raw-call/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-scalars",
       "descriptor": "formal/packages/original-operations-scalars/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/scalars/Connection.dfy",
         "formal/operations/scalars/Control.generated.dfy",
@@ -2356,14 +2070,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-scalars/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-scalars/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-scaled-power",
       "descriptor": "formal/packages/original-operations-scaled-power/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/scaled-power/Connection.dfy",
         "formal/operations/scaled-power/Control.generated.dfy",
@@ -2373,14 +2085,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-scaled-power/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-scaled-power/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-scaled-power-muldiv-regenerated",
       "descriptor": "formal/packages/original-operations-scaled-power-muldiv-regenerated/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/scaled-power/muldiv-regenerated/Control.generated.dfy",
         "formal/operations/scaled-power/muldiv-regenerated/Helpers.generated.dfy"
@@ -2394,14 +2104,12 @@
         "generator": "formal/operations/scaled-power/generate.py",
         "sha256": "93b2407260bf20e9dfd442c648989e3f21eb59fa7ece01ed3baecd2ad7d5ba7a",
         "reason": "Parent source generator emits this helper/compiler directory as an intermediate; its standalone local import closure is incomplete. Keep for provenance, not as a separately runnable proof package."
-      },
-      "historicalDescriptor": "formal/packages/original-operations-scaled-power-muldiv-regenerated/package.json",
-      "historicalStatus": "blocked-missing-inputs"
+      }
     },
     {
       "id": "original-operations-tuple-encode",
       "descriptor": "formal/packages/original-operations-tuple-encode/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/tuple-encode/Connection.dfy",
         "formal/operations/tuple-encode/Control.generated.dfy",
@@ -2411,14 +2119,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-tuple-encode/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-tuple-encode/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-tuple-encode-compiler",
       "descriptor": "formal/packages/original-operations-tuple-encode-compiler/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/tuple-encode/compiler/Control.generated.dfy",
         "formal/operations/tuple-encode/compiler/Helpers.generated.dfy"
@@ -2432,14 +2138,12 @@
         "generator": "formal/operations/tuple-encode/generate.py",
         "sha256": "c5aaf9fc90e1dc8de0df9d6e50718a6d0ed6721e9d94d07d550507a4bd52369f",
         "reason": "Parent source generator emits this helper/compiler directory as an intermediate; its standalone local import closure is incomplete. Keep for provenance, not as a separately runnable proof package."
-      },
-      "historicalDescriptor": "formal/packages/original-operations-tuple-encode-compiler/package.json",
-      "historicalStatus": "blocked-missing-inputs"
+      }
     },
     {
       "id": "original-operations-utf8",
       "descriptor": "formal/packages/original-operations-utf8/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/utf8/Connection.dfy",
         "formal/operations/utf8/Control.generated.dfy",
@@ -2449,14 +2153,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-utf8/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-utf8/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-operations-word-match",
       "descriptor": "formal/packages/original-operations-word-match/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/operations/word-match/Connection.dfy",
         "formal/operations/word-match/Control.generated.dfy",
@@ -2466,14 +2168,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-operations-word-match/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-operations-word-match/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-resolution",
       "descriptor": "formal/packages/original-resolution/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/resolution/Model.dfy",
         "formal/resolution/Source.generated.dfy",
@@ -2483,14 +2183,12 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-resolution/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-resolution/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     },
     {
       "id": "original-signed-mod",
       "descriptor": "formal/packages/original-signed-mod/canonical.json",
-      "status": "canonical-source-not-yet-recertified",
+      "status": "source-acceptance-pending",
       "implementations": [
         "formal/signed-mod/Reference.dfy",
         "formal/signed-mod/SignedMod.dfy"
@@ -2499,9 +2197,7 @@
       "bytecodeCredit": false,
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-signed-mod/canonical.json",
-      "selectionRole": "proof-package",
-      "historicalDescriptor": "formal/packages/original-signed-mod/package.json",
-      "historicalStatus": "original-unrecertified"
+      "selectionRole": "proof-package"
     }
   ],
   "uniqueMappedDeclarations": 659,

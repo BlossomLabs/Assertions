@@ -1,48 +1,34 @@
-"""Show native coverage and outstanding source acceptance for retained claim ledgers."""
+"""Report current public claims and their explicit library mappings."""
 import argparse
 import json
-from check import ROOT, LIBRARY, check, digest
-from status import build_status
-
+from check import ROOT, LIBRARY, check
 
 def readiness():
-    index=json.loads((LIBRARY/'claim-ledgers.json').read_text())
-    statuses={p['package']:p for p in build_status()['packages']}
+    index=json.loads((LIBRARY/'claims.json').read_text())
+    evidence=json.loads((ROOT/index['ledger']).read_text())['claims']
     rows=[]
-    for ledger in index['ledgers']:
-        references=[]
-        for reference in ledger['declarationReferences']:
-            covered=[]
-            if reference['resolution']=='unique':
-                candidate=reference['candidates'][0]
-                covered=[p for p in candidate['packages']
-                         if statuses[p]['canonicalNativeStatus']=='independently-reviewed-native']
-            references.append({'field':reference['field'],'qualifiedName':reference['qualifiedName'],
-                               'resolution':reference['resolution'],'nativeCoveredByPackages':covered})
-        rows.append({'ledger':ledger['path'],'ledgerSha256':ledger['sha256'],
-                     'nativeReferencedDeclarationsCovered':bool(references) and all(r['nativeCoveredByPackages'] for r in references),
-                     'declarationReferences':references,
-                     'canonicalSourceAcceptance':'pending-independent-source-correspondence-and-fault-review',
-                     'premisesPreservedIn':'formal/claim-ledgers.json',
-                     'exactBytecodeCredit':False})
-    return {'scope':'Readiness of retained claims. Coverage of named declarations is not complete source acceptance, and is not evidence for unnamed/prose claims.',
-            'counts':{'ledgers':len(rows),'ledgersWithAllNamedDeclarationsNativeCovered':sum(r['nativeReferencedDeclarationsCovered'] for r in rows)},
-            'ledgers':rows}
-
+    for identifier, claim in index['claims'].items():
+        current=evidence[identifier]
+        rows.append({'id':identifier,'claim':claim['recordedClaim'],
+                     'mappingStatus':claim['mappingStatus'],
+                     'publicEvidence':{'type':current.get('evidenceType'),'executionStatus':current.get('executionStatus')},
+                     'sourceProofs':claim['sourceProofs'],'bytecodeProofs':claim['bytecodeProofs'],
+                     'libraryAcceptance':'pending' if claim['mappingStatus']=='mapped' else 'unmapped'})
+    return {'scope':'Current public ledger evidence remains separate from library acceptance. Historical mappings are excluded.',
+            'counts':{'claims':len(rows),'mapped':sum(r['mappingStatus']=='mapped' for r in rows),
+                      'unmapped':sum(r['mappingStatus']=='unmapped' for r in rows)},'claims':rows}
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--json',action='store_true')
+    parser.add_argument('--claim',help='Show one current public claim ID.')
     args=parser.parse_args()
-    check()
-    result=readiness()
-    if args.json:
-        print(json.dumps(result,indent=2))
+    check(); result=readiness()
+    if args.claim:
+        result['claims']=[r for r in result['claims'] if r['id']==args.claim]
+        if not result['claims']:parser.error('Unknown public claim ID')
+    if args.json:print(json.dumps(result,indent=2))
     else:
         print(json.dumps(result['counts']))
-        for row in result['ledgers']:
-            covered=sum(bool(r['nativeCoveredByPackages']) for r in row['declarationReferences'])
-            print(row['ledger'],f"named declarations native-covered {covered}/{len(row['declarationReferences'])}",row['canonicalSourceAcceptance'])
-
-if __name__=='__main__':
-    main()
+        for row in result['claims']:print(row['id'],row['mappingStatus'],row['publicEvidence']['type'],row['publicEvidence']['executionStatus'])
+if __name__=='__main__':main()

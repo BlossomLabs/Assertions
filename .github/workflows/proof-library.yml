@@ -1,9 +1,9 @@
 name: Source proof library integrity
 on:
   push:
-    paths: ["formal/**", ".github/workflows/proof-library.yml"]
+    paths: ["formal/**", "docs/claim-evidence.json", ".github/workflows/proof-library.yml"]
   pull_request:
-    paths: ["formal/**", ".github/workflows/proof-library.yml"]
+    paths: ["formal/**", "docs/claim-evidence.json", ".github/workflows/proof-library.yml"]
 jobs:
   integrity:
     runs-on: ubuntu-latest

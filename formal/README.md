@@ -14,13 +14,15 @@ python3 formal/tools/status.py
 python3 formal/tools/readiness.py
 ```
 
-The checker needs only Python and this library. The 469 canonical files preserve
+The checker needs Python, this library and the current public claim ledger. The 469 canonical files preserve
 3,474 original declaration identities and 21 additional helper declarations.
-The contract indexes retain 3,481 provenance records, including seven duplicate
-original adapter identities. The registry contains 132 proof packages and four
-generation intermediates. Its 106 retained ledgers preserve premises and
-qualifications; all 863 exact declaration references resolve uniquely. These are
-inventory counts, not proof completion percentages.
+Contract declaration indexes describe canonical interfaces; they are not public claims.
+The registry contains 132 proof packages and four generation intermediates.
+[Claim mapping rules](CLAIMS.md) describe the integration.
+`claims.json` connects the current `docs/claim-evidence.json` IDs and wording to
+reviewed theorem mappings. All claims initially remain unmapped; historical
+mappings and migration statuses have been removed. These are inventory counts,
+not proof completion percentages.
 
 ## Verification
 
@@ -66,15 +68,13 @@ separate requirements.
 Earlier source trees, migration variants, bytecode proofs and campaign evidence
 remain on [PR #3](https://github.com/BlossomLabs/Assertions/pull/3), branch
 `codex/formal-proofs-pr`, at export commit
-`9de93eb4ad3241f6a6a507c6d015c9de7fedc492`. Some selected implementations and
+`4e53bac7`. Some selected implementations and
 receipts were local work beyond that commit; their original path/hash provenance
 is preserved, and their working tree remains intact.
 
 `preservation.json` binds the exported canonical proof bodies and interfaces.
-`canonical-sources.json`, contract claims and retained ledger indexes record
-original and selected implementation hashes as provenance. They are not runtime
-dependencies: day-to-day library checks, queries and native verification do not
-load the historical trees.
+`canonical-sources.json` retains artifact provenance needed to audit preservation.
+Public claim coverage uses only the current mappings in `claims.json`.
 
 The library remains under verification. `status.py` and `readiness.py` report
 current evidence; absence of evidence stays pending. Proof sources, generators
@@ -85,14 +85,14 @@ local/CI artifacts. Production contracts and deployment artifacts are unchanged.
 
 ```text
 formal/
-  source/        Contract models, source proofs, claim indexes and AST gates
+  source/        Contract models, source proofs, declaration indexes and AST gates
   bytecode/      Future exact-runtime proof packages
   foundations/   Shared mathematical, word, sequence and memory facts
   bridges/       Future source-to-bytecode representation proofs
   tools/         Uniform verification, generation and independent review
 ```
 
-Package descriptors, provenance bindings and claim-ledger indexes live at the
+Package descriptors, provenance bindings and current claim mappings live at the
 root alongside this guide. `bytecode/` and `bridges/` are intentionally empty
 proof scaffolds; they grant no proof credit.
 

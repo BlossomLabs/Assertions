@@ -17,6 +17,8 @@ class LibraryTests(unittest.TestCase):
             root=Path(directory)
             target=root/'formal'
             shutil.copytree(LIBRARY,target,ignore=shutil.ignore_patterns('*.generated.dfy','evidence','__pycache__'))
+            (root/'docs').mkdir()
+            shutil.copy(ROOT/'docs/claim-evidence.json',root/'docs/claim-evidence.json')
             subprocess.run(['git','init',str(root)],capture_output=True,check=True)
             objects=Path(subprocess.check_output(['git','rev-parse','--git-path','objects'],cwd=ROOT,text=True).strip())
             if not objects.is_absolute():objects=ROOT/objects
@@ -49,6 +51,8 @@ class LibraryTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             target=Path(directory)/'formal'
             shutil.copytree(LIBRARY,target,ignore=shutil.ignore_patterns('evidence','__pycache__'))
+            (Path(directory)/'docs').mkdir()
+            shutil.copy(ROOT/'docs/claim-evidence.json',Path(directory)/'docs/claim-evidence.json')
             preservation=target/'preservation.json'
             receipt=json.loads(preservation.read_text())
             relative='formal/foundations/SourceNaturalProductV8.dfy'
@@ -61,5 +65,24 @@ class LibraryTests(unittest.TestCase):
             result=subprocess.run([sys.executable,str(target/'tools/check.py')],capture_output=True,text=True)
             self.assertNotEqual(result.returncode,0)
             self.assertIn('Changed logical interface or proof body',result.stderr)
+
+    def test_current_claim_wording_and_inventory_drift_are_rejected(self):
+        from claim_mapping import validate_mappings
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); library=root/'formal'
+            library.mkdir(); (root/'docs').mkdir()
+            index={'schemaVersion':1,'ledger':'docs/claim-evidence.json','claims':{'C1':{'recordedClaim':'Current claim','mappingStatus':'unmapped','sourceProofs':[],'bytecodeProofs':[]}}}
+            (library/'claims.json').write_text(json.dumps(index))
+            evidence={'claims':{'C1':{'recordedClaim':'Current claim'}}}
+            path=root/'docs/claim-evidence.json';path.write_text(json.dumps(evidence))
+            validate_mappings(root,library,{})
+            evidence['claims']['C1']['recordedClaim']='Changed claim'
+            path.write_text(json.dumps(evidence))
+            with self.assertRaisesRegex(AssertionError,'wording drift'):
+                validate_mappings(root,library,{})
+            evidence['claims']['C2']={'recordedClaim':'New claim'}
+            path.write_text(json.dumps(evidence))
+            with self.assertRaisesRegex(AssertionError,'inventory drift'):
+                validate_mappings(root,library,{})
 
 if __name__=='__main__':unittest.main()

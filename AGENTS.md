@@ -9,8 +9,9 @@ fix it in the same change that falsified it.
 `formal/` is the canonical source proof library. Start with `formal/README.md`
 and run `python3 formal/tools/bootstrap_adapters.py --fetch` on a clean checkout,
 then `python3 formal/tools/check.py` before changing proof sources or metadata.
-Packages bind complete canonical import closures; contract indexes preserve
-logical interfaces and original premises. New proof-source changes require
+Packages bind complete canonical import closures; contract declaration indexes preserve
+logical interfaces. `formal/claims.json` binds current public claim IDs and wording;
+historical mappings do not establish coverage. New proof-source changes require
 updated preservation bindings, independent review and fresh affected closures.
 Native verification, compiler/generator correspondence, source fault tests and
 source acceptance are separate gates; none supplies exact-bytecode credit.

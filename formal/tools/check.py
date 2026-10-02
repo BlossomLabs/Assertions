@@ -42,7 +42,7 @@ def check():
         assert visited==set(closure) and set(descriptor['implementations'])<=visited
     count=0
     for contract in registry['contracts']:
-        for record in json.loads((LIBRARY/'source/claims'/contract/'claims.json').read_text())['records']:
+        for record in json.loads((LIBRARY/'source/declarations'/contract/'declarations.json').read_text())['records']:
             assert record['contract']==contract
             declaration=parsed[record['canonicalFile']][record['symbol']]
             assert declaration['kind']==record['kind'] and declaration['interface']==record['logicalInterface']
@@ -63,13 +63,9 @@ def check():
         for interface in foundation['interfaces']:
             d=parsed[foundation['file']][interface['symbol']]
             assert d['kind']==interface['kind'] and d['interface']==interface['logicalInterface']
-    for ledger in json.loads((LIBRARY/'claim-ledgers.json').read_text())['ledgers']:
-        for reference in ledger['declarationReferences']:
-            assert reference['resolution']=='unique'
-            candidate=reference['candidates'][0];symbol=candidate['canonicalDeclarationId'].split('::')[-1]
-            d=parsed[candidate['canonicalFile']][symbol]
-            assert d['kind']==candidate['kind'] and hashlib.sha256(d['interface'].encode()).hexdigest()==candidate['interfaceSha256']
-    print(f'PASS: {len(actual)} canonical files, {count} provenance declarations, {len(packages)} descriptors. No acceptance transferred.')
+    from claim_mapping import validate_mappings
+    validate_mappings(ROOT, LIBRARY, parsed)
+    print(f'PASS: {len(actual)} canonical files, {count} indexed declarations, {len(packages)} descriptors. No acceptance transferred.')
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--list',action='store_true');args=parser.parse_args()

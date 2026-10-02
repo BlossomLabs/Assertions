@@ -1,0 +1,566 @@
+{
+  "toString(uint256)": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "condition": {
+            "translated-slot": "ZERO"
+          },
+          "nodeType": "IfStatement",
+          "trueBody": {
+            "expression": {
+              "hexValue": "30",
+              "kind": "string",
+              "nodeType": "Literal",
+              "value": "0"
+            },
+            "nodeType": "Return"
+          }
+        },
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "digits",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ],
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "body": {
+            "nodeType": "Block",
+            "statements": [
+              {
+                "expression": {
+                  "nodeType": "UnaryOperation",
+                  "operator": "++",
+                  "prefix": false,
+                  "subExpression": {
+                    "name": "digits",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              }
+            ]
+          },
+          "condition": {
+            "translated-slot": "COUNT_LOOP"
+          },
+          "initializationExpression": {
+            "declarations": [
+              {
+                "constant": false,
+                "mutability": "mutable",
+                "name": "t",
+                "nodeType": "VariableDeclaration",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeName": {
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName"
+                },
+                "visibility": "internal"
+              }
+            ],
+            "initialValue": {
+              "name": "v",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "VariableDeclarationStatement"
+          },
+          "loopExpression": {
+            "expression": {
+              "leftHandSide": {
+                "name": "t",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "nodeType": "Assignment",
+              "operator": "/=",
+              "rightHandSide": {
+                "translated-slot": "COUNT_DIV"
+              }
+            },
+            "nodeType": "ExpressionStatement"
+          },
+          "nodeType": "ForStatement"
+        },
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "buf",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "memory",
+              "typeName": {
+                "name": "bytes",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "arguments": [
+              {
+                "name": "digits",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "nodeType": "NewExpression",
+              "typeName": {
+                "name": "bytes",
+                "nodeType": "ElementaryTypeName"
+              }
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "body": {
+            "nodeType": "Block",
+            "statements": [
+              {
+                "expression": {
+                  "nodeType": "UnaryOperation",
+                  "operator": "--",
+                  "prefix": false,
+                  "subExpression": {
+                    "name": "digits",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "baseExpression": {
+                      "name": "buf",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "indexExpression": {
+                      "name": "digits",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "IndexAccess"
+                  },
+                  "nodeType": "Assignment",
+                  "operator": "=",
+                  "rightHandSide": {
+                    "translated-slot": "DIGIT"
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              }
+            ]
+          },
+          "condition": {
+            "translated-slot": "WRITE_LOOP"
+          },
+          "initializationExpression": {
+            "declarations": [
+              {
+                "constant": false,
+                "mutability": "mutable",
+                "name": "t",
+                "nodeType": "VariableDeclaration",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeName": {
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName"
+                },
+                "visibility": "internal"
+              }
+            ],
+            "initialValue": {
+              "name": "v",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "VariableDeclarationStatement"
+          },
+          "loopExpression": {
+            "expression": {
+              "leftHandSide": {
+                "name": "t",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "nodeType": "Assignment",
+              "operator": "/=",
+              "rightHandSide": {
+                "translated-slot": "WRITE_DIV"
+              }
+            },
+            "nodeType": "ExpressionStatement"
+          },
+          "nodeType": "ForStatement"
+        },
+        {
+          "expression": {
+            "arguments": [
+              {
+                "name": "buf",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "nodeType": "ElementaryTypeNameExpression",
+              "typeName": {
+                "name": "string",
+                "nodeType": "ElementaryTypeName"
+              }
+            },
+            "kind": "typeConversion",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "Return"
+        }
+      ]
+    },
+    "functionSelector": "6900a3ae",
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "toString",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "v",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "name": "string",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "public"
+  },
+  "toString(int256)": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "expression": {
+            "arguments": [
+              {
+                "condition": {
+                  "translated-slot": "NEGATIVE"
+                },
+                "falseExpression": {
+                  "hexValue": "",
+                  "kind": "string",
+                  "nodeType": "Literal",
+                  "value": ""
+                },
+                "nodeType": "Conditional",
+                "trueExpression": {
+                  "hexValue": "2d",
+                  "kind": "string",
+                  "nodeType": "Literal",
+                  "value": "-"
+                }
+              },
+              {
+                "arguments": [
+                  {
+                    "arguments": [
+                      {
+                        "name": "value",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      }
+                    ],
+                    "expression": {
+                      "name": "_magnitude",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "kind": "functionCall",
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "tryCall": false
+                  }
+                ],
+                "expression": {
+                  "name": "toString",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "kind": "functionCall",
+                "names": [],
+                "nodeType": "FunctionCall",
+                "tryCall": false
+              }
+            ],
+            "expression": {
+              "expression": {
+                "nodeType": "ElementaryTypeNameExpression",
+                "typeName": {
+                  "name": "string",
+                  "nodeType": "ElementaryTypeName"
+                }
+              },
+              "memberName": "concat",
+              "nodeType": "MemberAccess"
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "Return"
+        }
+      ]
+    },
+    "functionSelector": "a322c40e",
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "toString",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "value",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "int256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "name": "string",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "external"
+  },
+  "_magnitude(int256)": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "nodeType": "UncheckedBlock",
+          "statements": [
+            {
+              "expression": {
+                "condition": {
+                  "leftExpression": {
+                    "name": "value",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "nodeType": "BinaryOperation",
+                  "operator": "<",
+                  "rightExpression": {
+                    "hexValue": "30",
+                    "kind": "number",
+                    "nodeType": "Literal",
+                    "value": "0"
+                  }
+                },
+                "falseExpression": {
+                  "arguments": [
+                    {
+                      "name": "value",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    }
+                  ],
+                  "expression": {
+                    "nodeType": "ElementaryTypeNameExpression",
+                    "typeName": {
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName"
+                    }
+                  },
+                  "kind": "typeConversion",
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "tryCall": false
+                },
+                "nodeType": "Conditional",
+                "trueExpression": {
+                  "leftExpression": {
+                    "arguments": [
+                      {
+                        "nodeType": "UnaryOperation",
+                        "operator": "-",
+                        "prefix": true,
+                        "subExpression": {
+                          "components": [
+                            {
+                              "leftExpression": {
+                                "name": "value",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "+",
+                              "rightExpression": {
+                                "hexValue": "31",
+                                "kind": "number",
+                                "nodeType": "Literal",
+                                "value": "1"
+                              }
+                            }
+                          ],
+                          "isInlineArray": false,
+                          "nodeType": "TupleExpression"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "nodeType": "ElementaryTypeNameExpression",
+                      "typeName": {
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName"
+                      }
+                    },
+                    "kind": "typeConversion",
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "tryCall": false
+                  },
+                  "nodeType": "BinaryOperation",
+                  "operator": "+",
+                  "rightExpression": {
+                    "hexValue": "31",
+                    "kind": "number",
+                    "nodeType": "Literal",
+                    "value": "1"
+                  }
+                }
+              },
+              "nodeType": "Return"
+            }
+          ]
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "_magnitude",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "value",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "int256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "private"
+  }
+}

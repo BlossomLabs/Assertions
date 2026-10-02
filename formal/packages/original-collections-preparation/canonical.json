@@ -1,0 +1,41 @@
+{
+  "id": "original-collections-preparation",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/collections/preparation/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/collections/preparation/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/collections/preparation/Connection.dfy",
+    "formal/source/collections/preparation/Model.dfy",
+    "formal/source/collections/preparation/Source.generated.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/abi/Frames.dfy",
+      "formal/source/collections/preparation/Model.dfy"
+    ],
+    "execution": [
+      "formal/source/collections/preparation/Source.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/collections/preparation/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/collections/preparation/Connection.dfy": "6f78cbffadd998daa4c8c152e81a87685282a9bc121578d9a1107a188293b02d",
+    "formal/source/collections/preparation/Source.generated.dfy": "0516fdc764b9b59b88475ad61cd0d2e2444d1899265045e6f6fa91861c91d133",
+    "formal/source/collections/preparation/Model.dfy": "fe987b75c7ad60773b12840a0736839af6868da55068ceb1c73eeebaf7f533a6",
+    "formal/source/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

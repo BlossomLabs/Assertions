@@ -1,0 +1,34 @@
+{
+  "id": "original-signed-mod",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/operations/signed-mod/Reference.dfy",
+  "verificationEntries": [
+    "formal/source/operations/signed-mod/Reference.dfy"
+  ],
+  "implementations": [
+    "formal/source/operations/signed-mod/Reference.dfy",
+    "formal/source/operations/signed-mod/SignedMod.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/operations/signed-mod/Reference.dfy",
+      "formal/source/operations/signed-mod/SignedMod.dfy"
+    ],
+    "execution": [],
+    "correspondence": [],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/operations/signed-mod/Reference.dfy": "0c0b7f376dc4c6f6dcdac9dbf9774ac5ae1828b158bfc741bb162597b2eb14fc",
+    "formal/source/operations/signed-mod/SignedMod.dfy": "8f34b64f014de533b333e54f9b657605fad72b839309f4d127e0b0c0fe88b6b7"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

@@ -44,3 +44,12 @@
 /formal/**/physical-preflight.json
 # Local retained-evidence ledgers; tracked historical records remain tracked.
 /docs/verification/
+
+# Local pinned proof tool installation
+/proof-tools
+
+# Local historical proof files retained during the library transition
+/.proof-history/
+
+# Canonical adapter artifacts restored with formal/tools/bootstrap_adapters.py
+/formal/**/*.generated.dfy

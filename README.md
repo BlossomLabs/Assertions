@@ -2,6 +2,20 @@
 
 On-chain assertion contracts for verifying blockchain state in Solidity, built around a static call to [ERC-8211 (Smart Batching)](https://www.erc8211.com/). An assertion is an ERC-8211 predicate: an `InputParam` that declares how to fetch a live value (`RAW_BYTES` literal, arbitrary `STATIC_CALL`, or `BALANCE` query) and the inline `Constraint`s it must satisfy: constraint i checks resolved word i, with unsigned/signed comparisons, ranges, OR alternatives and SKIP. Batch assertion calls alongside the transactions they guard (DAO proposals, Safe batches, upgrades): if any constraint fails, the guarded execution reverts atomically when the executor makes the assertion mandatory and propagates its failure in the same transaction.
 
+## Formal proof library
+
+The [source proof library](formal/README.md) is the primary formal
+verification interface for this project. It provides contract-specific claims,
+shared ABI and memory foundations, canonical proof sources, and uniform native
+verification and source-generation commands. Its integrity checker runs without
+the historical proof workspace.
+
+Earlier source, migration and exact-bytecode proof campaigns remain on the
+[historical proof branch (PR #3)](https://github.com/BlossomLabs/Assertions/pull/3).
+The library preserves their logical interfaces and provenance while reporting
+fresh native verification, generation and source acceptance separately.
+
+
 **Four contracts, one toolkit.** `Assertions` holds operands unresolved and judges them; the other three compute over values that are already resolved. All four are stateless and view-only, reach each other by address rather than by source import, and version independently by deploying at a new address.
 
 - **`Assertions`** owns everything that speaks ERC-8211. It judges batches in view mode: `assertParam` resolves one input parameter and validates its constraints; `assertBatch(executions)` evaluates a full `ComposableExecution[]` batch with every fetcher and every constructed call executed via `staticcall`. And it carries the eleven primitives whose operands arrive unresolved: selection (`resolve`, `gather`, `pick`, `nav`), call construction (`chain`, `read` from calldata segments, `get` from whole canonical values) and lazy resolution control (`cond`, `orElse`, `isValid`, `revertData`).

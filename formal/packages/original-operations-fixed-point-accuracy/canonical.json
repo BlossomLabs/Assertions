@@ -1,0 +1,73 @@
+{
+  "id": "original-operations-fixed-point-accuracy",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/operations/fixed-point-accuracy/Kernel.dfy",
+  "verificationEntries": [
+    "formal/source/operations/fixed-point-accuracy/Kernel.dfy"
+  ],
+  "implementations": [
+    "formal/source/operations/fixed-point-accuracy/Bridge.dfy",
+    "formal/source/operations/fixed-point-accuracy/Intervals.dfy",
+    "formal/source/operations/fixed-point-accuracy/Kernel.dfy",
+    "formal/source/operations/fixed-point-accuracy/Series.dfy",
+    "formal/source/operations/fixed-point-accuracy/Spec.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/operations/binary-log/Model.dfy",
+      "formal/source/operations/fixed-point-accuracy/Bridge.dfy",
+      "formal/source/operations/fixed-point-accuracy/Intervals.dfy",
+      "formal/source/operations/fixed-point-accuracy/Kernel.dfy",
+      "formal/source/operations/fixed-point-accuracy/Series.dfy",
+      "formal/source/operations/fixed-point-accuracy/Spec.dfy",
+      "formal/source/operations/fixed-point/Bounds.dfy",
+      "formal/source/operations/fixed-point/Model.dfy",
+      "formal/source/operations/full-mul-div/Bits.dfy",
+      "formal/source/operations/full-mul-div/Inverse.dfy",
+      "formal/source/operations/full-mul-div/Memory.dfy",
+      "formal/source/operations/full-mul-div/Model.dfy",
+      "formal/source/operations/full-mul-div/Product.dfy",
+      "formal/source/operations/full-mul-div/Recombine.dfy"
+    ],
+    "execution": [
+      "formal/source/operations/binary-log/Control.generated.dfy",
+      "formal/source/operations/full-mul-div/Control.generated.dfy",
+      "formal/source/operations/full-mul-div/Helpers.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/operations/binary-log/Connection.dfy",
+      "formal/source/operations/full-mul-div/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/operations/fixed-point-accuracy/Bridge.dfy": "85f8ffa2fd6a13f46e13fec5c98734770b82bfb7e1a70cbe5f308ae9e05acb0f",
+    "formal/source/operations/fixed-point/Bounds.dfy": "c54db686357986f04bf214301d0ece0c8c0b16baf5ee7f14c903f3b53a3efa31",
+    "formal/source/operations/fixed-point/Model.dfy": "23aeced12c0d6f2625d4a4309607b7ba572e32d285ef06a1ceff204f87e0e24e",
+    "formal/source/operations/full-mul-div/Connection.dfy": "33f4fcd752c28b6ab30c4b5f17b255f4f8aba776ec2f21b83853c0ac3a2b92a8",
+    "formal/source/operations/full-mul-div/Control.generated.dfy": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29",
+    "formal/source/operations/full-mul-div/Memory.dfy": "fa793dd9cdcafd53da4117f3e6a2e7f45dc9f10eb142c75a88eb0d9fc6b64207",
+    "formal/source/operations/full-mul-div/Model.dfy": "d434f131f2ed702d0436212ed0305c74ae04bc559e7860ef13f295681ca89d7a",
+    "formal/source/operations/full-mul-div/Recombine.dfy": "ed98ab273383898126e8153f81b9cb06113abf1a809634c04ced2a5e2e2d3d88",
+    "formal/source/operations/full-mul-div/Inverse.dfy": "ac63a7988e4d8ab8a3775ede709cffa838b8c2d79a49592068a06262421b1857",
+    "formal/source/operations/full-mul-div/Bits.dfy": "2ecb890dd5fe6ec1f62d20291fbba0a82d5f3546e87b7305f3c6377efbdfccd8",
+    "formal/source/operations/full-mul-div/Product.dfy": "32487b110ab9f246ab90a799d949a5fa363326e741a49f2e17b197051ae8c850",
+    "formal/source/operations/binary-log/Connection.dfy": "8594c44f6816e38809ea4addfe6a6c904ad0c60ce9aa2e2f5812b2aaa37ac805",
+    "formal/source/operations/binary-log/Control.generated.dfy": "0df721883a8efe7a1f26a18f6c207d12519d8497b063187200fb42c1cbde9eed",
+    "formal/source/operations/binary-log/Model.dfy": "aaf63b8efc1db2c1f34b0f4c4489773029351e909e60473bbc1596d48f0d30d2",
+    "formal/source/operations/full-mul-div/Helpers.generated.dfy": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a",
+    "formal/source/operations/fixed-point-accuracy/Series.dfy": "78c8402e20c312b711c593554b91cc6ef9ecfaf59b2883ca06779a6c4d534b83",
+    "formal/source/operations/fixed-point-accuracy/Intervals.dfy": "ad6154c9b18141db3410d16b7ed7f1672628ec8065afb7f1af7138a8c5bd2ab7",
+    "formal/source/operations/fixed-point-accuracy/Spec.dfy": "ef5b20a00e4c3713a1bd11b49a58eae185dfa225f6d0b46de48cf88165160082",
+    "formal/source/operations/fixed-point-accuracy/Kernel.dfy": "005749d8d963419600f7c5b78d84243876df15f95fd8440391fbcf15dd7e991b"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

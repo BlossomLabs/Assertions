@@ -1,0 +1,41 @@
+{
+  "id": "original-collections-sort-core",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/collections/sort-core/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/collections/sort-core/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/collections/sort-core/Connection.dfy",
+    "formal/source/collections/sort-core/Merge.dfy",
+    "formal/source/collections/sort-core/Model.dfy",
+    "formal/source/collections/sort-core/Ranges.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/collections/sort-core/Merge.dfy",
+      "formal/source/collections/sort-core/Model.dfy",
+      "formal/source/collections/sort-core/Ranges.dfy"
+    ],
+    "execution": [],
+    "correspondence": [
+      "formal/source/collections/sort-core/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/collections/sort-core/Connection.dfy": "7574916b597311b26e95349897aab10e2fdfac3bec169e0132572acc46aae6b9",
+    "formal/source/collections/sort-core/Ranges.dfy": "8c98f2d0b23db5ae862a50a1c0c3ebfb29b865445bda15623333dde2d89edeab",
+    "formal/source/collections/sort-core/Merge.dfy": "2f9405f5d219b0ea4c5a10e657c20e73e64a792e1aa8f35723a0dd5d1ac1a6f2",
+    "formal/source/collections/sort-core/Model.dfy": "1b73d1d7aaa59051903118d267e827d207bc7e4ee8695b6e492eacc4a5f6d954"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

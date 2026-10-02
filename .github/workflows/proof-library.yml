@@ -1,0 +1,19 @@
+name: Source proof library integrity
+on:
+  push:
+    paths: ["formal/**", "docs/claim-evidence.json", ".github/workflows/proof-library.yml"]
+  pull_request:
+    paths: ["formal/**", "docs/claim-evidence.json", ".github/workflows/proof-library.yml"]
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 formal/tools/bootstrap_adapters.py --fetch
+      - run: python3 formal/tools/check.py
+      - run: python3 formal/tools/status.py
+      - run: python3 formal/tools/readiness.py
+      - run: python3 -m unittest discover -s formal/tests -v

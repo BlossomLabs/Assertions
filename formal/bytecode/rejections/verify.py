@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+"""Retain physical short/nonpayable raw rejection proofs for all three runtimes."""
+import argparse,csv,datetime,importlib.util,json,re,shutil,subprocess,sys
+from pathlib import Path
+if not __debug__:raise RuntimeError('Run without Python -O')
+HERE=Path(__file__).resolve().parent
+ROOT=HERE.parents[2]
+def module(name,path):
+ spec=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
+getter=module('getter',ROOT/'formal/bytecode/getters/verify.py');common=getter.common;sha=common.sha
+NAMES=[c+k for c in ['Assertions','Expressions','Collections'] for k in ['Nonzero','Short']]
+DEPENDENCY=ROOT/'formal/bytecode/getters/evidence/operations-guard-current-inputs-v3/manifest.json'
+def inputs():
+ files=set(getter.inputs())|{f for f in HERE.iterdir() if f.is_file()}|{ROOT/'scripts/check-constant-getters-bytecode-evidence.py',ROOT/'docs/verification/constant-getters-bytecode.json'}
+ files|={f for f in DEPENDENCY.parent.rglob('*') if f.is_file()}
+ return sorted(files)
+def main():
+ p=argparse.ArgumentParser();p.add_argument('--dafny',type=Path,required=True);p.add_argument('--solc',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
+ dafny,solc=a.dafny.resolve(),a.solc.resolve();z3=dafny.parent/'z3/bin/z3-4.12.1';out=a.output.resolve();out.mkdir(parents=True,exist_ok=False)
+ assert {f.name for f in HERE.glob('*.dfy')}=={n+'.generated.dfy' for n in NAMES},'Uninventoried proof source'
+ for f in HERE.glob('*.dfy'):assert re.findall(r'^include "([^"]+)"',f.read_text(),re.M)==['../getters/Machine.dfy'],'Uninventoried model dependency'
+ dep=json.loads(DEPENDENCY.read_text());assert dep['status']=='passed' and dep['inputsUnchanged'] and all(j['passed'] for j in dep['checks'])
+ model=ROOT/'formal/bytecode/getters/Machine.dfy';assert sha(model)==dep['sourceSha256']['formal/bytecode/getters/Machine.dfy'],'Different shared model'
+ versions={k:subprocess.check_output([str(v),'--version'],text=True).strip() for k,v in [('dafny',dafny),('z3',z3),('solc',solc)]};assert versions['dafny']==json.loads((ROOT/'formal/abi/toolchain.json').read_text())['dafnyVersion'] and '4.12.1' in versions['z3'] and '0.8.36+commit.8a079791' in versions['solc']
+ tools={'dafny':dafny,'Dafny.dll':dafny.parent/'Dafny.dll','z3':z3,'solc':solc};assert {k:sha(v) for k,v in tools.items()}==dep['executableSha256'],'Different model proof tools'
+ files=inputs();hashes={str(f.relative_to(ROOT)):sha(f) for f in files};snap=out/'source-snapshot'
+ for f in files:
+  dest=snap/f.relative_to(ROOT);dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(f,dest)
+ source=snap/HERE.relative_to(ROOT)
+ m={'schemaVersion':1,'status':'incomplete','startedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'scope':'Physical byte-memory exact runtime rejection from PC zero through empty REVERT for nonzero call value or zero-value calldata shorter than four bytes in Assertions, Expressions and Collections. Six raw environment classes; accepted bodies/ABI decoding and whole-contract bytecode remain separate.','sourceSha256':hashes,'versions':versions,'executableSha256':{k:sha(v) for k,v in tools.items()},'dependency':{'manifest':str(DEPENDENCY.relative_to(ROOT)),'sha256':sha(DEPENDENCY),'modelSha256':sha(model),'retainedManifest':str((snap/DEPENDENCY.relative_to(ROOT)).relative_to(out))},'checks':[],'assumptions':[
+ 'Trusted boundaries: exact canonical bytes/input/artifact extraction, reviewed full-runtime instruction scanning, reached EVM opcode interpretation, fresh zero call memory and truthful CALLVALUE/CALLDATASIZE observations. CALLDATALOAD is never reached in these classes; its supplied word is arbitrary.',
+ 'Nonzero call value spans every nonzero 256-bit value and leaves calldata size arbitrary. Short frames have zero value and size below four. Every reached path is connected instruction by instruction through a complete finite Step sequence; no input path is dropped at a fuel or loop cut-off.',
+ 'Actual byte MSTORE(64,128), complete empty REVERT, stack cap three and reached byte memory cap 96 are proved using the immutable, fully native-verified retained getter model. Declared jumps must be actual instruction boundaries in the pinned full runtime; unconstrained unused bytes do not prove arbitrary mutation invariance.',
+ 'Adequate reached execution resources, faithful environment/memory/EVM projections and trusted Dafny/Boogie/Z3/solc/Node/Hardhat/EDR/scripts remain explicit. No compiler/allocator/serializer correctness premise substitutes for executed rejection instructions. No accepted body, unknown-selector rejection, whole-contract equivalence, gas, deployment, complexity, performance or unconditional resource safety claim.',
+ 'Current getter dependency checker and exact source/tool/evidence closure must pass before and after. Six native inventories, all zero audits, regenerated byte certificates, current full runtime reproduction, 21 full physical EVM fixtures and six REVERT-to-RETURN semantic bytecode faults are mandatory. Timeout/translation failure is not fault detection.'
+ ]}
+ def save():(out/'manifest.json').write_text(json.dumps(m,indent=2)+'\n')
+ def record(name,cmd,timeout=1200):
+  j=common.run(cmd,out/(name+'.log'),timeout);j.update(name=name,passed=j['exitCode']==0);m['checks'].append(j);save();return j
+ save();record('dependency-before',[sys.executable,'-B',ROOT/'scripts/check-constant-getters-bytecode-evidence.py'],240)
+ record('runtime-identity',[sys.executable,'-B',snap/'formal/bytecode/dispatch/identity.py','--solc',solc,'--output',out/'identity'],240)
+ gate=record('generation',[sys.executable,'-B',source/'generate.py','--output',out/'generated'],180);gate['passed']=gate['passed'] and all((source/(n+s)).read_bytes()==(out/'generated'/(n+s)).read_bytes() for n in NAMES for s in ['.generated.dfy','.mapping.json']);save()
+ if not all(j['passed'] for j in m['checks']):raise SystemExit('Dependency/identity/generation failed')
+ jobs=[]
+ for n in NAMES:
+  file=source/(n+'.generated.dfy');csvpath=out/('proof-'+n+'.csv');j=record('proof-'+n,common.proof_command(dafny,file,csvpath)+['--filter-symbol','BytecodeReject'+n,'--progress','Symbol']);common.check_proof(j,out/('proof-'+n+'.log'),csvpath,getter.inventory(HERE/file.name));jobs.append(j);save()
+  audit=record('audit-'+n,[dafny,'audit',file],180);audit['passed']=audit['passed'] and 'auditor completed with 0 findings' in (out/('audit-'+n+'.log')).read_text();save()
+ record('format',[dafny,'format','--check',*[source/(n+'.generated.dfy') for n in NAMES]],180)
+ concrete=record('concrete',[shutil.which('node'),HERE/'evm-traces.mjs',out/'evm-traces'],180);results=json.loads((out/'evm-traces/results.json').read_text()) if (out/'evm-traces/results.json').is_file() else []
+ expected={(c,i) for c in ['Assertions','Expressions','Collections'] for i in range(7)};concrete['passed']=concrete['passed'] and len(results)==21 and {(r['contract'],r['index']) for r in results}==expected and all(r['passed'] for r in results)
+ if (out/'evm-traces/toolchain.json').is_file():m['concreteToolchain']=json.loads((out/'evm-traces/toolchain.json').read_text())
+ save();record('candidate-generation',[sys.executable,'-B',source/'make-candidates.py','--output',out/'candidates'],180);faults=[]
+ for n in NAMES:
+  contract=n.removesuffix('Nonzero').removesuffix('Short');kind='Nonzero' if n.endswith('Nonzero') else 'Short';folder=out/'mutations'/n;folder.mkdir(parents=True);candidate=out/'candidates'/(n+'.bin')
+  translated=record(n+'-translation',[sys.executable,'-B',source/'generate.py','--runtime',candidate,'--contract',contract,'--output',folder],180)
+  # Resolve the same relative shared-model include inside each mutation tree.
+  modelcopy=folder.parent/'getters/Machine.dfy';modelcopy.parent.mkdir(parents=True,exist_ok=True)
+  if not modelcopy.exists():shutil.copy2(source.parent/'getters/Machine.dfy',modelcopy)
+  file=folder/(n+'.generated.dfy');lines=file.read_text().splitlines();anchor=next(i for i,l in enumerate(lines) if 'ensures var next :=' in l and 'next == Reverted([])' in l);symbol='BytecodeReject'+n+'.Advance'+str(10 if kind=='Nonzero' else 18)
+  baseline=next(j for j in jobs if j['name']=='proof-'+n);assert next(d for d in baseline['declarations'] if d['name']==symbol)['status']=='passed'
+  native=record(n+'-native',common.proof_command(dafny,file,folder/'proof.csv')+['--filter-symbol',symbol,'--filter-position',str(file)+':'+str(anchor+1),'--progress','Symbol'],180)
+  text=(out/(n+'-native.log')).read_text();rows=list(csv.DictReader((folder/'proof.csv').open())) if (folder/'proof.csv').is_file() else []
+  native['passed']=native['exitCode'] not in [0,None] and bool(rows) and any(r['TestResult.Outcome']=='Failed' for r in rows) and all(r['TestResult.Outcome'] in {'Passed','Failed'} for r in rows) and 'postcondition could not be proved' in text and not re.search(r'timed out|inconclusive|resource limit|type error|resolution error|parse error',text,re.I)
+  evm=record(n+'-concrete',[shutil.which('node'),HERE/'evm-traces.mjs',folder/'evm-traces',candidate,contract,kind],180);text=(out/(n+'-concrete.log')).read_text();failures=[]
+  for f in (folder/'evm-traces').glob(contract+'-*.json'):
+   t=json.loads(f.read_text())
+   if not t['trace']['failed']:failures.append({'trace':str(f.relative_to(out)),'actualSuccess':True,'returnValue':t['trace']['returnValue'],'case':t['case']})
+  evm['passed']=evm['exitCode'] not in [0,None] and 'Wrong EVM rejection '+contract+'/'+kind+'/' in text and bool(failures)
+  faults.append({'name':n,'candidateSha256':sha(candidate),'baselineCoveredSymbol':symbol,'semanticAssertion':{'line':anchor+1,'text':lines[anchor]},'checks':[translated,native,evm],'concreteFailures':failures});save()
+ (out/'mutations/results.json').write_text(json.dumps(faults,indent=2)+'\n');record('dependency-after',[sys.executable,'-B',ROOT/'scripts/check-constant-getters-bytecode-evidence.py'],240)
+ m['nativeResults']=[r for j in jobs for r in j['nativeResults']];m['declarationResults']=[d for j in jobs for d in j['declarations']]
+ m['inputsUnchanged']=hashes=={str(f.relative_to(ROOT)):sha(f) for f in inputs()};m['toolsUnchanged']=m['executableSha256']=={k:sha(v) for k,v in tools.items()};ct=m.get('concreteToolchain',{})
+ m['concreteToolsUnchanged']=bool(ct) and all(sha(Path(ct[k]))==ct[k+'Sha256'] for k in ['hardhatEntry','edrEntry','nativeBinding']) and sha(Path(ct['nodeExecutable']))==ct['nodeSha256'] and sha(ROOT/'pnpm-lock.yaml')==ct['lockfileSha256']
+ m['status']='passed' if m['inputsUnchanged'] and m['toolsUnchanged'] and m['concreteToolsUnchanged'] and all(j['passed'] for j in m['checks']) else 'failed';m['completedAt']=datetime.datetime.now(datetime.timezone.utc).isoformat();m['evidenceSha256']={str(f.relative_to(out)):sha(f) for f in sorted(out.rglob('*')) if f.is_file() and f.name!='manifest.json'};save();print(m['status']);raise SystemExit(0 if m['status']=='passed' else 1)
+if __name__=='__main__':main()

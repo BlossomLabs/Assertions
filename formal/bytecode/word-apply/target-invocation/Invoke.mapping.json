@@ -1,0 +1,229 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 12319,
+      "stack": [
+        "returnPc",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "mode",
+        "128",
+        "n"
+      ],
+      "op": 95,
+      "next": 12320,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 12320,
+      "stack": [
+        "returnPc",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "mode",
+        "128",
+        "n",
+        "0"
+      ],
+      "op": 129,
+      "next": 12321,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 12321,
+      "stack": [
+        "returnPc",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "mode",
+        "128",
+        "n",
+        "0",
+        "n"
+      ],
+      "op": 21,
+      "next": 12322,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 12322,
+      "stack": [
+        "returnPc",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "mode",
+        "128",
+        "n",
+        "0",
+        "0"
+      ],
+      "op": 97,
+      "next": 12325,
+      "immediate": 12619
+    },
+    {
+      "id": 4,
+      "pc": 12325,
+      "stack": [
+        "returnPc",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "mode",
+        "128",
+        "n",
+        "0",
+        "0",
+        "12619"
+      ],
+      "op": 87,
+      "next": 12326,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 12326,
+      "stack": [
+        "returnPc",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "mode",
+        "128",
+        "n",
+        "0"
+      ],
+      "op": 97,
+      "next": 12329,
+      "immediate": 12334
+    },
+    {
+      "id": 6,
+      "pc": 12329,
+      "stack": [
+        "returnPc",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "mode",
+        "128",
+        "n",
+        "0",
+        "12334"
+      ],
+      "op": 137,
+      "next": 12330,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 12330,
+      "stack": [
+        "returnPc",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "mode",
+        "128",
+        "n",
+        "0",
+        "12334",
+        "target"
+      ],
+      "op": 97,
+      "next": 12333,
+      "immediate": 15859
+    },
+    {
+      "id": 8,
+      "pc": 12333,
+      "stack": [
+        "returnPc",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "mode",
+        "128",
+        "n",
+        "0",
+        "12334",
+        "target",
+        "15859"
+      ],
+      "op": 86,
+      "next": 12334,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "15859": 91,
+    "12319": 95,
+    "12320": 129,
+    "12321": 21,
+    "12322": 97,
+    "12323": 49,
+    "12324": 75,
+    "12325": 87,
+    "12619": 91,
+    "12326": 97,
+    "12327": 48,
+    "12328": 46,
+    "12329": 137,
+    "12330": 97,
+    "12331": 61,
+    "12332": 243,
+    "12333": 86
+  },
+  "destinations": [
+    12619,
+    15859
+  ],
+  "scope": "Exact nonempty branch and target invocation only; helper/body/retained public evidence remain open",
+  "entryPc": 12319,
+  "terminal": "Running(15859,prefix+[returnPc,sourceOffset,sourceLength,target,templateOffset,templateLength,arrayOffset,count,mode,128,n,0,12334,target],mem)"
+}

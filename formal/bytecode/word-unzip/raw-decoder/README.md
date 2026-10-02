@@ -1,0 +1,3 @@
+# unzipWords fitting raw ABI rejection development
+
+The complete fitting-size domain is partitioned into an incomplete two-word head, oversized dynamic offset, incomplete length header, oversized dynamic length, incomplete payload, or accepted decoder geometry. Exact current runtime paths prove empty REVERT for each malformed class. The scalar lane is loaded for accepted frames and checked in the public body; it has no ABI enum restriction. Loose offsets, head overlap and trailing calldata admitted by the compiler remain within scope. Representation bound calldata size below 2^64, faithful instructions and adequate resources are explicit. No retained public evidence or bytecode coverage increment.

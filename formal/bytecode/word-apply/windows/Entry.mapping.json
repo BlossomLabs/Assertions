@@ -1,0 +1,160 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 16683,
+      "stack": [
+        "returnPc",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count"
+      ],
+      "op": 91,
+      "next": 16684,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 16684,
+      "stack": [
+        "returnPc",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count"
+      ],
+      "op": 96,
+      "next": 16686,
+      "immediate": 32
+    },
+    {
+      "id": 2,
+      "pc": 16686,
+      "stack": [
+        "returnPc",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "32"
+      ],
+      "op": 131,
+      "next": 16687,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 16687,
+      "stack": [
+        "returnPc",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "32",
+        "templateLength"
+      ],
+      "op": 16,
+      "next": 16688,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 16688,
+      "stack": [
+        "returnPc",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "0"
+      ],
+      "op": 21,
+      "next": 16689,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 16689,
+      "stack": [
+        "returnPc",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "1"
+      ],
+      "op": 97,
+      "next": 16692,
+      "immediate": 16726
+    },
+    {
+      "id": 6,
+      "pc": 16692,
+      "stack": [
+        "returnPc",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "1",
+        "16726"
+      ],
+      "op": 87,
+      "next": 16693,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 16726,
+      "stack": [
+        "returnPc",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count"
+      ],
+      "op": 91,
+      "next": 16727,
+      "immediate": 0
+    },
+    {
+      "id": 8,
+      "pc": 16727,
+      "stack": [
+        "returnPc",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count"
+      ],
+      "op": 95,
+      "next": 16728,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "12235": 91,
+    "16683": 91,
+    "16684": 96,
+    "16685": 32,
+    "16686": 131,
+    "16687": 16,
+    "16688": 21,
+    "16689": 97,
+    "16690": 65,
+    "16691": 86,
+    "16692": 87,
+    "16726": 91,
+    "16727": 95
+  },
+  "destinations": [
+    12235,
+    16726
+  ],
+  "scope": "Valid element-window prefix/iteration/exit control only; failing windows, full application and retained public bytecode evidence open",
+  "entryPc": 16683,
+  "terminal": "Running(16728,prefix+[returnPc,templateOffset,templateLength,arrayOffset,count,0],mem)"
+}

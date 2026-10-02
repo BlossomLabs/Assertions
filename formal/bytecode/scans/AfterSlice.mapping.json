@@ -1,0 +1,116 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 2885,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "WordOffset(offset,index)",
+        "32"
+      ],
+      "op": 91,
+      "next": 2886,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 2886,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "WordOffset(offset,index)",
+        "32"
+      ],
+      "op": 97,
+      "next": 2889,
+      "immediate": 2894
+    },
+    {
+      "id": 2,
+      "pc": 2889,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "WordOffset(offset,index)",
+        "32",
+        "2894"
+      ],
+      "op": 145,
+      "next": 2890,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 2890,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "2894",
+        "32",
+        "WordOffset(offset,index)"
+      ],
+      "op": 97,
+      "next": 2893,
+      "immediate": 23662
+    },
+    {
+      "id": 4,
+      "pc": 2893,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "2894",
+        "32",
+        "WordOffset(offset,index)",
+        "23662"
+      ],
+      "op": 86,
+      "next": 2894,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "2885": 91,
+    "2886": 97,
+    "2887": 11,
+    "2888": 78,
+    "2889": 145,
+    "2890": 97,
+    "2891": 92,
+    "2892": 110,
+    "2893": 86,
+    "23662": 91
+  },
+  "destinations": [
+    23662
+  ],
+  "expectedFinalStack": "394725771,604,offset,length,total,length/32,index,2894,32,WordOffset(offset,index)",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

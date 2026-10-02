@@ -1,0 +1,500 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 23623,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset"
+      ],
+      "op": 91,
+      "next": 23624,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 23624,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset"
+      ],
+      "op": 95,
+      "next": 23625,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 23625,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0"
+      ],
+      "op": 95,
+      "next": 23626,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 23626,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0"
+      ],
+      "op": 133,
+      "next": 23627,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 23627,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0",
+        "end"
+      ],
+      "op": 133,
+      "next": 23628,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 23628,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0",
+        "end",
+        "start"
+      ],
+      "op": 17,
+      "next": 23629,
+      "immediate": 0
+    },
+    {
+      "id": 6,
+      "pc": 23629,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0",
+        "0"
+      ],
+      "op": 21,
+      "next": 23630,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 23630,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0",
+        "1"
+      ],
+      "op": 97,
+      "next": 23633,
+      "immediate": 23637
+    },
+    {
+      "id": 8,
+      "pc": 23633,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0",
+        "1",
+        "23637"
+      ],
+      "op": 87,
+      "next": 23634,
+      "immediate": 0
+    },
+    {
+      "id": 9,
+      "pc": 23637,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0"
+      ],
+      "op": 91,
+      "next": 23638,
+      "immediate": 0
+    },
+    {
+      "id": 10,
+      "pc": 23638,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0"
+      ],
+      "op": 131,
+      "next": 23639,
+      "immediate": 0
+    },
+    {
+      "id": 11,
+      "pc": 23639,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0",
+        "length"
+      ],
+      "op": 134,
+      "next": 23640,
+      "immediate": 0
+    },
+    {
+      "id": 12,
+      "pc": 23640,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0",
+        "length",
+        "end"
+      ],
+      "op": 17,
+      "next": 23641,
+      "immediate": 0
+    },
+    {
+      "id": 13,
+      "pc": 23641,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0",
+        "0"
+      ],
+      "op": 21,
+      "next": 23642,
+      "immediate": 0
+    },
+    {
+      "id": 14,
+      "pc": 23642,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0",
+        "1"
+      ],
+      "op": 97,
+      "next": 23645,
+      "immediate": 23649
+    },
+    {
+      "id": 15,
+      "pc": 23645,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0",
+        "1",
+        "23649"
+      ],
+      "op": 87,
+      "next": 23646,
+      "immediate": 0
+    },
+    {
+      "id": 16,
+      "pc": 23649,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0"
+      ],
+      "op": 91,
+      "next": 23650,
+      "immediate": 0
+    },
+    {
+      "id": 17,
+      "pc": 23650,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0",
+        "0"
+      ],
+      "op": 80,
+      "next": 23651,
+      "immediate": 0
+    },
+    {
+      "id": 18,
+      "pc": 23651,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "0"
+      ],
+      "op": 80,
+      "next": 23652,
+      "immediate": 0
+    },
+    {
+      "id": 19,
+      "pc": 23652,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset"
+      ],
+      "op": 130,
+      "next": 23653,
+      "immediate": 0
+    },
+    {
+      "id": 20,
+      "pc": 23653,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "offset",
+        "start"
+      ],
+      "op": 1,
+      "next": 23654,
+      "immediate": 0
+    },
+    {
+      "id": 21,
+      "pc": 23654,
+      "stack": [
+        "8354",
+        "end",
+        "start",
+        "length",
+        "((start as nat)+(offset as nat))%G.Modulus()"
+      ],
+      "op": 147,
+      "next": 23655,
+      "immediate": 0
+    },
+    {
+      "id": 22,
+      "pc": 23655,
+      "stack": [
+        "((start as nat)+(offset as nat))%G.Modulus()",
+        "end",
+        "start",
+        "length",
+        "8354"
+      ],
+      "op": 145,
+      "next": 23656,
+      "immediate": 0
+    },
+    {
+      "id": 23,
+      "pc": 23656,
+      "stack": [
+        "((start as nat)+(offset as nat))%G.Modulus()",
+        "end",
+        "8354",
+        "length",
+        "start"
+      ],
+      "op": 144,
+      "next": 23657,
+      "immediate": 0
+    },
+    {
+      "id": 24,
+      "pc": 23657,
+      "stack": [
+        "((start as nat)+(offset as nat))%G.Modulus()",
+        "end",
+        "8354",
+        "start",
+        "length"
+      ],
+      "op": 146,
+      "next": 23658,
+      "immediate": 0
+    },
+    {
+      "id": 25,
+      "pc": 23658,
+      "stack": [
+        "((start as nat)+(offset as nat))%G.Modulus()",
+        "length",
+        "8354",
+        "start",
+        "end"
+      ],
+      "op": 3,
+      "next": 23659,
+      "immediate": 0
+    },
+    {
+      "id": 26,
+      "pc": 23659,
+      "stack": [
+        "((start as nat)+(offset as nat))%G.Modulus()",
+        "length",
+        "8354",
+        "((end as nat)+G.Modulus()-(start as nat))%G.Modulus()"
+      ],
+      "op": 145,
+      "next": 23660,
+      "immediate": 0
+    },
+    {
+      "id": 27,
+      "pc": 23660,
+      "stack": [
+        "((start as nat)+(offset as nat))%G.Modulus()",
+        "((end as nat)+G.Modulus()-(start as nat))%G.Modulus()",
+        "8354",
+        "length"
+      ],
+      "op": 80,
+      "next": 23661,
+      "immediate": 0
+    },
+    {
+      "id": 28,
+      "pc": 23661,
+      "stack": [
+        "((start as nat)+(offset as nat))%G.Modulus()",
+        "((end as nat)+G.Modulus()-(start as nat))%G.Modulus()",
+        "8354"
+      ],
+      "op": 86,
+      "next": 23662,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "23623": 91,
+    "23624": 95,
+    "23625": 95,
+    "23626": 133,
+    "23627": 133,
+    "23628": 17,
+    "23629": 21,
+    "23630": 97,
+    "23631": 92,
+    "23632": 85,
+    "23633": 87,
+    "23637": 91,
+    "23638": 131,
+    "23639": 134,
+    "23640": 17,
+    "23641": 21,
+    "23642": 97,
+    "23643": 92,
+    "23644": 97,
+    "23645": 87,
+    "23649": 91,
+    "23650": 80,
+    "23651": 80,
+    "23652": 130,
+    "23653": 1,
+    "23654": 147,
+    "23655": 145,
+    "23656": 144,
+    "23657": 146,
+    "23658": 3,
+    "23659": 145,
+    "23660": 80,
+    "23661": 86,
+    "8354": 91
+  },
+  "destinations": [
+    8354,
+    23637,
+    23649
+  ],
+  "finalStack": [
+    "((start as nat)+(offset as nat))%G.Modulus()",
+    "((end as nat)+G.Modulus()-(start as nat))%G.Modulus()"
+  ],
+  "scope": "development admitted actual helper path only; body composition and retained evidence remain open"
+}

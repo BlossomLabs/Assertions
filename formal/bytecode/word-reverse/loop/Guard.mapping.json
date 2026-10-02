@@ -1,0 +1,327 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 5846,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index"
+      ],
+      "op": 91,
+      "next": 5847,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 1,
+      "pc": 5847,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index"
+      ],
+      "op": 129,
+      "next": 5848,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 2,
+      "pc": 5848,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "length/32"
+      ],
+      "op": 129,
+      "next": 5849,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 3,
+      "pc": 5849,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "length/32",
+        "index"
+      ],
+      "op": 16,
+      "next": 5850,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 4,
+      "pc": 5850,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "1"
+      ],
+      "op": 21,
+      "next": 5851,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 5,
+      "pc": 5851,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0"
+      ],
+      "op": 97,
+      "next": 5854,
+      "immediate": 2914,
+      "memory": "mem"
+    },
+    {
+      "id": 6,
+      "pc": 5854,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0",
+        "2914"
+      ],
+      "op": 87,
+      "next": 5855,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 7,
+      "pc": 5855,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index"
+      ],
+      "op": 95,
+      "next": 5856,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 8,
+      "pc": 5856,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0"
+      ],
+      "op": 133,
+      "next": 5857,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 9,
+      "pc": 5857,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0",
+        "offset"
+      ],
+      "op": 133,
+      "next": 5858,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 10,
+      "pc": 5858,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0",
+        "offset",
+        "length"
+      ],
+      "op": 97,
+      "next": 5861,
+      "immediate": 5868,
+      "memory": "mem"
+    },
+    {
+      "id": 11,
+      "pc": 5861,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0",
+        "offset",
+        "length",
+        "5868"
+      ],
+      "op": 132,
+      "next": 5862,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 12,
+      "pc": 5862,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0",
+        "offset",
+        "length",
+        "5868",
+        "index"
+      ],
+      "op": 96,
+      "next": 5864,
+      "immediate": 32,
+      "memory": "mem"
+    },
+    {
+      "id": 13,
+      "pc": 5864,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0",
+        "offset",
+        "length",
+        "5868",
+        "index",
+        "32"
+      ],
+      "op": 97,
+      "next": 5867,
+      "immediate": 23581,
+      "memory": "mem"
+    },
+    {
+      "id": 14,
+      "pc": 5867,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0",
+        "offset",
+        "length",
+        "5868",
+        "index",
+        "32",
+        "23581"
+      ],
+      "op": 86,
+      "next": 5868,
+      "immediate": 0,
+      "memory": "mem"
+    }
+  ],
+  "requiredBytes": {
+    "5846": 91,
+    "5847": 129,
+    "5848": 129,
+    "5849": 16,
+    "5850": 21,
+    "5851": 97,
+    "5852": 11,
+    "5853": 98,
+    "5854": 87,
+    "2914": 91,
+    "5855": 95,
+    "5856": 133,
+    "5857": 133,
+    "5858": 97,
+    "5859": 22,
+    "5860": 236,
+    "5861": 132,
+    "5862": 96,
+    "5863": 32,
+    "5864": 97,
+    "5865": 92,
+    "5866": 29,
+    "5867": 86,
+    "23581": 91
+  },
+  "destinations": [
+    2914,
+    23581
+  ],
+  "expectedFinalStack": "2874738232,518,offset,length,128,length/32,index,0,offset,length,5868,index,32",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

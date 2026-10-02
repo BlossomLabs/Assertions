@@ -1,0 +1,5 @@
+# Successful physical word callback composition
+
+The owner composes the actual67 instructions from GAS at16908 through STATICCALL and the actual64 instruction exact32 receipt path. The resulting132 states reach the caller at12484 with the exact returned word and the actual receipt allocation/copy memory. It binds the target, caller, requested gas, complete payload and caller-local return data to truthful observations; requested gas is not a forwarded-gas claim.
+
+Fitting arbitrary aligned memory, represented pointers/length headers, canonical target, fitting lower stack and successful32-byte receipt are explicit local premises. The additional free+96 bound admits the result allocation and will be derived from finite raw-entry bounds in the public connection. This package does not cover failed or wrong-length calls, collection output, full raw entry, gas, deployment or performance. Selected native checks assume included contracts; full fresh included graph and retained physical/mutation/independent evidence remain mandatory.

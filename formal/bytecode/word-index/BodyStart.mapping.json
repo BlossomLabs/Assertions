@@ -1,0 +1,138 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 8235,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle"
+      ],
+      "op": 91,
+      "next": 8236,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 8236,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle"
+      ],
+      "op": 95,
+      "next": 8237,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 8237,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0"
+      ],
+      "op": 97,
+      "next": 8240,
+      "immediate": 8247
+    },
+    {
+      "id": 3,
+      "pc": 8240,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "8247"
+      ],
+      "op": 96,
+      "next": 8242,
+      "immediate": 32
+    },
+    {
+      "id": 4,
+      "pc": 8242,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "8247",
+        "32"
+      ],
+      "op": 132,
+      "next": 8243,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 8243,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "8247",
+        "32",
+        "length"
+      ],
+      "op": 97,
+      "next": 8246,
+      "immediate": 23523
+    },
+    {
+      "id": 6,
+      "pc": 8246,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "8247",
+        "32",
+        "length",
+        "23523"
+      ],
+      "op": 86,
+      "next": 8247,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "8235": 91,
+    "8236": 95,
+    "8237": 97,
+    "8238": 32,
+    "8239": 55,
+    "8240": 96,
+    "8241": 32,
+    "8242": 132,
+    "8243": 97,
+    "8244": 91,
+    "8245": 227,
+    "8246": 86,
+    "23523": 91
+  },
+  "destinations": [
+    23523
+  ],
+  "expectedFinalStack": "3904669827,604,offset,length,needle,0,8247,32,length",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

@@ -1,0 +1,11 @@
+# Noncanonical filter predicate rejection
+
+The generator pins the Collections runtime and filterWords selector and extracts the actual 88-instruction branch from PC12484 through REVERT1122. It connects a returned predicate word greater than one to the exact132-byte WrongCallbackResult packet: error selector, filter operation header, source index, zero context and canonical target. The arbitrary fitting heap and caller free-memory header remain explicit.
+
+Generated files are owned by generate.py. The development runner snapshots the complete included graph, owners, mapping, runtime artifact and pinned verifier inputs before verification. Selected component verification assumes imported checked contracts; fresh full included verification and raw callback/loop failure composition are still required. This package is development work, with no public coverage, deployment, gas or performance claim.
+
+This isolated second preparation preserves the first live predicate snapshot. Its admission predicate has the same domain. A separate admission lemma exposes the derived free-memory bounds; the control invariant records those bounds explicitly. Each instruction uses only its relevant scalar facts, and a separately checked store-stage lemma exposes the next heap stage without unfolding unrelated calldata or earlier writes. These are proof changes, with no Solidity or runtime change. Generation, resolution and audit precede any native snapshot; neither preparation is retained public evidence.
+
+The third preparation also hides the machine BitNot definition during instruction proofs and invokes only the checked NOT projection at the NOT instruction. The live second snapshot has reported three30-second timeouts at its NOT instruction; it is preserved and continues unchanged. No native third run is launched while that second run is live. This repair leaves the admitted inputs and exact compiled behavior unchanged.
+
+The public local Run contract also spells out H.Fits, which the independently checked Admission lemma already derives from the unchanged Admitted domain. This redundant fact makes the initial heap-stage expression well formed in Run's postcondition; callers derive it through Admission, without a new raw-input or representation assumption.

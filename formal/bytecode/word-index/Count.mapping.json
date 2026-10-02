@@ -1,0 +1,81 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 8292,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "0",
+        "length/32"
+      ],
+      "op": 91,
+      "next": 8293,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 8293,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "0",
+        "length/32"
+      ],
+      "op": 144,
+      "next": 8294,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 8294,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "0"
+      ],
+      "op": 80,
+      "next": 8295,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 8295,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32"
+      ],
+      "op": 95,
+      "next": 8296,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "8292": 91,
+    "8293": 144,
+    "8294": 80,
+    "8295": 95
+  },
+  "destinations": [],
+  "expectedFinalStack": "3904669827,604,offset,length,needle,0,length/32,0",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

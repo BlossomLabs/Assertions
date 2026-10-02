@@ -1,0 +1,327 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 8296,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index"
+      ],
+      "op": 91,
+      "next": 8297,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 8297,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index"
+      ],
+      "op": 129,
+      "next": 8298,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 8298,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "length/32"
+      ],
+      "op": 129,
+      "next": 8299,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 8299,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "length/32",
+        "index"
+      ],
+      "op": 16,
+      "next": 8300,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 8300,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "1"
+      ],
+      "op": 21,
+      "next": 8301,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 8301,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "0"
+      ],
+      "op": 97,
+      "next": 8304,
+      "immediate": 8385
+    },
+    {
+      "id": 6,
+      "pc": 8304,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "0",
+        "8385"
+      ],
+      "op": 87,
+      "next": 8305,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 8305,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index"
+      ],
+      "op": 131,
+      "next": 8306,
+      "immediate": 0
+    },
+    {
+      "id": 8,
+      "pc": 8306,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "needle"
+      ],
+      "op": 134,
+      "next": 8307,
+      "immediate": 0
+    },
+    {
+      "id": 9,
+      "pc": 8307,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "needle",
+        "offset"
+      ],
+      "op": 134,
+      "next": 8308,
+      "immediate": 0
+    },
+    {
+      "id": 10,
+      "pc": 8308,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "needle",
+        "offset",
+        "length"
+      ],
+      "op": 97,
+      "next": 8311,
+      "immediate": 8318
+    },
+    {
+      "id": 11,
+      "pc": 8311,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "needle",
+        "offset",
+        "length",
+        "8318"
+      ],
+      "op": 132,
+      "next": 8312,
+      "immediate": 0
+    },
+    {
+      "id": 12,
+      "pc": 8312,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "needle",
+        "offset",
+        "length",
+        "8318",
+        "index"
+      ],
+      "op": 96,
+      "next": 8314,
+      "immediate": 32
+    },
+    {
+      "id": 13,
+      "pc": 8314,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "needle",
+        "offset",
+        "length",
+        "8318",
+        "index",
+        "32"
+      ],
+      "op": 97,
+      "next": 8317,
+      "immediate": 23581
+    },
+    {
+      "id": 14,
+      "pc": 8317,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "needle",
+        "offset",
+        "length",
+        "8318",
+        "index",
+        "32",
+        "23581"
+      ],
+      "op": 86,
+      "next": 8318,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "8296": 91,
+    "8297": 129,
+    "8298": 129,
+    "8299": 16,
+    "8300": 21,
+    "8301": 97,
+    "8302": 32,
+    "8303": 193,
+    "8304": 87,
+    "8385": 91,
+    "8305": 131,
+    "8306": 134,
+    "8307": 134,
+    "8308": 97,
+    "8309": 32,
+    "8310": 126,
+    "8311": 132,
+    "8312": 96,
+    "8313": 32,
+    "8314": 97,
+    "8315": 92,
+    "8316": 29,
+    "8317": 86,
+    "23581": 91
+  },
+  "destinations": [
+    8385,
+    23581
+  ],
+  "expectedFinalStack": "3904669827,604,offset,length,needle,0,length/32,index,needle,offset,length,8318,index,32",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

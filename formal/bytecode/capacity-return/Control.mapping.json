@@ -1,0 +1,1464 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 518,
+      "op": 91,
+      "next": 519,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "128"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 1,
+      "pc": 519,
+      "op": 96,
+      "next": 521,
+      "immediate": 64,
+      "stack": [
+        "selector",
+        "128"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 2,
+      "pc": 521,
+      "op": 81,
+      "next": 522,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "128",
+        "64"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 3,
+      "pc": 522,
+      "op": 97,
+      "next": 525,
+      "immediate": 490,
+      "stack": [
+        "selector",
+        "128",
+        "O.Extent(capacity)"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 4,
+      "pc": 525,
+      "op": 145,
+      "next": 526,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "128",
+        "O.Extent(capacity)",
+        "490"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 5,
+      "pc": 526,
+      "op": 144,
+      "next": 527,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "O.Extent(capacity)",
+        "128"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 6,
+      "pc": 527,
+      "op": 97,
+      "next": 530,
+      "immediate": 21211,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 7,
+      "pc": 530,
+      "op": 86,
+      "next": 531,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "21211"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 8,
+      "pc": 21211,
+      "op": 91,
+      "next": 21212,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 9,
+      "pc": 21212,
+      "op": 96,
+      "next": 21214,
+      "immediate": 32,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 10,
+      "pc": 21214,
+      "op": 129,
+      "next": 21215,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "32"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 11,
+      "pc": 21215,
+      "op": 82,
+      "next": 21216,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "32",
+        "O.Extent(capacity)"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 12,
+      "pc": 21216,
+      "op": 95,
+      "next": 21217,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 13,
+      "pc": 21217,
+      "op": 97,
+      "next": 21220,
+      "immediate": 8389,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 14,
+      "pc": 21220,
+      "op": 96,
+      "next": 21222,
+      "immediate": 32,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 15,
+      "pc": 21222,
+      "op": 131,
+      "next": 21223,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "32"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 16,
+      "pc": 21223,
+      "op": 1,
+      "next": 21224,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "32",
+        "O.Extent(capacity)"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 17,
+      "pc": 21224,
+      "op": 132,
+      "next": 21225,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 18,
+      "pc": 21225,
+      "op": 97,
+      "next": 21228,
+      "immediate": 20951,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 19,
+      "pc": 21228,
+      "op": 86,
+      "next": 21229,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "20951"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 20,
+      "pc": 20951,
+      "op": 91,
+      "next": 20952,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 21,
+      "pc": 20952,
+      "op": 95,
+      "next": 20953,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 22,
+      "pc": 20953,
+      "op": 129,
+      "next": 20954,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 23,
+      "pc": 20954,
+      "op": 81,
+      "next": 20955,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "128"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 24,
+      "pc": 20955,
+      "op": 128,
+      "next": 20956,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 25,
+      "pc": 20956,
+      "op": 132,
+      "next": 20957,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "n*32"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 26,
+      "pc": 20957,
+      "op": 82,
+      "next": 20958,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "n*32",
+        "(O.Extent(capacity)+32)"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 27,
+      "pc": 20958,
+      "op": 128,
+      "next": 20959,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 28,
+      "pc": 20959,
+      "op": 96,
+      "next": 20961,
+      "immediate": 32,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "n*32"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 29,
+      "pc": 20961,
+      "op": 132,
+      "next": 20962,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "n*32",
+        "32"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 30,
+      "pc": 20962,
+      "op": 1,
+      "next": 20963,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "n*32",
+        "32",
+        "128"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 31,
+      "pc": 20963,
+      "op": 96,
+      "next": 20965,
+      "immediate": 32,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "n*32",
+        "160"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 32,
+      "pc": 20965,
+      "op": 134,
+      "next": 20966,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "n*32",
+        "160",
+        "32"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 33,
+      "pc": 20966,
+      "op": 1,
+      "next": 20967,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "n*32",
+        "160",
+        "32",
+        "(O.Extent(capacity)+32)"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 34,
+      "pc": 20967,
+      "op": 94,
+      "next": 20968,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "n*32",
+        "160",
+        "((O.Extent(capacity)+32)+32)"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 35,
+      "pc": 20968,
+      "op": 95,
+      "next": 20969,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 36,
+      "pc": 20969,
+      "op": 96,
+      "next": 20971,
+      "immediate": 32,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "0"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 37,
+      "pc": 20971,
+      "op": 130,
+      "next": 20972,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "0",
+        "32"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 38,
+      "pc": 20972,
+      "op": 134,
+      "next": 20973,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "0",
+        "32",
+        "n*32"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 39,
+      "pc": 20973,
+      "op": 1,
+      "next": 20974,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "0",
+        "32",
+        "n*32",
+        "(O.Extent(capacity)+32)"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 40,
+      "pc": 20974,
+      "op": 1,
+      "next": 20975,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "0",
+        "32",
+        "((O.Extent(capacity)+32)+n*32)"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 41,
+      "pc": 20975,
+      "op": 82,
+      "next": 20976,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "0",
+        "(((O.Extent(capacity)+32)+n*32)+32)"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 42,
+      "pc": 20976,
+      "op": 96,
+      "next": 20978,
+      "immediate": 32,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 43,
+      "pc": 20978,
+      "op": 96,
+      "next": 20980,
+      "immediate": 31,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "32"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 44,
+      "pc": 20980,
+      "op": 25,
+      "next": 20981,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "32",
+        "31"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 45,
+      "pc": 20981,
+      "op": 96,
+      "next": 20983,
+      "immediate": 31,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "32",
+        "115792089237316195423570985008687907853269984665640564039457584007913129639904"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 46,
+      "pc": 20983,
+      "op": 131,
+      "next": 20984,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "32",
+        "115792089237316195423570985008687907853269984665640564039457584007913129639904",
+        "31"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 47,
+      "pc": 20984,
+      "op": 1,
+      "next": 20985,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "32",
+        "115792089237316195423570985008687907853269984665640564039457584007913129639904",
+        "31",
+        "n*32"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 48,
+      "pc": 20985,
+      "op": 22,
+      "next": 20986,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "32",
+        "115792089237316195423570985008687907853269984665640564039457584007913129639904",
+        "n*32+31"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 49,
+      "pc": 20986,
+      "op": 133,
+      "next": 20987,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "32",
+        "n*32"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 50,
+      "pc": 20987,
+      "op": 1,
+      "next": 20988,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "32",
+        "n*32",
+        "(O.Extent(capacity)+32)"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 51,
+      "pc": 20988,
+      "op": 1,
+      "next": 20989,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "32",
+        "((O.Extent(capacity)+32)+n*32)"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 52,
+      "pc": 20989,
+      "op": 145,
+      "next": 20990,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "0",
+        "n*32",
+        "(((O.Extent(capacity)+32)+n*32)+32)"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 53,
+      "pc": 20990,
+      "op": 80,
+      "next": 20991,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "n*32",
+        "0"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 54,
+      "pc": 20991,
+      "op": 80,
+      "next": 20992,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "n*32"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 55,
+      "pc": 20992,
+      "op": 146,
+      "next": 20993,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "8389",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "(((O.Extent(capacity)+32)+n*32)+32)"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 56,
+      "pc": 20993,
+      "op": 145,
+      "next": 20994,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "(O.Extent(capacity)+32)",
+        "128",
+        "8389"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 57,
+      "pc": 20994,
+      "op": 80,
+      "next": 20995,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "8389",
+        "128",
+        "(O.Extent(capacity)+32)"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 58,
+      "pc": 20995,
+      "op": 80,
+      "next": 20996,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "8389",
+        "128"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 59,
+      "pc": 20996,
+      "op": 86,
+      "next": 20997,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "8389"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 60,
+      "pc": 8389,
+      "op": 91,
+      "next": 8390,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "(((O.Extent(capacity)+32)+n*32)+32)"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 61,
+      "pc": 8390,
+      "op": 147,
+      "next": 8391,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "490",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "(((O.Extent(capacity)+32)+n*32)+32)"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 62,
+      "pc": 8391,
+      "op": 146,
+      "next": 8392,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "128",
+        "O.Extent(capacity)",
+        "0",
+        "490"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 63,
+      "pc": 8392,
+      "op": 80,
+      "next": 8393,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "490",
+        "O.Extent(capacity)",
+        "0",
+        "128"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 64,
+      "pc": 8393,
+      "op": 80,
+      "next": 8394,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "490",
+        "O.Extent(capacity)",
+        "0"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 65,
+      "pc": 8394,
+      "op": 80,
+      "next": 8395,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "490",
+        "O.Extent(capacity)"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 66,
+      "pc": 8395,
+      "op": 86,
+      "next": 8396,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "490"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 67,
+      "pc": 490,
+      "op": 91,
+      "next": 491,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "(((O.Extent(capacity)+32)+n*32)+32)"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 68,
+      "pc": 491,
+      "op": 96,
+      "next": 493,
+      "immediate": 64,
+      "stack": [
+        "selector",
+        "(((O.Extent(capacity)+32)+n*32)+32)"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 69,
+      "pc": 493,
+      "op": 81,
+      "next": 494,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "64"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 70,
+      "pc": 494,
+      "op": 128,
+      "next": 495,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "O.Extent(capacity)"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 71,
+      "pc": 495,
+      "op": 145,
+      "next": 496,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "(((O.Extent(capacity)+32)+n*32)+32)",
+        "O.Extent(capacity)",
+        "O.Extent(capacity)"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 72,
+      "pc": 496,
+      "op": 3,
+      "next": 497,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "O.Extent(capacity)",
+        "O.Extent(capacity)",
+        "(((O.Extent(capacity)+32)+n*32)+32)"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 73,
+      "pc": 497,
+      "op": 144,
+      "next": 498,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "O.Extent(capacity)",
+        "((((O.Extent(capacity)+32)+n*32)+32)-O.Extent(capacity))"
+      ],
+      "stage": 4
+    },
+    {
+      "id": 74,
+      "pc": 498,
+      "op": 243,
+      "next": 499,
+      "immediate": 0,
+      "stack": [
+        "selector",
+        "((((O.Extent(capacity)+32)+n*32)+32)-O.Extent(capacity))",
+        "O.Extent(capacity)"
+      ],
+      "stage": 4
+    }
+  ],
+  "requiredBytes": {
+    "518": 91,
+    "519": 96,
+    "520": 64,
+    "521": 81,
+    "522": 97,
+    "523": 1,
+    "524": 234,
+    "525": 145,
+    "526": 144,
+    "527": 97,
+    "528": 82,
+    "529": 219,
+    "530": 86,
+    "21211": 91,
+    "21212": 96,
+    "21213": 32,
+    "21214": 129,
+    "21215": 82,
+    "21216": 95,
+    "21217": 97,
+    "21218": 32,
+    "21219": 197,
+    "21220": 96,
+    "21221": 32,
+    "21222": 131,
+    "21223": 1,
+    "21224": 132,
+    "21225": 97,
+    "21226": 81,
+    "21227": 215,
+    "21228": 86,
+    "20951": 91,
+    "20952": 95,
+    "20953": 129,
+    "20954": 81,
+    "20955": 128,
+    "20956": 132,
+    "20957": 82,
+    "20958": 128,
+    "20959": 96,
+    "20960": 32,
+    "20961": 132,
+    "20962": 1,
+    "20963": 96,
+    "20964": 32,
+    "20965": 134,
+    "20966": 1,
+    "20967": 94,
+    "20968": 95,
+    "20969": 96,
+    "20970": 32,
+    "20971": 130,
+    "20972": 134,
+    "20973": 1,
+    "20974": 1,
+    "20975": 82,
+    "20976": 96,
+    "20977": 32,
+    "20978": 96,
+    "20979": 31,
+    "20980": 25,
+    "20981": 96,
+    "20982": 31,
+    "20983": 131,
+    "20984": 1,
+    "20985": 22,
+    "20986": 133,
+    "20987": 1,
+    "20988": 1,
+    "20989": 145,
+    "20990": 80,
+    "20991": 80,
+    "20992": 146,
+    "20993": 145,
+    "20994": 80,
+    "20995": 80,
+    "20996": 86,
+    "8389": 91,
+    "8390": 147,
+    "8391": 146,
+    "8392": 80,
+    "8393": 80,
+    "8394": 80,
+    "8395": 86,
+    "490": 91,
+    "491": 96,
+    "492": 64,
+    "493": 81,
+    "494": 128,
+    "495": 145,
+    "496": 3,
+    "497": 144,
+    "498": 243
+  },
+  "destinations": [
+    490,
+    8389,
+    20951,
+    21211
+  ],
+  "scope": "Development actual capacity-aware serializer only. No completed public bytecode coverage."
+}

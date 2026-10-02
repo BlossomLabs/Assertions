@@ -1,0 +1,398 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 16909,
+      "op": 144,
+      "next": 16910,
+      "immediate": 0,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "0",
+        "gasBefore"
+      ]
+    },
+    {
+      "id": 1,
+      "pc": 16910,
+      "op": 80,
+      "next": 16911,
+      "immediate": 0,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0"
+      ]
+    },
+    {
+      "id": 2,
+      "pc": 16911,
+      "op": 95,
+      "next": 16912,
+      "immediate": 0,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore"
+      ]
+    },
+    {
+      "id": 3,
+      "pc": 16912,
+      "op": 95,
+      "next": 16913,
+      "immediate": 0,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0"
+      ]
+    },
+    {
+      "id": 4,
+      "pc": 16913,
+      "op": 134,
+      "next": 16914,
+      "immediate": 0,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "id": 5,
+      "pc": 16914,
+      "op": 96,
+      "next": 16916,
+      "immediate": 1,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target"
+      ]
+    },
+    {
+      "id": 6,
+      "pc": 16916,
+      "op": 96,
+      "next": 16918,
+      "immediate": 1,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target",
+        "1"
+      ]
+    },
+    {
+      "id": 7,
+      "pc": 16918,
+      "op": 96,
+      "next": 16920,
+      "immediate": 160,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target",
+        "1",
+        "1"
+      ]
+    },
+    {
+      "id": 8,
+      "pc": 16920,
+      "op": 27,
+      "next": 16921,
+      "immediate": 0,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target",
+        "1",
+        "1",
+        "160"
+      ]
+    },
+    {
+      "id": 9,
+      "pc": 16921,
+      "op": 3,
+      "next": 16922,
+      "immediate": 0,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target",
+        "1",
+        "1461501637330902918203684832716283019655932542976"
+      ]
+    },
+    {
+      "id": 10,
+      "pc": 16922,
+      "op": 22,
+      "next": 16923,
+      "immediate": 0,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target",
+        "1461501637330902918203684832716283019655932542975"
+      ]
+    },
+    {
+      "id": 11,
+      "pc": 16923,
+      "op": 134,
+      "next": 16924,
+      "immediate": 0,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target"
+      ]
+    },
+    {
+      "id": 12,
+      "pc": 16924,
+      "op": 96,
+      "next": 16926,
+      "immediate": 64,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target",
+        "ptr"
+      ]
+    },
+    {
+      "id": 13,
+      "pc": 16926,
+      "op": 81,
+      "next": 16927,
+      "immediate": 0,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target",
+        "ptr",
+        "64"
+      ]
+    },
+    {
+      "id": 14,
+      "pc": 16927,
+      "op": 97,
+      "next": 16930,
+      "immediate": 16936,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target",
+        "ptr",
+        "free"
+      ]
+    },
+    {
+      "id": 15,
+      "pc": 16930,
+      "op": 145,
+      "next": 16931,
+      "immediate": 0,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target",
+        "ptr",
+        "free",
+        "16936"
+      ]
+    },
+    {
+      "id": 16,
+      "pc": 16931,
+      "op": 144,
+      "next": 16932,
+      "immediate": 0,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target",
+        "16936",
+        "free",
+        "ptr"
+      ]
+    },
+    {
+      "id": 17,
+      "pc": 16932,
+      "op": 97,
+      "next": 16935,
+      "immediate": 24276,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target",
+        "16936",
+        "ptr",
+        "free"
+      ]
+    },
+    {
+      "id": 18,
+      "pc": 16935,
+      "op": 86,
+      "next": 16936,
+      "immediate": 0,
+      "stack": [
+        "12484",
+        "target",
+        "ptr",
+        "index",
+        "0",
+        "gasBefore",
+        "0",
+        "0",
+        "target",
+        "16936",
+        "ptr",
+        "free",
+        "24276"
+      ]
+    }
+  ],
+  "requiredBytes": {
+    "24276": 91,
+    "16909": 144,
+    "16910": 80,
+    "16911": 95,
+    "16912": 95,
+    "16913": 134,
+    "16914": 96,
+    "16915": 1,
+    "16916": 96,
+    "16917": 1,
+    "16918": 96,
+    "16919": 160,
+    "16920": 27,
+    "16921": 3,
+    "16922": 22,
+    "16923": 134,
+    "16924": 96,
+    "16925": 64,
+    "16926": 81,
+    "16927": 97,
+    "16928": 66,
+    "16929": 40,
+    "16930": 145,
+    "16931": 144,
+    "16932": 97,
+    "16933": 94,
+    "16934": 212,
+    "16935": 86
+  },
+  "destinations": [
+    24276
+  ],
+  "scope": "Exact controls surrounding bytes pack helper, explicit canonical target/memory pointer/arithmetic. Native/full public closure open."
+}

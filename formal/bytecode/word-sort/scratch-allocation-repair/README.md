@@ -1,0 +1,7 @@
+# sortWords scratch-allocation repaired certificates
+
+This isolated owner corrects the demonstrated CountGuard declaration gap and excess symbolic mask expansion in the original allocation development graph. Advance lemmas expose fitting admission directly, and only the reached NOT instruction invokes the exact NOT constant lemma. The reached AND instruction still calls the independently proved mask opcode connection. Unrelated memory-store theorem expansion is removed; actual memory expressions, every executed instruction, terminal state and memory bounds remain required.
+
+The original scratch-allocation paths-v1 run and all snapshots remain untouched while its remaining jobs finish. This separate repair package follows its already terminal failed CountGuard check; it neither cancels nor restarts that live run. Native results remain development evidence. Complete original-copy and scratch-memory composition, merge/body and public serialization retention remain open. Never edit generated files. Finish package inputs before snapshotting.
+
+V2 exposes the derived canonical allocation invariant: physical memory is rounded and spans at least the free-pointer word. This prevents MLOAD from silently expanding a shorter symbolic memory frame. The full allocation connection derives these premises from the actual copy/trailing-store representation. Mask calls follow the proved concrete state identity and opcode match.

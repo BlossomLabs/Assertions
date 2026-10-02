@@ -1,0 +1,146 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 1846,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB"
+      ],
+      "op": 91,
+      "next": 1847,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 1847,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB"
+      ],
+      "op": 96,
+      "next": 1849,
+      "immediate": 96
+    },
+    {
+      "id": 2,
+      "pc": 1849,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96"
+      ],
+      "op": 97,
+      "next": 1852,
+      "immediate": 1859
+    },
+    {
+      "id": 3,
+      "pc": 1852,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96",
+        "1859"
+      ],
+      "op": 96,
+      "next": 1854,
+      "immediate": 32
+    },
+    {
+      "id": 4,
+      "pc": 1854,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96",
+        "1859",
+        "32"
+      ],
+      "op": 133,
+      "next": 1855,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 1855,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96",
+        "1859",
+        "32",
+        "lengthA"
+      ],
+      "op": 97,
+      "next": 1858,
+      "immediate": 23523
+    },
+    {
+      "id": 6,
+      "pc": 1858,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96",
+        "1859",
+        "32",
+        "lengthA",
+        "23523"
+      ],
+      "op": 86,
+      "next": 1859,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "1846": 91,
+    "1847": 96,
+    "1848": 96,
+    "1849": 97,
+    "1850": 7,
+    "1851": 67,
+    "1852": 96,
+    "1853": 32,
+    "1854": 133,
+    "1855": 97,
+    "1856": 91,
+    "1857": 227,
+    "1858": 86,
+    "23523": 91
+  },
+  "destinations": [
+    23523
+  ],
+  "expectedFinalStack": "269019481,518,a,lengthA,b,lengthB,96,1859,32,lengthA",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

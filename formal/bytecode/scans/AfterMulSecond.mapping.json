@@ -1,0 +1,151 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 2861,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset",
+        "Position(index)",
+        "length",
+        "Position(index)"
+      ],
+      "op": 91,
+      "next": 2862,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 2862,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset",
+        "Position(index)",
+        "length",
+        "Position(index)"
+      ],
+      "op": 97,
+      "next": 2865,
+      "immediate": 2872
+    },
+    {
+      "id": 2,
+      "pc": 2865,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset",
+        "Position(index)",
+        "length",
+        "Position(index)",
+        "2872"
+      ],
+      "op": 144,
+      "next": 2866,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 2866,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset",
+        "Position(index)",
+        "length",
+        "2872",
+        "Position(index)"
+      ],
+      "op": 96,
+      "next": 2868,
+      "immediate": 32
+    },
+    {
+      "id": 4,
+      "pc": 2868,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset",
+        "Position(index)",
+        "length",
+        "2872",
+        "Position(index)",
+        "32"
+      ],
+      "op": 97,
+      "next": 2871,
+      "immediate": 23604
+    },
+    {
+      "id": 5,
+      "pc": 2871,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset",
+        "Position(index)",
+        "length",
+        "2872",
+        "Position(index)",
+        "32",
+        "23604"
+      ],
+      "op": 86,
+      "next": 2872,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "2861": 91,
+    "2862": 97,
+    "2863": 11,
+    "2864": 56,
+    "2865": 144,
+    "2866": 96,
+    "2867": 32,
+    "2868": 97,
+    "2869": 92,
+    "2870": 52,
+    "2871": 86,
+    "23604": 91
+  },
+  "destinations": [
+    23604
+  ],
+  "expectedFinalStack": "394725771,604,offset,length,total,length/32,index,offset,Position(index),length,2872,Position(index),32",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

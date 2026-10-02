@@ -1,0 +1,235 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 6652,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "96"
+      ],
+      "op": 91,
+      "next": 6653,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 6653,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "96"
+      ],
+      "op": 130,
+      "next": 6654,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 6654,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "96",
+        "length"
+      ],
+      "op": 96,
+      "next": 6656,
+      "immediate": 1
+    },
+    {
+      "id": 3,
+      "pc": 6656,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "96",
+        "length",
+        "1"
+      ],
+      "op": 96,
+      "next": 6658,
+      "immediate": 1
+    },
+    {
+      "id": 4,
+      "pc": 6658,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "96",
+        "length",
+        "1",
+        "1"
+      ],
+      "op": 96,
+      "next": 6660,
+      "immediate": 64
+    },
+    {
+      "id": 5,
+      "pc": 6660,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "96",
+        "length",
+        "1",
+        "1",
+        "64"
+      ],
+      "op": 27,
+      "next": 6661,
+      "immediate": 0
+    },
+    {
+      "id": 6,
+      "pc": 6661,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "96",
+        "length",
+        "1",
+        "18446744073709551616"
+      ],
+      "op": 3,
+      "next": 6662,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 6662,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "96",
+        "length",
+        "18446744073709551615"
+      ],
+      "op": 129,
+      "next": 6663,
+      "immediate": 0
+    },
+    {
+      "id": 8,
+      "pc": 6663,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "96",
+        "length",
+        "18446744073709551615",
+        "length"
+      ],
+      "op": 17,
+      "next": 6664,
+      "immediate": 0
+    },
+    {
+      "id": 9,
+      "pc": 6664,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "96",
+        "length",
+        "0"
+      ],
+      "op": 21,
+      "next": 6665,
+      "immediate": 0
+    },
+    {
+      "id": 10,
+      "pc": 6665,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "96",
+        "length",
+        "1"
+      ],
+      "op": 97,
+      "next": 6668,
+      "immediate": 6676
+    },
+    {
+      "id": 11,
+      "pc": 6668,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "96",
+        "length",
+        "1",
+        "6676"
+      ],
+      "op": 87,
+      "next": 6669,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "6652": 91,
+    "6653": 130,
+    "6654": 96,
+    "6655": 1,
+    "6656": 96,
+    "6657": 1,
+    "6658": 96,
+    "6659": 64,
+    "6660": 27,
+    "6661": 3,
+    "6662": 129,
+    "6663": 17,
+    "6664": 21,
+    "6665": 97,
+    "6666": 26,
+    "6667": 20,
+    "6668": 87,
+    "6676": 91
+  },
+  "destinations": [
+    6676
+  ],
+  "expectedFinalStack": "3045624246,518,offset,length,ordered,96,length",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

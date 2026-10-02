@@ -1,0 +1,3 @@
+# Whole raw zipWords entry development
+
+The full root composes the PC-zero selector route, exhaustive two-input ABI decoder, alignment/error ordering, unequal-count error, actual oversized doubled allocation Panic(0x41), physical header/calloc allocation, arbitrary finite pair loop, MCOPY and actual terminal bytes. Runtime identity, truthful representation, reviewed opcode/instruction interpretation, fresh memory and adequate reached resources remain explicit premises. Full current native include closure, exact declaration/result inventories, audit, independent physical receipts, semantic bytecode faults and immutable retained inputs are required before counting this public entry.

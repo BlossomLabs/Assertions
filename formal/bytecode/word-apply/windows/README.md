@@ -1,0 +1,7 @@
+# Compiled element-window check development
+
+The raw decoder's fitting offset array gives count<2^59 and every indexed32-byte load within calldata. `Inputs.dfy` connects this admitted frame to window representation and specifies the ordered offset validity test against templateLength-32. Loose/misaligned/overlapping arrays and windows remain admitted. No sorting, uniqueness or canonical ABI encoding premise is added.
+
+The owner `generate.py` gates the exact compiled runtime and both public selectors, then extracts the valid template prefix, one general valid window iteration (including checked subtraction and array bound helpers) and loop exit of `_checkElementWindows`. Concrete values choose code paths only; the generated proof predicates quantify over every fitting represented frame and index. All actual instructions, lower stack prefixes and unchanged memory are retained. Caller return PC12235 is the shared map/filter call site. Individual fragments still require a finite-loop composition. Short templates, first invalid windows and exact error serialization remain open, as do the whole application body and retained public bytecode evidence.
+
+Finish all package files before development snapshots; generate through the owner and never hand-edit generated files. Standard native limits and captured input/declaration graphs apply. No resource-sufficiency, external-observation, gas or deployment claim follows from these fragments.

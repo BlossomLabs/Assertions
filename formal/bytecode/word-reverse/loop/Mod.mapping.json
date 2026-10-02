@@ -1,0 +1,154 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 23523,
+      "stack": [
+        "5728",
+        "32",
+        "length"
+      ],
+      "op": 91,
+      "next": 23524,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 23524,
+      "stack": [
+        "5728",
+        "32",
+        "length"
+      ],
+      "op": 95,
+      "next": 23525,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 23525,
+      "stack": [
+        "5728",
+        "32",
+        "length",
+        "0"
+      ],
+      "op": 130,
+      "next": 23526,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 23526,
+      "stack": [
+        "5728",
+        "32",
+        "length",
+        "0",
+        "32"
+      ],
+      "op": 97,
+      "next": 23529,
+      "immediate": 23537
+    },
+    {
+      "id": 4,
+      "pc": 23529,
+      "stack": [
+        "5728",
+        "32",
+        "length",
+        "0",
+        "32",
+        "23537"
+      ],
+      "op": 87,
+      "next": 23530,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 23537,
+      "stack": [
+        "5728",
+        "32",
+        "length",
+        "0"
+      ],
+      "op": 91,
+      "next": 23538,
+      "immediate": 0
+    },
+    {
+      "id": 6,
+      "pc": 23538,
+      "stack": [
+        "5728",
+        "32",
+        "length",
+        "0"
+      ],
+      "op": 80,
+      "next": 23539,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 23539,
+      "stack": [
+        "5728",
+        "32",
+        "length"
+      ],
+      "op": 6,
+      "next": 23540,
+      "immediate": 0
+    },
+    {
+      "id": 8,
+      "pc": 23540,
+      "stack": [
+        "5728",
+        "(if 32 == 0 then 0 else (length as nat)%(32 as nat))"
+      ],
+      "op": 144,
+      "next": 23541,
+      "immediate": 0
+    },
+    {
+      "id": 9,
+      "pc": 23541,
+      "stack": [
+        "(if 32 == 0 then 0 else (length as nat)%(32 as nat))",
+        "5728"
+      ],
+      "op": 86,
+      "next": 23542,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "23523": 91,
+    "23524": 95,
+    "23525": 130,
+    "23526": 97,
+    "23527": 91,
+    "23528": 241,
+    "23529": 87,
+    "23537": 91,
+    "23538": 80,
+    "23539": 6,
+    "23540": 144,
+    "23541": 86,
+    "5728": 91
+  },
+  "destinations": [
+    5728,
+    23537
+  ],
+  "finalStack": [
+    "(if 32 == 0 then 0 else (length as nat)%(32 as nat))"
+  ],
+  "scope": "development admitted actual helper path only; body composition and retained evidence remain open"
+}

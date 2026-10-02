@@ -1,0 +1,3 @@
+# unzipWords whole entry development
+
+Composes exact raw calldata admission/rejection and actual body checks, count arithmetic, physical allocation, arbitrary finite lane loop and serializer into the pinned public runtime from PC zero. Fitting calldata representation, zero call value, compiler-bound selector, faithful opcode interpreter and adequate resources remain explicit. Nonzero value/short calldata use the independently retained common rejection package. All leaf native proofs and whole retained graph, full physical EVM paths and semantic bytecode mutation evidence remain required before coverage.

@@ -1,0 +1,141 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 2213,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "length",
+        "b",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "wordA",
+        "0",
+        "WordOffset(b,index)",
+        "32"
+      ],
+      "op": 91,
+      "next": 2214,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 1,
+      "pc": 2214,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "length",
+        "b",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "wordA",
+        "0",
+        "WordOffset(b,index)",
+        "32"
+      ],
+      "op": 97,
+      "next": 2217,
+      "immediate": 2222,
+      "memory": "mem"
+    },
+    {
+      "id": 2,
+      "pc": 2217,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "length",
+        "b",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "wordA",
+        "0",
+        "WordOffset(b,index)",
+        "32",
+        "2222"
+      ],
+      "op": 145,
+      "next": 2218,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 3,
+      "pc": 2218,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "length",
+        "b",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "wordA",
+        "0",
+        "2222",
+        "32",
+        "WordOffset(b,index)"
+      ],
+      "op": 97,
+      "next": 2221,
+      "immediate": 23662,
+      "memory": "mem"
+    },
+    {
+      "id": 4,
+      "pc": 2221,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "length",
+        "b",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "wordA",
+        "0",
+        "2222",
+        "32",
+        "WordOffset(b,index)",
+        "23662"
+      ],
+      "op": 86,
+      "next": 2222,
+      "immediate": 0,
+      "memory": "mem"
+    }
+  ],
+  "requiredBytes": {
+    "2213": 91,
+    "2214": 97,
+    "2215": 8,
+    "2216": 174,
+    "2217": 145,
+    "2218": 97,
+    "2219": 92,
+    "2220": 110,
+    "2221": 86,
+    "23662": 91
+  },
+  "destinations": [
+    23662
+  ],
+  "expectedFinalStack": "269019481,518,a,length,b,length,128,length/32,index,wordA,0,2222,32,WordOffset(b,index)",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

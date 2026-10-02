@@ -1,0 +1,332 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 6273,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "word"
+      ],
+      "op": 91,
+      "next": 6274,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 1,
+      "pc": 6274,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "word"
+      ],
+      "op": 96,
+      "next": 6276,
+      "immediate": 32,
+      "memory": "mem"
+    },
+    {
+      "id": 2,
+      "pc": 6276,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "word",
+        "32"
+      ],
+      "op": 131,
+      "next": 6277,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 3,
+      "pc": 6277,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "word",
+        "32",
+        "index"
+      ],
+      "op": 129,
+      "next": 6278,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 4,
+      "pc": 6278,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "word",
+        "32",
+        "index",
+        "32"
+      ],
+      "op": 2,
+      "next": 6279,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 5,
+      "pc": 6279,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "word",
+        "32",
+        "((32 as nat)*(index as nat))%G.Modulus()"
+      ],
+      "op": 135,
+      "next": 6280,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 6,
+      "pc": 6280,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "word",
+        "32",
+        "((32 as nat)*(index as nat))%G.Modulus()",
+        "128"
+      ],
+      "op": 1,
+      "next": 6281,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 7,
+      "pc": 6281,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "word",
+        "32",
+        "((128 as nat)+(((32 as nat)*(index as nat))%G.Modulus() as nat))%G.Modulus()"
+      ],
+      "op": 1,
+      "next": 6282,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 8,
+      "pc": 6282,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "word",
+        "((((128 as nat)+(((32 as nat)*(index as nat))%G.Modulus() as nat))%G.Modulus() as nat)+(32 as nat))%G.Modulus()"
+      ],
+      "op": 82,
+      "next": 6283,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 9,
+      "pc": 6283,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0"
+      ],
+      "op": 80,
+      "next": 6284,
+      "immediate": 0,
+      "memory": "Store(mem,Target(index),word)"
+    },
+    {
+      "id": 10,
+      "pc": 6284,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index"
+      ],
+      "op": 96,
+      "next": 6286,
+      "immediate": 1,
+      "memory": "Store(mem,Target(index),word)"
+    },
+    {
+      "id": 11,
+      "pc": 6286,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "1"
+      ],
+      "op": 1,
+      "next": 6287,
+      "immediate": 0,
+      "memory": "Store(mem,Target(index),word)"
+    },
+    {
+      "id": 12,
+      "pc": 6287,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "((1 as nat)+(index as nat))%G.Modulus()"
+      ],
+      "op": 97,
+      "next": 6290,
+      "immediate": 6162,
+      "memory": "Store(mem,Target(index),word)"
+    },
+    {
+      "id": 13,
+      "pc": 6290,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "((1 as nat)+(index as nat))%G.Modulus()",
+        "6162"
+      ],
+      "op": 86,
+      "next": 6291,
+      "immediate": 0,
+      "memory": "Store(mem,Target(index),word)"
+    }
+  ],
+  "requiredBytes": {
+    "6273": 91,
+    "6274": 96,
+    "6275": 32,
+    "6276": 131,
+    "6277": 129,
+    "6278": 2,
+    "6279": 135,
+    "6280": 1,
+    "6281": 1,
+    "6282": 82,
+    "6283": 80,
+    "6284": 96,
+    "6285": 1,
+    "6286": 1,
+    "6287": 97,
+    "6288": 24,
+    "6289": 18,
+    "6290": 86,
+    "6162": 91
+  },
+  "destinations": [
+    6162
+  ],
+  "expectedFinalStack": "2989505972,518,offset,length,lane,128,length/32,Count(length,lane),index+1",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

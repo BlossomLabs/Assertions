@@ -1,0 +1,701 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 20951,
+      "op": 91,
+      "next": 20952,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 1,
+      "pc": 20952,
+      "op": 95,
+      "next": 20953,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 2,
+      "pc": 20953,
+      "op": 129,
+      "next": 20954,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 3,
+      "pc": 20954,
+      "op": 81,
+      "next": 20955,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "src"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 4,
+      "pc": 20955,
+      "op": 128,
+      "next": 20956,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 5,
+      "pc": 20956,
+      "op": 132,
+      "next": 20957,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "length"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 6,
+      "pc": 20957,
+      "op": 82,
+      "next": 20958,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "length",
+        "dst"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 7,
+      "pc": 20958,
+      "op": 128,
+      "next": 20959,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 8,
+      "pc": 20959,
+      "op": 96,
+      "next": 20961,
+      "immediate": 32,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "length"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 9,
+      "pc": 20961,
+      "op": 132,
+      "next": 20962,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "length",
+        "32"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 10,
+      "pc": 20962,
+      "op": 1,
+      "next": 20963,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "length",
+        "32",
+        "src"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 11,
+      "pc": 20963,
+      "op": 96,
+      "next": 20965,
+      "immediate": 32,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "length",
+        "src+32"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 12,
+      "pc": 20965,
+      "op": 134,
+      "next": 20966,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "length",
+        "src+32",
+        "32"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 13,
+      "pc": 20966,
+      "op": 1,
+      "next": 20967,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "length",
+        "src+32",
+        "32",
+        "dst"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 14,
+      "pc": 20967,
+      "op": 94,
+      "next": 20968,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "length",
+        "src+32",
+        "dst+32"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 15,
+      "pc": 20968,
+      "op": 95,
+      "next": 20969,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 16,
+      "pc": 20969,
+      "op": 96,
+      "next": 20971,
+      "immediate": 32,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "0"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 17,
+      "pc": 20971,
+      "op": 130,
+      "next": 20972,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "0",
+        "32"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 18,
+      "pc": 20972,
+      "op": 134,
+      "next": 20973,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "0",
+        "32",
+        "length"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 19,
+      "pc": 20973,
+      "op": 1,
+      "next": 20974,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "0",
+        "32",
+        "length",
+        "dst"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 20,
+      "pc": 20974,
+      "op": 1,
+      "next": 20975,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "0",
+        "32",
+        "dst+length"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 21,
+      "pc": 20975,
+      "op": 82,
+      "next": 20976,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "0",
+        "dst+32+length"
+      ],
+      "stage": 2
+    },
+    {
+      "id": 22,
+      "pc": 20976,
+      "op": 96,
+      "next": 20978,
+      "immediate": 32,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 23,
+      "pc": 20978,
+      "op": 96,
+      "next": 20980,
+      "immediate": 31,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "32"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 24,
+      "pc": 20980,
+      "op": 25,
+      "next": 20981,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "32",
+        "31"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 25,
+      "pc": 20981,
+      "op": 96,
+      "next": 20983,
+      "immediate": 31,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "32",
+        "115792089237316195423570985008687907853269984665640564039457584007913129639904"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 26,
+      "pc": 20983,
+      "op": 131,
+      "next": 20984,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "32",
+        "115792089237316195423570985008687907853269984665640564039457584007913129639904",
+        "31"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 27,
+      "pc": 20984,
+      "op": 1,
+      "next": 20985,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "32",
+        "115792089237316195423570985008687907853269984665640564039457584007913129639904",
+        "31",
+        "length"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 28,
+      "pc": 20985,
+      "op": 22,
+      "next": 20986,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "32",
+        "115792089237316195423570985008687907853269984665640564039457584007913129639904",
+        "length+31"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 29,
+      "pc": 20986,
+      "op": 133,
+      "next": 20987,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "32",
+        "S.Round32(length)"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 30,
+      "pc": 20987,
+      "op": 1,
+      "next": 20988,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "32",
+        "S.Round32(length)",
+        "dst"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 31,
+      "pc": 20988,
+      "op": 1,
+      "next": 20989,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "32",
+        "dst+S.Round32(length)"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 32,
+      "pc": 20989,
+      "op": 145,
+      "next": 20990,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "0",
+        "length",
+        "H.End(dst,length)"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 33,
+      "pc": 20990,
+      "op": 80,
+      "next": 20991,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "H.End(dst,length)",
+        "length",
+        "0"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 34,
+      "pc": 20991,
+      "op": 80,
+      "next": 20992,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "H.End(dst,length)",
+        "length"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 35,
+      "pc": 20992,
+      "op": 146,
+      "next": 20993,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "dst",
+        "src",
+        "H.End(dst,length)"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 36,
+      "pc": 20993,
+      "op": 145,
+      "next": 20994,
+      "immediate": 0,
+      "stack": [
+        "H.End(dst,length)",
+        "dst",
+        "src",
+        "returnPc"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 37,
+      "pc": 20994,
+      "op": 80,
+      "next": 20995,
+      "immediate": 0,
+      "stack": [
+        "H.End(dst,length)",
+        "returnPc",
+        "src",
+        "dst"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 38,
+      "pc": 20995,
+      "op": 80,
+      "next": 20996,
+      "immediate": 0,
+      "stack": [
+        "H.End(dst,length)",
+        "returnPc",
+        "src"
+      ],
+      "stage": 3
+    },
+    {
+      "id": 39,
+      "pc": 20996,
+      "op": 86,
+      "next": 20997,
+      "immediate": 0,
+      "stack": [
+        "H.End(dst,length)",
+        "returnPc"
+      ],
+      "stage": 3
+    }
+  ],
+  "requiredBytes": {
+    "20951": 91,
+    "20952": 95,
+    "20953": 129,
+    "20954": 81,
+    "20955": 128,
+    "20956": 132,
+    "20957": 82,
+    "20958": 128,
+    "20959": 96,
+    "20960": 32,
+    "20961": 132,
+    "20962": 1,
+    "20963": 96,
+    "20964": 32,
+    "20965": 134,
+    "20966": 1,
+    "20967": 94,
+    "20968": 95,
+    "20969": 96,
+    "20970": 32,
+    "20971": 130,
+    "20972": 134,
+    "20973": 1,
+    "20974": 1,
+    "20975": 82,
+    "20976": 96,
+    "20977": 32,
+    "20978": 96,
+    "20979": 31,
+    "20980": 25,
+    "20981": 96,
+    "20982": 31,
+    "20983": 131,
+    "20984": 1,
+    "20985": 22,
+    "20986": 133,
+    "20987": 1,
+    "20988": 1,
+    "20989": 145,
+    "20990": 80,
+    "20991": 80,
+    "20992": 146,
+    "20993": 145,
+    "20994": 80,
+    "20995": 80,
+    "20996": 86
+  },
+  "scope": "Complete shared ABI bytes copy to supplied physical return jump. Full CallbackFailed composition and retention remain open."
+}

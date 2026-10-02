@@ -1,0 +1,310 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 6031,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "0",
+        "length/32"
+      ],
+      "op": 91,
+      "next": 6032,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 6032,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "0",
+        "length/32"
+      ],
+      "op": 144,
+      "next": 6033,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 6033,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "length/32",
+        "0"
+      ],
+      "op": 80,
+      "next": 6034,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 6034,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "length/32"
+      ],
+      "op": 95,
+      "next": 6035,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 6035,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "length/32",
+        "0"
+      ],
+      "op": 131,
+      "next": 6036,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 6036,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "length/32",
+        "0",
+        "lane"
+      ],
+      "op": 21,
+      "next": 6037,
+      "immediate": 0
+    },
+    {
+      "id": 6,
+      "pc": 6037,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "length/32",
+        "0",
+        "1"
+      ],
+      "op": 97,
+      "next": 6040,
+      "immediate": 6056
+    },
+    {
+      "id": 7,
+      "pc": 6040,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "length/32",
+        "0",
+        "1",
+        "6056"
+      ],
+      "op": 87,
+      "next": 6041,
+      "immediate": 0
+    },
+    {
+      "id": 8,
+      "pc": 6056,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "length/32",
+        "0"
+      ],
+      "op": 91,
+      "next": 6057,
+      "immediate": 0
+    },
+    {
+      "id": 9,
+      "pc": 6057,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "length/32",
+        "0"
+      ],
+      "op": 96,
+      "next": 6059,
+      "immediate": 2
+    },
+    {
+      "id": 10,
+      "pc": 6059,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "length/32",
+        "0",
+        "2"
+      ],
+      "op": 97,
+      "next": 6062,
+      "immediate": 6069
+    },
+    {
+      "id": 11,
+      "pc": 6062,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "length/32",
+        "0",
+        "2",
+        "6069"
+      ],
+      "op": 131,
+      "next": 6063,
+      "immediate": 0
+    },
+    {
+      "id": 12,
+      "pc": 6063,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "length/32",
+        "0",
+        "2",
+        "6069",
+        "length/32"
+      ],
+      "op": 96,
+      "next": 6065,
+      "immediate": 1
+    },
+    {
+      "id": 13,
+      "pc": 6065,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "length/32",
+        "0",
+        "2",
+        "6069",
+        "length/32",
+        "1"
+      ],
+      "op": 97,
+      "next": 6068,
+      "immediate": 23604
+    },
+    {
+      "id": 14,
+      "pc": 6068,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "length/32",
+        "0",
+        "2",
+        "6069",
+        "length/32",
+        "1",
+        "23604"
+      ],
+      "op": 86,
+      "next": 6069,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "6031": 91,
+    "6032": 144,
+    "6033": 80,
+    "6034": 95,
+    "6035": 131,
+    "6036": 21,
+    "6037": 97,
+    "6038": 23,
+    "6039": 168,
+    "6040": 87,
+    "6056": 91,
+    "6057": 96,
+    "6058": 2,
+    "6059": 97,
+    "6060": 23,
+    "6061": 181,
+    "6062": 131,
+    "6063": 96,
+    "6064": 1,
+    "6065": 97,
+    "6066": 92,
+    "6067": 52,
+    "6068": 86,
+    "23604": 91
+  },
+  "destinations": [
+    6056,
+    23604
+  ],
+  "expectedFinalStack": "2989505972,518,offset,length,lane,96,length/32,0,2,6069,length/32,1",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

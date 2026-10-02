@@ -1,0 +1,317 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 23581,
+      "stack": [
+        "ret",
+        "index",
+        "32"
+      ],
+      "op": 91,
+      "next": 23582,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 23582,
+      "stack": [
+        "ret",
+        "index",
+        "32"
+      ],
+      "op": 128,
+      "next": 23583,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 23583,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "32"
+      ],
+      "op": 130,
+      "next": 23584,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 23584,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "32",
+        "index"
+      ],
+      "op": 2,
+      "next": 23585,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 23585,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "((index as nat)*(32 as nat))%G.Modulus()"
+      ],
+      "op": 129,
+      "next": 23586,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 23586,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "((index as nat)*(32 as nat))%G.Modulus()",
+        "32"
+      ],
+      "op": 21,
+      "next": 23587,
+      "immediate": 0
+    },
+    {
+      "id": 6,
+      "pc": 23587,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "((index as nat)*(32 as nat))%G.Modulus()",
+        "0"
+      ],
+      "op": 130,
+      "next": 23588,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 23588,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "((index as nat)*(32 as nat))%G.Modulus()",
+        "0",
+        "32"
+      ],
+      "op": 130,
+      "next": 23589,
+      "immediate": 0
+    },
+    {
+      "id": 8,
+      "pc": 23589,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "((index as nat)*(32 as nat))%G.Modulus()",
+        "0",
+        "32",
+        "((index as nat)*(32 as nat))%G.Modulus()"
+      ],
+      "op": 4,
+      "next": 23590,
+      "immediate": 0
+    },
+    {
+      "id": 9,
+      "pc": 23590,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "((index as nat)*(32 as nat))%G.Modulus()",
+        "0",
+        "(if 32 == 0 then 0 else (((index as nat)*(32 as nat))%G.Modulus() as nat)/(32 as nat))"
+      ],
+      "op": 132,
+      "next": 23591,
+      "immediate": 0
+    },
+    {
+      "id": 10,
+      "pc": 23591,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "((index as nat)*(32 as nat))%G.Modulus()",
+        "0",
+        "(if 32 == 0 then 0 else (((index as nat)*(32 as nat))%G.Modulus() as nat)/(32 as nat))",
+        "index"
+      ],
+      "op": 20,
+      "next": 23592,
+      "immediate": 0
+    },
+    {
+      "id": 11,
+      "pc": 23592,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "((index as nat)*(32 as nat))%G.Modulus()",
+        "0",
+        "1"
+      ],
+      "op": 23,
+      "next": 23593,
+      "immediate": 0
+    },
+    {
+      "id": 12,
+      "pc": 23593,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "((index as nat)*(32 as nat))%G.Modulus()",
+        "1"
+      ],
+      "op": 97,
+      "next": 23596,
+      "immediate": 13698
+    },
+    {
+      "id": 13,
+      "pc": 23596,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "((index as nat)*(32 as nat))%G.Modulus()",
+        "1",
+        "13698"
+      ],
+      "op": 87,
+      "next": 23597,
+      "immediate": 0
+    },
+    {
+      "id": 14,
+      "pc": 13698,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "((index as nat)*(32 as nat))%G.Modulus()"
+      ],
+      "op": 91,
+      "next": 13699,
+      "immediate": 0
+    },
+    {
+      "id": 15,
+      "pc": 13699,
+      "stack": [
+        "ret",
+        "index",
+        "32",
+        "((index as nat)*(32 as nat))%G.Modulus()"
+      ],
+      "op": 146,
+      "next": 13700,
+      "immediate": 0
+    },
+    {
+      "id": 16,
+      "pc": 13700,
+      "stack": [
+        "((index as nat)*(32 as nat))%G.Modulus()",
+        "index",
+        "32",
+        "ret"
+      ],
+      "op": 145,
+      "next": 13701,
+      "immediate": 0
+    },
+    {
+      "id": 17,
+      "pc": 13701,
+      "stack": [
+        "((index as nat)*(32 as nat))%G.Modulus()",
+        "ret",
+        "32",
+        "index"
+      ],
+      "op": 80,
+      "next": 13702,
+      "immediate": 0
+    },
+    {
+      "id": 18,
+      "pc": 13702,
+      "stack": [
+        "((index as nat)*(32 as nat))%G.Modulus()",
+        "ret",
+        "32"
+      ],
+      "op": 80,
+      "next": 13703,
+      "immediate": 0
+    },
+    {
+      "id": 19,
+      "pc": 13703,
+      "stack": [
+        "((index as nat)*(32 as nat))%G.Modulus()",
+        "ret"
+      ],
+      "op": 86,
+      "next": 13704,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "23581": 91,
+    "23582": 128,
+    "23583": 130,
+    "23584": 2,
+    "23585": 129,
+    "23586": 21,
+    "23587": 130,
+    "23588": 130,
+    "23589": 4,
+    "23590": 132,
+    "23591": 20,
+    "23592": 23,
+    "23593": 97,
+    "23594": 53,
+    "23595": 130,
+    "23596": 87,
+    "13698": 91,
+    "13699": 146,
+    "13700": 145,
+    "13701": 80,
+    "13702": 80,
+    "13703": 86,
+    "2116": 91,
+    "2128": 91,
+    "2177": 91,
+    "2189": 91
+  },
+  "destinations": [
+    2116,
+    2128,
+    2177,
+    2189,
+    13698
+  ],
+  "finalStack": [
+    "((index as nat)*(32 as nat))%G.Modulus()"
+  ],
+  "scope": "development admitted actual helper path only; body composition and retained evidence remain open"
+}

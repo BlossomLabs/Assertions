@@ -1,0 +1,311 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 8363,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "needle",
+        "word"
+      ],
+      "op": 91,
+      "next": 8364,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 8364,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "needle",
+        "word"
+      ],
+      "op": 3,
+      "next": 8365,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 8365,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "((word as nat)+G.Modulus()-(needle as nat))%G.Modulus()"
+      ],
+      "op": 97,
+      "next": 8368,
+      "immediate": 8377
+    },
+    {
+      "id": 3,
+      "pc": 8368,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index",
+        "((word as nat)+G.Modulus()-(needle as nat))%G.Modulus()",
+        "8377"
+      ],
+      "op": 87,
+      "next": 8369,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 8369,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "0",
+        "length/32",
+        "index"
+      ],
+      "op": 145,
+      "next": 8370,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 8370,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "index",
+        "length/32",
+        "0"
+      ],
+      "op": 80,
+      "next": 8371,
+      "immediate": 0
+    },
+    {
+      "id": 6,
+      "pc": 8371,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "index",
+        "length/32"
+      ],
+      "op": 97,
+      "next": 8374,
+      "immediate": 8389
+    },
+    {
+      "id": 7,
+      "pc": 8374,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "index",
+        "length/32",
+        "8389"
+      ],
+      "op": 144,
+      "next": 8375,
+      "immediate": 0
+    },
+    {
+      "id": 8,
+      "pc": 8375,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "index",
+        "8389",
+        "length/32"
+      ],
+      "op": 80,
+      "next": 8376,
+      "immediate": 0
+    },
+    {
+      "id": 9,
+      "pc": 8376,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "index",
+        "8389"
+      ],
+      "op": 86,
+      "next": 8377,
+      "immediate": 0
+    },
+    {
+      "id": 10,
+      "pc": 8389,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "index"
+      ],
+      "op": 91,
+      "next": 8390,
+      "immediate": 0
+    },
+    {
+      "id": 11,
+      "pc": 8390,
+      "stack": [
+        "3904669827",
+        "604",
+        "offset",
+        "length",
+        "needle",
+        "index"
+      ],
+      "op": 147,
+      "next": 8391,
+      "immediate": 0
+    },
+    {
+      "id": 12,
+      "pc": 8391,
+      "stack": [
+        "3904669827",
+        "index",
+        "offset",
+        "length",
+        "needle",
+        "604"
+      ],
+      "op": 146,
+      "next": 8392,
+      "immediate": 0
+    },
+    {
+      "id": 13,
+      "pc": 8392,
+      "stack": [
+        "3904669827",
+        "index",
+        "604",
+        "length",
+        "needle",
+        "offset"
+      ],
+      "op": 80,
+      "next": 8393,
+      "immediate": 0
+    },
+    {
+      "id": 14,
+      "pc": 8393,
+      "stack": [
+        "3904669827",
+        "index",
+        "604",
+        "length",
+        "needle"
+      ],
+      "op": 80,
+      "next": 8394,
+      "immediate": 0
+    },
+    {
+      "id": 15,
+      "pc": 8394,
+      "stack": [
+        "3904669827",
+        "index",
+        "604",
+        "length"
+      ],
+      "op": 80,
+      "next": 8395,
+      "immediate": 0
+    },
+    {
+      "id": 16,
+      "pc": 8395,
+      "stack": [
+        "3904669827",
+        "index",
+        "604"
+      ],
+      "op": 86,
+      "next": 8396,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "8363": 91,
+    "8364": 3,
+    "8365": 97,
+    "8366": 32,
+    "8367": 185,
+    "8368": 87,
+    "8377": 91,
+    "8369": 145,
+    "8370": 80,
+    "8371": 97,
+    "8372": 32,
+    "8373": 197,
+    "8374": 144,
+    "8375": 80,
+    "8376": 86,
+    "8389": 91,
+    "8390": 147,
+    "8391": 146,
+    "8392": 80,
+    "8393": 80,
+    "8394": 80,
+    "8395": 86,
+    "604": 91
+  },
+  "destinations": [
+    604,
+    8377,
+    8389
+  ],
+  "expectedFinalStack": "3904669827,index",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

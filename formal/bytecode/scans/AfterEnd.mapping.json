@@ -1,0 +1,213 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 2872,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset",
+        "Position(index)",
+        "length",
+        "NextPosition(index)"
+      ],
+      "op": 91,
+      "next": 2873,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 2873,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset",
+        "Position(index)",
+        "length",
+        "NextPosition(index)"
+      ],
+      "op": 146,
+      "next": 2874,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 2874,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "NextPosition(index)",
+        "Position(index)",
+        "length",
+        "offset"
+      ],
+      "op": 97,
+      "next": 2877,
+      "immediate": 2885
+    },
+    {
+      "id": 3,
+      "pc": 2877,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "NextPosition(index)",
+        "Position(index)",
+        "length",
+        "offset",
+        "2885"
+      ],
+      "op": 147,
+      "next": 2878,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 2878,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "2885",
+        "Position(index)",
+        "length",
+        "offset",
+        "NextPosition(index)"
+      ],
+      "op": 146,
+      "next": 2879,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 2879,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "2885",
+        "NextPosition(index)",
+        "length",
+        "offset",
+        "Position(index)"
+      ],
+      "op": 145,
+      "next": 2880,
+      "immediate": 0
+    },
+    {
+      "id": 6,
+      "pc": 2880,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "2885",
+        "NextPosition(index)",
+        "Position(index)",
+        "offset",
+        "length"
+      ],
+      "op": 144,
+      "next": 2881,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 2881,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "2885",
+        "NextPosition(index)",
+        "Position(index)",
+        "length",
+        "offset"
+      ],
+      "op": 97,
+      "next": 2884,
+      "immediate": 23623
+    },
+    {
+      "id": 8,
+      "pc": 2884,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "2885",
+        "NextPosition(index)",
+        "Position(index)",
+        "length",
+        "offset",
+        "23623"
+      ],
+      "op": 86,
+      "next": 2885,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "2872": 91,
+    "2873": 146,
+    "2874": 97,
+    "2875": 11,
+    "2876": 69,
+    "2877": 147,
+    "2878": 146,
+    "2879": 145,
+    "2880": 144,
+    "2881": 97,
+    "2882": 92,
+    "2883": 71,
+    "2884": 86,
+    "23623": 91
+  },
+  "destinations": [
+    23623
+  ],
+  "expectedFinalStack": "394725771,604,offset,length,total,length/32,index,2885,NextPosition(index),Position(index),length,offset",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

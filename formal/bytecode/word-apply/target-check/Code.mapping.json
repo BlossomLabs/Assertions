@@ -1,0 +1,247 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 15859,
+      "stack": [
+        "12334",
+        "target"
+      ],
+      "consumed": 0,
+      "op": 91,
+      "next": 15860,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 15860,
+      "stack": [
+        "12334",
+        "target"
+      ],
+      "consumed": 0,
+      "op": 128,
+      "next": 15861,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 15861,
+      "stack": [
+        "12334",
+        "target",
+        "target"
+      ],
+      "consumed": 0,
+      "op": 96,
+      "next": 15863,
+      "immediate": 1
+    },
+    {
+      "id": 3,
+      "pc": 15863,
+      "stack": [
+        "12334",
+        "target",
+        "target",
+        "1"
+      ],
+      "consumed": 0,
+      "op": 96,
+      "next": 15865,
+      "immediate": 1
+    },
+    {
+      "id": 4,
+      "pc": 15865,
+      "stack": [
+        "12334",
+        "target",
+        "target",
+        "1",
+        "1"
+      ],
+      "consumed": 0,
+      "op": 96,
+      "next": 15867,
+      "immediate": 160
+    },
+    {
+      "id": 5,
+      "pc": 15867,
+      "stack": [
+        "12334",
+        "target",
+        "target",
+        "1",
+        "1",
+        "160"
+      ],
+      "consumed": 0,
+      "op": 27,
+      "next": 15868,
+      "immediate": 0
+    },
+    {
+      "id": 6,
+      "pc": 15868,
+      "stack": [
+        "12334",
+        "target",
+        "target",
+        "1",
+        "1461501637330902918203684832716283019655932542976"
+      ],
+      "consumed": 0,
+      "op": 3,
+      "next": 15869,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 15869,
+      "stack": [
+        "12334",
+        "target",
+        "target",
+        "1461501637330902918203684832716283019655932542975"
+      ],
+      "consumed": 0,
+      "op": 22,
+      "next": 15870,
+      "immediate": 0
+    },
+    {
+      "id": 8,
+      "pc": 15870,
+      "stack": [
+        "12334",
+        "target",
+        "target"
+      ],
+      "consumed": 0,
+      "op": 59,
+      "next": 15871,
+      "immediate": 0
+    },
+    {
+      "id": 9,
+      "pc": 15871,
+      "stack": [
+        "12334",
+        "target",
+        "codeSize"
+      ],
+      "consumed": 1,
+      "op": 95,
+      "next": 15872,
+      "immediate": 0
+    },
+    {
+      "id": 10,
+      "pc": 15872,
+      "stack": [
+        "12334",
+        "target",
+        "codeSize",
+        "0"
+      ],
+      "consumed": 1,
+      "op": 3,
+      "next": 15873,
+      "immediate": 0
+    },
+    {
+      "id": 11,
+      "pc": 15873,
+      "stack": [
+        "12334",
+        "target",
+        "G.Modulus()-codeSize"
+      ],
+      "consumed": 1,
+      "op": 97,
+      "next": 15876,
+      "immediate": 15912
+    },
+    {
+      "id": 12,
+      "pc": 15876,
+      "stack": [
+        "12334",
+        "target",
+        "G.Modulus()-codeSize",
+        "15912"
+      ],
+      "consumed": 1,
+      "op": 87,
+      "next": 15877,
+      "immediate": 0
+    },
+    {
+      "id": 13,
+      "pc": 15912,
+      "stack": [
+        "12334",
+        "target"
+      ],
+      "consumed": 1,
+      "op": 91,
+      "next": 15913,
+      "immediate": 0
+    },
+    {
+      "id": 14,
+      "pc": 15913,
+      "stack": [
+        "12334",
+        "target"
+      ],
+      "consumed": 1,
+      "op": 80,
+      "next": 15914,
+      "immediate": 0
+    },
+    {
+      "id": 15,
+      "pc": 15914,
+      "stack": [
+        "12334"
+      ],
+      "consumed": 1,
+      "op": 86,
+      "next": 15915,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "12334": 91,
+    "15859": 91,
+    "15860": 128,
+    "15861": 96,
+    "15862": 1,
+    "15863": 96,
+    "15864": 1,
+    "15865": 96,
+    "15866": 160,
+    "15867": 27,
+    "15868": 3,
+    "15869": 22,
+    "15870": 59,
+    "15871": 95,
+    "15872": 3,
+    "15873": 97,
+    "15874": 62,
+    "15875": 40,
+    "15876": 87,
+    "15912": 91,
+    "15913": 80,
+    "15914": 86
+  },
+  "destinations": [
+    12334,
+    15912
+  ],
+  "scope": "Canonical target helper admitted by one truthful positive code-size observation; source loop, errors and retained public evidence remain open."
+}

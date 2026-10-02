@@ -1,0 +1,233 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 23662,
+      "stack": [
+        "ret",
+        "32",
+        "offset"
+      ],
+      "op": 91,
+      "next": 23663,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 23663,
+      "stack": [
+        "ret",
+        "32",
+        "offset"
+      ],
+      "op": 128,
+      "next": 23664,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 23664,
+      "stack": [
+        "ret",
+        "32",
+        "offset",
+        "offset"
+      ],
+      "op": 53,
+      "next": 23665,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 23665,
+      "stack": [
+        "ret",
+        "32",
+        "offset",
+        "DataWord(data,offset)"
+      ],
+      "op": 96,
+      "next": 23667,
+      "immediate": 32
+    },
+    {
+      "id": 4,
+      "pc": 23667,
+      "stack": [
+        "ret",
+        "32",
+        "offset",
+        "DataWord(data,offset)",
+        "32"
+      ],
+      "op": 131,
+      "next": 23668,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 23668,
+      "stack": [
+        "ret",
+        "32",
+        "offset",
+        "DataWord(data,offset)",
+        "32",
+        "32"
+      ],
+      "op": 16,
+      "next": 23669,
+      "immediate": 0
+    },
+    {
+      "id": 6,
+      "pc": 23669,
+      "stack": [
+        "ret",
+        "32",
+        "offset",
+        "DataWord(data,offset)",
+        "0"
+      ],
+      "op": 21,
+      "next": 23670,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 23670,
+      "stack": [
+        "ret",
+        "32",
+        "offset",
+        "DataWord(data,offset)",
+        "1"
+      ],
+      "op": 97,
+      "next": 23673,
+      "immediate": 13698
+    },
+    {
+      "id": 8,
+      "pc": 23673,
+      "stack": [
+        "ret",
+        "32",
+        "offset",
+        "DataWord(data,offset)",
+        "1",
+        "13698"
+      ],
+      "op": 87,
+      "next": 23674,
+      "immediate": 0
+    },
+    {
+      "id": 9,
+      "pc": 13698,
+      "stack": [
+        "ret",
+        "32",
+        "offset",
+        "DataWord(data,offset)"
+      ],
+      "op": 91,
+      "next": 13699,
+      "immediate": 0
+    },
+    {
+      "id": 10,
+      "pc": 13699,
+      "stack": [
+        "ret",
+        "32",
+        "offset",
+        "DataWord(data,offset)"
+      ],
+      "op": 146,
+      "next": 13700,
+      "immediate": 0
+    },
+    {
+      "id": 11,
+      "pc": 13700,
+      "stack": [
+        "DataWord(data,offset)",
+        "32",
+        "offset",
+        "ret"
+      ],
+      "op": 145,
+      "next": 13701,
+      "immediate": 0
+    },
+    {
+      "id": 12,
+      "pc": 13701,
+      "stack": [
+        "DataWord(data,offset)",
+        "ret",
+        "offset",
+        "32"
+      ],
+      "op": 80,
+      "next": 13702,
+      "immediate": 0
+    },
+    {
+      "id": 13,
+      "pc": 13702,
+      "stack": [
+        "DataWord(data,offset)",
+        "ret",
+        "offset"
+      ],
+      "op": 80,
+      "next": 13703,
+      "immediate": 0
+    },
+    {
+      "id": 14,
+      "pc": 13703,
+      "stack": [
+        "DataWord(data,offset)",
+        "ret"
+      ],
+      "op": 86,
+      "next": 13704,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "23662": 91,
+    "23663": 128,
+    "23664": 53,
+    "23665": 96,
+    "23666": 32,
+    "23667": 131,
+    "23668": 16,
+    "23669": 21,
+    "23670": 97,
+    "23671": 53,
+    "23672": 130,
+    "23673": 87,
+    "13698": 91,
+    "13699": 146,
+    "13700": 145,
+    "13701": 80,
+    "13702": 80,
+    "13703": 86,
+    "2161": 91,
+    "2222": 91
+  },
+  "destinations": [
+    2161,
+    2222,
+    13698
+  ],
+  "finalStack": [
+    "DataWord(data,offset)"
+  ],
+  "scope": "development admitted actual helper path only; body composition and retained evidence remain open"
+}

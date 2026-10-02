@@ -1,0 +1,131 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 2767,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length"
+      ],
+      "op": 91,
+      "next": 2768,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 2768,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length"
+      ],
+      "op": 95,
+      "next": 2769,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 2769,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "0"
+      ],
+      "op": 97,
+      "next": 2772,
+      "immediate": 2779
+    },
+    {
+      "id": 3,
+      "pc": 2772,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "0",
+        "2779"
+      ],
+      "op": 96,
+      "next": 2774,
+      "immediate": 32
+    },
+    {
+      "id": 4,
+      "pc": 2774,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "0",
+        "2779",
+        "32"
+      ],
+      "op": 131,
+      "next": 2775,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 2775,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "0",
+        "2779",
+        "32",
+        "length"
+      ],
+      "op": 97,
+      "next": 2778,
+      "immediate": 23523
+    },
+    {
+      "id": 6,
+      "pc": 2778,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "0",
+        "2779",
+        "32",
+        "length",
+        "23523"
+      ],
+      "op": 86,
+      "next": 2779,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "2767": 91,
+    "2768": 95,
+    "2769": 97,
+    "2770": 10,
+    "2771": 219,
+    "2772": 96,
+    "2773": 32,
+    "2774": 131,
+    "2775": 97,
+    "2776": 91,
+    "2777": 227,
+    "2778": 86,
+    "23523": 91
+  },
+  "destinations": [
+    23523
+  ],
+  "expectedFinalStack": "394725771,604,offset,length,0,2779,32,length",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

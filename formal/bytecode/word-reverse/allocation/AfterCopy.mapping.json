@@ -1,0 +1,161 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 5838,
+      "op": 1,
+      "next": 5839,
+      "immediate": 0,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "n*32",
+        "96",
+        "n",
+        "128",
+        "n*32",
+        "160",
+        "n*32"
+      ],
+      "memory": "O.Heap(n,0)"
+    },
+    {
+      "id": 1,
+      "pc": 5839,
+      "op": 144,
+      "next": 5840,
+      "immediate": 0,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "n*32",
+        "96",
+        "n",
+        "128",
+        "n*32",
+        "O.Extent(n)"
+      ],
+      "memory": "O.Heap(n,0)"
+    },
+    {
+      "id": 2,
+      "pc": 5840,
+      "op": 80,
+      "next": 5841,
+      "immediate": 0,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "n*32",
+        "96",
+        "n",
+        "128",
+        "O.Extent(n)",
+        "n*32"
+      ],
+      "memory": "O.Heap(n,0)"
+    },
+    {
+      "id": 3,
+      "pc": 5841,
+      "op": 91,
+      "next": 5842,
+      "immediate": 0,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "n*32",
+        "96",
+        "n",
+        "128",
+        "O.Extent(n)"
+      ],
+      "memory": "O.Heap(n,0)"
+    },
+    {
+      "id": 4,
+      "pc": 5842,
+      "op": 80,
+      "next": 5843,
+      "immediate": 0,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "n*32",
+        "96",
+        "n",
+        "128",
+        "O.Extent(n)"
+      ],
+      "memory": "O.Heap(n,0)"
+    },
+    {
+      "id": 5,
+      "pc": 5843,
+      "op": 145,
+      "next": 5844,
+      "immediate": 0,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "n*32",
+        "96",
+        "n",
+        "128"
+      ],
+      "memory": "O.Heap(n,0)"
+    },
+    {
+      "id": 6,
+      "pc": 5844,
+      "op": 80,
+      "next": 5845,
+      "immediate": 0,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "n*32",
+        "128",
+        "n",
+        "96"
+      ],
+      "memory": "O.Heap(n,0)"
+    },
+    {
+      "id": 7,
+      "pc": 5845,
+      "op": 95,
+      "next": 5846,
+      "immediate": 0,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "n*32",
+        "128",
+        "n"
+      ],
+      "memory": "O.Heap(n,0)"
+    }
+  ],
+  "requiredBytes": {
+    "5838": 1,
+    "5839": 144,
+    "5840": 80,
+    "5841": 91,
+    "5842": 80,
+    "5843": 145,
+    "5844": 80,
+    "5845": 95
+  },
+  "destinations": [],
+  "scope": "Development actual post-copy allocator only; public retention remains open."
+}

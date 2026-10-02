@@ -1,0 +1,20 @@
+# Operations modular powers: conditional source evidence
+
+This package covers the four decoded `powMod` overloads. Coverage remains open until a complete retained manifest and independent checker pass. The source proof establishes mathematical modular powers over every decoded uint256/int256 operand, exact zero-modulus Panic(0x12), and the exact `ModularInverseDoesNotExist(base, modulus)` outcome for negative exponents without an inverse. Signed overloads use absolute modulus and restore the base sign for odd exponent magnitude, including int256 minimum operands.
+
+`generate.py` pins the complete public/private bodies, threshold/error declarations, actual compiler callee declarations and selectors. It gates the corrected assembly with a separate `let success := staticcall(...)` before querying fresh returndata size. It generates controls exclusively from templates. Complete reached Math.invMod, Math.ternary and Operations magnitude/sign helpers are connected to freshly proved semantics; the entire included mulDiv/helper graph receives fresh retained native verification. The AST gate and reviewed restricted source lowering remain a correspondence premise, not a certified Solidity-to-Dafny translator.
+
+The fallback proof connects the actual selected MULMOD, exponent shift and conditional square loop to an independently defined mathematical power. The inverse proof connects actual unchecked Euclidean tuple and coefficient updates to gcd and an independently defined Bezout representative. The determinant invariant bounds every consumed coefficient within signed representation; the terminal unused coefficient may wrap and is never silently interpreted as an exact unbounded integer. There is no assumed internal inverse or power postcondition.
+
+The precompile branch executes the actual six MSTORE request fields, derives the 192-byte big-endian request and follows the source's call, copy and fresh-size guard. The byte codecs receive quantified round-trip proofs. The external world assumption says a successful canonical 32-byte MODEXP receipt contains the correct mathematical result for that exact request. Failed or differently sized receipts take the proved fallback. This is an explicit external receipt assumption, not a proof of a precompile implementation or gas availability. Memory representation, decoded ABI operands, primitive source semantics, outer ABI/error serialization, adequate resources and the Dafny/Boogie/Z3 toolchain are separate premises.
+
+The concrete oracle tests all four overloads, fallback-sized and precompile-sized exponents, negative exponents, signed minima, full-width operands and exact errors. `EvaluationOrderOracle.t.sol` separately retains the old nested-guard counterexample: its size query sees prior returndata before STATICCALL, so fresh successful calls do not take that old success branch. That fixture describes the historical expression and is not the current guard. Two semantic source faults must compile and translate successfully, fail independent native arithmetic witnesses and fail real EVM oracle tests; errors, timeouts and parse failures are not counted as detection.
+
+Run retained evidence only after all direct package files are final:
+
+```sh
+python3 -B formal/operations/modular-power/verify.py --dafny /tmp/assertions-dafny-4.11.0/dafny/dafny --solc /home/sem/.cache/hardhat-nodejs/compilers-v3/linux-amd64/solc-linux-amd64-v0.8.36+commit.8a079791 --output formal/operations/modular-power/evidence/conditional-source-v1
+python3 -B formal/operations/modular-power/check-evidence.py --dafny /tmp/assertions-dafny-4.11.0/dafny/dafny --solc /home/sem/.cache/hardhat-nodejs/compilers-v3/linux-amd64/solc-linux-amd64-v0.8.36+commit.8a079791 --manifest formal/operations/modular-power/evidence/conditional-source-v1/manifest.json
+```
+
+Retained manifests freeze complete input hashes, tools, commands, all native declaration/obligation receipts, audit, EVM receipts and semantic fault evidence. Failed development snapshots stay preserved. No exact-bytecode, compiler correctness, gas, deployment or performance result follows from this conditional source package.

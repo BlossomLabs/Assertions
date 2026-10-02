@@ -1,0 +1,7 @@
+# Operations ASCII loops source correspondence
+
+Three public entries (`toLower`, `toUpper`, `charset`) and the complete `_foldCase` helper are compiler-AST gated. The source-derived loop guards, letter comparisons, toggling expression, character-class condition and public range arguments drive native loops with rank input length minus current index. Prefix and untouched-suffix invariants prove exact position-preserving ASCII transformations for arbitrary finite input, including preservation of every non-ASCII byte. The bitmap loop proves universal membership with empty-input truth and immediate rejection on a missing bit.
+
+Decoded calldata, valid disjoint nonwrapping memory/copy projections, 8-bit bytes and 256-bit bitmap semantics, faithful source lowering and outer ABI return encoding and sufficient resources are explicit premises. Input length is representable as uint256; loop safety and increments follow from the invariant, and there is no fixture/fuel/iteration bound. The public byte sequences and bitmap span their full domains. No external observations or Unicode case-conversion claims occur.
+
+Retention requires all native declarations and CSV results, source/dependency/tool hashes, zero audit findings, three real EVM tests and two semantic source faults that translate then fail native semantics and EVM fixtures. Exact bytecode, gas, deployment and performance remain separate tracks. Update coverage only after the independent current-input checker passes.

@@ -1,0 +1,141 @@
+{
+  "entries": [
+    {
+      "signature": "encode(string,bytes[])",
+      "selector": "ffe9205d",
+      "symbol": "Raw"
+    },
+    {
+      "signature": "encodeBytes(string,bytes[])",
+      "selector": "821f167b",
+      "symbol": "Bytes"
+    }
+  ],
+  "slots": {
+    "RAW_OFFSET": "32",
+    "BYTES_DESCRIPTOR": "t"
+  },
+  "helperBindings": [
+    {
+      "caller": "encode",
+      "callee": "AbiCodec.tuple",
+      "compilerDeclaration": 9663
+    },
+    {
+      "caller": "encodeBytes",
+      "callee": "AbiCodec.tuple",
+      "compilerDeclaration": 9663
+    }
+  ],
+  "codecMapping": {
+    "sourceSha256": "485f0d49f35528cc4c9be7767c631be6903ff57b5cb95bcbb25d6cd04ce5fed6",
+    "translatedSlots": {
+      "HEAD_DYNAMIC": "(head + 32)",
+      "HEAD_STATIC": "(head + |v|)",
+      "PREFIX": "(if asArray then 64 else 0)",
+      "SIZE_STEP": "(size + (|values[i]| - 32))",
+      "TAIL_STEP": "(tail + (|v| - 32))",
+      "ROUTE_INDEX": "c.index",
+      "COMPONENT_BYTES": "(words * 32)",
+      "UNPACK_WIDTH": "(words * 32)"
+    },
+    "contextForwarding": [
+      {
+        "function": "checkWords",
+        "id": 745,
+        "calls": [
+          "checkRule",
+          "checkWords",
+          "checkWords"
+        ]
+      },
+      {
+        "function": "checkRule",
+        "id": 848,
+        "calls": [
+          "requireValue"
+        ]
+      },
+      {
+        "function": "word",
+        "id": 949,
+        "calls": [
+          "requireValue"
+        ]
+      },
+      {
+        "function": "validate",
+        "id": 1082,
+        "calls": [
+          "validateStatic",
+          "validateDynamic"
+        ]
+      },
+      {
+        "function": "validateStatic",
+        "id": 1157,
+        "calls": [
+          "requireValue",
+          "checkWords"
+        ]
+      },
+      {
+        "function": "validateDynamic",
+        "id": 1204,
+        "calls": [
+          "word",
+          "requireValue",
+          "body",
+          "requireValue"
+        ]
+      },
+      {
+        "function": "body",
+        "id": 1765,
+        "calls": [
+          "requireValue",
+          "word",
+          "requireValue",
+          "checkWords",
+          "word",
+          "requireValue",
+          "body",
+          "requireValue",
+          "checkWords",
+          "word",
+          "requireValue",
+          "body",
+          "word",
+          "requireValue",
+          "requireValue",
+          "word",
+          "requireValue"
+        ]
+      }
+    ],
+    "scope": "Full construction connection with all inherited source gates.",
+    "functions": {
+      "requireValue:897": "19273:442:0",
+      "copy:965": "20522:209:0",
+      "store:977": "20846:144:0",
+      "slice:1021": "21131:242:0",
+      "validate:1042": "21874:168:0",
+      "validate:1082": "22129:284:0",
+      "validate:1114": "22608:238:0",
+      "validateComponent:2094": "31351:894:0",
+      "tuple:2114": "33029:145:0",
+      "tuple:2191": "33298:518:0",
+      "isDynamic:2223": "33960:214:0",
+      "assemble:2386": "34789:1024:0",
+      "pack:2454": "36093:401:0",
+      "unpack:2673": "36951:1140:0"
+    },
+    "normalizations": [
+      "Solidity memory bytes are bounded byte sequences; fresh allocations are zero initialized. Memory.dfy proves exact MCOPY/MSTORE projection and slice guards under the stated physical layout and allocation assumptions.",
+      "Assembly loops preserve source branch order, indexing, stores and copies. Source arithmetic RHS expressions are translated; invariants prove every intermediate fits uint256 under the output representability premise.",
+      "Context forwarding is structurally audited at every identifier use. It cannot affect decisions or arithmetic; requireValue selects the exact error fields. Routes preserve parser failures and panics.",
+      "Component validation retains envelope and static footprint checks, including checked multiplication panic for unusually wide static tuples. Cached validation requires a matching descriptor shape."
+    ]
+  },
+  "compilerBookkeeping": "AST declaration-ID lists normalized; complete executable nodes retained, wrapper tuple target bound by actual referencedDeclaration and inherited codec gates freshly run."
+}

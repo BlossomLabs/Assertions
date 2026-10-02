@@ -1,0 +1,7 @@
+# Operations byte bounds and hashing source correspondence
+
+Six complete public entries (`slice`, `sliceRange`, `byteAt`, `byteLen`, `hash`, `hashPairSorted`) and the complete `_rangeIndex`/`_strictIndex` helpers are compiler-AST gated. Source branch and return slots are translated into the checked model. Native theorems prove exact clamped ranges, strict signed index errors, original contiguous bytes, byte length, original hash preimage and unsigned canonical sorted-pair preimage.
+
+Input byte sequences have representable length below 2^255, making the source's int256 length casts positive and their checked negations safe. All uint256/int256 input indices retain their full domains. This is a representation premise, not a fixture or solver bound. Valid ABI decoding, faithful source casts, calldata-slice/packed-word projections, disjoint nonwrapping memory, faithful restricted AST lowering, exact outer ABI/custom-error serialization and adequate resources remain assumptions. Hash receipts must faithfully implement KECCAK256 for each requested byte preimage. No collision-free or cryptographic algorithm proof is claimed. No external target is called.
+
+Retained evidence requires full source/tool/native declaration inventories, zero audit, six real EVM tests including exact errors and empty endpoints, and two semantic source faults that translate then fail native semantics and EVM fixtures. Coverage is updated only after the independent current-input evidence checker passes. Exact compiled-bytecode, gas, deployment and performance remain separate.

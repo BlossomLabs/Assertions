@@ -1,0 +1,193 @@
+{
+  "_wordAt": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "AST": {
+            "nodeType": "YulBlock",
+            "statements": [
+              {
+                "nodeType": "YulAssignment",
+                "value": {
+                  "arguments": [
+                    {
+                      "address-slot": "_wordAt"
+                    }
+                  ],
+                  "functionName": {
+                    "name": "mload",
+                    "nodeType": "YulIdentifier"
+                  },
+                  "nodeType": "YulFunctionCall"
+                },
+                "variableNames": [
+                  {
+                    "name": "w",
+                    "nodeType": "YulIdentifier"
+                  }
+                ]
+              }
+            ]
+          },
+          "evmVersion": "cancun",
+          "flags": [
+            "memory-safe"
+          ],
+          "nodeType": "InlineAssembly"
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "_wordAt",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "b",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "i",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "w",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "private"
+  },
+  "_setWord": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "AST": {
+            "nodeType": "YulBlock",
+            "statements": [
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "address-slot": "_setWord"
+                    },
+                    {
+                      "name": "w",
+                      "nodeType": "YulIdentifier"
+                    }
+                  ],
+                  "functionName": {
+                    "name": "mstore",
+                    "nodeType": "YulIdentifier"
+                  },
+                  "nodeType": "YulFunctionCall"
+                },
+                "nodeType": "YulExpressionStatement"
+              }
+            ]
+          },
+          "evmVersion": "cancun",
+          "flags": [
+            "memory-safe"
+          ],
+          "nodeType": "InlineAssembly"
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "_setWord",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "b",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "i",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "w",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": []
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "private"
+  }
+}

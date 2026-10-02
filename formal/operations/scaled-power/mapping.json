@@ -1,0 +1,43 @@
+{
+  "entries": [
+    {
+      "signature": "rpow(uint256,uint256,uint256)",
+      "selector": "67b870af",
+      "symbol": "Run"
+    }
+  ],
+  "slots": {
+    "BASE_ZERO": "(base == 0)",
+    "X_ZERO": "(x == 0)",
+    "ZERO_RESULT": "(if (n == 0) then base else 0)",
+    "INITIAL": "base",
+    "LOOP": "(n > 0)",
+    "SELECTED": "(I.And(n,1) == 1)",
+    "REMAINING": "(n > 0)",
+    "RETURN": "result",
+    "SELECT_ARGUMENTS": "result,x,base",
+    "SQUARE_ARGUMENTS": "x,x,base",
+    "SHIFT": "(n/B.Power(1))"
+  },
+  "helperBindings": [
+    {
+      "callee": "_panic",
+      "compilerDeclaration": 6774
+    },
+    {
+      "callee": "mulDiv",
+      "compilerDeclaration": 579
+    },
+    {
+      "callee": "mulDiv",
+      "compilerDeclaration": 579
+    }
+  ],
+  "sourceSha256": {
+    "contracts/Operations.sol": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce",
+    "contracts/lib/AbiCodec.sol": "485f0d49f35528cc4c9be7767c631be6903ff57b5cb95bcbb25d6cd04ce5fed6",
+    "node_modules/@openzeppelin/contracts/utils/math/Math.sol": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+    "node_modules/@openzeppelin/contracts/utils/math/SafeCast.sol": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+    "node_modules/@openzeppelin/contracts/utils/Panic.sol": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec"
+  }
+}

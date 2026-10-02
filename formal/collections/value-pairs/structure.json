@@ -1,0 +1,2274 @@
+{
+  "zipValues": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "condition": {
+            "translated-slot": "ZIP_LENGTH"
+          },
+          "nodeType": "IfStatement",
+          "trueBody": {
+            "errorCall": {
+              "arguments": [
+                {
+                  "expression": {
+                    "name": "left",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "memberName": "length",
+                  "nodeType": "MemberAccess"
+                },
+                {
+                  "expression": {
+                    "name": "right",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "memberName": "length",
+                  "nodeType": "MemberAccess"
+                }
+              ],
+              "expression": {
+                "name": "LengthMismatch",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "kind": "functionCall",
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            },
+            "nodeType": "RevertStatement"
+          }
+        },
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "plan",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "memory",
+              "typeName": {
+                "nodeType": "UserDefinedTypeName",
+                "pathNode": {
+                  "name": "AbiCodec.TupleLayout",
+                  "nodeType": "IdentifierPath"
+                }
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "arguments": [
+              {
+                "name": "leftType",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "rightType",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "_zipPlan",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "name": "out",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "Assignment",
+            "operator": "=",
+            "rightHandSide": {
+              "arguments": [
+                {
+                  "expression": {
+                    "name": "left",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "memberName": "length",
+                  "nodeType": "MemberAccess"
+                }
+              ],
+              "expression": {
+                "nodeType": "NewExpression",
+                "typeName": {
+                  "baseType": {
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName"
+                  },
+                  "nodeType": "ArrayTypeName"
+                }
+              },
+              "kind": "functionCall",
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "pair",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "memory",
+              "typeName": {
+                "baseType": {
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName"
+                },
+                "nodeType": "ArrayTypeName"
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "arguments": [
+              {
+                "hexValue": "32",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "2"
+              }
+            ],
+            "expression": {
+              "nodeType": "NewExpression",
+              "typeName": {
+                "baseType": {
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName"
+                },
+                "nodeType": "ArrayTypeName"
+              }
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "body": {
+            "nodeType": "Block",
+            "statements": [
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "arguments": [
+                        {
+                          "name": "leftType",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        }
+                      ],
+                      "expression": {
+                        "nodeType": "ElementaryTypeNameExpression",
+                        "typeName": {
+                          "name": "bytes",
+                          "nodeType": "ElementaryTypeName"
+                        }
+                      },
+                      "kind": "typeConversion",
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "tryCall": false
+                    },
+                    {
+                      "baseExpression": {
+                        "name": "left",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "indexExpression": {
+                        "translated-slot": "ZIP_LEFT"
+                      },
+                      "nodeType": "IndexAccess"
+                    }
+                  ],
+                  "expression": {
+                    "expression": {
+                      "name": "AbiCodec",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "validate",
+                    "nodeType": "MemberAccess"
+                  },
+                  "kind": "functionCall",
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "tryCall": false
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "arguments": [
+                        {
+                          "name": "rightType",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        }
+                      ],
+                      "expression": {
+                        "nodeType": "ElementaryTypeNameExpression",
+                        "typeName": {
+                          "name": "bytes",
+                          "nodeType": "ElementaryTypeName"
+                        }
+                      },
+                      "kind": "typeConversion",
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "tryCall": false
+                    },
+                    {
+                      "baseExpression": {
+                        "name": "right",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "indexExpression": {
+                        "translated-slot": "ZIP_RIGHT"
+                      },
+                      "nodeType": "IndexAccess"
+                    }
+                  ],
+                  "expression": {
+                    "expression": {
+                      "name": "AbiCodec",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "validate",
+                    "nodeType": "MemberAccess"
+                  },
+                  "kind": "functionCall",
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "tryCall": false
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "baseExpression": {
+                      "name": "pair",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "indexExpression": {
+                      "translated-slot": "LEFT_SLOT"
+                    },
+                    "nodeType": "IndexAccess"
+                  },
+                  "nodeType": "Assignment",
+                  "operator": "=",
+                  "rightHandSide": {
+                    "baseExpression": {
+                      "name": "left",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "indexExpression": {
+                      "name": "i",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "IndexAccess"
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "baseExpression": {
+                      "name": "pair",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "indexExpression": {
+                      "translated-slot": "RIGHT_SLOT"
+                    },
+                    "nodeType": "IndexAccess"
+                  },
+                  "nodeType": "Assignment",
+                  "operator": "=",
+                  "rightHandSide": {
+                    "baseExpression": {
+                      "name": "right",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "indexExpression": {
+                      "name": "i",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "IndexAccess"
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "declarations": [
+                  {
+                    "constant": false,
+                    "mutability": "mutable",
+                    "name": "tuple",
+                    "nodeType": "VariableDeclaration",
+                    "stateVariable": false,
+                    "storageLocation": "memory",
+                    "typeName": {
+                      "name": "bytes",
+                      "nodeType": "ElementaryTypeName"
+                    },
+                    "visibility": "internal"
+                  }
+                ],
+                "initialValue": {
+                  "arguments": [
+                    {
+                      "expression": {
+                        "name": "plan",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "memberName": "dynamic",
+                      "nodeType": "MemberAccess"
+                    },
+                    {
+                      "expression": {
+                        "name": "plan",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "memberName": "headSize",
+                      "nodeType": "MemberAccess"
+                    },
+                    {
+                      "name": "pair",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    {
+                      "translated-slot": "ARRAY_MODE"
+                    }
+                  ],
+                  "expression": {
+                    "expression": {
+                      "name": "AbiCodec",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "assemble",
+                    "nodeType": "MemberAccess"
+                  },
+                  "kind": "functionCall",
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "tryCall": false
+                },
+                "nodeType": "VariableDeclarationStatement"
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "baseExpression": {
+                      "name": "out",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "indexExpression": {
+                      "name": "i",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "IndexAccess"
+                  },
+                  "nodeType": "Assignment",
+                  "operator": "=",
+                  "rightHandSide": {
+                    "condition": {
+                      "translated-slot": "ENVELOPE"
+                    },
+                    "falseExpression": {
+                      "name": "tuple",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "Conditional",
+                    "trueExpression": {
+                      "arguments": [
+                        {
+                          "arguments": [
+                            {
+                              "arguments": [
+                                {
+                                  "hexValue": "3332",
+                                  "kind": "number",
+                                  "nodeType": "Literal",
+                                  "value": "32"
+                                }
+                              ],
+                              "expression": {
+                                "nodeType": "ElementaryTypeNameExpression",
+                                "typeName": {
+                                  "name": "uint256",
+                                  "nodeType": "ElementaryTypeName"
+                                }
+                              },
+                              "kind": "typeConversion",
+                              "names": [],
+                              "nodeType": "FunctionCall",
+                              "tryCall": false
+                            }
+                          ],
+                          "expression": {
+                            "expression": {
+                              "name": "abi",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "memberName": "encode",
+                            "nodeType": "MemberAccess"
+                          },
+                          "kind": "functionCall",
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "tryCall": false
+                        },
+                        {
+                          "name": "tuple",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        }
+                      ],
+                      "expression": {
+                        "expression": {
+                          "nodeType": "ElementaryTypeNameExpression",
+                          "typeName": {
+                            "name": "bytes",
+                            "nodeType": "ElementaryTypeName"
+                          }
+                        },
+                        "memberName": "concat",
+                        "nodeType": "MemberAccess"
+                      },
+                      "kind": "functionCall",
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "tryCall": false
+                    }
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              }
+            ]
+          },
+          "condition": {
+            "leftExpression": {
+              "name": "i",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "BinaryOperation",
+            "operator": "<",
+            "rightExpression": {
+              "expression": {
+                "name": "left",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "memberName": "length",
+              "nodeType": "MemberAccess"
+            }
+          },
+          "initializationExpression": {
+            "declarations": [
+              {
+                "constant": false,
+                "mutability": "mutable",
+                "name": "i",
+                "nodeType": "VariableDeclaration",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeName": {
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName"
+                },
+                "visibility": "internal"
+              }
+            ],
+            "nodeType": "VariableDeclarationStatement"
+          },
+          "loopExpression": {
+            "expression": {
+              "nodeType": "UnaryOperation",
+              "operator": "++",
+              "prefix": false,
+              "subExpression": {
+                "name": "i",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            },
+            "nodeType": "ExpressionStatement"
+          },
+          "nodeType": "ForStatement"
+        }
+      ]
+    },
+    "functionSelector": "09ebd0b5",
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "zipValues",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "leftType",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "string",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "rightType",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "string",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "left",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "baseType": {
+              "name": "bytes",
+              "nodeType": "ElementaryTypeName"
+            },
+            "nodeType": "ArrayTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "right",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "baseType": {
+              "name": "bytes",
+              "nodeType": "ElementaryTypeName"
+            },
+            "nodeType": "ArrayTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "out",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "baseType": {
+              "name": "bytes",
+              "nodeType": "ElementaryTypeName"
+            },
+            "nodeType": "ArrayTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "external"
+  },
+  "unzipValues": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "condition": {
+            "translated-slot": "LANE_BAD"
+          },
+          "nodeType": "IfStatement",
+          "trueBody": {
+            "errorCall": {
+              "arguments": [
+                {
+                  "name": "lane",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                }
+              ],
+              "expression": {
+                "name": "InvalidLane",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "kind": "functionCall",
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            },
+            "nodeType": "RevertStatement"
+          }
+        },
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "plan",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "memory",
+              "typeName": {
+                "nodeType": "UserDefinedTypeName",
+                "pathNode": {
+                  "name": "AbiCodec.TupleLayout",
+                  "nodeType": "IdentifierPath"
+                }
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "arguments": [
+              {
+                "name": "leftType",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "rightType",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "_zipPlan",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "name": "out",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "Assignment",
+            "operator": "=",
+            "rightHandSide": {
+              "arguments": [
+                {
+                  "expression": {
+                    "name": "pairs",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "memberName": "length",
+                  "nodeType": "MemberAccess"
+                }
+              ],
+              "expression": {
+                "nodeType": "NewExpression",
+                "typeName": {
+                  "baseType": {
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName"
+                  },
+                  "nodeType": "ArrayTypeName"
+                }
+              },
+              "kind": "functionCall",
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "body": {
+            "nodeType": "Block",
+            "statements": [
+              {
+                "declarations": [
+                  {
+                    "constant": false,
+                    "mutability": "mutable",
+                    "name": "parts",
+                    "nodeType": "VariableDeclaration",
+                    "stateVariable": false,
+                    "storageLocation": "memory",
+                    "typeName": {
+                      "baseType": {
+                        "name": "bytes",
+                        "nodeType": "ElementaryTypeName"
+                      },
+                      "nodeType": "ArrayTypeName"
+                    },
+                    "visibility": "internal"
+                  }
+                ],
+                "initialValue": {
+                  "arguments": [
+                    {
+                      "baseExpression": {
+                        "name": "pairs",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "indexExpression": {
+                        "name": "i",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "nodeType": "IndexAccess"
+                    },
+                    {
+                      "name": "plan",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    }
+                  ],
+                  "expression": {
+                    "name": "_unzipPair",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "kind": "functionCall",
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "tryCall": false
+                },
+                "nodeType": "VariableDeclarationStatement"
+              },
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "arguments": [
+                        {
+                          "name": "leftType",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        }
+                      ],
+                      "expression": {
+                        "nodeType": "ElementaryTypeNameExpression",
+                        "typeName": {
+                          "name": "bytes",
+                          "nodeType": "ElementaryTypeName"
+                        }
+                      },
+                      "kind": "typeConversion",
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "tryCall": false
+                    },
+                    {
+                      "baseExpression": {
+                        "name": "parts",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "indexExpression": {
+                        "translated-slot": "UNZIP_LEFT"
+                      },
+                      "nodeType": "IndexAccess"
+                    }
+                  ],
+                  "expression": {
+                    "expression": {
+                      "name": "AbiCodec",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "validate",
+                    "nodeType": "MemberAccess"
+                  },
+                  "kind": "functionCall",
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "tryCall": false
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "arguments": [
+                        {
+                          "name": "rightType",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        }
+                      ],
+                      "expression": {
+                        "nodeType": "ElementaryTypeNameExpression",
+                        "typeName": {
+                          "name": "bytes",
+                          "nodeType": "ElementaryTypeName"
+                        }
+                      },
+                      "kind": "typeConversion",
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "tryCall": false
+                    },
+                    {
+                      "baseExpression": {
+                        "name": "parts",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "indexExpression": {
+                        "translated-slot": "UNZIP_RIGHT"
+                      },
+                      "nodeType": "IndexAccess"
+                    }
+                  ],
+                  "expression": {
+                    "expression": {
+                      "name": "AbiCodec",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "validate",
+                    "nodeType": "MemberAccess"
+                  },
+                  "kind": "functionCall",
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "tryCall": false
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "baseExpression": {
+                      "name": "out",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "indexExpression": {
+                      "name": "i",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "IndexAccess"
+                  },
+                  "nodeType": "Assignment",
+                  "operator": "=",
+                  "rightHandSide": {
+                    "baseExpression": {
+                      "name": "parts",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "indexExpression": {
+                      "translated-slot": "SELECTED"
+                    },
+                    "nodeType": "IndexAccess"
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              }
+            ]
+          },
+          "condition": {
+            "leftExpression": {
+              "name": "i",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "BinaryOperation",
+            "operator": "<",
+            "rightExpression": {
+              "expression": {
+                "name": "pairs",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "memberName": "length",
+              "nodeType": "MemberAccess"
+            }
+          },
+          "initializationExpression": {
+            "declarations": [
+              {
+                "constant": false,
+                "mutability": "mutable",
+                "name": "i",
+                "nodeType": "VariableDeclaration",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeName": {
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName"
+                },
+                "visibility": "internal"
+              }
+            ],
+            "nodeType": "VariableDeclarationStatement"
+          },
+          "loopExpression": {
+            "expression": {
+              "nodeType": "UnaryOperation",
+              "operator": "++",
+              "prefix": false,
+              "subExpression": {
+                "name": "i",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            },
+            "nodeType": "ExpressionStatement"
+          },
+          "nodeType": "ForStatement"
+        }
+      ]
+    },
+    "functionSelector": "40b7d863",
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "unzipValues",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "leftType",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "string",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "rightType",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "string",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "pairs",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "baseType": {
+              "name": "bytes",
+              "nodeType": "ElementaryTypeName"
+            },
+            "nodeType": "ArrayTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "lane",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "out",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "baseType": {
+              "name": "bytes",
+              "nodeType": "ElementaryTypeName"
+            },
+            "nodeType": "ArrayTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "external"
+  },
+  "_unzipPair": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "base",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "translated-slot": "BASE"
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "condition": {
+            "leftExpression": {
+              "leftExpression": {
+                "name": "base",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "nodeType": "BinaryOperation",
+              "operator": "!=",
+              "rightExpression": {
+                "hexValue": "30",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "0"
+              }
+            },
+            "nodeType": "BinaryOperation",
+            "operator": "&&",
+            "rightExpression": {
+              "translated-slot": "ENVELOPE_WRONG"
+            }
+          },
+          "nodeType": "IfStatement",
+          "trueBody": {
+            "errorCall": {
+              "arguments": [
+                {
+                  "hexValue": "30",
+                  "kind": "number",
+                  "nodeType": "Literal",
+                  "value": "0"
+                }
+              ],
+              "expression": {
+                "expression": {
+                  "name": "AbiCodec",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "memberName": "InvalidValue",
+                "nodeType": "MemberAccess"
+              },
+              "kind": "functionCall",
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            },
+            "nodeType": "RevertStatement"
+          }
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "name": "parts",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "Assignment",
+            "operator": "=",
+            "rightHandSide": {
+              "arguments": [
+                {
+                  "hexValue": "32",
+                  "kind": "number",
+                  "nodeType": "Literal",
+                  "value": "2"
+                }
+              ],
+              "expression": {
+                "nodeType": "NewExpression",
+                "typeName": {
+                  "baseType": {
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName"
+                  },
+                  "nodeType": "ArrayTypeName"
+                }
+              },
+              "kind": "functionCall",
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "head",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ],
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "tail",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "expression": {
+              "name": "plan",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "memberName": "headSize",
+            "nodeType": "MemberAccess"
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "body": {
+            "nodeType": "Block",
+            "statements": [
+              {
+                "condition": {
+                  "baseExpression": {
+                    "expression": {
+                      "name": "plan",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "dynamic",
+                    "nodeType": "MemberAccess"
+                  },
+                  "indexExpression": {
+                    "name": "i",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "nodeType": "IndexAccess"
+                },
+                "falseBody": {
+                  "nodeType": "Block",
+                  "statements": [
+                    {
+                      "expression": {
+                        "leftHandSide": {
+                          "baseExpression": {
+                            "name": "parts",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "indexExpression": {
+                            "name": "i",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "nodeType": "IndexAccess"
+                        },
+                        "nodeType": "Assignment",
+                        "operator": "=",
+                        "rightHandSide": {
+                          "arguments": [
+                            {
+                              "name": "pair",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            {
+                              "leftExpression": {
+                                "name": "base",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "+",
+                              "rightExpression": {
+                                "name": "head",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              }
+                            },
+                            {
+                              "leftExpression": {
+                                "baseExpression": {
+                                  "expression": {
+                                    "name": "plan",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  },
+                                  "memberName": "words",
+                                  "nodeType": "MemberAccess"
+                                },
+                                "indexExpression": {
+                                  "name": "i",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                "nodeType": "IndexAccess"
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "*",
+                              "rightExpression": {
+                                "hexValue": "3332",
+                                "kind": "number",
+                                "nodeType": "Literal",
+                                "value": "32"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "expression": {
+                              "name": "AbiCodec",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "memberName": "slice",
+                            "nodeType": "MemberAccess"
+                          },
+                          "kind": "functionCall",
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "tryCall": false
+                        }
+                      },
+                      "nodeType": "ExpressionStatement"
+                    }
+                  ]
+                },
+                "nodeType": "IfStatement",
+                "trueBody": {
+                  "nodeType": "Block",
+                  "statements": [
+                    {
+                      "condition": {
+                        "translated-slot": "OFFSET_WRONG"
+                      },
+                      "nodeType": "IfStatement",
+                      "trueBody": {
+                        "errorCall": {
+                          "arguments": [
+                            {
+                              "leftExpression": {
+                                "name": "base",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "+",
+                              "rightExpression": {
+                                "name": "head",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "expression": {
+                              "name": "AbiCodec",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "memberName": "InvalidValue",
+                            "nodeType": "MemberAccess"
+                          },
+                          "kind": "functionCall",
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "tryCall": false
+                        },
+                        "nodeType": "RevertStatement"
+                      }
+                    },
+                    {
+                      "declarations": [
+                        {
+                          "constant": false,
+                          "mutability": "mutable",
+                          "name": "end",
+                          "nodeType": "VariableDeclaration",
+                          "stateVariable": false,
+                          "storageLocation": "default",
+                          "typeName": {
+                            "name": "uint256",
+                            "nodeType": "ElementaryTypeName"
+                          },
+                          "visibility": "internal"
+                        }
+                      ],
+                      "initialValue": {
+                        "condition": {
+                          "translated-slot": "NEXT_BOUNDARY"
+                        },
+                        "falseExpression": {
+                          "leftExpression": {
+                            "expression": {
+                              "name": "pair",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "memberName": "length",
+                            "nodeType": "MemberAccess"
+                          },
+                          "nodeType": "BinaryOperation",
+                          "operator": "-",
+                          "rightExpression": {
+                            "name": "base",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          }
+                        },
+                        "nodeType": "Conditional",
+                        "trueExpression": {
+                          "arguments": [
+                            {
+                              "name": "pair",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            {
+                              "leftExpression": {
+                                "leftExpression": {
+                                  "name": "base",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                "nodeType": "BinaryOperation",
+                                "operator": "+",
+                                "rightExpression": {
+                                  "name": "head",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "+",
+                              "rightExpression": {
+                                "hexValue": "3332",
+                                "kind": "number",
+                                "nodeType": "Literal",
+                                "value": "32"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "expression": {
+                              "name": "AbiCodec",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "memberName": "word",
+                            "nodeType": "MemberAccess"
+                          },
+                          "kind": "functionCall",
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "tryCall": false
+                        }
+                      },
+                      "nodeType": "VariableDeclarationStatement"
+                    },
+                    {
+                      "condition": {
+                        "translated-slot": "BOUNDARY_WRONG"
+                      },
+                      "nodeType": "IfStatement",
+                      "trueBody": {
+                        "errorCall": {
+                          "arguments": [
+                            {
+                              "leftExpression": {
+                                "name": "base",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "+",
+                              "rightExpression": {
+                                "name": "head",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "expression": {
+                              "name": "AbiCodec",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "memberName": "InvalidValue",
+                            "nodeType": "MemberAccess"
+                          },
+                          "kind": "functionCall",
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "tryCall": false
+                        },
+                        "nodeType": "RevertStatement"
+                      }
+                    },
+                    {
+                      "expression": {
+                        "leftHandSide": {
+                          "baseExpression": {
+                            "name": "parts",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "indexExpression": {
+                            "name": "i",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "nodeType": "IndexAccess"
+                        },
+                        "nodeType": "Assignment",
+                        "operator": "=",
+                        "rightHandSide": {
+                          "arguments": [
+                            {
+                              "arguments": [
+                                {
+                                  "arguments": [
+                                    {
+                                      "hexValue": "3332",
+                                      "kind": "number",
+                                      "nodeType": "Literal",
+                                      "value": "32"
+                                    }
+                                  ],
+                                  "expression": {
+                                    "nodeType": "ElementaryTypeNameExpression",
+                                    "typeName": {
+                                      "name": "uint256",
+                                      "nodeType": "ElementaryTypeName"
+                                    }
+                                  },
+                                  "kind": "typeConversion",
+                                  "names": [],
+                                  "nodeType": "FunctionCall",
+                                  "tryCall": false
+                                }
+                              ],
+                              "expression": {
+                                "expression": {
+                                  "name": "abi",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                "memberName": "encode",
+                                "nodeType": "MemberAccess"
+                              },
+                              "kind": "functionCall",
+                              "names": [],
+                              "nodeType": "FunctionCall",
+                              "tryCall": false
+                            },
+                            {
+                              "arguments": [
+                                {
+                                  "name": "pair",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                {
+                                  "leftExpression": {
+                                    "name": "base",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  },
+                                  "nodeType": "BinaryOperation",
+                                  "operator": "+",
+                                  "rightExpression": {
+                                    "name": "tail",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  }
+                                },
+                                {
+                                  "translated-slot": "SPAN"
+                                }
+                              ],
+                              "expression": {
+                                "expression": {
+                                  "name": "AbiCodec",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                "memberName": "slice",
+                                "nodeType": "MemberAccess"
+                              },
+                              "kind": "functionCall",
+                              "names": [],
+                              "nodeType": "FunctionCall",
+                              "tryCall": false
+                            }
+                          ],
+                          "expression": {
+                            "expression": {
+                              "nodeType": "ElementaryTypeNameExpression",
+                              "typeName": {
+                                "name": "bytes",
+                                "nodeType": "ElementaryTypeName"
+                              }
+                            },
+                            "memberName": "concat",
+                            "nodeType": "MemberAccess"
+                          },
+                          "kind": "functionCall",
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "tryCall": false
+                        }
+                      },
+                      "nodeType": "ExpressionStatement"
+                    },
+                    {
+                      "expression": {
+                        "leftHandSide": {
+                          "name": "tail",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "nodeType": "Assignment",
+                        "operator": "=",
+                        "rightHandSide": {
+                          "name": "end",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        }
+                      },
+                      "nodeType": "ExpressionStatement"
+                    }
+                  ]
+                }
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "name": "head",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "nodeType": "Assignment",
+                  "operator": "+=",
+                  "rightHandSide": {
+                    "leftExpression": {
+                      "baseExpression": {
+                        "expression": {
+                          "name": "plan",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "memberName": "words",
+                        "nodeType": "MemberAccess"
+                      },
+                      "indexExpression": {
+                        "name": "i",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "nodeType": "IndexAccess"
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "*",
+                    "rightExpression": {
+                      "hexValue": "3332",
+                      "kind": "number",
+                      "nodeType": "Literal",
+                      "value": "32"
+                    }
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              }
+            ]
+          },
+          "condition": {
+            "translated-slot": "LOOP"
+          },
+          "initializationExpression": {
+            "declarations": [
+              {
+                "constant": false,
+                "mutability": "mutable",
+                "name": "i",
+                "nodeType": "VariableDeclaration",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeName": {
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName"
+                },
+                "visibility": "internal"
+              }
+            ],
+            "nodeType": "VariableDeclarationStatement"
+          },
+          "loopExpression": {
+            "expression": {
+              "nodeType": "UnaryOperation",
+              "operator": "++",
+              "prefix": false,
+              "subExpression": {
+                "name": "i",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            },
+            "nodeType": "ExpressionStatement"
+          },
+          "nodeType": "ForStatement"
+        },
+        {
+          "condition": {
+            "translated-slot": "TAIL_WRONG"
+          },
+          "nodeType": "IfStatement",
+          "trueBody": {
+            "errorCall": {
+              "arguments": [
+                {
+                  "leftExpression": {
+                    "name": "base",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "nodeType": "BinaryOperation",
+                  "operator": "+",
+                  "rightExpression": {
+                    "name": "tail",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                }
+              ],
+              "expression": {
+                "expression": {
+                  "name": "AbiCodec",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "memberName": "InvalidValue",
+                "nodeType": "MemberAccess"
+              },
+              "kind": "functionCall",
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            },
+            "nodeType": "RevertStatement"
+          }
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "_unzipPair",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "pair",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "plan",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "nodeType": "UserDefinedTypeName",
+            "pathNode": {
+              "name": "AbiCodec.TupleLayout",
+              "nodeType": "IdentifierPath"
+            }
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "parts",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "baseType": {
+              "name": "bytes",
+              "nodeType": "ElementaryTypeName"
+            },
+            "nodeType": "ArrayTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "private"
+  },
+  "_zipPlan": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "a",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "bool",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            },
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "aw",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "arguments": [
+              {
+                "arguments": [
+                  {
+                    "name": "leftType",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                ],
+                "expression": {
+                  "nodeType": "ElementaryTypeNameExpression",
+                  "typeName": {
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName"
+                  }
+                },
+                "kind": "typeConversion",
+                "names": [],
+                "nodeType": "FunctionCall",
+                "tryCall": false
+              }
+            ],
+            "expression": {
+              "expression": {
+                "name": "AbiCodec",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "memberName": "shape",
+              "nodeType": "MemberAccess"
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "b",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "bool",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            },
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "bw",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "arguments": [
+              {
+                "arguments": [
+                  {
+                    "name": "rightType",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                ],
+                "expression": {
+                  "nodeType": "ElementaryTypeNameExpression",
+                  "typeName": {
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName"
+                  }
+                },
+                "kind": "typeConversion",
+                "names": [],
+                "nodeType": "FunctionCall",
+                "tryCall": false
+              }
+            ],
+            "expression": {
+              "expression": {
+                "name": "AbiCodec",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "memberName": "shape",
+              "nodeType": "MemberAccess"
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "expression": {
+                "name": "plan",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "memberName": "dynamic",
+              "nodeType": "MemberAccess"
+            },
+            "nodeType": "Assignment",
+            "operator": "=",
+            "rightHandSide": {
+              "arguments": [
+                {
+                  "hexValue": "32",
+                  "kind": "number",
+                  "nodeType": "Literal",
+                  "value": "2"
+                }
+              ],
+              "expression": {
+                "nodeType": "NewExpression",
+                "typeName": {
+                  "baseType": {
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName"
+                  },
+                  "nodeType": "ArrayTypeName"
+                }
+              },
+              "kind": "functionCall",
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "baseExpression": {
+                "expression": {
+                  "name": "plan",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "memberName": "dynamic",
+                "nodeType": "MemberAccess"
+              },
+              "indexExpression": {
+                "hexValue": "30",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "0"
+              },
+              "nodeType": "IndexAccess"
+            },
+            "nodeType": "Assignment",
+            "operator": "=",
+            "rightHandSide": {
+              "name": "a",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "baseExpression": {
+                "expression": {
+                  "name": "plan",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "memberName": "dynamic",
+                "nodeType": "MemberAccess"
+              },
+              "indexExpression": {
+                "hexValue": "31",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "1"
+              },
+              "nodeType": "IndexAccess"
+            },
+            "nodeType": "Assignment",
+            "operator": "=",
+            "rightHandSide": {
+              "name": "b",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "expression": {
+                "name": "plan",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "memberName": "headSize",
+              "nodeType": "MemberAccess"
+            },
+            "nodeType": "Assignment",
+            "operator": "=",
+            "rightHandSide": {
+              "translated-slot": "HEAD"
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "expression": {
+                "name": "plan",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "memberName": "words",
+              "nodeType": "MemberAccess"
+            },
+            "nodeType": "Assignment",
+            "operator": "=",
+            "rightHandSide": {
+              "arguments": [
+                {
+                  "hexValue": "32",
+                  "kind": "number",
+                  "nodeType": "Literal",
+                  "value": "2"
+                }
+              ],
+              "expression": {
+                "nodeType": "NewExpression",
+                "typeName": {
+                  "baseType": {
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName"
+                  },
+                  "nodeType": "ArrayTypeName"
+                }
+              },
+              "kind": "functionCall",
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "baseExpression": {
+                "expression": {
+                  "name": "plan",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "memberName": "words",
+                "nodeType": "MemberAccess"
+              },
+              "indexExpression": {
+                "hexValue": "30",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "0"
+              },
+              "nodeType": "IndexAccess"
+            },
+            "nodeType": "Assignment",
+            "operator": "=",
+            "rightHandSide": {
+              "name": "aw",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "baseExpression": {
+                "expression": {
+                  "name": "plan",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "memberName": "words",
+                "nodeType": "MemberAccess"
+              },
+              "indexExpression": {
+                "hexValue": "31",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "1"
+              },
+              "nodeType": "IndexAccess"
+            },
+            "nodeType": "Assignment",
+            "operator": "=",
+            "rightHandSide": {
+              "name": "bw",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "_zipPlan",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "leftType",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "string",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "rightType",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "string",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "plan",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "nodeType": "UserDefinedTypeName",
+            "pathNode": {
+              "name": "AbiCodec.TupleLayout",
+              "nodeType": "IdentifierPath"
+            }
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "private"
+  }
+}

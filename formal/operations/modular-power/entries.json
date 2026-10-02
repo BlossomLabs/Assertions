@@ -1,0 +1,22 @@
+[
+  {
+    "signature": "powMod(uint256,uint256,uint256)",
+    "selector": "44852766",
+    "symbol": "UU"
+  },
+  {
+    "signature": "powMod(int256,uint256,int256)",
+    "selector": "640c3e5a",
+    "symbol": "SU"
+  },
+  {
+    "signature": "powMod(uint256,int256,uint256)",
+    "selector": "dec28c5b",
+    "symbol": "US"
+  },
+  {
+    "signature": "powMod(int256,int256,int256)",
+    "selector": "08198add",
+    "symbol": "SS"
+  }
+]

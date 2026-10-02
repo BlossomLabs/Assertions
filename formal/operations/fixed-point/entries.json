@@ -1,0 +1,12 @@
+[
+  {
+    "signature": "expWad(int256)",
+    "selector": "40816fae",
+    "symbol": "Exp"
+  },
+  {
+    "signature": "lnWad(int256)",
+    "selector": "620ef2b4",
+    "symbol": "Ln"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "signature": "mulDiv(uint256,uint256,uint256,uint8)",
+    "selector": "1a134248",
+    "symbol": "Unsigned"
+  },
+  {
+    "signature": "mulDiv(int256,int256,int256,uint8)",
+    "selector": "693741c1",
+    "symbol": "Signed"
+  }
+]

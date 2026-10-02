@@ -1,0 +1,12 @@
+[
+  {
+    "signature": "exp(uint256,uint256)",
+    "selector": "f5f565f8",
+    "symbol": "Unsigned"
+  },
+  {
+    "signature": "exp(int256,uint256)",
+    "selector": "185af0ad",
+    "symbol": "Signed"
+  }
+]

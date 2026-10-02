@@ -1,0 +1,21 @@
+{
+  "slots": {
+    "ZERO": "(n == 0)",
+    "REMAINDER": "(a%n)",
+    "GCD": "n",
+    "X": "0",
+    "Y": "1",
+    "LOOP": "(remainder != 0)",
+    "QUOTIENT": "P.Div(gcd,remainder)",
+    "NO_INVERSE": "(gcd != 1)",
+    "NEXT_GCD": "remainder",
+    "NEXT_REMAINDER": "((gcd - ((remainder * quotient) % B.Word)) % B.Word)",
+    "NEXT_X": "y",
+    "NEXT_Y": "H.Signed(x - H.Signed(y * H.Signed(quotient)))",
+    "RETURN_ARGUMENTS": "(x < 0),((n - ((H.Signed(-x)) % B.Word)) % B.Word),((x) % B.Word)"
+  },
+  "helperBinding": {
+    "callee": "Math.ternary",
+    "compilerDeclaration": 340
+  }
+}

@@ -70,7 +70,25 @@ The contracts require a Cancun-compatible EVM (including MCOPY and blob-context 
 
 The website vendors an EVMcrispr checkout at `website/.evmcrispr`, pinned by `evmcrispr.commit` in `website/package.json`. The pinned revision's SDK compiles against all four addresses above. `pnpm --dir website check:integration` verifies that the pin, the compiled artifacts and the deployment manifest agree.
 
-The gas guard propagates `SubcallOutOfGas()` through supported core, Operations `rawCall`, Collections callbacks and Expressions paths. Ordinary errors retain their wrappers. External targets that hide failures or deliberately change behavior with available gas are outside this guarantee. Empty batches and unconstrained values are accepted; a constructed call must succeed, but its return value is discarded, even when it encodes `false`. Run `pnpm halmos` for the bounded symbolic checks or `python3 scripts/verify-claims.py` for an inventoried run. The runner records source hashes, bounds, assumptions and incomplete outcomes; generated results remain local.
+The gas guard propagates `SubcallOutOfGas()` through supported core, Operations `rawCall`, Collections callbacks and Expressions paths. Ordinary errors retain their wrappers. External targets that hide failures or deliberately change behavior with available gas are outside this guarantee. Empty batches and unconstrained values are accepted; a constructed call must succeed, but its return value is discarded, even when it encodes `false`. See [the claims ledger](docs/claims.md) and [retained verification evidence](docs/verification/halmos-coverage/README.md) for bounds and execution status.
+
+The [ABI source proof](formal/abi/CONNECTION.md) connects the mathematical encoder and validator to production `AbiCodec.sol`, including recursive arrays/tuples and pack/unpack. Its passing baseline retains the trusted translation, memory and resource assumptions; compiler correctness and arbitrary-geometry bytecode verification remain separate.
+
+The [navigation source proof](formal/navigation/README.md) connects `nav` after operand resolution to typed path selection, complete ABI value returns, LEN/PAYLOAD and empty paths. It proves arbitrary finite canonical queries under explicit arithmetic and EVM-resource assumptions, with retained proof results, independent solc/EVM tests and actual-source fault checks. Full resolver and compiled-bytecode correspondence remain separate.
+
+The [constraint engine source proof](formal/constraints/README.md) connects `_checkConstraint` and `_validateConstraints` to independent signed/unsigned predicates and arbitrary finite positional lists, including OR rejection, short-circuit order and exact first-failure fields. Its retained baseline states the translation, decoder-outcome, memory and resource assumptions; resolver, judge-entry and compiled-bytecode proofs remain separate.
+
+The [resolution and judge source proof](formal/resolution/README.md) connects RAW_BYTES, STATIC_CALL and BALANCE to constraint validation and both judge entry points, with arbitrary finite batches, ordered routing and exact propagated failures. External outcomes are history-indexed, so repeated calls need not be deterministic. Remaining core primitives, Expressions, Collections and compiled-bytecode verification are tracked separately.
+
+The [raw-value core source proof](formal/core/README.md) covers `resolve`, `gather`, `pick`, `read`, `chain` and `cond` over arbitrary finite operand/hop lists, including signed word selection, ordered resolution, lazy branches and exact error indices. Remaining source and bytecode obligations stay tracked in the verification plan.
+
+The [guarded-control source proof](formal/control/README.md) covers `orElse`, `isValid` and `revertData`, including exact failure precedence, lazy fallback and selector handling. Self-call receipts and sampled gas remain explicit premises; recursive call trees and exact bytecode remain separate obligations.
+
+The [resolver-to-navigation composition](formal/composition/README.md) connects `nav` to the constraint/resolver and navigation proofs, preserving exact resolver failure precedence and the independent canonical path/mode semantics.
+
+The [get/argument source proof](formal/arguments/README.md) connects ordered operand resolution to canonical tuple construction and the final call, including first invalid component indices and the empty-tuple exception. Recursive call trees and the remaining graph/collection/bytecode obligations stay open.
+
+The [expression-admission proof](formal/expressions/admission/README.md) covers graph descriptor parsing, backward references, kind arities and exact admission errors. Evaluation, canonical values and cache behavior remain separate proof obligations.
 
 ## License
 

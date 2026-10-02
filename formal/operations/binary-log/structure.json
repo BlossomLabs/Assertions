@@ -1,0 +1,347 @@
+{
+  "Operations.log2": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "condition": {
+            "translated-slot": "ZERO"
+          },
+          "nodeType": "IfStatement",
+          "trueBody": {
+            "errorCall": {
+              "arguments": [
+                {
+                  "hexValue": "30",
+                  "kind": "number",
+                  "nodeType": "Literal",
+                  "value": "0"
+                }
+              ],
+              "expression": {
+                "name": "LogarithmUndefined",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "kind": "functionCall",
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            },
+            "nodeType": "RevertStatement"
+          }
+        },
+        {
+          "expression": {
+            "arguments": [
+              {
+                "name": "x",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "expression": {
+                "name": "Math",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "memberName": "log2",
+              "nodeType": "MemberAccess"
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "Return"
+        }
+      ]
+    },
+    "functionSelector": "5456bf13",
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "log2",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "x",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "external"
+  },
+  "Math.log2": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "expression": {
+            "leftHandSide": {
+              "name": "r",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "Assignment",
+            "operator": "=",
+            "rightHandSide": {
+              "translated-slot": "FLAG_0"
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "name": "r",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "Assignment",
+            "operator": "|=",
+            "rightHandSide": {
+              "translated-slot": "FLAG_1"
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "name": "r",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "Assignment",
+            "operator": "|=",
+            "rightHandSide": {
+              "translated-slot": "FLAG_2"
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "name": "r",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "Assignment",
+            "operator": "|=",
+            "rightHandSide": {
+              "translated-slot": "FLAG_3"
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "name": "r",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "Assignment",
+            "operator": "|=",
+            "rightHandSide": {
+              "translated-slot": "FLAG_4"
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "expression": {
+            "leftHandSide": {
+              "name": "r",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "Assignment",
+            "operator": "|=",
+            "rightHandSide": {
+              "translated-slot": "FLAG_5"
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "AST": {
+            "nodeType": "YulBlock",
+            "statements": [
+              {
+                "nodeType": "YulAssignment",
+                "value": {
+                  "translated-slot": "RETURN"
+                },
+                "variableNames": [
+                  {
+                    "name": "r",
+                    "nodeType": "YulIdentifier"
+                  }
+                ]
+              }
+            ]
+          },
+          "evmVersion": "cancun",
+          "flags": [
+            "memory-safe"
+          ],
+          "nodeType": "InlineAssembly"
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "log2",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "x",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "r",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "internal"
+  },
+  "SafeCast.toUint": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "AST": {
+            "nodeType": "YulBlock",
+            "statements": [
+              {
+                "nodeType": "YulAssignment",
+                "value": {
+                  "translated-slot": "CAST"
+                },
+                "variableNames": [
+                  {
+                    "name": "u",
+                    "nodeType": "YulIdentifier"
+                  }
+                ]
+              }
+            ]
+          },
+          "evmVersion": "cancun",
+          "flags": [
+            "memory-safe"
+          ],
+          "nodeType": "InlineAssembly"
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "toUint",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "b",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "bool",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "u",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "internal"
+  }
+}

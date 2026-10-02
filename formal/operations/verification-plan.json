@@ -1,0 +1,974 @@
+{
+  "schemaVersion": 1,
+  "scope": "All 92 Operations public ABI entries: conditional source correspondence first; Operations exact-bytecode track begins after the existing 49 Assertions/Expressions/Collections bytecode entries complete.",
+  "status": "conditional-source-complete-bytecode-queued",
+  "publicEntries": [
+    {
+      "signature": "absDiff(int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "absDiff(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "add(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "add(int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "addMod(int256,int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-modular-source.json"
+    },
+    {
+      "signature": "addMod(uint256,uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-modular-source.json"
+    },
+    {
+      "signature": "balance(address)",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "baseFee()",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "bitAnd(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "bitOr(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "bitSet(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "bitXor(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "blobBaseFee()",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "blobHash(uint256)",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "blockHash(uint256)",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "blockNumber()",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "byteAt(bytes,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-byte-bounds-source.json"
+    },
+    {
+      "signature": "byteLen(bytes)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-byte-bounds-source.json"
+    },
+    {
+      "signature": "chainId()",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "charset(bytes,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-ascii-source.json"
+    },
+    {
+      "signature": "code(address)",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "codeHash(address)",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "coinbase()",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "concat(bytes[],bytes)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-concat-source.json"
+    },
+    {
+      "signature": "contains(bytes,bytes)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-word-match-source.json"
+    },
+    {
+      "signature": "div(int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "div(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "encode(string,bytes[])",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-tuple-encode-source.json"
+    },
+    {
+      "signature": "encodeBytes(string,bytes[])",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-tuple-encode-source.json"
+    },
+    {
+      "signature": "eq(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "exp(int256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-checked-power-source.json"
+    },
+    {
+      "signature": "exp(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-checked-power-source.json"
+    },
+    {
+      "signature": "expWad(int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-fixed-point-source.json"
+    },
+    {
+      "signature": "formatUnits(int256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-decimal-units-source.json"
+    },
+    {
+      "signature": "formatUnits(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-decimal-units-source.json"
+    },
+    {
+      "signature": "gasLimit()",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "gasPrice()",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "ge(int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "ge(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "gt(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "gt(int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "hash(bytes)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-byte-bounds-source.json"
+    },
+    {
+      "signature": "hashPairSorted(bytes32,bytes32)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-byte-bounds-source.json"
+    },
+    {
+      "signature": "indexOf(bytes,bytes,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-occurrence-index-source.json"
+    },
+    {
+      "signature": "le(int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "le(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "lnWad(int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-fixed-point-source.json"
+    },
+    {
+      "signature": "log2(uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-binary-log-source.json"
+    },
+    {
+      "signature": "lt(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "lt(int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "max(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "max(int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "min(int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "min(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "mod(int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "mod(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "mul(int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "mul(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "mulDiv(uint256,uint256,uint256,uint8)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-full-mul-div-source.json"
+    },
+    {
+      "signature": "mulDiv(int256,int256,int256,uint8)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-full-mul-div-source.json"
+    },
+    {
+      "signature": "mulMod(int256,int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-modular-source.json"
+    },
+    {
+      "signature": "mulMod(uint256,uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-modular-source.json"
+    },
+    {
+      "signature": "ne(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "origin()",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "parseInt(bytes)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-decimal-digits-source.json"
+    },
+    {
+      "signature": "parseUint(bytes)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-decimal-digits-source.json"
+    },
+    {
+      "signature": "parseUnits(bytes,uint256,uint8)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-parse-units-source.json"
+    },
+    {
+      "signature": "parseUnitsUnsigned(bytes,uint256,uint8)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-parse-units-source.json"
+    },
+    {
+      "signature": "powMod(int256,int256,int256)",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-modular-power-source.json"
+    },
+    {
+      "signature": "powMod(uint256,uint256,uint256)",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-modular-power-source.json"
+    },
+    {
+      "signature": "powMod(int256,uint256,int256)",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-modular-power-source.json"
+    },
+    {
+      "signature": "powMod(uint256,int256,uint256)",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-modular-power-source.json"
+    },
+    {
+      "signature": "prevRandao()",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "rawCall(address,bytes)",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-raw-call-source.json"
+    },
+    {
+      "signature": "replace(bytes,bytes,bytes)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-byte-replace-source.json"
+    },
+    {
+      "signature": "rpow(uint256,uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scaled-power-source.json"
+    },
+    {
+      "signature": "shl(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "shr(int256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "shr(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "slice(bytes,uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-byte-bounds-source.json"
+    },
+    {
+      "signature": "sliceRange(bytes,int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-byte-bounds-source.json"
+    },
+    {
+      "signature": "split(bytes,bytes)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-byte-split-source.json"
+    },
+    {
+      "signature": "sqrt(uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-integer-root-source.json"
+    },
+    {
+      "signature": "stringAt(bytes,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-utf8-source.json"
+    },
+    {
+      "signature": "stringSlice(bytes,int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-utf8-source.json"
+    },
+    {
+      "signature": "sub(int256,int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "sub(uint256,uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-scalars-source.json"
+    },
+    {
+      "signature": "timestamp()",
+      "stateMutability": "view",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-environment-source.json"
+    },
+    {
+      "signature": "toLower(bytes)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-ascii-source.json"
+    },
+    {
+      "signature": "toString(uint256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-decimal-render-source.json"
+    },
+    {
+      "signature": "toString(int256)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-decimal-render-source.json"
+    },
+    {
+      "signature": "toUpper(bytes)",
+      "stateMutability": "pure",
+      "status": "conditional-source-passed",
+      "ledger": "docs/verification/operations-ascii-source.json"
+    }
+  ],
+  "sourceCoverage": {
+    "completed": 92,
+    "total": 92,
+    "remaining": 0
+  },
+  "currentPackage": null,
+  "premises": [
+    "Restricted compiler AST translation and primitive checked/wrapping integer/bitvector semantics must be explicit.",
+    "All retained native declarations, input/tool/source/AST identities, zero-audit, EVM fixtures and semantic source faults must pass before coverage is counted.",
+    "No exact-bytecode, gas, deployment or performance claim is inferred from conditional source proofs."
+  ],
+  "next": [
+    "Parent independently checks final fixed-point package and complete source ledger/checker.",
+    "Operations exact-bytecode follows parent completion of original49 entries.",
+    "Analytic expWad/lnWad real-function accuracy and inverse approximation bounds remain separately open."
+  ],
+  "completedPackages": [
+    {
+      "directory": "formal/operations/scalars",
+      "manifest": "formal/operations/scalars/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-scalars-source.json",
+      "nativeObligations": 334,
+      "evmTests": 33,
+      "semanticSourceFaults": 3,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/environment",
+      "manifest": "formal/operations/environment/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-environment-source.json",
+      "nativeObligations": 453,
+      "evmTests": 15,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/byte-bounds",
+      "manifest": "formal/operations/byte-bounds/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-byte-bounds-source.json",
+      "nativeObligations": 193,
+      "evmTests": 6,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/ascii",
+      "manifest": "formal/operations/ascii/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-ascii-source.json",
+      "nativeObligations": 101,
+      "evmTests": 3,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/modular",
+      "manifest": "formal/operations/modular/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-modular-source.json",
+      "nativeObligations": 208,
+      "evmTests": 4,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/raw-call",
+      "manifest": "formal/operations/raw-call/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-raw-call-source.json",
+      "nativeObligations": 65,
+      "evmTests": 6,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/decimal-digits",
+      "manifest": "formal/operations/decimal-digits/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-decimal-digits-source.json",
+      "nativeObligations": 277,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/decimal-render",
+      "manifest": "formal/operations/decimal-render/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-decimal-render-source.json",
+      "nativeObligations": 271,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/decimal-units",
+      "manifest": "formal/operations/decimal-units/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-decimal-units-source.json",
+      "nativeObligations": 617,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/parse-units",
+      "manifest": "formal/operations/parse-units/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-parse-units-source.json",
+      "nativeObligations": 849,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/utf8",
+      "manifest": "formal/operations/utf8/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-utf8-source.json",
+      "nativeObligations": 742,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/concat",
+      "manifest": "formal/operations/concat/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-concat-source.json",
+      "nativeObligations": 266,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/word-match",
+      "manifest": "formal/operations/word-match/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-word-match-source.json",
+      "nativeObligations": 446,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/occurrence-index",
+      "manifest": "formal/operations/occurrence-index/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-occurrence-index-source.json",
+      "nativeObligations": 674,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/byte-split",
+      "manifest": "formal/operations/byte-split/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-byte-split-source.json",
+      "nativeObligations": 837,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/byte-replace",
+      "manifest": "formal/operations/byte-replace/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-byte-replace-source.json",
+      "nativeObligations": 1347,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/binary-log",
+      "manifest": "formal/operations/binary-log/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-binary-log-source.json",
+      "nativeObligations": 608,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/checked-power",
+      "manifest": "formal/operations/checked-power/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-checked-power-source.json",
+      "nativeObligations": 154,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/integer-root",
+      "manifest": "formal/operations/integer-root/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-integer-root-source.json",
+      "nativeObligations": 1796,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/full-mul-div",
+      "manifest": "formal/operations/full-mul-div/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-full-mul-div-source.json",
+      "nativeObligations": 1811,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/scaled-power",
+      "manifest": "formal/operations/scaled-power/evidence/powmod-guard-refresh-v1/manifest.json",
+      "ledger": "docs/verification/operations-scaled-power-source.json",
+      "nativeObligations": 1991,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/modular-power",
+      "manifest": "formal/operations/modular-power/evidence/conditional-source-v1/manifest.json",
+      "ledger": "docs/verification/operations-modular-power-source.json",
+      "nativeObligations": 3041,
+      "evmTests": 3,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/tuple-encode",
+      "manifest": "formal/operations/tuple-encode/evidence/conditional-source-v1/manifest.json",
+      "ledger": "docs/verification/operations-tuple-encode-source.json",
+      "nativeObligations": 487,
+      "codecReusedObligations": 7579,
+      "evmTests": 2,
+      "semanticSourceFaults": 2,
+      "currentSourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+    },
+    {
+      "directory": "formal/operations/fixed-point",
+      "manifest": "formal/operations/fixed-point/evidence/conditional-source-v1/manifest.json",
+      "ledger": "docs/verification/operations-fixed-point-source.json",
+      "entries": 2,
+      "nativeObligations": 2473,
+      "checkerLog": "/tmp/operations-fixed-point-checker-v1.log",
+      "scope": "Exact finite-word quantized rational/Horner kernels; real exp/log accuracy and inverse approximation bounds remain open."
+    }
+  ],
+  "historicalSourceCoverage": {
+    "completed": 84,
+    "total": 92,
+    "remaining": 8
+  },
+  "currentSourceCoverage": {
+    "completed": 92,
+    "total": 92,
+    "remaining": 0,
+    "sourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce"
+  },
+  "currentSourceRevalidation": {
+    "status": "passed",
+    "sourceSha256": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce",
+    "completedPackages": [
+      {
+        "directory": "formal/operations/scalars",
+        "manifest": "formal/operations/scalars/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 33,
+        "nativeObligations": 334,
+        "checkerLog": "/tmp/operations-scalars-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/environment",
+        "manifest": "formal/operations/environment/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 15,
+        "nativeObligations": 453,
+        "checkerLog": "/tmp/operations-environment-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/byte-bounds",
+        "manifest": "formal/operations/byte-bounds/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 6,
+        "nativeObligations": 193,
+        "checkerLog": "/tmp/operations-byte-bounds-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/ascii",
+        "manifest": "formal/operations/ascii/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 3,
+        "nativeObligations": 101,
+        "checkerLog": "/tmp/operations-ascii-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/modular",
+        "manifest": "formal/operations/modular/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 4,
+        "nativeObligations": 208,
+        "checkerLog": "/tmp/operations-modular-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/raw-call",
+        "manifest": "formal/operations/raw-call/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 1,
+        "nativeObligations": 65,
+        "checkerLog": "/tmp/operations-raw-call-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/decimal-digits",
+        "manifest": "formal/operations/decimal-digits/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 2,
+        "nativeObligations": 277,
+        "checkerLog": "/tmp/operations-decimal-digits-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/decimal-render",
+        "manifest": "formal/operations/decimal-render/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 2,
+        "nativeObligations": 271,
+        "checkerLog": "/tmp/operations-decimal-render-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/decimal-units",
+        "manifest": "formal/operations/decimal-units/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 2,
+        "nativeObligations": 617,
+        "checkerLog": "/tmp/operations-decimal-units-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/parse-units",
+        "manifest": "formal/operations/parse-units/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 2,
+        "nativeObligations": 849,
+        "checkerLog": "/tmp/operations-parse-units-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/utf8",
+        "manifest": "formal/operations/utf8/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 2,
+        "nativeObligations": 742,
+        "checkerLog": "/tmp/operations-utf8-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/concat",
+        "manifest": "formal/operations/concat/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 1,
+        "nativeObligations": 266,
+        "checkerLog": "/tmp/operations-concat-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/word-match",
+        "manifest": "formal/operations/word-match/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 1,
+        "nativeObligations": 446,
+        "checkerLog": "/tmp/operations-word-match-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/occurrence-index",
+        "manifest": "formal/operations/occurrence-index/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 1,
+        "nativeObligations": 674,
+        "checkerLog": "/tmp/operations-occurrence-index-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/byte-split",
+        "manifest": "formal/operations/byte-split/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 1,
+        "nativeObligations": 837,
+        "checkerLog": "/tmp/operations-byte-split-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/byte-replace",
+        "manifest": "formal/operations/byte-replace/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 1,
+        "nativeObligations": 1347,
+        "checkerLog": "/tmp/operations-byte-replace-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/binary-log",
+        "manifest": "formal/operations/binary-log/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 1,
+        "nativeObligations": 608,
+        "checkerLog": "/tmp/operations-binary-log-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/checked-power",
+        "manifest": "formal/operations/checked-power/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 2,
+        "nativeObligations": 154,
+        "checkerLog": "/tmp/operations-checked-power-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/integer-root",
+        "manifest": "formal/operations/integer-root/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 1,
+        "nativeObligations": 1796,
+        "checkerLog": "/tmp/operations-integer-root-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/full-mul-div",
+        "manifest": "formal/operations/full-mul-div/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 2,
+        "nativeObligations": 1811,
+        "checkerLog": "/tmp/operations-full-mul-div-current-check-v1.log"
+      },
+      {
+        "directory": "formal/operations/scaled-power",
+        "manifest": "formal/operations/scaled-power/evidence/powmod-guard-refresh-v1/manifest.json",
+        "entries": 1,
+        "nativeObligations": 1991,
+        "checkerLog": "/tmp/operations-scaled-power-current-check-v1.log"
+      }
+    ],
+    "activePackage": null,
+    "completedAt": "2026-10-01T01:55:23.898457+00:00"
+  },
+  "completeSourceChecker": "formal/operations/check-source-coverage.py",
+  "conditionalSourceCompletedAt": "2026-10-01T02:41:45.205384+00:00",
+  "completeSourceCheckerResult": {
+    "status": "passed",
+    "checker": "formal/operations/check-source-coverage.py",
+    "log": "/tmp/operations-complete-source-checker-v1.log",
+    "logSha256": "b0d5fef9bbeea72e3ae39e8984c6283b3790130499cbf533b88351fd7014f821",
+    "currentSourceEntries": 92,
+    "retainedPackages": 24,
+    "completedAt": "2026-10-01T02:42:27.959240+00:00",
+    "nativeRerun": false,
+    "scope": "Fresh complete public signature/selector union, current manifests/input snapshots/tool/evidence closure, independently reconstructed retained native inventories, EVM/fault receipts and regenerated controls for every package. No runtime bytecode or analytic exp/log approximation claim.",
+    "retainedManifest": "formal/operations/evidence/conditional-source-coverage-v1/manifest.json"
+  }
+}

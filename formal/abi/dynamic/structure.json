@@ -1,0 +1,3812 @@
+{
+  "validateDynamic": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "expression": {
+            "arguments": [
+              {
+                "leftExpression": {
+                  "arguments": [
+                    {
+                      "name": "v",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    {
+                      "hexValue": "30",
+                      "kind": "number",
+                      "nodeType": "Literal",
+                      "value": "0"
+                    },
+                    {
+                      "name": "context",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    }
+                  ],
+                  "expression": {
+                    "name": "word",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [
+                      918,
+                      949
+                    ]
+                  },
+                  "kind": "functionCall",
+                  "nameLocations": [],
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "tryCall": false
+                },
+                "nodeType": "BinaryOperation",
+                "operator": "==",
+                "rightExpression": {
+                  "hexValue": "3332",
+                  "kind": "number",
+                  "nodeType": "Literal",
+                  "value": "32"
+                }
+              },
+              {
+                "hexValue": "30",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "0"
+              },
+              {
+                "name": "context",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "requireValue",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "nameLocations": [],
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "end",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "leftExpression": {
+              "hexValue": "3332",
+              "kind": "number",
+              "nodeType": "Literal",
+              "value": "32"
+            },
+            "nodeType": "BinaryOperation",
+            "operator": "+",
+            "rightExpression": {
+              "arguments": [
+                {
+                  "name": "t",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                {
+                  "hexValue": "30",
+                  "kind": "number",
+                  "nodeType": "Literal",
+                  "value": "0"
+                },
+                {
+                  "expression": {
+                    "name": "t",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "memberName": "length",
+                  "nodeType": "MemberAccess"
+                },
+                {
+                  "name": "v",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                {
+                  "hexValue": "3332",
+                  "kind": "number",
+                  "nodeType": "Literal",
+                  "value": "32"
+                },
+                {
+                  "name": "context",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                }
+              ],
+              "expression": {
+                "name": "body",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "kind": "functionCall",
+              "nameLocations": [],
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            }
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "expression": {
+            "arguments": [
+              {
+                "leftExpression": {
+                  "name": "end",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "nodeType": "BinaryOperation",
+                "operator": "==",
+                "rightExpression": {
+                  "expression": {
+                    "name": "v",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "memberName": "length",
+                  "nodeType": "MemberAccess"
+                }
+              },
+              {
+                "name": "end",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "context",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "requireValue",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "nameLocations": [],
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "ExpressionStatement"
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "validateDynamic",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "t",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "v",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "context",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "nodeType": "UserDefinedTypeName",
+            "pathNode": {
+              "name": "Context",
+              "nameLocations": [
+                "23458:7:0"
+              ],
+              "nodeType": "IdentifierPath"
+            }
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": []
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "private"
+  },
+  "body": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "expression": {
+            "arguments": [
+              {
+                "leftExpression": {
+                  "name": "p",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "nodeType": "BinaryOperation",
+                "operator": "<=",
+                "rightExpression": {
+                  "expression": {
+                    "name": "v",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "memberName": "length",
+                  "nodeType": "MemberAccess"
+                }
+              },
+              {
+                "name": "p",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "context",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "requireValue",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "nameLocations": [],
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "condition": {
+            "leftExpression": {
+              "baseExpression": {
+                "name": "t",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "indexExpression": {
+                "leftExpression": {
+                  "name": "e",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "nodeType": "BinaryOperation",
+                "operator": "-",
+                "rightExpression": {
+                  "hexValue": "31",
+                  "kind": "number",
+                  "nodeType": "Literal",
+                  "value": "1"
+                }
+              },
+              "nodeType": "IndexAccess"
+            },
+            "nodeType": "BinaryOperation",
+            "operator": "==",
+            "rightExpression": {
+              "hexValue": "5d",
+              "kind": "string",
+              "nodeType": "Literal",
+              "value": "]"
+            }
+          },
+          "nodeType": "IfStatement",
+          "trueBody": {
+            "nodeType": "Block",
+            "statements": [
+              {
+                "declarations": [
+                  {
+                    "constant": false,
+                    "mutability": "mutable",
+                    "name": "x",
+                    "nodeType": "VariableDeclaration",
+                    "stateVariable": false,
+                    "storageLocation": "memory",
+                    "typeName": {
+                      "nodeType": "UserDefinedTypeName",
+                      "pathNode": {
+                        "name": "ArrayState",
+                        "nameLocations": [
+                          "25151:10:0"
+                        ],
+                        "nodeType": "IdentifierPath"
+                      }
+                    },
+                    "visibility": "internal"
+                  }
+                ],
+                "nodeType": "VariableDeclarationStatement"
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "expression": {
+                      "name": "x",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "j",
+                    "nodeType": "MemberAccess"
+                  },
+                  "nodeType": "Assignment",
+                  "operator": "=",
+                  "rightHandSide": {
+                    "arguments": [
+                      {
+                        "name": "t",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      {
+                        "name": "s",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      {
+                        "name": "e",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      }
+                    ],
+                    "expression": {
+                      "name": "suffixStart",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "kind": "functionCall",
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "tryCall": false
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "expression": {
+                      "name": "x",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "base",
+                    "nodeType": "MemberAccess"
+                  },
+                  "nodeType": "Assignment",
+                  "operator": "=",
+                  "rightHandSide": {
+                    "name": "p",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "condition": {
+                  "leftExpression": {
+                    "leftExpression": {
+                      "expression": {
+                        "name": "x",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "memberName": "j",
+                      "nodeType": "MemberAccess"
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "+",
+                    "rightExpression": {
+                      "hexValue": "31",
+                      "kind": "number",
+                      "nodeType": "Literal",
+                      "value": "1"
+                    }
+                  },
+                  "nodeType": "BinaryOperation",
+                  "operator": "==",
+                  "rightExpression": {
+                    "leftExpression": {
+                      "name": "e",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "-",
+                    "rightExpression": {
+                      "hexValue": "31",
+                      "kind": "number",
+                      "nodeType": "Literal",
+                      "value": "1"
+                    }
+                  }
+                },
+                "falseBody": {
+                  "nodeType": "Block",
+                  "statements": [
+                    {
+                      "body": {
+                        "nodeType": "Block",
+                        "statements": [
+                          {
+                            "expression": {
+                              "leftHandSide": {
+                                "expression": {
+                                  "name": "x",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                "memberName": "count",
+                                "nodeType": "MemberAccess"
+                              },
+                              "nodeType": "Assignment",
+                              "operator": "=",
+                              "rightHandSide": {
+                                "leftExpression": {
+                                  "leftExpression": {
+                                    "leftExpression": {
+                                      "expression": {
+                                        "name": "x",
+                                        "nodeType": "Identifier",
+                                        "overloadedDeclarations": []
+                                      },
+                                      "memberName": "count",
+                                      "nodeType": "MemberAccess"
+                                    },
+                                    "nodeType": "BinaryOperation",
+                                    "operator": "*",
+                                    "rightExpression": {
+                                      "hexValue": "3130",
+                                      "kind": "number",
+                                      "nodeType": "Literal",
+                                      "value": "10"
+                                    }
+                                  },
+                                  "nodeType": "BinaryOperation",
+                                  "operator": "+",
+                                  "rightExpression": {
+                                    "arguments": [
+                                      {
+                                        "baseExpression": {
+                                          "name": "t",
+                                          "nodeType": "Identifier",
+                                          "overloadedDeclarations": []
+                                        },
+                                        "indexExpression": {
+                                          "name": "k",
+                                          "nodeType": "Identifier",
+                                          "overloadedDeclarations": []
+                                        },
+                                        "nodeType": "IndexAccess"
+                                      }
+                                    ],
+                                    "expression": {
+                                      "nodeType": "ElementaryTypeNameExpression",
+                                      "typeName": {
+                                        "name": "uint8",
+                                        "nodeType": "ElementaryTypeName"
+                                      }
+                                    },
+                                    "kind": "typeConversion",
+                                    "nameLocations": [],
+                                    "names": [],
+                                    "nodeType": "FunctionCall",
+                                    "tryCall": false
+                                  }
+                                },
+                                "nodeType": "BinaryOperation",
+                                "operator": "-",
+                                "rightExpression": {
+                                  "hexValue": "3438",
+                                  "kind": "number",
+                                  "nodeType": "Literal",
+                                  "value": "48"
+                                }
+                              }
+                            },
+                            "nodeType": "ExpressionStatement"
+                          }
+                        ]
+                      },
+                      "condition": {
+                        "leftExpression": {
+                          "name": "k",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "<",
+                        "rightExpression": {
+                          "leftExpression": {
+                            "name": "e",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "nodeType": "BinaryOperation",
+                          "operator": "-",
+                          "rightExpression": {
+                            "hexValue": "31",
+                            "kind": "number",
+                            "nodeType": "Literal",
+                            "value": "1"
+                          }
+                        }
+                      },
+                      "initializationExpression": {
+                        "declarations": [
+                          {
+                            "constant": false,
+                            "mutability": "mutable",
+                            "name": "k",
+                            "nodeType": "VariableDeclaration",
+                            "stateVariable": false,
+                            "storageLocation": "default",
+                            "typeName": {
+                              "name": "uint256",
+                              "nodeType": "ElementaryTypeName"
+                            },
+                            "visibility": "internal"
+                          }
+                        ],
+                        "initialValue": {
+                          "leftExpression": {
+                            "expression": {
+                              "name": "x",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "memberName": "j",
+                            "nodeType": "MemberAccess"
+                          },
+                          "nodeType": "BinaryOperation",
+                          "operator": "+",
+                          "rightExpression": {
+                            "hexValue": "31",
+                            "kind": "number",
+                            "nodeType": "Literal",
+                            "value": "1"
+                          }
+                        },
+                        "nodeType": "VariableDeclarationStatement"
+                      },
+                      "isSimpleCounterLoop": true,
+                      "loopExpression": {
+                        "expression": {
+                          "nodeType": "UnaryOperation",
+                          "operator": "++",
+                          "prefix": false,
+                          "subExpression": {
+                            "name": "k",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          }
+                        },
+                        "nodeType": "ExpressionStatement"
+                      },
+                      "nodeType": "ForStatement"
+                    }
+                  ]
+                },
+                "nodeType": "IfStatement",
+                "trueBody": {
+                  "nodeType": "Block",
+                  "statements": [
+                    {
+                      "expression": {
+                        "leftHandSide": {
+                          "expression": {
+                            "name": "x",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "memberName": "count",
+                          "nodeType": "MemberAccess"
+                        },
+                        "nodeType": "Assignment",
+                        "operator": "=",
+                        "rightHandSide": {
+                          "arguments": [
+                            {
+                              "name": "v",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            {
+                              "name": "p",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            {
+                              "name": "context",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            }
+                          ],
+                          "expression": {
+                            "name": "word",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              918,
+                              949
+                            ]
+                          },
+                          "kind": "functionCall",
+                          "nameLocations": [],
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "tryCall": false
+                        }
+                      },
+                      "nodeType": "ExpressionStatement"
+                    },
+                    {
+                      "expression": {
+                        "leftHandSide": {
+                          "expression": {
+                            "name": "x",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "memberName": "base",
+                          "nodeType": "MemberAccess"
+                        },
+                        "nodeType": "Assignment",
+                        "operator": "+=",
+                        "rightHandSide": {
+                          "hexValue": "3332",
+                          "kind": "number",
+                          "nodeType": "Literal",
+                          "value": "32"
+                        }
+                      },
+                      "nodeType": "ExpressionStatement"
+                    }
+                  ]
+                }
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "components": [
+                      null,
+                      {
+                        "expression": {
+                          "name": "x",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "memberName": "dynamic",
+                        "nodeType": "MemberAccess"
+                      },
+                      {
+                        "expression": {
+                          "name": "x",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "memberName": "words",
+                        "nodeType": "MemberAccess"
+                      }
+                    ],
+                    "isInlineArray": false,
+                    "nodeType": "TupleExpression"
+                  },
+                  "nodeType": "Assignment",
+                  "operator": "=",
+                  "rightHandSide": {
+                    "arguments": [
+                      {
+                        "name": "t",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      {
+                        "name": "s",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      {
+                        "expression": {
+                          "name": "x",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "memberName": "j",
+                        "nodeType": "MemberAccess"
+                      }
+                    ],
+                    "expression": {
+                      "name": "typeShape",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "kind": "functionCall",
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "tryCall": false
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "leftExpression": {
+                        "expression": {
+                          "name": "x",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "memberName": "count",
+                        "nodeType": "MemberAccess"
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "<=",
+                      "rightExpression": {
+                        "leftExpression": {
+                          "leftExpression": {
+                            "components": [
+                              {
+                                "leftExpression": {
+                                  "expression": {
+                                    "name": "v",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  },
+                                  "memberName": "length",
+                                  "nodeType": "MemberAccess"
+                                },
+                                "nodeType": "BinaryOperation",
+                                "operator": "-",
+                                "rightExpression": {
+                                  "expression": {
+                                    "name": "x",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  },
+                                  "memberName": "base",
+                                  "nodeType": "MemberAccess"
+                                }
+                              }
+                            ],
+                            "isInlineArray": false,
+                            "nodeType": "TupleExpression"
+                          },
+                          "nodeType": "BinaryOperation",
+                          "operator": "/",
+                          "rightExpression": {
+                            "hexValue": "3332",
+                            "kind": "number",
+                            "nodeType": "Literal",
+                            "value": "32"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "/",
+                        "rightExpression": {
+                          "expression": {
+                            "name": "x",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "memberName": "words",
+                          "nodeType": "MemberAccess"
+                        }
+                      }
+                    },
+                    {
+                      "expression": {
+                        "name": "x",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "memberName": "base",
+                      "nodeType": "MemberAccess"
+                    },
+                    {
+                      "name": "context",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    }
+                  ],
+                  "expression": {
+                    "name": "requireValue",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "kind": "functionCall",
+                  "nameLocations": [],
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "tryCall": false
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "expression": {
+                      "name": "x",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "tail",
+                    "nodeType": "MemberAccess"
+                  },
+                  "nodeType": "Assignment",
+                  "operator": "=",
+                  "rightHandSide": {
+                    "leftExpression": {
+                      "leftExpression": {
+                        "expression": {
+                          "name": "x",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "memberName": "count",
+                        "nodeType": "MemberAccess"
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "*",
+                      "rightExpression": {
+                        "expression": {
+                          "name": "x",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "memberName": "words",
+                        "nodeType": "MemberAccess"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "*",
+                    "rightExpression": {
+                      "hexValue": "3332",
+                      "kind": "number",
+                      "nodeType": "Literal",
+                      "value": "32"
+                    }
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "condition": {
+                  "nodeType": "UnaryOperation",
+                  "operator": "!",
+                  "prefix": true,
+                  "subExpression": {
+                    "expression": {
+                      "name": "x",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "dynamic",
+                    "nodeType": "MemberAccess"
+                  }
+                },
+                "nodeType": "IfStatement",
+                "trueBody": {
+                  "nodeType": "Block",
+                  "statements": [
+                    {
+                      "expression": {
+                        "arguments": [
+                          {
+                            "name": "t",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          {
+                            "name": "s",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          {
+                            "expression": {
+                              "name": "x",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "memberName": "j",
+                            "nodeType": "MemberAccess"
+                          },
+                          {
+                            "expression": {
+                              "name": "x",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "memberName": "count",
+                            "nodeType": "MemberAccess"
+                          },
+                          {
+                            "name": "v",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          {
+                            "expression": {
+                              "name": "x",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "memberName": "base",
+                            "nodeType": "MemberAccess"
+                          },
+                          {
+                            "name": "context",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          }
+                        ],
+                        "expression": {
+                          "name": "checkWords",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "kind": "functionCall",
+                        "nameLocations": [],
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "tryCall": false
+                      },
+                      "nodeType": "ExpressionStatement"
+                    },
+                    {
+                      "expression": {
+                        "slot": "BODY_EXTENT"
+                      },
+                      "nodeType": "Return"
+                    }
+                  ]
+                }
+              },
+              {
+                "body": {
+                  "nodeType": "Block",
+                  "statements": [
+                    {
+                      "declarations": [
+                        {
+                          "constant": false,
+                          "mutability": "mutable",
+                          "name": "position",
+                          "nodeType": "VariableDeclaration",
+                          "stateVariable": false,
+                          "storageLocation": "default",
+                          "typeName": {
+                            "name": "uint256",
+                            "nodeType": "ElementaryTypeName"
+                          },
+                          "visibility": "internal"
+                        }
+                      ],
+                      "initialValue": {
+                        "leftExpression": {
+                          "expression": {
+                            "name": "x",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "memberName": "base",
+                          "nodeType": "MemberAccess"
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "+",
+                        "rightExpression": {
+                          "leftExpression": {
+                            "leftExpression": {
+                              "name": "i",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "*",
+                            "rightExpression": {
+                              "expression": {
+                                "name": "x",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              },
+                              "memberName": "words",
+                              "nodeType": "MemberAccess"
+                            }
+                          },
+                          "nodeType": "BinaryOperation",
+                          "operator": "*",
+                          "rightExpression": {
+                            "hexValue": "3332",
+                            "kind": "number",
+                            "nodeType": "Literal",
+                            "value": "32"
+                          }
+                        }
+                      },
+                      "nodeType": "VariableDeclarationStatement"
+                    },
+                    {
+                      "expression": {
+                        "arguments": [
+                          {
+                            "leftExpression": {
+                              "arguments": [
+                                {
+                                  "name": "v",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                {
+                                  "name": "position",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                {
+                                  "name": "context",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                }
+                              ],
+                              "expression": {
+                                "name": "word",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [
+                                  918,
+                                  949
+                                ]
+                              },
+                              "kind": "functionCall",
+                              "nameLocations": [],
+                              "names": [],
+                              "nodeType": "FunctionCall",
+                              "tryCall": false
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "==",
+                            "rightExpression": {
+                              "expression": {
+                                "name": "x",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              },
+                              "memberName": "tail",
+                              "nodeType": "MemberAccess"
+                            }
+                          },
+                          {
+                            "name": "position",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          {
+                            "name": "context",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          }
+                        ],
+                        "expression": {
+                          "name": "requireValue",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "kind": "functionCall",
+                        "nameLocations": [],
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "tryCall": false
+                      },
+                      "nodeType": "ExpressionStatement"
+                    },
+                    {
+                      "expression": {
+                        "leftHandSide": {
+                          "expression": {
+                            "name": "x",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "memberName": "tail",
+                          "nodeType": "MemberAccess"
+                        },
+                        "nodeType": "Assignment",
+                        "operator": "+=",
+                        "rightHandSide": {
+                          "arguments": [
+                            {
+                              "name": "t",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            {
+                              "name": "s",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            {
+                              "expression": {
+                                "name": "x",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              },
+                              "memberName": "j",
+                              "nodeType": "MemberAccess"
+                            },
+                            {
+                              "name": "v",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            {
+                              "leftExpression": {
+                                "expression": {
+                                  "name": "x",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                "memberName": "base",
+                                "nodeType": "MemberAccess"
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "+",
+                              "rightExpression": {
+                                "expression": {
+                                  "name": "x",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                "memberName": "tail",
+                                "nodeType": "MemberAccess"
+                              }
+                            },
+                            {
+                              "name": "context",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            }
+                          ],
+                          "expression": {
+                            "name": "body",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "kind": "functionCall",
+                          "nameLocations": [],
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "tryCall": false
+                        }
+                      },
+                      "nodeType": "ExpressionStatement"
+                    }
+                  ]
+                },
+                "condition": {
+                  "leftExpression": {
+                    "name": "i",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "nodeType": "BinaryOperation",
+                  "operator": "<",
+                  "rightExpression": {
+                    "expression": {
+                      "name": "x",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "count",
+                    "nodeType": "MemberAccess"
+                  }
+                },
+                "initializationExpression": {
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "i",
+                      "nodeType": "VariableDeclaration",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeName": {
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName"
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "nodeType": "VariableDeclarationStatement"
+                },
+                "isSimpleCounterLoop": true,
+                "loopExpression": {
+                  "expression": {
+                    "nodeType": "UnaryOperation",
+                    "operator": "++",
+                    "prefix": false,
+                    "subExpression": {
+                      "name": "i",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    }
+                  },
+                  "nodeType": "ExpressionStatement"
+                },
+                "nodeType": "ForStatement"
+              },
+              {
+                "expression": {
+                  "slot": "BODY_EXTENT"
+                },
+                "nodeType": "Return"
+              }
+            ]
+          }
+        },
+        {
+          "condition": {
+            "leftExpression": {
+              "baseExpression": {
+                "name": "t",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "indexExpression": {
+                "name": "s",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "nodeType": "IndexAccess"
+            },
+            "nodeType": "BinaryOperation",
+            "operator": "==",
+            "rightExpression": {
+              "hexValue": "28",
+              "kind": "string",
+              "nodeType": "Literal",
+              "value": "("
+            }
+          },
+          "nodeType": "IfStatement",
+          "trueBody": {
+            "nodeType": "Block",
+            "statements": [
+              {
+                "declarations": [
+                  {
+                    "constant": false,
+                    "mutability": "mutable",
+                    "name": "x",
+                    "nodeType": "VariableDeclaration",
+                    "stateVariable": false,
+                    "storageLocation": "memory",
+                    "typeName": {
+                      "nodeType": "UserDefinedTypeName",
+                      "pathNode": {
+                        "name": "ArrayState",
+                        "nameLocations": [
+                          "26436:10:0"
+                        ],
+                        "nodeType": "IdentifierPath"
+                      }
+                    },
+                    "visibility": "internal"
+                  }
+                ],
+                "nodeType": "VariableDeclarationStatement"
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "expression": {
+                      "name": "x",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "j",
+                    "nodeType": "MemberAccess"
+                  },
+                  "nodeType": "Assignment",
+                  "operator": "=",
+                  "rightHandSide": {
+                    "leftExpression": {
+                      "name": "s",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "+",
+                    "rightExpression": {
+                      "hexValue": "31",
+                      "kind": "number",
+                      "nodeType": "Literal",
+                      "value": "1"
+                    }
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "body": {
+                  "nodeType": "Block",
+                  "statements": [
+                    {
+                      "declarations": [
+                        {
+                          "constant": false,
+                          "mutability": "mutable",
+                          "name": "next",
+                          "nodeType": "VariableDeclaration",
+                          "stateVariable": false,
+                          "storageLocation": "default",
+                          "typeName": {
+                            "name": "uint256",
+                            "nodeType": "ElementaryTypeName"
+                          },
+                          "visibility": "internal"
+                        },
+                        null,
+                        {
+                          "constant": false,
+                          "mutability": "mutable",
+                          "name": "w",
+                          "nodeType": "VariableDeclaration",
+                          "stateVariable": false,
+                          "storageLocation": "default",
+                          "typeName": {
+                            "name": "uint256",
+                            "nodeType": "ElementaryTypeName"
+                          },
+                          "visibility": "internal"
+                        }
+                      ],
+                      "initialValue": {
+                        "arguments": [
+                          {
+                            "name": "t",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          {
+                            "expression": {
+                              "name": "x",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "memberName": "j",
+                            "nodeType": "MemberAccess"
+                          },
+                          {
+                            "leftExpression": {
+                              "name": "e",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "-",
+                            "rightExpression": {
+                              "hexValue": "31",
+                              "kind": "number",
+                              "nodeType": "Literal",
+                              "value": "1"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "name": "typeShape",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "kind": "functionCall",
+                        "nameLocations": [],
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "tryCall": false
+                      },
+                      "nodeType": "VariableDeclarationStatement"
+                    },
+                    {
+                      "expression": {
+                        "arguments": [
+                          {
+                            "leftExpression": {
+                              "name": "w",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "<=",
+                            "rightExpression": {
+                              "leftExpression": {
+                                "components": [
+                                  {
+                                    "leftExpression": {
+                                      "leftExpression": {
+                                        "expression": {
+                                          "name": "v",
+                                          "nodeType": "Identifier",
+                                          "overloadedDeclarations": []
+                                        },
+                                        "memberName": "length",
+                                        "nodeType": "MemberAccess"
+                                      },
+                                      "nodeType": "BinaryOperation",
+                                      "operator": "-",
+                                      "rightExpression": {
+                                        "name": "p",
+                                        "nodeType": "Identifier",
+                                        "overloadedDeclarations": []
+                                      }
+                                    },
+                                    "nodeType": "BinaryOperation",
+                                    "operator": "-",
+                                    "rightExpression": {
+                                      "expression": {
+                                        "name": "x",
+                                        "nodeType": "Identifier",
+                                        "overloadedDeclarations": []
+                                      },
+                                      "memberName": "tail",
+                                      "nodeType": "MemberAccess"
+                                    }
+                                  }
+                                ],
+                                "isInlineArray": false,
+                                "nodeType": "TupleExpression"
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "/",
+                              "rightExpression": {
+                                "hexValue": "3332",
+                                "kind": "number",
+                                "nodeType": "Literal",
+                                "value": "32"
+                              }
+                            }
+                          },
+                          {
+                            "name": "p",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          {
+                            "name": "context",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          }
+                        ],
+                        "expression": {
+                          "name": "requireValue",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "kind": "functionCall",
+                        "nameLocations": [],
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "tryCall": false
+                      },
+                      "nodeType": "ExpressionStatement"
+                    },
+                    {
+                      "expression": {
+                        "leftHandSide": {
+                          "expression": {
+                            "name": "x",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "memberName": "tail",
+                          "nodeType": "MemberAccess"
+                        },
+                        "nodeType": "Assignment",
+                        "operator": "+=",
+                        "rightHandSide": {
+                          "leftExpression": {
+                            "name": "w",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "nodeType": "BinaryOperation",
+                          "operator": "*",
+                          "rightExpression": {
+                            "hexValue": "3332",
+                            "kind": "number",
+                            "nodeType": "Literal",
+                            "value": "32"
+                          }
+                        }
+                      },
+                      "nodeType": "ExpressionStatement"
+                    },
+                    {
+                      "expression": {
+                        "leftHandSide": {
+                          "expression": {
+                            "name": "x",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "memberName": "j",
+                          "nodeType": "MemberAccess"
+                        },
+                        "nodeType": "Assignment",
+                        "operator": "=",
+                        "rightHandSide": {
+                          "leftExpression": {
+                            "name": "next",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "nodeType": "BinaryOperation",
+                          "operator": "+",
+                          "rightExpression": {
+                            "hexValue": "31",
+                            "kind": "number",
+                            "nodeType": "Literal",
+                            "value": "1"
+                          }
+                        }
+                      },
+                      "nodeType": "ExpressionStatement"
+                    }
+                  ]
+                },
+                "condition": {
+                  "leftExpression": {
+                    "expression": {
+                      "name": "x",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "j",
+                    "nodeType": "MemberAccess"
+                  },
+                  "nodeType": "BinaryOperation",
+                  "operator": "<",
+                  "rightExpression": {
+                    "leftExpression": {
+                      "name": "e",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "-",
+                    "rightExpression": {
+                      "hexValue": "31",
+                      "kind": "number",
+                      "nodeType": "Literal",
+                      "value": "1"
+                    }
+                  }
+                },
+                "nodeType": "WhileStatement"
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "expression": {
+                      "name": "x",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "j",
+                    "nodeType": "MemberAccess"
+                  },
+                  "nodeType": "Assignment",
+                  "operator": "=",
+                  "rightHandSide": {
+                    "leftExpression": {
+                      "name": "s",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "+",
+                    "rightExpression": {
+                      "hexValue": "31",
+                      "kind": "number",
+                      "nodeType": "Literal",
+                      "value": "1"
+                    }
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "body": {
+                  "nodeType": "Block",
+                  "statements": [
+                    {
+                      "declarations": [
+                        {
+                          "constant": false,
+                          "mutability": "mutable",
+                          "name": "next",
+                          "nodeType": "VariableDeclaration",
+                          "stateVariable": false,
+                          "storageLocation": "default",
+                          "typeName": {
+                            "name": "uint256",
+                            "nodeType": "ElementaryTypeName"
+                          },
+                          "visibility": "internal"
+                        },
+                        {
+                          "constant": false,
+                          "mutability": "mutable",
+                          "name": "dynamic",
+                          "nodeType": "VariableDeclaration",
+                          "stateVariable": false,
+                          "storageLocation": "default",
+                          "typeName": {
+                            "name": "bool",
+                            "nodeType": "ElementaryTypeName"
+                          },
+                          "visibility": "internal"
+                        },
+                        {
+                          "constant": false,
+                          "mutability": "mutable",
+                          "name": "w",
+                          "nodeType": "VariableDeclaration",
+                          "stateVariable": false,
+                          "storageLocation": "default",
+                          "typeName": {
+                            "name": "uint256",
+                            "nodeType": "ElementaryTypeName"
+                          },
+                          "visibility": "internal"
+                        }
+                      ],
+                      "initialValue": {
+                        "arguments": [
+                          {
+                            "name": "t",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          {
+                            "expression": {
+                              "name": "x",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "memberName": "j",
+                            "nodeType": "MemberAccess"
+                          },
+                          {
+                            "leftExpression": {
+                              "name": "e",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "-",
+                            "rightExpression": {
+                              "hexValue": "31",
+                              "kind": "number",
+                              "nodeType": "Literal",
+                              "value": "1"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "name": "typeShape",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "kind": "functionCall",
+                        "nameLocations": [],
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "tryCall": false
+                      },
+                      "nodeType": "VariableDeclarationStatement"
+                    },
+                    {
+                      "condition": {
+                        "name": "dynamic",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "falseBody": {
+                        "nodeType": "Block",
+                        "statements": [
+                          {
+                            "expression": {
+                              "arguments": [
+                                {
+                                  "name": "t",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                {
+                                  "expression": {
+                                    "name": "x",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  },
+                                  "memberName": "j",
+                                  "nodeType": "MemberAccess"
+                                },
+                                {
+                                  "name": "next",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                {
+                                  "hexValue": "31",
+                                  "kind": "number",
+                                  "nodeType": "Literal",
+                                  "value": "1"
+                                },
+                                {
+                                  "name": "v",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                {
+                                  "leftExpression": {
+                                    "name": "p",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  },
+                                  "nodeType": "BinaryOperation",
+                                  "operator": "+",
+                                  "rightExpression": {
+                                    "expression": {
+                                      "name": "x",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": []
+                                    },
+                                    "memberName": "base",
+                                    "nodeType": "MemberAccess"
+                                  }
+                                },
+                                {
+                                  "name": "context",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                }
+                              ],
+                              "expression": {
+                                "name": "checkWords",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              },
+                              "kind": "functionCall",
+                              "nameLocations": [],
+                              "names": [],
+                              "nodeType": "FunctionCall",
+                              "tryCall": false
+                            },
+                            "nodeType": "ExpressionStatement"
+                          }
+                        ]
+                      },
+                      "nodeType": "IfStatement",
+                      "trueBody": {
+                        "nodeType": "Block",
+                        "statements": [
+                          {
+                            "expression": {
+                              "arguments": [
+                                {
+                                  "leftExpression": {
+                                    "arguments": [
+                                      {
+                                        "name": "v",
+                                        "nodeType": "Identifier",
+                                        "overloadedDeclarations": []
+                                      },
+                                      {
+                                        "leftExpression": {
+                                          "name": "p",
+                                          "nodeType": "Identifier",
+                                          "overloadedDeclarations": []
+                                        },
+                                        "nodeType": "BinaryOperation",
+                                        "operator": "+",
+                                        "rightExpression": {
+                                          "expression": {
+                                            "name": "x",
+                                            "nodeType": "Identifier",
+                                            "overloadedDeclarations": []
+                                          },
+                                          "memberName": "base",
+                                          "nodeType": "MemberAccess"
+                                        }
+                                      },
+                                      {
+                                        "name": "context",
+                                        "nodeType": "Identifier",
+                                        "overloadedDeclarations": []
+                                      }
+                                    ],
+                                    "expression": {
+                                      "name": "word",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": [
+                                        918,
+                                        949
+                                      ]
+                                    },
+                                    "kind": "functionCall",
+                                    "nameLocations": [],
+                                    "names": [],
+                                    "nodeType": "FunctionCall",
+                                    "tryCall": false
+                                  },
+                                  "nodeType": "BinaryOperation",
+                                  "operator": "==",
+                                  "rightExpression": {
+                                    "expression": {
+                                      "name": "x",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": []
+                                    },
+                                    "memberName": "tail",
+                                    "nodeType": "MemberAccess"
+                                  }
+                                },
+                                {
+                                  "leftExpression": {
+                                    "name": "p",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  },
+                                  "nodeType": "BinaryOperation",
+                                  "operator": "+",
+                                  "rightExpression": {
+                                    "expression": {
+                                      "name": "x",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": []
+                                    },
+                                    "memberName": "base",
+                                    "nodeType": "MemberAccess"
+                                  }
+                                },
+                                {
+                                  "name": "context",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                }
+                              ],
+                              "expression": {
+                                "name": "requireValue",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              },
+                              "kind": "functionCall",
+                              "nameLocations": [],
+                              "names": [],
+                              "nodeType": "FunctionCall",
+                              "tryCall": false
+                            },
+                            "nodeType": "ExpressionStatement"
+                          },
+                          {
+                            "expression": {
+                              "leftHandSide": {
+                                "expression": {
+                                  "name": "x",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                "memberName": "tail",
+                                "nodeType": "MemberAccess"
+                              },
+                              "nodeType": "Assignment",
+                              "operator": "+=",
+                              "rightHandSide": {
+                                "arguments": [
+                                  {
+                                    "name": "t",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  },
+                                  {
+                                    "expression": {
+                                      "name": "x",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": []
+                                    },
+                                    "memberName": "j",
+                                    "nodeType": "MemberAccess"
+                                  },
+                                  {
+                                    "name": "next",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  },
+                                  {
+                                    "name": "v",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  },
+                                  {
+                                    "leftExpression": {
+                                      "name": "p",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": []
+                                    },
+                                    "nodeType": "BinaryOperation",
+                                    "operator": "+",
+                                    "rightExpression": {
+                                      "expression": {
+                                        "name": "x",
+                                        "nodeType": "Identifier",
+                                        "overloadedDeclarations": []
+                                      },
+                                      "memberName": "tail",
+                                      "nodeType": "MemberAccess"
+                                    }
+                                  },
+                                  {
+                                    "name": "context",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  }
+                                ],
+                                "expression": {
+                                  "name": "body",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                },
+                                "kind": "functionCall",
+                                "nameLocations": [],
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "tryCall": false
+                              }
+                            },
+                            "nodeType": "ExpressionStatement"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "expression": {
+                        "leftHandSide": {
+                          "expression": {
+                            "name": "x",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "memberName": "base",
+                          "nodeType": "MemberAccess"
+                        },
+                        "nodeType": "Assignment",
+                        "operator": "$TUPLE_ADVANCE",
+                        "rightHandSide": {
+                          "slot": "TUPLE_ADVANCE"
+                        }
+                      },
+                      "nodeType": "ExpressionStatement"
+                    },
+                    {
+                      "expression": {
+                        "leftHandSide": {
+                          "expression": {
+                            "name": "x",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "memberName": "j",
+                          "nodeType": "MemberAccess"
+                        },
+                        "nodeType": "Assignment",
+                        "operator": "=",
+                        "rightHandSide": {
+                          "slot": "SECOND_NEXT"
+                        }
+                      },
+                      "nodeType": "ExpressionStatement"
+                    }
+                  ]
+                },
+                "condition": {
+                  "leftExpression": {
+                    "expression": {
+                      "name": "x",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "j",
+                    "nodeType": "MemberAccess"
+                  },
+                  "nodeType": "BinaryOperation",
+                  "operator": "<",
+                  "rightExpression": {
+                    "leftExpression": {
+                      "name": "e",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "-",
+                    "rightExpression": {
+                      "hexValue": "31",
+                      "kind": "number",
+                      "nodeType": "Literal",
+                      "value": "1"
+                    }
+                  }
+                },
+                "nodeType": "WhileStatement"
+              },
+              {
+                "expression": {
+                  "expression": {
+                    "name": "x",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "memberName": "tail",
+                  "nodeType": "MemberAccess"
+                },
+                "nodeType": "Return"
+              }
+            ]
+          }
+        },
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "n",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "arguments": [
+              {
+                "name": "v",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "p",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "context",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "word",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [
+                918,
+                949
+              ]
+            },
+            "kind": "functionCall",
+            "nameLocations": [],
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "expression": {
+            "arguments": [
+              {
+                "leftExpression": {
+                  "name": "n",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "nodeType": "BinaryOperation",
+                "operator": "<=",
+                "rightExpression": {
+                  "leftExpression": {
+                    "leftExpression": {
+                      "expression": {
+                        "name": "v",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "memberName": "length",
+                      "nodeType": "MemberAccess"
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "-",
+                    "rightExpression": {
+                      "name": "p",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    }
+                  },
+                  "nodeType": "BinaryOperation",
+                  "operator": "-",
+                  "rightExpression": {
+                    "hexValue": "3332",
+                    "kind": "number",
+                    "nodeType": "Literal",
+                    "value": "32"
+                  }
+                }
+              },
+              {
+                "name": "p",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "context",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "requireValue",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "nameLocations": [],
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "padded",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "leftExpression": {
+              "leftExpression": {
+                "components": [
+                  {
+                    "leftExpression": {
+                      "name": "n",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "+",
+                    "rightExpression": {
+                      "hexValue": "3331",
+                      "kind": "number",
+                      "nodeType": "Literal",
+                      "value": "31"
+                    }
+                  }
+                ],
+                "isInlineArray": false,
+                "nodeType": "TupleExpression"
+              },
+              "nodeType": "BinaryOperation",
+              "operator": "/",
+              "rightExpression": {
+                "hexValue": "3332",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "32"
+              }
+            },
+            "nodeType": "BinaryOperation",
+            "operator": "*",
+            "rightExpression": {
+              "hexValue": "3332",
+              "kind": "number",
+              "nodeType": "Literal",
+              "value": "32"
+            }
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "expression": {
+            "arguments": [
+              {
+                "leftExpression": {
+                  "name": "padded",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "nodeType": "BinaryOperation",
+                "operator": "<=",
+                "rightExpression": {
+                  "leftExpression": {
+                    "leftExpression": {
+                      "expression": {
+                        "name": "v",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "memberName": "length",
+                      "nodeType": "MemberAccess"
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "-",
+                    "rightExpression": {
+                      "name": "p",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    }
+                  },
+                  "nodeType": "BinaryOperation",
+                  "operator": "-",
+                  "rightExpression": {
+                    "hexValue": "3332",
+                    "kind": "number",
+                    "nodeType": "Literal",
+                    "value": "32"
+                  }
+                }
+              },
+              {
+                "name": "p",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "context",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "requireValue",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "nameLocations": [],
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "padding",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "default",
+              "typeName": {
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "leftExpression": {
+              "name": "padded",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "BinaryOperation",
+            "operator": "-",
+            "rightExpression": {
+              "name": "n",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            }
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "condition": {
+            "leftExpression": {
+              "leftExpression": {
+                "name": "padding",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "nodeType": "BinaryOperation",
+              "operator": "!=",
+              "rightExpression": {
+                "hexValue": "30",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "0"
+              }
+            },
+            "nodeType": "BinaryOperation",
+            "operator": "&&",
+            "rightExpression": {
+              "leftExpression": {
+                "leftExpression": {
+                  "arguments": [
+                    {
+                      "name": "v",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    {
+                      "leftExpression": {
+                        "name": "p",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "+",
+                      "rightExpression": {
+                        "name": "padded",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      }
+                    },
+                    {
+                      "name": "context",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    }
+                  ],
+                  "expression": {
+                    "name": "word",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [
+                      918,
+                      949
+                    ]
+                  },
+                  "kind": "functionCall",
+                  "nameLocations": [],
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "tryCall": false
+                },
+                "nodeType": "BinaryOperation",
+                "operator": "&",
+                "rightExpression": {
+                  "components": [
+                    {
+                      "leftExpression": {
+                        "expression": {
+                          "arguments": [
+                            {
+                              "nodeType": "ElementaryTypeNameExpression",
+                              "typeName": {
+                                "name": "uint256",
+                                "nodeType": "ElementaryTypeName"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "name": "type",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "kind": "functionCall",
+                          "nameLocations": [],
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "tryCall": false
+                        },
+                        "memberName": "max",
+                        "nodeType": "MemberAccess"
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": ">>",
+                      "rightExpression": {
+                        "components": [
+                          {
+                            "leftExpression": {
+                              "components": [
+                                {
+                                  "leftExpression": {
+                                    "hexValue": "3332",
+                                    "kind": "number",
+                                    "nodeType": "Literal",
+                                    "value": "32"
+                                  },
+                                  "nodeType": "BinaryOperation",
+                                  "operator": "-",
+                                  "rightExpression": {
+                                    "name": "padding",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  }
+                                }
+                              ],
+                              "isInlineArray": false,
+                              "nodeType": "TupleExpression"
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "*",
+                            "rightExpression": {
+                              "hexValue": "38",
+                              "kind": "number",
+                              "nodeType": "Literal",
+                              "value": "8"
+                            }
+                          }
+                        ],
+                        "isInlineArray": false,
+                        "nodeType": "TupleExpression"
+                      }
+                    }
+                  ],
+                  "isInlineArray": false,
+                  "nodeType": "TupleExpression"
+                }
+              },
+              "nodeType": "BinaryOperation",
+              "operator": "!=",
+              "rightExpression": {
+                "hexValue": "30",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "0"
+              }
+            }
+          },
+          "nodeType": "IfStatement",
+          "trueBody": {
+            "nodeType": "Block",
+            "statements": [
+              {
+                "body": {
+                  "nodeType": "Block",
+                  "statements": [
+                    {
+                      "expression": {
+                        "arguments": [
+                          {
+                            "leftExpression": {
+                              "baseExpression": {
+                                "name": "v",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              },
+                              "indexExpression": {
+                                "leftExpression": {
+                                  "leftExpression": {
+                                    "name": "p",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": []
+                                  },
+                                  "nodeType": "BinaryOperation",
+                                  "operator": "+",
+                                  "rightExpression": {
+                                    "hexValue": "3332",
+                                    "kind": "number",
+                                    "nodeType": "Literal",
+                                    "value": "32"
+                                  }
+                                },
+                                "nodeType": "BinaryOperation",
+                                "operator": "+",
+                                "rightExpression": {
+                                  "name": "i",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": []
+                                }
+                              },
+                              "nodeType": "IndexAccess"
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "==",
+                            "rightExpression": {
+                              "hexValue": "30",
+                              "kind": "number",
+                              "nodeType": "Literal",
+                              "value": "0"
+                            }
+                          },
+                          {
+                            "leftExpression": {
+                              "leftExpression": {
+                                "name": "p",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": []
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "+",
+                              "rightExpression": {
+                                "hexValue": "3332",
+                                "kind": "number",
+                                "nodeType": "Literal",
+                                "value": "32"
+                              }
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "+",
+                            "rightExpression": {
+                              "name": "i",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": []
+                            }
+                          },
+                          {
+                            "name": "context",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          }
+                        ],
+                        "expression": {
+                          "name": "requireValue",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        "kind": "functionCall",
+                        "nameLocations": [],
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "tryCall": false
+                      },
+                      "nodeType": "ExpressionStatement"
+                    }
+                  ]
+                },
+                "condition": {
+                  "leftExpression": {
+                    "name": "i",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "nodeType": "BinaryOperation",
+                  "operator": "<",
+                  "rightExpression": {
+                    "name": "padded",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                },
+                "initializationExpression": {
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "i",
+                      "nodeType": "VariableDeclaration",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeName": {
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName"
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "initialValue": {
+                    "name": "n",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "nodeType": "VariableDeclarationStatement"
+                },
+                "isSimpleCounterLoop": true,
+                "loopExpression": {
+                  "expression": {
+                    "nodeType": "UnaryOperation",
+                    "operator": "++",
+                    "prefix": false,
+                    "subExpression": {
+                      "name": "i",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    }
+                  },
+                  "nodeType": "ExpressionStatement"
+                },
+                "nodeType": "ForStatement"
+              }
+            ]
+          }
+        },
+        {
+          "expression": {
+            "leftExpression": {
+              "hexValue": "3332",
+              "kind": "number",
+              "nodeType": "Literal",
+              "value": "32"
+            },
+            "nodeType": "BinaryOperation",
+            "operator": "+",
+            "rightExpression": {
+              "name": "padded",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            }
+          },
+          "nodeType": "Return"
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "body",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "t",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "s",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "e",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "v",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "p",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "context",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "nodeType": "UserDefinedTypeName",
+            "pathNode": {
+              "name": "Context",
+              "nameLocations": [
+                "24973:7:0"
+              ],
+              "nodeType": "IdentifierPath"
+            }
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "internal"
+  },
+  "suffixStart": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "expression": {
+            "leftHandSide": {
+              "name": "j",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "Assignment",
+            "operator": "=",
+            "rightHandSide": {
+              "leftExpression": {
+                "name": "te",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "nodeType": "BinaryOperation",
+              "operator": "-",
+              "rightExpression": {
+                "hexValue": "32",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "2"
+              }
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "body": {
+            "nodeType": "Block",
+            "statements": [
+              {
+                "expression": {
+                  "nodeType": "UnaryOperation",
+                  "operator": "--",
+                  "prefix": false,
+                  "subExpression": {
+                    "name": "j",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              }
+            ]
+          },
+          "condition": {
+            "leftExpression": {
+              "leftExpression": {
+                "leftExpression": {
+                  "name": "j",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "nodeType": "BinaryOperation",
+                "operator": ">",
+                "rightExpression": {
+                  "name": "ts",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                }
+              },
+              "nodeType": "BinaryOperation",
+              "operator": "&&",
+              "rightExpression": {
+                "leftExpression": {
+                  "baseExpression": {
+                    "name": "t",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "indexExpression": {
+                    "name": "j",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "nodeType": "IndexAccess"
+                },
+                "nodeType": "BinaryOperation",
+                "operator": ">=",
+                "rightExpression": {
+                  "hexValue": "30",
+                  "kind": "string",
+                  "nodeType": "Literal",
+                  "value": "0"
+                }
+              }
+            },
+            "nodeType": "BinaryOperation",
+            "operator": "&&",
+            "rightExpression": {
+              "leftExpression": {
+                "baseExpression": {
+                  "name": "t",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "indexExpression": {
+                  "name": "j",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "nodeType": "IndexAccess"
+              },
+              "nodeType": "BinaryOperation",
+              "operator": "<=",
+              "rightExpression": {
+                "hexValue": "39",
+                "kind": "string",
+                "nodeType": "Literal",
+                "value": "9"
+              }
+            }
+          },
+          "nodeType": "WhileStatement"
+        },
+        {
+          "condition": {
+            "leftExpression": {
+              "baseExpression": {
+                "name": "t",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "indexExpression": {
+                "name": "j",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "nodeType": "IndexAccess"
+            },
+            "nodeType": "BinaryOperation",
+            "operator": "!=",
+            "rightExpression": {
+              "hexValue": "5b",
+              "kind": "string",
+              "nodeType": "Literal",
+              "value": "["
+            }
+          },
+          "nodeType": "IfStatement",
+          "trueBody": {
+            "errorCall": {
+              "arguments": [
+                {
+                  "name": "j",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                }
+              ],
+              "expression": {
+                "name": "InvalidTypeDescriptor",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "kind": "functionCall",
+              "nameLocations": [],
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            },
+            "nodeType": "RevertStatement"
+          }
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "suffixStart",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "t",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "ts",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "te",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "j",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "internal"
+  },
+  "validateStatic": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "expression": {
+            "arguments": [
+              {
+                "leftExpression": {
+                  "leftExpression": {
+                    "leftExpression": {
+                      "expression": {
+                        "name": "v",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "memberName": "length",
+                      "nodeType": "MemberAccess"
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "%",
+                    "rightExpression": {
+                      "hexValue": "3332",
+                      "kind": "number",
+                      "nodeType": "Literal",
+                      "value": "32"
+                    }
+                  },
+                  "nodeType": "BinaryOperation",
+                  "operator": "==",
+                  "rightExpression": {
+                    "hexValue": "30",
+                    "kind": "number",
+                    "nodeType": "Literal",
+                    "value": "0"
+                  }
+                },
+                "nodeType": "BinaryOperation",
+                "operator": "&&",
+                "rightExpression": {
+                  "leftExpression": {
+                    "name": "words",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "nodeType": "BinaryOperation",
+                  "operator": "==",
+                  "rightExpression": {
+                    "leftExpression": {
+                      "expression": {
+                        "name": "v",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "memberName": "length",
+                      "nodeType": "MemberAccess"
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "/",
+                    "rightExpression": {
+                      "hexValue": "3332",
+                      "kind": "number",
+                      "nodeType": "Literal",
+                      "value": "32"
+                    }
+                  }
+                }
+              },
+              {
+                "hexValue": "30",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "0"
+              },
+              {
+                "name": "context",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "requireValue",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "nameLocations": [],
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "expression": {
+            "arguments": [
+              {
+                "name": "t",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "hexValue": "30",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "0"
+              },
+              {
+                "expression": {
+                  "name": "t",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "memberName": "length",
+                "nodeType": "MemberAccess"
+              },
+              {
+                "hexValue": "31",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "1"
+              },
+              {
+                "name": "v",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "hexValue": "30",
+                "kind": "number",
+                "nodeType": "Literal",
+                "value": "0"
+              },
+              {
+                "name": "context",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "checkWords",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "nameLocations": [],
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "ExpressionStatement"
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "validateStatic",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "t",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "v",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "words",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "context",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "nodeType": "UserDefinedTypeName",
+            "pathNode": {
+              "name": "Context",
+              "nameLocations": [
+                "23063:7:0"
+              ],
+              "nodeType": "IdentifierPath"
+            }
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": []
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "private"
+  },
+  "validateDispatch": [
+    {
+      "body": {
+        "nodeType": "Block",
+        "statements": [
+          {
+            "declarations": [
+              {
+                "constant": false,
+                "mutability": "mutable",
+                "name": "context",
+                "nodeType": "VariableDeclaration",
+                "stateVariable": false,
+                "storageLocation": "memory",
+                "typeName": {
+                  "nodeType": "UserDefinedTypeName",
+                  "pathNode": {
+                    "name": "Context",
+                    "nameLocations": [
+                      "21973:7:0"
+                    ],
+                    "nodeType": "IdentifierPath"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "nodeType": "VariableDeclarationStatement"
+          },
+          {
+            "expression": {
+              "arguments": [
+                {
+                  "name": "t",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                {
+                  "name": "v",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                {
+                  "name": "context",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                }
+              ],
+              "expression": {
+                "name": "validate",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": [
+                  1042,
+                  1082,
+                  1114
+                ]
+              },
+              "kind": "functionCall",
+              "nameLocations": [],
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            },
+            "nodeType": "Return"
+          }
+        ]
+      },
+      "implemented": true,
+      "kind": "function",
+      "modifiers": [],
+      "name": "validate",
+      "nodeType": "FunctionDefinition",
+      "parameters": {
+        "nodeType": "ParameterList",
+        "parameters": [
+          {
+            "constant": false,
+            "mutability": "mutable",
+            "name": "t",
+            "nodeType": "VariableDeclaration",
+            "stateVariable": false,
+            "storageLocation": "calldata",
+            "typeName": {
+              "name": "bytes",
+              "nodeType": "ElementaryTypeName"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "mutability": "mutable",
+            "name": "v",
+            "nodeType": "VariableDeclaration",
+            "stateVariable": false,
+            "storageLocation": "memory",
+            "typeName": {
+              "name": "bytes",
+              "nodeType": "ElementaryTypeName"
+            },
+            "visibility": "internal"
+          }
+        ]
+      },
+      "returnParameters": {
+        "nodeType": "ParameterList",
+        "parameters": [
+          {
+            "constant": false,
+            "mutability": "mutable",
+            "name": "dynamic",
+            "nodeType": "VariableDeclaration",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeName": {
+              "name": "bool",
+              "nodeType": "ElementaryTypeName"
+            },
+            "visibility": "internal"
+          }
+        ]
+      },
+      "stateMutability": "pure",
+      "virtual": false,
+      "visibility": "internal"
+    },
+    {
+      "body": {
+        "nodeType": "Block",
+        "statements": [
+          {
+            "declarations": [
+              {
+                "constant": false,
+                "mutability": "mutable",
+                "name": "words",
+                "nodeType": "VariableDeclaration",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeName": {
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName"
+                },
+                "visibility": "internal"
+              }
+            ],
+            "nodeType": "VariableDeclarationStatement"
+          },
+          {
+            "expression": {
+              "leftHandSide": {
+                "components": [
+                  {
+                    "name": "dynamic",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  {
+                    "name": "words",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                ],
+                "isInlineArray": false,
+                "nodeType": "TupleExpression"
+              },
+              "nodeType": "Assignment",
+              "operator": "=",
+              "rightHandSide": {
+                "arguments": [
+                  {
+                    "name": "t",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                ],
+                "expression": {
+                  "name": "shape",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "kind": "functionCall",
+                "nameLocations": [],
+                "names": [],
+                "nodeType": "FunctionCall",
+                "tryCall": false
+              }
+            },
+            "nodeType": "ExpressionStatement"
+          },
+          {
+            "condition": {
+              "name": "dynamic",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "falseBody": {
+              "expression": {
+                "arguments": [
+                  {
+                    "name": "t",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  {
+                    "name": "v",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  {
+                    "name": "words",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  {
+                    "name": "context",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                ],
+                "expression": {
+                  "name": "validateStatic",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "kind": "functionCall",
+                "nameLocations": [],
+                "names": [],
+                "nodeType": "FunctionCall",
+                "tryCall": false
+              },
+              "nodeType": "ExpressionStatement"
+            },
+            "nodeType": "IfStatement",
+            "trueBody": {
+              "expression": {
+                "arguments": [
+                  {
+                    "name": "t",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  {
+                    "name": "v",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  {
+                    "name": "context",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                ],
+                "expression": {
+                  "name": "validateDynamic",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "kind": "functionCall",
+                "nameLocations": [],
+                "names": [],
+                "nodeType": "FunctionCall",
+                "tryCall": false
+              },
+              "nodeType": "ExpressionStatement"
+            }
+          }
+        ]
+      },
+      "implemented": true,
+      "kind": "function",
+      "modifiers": [],
+      "name": "validate",
+      "nodeType": "FunctionDefinition",
+      "parameters": {
+        "nodeType": "ParameterList",
+        "parameters": [
+          {
+            "constant": false,
+            "mutability": "mutable",
+            "name": "t",
+            "nodeType": "VariableDeclaration",
+            "stateVariable": false,
+            "storageLocation": "calldata",
+            "typeName": {
+              "name": "bytes",
+              "nodeType": "ElementaryTypeName"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "mutability": "mutable",
+            "name": "v",
+            "nodeType": "VariableDeclaration",
+            "stateVariable": false,
+            "storageLocation": "memory",
+            "typeName": {
+              "name": "bytes",
+              "nodeType": "ElementaryTypeName"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "mutability": "mutable",
+            "name": "context",
+            "nodeType": "VariableDeclaration",
+            "stateVariable": false,
+            "storageLocation": "memory",
+            "typeName": {
+              "nodeType": "UserDefinedTypeName",
+              "pathNode": {
+                "name": "Context",
+                "nameLocations": [
+                  "22181:7:0"
+                ],
+                "nodeType": "IdentifierPath"
+              }
+            },
+            "visibility": "internal"
+          }
+        ]
+      },
+      "returnParameters": {
+        "nodeType": "ParameterList",
+        "parameters": [
+          {
+            "constant": false,
+            "mutability": "mutable",
+            "name": "dynamic",
+            "nodeType": "VariableDeclaration",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeName": {
+              "name": "bool",
+              "nodeType": "ElementaryTypeName"
+            },
+            "visibility": "internal"
+          }
+        ]
+      },
+      "stateMutability": "pure",
+      "virtual": false,
+      "visibility": "internal"
+    },
+    {
+      "body": {
+        "nodeType": "Block",
+        "statements": [
+          {
+            "declarations": [
+              {
+                "constant": false,
+                "mutability": "mutable",
+                "name": "context",
+                "nodeType": "VariableDeclaration",
+                "stateVariable": false,
+                "storageLocation": "memory",
+                "typeName": {
+                  "nodeType": "UserDefinedTypeName",
+                  "pathNode": {
+                    "name": "Context",
+                    "nameLocations": [
+                      "22713:7:0"
+                    ],
+                    "nodeType": "IdentifierPath"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "nodeType": "VariableDeclarationStatement"
+          },
+          {
+            "condition": {
+              "name": "dynamic",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "falseBody": {
+              "expression": {
+                "arguments": [
+                  {
+                    "name": "t",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  {
+                    "name": "v",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  {
+                    "name": "words",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  {
+                    "name": "context",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                ],
+                "expression": {
+                  "name": "validateStatic",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "kind": "functionCall",
+                "nameLocations": [],
+                "names": [],
+                "nodeType": "FunctionCall",
+                "tryCall": false
+              },
+              "nodeType": "ExpressionStatement"
+            },
+            "nodeType": "IfStatement",
+            "trueBody": {
+              "expression": {
+                "arguments": [
+                  {
+                    "name": "t",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  {
+                    "name": "v",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  {
+                    "name": "context",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  }
+                ],
+                "expression": {
+                  "name": "validateDynamic",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": []
+                },
+                "kind": "functionCall",
+                "nameLocations": [],
+                "names": [],
+                "nodeType": "FunctionCall",
+                "tryCall": false
+              },
+              "nodeType": "ExpressionStatement"
+            }
+          }
+        ]
+      },
+      "implemented": true,
+      "kind": "function",
+      "modifiers": [],
+      "name": "validate",
+      "nodeType": "FunctionDefinition",
+      "parameters": {
+        "nodeType": "ParameterList",
+        "parameters": [
+          {
+            "constant": false,
+            "mutability": "mutable",
+            "name": "t",
+            "nodeType": "VariableDeclaration",
+            "stateVariable": false,
+            "storageLocation": "calldata",
+            "typeName": {
+              "name": "bytes",
+              "nodeType": "ElementaryTypeName"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "mutability": "mutable",
+            "name": "v",
+            "nodeType": "VariableDeclaration",
+            "stateVariable": false,
+            "storageLocation": "memory",
+            "typeName": {
+              "name": "bytes",
+              "nodeType": "ElementaryTypeName"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "mutability": "mutable",
+            "name": "dynamic",
+            "nodeType": "VariableDeclaration",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeName": {
+              "name": "bool",
+              "nodeType": "ElementaryTypeName"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "mutability": "mutable",
+            "name": "words",
+            "nodeType": "VariableDeclaration",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeName": {
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName"
+            },
+            "visibility": "internal"
+          }
+        ]
+      },
+      "returnParameters": {
+        "nodeType": "ParameterList",
+        "parameters": []
+      },
+      "stateMutability": "pure",
+      "virtual": false,
+      "visibility": "internal"
+    }
+  ]
+}

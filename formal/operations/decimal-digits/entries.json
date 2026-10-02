@@ -1,0 +1,12 @@
+[
+  {
+    "signature": "parseUint(bytes)",
+    "selector": "1cce87ec",
+    "symbol": "parseUint"
+  },
+  {
+    "signature": "parseInt(bytes)",
+    "selector": "e08bc3fe",
+    "symbol": "parseInt"
+  }
+]

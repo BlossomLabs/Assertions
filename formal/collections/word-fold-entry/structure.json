@@ -1,0 +1,988 @@
+{
+  "foldRange": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "expression": {
+            "arguments": [
+              {
+                "translated-slot": "R_DOMAIN"
+              },
+              {
+                "translated-slot": "R_COUNT"
+              },
+              {
+                "baseExpression": {
+                  "expression": {
+                    "name": "msg",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "memberName": "data",
+                  "nodeType": "MemberAccess"
+                },
+                "endExpression": {
+                  "hexValue": "30",
+                  "kind": "number",
+                  "nodeType": "Literal",
+                  "value": "0"
+                },
+                "nodeType": "IndexRangeAccess",
+                "startExpression": {
+                  "hexValue": "30",
+                  "kind": "number",
+                  "nodeType": "Literal",
+                  "value": "0"
+                }
+              },
+              {
+                "name": "target",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "template",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "accOffset",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "elemOffsets",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "init",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "exit",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "_fold",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "Return"
+        }
+      ]
+    },
+    "functionSelector": "f1d88dc8",
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "foldRange",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "n",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "target",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "address",
+            "nodeType": "ElementaryTypeName",
+            "stateMutability": "nonpayable"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "template",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "accOffset",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "elemOffsets",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "baseType": {
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName"
+            },
+            "nodeType": "ArrayTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "init",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "bytes32",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "exit",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "nodeType": "UserDefinedTypeName",
+            "pathNode": {
+              "name": "FoldExit",
+              "nodeType": "IdentifierPath"
+            }
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "bytes32",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "view",
+    "virtual": false,
+    "visibility": "external"
+  },
+  "foldBytes": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "expression": {
+            "arguments": [
+              {
+                "translated-slot": "B_DOMAIN"
+              },
+              {
+                "translated-slot": "B_COUNT"
+              },
+              {
+                "name": "s",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "target",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "template",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "accOffset",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "elemOffsets",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "init",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "exit",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "_fold",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "Return"
+        }
+      ]
+    },
+    "functionSelector": "6d24e79c",
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "foldBytes",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "s",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "target",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "address",
+            "nodeType": "ElementaryTypeName",
+            "stateMutability": "nonpayable"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "template",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "accOffset",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "elemOffsets",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "baseType": {
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName"
+            },
+            "nodeType": "ArrayTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "init",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "bytes32",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "exit",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "nodeType": "UserDefinedTypeName",
+            "pathNode": {
+              "name": "FoldExit",
+              "nodeType": "IdentifierPath"
+            }
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "bytes32",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "view",
+    "virtual": false,
+    "visibility": "external"
+  },
+  "foldWords": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "condition": {
+            "translated-slot": "UNALIGNED"
+          },
+          "nodeType": "IfStatement",
+          "trueBody": {
+            "errorCall": {
+              "arguments": [
+                {
+                  "expression": {
+                    "name": "s",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "memberName": "length",
+                  "nodeType": "MemberAccess"
+                }
+              ],
+              "expression": {
+                "name": "UnalignedWords",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              "kind": "functionCall",
+              "names": [],
+              "nodeType": "FunctionCall",
+              "tryCall": false
+            },
+            "nodeType": "RevertStatement"
+          }
+        },
+        {
+          "expression": {
+            "arguments": [
+              {
+                "translated-slot": "W_DOMAIN"
+              },
+              {
+                "translated-slot": "W_COUNT"
+              },
+              {
+                "name": "s",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "target",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "template",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "accOffset",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "elemOffsets",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "init",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "exit",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "_fold",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "Return"
+        }
+      ]
+    },
+    "functionSelector": "6de60cb0",
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "foldWords",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "s",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "target",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "address",
+            "nodeType": "ElementaryTypeName",
+            "stateMutability": "nonpayable"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "template",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "accOffset",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "elemOffsets",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "baseType": {
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName"
+            },
+            "nodeType": "ArrayTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "init",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "bytes32",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "exit",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "nodeType": "UserDefinedTypeName",
+            "pathNode": {
+              "name": "FoldExit",
+              "nodeType": "IdentifierPath"
+            }
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "bytes32",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "view",
+    "virtual": false,
+    "visibility": "external"
+  },
+  "_fold": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "expression": {
+            "arguments": [
+              {
+                "name": "template",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "accOffset",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "elemOffsets",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "_checkWindows",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "condition": {
+            "translated-slot": "EMPTY"
+          },
+          "nodeType": "IfStatement",
+          "trueBody": {
+            "expression": {
+              "name": "init",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "Return"
+          }
+        },
+        {
+          "expression": {
+            "arguments": [
+              {
+                "name": "target",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "_checkTarget",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "run",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "memory",
+              "typeName": {
+                "nodeType": "UserDefinedTypeName",
+                "pathNode": {
+                  "name": "FoldRun",
+                  "nodeType": "IdentifierPath"
+                }
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "arguments": [
+              {
+                "name": "domain",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "count",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "target",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "accOffset",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "init",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "exit",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "FoldRun",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "structConstructorCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "expression": {
+            "arguments": [
+              {
+                "name": "run",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "s",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "template",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              },
+              {
+                "name": "elemOffsets",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": []
+              }
+            ],
+            "expression": {
+              "name": "_foldLoop",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "kind": "functionCall",
+            "names": [],
+            "nodeType": "FunctionCall",
+            "tryCall": false
+          },
+          "nodeType": "Return"
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "_fold",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "domain",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "nodeType": "UserDefinedTypeName",
+            "pathNode": {
+              "name": "FoldDomain",
+              "nodeType": "IdentifierPath"
+            }
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "count",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "s",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "target",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "address",
+            "nodeType": "ElementaryTypeName",
+            "stateMutability": "nonpayable"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "template",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "accOffset",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "elemOffsets",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "baseType": {
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName"
+            },
+            "nodeType": "ArrayTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "init",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "bytes32",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "exit",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "nodeType": "UserDefinedTypeName",
+            "pathNode": {
+              "name": "FoldExit",
+              "nodeType": "IdentifierPath"
+            }
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "bytes32",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "view",
+    "virtual": false,
+    "visibility": "private"
+  },
+  "UnalignedWords": {
+    "errorSelector": "a949d285",
+    "name": "UnalignedWords",
+    "nodeType": "ErrorDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "length",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    }
+  }
+}

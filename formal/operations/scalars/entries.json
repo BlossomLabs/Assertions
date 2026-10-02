@@ -1,0 +1,266 @@
+[
+  {
+    "signature": "add(uint256,uint256)",
+    "selector": "771602f7",
+    "symbol": "addU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "add(int256,int256)",
+    "selector": "a5f3c23b",
+    "symbol": "addS",
+    "signed": true,
+    "domain": "M.Signed(a) && M.Signed(b)",
+    "boolean": false
+  },
+  {
+    "signature": "sub(uint256,uint256)",
+    "selector": "b67d77c5",
+    "symbol": "subU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "sub(int256,int256)",
+    "selector": "adefc37b",
+    "symbol": "subS",
+    "signed": true,
+    "domain": "M.Signed(a) && M.Signed(b)",
+    "boolean": false
+  },
+  {
+    "signature": "mul(uint256,uint256)",
+    "selector": "c8a4ac9c",
+    "symbol": "mulU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "mul(int256,int256)",
+    "selector": "bbe93d91",
+    "symbol": "mulS",
+    "signed": true,
+    "domain": "M.Signed(a) && M.Signed(b)",
+    "boolean": false
+  },
+  {
+    "signature": "div(uint256,uint256)",
+    "selector": "a391c15b",
+    "symbol": "divU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "div(int256,int256)",
+    "selector": "43509138",
+    "symbol": "divS",
+    "signed": true,
+    "domain": "M.Signed(a) && M.Signed(b)",
+    "boolean": false
+  },
+  {
+    "signature": "mod(uint256,uint256)",
+    "selector": "f43f523a",
+    "symbol": "modU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "mod(int256,int256)",
+    "selector": "24e28928",
+    "symbol": "modS",
+    "signed": true,
+    "domain": "M.Signed(a) && M.Signed(b)",
+    "boolean": false
+  },
+  {
+    "signature": "min(uint256,uint256)",
+    "selector": "7ae2b5c7",
+    "symbol": "minU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "min(int256,int256)",
+    "selector": "29aa9cbe",
+    "symbol": "minS",
+    "signed": true,
+    "domain": "M.Signed(a) && M.Signed(b)",
+    "boolean": false
+  },
+  {
+    "signature": "max(uint256,uint256)",
+    "selector": "6d5433e6",
+    "symbol": "maxU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "max(int256,int256)",
+    "selector": "81fe5786",
+    "symbol": "maxS",
+    "signed": true,
+    "domain": "M.Signed(a) && M.Signed(b)",
+    "boolean": false
+  },
+  {
+    "signature": "absDiff(uint256,uint256)",
+    "selector": "a09ae0aa",
+    "symbol": "absDiffU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "absDiff(int256,int256)",
+    "selector": "1e4812c8",
+    "symbol": "absDiffS",
+    "signed": true,
+    "domain": "M.Signed(a) && M.Signed(b)",
+    "boolean": false
+  },
+  {
+    "signature": "eq(uint256,uint256)",
+    "selector": "32148d73",
+    "symbol": "eqU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": true
+  },
+  {
+    "signature": "ne(uint256,uint256)",
+    "selector": "33151e4c",
+    "symbol": "neU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": true
+  },
+  {
+    "signature": "lt(uint256,uint256)",
+    "selector": "118fc88c",
+    "symbol": "ltU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": true
+  },
+  {
+    "signature": "lt(int256,int256)",
+    "selector": "30880038",
+    "symbol": "ltS",
+    "signed": true,
+    "domain": "M.Signed(a) && M.Signed(b)",
+    "boolean": true
+  },
+  {
+    "signature": "gt(uint256,uint256)",
+    "selector": "21e5749b",
+    "symbol": "gtU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": true
+  },
+  {
+    "signature": "gt(int256,int256)",
+    "selector": "ac08973d",
+    "symbol": "gtS",
+    "signed": true,
+    "domain": "M.Signed(a) && M.Signed(b)",
+    "boolean": true
+  },
+  {
+    "signature": "le(uint256,uint256)",
+    "selector": "d3662cfd",
+    "symbol": "leU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": true
+  },
+  {
+    "signature": "le(int256,int256)",
+    "selector": "00136bb8",
+    "symbol": "leS",
+    "signed": true,
+    "domain": "M.Signed(a) && M.Signed(b)",
+    "boolean": true
+  },
+  {
+    "signature": "ge(uint256,uint256)",
+    "selector": "85e1f66c",
+    "symbol": "geU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": true
+  },
+  {
+    "signature": "ge(int256,int256)",
+    "selector": "6552f187",
+    "symbol": "geS",
+    "signed": true,
+    "domain": "M.Signed(a) && M.Signed(b)",
+    "boolean": true
+  },
+  {
+    "signature": "bitAnd(uint256,uint256)",
+    "selector": "7598b508",
+    "symbol": "bitAndU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "bitOr(uint256,uint256)",
+    "selector": "b0229c96",
+    "symbol": "bitOrU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "bitXor(uint256,uint256)",
+    "selector": "496e22b8",
+    "symbol": "bitXorU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "shl(uint256,uint256)",
+    "selector": "9da760ef",
+    "symbol": "shlU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "shr(uint256,uint256)",
+    "selector": "75f4479a",
+    "symbol": "shrU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "shr(int256,uint256)",
+    "selector": "1b7d7318",
+    "symbol": "shrS",
+    "signed": true,
+    "domain": "M.Signed(a) && M.Word(b)",
+    "boolean": false
+  },
+  {
+    "signature": "bitSet(uint256,uint256)",
+    "selector": "b280615c",
+    "symbol": "bitSetU",
+    "signed": false,
+    "domain": "M.Word(a) && M.Word(b)",
+    "boolean": true
+  }
+]

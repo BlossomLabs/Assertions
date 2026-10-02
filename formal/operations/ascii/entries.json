@@ -1,0 +1,17 @@
+[
+  {
+    "signature": "toLower(bytes)",
+    "selector": "c1459c04",
+    "symbol": "toLower"
+  },
+  {
+    "signature": "toUpper(bytes)",
+    "selector": "feec0cff",
+    "symbol": "toUpper"
+  },
+  {
+    "signature": "charset(bytes,uint256)",
+    "selector": "3e8c97e3",
+    "symbol": "charset"
+  }
+]

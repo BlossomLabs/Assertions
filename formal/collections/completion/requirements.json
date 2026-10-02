@@ -1,0 +1,322 @@
+[
+  {
+    "requirement": "Complete raw word fold admission and public Full/Any/All composition",
+    "sourceFunctions": [
+      "foldRange",
+      "foldBytes",
+      "foldWords",
+      "_fold"
+    ],
+    "evidence": "formal/collections/word-fold-entry/evidence/public-word-folds/manifest.json",
+    "ledger": "docs/verification/collections-word-fold-entry-source-connection.json",
+    "theorems": [
+      "CollectionsWordFoldEntryConnection.Run",
+      "CollectionsWordFoldEntrySource.Run"
+    ],
+    "checker": "scripts/check-collections-word-fold-entry-evidence.py"
+  },
+  {
+    "requirement": "Complete raw word map/filter admission, physical frames, actual helper/callback receipts and output/header composition",
+    "sourceFunctions": [
+      "mapWords",
+      "filterWords",
+      "_applyWords"
+    ],
+    "evidence": "formal/collections/word-apply/evidence/public-word-map-filter-v2/manifest.json",
+    "ledger": "docs/verification/collections-word-apply-source-connection.json",
+    "theorems": [
+      "CollectionsWordApplyConnection.Run",
+      "CollectionsWordApplyEngine.Run",
+      "CollectionsWordApplySource.Run"
+    ],
+    "checker": "scripts/check-collections-word-apply-evidence.py"
+  },
+  {
+    "requirement": "Least original index and exact checked full-width sum or arithmetic panic",
+    "sourceFunctions": [
+      "wordIndexOf",
+      "sumWords"
+    ],
+    "evidence": "formal/collections/word-scans/evidence/least-index-checked-sum/manifest.json",
+    "ledger": "docs/verification/collections-word-scans-source-connection.json",
+    "theorems": [
+      "CollectionsWordScansConnection.Index",
+      "CollectionsWordScansConnection.SumWords"
+    ],
+    "checker": "scripts/check-collections-word-scans-evidence.py"
+  },
+  {
+    "requirement": "Complete physical word layouts, raw width/lane/slice checks and successful allocation projection",
+    "sourceFunctions": [
+      "iotaWords",
+      "reverseWords",
+      "zipWords",
+      "unzipWords"
+    ],
+    "evidence": "formal/collections/word-layout/evidence/physical-word-layouts/manifest.json",
+    "ledger": "docs/verification/collections-word-layout-source-connection.json",
+    "theorems": [
+      "CollectionsWordLayoutConnection.Run",
+      "CollectionsWordLayoutSource.IotaWords",
+      "CollectionsWordLayoutSource.ReverseWords",
+      "CollectionsWordLayoutSource.ZipWords",
+      "CollectionsWordLayoutSource.UnzipWords"
+    ],
+    "checker": "scripts/check-collections-word-layout-evidence.py"
+  },
+  {
+    "requirement": "Physical unsigned word sorting, stable occurrence permutation, sortedness and loop counters",
+    "sourceFunctions": [
+      "sortWords"
+    ],
+    "evidence": "formal/collections/word-sort/evidence/unsigned-word-source/manifest.json",
+    "ledger": "docs/verification/collections-word-sort-source-connection.json",
+    "theorems": [
+      "CollectionsWordSortConnection.Run",
+      "CollectionsWordSortSource.SortWords"
+    ],
+    "checker": "scripts/check-collections-word-sort-evidence.py"
+  },
+  {
+    "requirement": "Stable physical original word selection, unordered uniqueness, ordered run starts and conditional grouped agreement",
+    "sourceFunctions": [
+      "uniqueWords"
+    ],
+    "evidence": "formal/collections/word-unique/evidence/stable-first-word-source/manifest.json",
+    "ledger": "docs/verification/collections-word-unique-source-connection.json",
+    "theorems": [
+      "CollectionsWordUniqueConnection.Run",
+      "CollectionsWordUniqueModel.NoDuplicates",
+      "CollectionsWordUniqueModel.GroupedEquivalent"
+    ],
+    "checker": "scripts/check-collections-word-unique-evidence.py"
+  },
+  {
+    "requirement": "Raw canonical array codec, exact errors and both public source inverse directions",
+    "sourceFunctions": [
+      "packArray",
+      "unpackArray"
+    ],
+    "evidence": "formal/collections/value-codec/evidence/public-array-codec/manifest.json",
+    "ledger": "docs/verification/collections-value-codec-source-connection.json",
+    "theorems": [
+      "CollectionsValueCodecConnection.Pack",
+      "CollectionsValueCodecConnection.Unpack",
+      "CollectionsValueCodecConnection.UnpackPack",
+      "CollectionsValueCodecConnection.PackUnpack"
+    ],
+    "checker": "scripts/check-collections-value-codec-evidence.py"
+  },
+  {
+    "requirement": "Raw map/filter/fold preparation, actual canonical validation, binding/callback/results, stable outputs and accumulator history",
+    "sourceFunctions": [
+      "mapValues",
+      "filterValues",
+      "foldValues"
+    ],
+    "evidence": "formal/collections/value-entry/evidence/public-value-traversals-v2/manifest.json",
+    "ledger": "docs/verification/collections-value-entry-source-connection.json",
+    "theorems": [
+      "CollectionsValueEntryAdmission.Run",
+      "CollectionsValueEntryConnection.Run"
+    ],
+    "checker": "scripts/check-collections-value-entry-evidence.py"
+  },
+  {
+    "requirement": "Raw sort preparation and all-input validation, actual history-sensitive merge comparator source and conditional coherent sorting/stability",
+    "sourceFunctions": [
+      "sortValues"
+    ],
+    "evidence": "formal/collections/value-sort-entry/evidence/public-value-sort/manifest.json",
+    "ledger": "docs/verification/collections-value-sort-entry-source-connection.json",
+    "theorems": [
+      "CollectionsValueSortEntryConnection.Run"
+    ],
+    "checker": "scripts/check-collections-value-sort-entry-evidence.py"
+  },
+  {
+    "requirement": "Raw uniqueness, exact arbitrary-history greedy algorithm, stable original values and conditional coherent/grouped key-class selection",
+    "sourceFunctions": [
+      "uniqueValues"
+    ],
+    "evidence": "formal/collections/value-unique/evidence/public-greedy-uniqueness/manifest.json",
+    "ledger": "docs/verification/collections-value-unique-source-connection.json",
+    "theorems": [
+      "CollectionsValueUniqueConnection.Run",
+      "CollectionsValueUniqueClasses.Run",
+      "CollectionsValueUniqueSource.Run"
+    ],
+    "checker": "scripts/check-collections-value-unique-evidence.py"
+  },
+  {
+    "requirement": "Pure structural value order, signed slice boundaries, selected validation and checked flatten counts",
+    "sourceFunctions": [
+      "reverseValues",
+      "sliceValues",
+      "flattenValues",
+      "_sliceIndex"
+    ],
+    "evidence": "formal/collections/value-structure/evidence/pure-value-positions/manifest.json",
+    "ledger": "docs/verification/collections-value-structure-source-connection.json",
+    "theorems": [
+      "CollectionsValueStructureConnection.Run",
+      "CollectionsValueStructureSource.SliceIndex"
+    ],
+    "checker": "scripts/check-collections-value-structure-evidence.py"
+  },
+  {
+    "requirement": "Raw first-decisive searches, strict callback receipts, exact reached trace and max sentinel/boolean wrappers",
+    "sourceFunctions": [
+      "indexOfValues",
+      "anyValues",
+      "allValues",
+      "findValues",
+      "_findValue"
+    ],
+    "evidence": "formal/collections/value-search/evidence/public-predicate-searches/manifest.json",
+    "ledger": "docs/verification/collections-value-search-source-connection.json",
+    "theorems": [
+      "CollectionsValueSearchConnection.Run",
+      "CollectionsValueSearchEntry.Run",
+      "CollectionsValueSearchSource.Run"
+    ],
+    "checker": "scripts/check-collections-value-search-evidence.py"
+  },
+  {
+    "requirement": "Raw value pairing, both-side validation, exact independent framing, original selected lane and both public source inverse directions",
+    "sourceFunctions": [
+      "zipValues",
+      "unzipValues",
+      "_zipPlan",
+      "_unzipPair"
+    ],
+    "evidence": "formal/collections/value-pairs/evidence/public-canonical-pairs-v3/manifest.json",
+    "ledger": "docs/verification/collections-value-pairs-source-connection.json",
+    "theorems": [
+      "CollectionsValuePairsConnection.Run",
+      "CollectionsValuePairsSource.Pair",
+      "CollectionsValuePairsInverses.UnzipZip",
+      "CollectionsValuePairsInverses.ZipUnzip"
+    ],
+    "checker": "scripts/check-collections-value-pairs-evidence.py"
+  },
+  {
+    "requirement": "Actual word load/store with bounded modular addresses, exact bytes and disjoint frame preservation",
+    "sourceFunctions": [
+      "_wordAt",
+      "_setWord"
+    ],
+    "evidence": "formal/collections/word-memory/evidence/actual-word-helpers-v2/manifest.json",
+    "ledger": "docs/verification/collections-word-memory-source-connection.json",
+    "theorems": [
+      "CollectionsWordMemoryConnection.Read",
+      "CollectionsWordMemoryConnection.Write",
+      "CollectionsWordMemorySource.WordAt",
+      "CollectionsWordMemorySource.SetWord"
+    ],
+    "checker": "scripts/check-collections-word-memory-evidence.py"
+  },
+  {
+    "requirement": "Ordered raw window checks and arbitrary overlapping/unaligned stamping with last-write semantics",
+    "sourceFunctions": [
+      "_checkWindows",
+      "_checkElementWindows",
+      "_stampWindows",
+      "_stampElements"
+    ],
+    "evidence": "formal/collections/word-windows/evidence/ordered-template-writes/manifest.json",
+    "ledger": "docs/verification/collections-word-windows-source-connection.json",
+    "theorems": [
+      "CollectionsWordWindowsConnection.Run",
+      "CollectionsWordWindowsSource.CheckWindows",
+      "CollectionsWordWindowsSource.CheckElements",
+      "CollectionsWordWindowsSource.StampWindows",
+      "CollectionsWordWindowsSource.StampElements"
+    ],
+    "checker": "scripts/check-collections-word-windows-evidence.py"
+  },
+  {
+    "requirement": "Word domain elements, truthful target checks and exact callback outcomes/errors under external-observation premises",
+    "sourceFunctions": [
+      "_domainElem",
+      "_checkTarget",
+      "_callWord"
+    ],
+    "evidence": "formal/collections/word-call/evidence/domain-and-call-source-v2/manifest.json",
+    "ledger": "docs/verification/collections-word-call-source-connection.json",
+    "theorems": [
+      "CollectionsWordCallConnection.Run",
+      "CollectionsWordCallSource.DomainElement",
+      "CollectionsWordCallSource.CheckTarget",
+      "CollectionsWordCallSource.CallWord"
+    ],
+    "checker": "scripts/check-collections-word-call-evidence.py"
+  },
+  {
+    "requirement": "Actual persistent-memory finite word fold loop and output/error suffix",
+    "sourceFunctions": [
+      "_foldLoop"
+    ],
+    "evidence": "formal/collections/word-fold-loop/evidence/feedback-and-first-exit/manifest.json",
+    "ledger": "docs/verification/collections-word-fold-loop-source-connection.json",
+    "theorems": [
+      "CollectionsWordFoldLoopConnection.Run"
+    ],
+    "checker": "scripts/check-collections-word-fold-loop-evidence.py"
+  },
+  {
+    "requirement": "Source preparation and binding controls; actual codec instantiation is certified by complete public callers",
+    "sourceFunctions": [
+      "_prepareCallback",
+      "_bindValue"
+    ],
+    "evidence": "formal/collections/preparation/evidence/preparation-and-binding/manifest.json",
+    "ledger": "docs/verification/collections-preparation-source-connection.json",
+    "theorems": [
+      "CollectionsPreparationSource.PrepareCallback",
+      "CollectionsPreparationSource.BindValue"
+    ],
+    "checker": "scripts/check-collections-preparation-evidence.py"
+  },
+  {
+    "requirement": "Actual prepared callback construction, persistent lazy target flag, static external observations and helper first-failure order",
+    "sourceFunctions": [
+      "_callValue"
+    ],
+    "evidence": "formal/collections/calls/evidence/callback-invocation-v2/manifest.json",
+    "ledger": "docs/verification/collections-calls-source-connection.json",
+    "theorems": [
+      "CollectionsCallsSource.CallValue",
+      "CollectionsCallsConnection.Run"
+    ],
+    "checker": "scripts/check-collections-calls-evidence.py"
+  },
+  {
+    "requirement": "Strict boolean result and conservative source exhaustion/reserved-marker classification; physical exhaustion diagnosis is not claimed",
+    "sourceFunctions": [
+      "_predicate",
+      "_rejectOutOfGas"
+    ],
+    "evidence": "formal/collections/callback-results/evidence/predicate-and-exhaustion/manifest.json",
+    "ledger": "docs/verification/collections-callback-results-source-connection.json",
+    "theorems": [
+      "CollectionsCallbackResultsSource.Predicate",
+      "CollectionsCallbackResultsSource.RejectOutOfGas",
+      "CollectionsCallbackResultsConnection.Exhaustion"
+    ],
+    "checker": "scripts/check-collections-callback-results-evidence.py"
+  },
+  {
+    "requirement": "Actual source callback-result validation and exact compiler-bound result-context errors",
+    "sourceFunctions": [
+      "_validateResult"
+    ],
+    "evidence": "formal/collections/validation/evidence/validation-receipts/manifest.json",
+    "ledger": "docs/verification/collections-validation-source-connection.json",
+    "theorems": [
+      "CollectionsValidationSource.Result",
+      "CollectionsValidationConnection.Result"
+    ],
+    "checker": "scripts/check-collections-validation-evidence.py"
+  }
+]

@@ -1,0 +1,142 @@
+{
+  "entries": [
+    {
+      "signature": "powMod(uint256,uint256,uint256)",
+      "selector": "44852766",
+      "symbol": "UU"
+    },
+    {
+      "signature": "powMod(int256,uint256,int256)",
+      "selector": "640c3e5a",
+      "symbol": "SU"
+    },
+    {
+      "signature": "powMod(uint256,int256,uint256)",
+      "selector": "dec28c5b",
+      "symbol": "US"
+    },
+    {
+      "signature": "powMod(int256,int256,int256)",
+      "selector": "08198add",
+      "symbol": "SS"
+    }
+  ],
+  "slots": {
+    "INITIAL_RESULT": "(1%modulus)",
+    "INITIAL_BASE": "(base%modulus)",
+    "THRESHOLD_GUARD": "(exponent >= 4294967296)",
+    "LOOP": "(exponent != 0)",
+    "SELECTED": "(I.And(exponent,1) != 0)",
+    "SELECTED_VALUE": "P.Multiply(result,base)%modulus",
+    "SHIFT": "(exponent/B.Power(1))",
+    "REMAINING": "(exponent != 0)",
+    "SQUARE_VALUE": "P.Multiply(base,base)%modulus",
+    "RETURN_VALUE": "result",
+    "REQUEST_STORES": "    var state1 := R.Store(memory,p,32);\n    var state2 := R.Store(state1,((p + 32) % B.Word),32);\n    var state3 := R.Store(state2,((p + 64) % B.Word),32);\n    var state4 := R.Store(state3,((p + 96) % B.Word),base);\n    var state5 := R.Store(state4,((p + 128) % B.Word),exponent);\n    var state6 := R.Store(state5,((p + 160) % B.Word),modulus);",
+    "CALL_TARGET": "5",
+    "CALL_INPUT_SIZE": "192",
+    "EXPECTED_RETURN_SIZE": "32",
+    "CALL_GUARD": "I.And(success,B.Bool(returnedSize == 32)) != 0",
+    "LOAD_RESULT_OFFSET": "p",
+    "INVERSE_ZERO": "(inverse == 0)",
+    "INVERSE_MISSING": "((1%modulus) != 0)",
+    "INVERSE_ERROR_ARGUMENTS": "base,modulus",
+    "UU_ARGUMENTS": "a,exponent,m",
+    "SU_NEGATIVE": "((a < 0) && (I.And(exponent,1) != 0))",
+    "US_NEGATIVE": "(exponent < 0)",
+    "US_INVERSE_ARGUMENTS": "a,m",
+    "SS_NEGATIVE": "(exponent < 0)",
+    "SS_INVERSE_ARGUMENTS": "base,modulus",
+    "SS_RESTORE_NEGATIVE": "((a < 0) && (I.And(((exponent)%B.Word),1) != 0))"
+  },
+  "helperBindings": [
+    {
+      "caller": "UU",
+      "callee": "_powMod",
+      "compilerDeclaration": 6845
+    },
+    {
+      "caller": "SU",
+      "callee": "_signedMagnitude",
+      "compilerDeclaration": 6766
+    },
+    {
+      "caller": "SU",
+      "callee": "_powMod",
+      "compilerDeclaration": 6845
+    },
+    {
+      "caller": "SU",
+      "callee": "_magnitude",
+      "compilerDeclaration": 6718
+    },
+    {
+      "caller": "SU",
+      "callee": "_magnitude",
+      "compilerDeclaration": 6718
+    },
+    {
+      "caller": "US",
+      "callee": "_powMod",
+      "compilerDeclaration": 6845
+    },
+    {
+      "caller": "US",
+      "callee": "_inverseMod",
+      "compilerDeclaration": 6879
+    },
+    {
+      "caller": "US",
+      "callee": "_magnitude",
+      "compilerDeclaration": 6718
+    },
+    {
+      "caller": "SS",
+      "callee": "_magnitude",
+      "compilerDeclaration": 6718
+    },
+    {
+      "caller": "SS",
+      "callee": "_magnitude",
+      "compilerDeclaration": 6718
+    },
+    {
+      "caller": "SS",
+      "callee": "_inverseMod",
+      "compilerDeclaration": 6879
+    },
+    {
+      "caller": "SS",
+      "callee": "_signedMagnitude",
+      "compilerDeclaration": 6766
+    },
+    {
+      "caller": "SS",
+      "callee": "_powMod",
+      "compilerDeclaration": 6845
+    },
+    {
+      "caller": "SS",
+      "callee": "_magnitude",
+      "compilerDeclaration": 6718
+    },
+    {
+      "caller": "_inverseMod",
+      "callee": "invMod",
+      "compilerDeclaration": 802
+    },
+    {
+      "caller": "_inverseMod",
+      "callee": "ModularInverseDoesNotExist",
+      "compilerDeclaration": 3537
+    }
+  ],
+  "callOrder": "Separate STATICCALL success declaration then fresh RETURNDATASIZE guard, complete AST gated.",
+  "sourceSha256": {
+    "contracts/Operations.sol": "9203dfb7d3213c599f3f5390725e5be3e83dbdcc14b267642a042e652fb325ce",
+    "contracts/lib/AbiCodec.sol": "485f0d49f35528cc4c9be7767c631be6903ff57b5cb95bcbb25d6cd04ce5fed6",
+    "node_modules/@openzeppelin/contracts/utils/math/Math.sol": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+    "node_modules/@openzeppelin/contracts/utils/math/SafeCast.sol": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+    "node_modules/@openzeppelin/contracts/utils/Panic.sol": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec"
+  }
+}

@@ -1,0 +1,11 @@
+# Operations.sqrt conditional source proof
+
+Scope: `sqrt(uint256)` at the decoded public source boundary. Coverage is open until the retained verifier and independent checker pass.
+
+`generate.py` compiles the pinned full sources with Solidity 0.8.36, Cancun and optimizer runs 200. It gates the complete Operations.sqrt wrapper, the reached single-argument OpenZeppelin Math.sqrt body, and SafeCast.toUint(bool), including compiler-bound selectors. Controls come only from Control.template.dfy; never edit Control.generated.dfy directly.
+
+The independent specification constructs the unique natural root by a terminating binary search and states `r*r <= a < (r+1)*(r+1)`. Seed.dfy proves the source's conditional shifts produce `t*t <= a < 4*t*t`, with no uint256 wrap. Model.dfy and Convergence.dfy prove the actual six integer Newton updates finish within one above the root. Exact rational error bounds are mathematical real arithmetic, not floating-point computations. Generated block methods separately prove each of the seven actual source seed blocks and six actual Newton blocks, then compose the original unrolled path. The final comparison and actual double-ISZERO boolean conversion choose the unique floor root. The proof covers every uint256 input, without an iteration fuel or high-bit restriction. Included mathematical helper bodies are checked afresh.
+
+The correspondence remains conditional on trustworthy compiler AST/selector receipt, reviewed restricted AST lowering, decoded unsigned operands, faithful source control/defaults and uint256 primitive/return representation, sufficient resources, and the Dafny/Boogie/Z3 toolchain. It establishes no compiled-bytecode, gas, deployment, or performance result.
+
+Retained verification freezes the complete direct package and transitive proof/source/tool input graph before execution. The checker independently checks current inputs, snapshot and artifact hashes, all native declarations/results, zero audit findings, exact fixture inventory and source mutation receipts, and regeneration. Compiler-admissible Newton-addition and correction-comparison mutations must translate and fail an independent literal native oracle and real EVM fixtures. Parsing, resolution errors, timeouts and inconclusive results never count as semantic detection. Failed development and retained snapshots remain available.

@@ -1,0 +1,489 @@
+{
+  "_foldLoop": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "declarations": [
+            {
+              "constant": false,
+              "mutability": "mutable",
+              "name": "callData",
+              "nodeType": "VariableDeclaration",
+              "stateVariable": false,
+              "storageLocation": "memory",
+              "typeName": {
+                "name": "bytes",
+                "nodeType": "ElementaryTypeName"
+              },
+              "visibility": "internal"
+            }
+          ],
+          "initialValue": {
+            "name": "template",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": []
+          },
+          "nodeType": "VariableDeclarationStatement"
+        },
+        {
+          "body": {
+            "nodeType": "Block",
+            "statements": [
+              {
+                "nodeType": "Block",
+                "statements": [
+                  {
+                    "declarations": [
+                      {
+                        "constant": false,
+                        "mutability": "mutable",
+                        "name": "elem",
+                        "nodeType": "VariableDeclaration",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeName": {
+                          "name": "bytes32",
+                          "nodeType": "ElementaryTypeName"
+                        },
+                        "visibility": "internal"
+                      }
+                    ],
+                    "initialValue": {
+                      "arguments": [
+                        {
+                          "expression": {
+                            "name": "run",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "memberName": "domain",
+                          "nodeType": "MemberAccess"
+                        },
+                        {
+                          "name": "i",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        {
+                          "name": "s",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        }
+                      ],
+                      "expression": {
+                        "name": "_domainElem",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "kind": "functionCall",
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "tryCall": false
+                    },
+                    "nodeType": "VariableDeclarationStatement"
+                  },
+                  {
+                    "expression": {
+                      "arguments": [
+                        {
+                          "name": "callData",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        {
+                          "expression": {
+                            "name": "run",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "memberName": "accOffset",
+                          "nodeType": "MemberAccess"
+                        },
+                        {
+                          "expression": {
+                            "name": "run",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": []
+                          },
+                          "memberName": "acc",
+                          "nodeType": "MemberAccess"
+                        },
+                        {
+                          "name": "elemOffsets",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        },
+                        {
+                          "name": "elem",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": []
+                        }
+                      ],
+                      "expression": {
+                        "name": "_stampWindows",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "kind": "functionCall",
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "tryCall": false
+                    },
+                    "nodeType": "ExpressionStatement"
+                  }
+                ]
+              },
+              {
+                "declarations": [
+                  {
+                    "constant": false,
+                    "mutability": "mutable",
+                    "name": "next",
+                    "nodeType": "VariableDeclaration",
+                    "stateVariable": false,
+                    "storageLocation": "default",
+                    "typeName": {
+                      "name": "bytes32",
+                      "nodeType": "ElementaryTypeName"
+                    },
+                    "visibility": "internal"
+                  }
+                ],
+                "initialValue": {
+                  "arguments": [
+                    {
+                      "expression": {
+                        "name": "run",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      },
+                      "memberName": "target",
+                      "nodeType": "MemberAccess"
+                    },
+                    {
+                      "name": "callData",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    {
+                      "name": "i",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    }
+                  ],
+                  "expression": {
+                    "name": "_callWord",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "kind": "functionCall",
+                  "names": [],
+                  "nodeType": "FunctionCall",
+                  "tryCall": false
+                },
+                "nodeType": "VariableDeclarationStatement"
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "expression": {
+                      "name": "run",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "memberName": "acc",
+                    "nodeType": "MemberAccess"
+                  },
+                  "nodeType": "Assignment",
+                  "operator": "=",
+                  "rightHandSide": {
+                    "translated-slot": "FEEDBACK"
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "condition": {
+                  "translated-slot": "ANY"
+                },
+                "nodeType": "IfStatement",
+                "trueBody": {
+                  "nodeType": "Break"
+                }
+              },
+              {
+                "condition": {
+                  "translated-slot": "ALL"
+                },
+                "nodeType": "IfStatement",
+                "trueBody": {
+                  "nodeType": "Break"
+                }
+              },
+              {
+                "nodeType": "UncheckedBlock",
+                "statements": [
+                  {
+                    "expression": {
+                      "nodeType": "UnaryOperation",
+                      "operator": "++",
+                      "prefix": false,
+                      "subExpression": {
+                        "name": "i",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": []
+                      }
+                    },
+                    "nodeType": "ExpressionStatement"
+                  }
+                ]
+              }
+            ]
+          },
+          "condition": {
+            "translated-slot": "LOOP"
+          },
+          "initializationExpression": {
+            "declarations": [
+              {
+                "constant": false,
+                "mutability": "mutable",
+                "name": "i",
+                "nodeType": "VariableDeclaration",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeName": {
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName"
+                },
+                "visibility": "internal"
+              }
+            ],
+            "initialValue": {
+              "hexValue": "30",
+              "kind": "number",
+              "nodeType": "Literal",
+              "value": "0"
+            },
+            "nodeType": "VariableDeclarationStatement"
+          },
+          "nodeType": "ForStatement"
+        },
+        {
+          "expression": {
+            "expression": {
+              "name": "run",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "memberName": "acc",
+            "nodeType": "MemberAccess"
+          },
+          "nodeType": "Return"
+        }
+      ]
+    },
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "_foldLoop",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "run",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "memory",
+          "typeName": {
+            "nodeType": "UserDefinedTypeName",
+            "pathNode": {
+              "name": "FoldRun",
+              "nodeType": "IdentifierPath"
+            }
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "s",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "template",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "name": "bytes",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "elemOffsets",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "calldata",
+          "typeName": {
+            "baseType": {
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName"
+            },
+            "nodeType": "ArrayTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "bytes32",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "view",
+    "virtual": false,
+    "visibility": "private"
+  },
+  "FoldExit": {
+    "canonicalName": "Collections.FoldExit",
+    "members": [
+      {
+        "name": "Full",
+        "nodeType": "EnumValue"
+      },
+      {
+        "name": "Any",
+        "nodeType": "EnumValue"
+      },
+      {
+        "name": "All",
+        "nodeType": "EnumValue"
+      }
+    ],
+    "name": "FoldExit",
+    "nodeType": "EnumDefinition"
+  },
+  "FoldRun": {
+    "canonicalName": "Collections.FoldRun",
+    "members": [
+      {
+        "constant": false,
+        "mutability": "mutable",
+        "name": "domain",
+        "nodeType": "VariableDeclaration",
+        "stateVariable": false,
+        "storageLocation": "default",
+        "typeName": {
+          "nodeType": "UserDefinedTypeName",
+          "pathNode": {
+            "name": "FoldDomain",
+            "nodeType": "IdentifierPath"
+          }
+        },
+        "visibility": "internal"
+      },
+      {
+        "constant": false,
+        "mutability": "mutable",
+        "name": "count",
+        "nodeType": "VariableDeclaration",
+        "stateVariable": false,
+        "storageLocation": "default",
+        "typeName": {
+          "name": "uint256",
+          "nodeType": "ElementaryTypeName"
+        },
+        "visibility": "internal"
+      },
+      {
+        "constant": false,
+        "mutability": "mutable",
+        "name": "target",
+        "nodeType": "VariableDeclaration",
+        "stateVariable": false,
+        "storageLocation": "default",
+        "typeName": {
+          "name": "address",
+          "nodeType": "ElementaryTypeName",
+          "stateMutability": "nonpayable"
+        },
+        "visibility": "internal"
+      },
+      {
+        "constant": false,
+        "mutability": "mutable",
+        "name": "accOffset",
+        "nodeType": "VariableDeclaration",
+        "stateVariable": false,
+        "storageLocation": "default",
+        "typeName": {
+          "name": "uint256",
+          "nodeType": "ElementaryTypeName"
+        },
+        "visibility": "internal"
+      },
+      {
+        "constant": false,
+        "mutability": "mutable",
+        "name": "acc",
+        "nodeType": "VariableDeclaration",
+        "stateVariable": false,
+        "storageLocation": "default",
+        "typeName": {
+          "name": "bytes32",
+          "nodeType": "ElementaryTypeName"
+        },
+        "visibility": "internal"
+      },
+      {
+        "constant": false,
+        "mutability": "mutable",
+        "name": "exit",
+        "nodeType": "VariableDeclaration",
+        "stateVariable": false,
+        "storageLocation": "default",
+        "typeName": {
+          "nodeType": "UserDefinedTypeName",
+          "pathNode": {
+            "name": "FoldExit",
+            "nodeType": "IdentifierPath"
+          }
+        },
+        "visibility": "internal"
+      }
+    ],
+    "name": "FoldRun",
+    "nodeType": "StructDefinition",
+    "visibility": "public"
+  }
+}

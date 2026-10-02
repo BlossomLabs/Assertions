@@ -1,0 +1,14 @@
+{
+  "check_fixedArrayCanonical": {"type": "uint8[2][]", "countCases": [0, 1, "uint256.max"], "bodyWords": 2, "symbolic": "both complete 256-bit words", "obligation": "canonical verdict and exact successful elements"},
+  "check_tupleCanonical": {"type": "(uint8[2],string)[]", "outerCount": 1, "geometryCases": [0, 1, 2, 3, 4], "stringLengths": [2, 33], "stringOffsets": [64, 96, 128], "symbolic": "two scalar words and one payload word, all 256 bits", "obligation": "canonical verdict including loose offsets, dirty padding, truncation and trailing data"},
+  "check_stringsCanonical": {"type": "string[]", "count": 2, "payloadLength": 2, "geometryCases": [0, 1, 2, 3], "elementOffsets": [64, 128, 160], "symbolic": "both complete payload words", "obligation": "canonical verdict including loose/backward offsets, dirty padding and trailing data"},
+  "check_hostileCount": {"type": "uint8[]", "count": "all uint256 > 2", "bodyWords": 2, "obligation": "exact InvalidValue(64)"},
+  "check_nestedHostileCount": {"type": "uint8[][]", "outerCount": 1, "innerCount": "all uint256 > 2", "innerBodyWords": 2, "obligation": "exact InvalidValue(128)"},
+  "check_tupleHeadTruncated": {"type": "(uint8[2],string)[]", "outerCount": 1, "tupleBodyWords": 1, "symbolic": "the complete available 256-bit word", "obligation": "exact InvalidValue(96) before any child validation"},
+  "check_tupleValues": {"type": "(uint8,bytes)[]", "outerCount": 2, "payloadLength": 2, "symbolic": "both uint8 tags and both bytes2 payloads", "obligation": "success and exact independently encoded element values"},
+  "check_nestedArrays": {"type": "uint8[][]", "outerCount": 2, "innerCounts": [0, 2], "symbolic": "both uint8 elements", "obligation": "success and exact elements including the empty inner array"},
+  "check_dynamicFixedArray": {"type": "bytes[2][]", "outerCount": 1, "fixedCount": 2, "payloadLength": 2, "symbolic": "both bytes2 payloads", "obligation": "success and exact dynamically rewrapped element"},
+  "check_dynamicFixedOffsets": {"type": "bytes[2][]", "outerCount": 1, "fixedCount": 2, "payloadLength": 2, "secondOffsetCases": [64, 128], "symbolic": "both complete 256-bit payload words", "obligation": "canonical verdict including backward offset and dirty padding"},
+  "check_emptyArrays": {"elementTypes": ["uint8[2]", "(uint8,bytes)", "bytes[2]"], "count": 0, "obligation": "success with exact empty bytes[] return"},
+  "check_envelopeAndTrailing": {"type": "uint8[]", "count": 1, "symbolic": "one uint8 value and the bool selecting either malformed case", "obligation": "exact InvalidValue(0) for envelope 64 or InvalidValue(96) for one trailing byte"}
+}

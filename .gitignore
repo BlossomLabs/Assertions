@@ -24,3 +24,23 @@
 
 # Astro generated types (when astro runs from the repo root)
 /.astro
+
+# Foundry output
+/out
+/cache_forge
+
+# Formal verification output (regenerated locally; not retained in Git)
+/TestResults/
+/formal/**/evidence/
+/formal/**/development/
+/formal/**/source-snapshot/
+/formal/**/__pycache__/
+/formal/**/*.pyc
+/formal/**/*.csv
+/formal/**/*.log
+/formal/**/solc-input.json
+/formal/**/solc-output.json*
+/formal/**/preflight.json
+/formal/**/physical-preflight.json
+# Local retained-evidence ledgers; tracked historical records remain tracked.
+/docs/verification/

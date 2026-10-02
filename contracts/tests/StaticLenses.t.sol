@@ -4,6 +4,7 @@ pragma solidity ^0.8.28;
 import "forge-std/Test.sol";
 import "../Assertions.sol";
 import "../lib/ERC8211.sol";
+import "../lib/AbiCodec.sol";
 
 contract StaticLensesTest is Test {
     Assertions assertions;
@@ -136,5 +137,87 @@ contract StaticLensesTest is Test {
             ),
             abi.encode(record)
         );
+    }
+
+    // ============ Canonical words in returned values ============
+
+    /** @dev Byte offset of the first word equal to `sentinel` at or after `from` */
+    function _find(bytes memory data, uint256 sentinel, uint256 from) internal pure returns (uint256 p) {
+        for (p = from; p + 32 <= data.length; p += 32) {
+            uint256 w;
+            assembly { w := mload(add(add(data, 32), p)) }
+            if (w == sentinel) return p;
+        }
+        revert("sentinel not found");
+    }
+
+    function _expectInvalidValue(bytes memory data, string memory types, int256[] memory path, uint256 sentinel, uint256 from)
+        internal
+    {
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, _find(data, sentinel, from)));
+        assertions.nav(_raw(data), types, path);
+    }
+
+    function test_nav_rejectsOutOfRangeStaticTerminals() public {
+        // A word terminal.
+        bytes memory data = abi.encode(uint256(7), uint256(0x1234));
+        _expectInvalidValue(data, "(uint256,uint8)", _path(1), 0x1234, 32);
+        // A word inside a static tuple terminal.
+        data = abi.encode(uint256(7), uint256(2), uint256(0xBEEF));
+        _expectInvalidValue(data, "(uint256,(bool,address))", _path(1), 2, 32);
+        // A word inside a fixed array terminal: 0x80 is no sign-extended int8.
+        data = abi.encode(type(uint256).max, uint256(0x80));
+        _expectInvalidValue(data, "(int8[2])", _path(0), 0x80, 0);
+        // An element reached by indexing.
+        data = abi.encode(uint256(1), uint256(1) << 160);
+        _expectInvalidValue(data, "(address[2])", _path(0, 1), uint256(1) << 160, 0);
+    }
+
+    function test_nav_rejectsOutOfRangeElementsOfDynamicArrays() public {
+        uint256[] memory words = new uint256[](3);
+        words[0] = 1;
+        words[1] = 2;
+        words[2] = 0x100;
+        bytes memory data = abi.encode(words);
+        _expectInvalidValue(data, "(uint8[])", _path(0), 0x100, 64);
+    }
+
+    function test_nav_acceptsInRangeBoundaryWords() public view {
+        bytes memory data = abi.encode(int8(-128), bytes1(0xff), type(uint160).max, true);
+        assertEq(_nav(_raw(data), "(int8,bytes1,address,bool)", _path(0)), abi.encode(int8(-128)));
+        assertEq(_nav(_raw(data), "(int8,bytes1,address,bool)", _path(1)), abi.encode(bytes1(0xff)));
+        assertEq(_nav(_raw(data), "(int8,bytes1,address,bool)", _path(2)), abi.encode(type(uint160).max));
+        assertEq(_nav(_raw(data), "(int8,bytes1,address,bool)", _path(3)), abi.encode(true));
+        uint8[] memory small = new uint8[](2);
+        small[0] = 0;
+        small[1] = 255;
+        assertEq(_nav(_raw(abi.encode(small)), "(uint8[])", _path(0)), abi.encode(small));
+    }
+
+    /**
+     * @dev nav validates what it returns, not the siblings it skips: a
+     *      dirty word next to the selection does not reach the consumer
+     */
+    function test_nav_checksOnlyTheReturnedValue() public view {
+        bytes memory data = abi.encode(uint256(0x1234), uint256(5));
+        assertEq(_nav(_raw(data), "(uint8,uint256)", _path(1)), abi.encode(uint256(5)));
+    }
+
+    /**
+     * @dev A whole bytes or string terminal is returned canonical: dirty
+     *      padding reverts at the first dirty byte, as AbiCodec.body does for
+     *      the same value nested in an array. PAYLOAD and LEN never emit the
+     *      padding and are unaffected.
+     */
+    function test_nav_rejectsDirtyPaddingOfBytesTerminal() public {
+        bytes memory data = abi.encode(bytes("abc"), uint256(7));
+        uint256 payload = _find(data, 3, 0) + 32;
+        data[payload + 5] = 0x01;
+        _nav(_raw(data), "(bytes,uint8)", _path(0, type(int256).min + 1));
+        _nav(_raw(data), "(bytes,uint8)", _path(0, type(int256).min));
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, payload + 5));
+        assertions.nav(_raw(data), "(bytes,uint8)", _path(0));
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, payload + 5));
+        assertions.nav(_raw(data), "(string,uint8)", _path(0));
     }
 }

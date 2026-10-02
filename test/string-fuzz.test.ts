@@ -86,7 +86,8 @@ const cmpU = (a: bigint, b: bigint) => (a < b ? -1 : a > b ? 1 : 0);
 // Haystacks: small alphabets make needles match and self-overlap.
 function genHay(rng: Rng): number[] {
   const r = rng();
-  const len = randInt(rng, 0, 40);
+  // Some haystacks outgrow two words so long needles fit and cross word boundaries.
+  const len = randInt(rng, 0, rng() < 0.25 ? 100 : 40);
   if (r < 0.4) {
     const alpha = Array.from({ length: randInt(rng, 1, 3) }, () => randInt(rng, 0, 255));
     return Array.from({ length: len }, () => alpha[randInt(rng, 0, alpha.length - 1)]);
@@ -103,6 +104,15 @@ function genHay(rng: Rng): number[] {
 function genNeedle(rng: Rng, hay: number[]): number[] {
   const r = rng();
   if (r < 0.1) return [];
+  if (r < 0.3 && hay.length > 0) {
+    // Long needles exercise the word-at-a-time compare past one word and its
+    // masked tail; flipping the last byte makes a near-miss that matches
+    // everything but the final (masked) byte.
+    const start = randInt(rng, 0, hay.length - 1);
+    const needle = hay.slice(start, start + randInt(rng, 1, Math.min(70, hay.length - start)));
+    if (rng() < 0.5) needle[needle.length - 1] ^= 1;
+    return needle;
+  }
   if (r < 0.7 && hay.length > 0) {
     const start = randInt(rng, 0, hay.length - 1);
     const len = randInt(rng, 1, Math.min(4, hay.length - start));
@@ -164,6 +174,23 @@ function indexOfRef(s: number[], needle: number[], occ: bigint): bigint {
     wanted = occ;
   }
   return wanted < BigInt(occs.length) ? BigInt(occs[Number(wanted)]) : n;
+}
+
+function splitRef(s: number[], needle: number[]): number[][] {
+  const parts: number[][] = [];
+  let p = 0;
+  let start = 0;
+  while (p + needle.length <= s.length) {
+    if (needle.every((b, j) => s[p + j] === b)) {
+      parts.push(s.slice(start, p));
+      p += needle.length;
+      start = p;
+    } else {
+      p++;
+    }
+  }
+  parts.push(s.slice(start));
+  return parts;
 }
 
 function replaceRef(s: number[], needle: number[], repl: number[]): number[] {
@@ -259,6 +286,11 @@ function show(v: unknown): string {
 function valuesEqual(outType: string, got: unknown, want: unknown): boolean {
   if (outType === "bytes" || outType === "bytes32") {
     return (got as string).toLowerCase() === (want as string).toLowerCase();
+  }
+  if (outType === "bytes[]") {
+    const g = got as string[];
+    const w = want as string[];
+    return g.length === w.length && g.every((x, i) => x.toLowerCase() === w[i].toLowerCase());
   }
   return got === want;
 }
@@ -364,6 +396,35 @@ const SPECS: Spec[] = [
       return [toHexStr(hay), toHexStr(genNeedle(rng, hay)), occs[randInt(rng, 0, occs.length - 1)]];
     },
     ref: (s: Hex, needle: Hex, occ: bigint) => ({ ok: indexOfRef(fromHexStr(s), fromHexStr(needle), occ) }),
+  },
+  {
+    label: "contains",
+    name: "contains",
+    inTypes: ["bytes", "bytes"],
+    outType: "bool",
+    gen: (rng) => {
+      const hay = genHay(rng);
+      return [toHexStr(hay), toHexStr(genNeedle(rng, hay))];
+    },
+    ref: (s: Hex, needle: Hex) => {
+      const n = fromHexStr(needle);
+      return { ok: n.length === 0 || occurrencePositions(fromHexStr(s), n).length > 0 };
+    },
+  },
+  {
+    label: "split",
+    name: "split",
+    inTypes: ["bytes", "bytes"],
+    outType: "bytes[]",
+    gen: (rng) => {
+      const hay = genHay(rng);
+      return [toHexStr(hay), toHexStr(genNeedle(rng, hay))];
+    },
+    ref: (s: Hex, needle: Hex) => {
+      const n = fromHexStr(needle);
+      if (n.length === 0) return { revert: "EmptyNeedle" };
+      return { ok: splitRef(fromHexStr(s), n).map(toHexStr) };
+    },
   },
   {
     label: "replace",

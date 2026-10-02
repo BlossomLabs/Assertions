@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "compile": "hardhat compile",
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "test:forge": "forge test",
+    "halmos": "halmos --loop 70 --default-bytes-lengths 0,1,31,32,33,64,65"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^3.1.8",
@@ -23,5 +25,8 @@
       "ws@<8.21.0": ">=8.21.0 <9"
     }
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@openzeppelin/contracts": "5.6.1"
+  }
 }

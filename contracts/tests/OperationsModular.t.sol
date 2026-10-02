@@ -5,7 +5,10 @@ import {Operations} from "../Operations.sol";
 
 contract OperationsModularTest is Test {
     Operations ops;
-    function setUp() public { ops = new Operations(); }
+
+    function setUp() public {
+        ops = new Operations();
+    }
 
     function test_powMod() public view {
         assertEq(ops.powMod(uint256(3), uint256(100), 11), 1);
@@ -33,6 +36,9 @@ contract OperationsModularTest is Test {
         assertEq(ops.powMod(low, uint256(2), -7), 1);
         assertEq(ops.powMod(uint256(2), high, 7), 1);
         assertEq(ops.powMod(int256(3), int256(-1), low), int256((uint256(1) << 255) / 3 + 1));
+        // Modulo 1 the inverse exists and is 0, the value Math.invMod also uses for "none".
+        assertEq(ops.powMod(uint256(5), int256(-1), 1), 0);
+        assertEq(ops.powMod(int256(-5), int256(-1), -1), 0);
     }
 
     function test_powModFailures() public {
@@ -94,8 +100,10 @@ contract OperationsModularTest is Test {
         assertEq(ops.powMod(uint256(1), threshold, 7), 1);
         assertEq(ops.powMod(int256(-3), threshold + 1, -11), -int256(_referencePowMod(3, threshold + 1, 11)));
         assertEq(ops.powMod(int256(-3), threshold, -11), int256(_referencePowMod(3, threshold, 11)));
-        assertEq(ops.powMod(uint256(3), int256(-int256(threshold)), 11),
-            _referencePowMod(ops.powMod(uint256(3), int256(-1), 11), threshold, 11));
+        assertEq(
+            ops.powMod(uint256(3), int256(-int256(threshold)), 11),
+            _referencePowMod(ops.powMod(uint256(3), int256(-1), 11), threshold, 11)
+        );
     }
 
     function testFuzz_powModAroundThreshold(uint256 a, uint8 offset, bool above, uint256 m) public view {
@@ -112,9 +120,13 @@ contract OperationsModularTest is Test {
     function testFuzz_powModSmall(uint8 a, uint8 e, uint128 m) public view {
         if (m == 0) return;
         uint256 expected = 1 % uint256(m);
-        for (uint256 i = 0; i < e; i++) expected = expected * a % m;
+        for (uint256 i = 0; i < e; i++) {
+            expected = expected * a % m;
+        }
         assertEq(ops.powMod(uint256(a), uint256(e), m), expected);
-        assertEq(ops.powMod(-int256(uint256(a)), uint256(e), -int256(uint256(m))),
-            a != 0 && e & 1 != 0 ? -int256(expected) : int256(expected));
+        assertEq(
+            ops.powMod(-int256(uint256(a)), uint256(e), -int256(uint256(m))),
+            a != 0 && e & 1 != 0 ? -int256(expected) : int256(expected)
+        );
     }
 }

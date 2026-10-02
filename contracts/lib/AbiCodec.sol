@@ -19,14 +19,18 @@ error InvalidTypeDescriptor(uint256 position);
  *         descriptors through this one grammar.
  * @dev A descriptor is plain ABI type syntax: a name matching [a-z0-9]+ or
  *      a parenthesized, comma-separated tuple, followed by any number of
- *      `[]` or `[k]` suffixes. Only the SHAPE is interpreted: `bytes` and
- *      `string` are the dynamic base names, every other name is one
- *      32-byte word whose meaning stays the caller's claim (a `uint8`
- *      and an `address` parse identically). A "canonical single-value
- *      encoding" throughout this repo means abi.encode(value) of exactly
- *      one value: the bare word for a static type, [0x20][tail] for a
- *      dynamic one, with tight offsets and zero padding. Every function
- *      is internal and knows nothing of ERC-8211.
+ *      `[]` or `[k]` suffixes. `bytes` and `string` are the dynamic base
+ *      names, every other name is one 32-byte word. Validation also holds
+ *      each static word to its base name's range, as solc's decoder does:
+ *      uintN, address and bool words leave their high bits clear, intN
+ *      words are sign-extended, bytesN and function words leave their low
+ *      bits clear. The 256-bit types, and names that are not well-formed
+ *      narrow ABI types, admit every word; their meaning stays the
+ *      caller's claim. A "canonical single-value encoding" throughout
+ *      this repo means abi.encode(value) of exactly one value: the bare
+ *      word for a static type, [0x20][tail] for a dynamic one, with tight
+ *      offsets, zero padding and in-range words. Every function is
+ *      internal and knows nothing of ERC-8211.
  */
 library AbiCodec {
     // ============ Errors ============
@@ -34,8 +38,9 @@ library AbiCodec {
     /**
      * @notice Thrown when an encoded value is not in canonical form at the
      *         given byte offset (a short buffer, a non-tight offset, a
-     *         length overrunning the data, nonzero padding, or trailing
-     *         bytes after the last tail)
+     *         length overrunning the data, nonzero padding, a static word
+     *         outside its type's range, or trailing bytes after the last
+     *         tail)
      * @param offset The byte offset of the offending word within the value
      */
     error InvalidValue(uint256 offset);
@@ -61,7 +66,8 @@ library AbiCodec {
 
     /**
      * @notice Thrown when a dynamic tuple component has a well-formed
-     *         envelope but a non-canonical body
+     *         envelope but a non-canonical body, or a static component
+     *         has a word outside its type's range
      * @param index The component's position in the tuple
      * @param offset The byte offset of the offending word within the value
      */
@@ -224,20 +230,22 @@ library AbiCodec {
         while (end < limit && byteAt(t, end) == LBRACKET) {
             uint256 q2 = end + 1;
             uint256 k;
-            bool fixedSize;
             while (q2 < limit) {
                 uint8 c = byteAt(t, q2);
-                if (c < 0x30 || c > 0x39) break;
+                if (c < 0x30 || c > 0x39 || k > type(uint32).max) break;
                 k = k * 10 + (c - 0x30);
-                fixedSize = true;
                 q2++;
             }
-            if (q2 >= limit || byteAt(t, q2) != RBRACKET) revert InvalidTypeDescriptor(q2);
-            if (fixedSize) {
-                if (!dyn) words = words * k;
-            } else {
+            if (q2 == end + 1) {
                 dyn = true;
                 words = 1;
+            } else if (!dyn) {
+                words = words * k;
+            }
+            // A fixed length is 1 to 2^32 - 1 (solc refuses T[0]), and so is a static footprint.
+            if (q2 >= limit || byteAt(t, q2) != RBRACKET || (k | words) > type(uint32).max || (k == 0 && q2 != end + 1))
+            {
+                revert InvalidTypeDescriptor(q2);
             }
             end = q2 + 1;
         }
@@ -265,6 +273,190 @@ library AbiCodec {
         uint256 end;
         (end, dynamic, words) = typeShape(t, 0, t.length);
         if (end != t.length) revert InvalidTypeDescriptor(end);
+    }
+
+    /**
+     * @dev The base name starting at t[s] (bounded by `limit`): the
+     *      position just past it and its canonical-word rule, as solc's
+     *      decoder applies it. Kind 1 admits `bits` low bits (uintN,
+     *      address, bool), kind 2 a value sign-extended from `bits` (intN),
+     *      kind 3 `bits` high bits (bytesN, function). Kind 0 admits every
+     *      word: the 256-bit types, and any name that is not a well-formed
+     *      narrow ABI type, whose meaning stays the caller's claim. The
+     *      recognised names are matched as one word and their width digits
+     *      parsed in the same pass; only other names fall back to scanName.
+     */
+    function wordRule(bytes calldata t, uint256 s, uint256 limit)
+        private
+        pure
+        returns (uint256 end, uint256 kind, uint256 bits)
+    {
+        assembly ("memory-safe") {
+            let w := calldataload(add(t.offset, s))
+            let w7 := shr(200, w)
+            let p
+            // The full-width names dominate word workloads and match first, loop-free:
+            // "uint256", "bytes32", "int256".
+            // Calldata padding may contain name bytes: match only inside the descriptor.
+            if and(gt(sub(limit, s), 6), or(eq(w7, 0x75696e74323536), eq(w7, 0x62797465733332))) { p := 7 }
+            if eq(shr(208, w), 0x696e74323536) { p := 6 }
+            if iszero(p) {
+                // "address"
+                if eq(w7, 0x61646472657373) {
+                    p := 7
+                    kind := 1
+                    bits := 160
+                }
+                // "function"
+                if eq(shr(192, w), 0x66756e6374696f6e) {
+                    p := 8
+                    kind := 3
+                    bits := 192
+                }
+                // "bool"
+                if eq(shr(224, w), 0x626f6f6c) {
+                    p := 4
+                    kind := 1
+                    bits := 1
+                }
+            }
+            // The width families: "uint", "int", "bytes".
+            if iszero(p) {
+                if eq(shr(224, w), 0x75696e74) {
+                    p := 4
+                    kind := 1
+                }
+                if eq(shr(232, w), 0x696e74) {
+                    p := 3
+                    kind := 2
+                }
+                if eq(shr(216, w), 0x6279746573) {
+                    p := 5
+                    kind := 3
+                }
+            }
+            end := add(s, p)
+            // A match that reads past `limit` saw bytes of something else.
+            if gt(end, limit) {
+                end := s
+                kind := 0
+            }
+            if and(gt(kind, 0), iszero(bits)) {
+                for {} lt(end, limit) { end := add(end, 1) } {
+                    let c := sub(byte(0, calldataload(add(t.offset, end))), 0x30)
+                    // A leading zero or an oversized width stops here, where the
+                    // digit left over makes the whole a name with no rule.
+                    if or(gt(c, 9), or(gt(bits, 99), iszero(or(bits, c)))) { break }
+                    bits := add(mul(bits, 10), c)
+                }
+                if eq(kind, 3) { bits := mul(bits, 8) }
+                // No digits leaves zero width: bare "uint" and "int" are full-width.
+                if or(or(iszero(bits), gt(bits, 248)), mod(bits, 8)) { kind := 0 }
+            }
+            // Any further name byte makes this another name, found by scanName.
+            if lt(end, limit) {
+                let c := byte(0, calldataload(add(t.offset, end)))
+                if or(lt(sub(c, 0x30), 10), lt(sub(c, 0x61), 26)) { end := s }
+            }
+            if eq(end, s) { kind := 0 }
+        }
+        if (end == s) end = scanName(t, s, limit);
+    }
+
+    /**
+     * @dev Walks `count` consecutive values of the STATIC type starting at
+     *      t[s] (bounded by `limit`) encoded from `p` of `v`, checking every
+     *      word against its base name's canonical-word rule (see wordRule)
+     *      and reverting through `context` at the offending word. Parsing
+     *      and checking share one pass over the descriptor; a base name
+     *      under [k] suffixes resolves its rule once for all its words.
+     *      Returns the position just past the type and the head footprint
+     *      of one value in words. The caller has validated the descriptor
+     *      and bounded the footprint against `v`. A zero `context` reports
+     *      InvalidValue at the offending word's offset in `v`.
+     */
+    function checkWords(
+        bytes calldata t,
+        uint256 s,
+        uint256 limit,
+        uint256 count,
+        bytes memory v,
+        uint256 p,
+        Context memory context
+    ) internal pure returns (uint256 end, uint256 words) {
+        if (byteAt(t, s) == LPAREN) {
+            end = s;
+            do {
+                (uint256 next, uint256 w) =
+                    checkWords(t, end + 1, limit, count == 0 ? 0 : 1, v, p + words * 32, context);
+                words += w;
+                end = next;
+            } while (byteAt(t, end) == COMMA);
+            uint256 copies;
+            uint256 close = ++end;
+            (end, copies) = suffixes(t, end, limit);
+            // The first tuple was checked while parsing; walk its copies,
+            // bounded at the tuple's own `)` so no copy re-reads the suffixes.
+            for (uint256 i = 1; i < copies * count; i++) {
+                checkWords(t, s, close, 1, v, p + i * words * 32, context);
+            }
+            words *= copies;
+        } else {
+            uint256 kind;
+            uint256 bits;
+            (end, kind, bits) = wordRule(t, s, limit);
+            words = 1;
+            if (end < limit) (end, words) = suffixes(t, end, limit);
+            if (kind != 0) checkRule(kind, bits, words * count, v, p, context);
+        }
+    }
+
+    /**
+     * @dev The [k] suffixes from `end` of an already validated static
+     *      type: the position past them and the product of their sizes
+     */
+    function suffixes(bytes calldata t, uint256 end, uint256 limit) private pure returns (uint256, uint256 product) {
+        product = 1;
+        unchecked {
+            while (end < limit && byteAt(t, end) == LBRACKET) {
+                uint256 k;
+                while (byteAt(t, ++end) != RBRACKET) {
+                    k = k * 10 + byteAt(t, end) - 0x30;
+                }
+                end++;
+                product *= k;
+            }
+        }
+        return (end, product);
+    }
+
+    /**
+     * @dev Checks `n` consecutive words from `p` of `v` against one
+     *      canonical-word rule (see wordRule), reverting through `context`
+     *      at the first offending word. The words are read unchecked:
+     *      every caller of checkWords has bounded the span against `v`.
+     */
+    function checkRule(uint256 kind, uint256 bits, uint256 n, bytes memory v, uint256 p, Context memory context)
+        private
+        pure
+    {
+        uint256 bad = n;
+        assembly ("memory-safe") {
+            let src := add(add(v, 32), p)
+            for { let i := 0 } lt(i, n) { i := add(i, 1) } {
+                let x := mload(add(src, shl(5, i)))
+                let ok
+                switch kind
+                case 1 { ok := iszero(shr(bits, x)) }
+                case 2 { ok := eq(signextend(sub(shr(3, bits), 1), x), x) }
+                default { ok := iszero(shl(bits, x)) }
+                if iszero(ok) {
+                    bad := i
+                    break
+                }
+            }
+        }
+        requireValue(bad == n, p + bad * 32, context);
     }
 
     // ============ Values ============
@@ -347,7 +539,7 @@ library AbiCodec {
         uint256 words;
         (dynamic, words) = shape(t);
         if (dynamic) validateDynamic(t, v, context);
-        else requireValue(v.length % 32 == 0 && words == v.length / 32, 0, context);
+        else validateStatic(t, v, words, context);
     }
 
     /**
@@ -358,7 +550,16 @@ library AbiCodec {
     function validate(bytes calldata t, bytes memory v, bool dynamic, uint256 words) internal pure {
         Context memory context;
         if (dynamic) validateDynamic(t, v, context);
-        else requireValue(v.length % 32 == 0 && words == v.length / 32, 0, context);
+        else validateStatic(t, v, words, context);
+    }
+
+    /**
+     * @dev The static half of `validate`: exactly the head footprint, every
+     *      word canonical for its base name
+     */
+    function validateStatic(bytes calldata t, bytes memory v, uint256 words, Context memory context) private pure {
+        requireValue(v.length % 32 == 0 && words == v.length / 32, 0, context);
+        checkWords(t, 0, t.length, 1, v, 0, context);
     }
 
     /**
@@ -367,7 +568,8 @@ library AbiCodec {
      */
     function validateDynamic(bytes calldata t, bytes memory v, Context memory context) private pure {
         requireValue(word(v, 0, context) == 32, 0, context);
-        requireValue(body(t, 0, t.length, v, 32, context) == v.length - 32, 32, context);
+        uint256 end = 32 + body(t, 0, t.length, v, 32, context);
+        requireValue(end == v.length, end, context);
     }
 
     /**
@@ -390,7 +592,8 @@ library AbiCodec {
      * @dev Byte extent of the value of type t[s:e] encoded in place at `p`
      *      of `v`, validating canonical form on the way: every offset points
      *      exactly where the previous tail ended, every length fits the
-     *      data, and bytes/string padding is zero. Only dynamic types reach
+     *      data, bytes/string padding is zero and static words are in
+     *      range (see checkWords). Only dynamic types reach
      *      the base-name branch (static children are covered by their
      *      parent's head footprint). Element counts are bounded against the
      *      remaining data before any multiplication, so a hostile length
@@ -416,11 +619,13 @@ library AbiCodec {
             }
             (, x.dynamic, x.words) = typeShape(t, s, x.j);
             // Bound multiplication and traversal before trusting an encoded length.
-            requireValue(x.words <= (v.length - x.base) / 32 || x.count == 0, x.base, context);
-            if (x.words != 0) requireValue(x.count <= (v.length - x.base) / 32 / x.words, x.base, context);
+            requireValue(x.count <= (v.length - x.base) / 32 / x.words, x.base, context);
             x.tail = x.count * x.words * 32;
             // Static bodies contain no offsets or byte padding: the bounded head is the complete body.
-            if (!x.dynamic) return x.base - p + x.tail;
+            if (!x.dynamic) {
+                checkWords(t, s, x.j, x.count, v, x.base, context);
+                return x.base - p + x.tail;
+            }
             for (uint256 i; i < x.count; i++) {
                 uint256 position = x.base + i * x.words * 32;
                 requireValue(word(v, position, context) == x.tail, position, context);
@@ -443,6 +648,8 @@ library AbiCodec {
                 if (dynamic) {
                     requireValue(word(v, p + x.base, context) == x.tail, p + x.base, context);
                     x.tail += body(t, x.j, next, v, p + x.tail, context);
+                } else {
+                    checkWords(t, x.j, next, 1, v, p + x.base, context);
                 }
                 x.base += w * 32;
                 x.j = next + 1;
@@ -473,7 +680,8 @@ library AbiCodec {
      *      Reverts with InvalidTypeDescriptor when `t` is not a
      *      parenthesized tuple (a well-formed non-tuple at position 0, a
      *      malformed one at its own byte) or when a component is malformed.
-     *      "()" yields an empty layout.
+     *      "()" reverts with InvalidTypeDescriptor(1); call constructors
+     *      handle their empty argument lists before calling this helper.
      */
     function tupleLayout(bytes calldata t) internal pure returns (TupleLayout memory plan) {
         if (t.length < 2 || byteAt(t, 0) != LPAREN || byteAt(t, t.length - 1) != RPAREN) {
@@ -544,12 +752,13 @@ library AbiCodec {
             if (value.length < 64 || value.length % 32 != 0 || head != bytes32(uint256(32))) {
                 revert InvalidComponentEnvelope(index, value.length, head);
             }
-        } else if (words > type(uint256).max / 32 || value.length != words * 32) {
-            // A descriptor whose footprint cannot be represented is malformed.
-            if (words > type(uint256).max / 32) revert InvalidTypeDescriptor(0);
+        } else if (value.length != words * 32) {
+            // typeShape caps a footprint at 2^32 - 1 words, so words * 32 cannot overflow.
             revert InvalidComponentLength(index, words * 32, value.length);
         }
-        if (dynamic) validateDynamic(t, value, Context(ContextKind.TupleComponent, bytes4(0), index, 0, address(0)));
+        Context memory context = Context(ContextKind.TupleComponent, bytes4(0), index, 0, address(0));
+        if (dynamic) validateDynamic(t, value, context);
+        else checkWords(t, 0, t.length, 1, value, 0, context);
     }
 
     /**
@@ -668,10 +877,11 @@ library AbiCodec {
         (x.dynamic, x.words) = shape(t);
         if (word(encoded, 0) != 32) revert InvalidValue(0);
         x.count = word(encoded, 32);
-        if (x.words != 0 && x.count > (encoded.length - 64) / 32 / x.words) revert InvalidValue(64);
+        if (x.count > (encoded.length - 64) / 32 / x.words) revert InvalidValue(64);
         x.tail = x.count * x.words * 32;
         values = new bytes[](x.count);
         Context memory context;
+        if (!x.dynamic) checkWords(t, 0, t.length, x.count, encoded, 64, context);
         for (uint256 i; i < x.count; i++) {
             uint256 p = 64 + i * x.words * 32;
             if (x.dynamic) {
@@ -681,7 +891,6 @@ library AbiCodec {
                 x.tail += n;
             } else {
                 values[i] = slice(encoded, p, x.words * 32);
-                validate(t, values[i]);
             }
         }
         if (64 + x.tail != encoded.length) revert InvalidValue(64 + x.tail);

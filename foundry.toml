@@ -1,0 +1,28 @@
+# Foundry runs the same Solidity tests as Hardhat and hosts the Halmos
+# symbolic checks (`check_*` functions). Hardhat stays the build of record:
+# canonical artifacts and CREATE2 addresses come from `pnpm compile`, never
+# from `out/`. Forge's metadata (source keys, remappings) differs from
+# Hardhat's, so its bytecode differs in the metadata trailer only.
+[profile.default]
+src = "contracts"
+test = "contracts/tests"
+out = "out"
+# Hardhat owns `cache/`.
+cache_path = "cache_forge"
+libs = ["node_modules"]
+remappings = ["forge-std/=node_modules/forge-std/src/", "@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/"]
+
+# Mirrors hardhat.config.ts so the analysed code matches the deployed code.
+solc_version = "0.8.36"
+optimizer = true
+optimizer_runs = 200
+evm_version = "cancun"
+
+# Halmos reads the AST and storage layouts. Always emitting them keeps a
+# `forge test` rebuild from leaving artifacts Halmos cannot use.
+ast = true
+extra_output = ["storageLayout", "metadata"]
+
+[lint]
+# The repo formats with `forge fmt`; forge-lint notes are not a gate here.
+lint_on_build = false

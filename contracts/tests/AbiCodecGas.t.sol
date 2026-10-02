@@ -122,9 +122,11 @@ contract AbiCodecGasTest is Test {
         uint256 tupleNode = _cost(address(xp), abi.encodeCall(Expressions.evaluate, (q, new bytes[](0))));
         emit log_named_uint("evaluate 2 Literals + Tuple, gas       ", tupleNode);
         // One Literal node under 13k, each further Literal under 5k, a
-        // two-word Tuple node under 30k on top of its literals (26.2k measured).
+        // two-word Tuple node under 33k on top of its literals: 26.2k
+        // measured, 30.9k once static words were checked against their base
+        // type (2026-09-24, `forge test --match-test test_gas_evaluatePerNode -vv`).
         assertLt(costs[0], 13_000);
         assertLt((costs[3] - costs[0]) / 3, 5_000);
-        assertLt(tupleNode - costs[1], 30_000);
+        assertLt(tupleNode - costs[1], 33_000);
     }
 }

@@ -33,6 +33,11 @@ export const EXPRESSIONS_ABI = [
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "GuardedCallForbidden",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes4",
@@ -216,6 +221,11 @@ export const EXPRESSIONS_ABI = [
       }
     ],
     "name": "NotSelf",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SubcallOutOfGas",
     "type": "error"
   },
   {

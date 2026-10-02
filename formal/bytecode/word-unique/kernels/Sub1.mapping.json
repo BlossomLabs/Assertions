@@ -1,0 +1,245 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 23784,
+      "stack": [
+        "3833",
+        "1",
+        "kept"
+      ],
+      "op": 91,
+      "next": 23785,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 23785,
+      "stack": [
+        "3833",
+        "1",
+        "kept"
+      ],
+      "op": 129,
+      "next": 23786,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 23786,
+      "stack": [
+        "3833",
+        "1",
+        "kept",
+        "1"
+      ],
+      "op": 129,
+      "next": 23787,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 23787,
+      "stack": [
+        "3833",
+        "1",
+        "kept",
+        "1",
+        "kept"
+      ],
+      "op": 3,
+      "next": 23788,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 23788,
+      "stack": [
+        "3833",
+        "1",
+        "kept",
+        "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()"
+      ],
+      "op": 129,
+      "next": 23789,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 23789,
+      "stack": [
+        "3833",
+        "1",
+        "kept",
+        "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()",
+        "kept"
+      ],
+      "op": 129,
+      "next": 23790,
+      "immediate": 0
+    },
+    {
+      "id": 6,
+      "pc": 23790,
+      "stack": [
+        "3833",
+        "1",
+        "kept",
+        "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()",
+        "kept",
+        "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()"
+      ],
+      "op": 17,
+      "next": 23791,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 23791,
+      "stack": [
+        "3833",
+        "1",
+        "kept",
+        "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()",
+        "0"
+      ],
+      "op": 21,
+      "next": 23792,
+      "immediate": 0
+    },
+    {
+      "id": 8,
+      "pc": 23792,
+      "stack": [
+        "3833",
+        "1",
+        "kept",
+        "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()",
+        "1"
+      ],
+      "op": 97,
+      "next": 23795,
+      "immediate": 13698
+    },
+    {
+      "id": 9,
+      "pc": 23795,
+      "stack": [
+        "3833",
+        "1",
+        "kept",
+        "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()",
+        "1",
+        "13698"
+      ],
+      "op": 87,
+      "next": 23796,
+      "immediate": 0
+    },
+    {
+      "id": 10,
+      "pc": 13698,
+      "stack": [
+        "3833",
+        "1",
+        "kept",
+        "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()"
+      ],
+      "op": 91,
+      "next": 13699,
+      "immediate": 0
+    },
+    {
+      "id": 11,
+      "pc": 13699,
+      "stack": [
+        "3833",
+        "1",
+        "kept",
+        "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()"
+      ],
+      "op": 146,
+      "next": 13700,
+      "immediate": 0
+    },
+    {
+      "id": 12,
+      "pc": 13700,
+      "stack": [
+        "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()",
+        "1",
+        "kept",
+        "3833"
+      ],
+      "op": 145,
+      "next": 13701,
+      "immediate": 0
+    },
+    {
+      "id": 13,
+      "pc": 13701,
+      "stack": [
+        "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()",
+        "3833",
+        "kept",
+        "1"
+      ],
+      "op": 80,
+      "next": 13702,
+      "immediate": 0
+    },
+    {
+      "id": 14,
+      "pc": 13702,
+      "stack": [
+        "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()",
+        "3833",
+        "kept"
+      ],
+      "op": 80,
+      "next": 13703,
+      "immediate": 0
+    },
+    {
+      "id": 15,
+      "pc": 13703,
+      "stack": [
+        "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()",
+        "3833"
+      ],
+      "op": 86,
+      "next": 13704,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "23784": 91,
+    "23785": 129,
+    "23786": 129,
+    "23787": 3,
+    "23788": 129,
+    "23789": 129,
+    "23790": 17,
+    "23791": 21,
+    "23792": 97,
+    "23793": 53,
+    "23794": 130,
+    "23795": 87,
+    "13698": 91,
+    "13699": 146,
+    "13700": 145,
+    "13701": 80,
+    "13702": 80,
+    "13703": 86,
+    "3833": 91
+  },
+  "destinations": [
+    3833,
+    13698
+  ],
+  "finalStack": [
+    "((kept as nat)+G.Modulus()-(1 as nat))%G.Modulus()"
+  ],
+  "scope": "development admitted actual helper path only; body composition and retained evidence remain open"
+}

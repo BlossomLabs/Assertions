@@ -1,0 +1,3 @@
+# zipWords raw ABI rejection development
+
+The physical compiler boundary rejects a short two-word head, then checks the first dynamic bytes operand before checking the second. Each operand has four rejection classes: excessive offset, incomplete length header, excessive length, and incomplete payload. Together with accepted decoding this must form an exhaustive partition over fitting raw calldata. Loose offsets, overlapping operands, dirty gaps/padding and trailing bytes are accepted when the actual checks admit them. Full native path verification, raw boundary composition and retained evidence remain required.

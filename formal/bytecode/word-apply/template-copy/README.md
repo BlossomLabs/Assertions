@@ -1,0 +1,5 @@
+# Physical word-apply template copy
+
+Development preparation for the reached instructions from positive target return atPC12334 through physical calldata-template allocation/copy/zero padding to initial element loopPC12391. The generic leaf uses the reached free pointer, explicit fitting finite memory/calldata and length bounds, arbitrary remaining fields and lower stack prefix. The raw composition must derive these bounds and protect the earlier output heap. Native checks, disjoint-frame connection and full retained public evidence remain pending; no gas/deployment/performance claim. Regenerate from generate.py.
+
+V1 preserved1,923 native rows (Memory59 passed; Copy1,859 passed and five ordinary failures). The generic leaf initially admitted short memory while expecting its free-pointer MLOAD to leave memory unchanged. V2 explicitly requires at least96 bytes of initial memory, which the reached raw output heap always satisfies (at least160), and repeats the already-implied Admitted facts where function well-formedness needs them outside the opaque Good body. The raw public domain and executed instructions are unchanged.

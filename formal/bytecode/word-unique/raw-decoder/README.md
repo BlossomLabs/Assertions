@@ -1,0 +1,5 @@
+# Exhaustive fitting uniqueWords raw admission
+
+The compiler checks raw bytes head/offset/header/length/tail before validating the bool word at calldata offset 36. Six exact malformed classes must connect to physical empty REVERT: short two-word head, offset at least 2^64, missing length header, length at least 2^64, truncated bytes payload, and a noncanonical bool after accepted bytes. Canonical bool values zero and one remain admitted independently.
+
+Owned generation extracts every actual reached instruction and fixed trace block from the current full runtime and assigned selector. Loose offsets, unused dirty gaps, overlapping empty heads and arbitrary trailing calldata must retain compiler behavior. Calldata size four through 2^64−1, reviewed opcode/environment/instruction projections, fresh memory and adequate reached resources remain explicit. Development checks contribute no retained public-entry coverage; full body/allocation/loop/serialization and independent retained checking remain required.

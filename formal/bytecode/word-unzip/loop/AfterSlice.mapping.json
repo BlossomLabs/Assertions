@@ -1,0 +1,136 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 6264,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "WordOffset(offset,index,lane)",
+        "32"
+      ],
+      "op": 91,
+      "next": 6265,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 1,
+      "pc": 6265,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "WordOffset(offset,index,lane)",
+        "32"
+      ],
+      "op": 97,
+      "next": 6268,
+      "immediate": 6273,
+      "memory": "mem"
+    },
+    {
+      "id": 2,
+      "pc": 6268,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "WordOffset(offset,index,lane)",
+        "32",
+        "6273"
+      ],
+      "op": 145,
+      "next": 6269,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 3,
+      "pc": 6269,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "6273",
+        "32",
+        "WordOffset(offset,index,lane)"
+      ],
+      "op": 97,
+      "next": 6272,
+      "immediate": 23662,
+      "memory": "mem"
+    },
+    {
+      "id": 4,
+      "pc": 6272,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "128",
+        "length/32",
+        "Count(length,lane)",
+        "index",
+        "0",
+        "6273",
+        "32",
+        "WordOffset(offset,index,lane)",
+        "23662"
+      ],
+      "op": 86,
+      "next": 6273,
+      "immediate": 0,
+      "memory": "mem"
+    }
+  ],
+  "requiredBytes": {
+    "6264": 91,
+    "6265": 97,
+    "6266": 24,
+    "6267": 129,
+    "6268": 145,
+    "6269": 97,
+    "6270": 92,
+    "6271": 110,
+    "6272": 86,
+    "23662": 91
+  },
+  "destinations": [
+    23662
+  ],
+  "expectedFinalStack": "2989505972,518,offset,length,lane,128,length/32,Count(length,lane),index,0,6273,32,WordOffset(offset,index,lane)",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

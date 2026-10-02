@@ -1,0 +1,288 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 2828,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index"
+      ],
+      "op": 91,
+      "next": 2829,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 2829,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index"
+      ],
+      "op": 129,
+      "next": 2830,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 2830,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "length/32"
+      ],
+      "op": 129,
+      "next": 2831,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 2831,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "length/32",
+        "index"
+      ],
+      "op": 16,
+      "next": 2832,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 2832,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "1"
+      ],
+      "op": 21,
+      "next": 2833,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 2833,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "0"
+      ],
+      "op": 97,
+      "next": 2836,
+      "immediate": 2914
+    },
+    {
+      "id": 6,
+      "pc": 2836,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "0",
+        "2914"
+      ],
+      "op": 87,
+      "next": 2837,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 2837,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index"
+      ],
+      "op": 132,
+      "next": 2838,
+      "immediate": 0
+    },
+    {
+      "id": 8,
+      "pc": 2838,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset"
+      ],
+      "op": 132,
+      "next": 2839,
+      "immediate": 0
+    },
+    {
+      "id": 9,
+      "pc": 2839,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset",
+        "length"
+      ],
+      "op": 97,
+      "next": 2842,
+      "immediate": 2849
+    },
+    {
+      "id": 10,
+      "pc": 2842,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset",
+        "length",
+        "2849"
+      ],
+      "op": 131,
+      "next": 2843,
+      "immediate": 0
+    },
+    {
+      "id": 11,
+      "pc": 2843,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset",
+        "length",
+        "2849",
+        "index"
+      ],
+      "op": 96,
+      "next": 2845,
+      "immediate": 32
+    },
+    {
+      "id": 12,
+      "pc": 2845,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset",
+        "length",
+        "2849",
+        "index",
+        "32"
+      ],
+      "op": 97,
+      "next": 2848,
+      "immediate": 23581
+    },
+    {
+      "id": 13,
+      "pc": 2848,
+      "stack": [
+        "394725771",
+        "604",
+        "offset",
+        "length",
+        "total",
+        "length/32",
+        "index",
+        "offset",
+        "length",
+        "2849",
+        "index",
+        "32",
+        "23581"
+      ],
+      "op": 86,
+      "next": 2849,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "2828": 91,
+    "2829": 129,
+    "2830": 129,
+    "2831": 16,
+    "2832": 21,
+    "2833": 97,
+    "2834": 11,
+    "2835": 98,
+    "2836": 87,
+    "2914": 91,
+    "2837": 132,
+    "2838": 132,
+    "2839": 97,
+    "2840": 11,
+    "2841": 33,
+    "2842": 131,
+    "2843": 96,
+    "2844": 32,
+    "2845": 97,
+    "2846": 92,
+    "2847": 29,
+    "2848": 86,
+    "23581": 91
+  },
+  "destinations": [
+    2914,
+    23581
+  ],
+  "expectedFinalStack": "394725771,604,offset,length,total,length/32,index,offset,length,2849,index,32",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

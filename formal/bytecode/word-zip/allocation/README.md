@@ -1,0 +1,3 @@
+# zipWords allocation development
+
+The exact current physical allocation starts at PC 2047, stores output length at PC 2054, computes the rounded free pointer through AND at PC 2062 and stores it at PC 2070. Nonempty output is initialized by actual CALLDATACOPY at PC 2085 from the raw calldata end; empty output skips copying. The post-copy path enters the pair loop at PC 2094. Allocation word count is twice the input count; both raw input slices may overlap. The allocation-size guard and full raw entry remain separate proof obligations. No resource, gas or retained public-evidence claim follows from these development controls.

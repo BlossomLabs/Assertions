@@ -1,0 +1,199 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 1903,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96",
+        "lengthB%32"
+      ],
+      "op": 91,
+      "next": 1904,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 1904,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96",
+        "lengthB%32"
+      ],
+      "op": 21,
+      "next": 1905,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 1905,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96",
+        "1"
+      ],
+      "op": 97,
+      "next": 1908,
+      "immediate": 1936
+    },
+    {
+      "id": 3,
+      "pc": 1908,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96",
+        "1",
+        "1936"
+      ],
+      "op": 87,
+      "next": 1909,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 1936,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96"
+      ],
+      "op": 91,
+      "next": 1937,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 1937,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96"
+      ],
+      "op": 131,
+      "next": 1938,
+      "immediate": 0
+    },
+    {
+      "id": 6,
+      "pc": 1938,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96",
+        "lengthA"
+      ],
+      "op": 130,
+      "next": 1939,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 1939,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96",
+        "lengthA",
+        "lengthB"
+      ],
+      "op": 20,
+      "next": 1940,
+      "immediate": 0
+    },
+    {
+      "id": 8,
+      "pc": 1940,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96",
+        "1"
+      ],
+      "op": 97,
+      "next": 1943,
+      "immediate": 1999
+    },
+    {
+      "id": 9,
+      "pc": 1943,
+      "stack": [
+        "269019481",
+        "518",
+        "a",
+        "lengthA",
+        "b",
+        "lengthB",
+        "96",
+        "1",
+        "1999"
+      ],
+      "op": 87,
+      "next": 1944,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "1903": 91,
+    "1904": 21,
+    "1905": 97,
+    "1906": 7,
+    "1907": 144,
+    "1908": 87,
+    "1936": 91,
+    "1937": 131,
+    "1938": 130,
+    "1939": 20,
+    "1940": 97,
+    "1941": 7,
+    "1942": 207,
+    "1943": 87,
+    "1999": 91
+  },
+  "destinations": [
+    1936,
+    1999
+  ],
+  "expectedFinalStack": "269019481,518,a,lengthA,b,lengthB,96",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

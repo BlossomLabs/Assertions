@@ -1,0 +1,362 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 784,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count"
+      ],
+      "op": 91,
+      "next": 785,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 785,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count"
+      ],
+      "op": 97,
+      "next": 788,
+      "immediate": 5507
+    },
+    {
+      "id": 2,
+      "pc": 788,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "5507"
+      ],
+      "op": 86,
+      "next": 789,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 5507,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count"
+      ],
+      "op": 91,
+      "next": 5508,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 5508,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count"
+      ],
+      "op": 96,
+      "next": 5510,
+      "immediate": 96
+    },
+    {
+      "id": 5,
+      "pc": 5510,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "96"
+      ],
+      "op": 97,
+      "next": 5513,
+      "immediate": 5526
+    },
+    {
+      "id": 6,
+      "pc": 5513,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "96",
+        "5526"
+      ],
+      "op": 136,
+      "next": 5514,
+      "immediate": 0
+    },
+    {
+      "id": 7,
+      "pc": 5514,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "96",
+        "5526",
+        "sourceOffset"
+      ],
+      "op": 136,
+      "next": 5515,
+      "immediate": 0
+    },
+    {
+      "id": 8,
+      "pc": 5515,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "96",
+        "5526",
+        "sourceOffset",
+        "sourceLength"
+      ],
+      "op": 136,
+      "next": 5516,
+      "immediate": 0
+    },
+    {
+      "id": 9,
+      "pc": 5516,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "96",
+        "5526",
+        "sourceOffset",
+        "sourceLength",
+        "target"
+      ],
+      "op": 136,
+      "next": 5517,
+      "immediate": 0
+    },
+    {
+      "id": 10,
+      "pc": 5517,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "96",
+        "5526",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset"
+      ],
+      "op": 136,
+      "next": 5518,
+      "immediate": 0
+    },
+    {
+      "id": 11,
+      "pc": 5518,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "96",
+        "5526",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength"
+      ],
+      "op": 136,
+      "next": 5519,
+      "immediate": 0
+    },
+    {
+      "id": 12,
+      "pc": 5519,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "96",
+        "5526",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset"
+      ],
+      "op": 136,
+      "next": 5520,
+      "immediate": 0
+    },
+    {
+      "id": 13,
+      "pc": 5520,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "96",
+        "5526",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count"
+      ],
+      "op": 96,
+      "next": 5522,
+      "immediate": 1
+    },
+    {
+      "id": 14,
+      "pc": 5522,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "96",
+        "5526",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "1"
+      ],
+      "op": 97,
+      "next": 5525,
+      "immediate": 12177
+    },
+    {
+      "id": 15,
+      "pc": 5525,
+      "stack": [
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "96",
+        "5526",
+        "sourceOffset",
+        "sourceLength",
+        "target",
+        "templateOffset",
+        "templateLength",
+        "arrayOffset",
+        "count",
+        "1",
+        "12177"
+      ],
+      "op": 86,
+      "next": 5526,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "12177": 91,
+    "784": 91,
+    "785": 97,
+    "786": 21,
+    "787": 131,
+    "788": 86,
+    "5507": 91,
+    "5508": 96,
+    "5509": 96,
+    "5510": 97,
+    "5511": 21,
+    "5512": 150,
+    "5513": 136,
+    "5514": 136,
+    "5515": 136,
+    "5516": 136,
+    "5517": 136,
+    "5518": 136,
+    "5519": 136,
+    "5520": 96,
+    "5521": 1,
+    "5522": 97,
+    "5523": 47,
+    "5524": 145,
+    "5525": 86
+  },
+  "destinations": [
+    5507,
+    12177
+  ],
+  "scope": "Both actual decoded wrappers into the shared engine only; no complete entry/body/public coverage",
+  "entryPc": 784,
+  "terminal": "Running(12177,prefix+[sourceOffset,sourceLength,target,templateOffset,templateLength,arrayOffset,count,96,5526,sourceOffset,sourceLength,target,templateOffset,templateLength,arrayOffset,count,1],mem)"
+}

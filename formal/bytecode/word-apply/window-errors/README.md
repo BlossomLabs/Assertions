@@ -1,0 +1,3 @@
+# Physical word-apply window errors
+
+Development preparation for exact shared window-check rejection: short template before any offset iteration, and arbitrary represented first invalid offset after a finite valid prefix. The extracted leaves execute every instruction, including repeated calldata loads and checked subtraction/index helpers, physical selector/offset/template-length stores and REVERT. Fresh memory is from the raw public prefix; alignment occurs earlier. Native checks and raw composition/full retained public evidence remain pending. No gas/deployment/performance claim. Regenerate through generate.py.

@@ -1,0 +1,135 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 5982,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96"
+      ],
+      "op": 91,
+      "next": 5983,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 5983,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96"
+      ],
+      "op": 96,
+      "next": 5985,
+      "immediate": 1
+    },
+    {
+      "id": 2,
+      "pc": 5985,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "1"
+      ],
+      "op": 130,
+      "next": 5986,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 5986,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "1",
+        "lane"
+      ],
+      "op": 17,
+      "next": 5987,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 5987,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "0"
+      ],
+      "op": 21,
+      "next": 5988,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 5988,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "1"
+      ],
+      "op": 97,
+      "next": 5991,
+      "immediate": 6019
+    },
+    {
+      "id": 6,
+      "pc": 5991,
+      "stack": [
+        "2989505972",
+        "518",
+        "offset",
+        "length",
+        "lane",
+        "96",
+        "1",
+        "6019"
+      ],
+      "op": 87,
+      "next": 5992,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "5982": 91,
+    "5983": 96,
+    "5984": 1,
+    "5985": 130,
+    "5986": 17,
+    "5987": 21,
+    "5988": 97,
+    "5989": 23,
+    "5990": 131,
+    "5991": 87,
+    "6019": 91
+  },
+  "destinations": [
+    6019
+  ],
+  "expectedFinalStack": "2989505972,518,offset,length,lane,96",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

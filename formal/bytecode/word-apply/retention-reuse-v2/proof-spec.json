@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "status": "prepared-not-retained",
+  "publicEntries": [
+    "Collections.mapWords(bytes,address,bytes,uint256[])",
+    "Collections.filterWords(bytes,address,bytes,uint256[])"
+  ],
+  "selectors": {
+    "mapWords": "ed6dc3be",
+    "filterWords": "7787eb48"
+  },
+  "scope": "Exact current compiled runtime PC-zero accepted and rejected raw calls, complete finite successful loop/output and first reached error packet, under explicit finite representation, fitting resources and truthful external observations. No public coverage before complete retained native/physical/semantic/independent gates pass.",
+  "rootProofs": [
+    "formal/bytecode/word-apply/raw-success/Connection.dfy",
+    "formal/bytecode/word-apply/raw-empty/Connection.dfy",
+    "formal/bytecode/word-apply/raw-alignment-error/Connection.dfy",
+    "formal/bytecode/word-apply/raw-window-errors/Connection.dfy",
+    "formal/bytecode/word-apply/raw-target-rejection/Connection.dfy",
+    "formal/bytecode/word-apply/raw-abi-rejection/Engine.dfy",
+    "formal/bytecode/word-apply/raw-wrong-size-repair-v4/Connection.dfy",
+    "formal/bytecode/word-apply/raw-refused-guard-repair-v6/Connection.dfy",
+    "formal/bytecode/word-apply/raw-failed-callback-repair-v4/Connection.dfy",
+    "formal/bytecode/word-apply/raw-predicate-error/Connection.dfy",
+    "formal/bytecode/word-apply/return-kind/Control.generated.dfy"
+  ],
+  "currentProspectiveIncludedFiles": 208,
+  "assumptions": [
+    "Pinned solc input/settings/runtime extraction and reviewed EVM opcode semantics/toolchain are trusted premises.",
+    "Calldata is a represented finite byte sequence fitting the compiler decoder bound; raw loose, shared, overlapping and misaligned tails remain admitted where the compiled decoder accepts them.",
+    "Physical stack and memory footprints and serializer resources fit the declared representation bounds; no claim about execution completing under arbitrary gas budgets.",
+    "The actual caller identity, target code size, requested GAS values, staticcall success/input/full returned bytes and postcall GAS observations are truthful for the reached execution context/history.",
+    "Only executed successful prefix callbacks and the first reached failure/rejection are observed; constructed recursive-model suffixes do not assert external observations.",
+    "Source proof coverage and exact bytecode evidence are separate; source proofs do not establish compiled runtime, deployment, gas or performance claims."
+  ],
+  "remainingRequiredWork": [
+    "Complete current V8 physical CallbackFailed controls and V5 receipt/serializer, V3 caller/iteration and V4 raw failure native connections, preserving every predecessor. Every current included declaration still requires fresh full native retention.",
+    "Finish all owner/verifier/fixture/mutation/package files and format/regenerate/audit gates before capturing a retained input snapshot.",
+    "Reverify every declaration in the complete current included graph with normal native limits; selected historical snapshots assume includes and do not replace fresh complete retention.",
+    "Compile/runtime identity, complete PC-zero EVM receipt and observation fixtures, actual semantic bytecode/source mutations with matching native/physical contradictions, and independent checker must all pass.",
+    "Short-selector and nonzero-value dispatcher rejection dependencies must be revalidated against the complete current compiler/source/runtime inputs.",
+    "Only then create/update the public ledger/checker and advance original bytecode coverage10/49 to12/49."
+  ],
+  "supplementalScope": "Actual physical PC498 terminal return/memory slice theorem; required complete baseline/native inventory also provides the semantic RETURN-to-REVERT fault anchor without assuming unverified serializer advance contracts."
+}

@@ -1,0 +1,170 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 6836,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "128",
+        "kept",
+        "index",
+        "word",
+        "0",
+        "word",
+        "last"
+      ],
+      "op": 91,
+      "next": 6837,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 1,
+      "pc": 6837,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "128",
+        "kept",
+        "index",
+        "word",
+        "0",
+        "word",
+        "last"
+      ],
+      "op": 20,
+      "next": 6838,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 2,
+      "pc": 6838,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "128",
+        "kept",
+        "index",
+        "word",
+        "0",
+        "0"
+      ],
+      "op": 91,
+      "next": 6839,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 3,
+      "pc": 6839,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "128",
+        "kept",
+        "index",
+        "word",
+        "0",
+        "0"
+      ],
+      "op": 144,
+      "next": 6840,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 4,
+      "pc": 6840,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "128",
+        "kept",
+        "index",
+        "word",
+        "0",
+        "0"
+      ],
+      "op": 80,
+      "next": 6841,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 5,
+      "pc": 6841,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "128",
+        "kept",
+        "index",
+        "word",
+        "0"
+      ],
+      "op": 97,
+      "next": 6844,
+      "immediate": 6890,
+      "memory": "mem"
+    },
+    {
+      "id": 6,
+      "pc": 6844,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "128",
+        "kept",
+        "index",
+        "word",
+        "0",
+        "6890"
+      ],
+      "op": 86,
+      "next": 6845,
+      "immediate": 0,
+      "memory": "mem"
+    }
+  ],
+  "requiredBytes": {
+    "6836": 91,
+    "6837": 20,
+    "6838": 91,
+    "6839": 144,
+    "6840": 80,
+    "6841": 97,
+    "6842": 26,
+    "6843": 234,
+    "6844": 86,
+    "6890": 91
+  },
+  "destinations": [
+    6890
+  ],
+  "expectedFinalStack": "3045624246,518,offset,length,ordered,128,kept,index,word,0",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

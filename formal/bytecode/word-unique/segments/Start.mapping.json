@@ -1,0 +1,142 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 6724,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "128",
+        "kept",
+        "index"
+      ],
+      "op": 91,
+      "next": 6725,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 1,
+      "pc": 6725,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "128",
+        "kept",
+        "index"
+      ],
+      "op": 97,
+      "next": 6728,
+      "immediate": 6735,
+      "memory": "mem"
+    },
+    {
+      "id": 2,
+      "pc": 6728,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "128",
+        "kept",
+        "index",
+        "6735"
+      ],
+      "op": 96,
+      "next": 6730,
+      "immediate": 32,
+      "memory": "mem"
+    },
+    {
+      "id": 3,
+      "pc": 6730,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "128",
+        "kept",
+        "index",
+        "6735",
+        "32"
+      ],
+      "op": 134,
+      "next": 6731,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 4,
+      "pc": 6731,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "128",
+        "kept",
+        "index",
+        "6735",
+        "32",
+        "length"
+      ],
+      "op": 97,
+      "next": 6734,
+      "immediate": 23562,
+      "memory": "mem"
+    },
+    {
+      "id": 5,
+      "pc": 6734,
+      "stack": [
+        "3045624246",
+        "518",
+        "offset",
+        "length",
+        "ordered",
+        "128",
+        "kept",
+        "index",
+        "6735",
+        "32",
+        "length",
+        "23562"
+      ],
+      "op": 86,
+      "next": 6735,
+      "immediate": 0,
+      "memory": "mem"
+    }
+  ],
+  "requiredBytes": {
+    "6724": 91,
+    "6725": 97,
+    "6726": 26,
+    "6727": 79,
+    "6728": 96,
+    "6729": 32,
+    "6730": 134,
+    "6731": 97,
+    "6732": 92,
+    "6733": 10,
+    "6734": 86,
+    "23562": 91
+  },
+  "destinations": [
+    23562
+  ],
+  "expectedFinalStack": "3045624246,518,offset,length,ordered,128,kept,index,6735,32,length",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

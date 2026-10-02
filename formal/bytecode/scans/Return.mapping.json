@@ -1,0 +1,266 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 604,
+      "stack": [
+        "394725771",
+        "total"
+      ],
+      "memory": "Store([],64,128)",
+      "op": 91,
+      "next": 605,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 605,
+      "stack": [
+        "394725771",
+        "total"
+      ],
+      "memory": "Store([],64,128)",
+      "op": 96,
+      "next": 607,
+      "immediate": 64
+    },
+    {
+      "id": 2,
+      "pc": 607,
+      "stack": [
+        "394725771",
+        "total",
+        "64"
+      ],
+      "memory": "Store([],64,128)",
+      "op": 81,
+      "next": 608,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 608,
+      "stack": [
+        "394725771",
+        "total",
+        "128"
+      ],
+      "memory": "Store([],64,128)",
+      "op": 144,
+      "next": 609,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 609,
+      "stack": [
+        "394725771",
+        "128",
+        "total"
+      ],
+      "memory": "Store([],64,128)",
+      "op": 129,
+      "next": 610,
+      "immediate": 0
+    },
+    {
+      "id": 5,
+      "pc": 610,
+      "stack": [
+        "394725771",
+        "128",
+        "total",
+        "128"
+      ],
+      "memory": "Store([],64,128)",
+      "op": 82,
+      "next": 611,
+      "immediate": 0
+    },
+    {
+      "id": 6,
+      "pc": 611,
+      "stack": [
+        "394725771",
+        "128"
+      ],
+      "memory": "Store(Store([],64,128),128,total)",
+      "op": 96,
+      "next": 613,
+      "immediate": 32
+    },
+    {
+      "id": 7,
+      "pc": 613,
+      "stack": [
+        "394725771",
+        "128",
+        "32"
+      ],
+      "memory": "Store(Store([],64,128),128,total)",
+      "op": 1,
+      "next": 614,
+      "immediate": 0
+    },
+    {
+      "id": 8,
+      "pc": 614,
+      "stack": [
+        "394725771",
+        "160"
+      ],
+      "memory": "Store(Store([],64,128),128,total)",
+      "op": 97,
+      "next": 617,
+      "immediate": 490
+    },
+    {
+      "id": 9,
+      "pc": 617,
+      "stack": [
+        "394725771",
+        "160",
+        "490"
+      ],
+      "memory": "Store(Store([],64,128),128,total)",
+      "op": 86,
+      "next": 618,
+      "immediate": 0
+    },
+    {
+      "id": 10,
+      "pc": 490,
+      "stack": [
+        "394725771",
+        "160"
+      ],
+      "memory": "Store(Store([],64,128),128,total)",
+      "op": 91,
+      "next": 491,
+      "immediate": 0
+    },
+    {
+      "id": 11,
+      "pc": 491,
+      "stack": [
+        "394725771",
+        "160"
+      ],
+      "memory": "Store(Store([],64,128),128,total)",
+      "op": 96,
+      "next": 493,
+      "immediate": 64
+    },
+    {
+      "id": 12,
+      "pc": 493,
+      "stack": [
+        "394725771",
+        "160",
+        "64"
+      ],
+      "memory": "Store(Store([],64,128),128,total)",
+      "op": 81,
+      "next": 494,
+      "immediate": 0
+    },
+    {
+      "id": 13,
+      "pc": 494,
+      "stack": [
+        "394725771",
+        "160",
+        "128"
+      ],
+      "memory": "Store(Store([],64,128),128,total)",
+      "op": 128,
+      "next": 495,
+      "immediate": 0
+    },
+    {
+      "id": 14,
+      "pc": 495,
+      "stack": [
+        "394725771",
+        "160",
+        "128",
+        "128"
+      ],
+      "memory": "Store(Store([],64,128),128,total)",
+      "op": 145,
+      "next": 496,
+      "immediate": 0
+    },
+    {
+      "id": 15,
+      "pc": 496,
+      "stack": [
+        "394725771",
+        "128",
+        "128",
+        "160"
+      ],
+      "memory": "Store(Store([],64,128),128,total)",
+      "op": 3,
+      "next": 497,
+      "immediate": 0
+    },
+    {
+      "id": 16,
+      "pc": 497,
+      "stack": [
+        "394725771",
+        "128",
+        "32"
+      ],
+      "memory": "Store(Store([],64,128),128,total)",
+      "op": 144,
+      "next": 498,
+      "immediate": 0
+    },
+    {
+      "id": 17,
+      "pc": 498,
+      "stack": [
+        "394725771",
+        "32",
+        "128"
+      ],
+      "memory": "Store(Store([],64,128),128,total)",
+      "op": 243,
+      "next": 499,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "604": 91,
+    "605": 96,
+    "606": 64,
+    "607": 81,
+    "608": 144,
+    "609": 129,
+    "610": 82,
+    "611": 96,
+    "612": 32,
+    "613": 1,
+    "614": 97,
+    "615": 1,
+    "616": 234,
+    "617": 86,
+    "490": 91,
+    "491": 96,
+    "492": 64,
+    "493": 81,
+    "494": 128,
+    "495": 145,
+    "496": 3,
+    "497": 144,
+    "498": 243
+  },
+  "destinations": [
+    490
+  ],
+  "maximumStackWords": 4,
+  "scope": "development exact physical scalar return; complete entry connection and retained evidence remain open"
+}

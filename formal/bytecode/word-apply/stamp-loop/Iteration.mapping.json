@@ -1,0 +1,828 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 16850,
+      "op": 91,
+      "next": 16851,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 1,
+      "pc": 16851,
+      "op": 130,
+      "next": 16852,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 2,
+      "pc": 16852,
+      "op": 129,
+      "next": 16853,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "count"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 3,
+      "pc": 16853,
+      "op": 16,
+      "next": 16854,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "count",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 4,
+      "pc": 16854,
+      "op": 21,
+      "next": 16855,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "1"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 5,
+      "pc": 16855,
+      "op": 97,
+      "next": 16858,
+      "immediate": 16419,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 6,
+      "pc": 16858,
+      "op": 87,
+      "next": 16859,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "16419"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 7,
+      "pc": 16859,
+      "op": 95,
+      "next": 16860,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 8,
+      "pc": 16860,
+      "op": 132,
+      "next": 16861,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 9,
+      "pc": 16861,
+      "op": 132,
+      "next": 16862,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "arrayOffset"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 10,
+      "pc": 16862,
+      "op": 131,
+      "next": 16863,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "arrayOffset",
+        "count"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 11,
+      "pc": 16863,
+      "op": 129,
+      "next": 16864,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "arrayOffset",
+        "count",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 12,
+      "pc": 16864,
+      "op": 129,
+      "next": 16865,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "arrayOffset",
+        "count",
+        "index",
+        "count"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 13,
+      "pc": 16865,
+      "op": 16,
+      "next": 16866,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "arrayOffset",
+        "count",
+        "index",
+        "count",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 14,
+      "pc": 16866,
+      "op": 97,
+      "next": 16869,
+      "immediate": 16877,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "arrayOffset",
+        "count",
+        "index",
+        "1"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 15,
+      "pc": 16869,
+      "op": 87,
+      "next": 16870,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "arrayOffset",
+        "count",
+        "index",
+        "1",
+        "16877"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 16,
+      "pc": 16877,
+      "op": 91,
+      "next": 16878,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "arrayOffset",
+        "count",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 17,
+      "pc": 16878,
+      "op": 96,
+      "next": 16880,
+      "immediate": 32,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "arrayOffset",
+        "count",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 18,
+      "pc": 16880,
+      "op": 144,
+      "next": 16881,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "arrayOffset",
+        "count",
+        "index",
+        "32"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 19,
+      "pc": 16881,
+      "op": 129,
+      "next": 16882,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "arrayOffset",
+        "count",
+        "32",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 20,
+      "pc": 16882,
+      "op": 2,
+      "next": 16883,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "arrayOffset",
+        "count",
+        "32",
+        "index",
+        "32"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 21,
+      "pc": 16883,
+      "op": 146,
+      "next": 16884,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "arrayOffset",
+        "count",
+        "32",
+        "index*32"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 22,
+      "pc": 16884,
+      "op": 144,
+      "next": 16885,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "index*32",
+        "count",
+        "32",
+        "arrayOffset"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 23,
+      "pc": 16885,
+      "op": 146,
+      "next": 16886,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "index*32",
+        "count",
+        "arrayOffset",
+        "32"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 24,
+      "pc": 16886,
+      "op": 1,
+      "next": 16887,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "32",
+        "count",
+        "arrayOffset",
+        "index*32"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 25,
+      "pc": 16887,
+      "op": 53,
+      "next": 16888,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "32",
+        "count",
+        "((arrayOffset as nat)+index*32)%G.Modulus()"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 26,
+      "pc": 16888,
+      "op": 136,
+      "next": 16889,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "32",
+        "count",
+        "W.At(arrayOffset,index,data)"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 27,
+      "pc": 16889,
+      "op": 1,
+      "next": 16890,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "32",
+        "count",
+        "W.At(arrayOffset,index,data)",
+        "callPtr"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 28,
+      "pc": 16890,
+      "op": 144,
+      "next": 16891,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "32",
+        "count",
+        "callPtr+W.At(arrayOffset,index,data)"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 29,
+      "pc": 16891,
+      "op": 145,
+      "next": 16892,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "32",
+        "callPtr+W.At(arrayOffset,index,data)",
+        "count"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 30,
+      "pc": 16892,
+      "op": 1,
+      "next": 16893,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "count",
+        "callPtr+W.At(arrayOffset,index,data)",
+        "32"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 31,
+      "pc": 16893,
+      "op": 132,
+      "next": 16894,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "count",
+        "callPtr+W.At(arrayOffset,index,data)+32"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 32,
+      "pc": 16894,
+      "op": 144,
+      "next": 16895,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "count",
+        "callPtr+W.At(arrayOffset,index,data)+32",
+        "word"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 33,
+      "pc": 16895,
+      "op": 82,
+      "next": 16896,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "count",
+        "word",
+        "callPtr+W.At(arrayOffset,index,data)+32"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 34,
+      "pc": 16896,
+      "op": 80,
+      "next": 16897,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0",
+        "count"
+      ],
+      "memory": "Store(mem,callPtr+W.At(arrayOffset,index,data)+32,word)"
+    },
+    {
+      "id": 35,
+      "pc": 16897,
+      "op": 80,
+      "next": 16898,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0"
+      ],
+      "memory": "Store(mem,callPtr+W.At(arrayOffset,index,data)+32,word)"
+    },
+    {
+      "id": 36,
+      "pc": 16898,
+      "op": 96,
+      "next": 16900,
+      "immediate": 1,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index"
+      ],
+      "memory": "Store(mem,callPtr+W.At(arrayOffset,index,data)+32,word)"
+    },
+    {
+      "id": 37,
+      "pc": 16900,
+      "op": 1,
+      "next": 16901,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "1"
+      ],
+      "memory": "Store(mem,callPtr+W.At(arrayOffset,index,data)+32,word)"
+    },
+    {
+      "id": 38,
+      "pc": 16901,
+      "op": 97,
+      "next": 16904,
+      "immediate": 16850,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index+1"
+      ],
+      "memory": "Store(mem,callPtr+W.At(arrayOffset,index,data)+32,word)"
+    },
+    {
+      "id": 39,
+      "pc": 16904,
+      "op": 86,
+      "next": 16905,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index+1",
+        "16850"
+      ],
+      "memory": "Store(mem,callPtr+W.At(arrayOffset,index,data)+32,word)"
+    }
+  ],
+  "requiredBytes": {
+    "12472": 91,
+    "16850": 91,
+    "16851": 130,
+    "16852": 129,
+    "16853": 16,
+    "16854": 21,
+    "16855": 97,
+    "16856": 64,
+    "16857": 35,
+    "16858": 87,
+    "16419": 91,
+    "16859": 95,
+    "16860": 132,
+    "16861": 132,
+    "16862": 131,
+    "16863": 129,
+    "16864": 129,
+    "16865": 16,
+    "16866": 97,
+    "16867": 65,
+    "16868": 237,
+    "16869": 87,
+    "16877": 91,
+    "16878": 96,
+    "16879": 32,
+    "16880": 144,
+    "16881": 129,
+    "16882": 2,
+    "16883": 146,
+    "16884": 144,
+    "16885": 146,
+    "16886": 1,
+    "16887": 53,
+    "16888": 136,
+    "16889": 1,
+    "16890": 144,
+    "16891": 145,
+    "16892": 1,
+    "16893": 132,
+    "16894": 144,
+    "16895": 82,
+    "16896": 80,
+    "16897": 80,
+    "16898": 96,
+    "16899": 1,
+    "16900": 1,
+    "16901": 97,
+    "16902": 65,
+    "16903": 210,
+    "16904": 86
+  },
+  "destinations": [
+    12472,
+    16419,
+    16850,
+    16877
+  ],
+  "scope": "Actual stamping iteration/exit leaves only; whole engine/frame/callback/output and retained public evidence open."
+}

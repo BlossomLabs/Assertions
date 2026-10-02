@@ -1,0 +1,5 @@
+# Complete represented raw loop state
+
+The hand-written recursive state uses the actual initial output/template heap, the complete original source word at each index, physical ordered stamps, callback packing and exact32-byte receipt, followed by the actual positional map write or stable canonical filter keep/skip. The successful receipt sequence may contain arbitrary full256-bit words; filter responses must be canonical0/1 for this successful path.
+
+The per-iteration memory/free-pointer premise is derived from the original raw source/template/window representation and64-byte receipt growth. Raw layouts may overlap as admitted by the compiler. The physical trace loop must connect to this state, and output header shrink/serialization, all error branches, fresh complete included native verification, EVM receipts, semantic faults and independent retained checker remain required. Prepared state definitions and selected development checks alone add no public coverage. Resources/external observations remain explicit; no gas/deployment/performance claim.

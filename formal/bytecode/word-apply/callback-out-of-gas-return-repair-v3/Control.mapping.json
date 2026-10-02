@@ -1,0 +1,221 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 16171,
+      "op": 96,
+      "next": 16173,
+      "immediate": 64,
+      "stack": [],
+      "stage": 0
+    },
+    {
+      "id": 1,
+      "pc": 16173,
+      "op": 81,
+      "next": 16174,
+      "immediate": 0,
+      "stack": [
+        "64"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 2,
+      "pc": 16174,
+      "op": 99,
+      "next": 16179,
+      "immediate": 1765311239,
+      "stack": [
+        "free"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 3,
+      "pc": 16179,
+      "op": 96,
+      "next": 16181,
+      "immediate": 225,
+      "stack": [
+        "free",
+        "1765311239"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 4,
+      "pc": 16181,
+      "op": 27,
+      "next": 16182,
+      "immediate": 0,
+      "stack": [
+        "free",
+        "1765311239",
+        "225"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 5,
+      "pc": 16182,
+      "op": 129,
+      "next": 16183,
+      "immediate": 0,
+      "stack": [
+        "free",
+        "M.Header()"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 6,
+      "pc": 16183,
+      "op": 82,
+      "next": 16184,
+      "immediate": 0,
+      "stack": [
+        "free",
+        "M.Header()",
+        "free"
+      ],
+      "stage": 0
+    },
+    {
+      "id": 7,
+      "pc": 16184,
+      "op": 96,
+      "next": 16186,
+      "immediate": 4,
+      "stack": [
+        "free"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 8,
+      "pc": 16186,
+      "op": 1,
+      "next": 16187,
+      "immediate": 0,
+      "stack": [
+        "free",
+        "4"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 9,
+      "pc": 16187,
+      "op": 96,
+      "next": 16189,
+      "immediate": 64,
+      "stack": [
+        "free+4"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 10,
+      "pc": 16189,
+      "op": 81,
+      "next": 16190,
+      "immediate": 0,
+      "stack": [
+        "free+4",
+        "64"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 11,
+      "pc": 16190,
+      "op": 128,
+      "next": 16191,
+      "immediate": 0,
+      "stack": [
+        "free+4",
+        "free"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 12,
+      "pc": 16191,
+      "op": 145,
+      "next": 16192,
+      "immediate": 0,
+      "stack": [
+        "free+4",
+        "free",
+        "free"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 13,
+      "pc": 16192,
+      "op": 3,
+      "next": 16193,
+      "immediate": 0,
+      "stack": [
+        "free",
+        "free",
+        "free+4"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 14,
+      "pc": 16193,
+      "op": 144,
+      "next": 16194,
+      "immediate": 0,
+      "stack": [
+        "free",
+        "4"
+      ],
+      "stage": 1
+    },
+    {
+      "id": 15,
+      "pc": 16194,
+      "op": 253,
+      "next": 16195,
+      "immediate": 0,
+      "stack": [
+        "4",
+        "free"
+      ],
+      "stage": 1
+    }
+  ],
+  "requiredBytes": {
+    "16171": 96,
+    "16172": 64,
+    "16173": 81,
+    "16174": 99,
+    "16175": 105,
+    "16176": 56,
+    "16177": 131,
+    "16178": 7,
+    "16179": 96,
+    "16180": 225,
+    "16181": 27,
+    "16182": 129,
+    "16183": 82,
+    "16184": 96,
+    "16185": 4,
+    "16186": 1,
+    "16187": 96,
+    "16188": 64,
+    "16189": 81,
+    "16190": 128,
+    "16191": 145,
+    "16192": 3,
+    "16193": 144,
+    "16194": 253
+  },
+  "scope": "Complete local exact exhaustion signal return. Guard and full raw failure composition remain open."
+}

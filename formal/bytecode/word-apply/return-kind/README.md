@@ -1,0 +1,3 @@
+# Physical serializer termination
+
+This supplemental theorem proves actual PC498 RETURN over every fitting physical memory slice and arbitrary lower stack prefix. It avoids the ABI encoder representation in a terminal-kind mutation diagnostic; the full serializer proof still proves canonical bytes. The generator gates the whole current runtime identity and emits only the actual termination opcode in the physical body/Matches predicate, keeping the expected Returned postcondition fixed. Both accepted termination opcodes are translated, so a RETURN-to-REVERT fault must cause an ordinary semantic failure. No caller/global/source proof, gas, deployment or public coverage claim.

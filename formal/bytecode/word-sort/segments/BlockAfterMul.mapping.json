@@ -1,0 +1,146 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 3887,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "start",
+        "width*2"
+      ],
+      "op": 91,
+      "next": 3888,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 3888,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "start",
+        "width*2"
+      ],
+      "op": 97,
+      "next": 3891,
+      "immediate": 3897
+    },
+    {
+      "id": 2,
+      "pc": 3891,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "start",
+        "width*2",
+        "3897"
+      ],
+      "op": 144,
+      "next": 3892,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 3892,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "start",
+        "3897",
+        "width*2"
+      ],
+      "op": 130,
+      "next": 3893,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 3893,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "start",
+        "3897",
+        "width*2",
+        "start"
+      ],
+      "op": 97,
+      "next": 3896,
+      "immediate": 23604
+    },
+    {
+      "id": 5,
+      "pc": 3896,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "start",
+        "3897",
+        "width*2",
+        "start",
+        "23604"
+      ],
+      "op": 86,
+      "next": 3897,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "3887": 91,
+    "3888": 97,
+    "3889": 15,
+    "3890": 57,
+    "3891": 144,
+    "3892": 130,
+    "3893": 97,
+    "3894": 92,
+    "3895": 52,
+    "3896": 86,
+    "23604": 91
+  },
+  "destinations": [
+    23604
+  ],
+  "initialStack": "785862473,518,offset,n*32,out,n,scratch,width,start,width*2",
+  "finalStack": "785862473,518,offset,n*32,out,n,scratch,width,start,3897,width*2,start",
+  "loads": [],
+  "scope": "Actual fitting merge segment only; complete unbounded merge/public entry retained evidence open"
+}

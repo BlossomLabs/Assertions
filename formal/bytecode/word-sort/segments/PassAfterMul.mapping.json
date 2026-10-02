@@ -1,0 +1,111 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 3919,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "width*2"
+      ],
+      "op": 91,
+      "next": 3920,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 3920,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "width*2"
+      ],
+      "op": 144,
+      "next": 3921,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 3921,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width*2",
+        "width"
+      ],
+      "op": 80,
+      "next": 3922,
+      "immediate": 0
+    },
+    {
+      "id": 3,
+      "pc": 3922,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width*2"
+      ],
+      "op": 97,
+      "next": 3925,
+      "immediate": 3612
+    },
+    {
+      "id": 4,
+      "pc": 3925,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width*2",
+        "3612"
+      ],
+      "op": 86,
+      "next": 3926,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "3919": 91,
+    "3920": 144,
+    "3921": 80,
+    "3922": 97,
+    "3923": 14,
+    "3924": 28,
+    "3925": 86,
+    "3612": 91
+  },
+  "destinations": [
+    3612
+  ],
+  "initialStack": "785862473,518,offset,n*32,out,n,scratch,width,width*2",
+  "finalStack": "785862473,518,offset,n*32,out,n,scratch,width*2",
+  "loads": [],
+  "scope": "Actual fitting merge segment only; complete unbounded merge/public entry retained evidence open"
+}

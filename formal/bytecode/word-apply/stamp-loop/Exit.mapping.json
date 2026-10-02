@@ -1,0 +1,245 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 16850,
+      "op": 91,
+      "next": 16851,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 1,
+      "pc": 16851,
+      "op": 130,
+      "next": 16852,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 2,
+      "pc": 16852,
+      "op": 129,
+      "next": 16853,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "count"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 3,
+      "pc": 16853,
+      "op": 16,
+      "next": 16854,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "count",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 4,
+      "pc": 16854,
+      "op": 21,
+      "next": 16855,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "0"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 5,
+      "pc": 16855,
+      "op": 97,
+      "next": 16858,
+      "immediate": 16419,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "1"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 6,
+      "pc": 16858,
+      "op": 87,
+      "next": 16859,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index",
+        "1",
+        "16419"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 7,
+      "pc": 16419,
+      "op": 91,
+      "next": 16420,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 8,
+      "pc": 16420,
+      "op": 80,
+      "next": 16421,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word",
+        "index"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 9,
+      "pc": 16421,
+      "op": 80,
+      "next": 16422,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count",
+        "word"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 10,
+      "pc": 16422,
+      "op": 80,
+      "next": 16423,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset",
+        "count"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 11,
+      "pc": 16423,
+      "op": 80,
+      "next": 16424,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr",
+        "arrayOffset"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 12,
+      "pc": 16424,
+      "op": 80,
+      "next": 16425,
+      "immediate": 0,
+      "stack": [
+        "returnPc",
+        "callPtr"
+      ],
+      "memory": "mem"
+    },
+    {
+      "id": 13,
+      "pc": 16425,
+      "op": 86,
+      "next": 16426,
+      "immediate": 0,
+      "stack": [
+        "returnPc"
+      ],
+      "memory": "mem"
+    }
+  ],
+  "requiredBytes": {
+    "12472": 91,
+    "16850": 91,
+    "16851": 130,
+    "16852": 129,
+    "16853": 16,
+    "16854": 21,
+    "16855": 97,
+    "16856": 64,
+    "16857": 35,
+    "16858": 87,
+    "16419": 91,
+    "16420": 80,
+    "16421": 80,
+    "16422": 80,
+    "16423": 80,
+    "16424": 80,
+    "16425": 86
+  },
+  "destinations": [
+    12472,
+    16419
+  ],
+  "scope": "Actual stamping iteration/exit leaves only; whole engine/frame/callback/output and retained public evidence open."
+}

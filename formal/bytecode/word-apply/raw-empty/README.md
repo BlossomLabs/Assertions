@@ -1,0 +1,3 @@
+# Empty raw word-apply return
+
+This development connection composes the actual PC-zero decoder and alignment/window checks with count division, physical empty allocation, the compiler empty map/filter branch and shared dynamic bytes serialization through RETURN. It admits compiler-accepted loose/overlapping raw offsets, arbitrary valid target (including codeless), fitting calldata and any valid element-window array. Source length is zero; no CodeSize, gas or callback observations are required. The filter branch physically writes zero to the existing zero output header. Native checks and complete fresh include-graph retention remain pending; no new public coverage or gas/deployment/performance claim.

@@ -1,0 +1,9 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "requiredBytes": {
+    "498": 243
+  },
+  "pc": 498,
+  "nativeSymbol": "BytecodeApplyReturnKind.Terminal",
+  "scope": "Actual termination instruction over fitting physical slices, fixed successful RETURN semantics; full public caller/ABI/loop composition remains a separate theorem."
+}

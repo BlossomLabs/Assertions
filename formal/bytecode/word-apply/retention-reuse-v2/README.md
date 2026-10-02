@@ -1,0 +1,9 @@
+# Complete mapWords/filterWords retention with unchanged native evidence
+
+This verifier preserves the original failed retention attempt. It accepts reuse only after that attempt is terminal and contains exactly the complete207-module matrix, identical root specification and entire native include graph, identical current and historical input snapshots, identical tool hashes, exact original whole-module commands, and passing root audits. The only reviewed prior failures are ordinary30-second timeouts in raw-template and raw-success. Partial timed-out rows receive no credit.
+
+Every reused module's copied original log and CSV is matched to the terminal manifest evidence hashes and rechecked against the current complete declaration inventory. Original provenance remains explicit. The two incomplete modules are reverified with unchanged statements, admitted domains and postconditions at120 seconds per obligation. An optional completed `--reuse-repair-from` supplies those two unchanged120-second whole-module proofs only after exact included graph, full current/historical source/tool closure, complete module commands/inventory/logs/CSV and their audits are independently rechecked. Every module in the full207-module graph must pass under its identical current include closure.
+
+All runtime identity, dependency checks, generation comparisons, formatting, eleven root audits,150 fresh physical fixtures and three matching native/physical semantic mutations still run. The whole included graph is mandatory. Every owner file must be complete before capture. `--reuse-native-from` must name the original terminal manifest; never restart or cancel the live attempt because observation polling times out.
+
+No ledger or public coverage follows until complete retained evidence and independent checking pass. Representation, sufficient reached resources and truthful external observations remain explicit. No gas, deployment, performance or compiler-correctness claim.

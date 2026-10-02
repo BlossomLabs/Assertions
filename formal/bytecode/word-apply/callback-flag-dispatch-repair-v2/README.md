@@ -1,0 +1,7 @@
+# Callback flag dispatch
+
+Control.dfy is an authored proof of the complete three actual instructions at PC17003,17004,17007. It duplicates the physical success flag, pushes the compiled destination17065 and branches to the successful receipt-size check or to the failure guard at17008. It preserves arbitrary memory, return bytes and observation cursor; no observation is consumed by this local branch. The actual local stack includes return PC12484, target, template pointer, source index, zero context, earlier gas observation, flag and receipt pointer.
+
+Matches binds all reached bytes and the jump destination. These small authored constants must also be checked against the pinned runtime during retained evidence. The development runner captures the included graph and owners before selected native verification. Actual receipt allocation, failure guard, full raw composition, fresh included native evidence, physical fixtures and semantic mutations remain required. There is no public coverage credit or gas/deployment/performance claim.
+
+Isolated V2 preserves the same domain and physical three instructions. The actual V1 run failed only the singleton-trace and initial empty stack-suffix loop invariant instantiations. V2 explicitly proves those initial facts; V1 snapshot is retained.

@@ -1,0 +1,126 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 5904,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0",
+        "WordOffset(offset,index)",
+        "32"
+      ],
+      "op": 91,
+      "next": 5905,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 1,
+      "pc": 5905,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0",
+        "WordOffset(offset,index)",
+        "32"
+      ],
+      "op": 97,
+      "next": 5908,
+      "immediate": 5913,
+      "memory": "mem"
+    },
+    {
+      "id": 2,
+      "pc": 5908,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0",
+        "WordOffset(offset,index)",
+        "32",
+        "5913"
+      ],
+      "op": 145,
+      "next": 5909,
+      "immediate": 0,
+      "memory": "mem"
+    },
+    {
+      "id": 3,
+      "pc": 5909,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0",
+        "5913",
+        "32",
+        "WordOffset(offset,index)"
+      ],
+      "op": 97,
+      "next": 5912,
+      "immediate": 23662,
+      "memory": "mem"
+    },
+    {
+      "id": 4,
+      "pc": 5912,
+      "stack": [
+        "2874738232",
+        "518",
+        "offset",
+        "length",
+        "128",
+        "length/32",
+        "index",
+        "0",
+        "5913",
+        "32",
+        "WordOffset(offset,index)",
+        "23662"
+      ],
+      "op": 86,
+      "next": 5913,
+      "immediate": 0,
+      "memory": "mem"
+    }
+  ],
+  "requiredBytes": {
+    "5904": 91,
+    "5905": 97,
+    "5906": 23,
+    "5907": 25,
+    "5908": 145,
+    "5909": 97,
+    "5910": 92,
+    "5911": 110,
+    "5912": 86,
+    "23662": 91
+  },
+  "destinations": [
+    23662
+  ],
+  "expectedFinalStack": "2874738232,518,offset,length,128,length/32,index,0,5913,32,WordOffset(offset,index)",
+  "scope": "development admitted actual loop segment only; unbounded loop/public entry and retained evidence remain open"
+}

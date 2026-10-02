@@ -1,0 +1,166 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 3860,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "start",
+        "middle",
+        "end",
+        "a",
+        "b",
+        "dest",
+        "take"
+      ],
+      "op": 91,
+      "next": 3861,
+      "immediate": 0
+    },
+    {
+      "id": 1,
+      "pc": 3861,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "start",
+        "middle",
+        "end",
+        "a",
+        "b",
+        "dest",
+        "take"
+      ],
+      "op": 80,
+      "next": 3862,
+      "immediate": 0
+    },
+    {
+      "id": 2,
+      "pc": 3862,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "start",
+        "middle",
+        "end",
+        "a",
+        "b",
+        "dest"
+      ],
+      "op": 96,
+      "next": 3864,
+      "immediate": 1
+    },
+    {
+      "id": 3,
+      "pc": 3864,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "start",
+        "middle",
+        "end",
+        "a",
+        "b",
+        "dest",
+        "1"
+      ],
+      "op": 1,
+      "next": 3865,
+      "immediate": 0
+    },
+    {
+      "id": 4,
+      "pc": 3865,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "start",
+        "middle",
+        "end",
+        "a",
+        "b",
+        "((1 as nat)+(dest as nat))%G.Modulus()"
+      ],
+      "op": 97,
+      "next": 3868,
+      "immediate": 3726
+    },
+    {
+      "id": 5,
+      "pc": 3868,
+      "stack": [
+        "785862473",
+        "518",
+        "offset",
+        "n*32",
+        "out",
+        "n",
+        "scratch",
+        "width",
+        "start",
+        "middle",
+        "end",
+        "a",
+        "b",
+        "((1 as nat)+(dest as nat))%G.Modulus()",
+        "3726"
+      ],
+      "op": 86,
+      "next": 3869,
+      "immediate": 0
+    }
+  ],
+  "requiredBytes": {
+    "3860": 91,
+    "3861": 80,
+    "3862": 96,
+    "3863": 1,
+    "3864": 1,
+    "3865": 97,
+    "3866": 14,
+    "3867": 142,
+    "3868": 86,
+    "3726": 91
+  },
+  "destinations": [
+    3726
+  ],
+  "initialStack": "785862473,518,offset,n*32,out,n,scratch,width,start,middle,end,a,b,dest,take",
+  "finalStack": "785862473,518,offset,n*32,out,n,scratch,width,start,middle,end,a,b,((1 as nat)+(dest as nat))%G.Modulus()",
+  "loads": [],
+  "scope": "Actual fitting merge segment only; complete unbounded merge/public entry retained evidence open"
+}

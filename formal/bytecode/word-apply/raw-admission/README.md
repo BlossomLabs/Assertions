@@ -1,0 +1,5 @@
+# Raw word apply successful admission connection
+
+The development theorem composes physical dispatch fromPCzero, both selected public wrapper calls, all actual shared ABI decoder instructions, decoded engine invocation, source alignment and the finite valid-window check. It ends at actualPC12235 with the complete compiler stack and unchanged fresh memory. Raw framing and canonical target address are checked by the actual decoder; accepted loose or overlapping dynamic tails, dirty unused padding and trailing data remain admitted.
+
+Premises are explicit: zero value and the compiler-bound selected public selector, fitting raw calldata, source length divisible by32 and valid template windows. Error branches, allocation, empty behavior, target code checks, template copy, callbacks, output and complete retained public coverage remain open. Selected connection verification assumes imported leaf contracts; complete fresh retained native include-graph closure is mandatory before public claims. Reviewed interpretation and adequate resources remain explicit; no gas, deployment or performance claim follows.

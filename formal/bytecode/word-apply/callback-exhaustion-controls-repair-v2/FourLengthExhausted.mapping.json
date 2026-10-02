@@ -1,0 +1,704 @@
+{
+  "runtimeSha256": "7e8942cbdbd418df4c07cd041da9fd1d91ea452772b3eeb9f5ee7bb48e2622c4",
+  "states": [
+    {
+      "id": 0,
+      "pc": 16107,
+      "op": 91,
+      "next": 16108,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 1,
+      "pc": 16108,
+      "op": 95,
+      "next": 16109,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 2,
+      "pc": 16109,
+      "op": 129,
+      "next": 16110,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "0"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 3,
+      "pc": 16110,
+      "op": 81,
+      "next": 16111,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "0",
+        "receipt"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 4,
+      "pc": 16111,
+      "op": 96,
+      "next": 16113,
+      "immediate": 4,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "0",
+        "length"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 5,
+      "pc": 16113,
+      "op": 3,
+      "next": 16114,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "0",
+        "length",
+        "4"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 6,
+      "pc": 16114,
+      "op": 97,
+      "next": 16117,
+      "immediate": 16124,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "0",
+        "H.Difference(length)"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 7,
+      "pc": 16117,
+      "op": 87,
+      "next": 16118,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "0",
+        "H.Difference(length)",
+        "16124"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 8,
+      "pc": 16118,
+      "op": 80,
+      "next": 16119,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "0"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 9,
+      "pc": 16119,
+      "op": 96,
+      "next": 16121,
+      "immediate": 32,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 10,
+      "pc": 16121,
+      "op": 129,
+      "next": 16122,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "32"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 11,
+      "pc": 16122,
+      "op": 1,
+      "next": 16123,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "32",
+        "receipt"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 12,
+      "pc": 16123,
+      "op": 81,
+      "next": 16124,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "receipt+32"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 13,
+      "pc": 16124,
+      "op": 91,
+      "next": 16125,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 14,
+      "pc": 16125,
+      "op": 97,
+      "next": 16128,
+      "immediate": 16135,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 15,
+      "pc": 16128,
+      "op": 96,
+      "next": 16130,
+      "immediate": 63,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "16135"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 16,
+      "pc": 16130,
+      "op": 132,
+      "next": 16131,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "16135",
+        "63"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 17,
+      "pc": 16131,
+      "op": 97,
+      "next": 16134,
+      "immediate": 23562,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "16135",
+        "63",
+        "gasBefore"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 18,
+      "pc": 16134,
+      "op": 86,
+      "next": 16135,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "16135",
+        "63",
+        "gasBefore",
+        "23562"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 19,
+      "pc": 23562,
+      "op": 91,
+      "next": 23563,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "16135",
+        "63",
+        "gasBefore"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 20,
+      "pc": 23563,
+      "op": 95,
+      "next": 23564,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "16135",
+        "63",
+        "gasBefore"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 21,
+      "pc": 23564,
+      "op": 130,
+      "next": 23565,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "16135",
+        "63",
+        "gasBefore",
+        "0"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 22,
+      "pc": 23565,
+      "op": 97,
+      "next": 23568,
+      "immediate": 23576,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "16135",
+        "63",
+        "gasBefore",
+        "0",
+        "63"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 23,
+      "pc": 23568,
+      "op": 87,
+      "next": 23569,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "16135",
+        "63",
+        "gasBefore",
+        "0",
+        "63",
+        "23576"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 24,
+      "pc": 23576,
+      "op": 91,
+      "next": 23577,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "16135",
+        "63",
+        "gasBefore",
+        "0"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 25,
+      "pc": 23577,
+      "op": 80,
+      "next": 23578,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "16135",
+        "63",
+        "gasBefore",
+        "0"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 26,
+      "pc": 23578,
+      "op": 4,
+      "next": 23579,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "16135",
+        "63",
+        "gasBefore"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 27,
+      "pc": 23579,
+      "op": 144,
+      "next": 23580,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "16135",
+        "gasBefore/63"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 28,
+      "pc": 23580,
+      "op": 86,
+      "next": 23581,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "gasBefore/63",
+        "16135"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 29,
+      "pc": 16135,
+      "op": 91,
+      "next": 16136,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "gasBefore/63"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 30,
+      "pc": 16136,
+      "op": 90,
+      "next": 16137,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "gasBefore/63"
+      ],
+      "cursorDelta": 0
+    },
+    {
+      "id": 31,
+      "pc": 16137,
+      "op": 17,
+      "next": 16138,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "gasBefore/63",
+        "gasAfter"
+      ],
+      "cursorDelta": 1
+    },
+    {
+      "id": 32,
+      "pc": 16138,
+      "op": 21,
+      "next": 16139,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "0"
+      ],
+      "cursorDelta": 1
+    },
+    {
+      "id": 33,
+      "pc": 16139,
+      "op": 128,
+      "next": 16140,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "1"
+      ],
+      "cursorDelta": 1
+    },
+    {
+      "id": 34,
+      "pc": 16140,
+      "op": 97,
+      "next": 16143,
+      "immediate": 16165,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "1",
+        "1"
+      ],
+      "cursorDelta": 1
+    },
+    {
+      "id": 35,
+      "pc": 16143,
+      "op": 87,
+      "next": 16144,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "1",
+        "1",
+        "16165"
+      ],
+      "cursorDelta": 1
+    },
+    {
+      "id": 36,
+      "pc": 16165,
+      "op": 91,
+      "next": 16166,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "1"
+      ],
+      "cursorDelta": 1
+    },
+    {
+      "id": 37,
+      "pc": 16166,
+      "op": 21,
+      "next": 16167,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "1"
+      ],
+      "cursorDelta": 1
+    },
+    {
+      "id": 38,
+      "pc": 16167,
+      "op": 97,
+      "next": 16170,
+      "immediate": 16195,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "0"
+      ],
+      "cursorDelta": 1
+    },
+    {
+      "id": 39,
+      "pc": 16170,
+      "op": 87,
+      "next": 16171,
+      "immediate": 0,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head",
+        "0",
+        "16195"
+      ],
+      "cursorDelta": 1
+    },
+    {
+      "id": 40,
+      "pc": 16171,
+      "stack": [
+        "17017",
+        "gasBefore",
+        "receipt",
+        "head"
+      ],
+      "cursorDelta": 1,
+      "terminal": true
+    }
+  ],
+  "requiredBytes": {
+    "16107": 91,
+    "16108": 95,
+    "16109": 129,
+    "16110": 81,
+    "16111": 96,
+    "16112": 4,
+    "16113": 3,
+    "16114": 97,
+    "16115": 62,
+    "16116": 252,
+    "16117": 87,
+    "16118": 80,
+    "16119": 96,
+    "16120": 32,
+    "16121": 129,
+    "16122": 1,
+    "16123": 81,
+    "16124": 91,
+    "16125": 97,
+    "16126": 63,
+    "16127": 7,
+    "16128": 96,
+    "16129": 63,
+    "16130": 132,
+    "16131": 97,
+    "16132": 92,
+    "16133": 10,
+    "16134": 86,
+    "23562": 91,
+    "23563": 95,
+    "23564": 130,
+    "23565": 97,
+    "23566": 92,
+    "23567": 24,
+    "23568": 87,
+    "23576": 91,
+    "23577": 80,
+    "23578": 4,
+    "23579": 144,
+    "23580": 86,
+    "16135": 91,
+    "16136": 90,
+    "16137": 17,
+    "16138": 21,
+    "16139": 128,
+    "16140": 97,
+    "16141": 63,
+    "16142": 37,
+    "16143": 87,
+    "16165": 91,
+    "16166": 21,
+    "16167": 97,
+    "16168": 63,
+    "16169": 67,
+    "16170": 87,
+    "16195": 91,
+    "17017": 91
+  },
+  "scope": "Complete local guard path. Raw callback composition and retained graph remain open."
+}

@@ -52,8 +52,9 @@ interface IERC20Balance {
  *         control (`cond`, `orElse`, `isValid`, `revertData`).
  * @dev The judge is view-only: assertBatch(executions) evaluates the
  *      ERC-8211 execution algorithm directly, restricted to what a view
- *      context can express: every fetcher resolution is a staticcall,
- *      entries with a TARGET parameter execute the constructed call via
+ *      context can express: call-based fetchers use staticcalls, while literals and native
+ *      balances are read directly,
+ *      entries whose TARGET resolves to a nonzero address execute the call via
  *      STATICCALL (the call itself becomes an assertion: it must not
  *      revert), VALUE parameters and outputParams are rejected (no ETH
  *      forwarding, no Storage writes in view). Entries without a TARGET
@@ -84,6 +85,7 @@ contract Assertions {
     // ============ Custom Errors ============
     //
     // ConstraintFailed, CallFailed, InvalidBalanceData, InvalidConstraintData,
+    // InvalidConstraintRange, InvalidOrConstraint,
     // ReturnDataOutOfBounds and InvalidAddressWord are the standard's shared
     // errors, declared in ERC8211.sol. ElementIndexOutOfBounds is declared
     // above; InvalidTypeDescriptor comes from the shared AbiCodec grammar.
@@ -125,8 +127,9 @@ contract Assertions {
 
     /**
      * @notice Thrown when nav cannot proceed: a path step indexes into a
-     *         non-composite value, or the terminal cannot be represented as
-     *         a single return (descriptor parse failures revert with
+     *         non-composite value, a sentinel has no preceding selection, or
+     *         LEN/PAYLOAD is applied to an unsupported type
+     *         (descriptor parse failures revert with
      *         InvalidTypeDescriptor instead)
      * @param position The byte position in the descriptor where navigation
      *        failed
@@ -173,7 +176,9 @@ contract Assertions {
      *         nested core frames, so orElse, isValid and revertData never
      *         read it as "the attempt failed". Operations and Collections preserve
      *         the same signal. External targets that swallow failures or branch
-     *         on available gas are outside this guarantee.
+     *         on available gas are outside this guarantee. The exact four-byte
+     *         signal is reserved, not authenticated: a target can deliberately
+     *         raise it, and near-exhausting ordinary failures may also be refused.
      */
     error SubcallOutOfGas();
 
@@ -184,7 +189,8 @@ contract Assertions {
      *         view-mode evaluation: every input parameter resolves, every
      *         constraint holds, and every constructed call succeeds as a
      *         staticcall. Constructed-call returndata is ignored, including a
-     *         returned false. An empty batch succeeds.
+     *         returned false. A TARGET resolving to address(0) skips the call,
+     *         as does an entry with no TARGET. An empty batch succeeds.
      * @param executions The ERC-8211 batch entries (standard wire format)
      */
     function assertBatch(ComposableExecution[] calldata executions) external view {
@@ -230,9 +236,9 @@ contract Assertions {
      *         resolved bytes unchanged
      * @dev THE primitive: the ERC-8211 static call, exposed as a read.
      *      The value is returned via a raw assembly return,
-     *      indistinguishable from a contract returning it directly, so
-     *      nesting a resolve inside any operand behaves exactly like
-     *      calling the underlying target. Constraints on `param` are
+     *      with the same raw return layout as the fetched value. The fetch
+     *      runs in this contract's staticcall context; caller- or gas-sensitive
+     *      targets may differ from a direct call in another frame. Constraints on `param` are
      *      validated before returning (a violation reverts with
      *      ConstraintFailed identifying the constraint), which turns any
      *      nested operand into an inline assert.
@@ -250,12 +256,13 @@ contract Assertions {
      * @notice Resolves each operand exactly once and returns the raw
      *         results as a bytes[] value, one element per operand
      * @dev `resolve` over a list, for assembling a `bytes[]` from N live
-     *      operands without an encoder computing array offsets on-chain:
+     *      operands without the caller constructing array offsets:
      *      the canonical way to build the values list of Operations'
      *      `concat` or `encode`, or a Collections values array, from
      *      operands that are only known at judge time. Results are taken
-     *      as-is and not validated against any type; the consumer's
-     *      declared type (a `bytes[]` in a `get` descriptor) does that.
+     *      as-is without validating the types encoded inside them. A
+     *      `bytes[]` descriptor checks only the outer array and bytes
+     *      envelopes; a typed consumer must validate each inner value.
      *      Constraints on each operand are validated as in `resolve`, with
      *      ConstraintFailed naming the operand by its index. Returned as an
      *      ordinary ABI value, which is exactly the canonical single-value
@@ -278,8 +285,10 @@ contract Assertions {
      *         of the resolved bytes
      * @dev The word extractor for multi-value returns: word positions
      *      follow the raw ABI encoding of the resolved data (so dynamic
-     *      types contribute head offsets, a single dynamic array's length
-     *      sits at word 1 and its elements at words 2+i). `wordIndex` is
+     *      types contribute head offsets; a single dynamic array's length
+     *      sits at word 1, and one-word static elements sit at words 2+i).
+     *      Multiword elements span several words; dynamic elements have
+     *      offset words followed by tails. `wordIndex` is
      *      0-based; negative counts from the end (-1 = last word),
      *      resolved against the live data. Reverts with
      *      ReturnDataOutOfBounds outside the full words in either
@@ -329,13 +338,13 @@ contract Assertions {
      *      `path` walks it: the first step selects a tuple component
      *      (non-negative), each further step indexes the current tuple or
      *      array (array steps accept negative indices, resolved against the
-     *      live length, -1 = last). Only the SHAPE of the descriptor is
-     *      parsed (dynamic vs static, head footprints; the shared AbiCodec
-     *      grammar); base type names beyond bytes/string are not
-     *      interpreted. The declared type is the author's claim about the
-     *      encoder, like an inline ABI: a wrong claim reverts loudly in
-     *      almost all cases, but a shape-compatible wrong type can read
-     *      the wrong value.
+     *      live length, -1 = last). Navigation uses the descriptor
+     *      shape (dynamic vs static, head footprints; the shared AbiCodec
+     *      grammar), and returned static words are range-checked for
+     *      recognized ABI base types. Unrecognized base names describe
+     *      unrestricted words. The declared type is the author's claim about the
+     *      encoder, like an inline ABI: incompatible encodings can revert,
+     *      but a shape-compatible wrong type can read the wrong value.
      *
      *      The selection is returned via a raw assembly return,
      *      indistinguishable from a contract returning that value directly,
@@ -530,8 +539,9 @@ contract Assertions {
      *      the second value's head offset from the first value's length
      *      on-chain, re-resolving the first value once per later offset.
      *      Here every argument arrives as a canonical single-value ABI
-     *      encoding (a 32-byte word for a static type, [0x20][len][payload]
-     *      for string/bytes, abi.encode(T[]) for an array) and the layout is
+     *      encoding (a word for a static scalar, the full bare footprint for a
+     *      static tuple or fixed array, [0x20][len][payload] for string/bytes,
+     *      abi.encode(T[]) for a dynamic array) and the layout is
      *      computed in this frame: each operand resolves exactly once, and
      *      the destination sees this contract as the caller, exactly as with
      *      `read`. The returndata is returned via a raw assembly return, so
@@ -604,21 +614,21 @@ contract Assertions {
     // ============ OrElse / IsValid ============
 
     /**
-     * @notice Resolves `a`; if that reverts for ANY reason, resolves and
-     *         returns `b` instead
+     * @notice Resolves `a`; on an ordinary failure, resolves and returns
+     *         `b` instead. Gas exhaustion propagates as SubcallOutOfGas
      * @dev The composable try/catch. The attempt runs behind an external
      *      self-staticcall boundary (the EVM's only catch primitive), so
-     *      ALL failures of `a` select the fallback: a reverting or
+     *      ordinary failures of `a` select the fallback: a reverting or
      *      code-less call target, a violated constraint (constraints
-     *      double as guards here), malformed data, even out-of-gas inside
-     *      the subframe, EXCEPT an attempt that burned all the gas it was
-     *      given: that one reverts SubcallOutOfGas instead of taking `b`,
+     *      double as guards here), or malformed data. An attempt that
+     *      exhausts or nearly exhausts its gas, or propagates the exact
+     *      SubcallOutOfGas signal, reverts SubcallOutOfGas instead of taking `b`,
      *      because the transaction's gas limit could have chosen it. Do not
      *      use orElse to distinguish other failure causes. On success the
      *      attempt's bytes pass through byte-identically. `b` resolves
      *      in-frame: its failures propagate; chain further orElse operands
      *      for more fallbacks. In resolution errors `b` is operand 1.
-     * @param a The attempt (any failure selects the fallback)
+     * @param a The attempt (ordinary failures select the fallback)
      * @param b The fallback, resolved only when the attempt failed
      */
     function orElse(InputParam calldata a, InputParam calldata b) external view {
@@ -693,7 +703,11 @@ contract Assertions {
      *      A code-less target counts as a failure, as it does for
      *      `isValid`, but it carries no reason. A staticcall into an
      *      empty account succeeds with empty returndata, so there is
-     *      nothing for an expectation to match and one fails here.
+     *      nothing for a nonzero selector to match. A zero selector
+     *      accepts this failure and returns empty data.
+     *      Decoding the operand happens before probing the target. A decoder
+     *      bare revert, allocation panic or resource failure at that stage
+     *      is propagated; it is not the target's observed revert data.
      *      Expressions' ProbeCall node applies these same rules to graph
      *      values.
      * @param a The call operand, which must revert (STATIC_CALL fetcher,
@@ -713,7 +727,7 @@ contract Assertions {
         if (target.code.length == 0) {
             // Agrees with isValid(), which counts a code-less target a failure
             // (there is no word to splice). But an empty account produces no
-            // revert data, so no expectation can be satisfied here.
+            // revert data, so only a zero expectedSelector accepts it here.
             if (expectedSelector != bytes4(0)) {
                 revert UnexpectedRevertData(expectedSelector, bytes4(0));
             }
@@ -798,7 +812,9 @@ contract Assertions {
      *      RAW_BYTES echoes paramData; STATIC_CALL returns the raw
      *      returndata of the encoded call; BALANCE returns
      *      abi.encode(uint256 balance). `assertion`, `entryIndex` and
-     *      `paramIndex` are error-reporting context only.
+     *      `paramIndex` are error-reporting context only. STATIC_CALL decoding
+     *      can fail with a bare revert, allocation panic or resource failure
+     *      before any target call is attempted.
      */
     function _resolve(InputParam calldata param, string memory assertion, uint256 entryIndex, uint256 paramIndex)
         internal
@@ -903,6 +919,8 @@ contract Assertions {
      *      Check all word bounds before evaluating any predicate. OR checks
      *      its leaves against one word and rejects nested OR structurally,
      *      before short-circuiting. Reference lengths stay canonical.
+     *      OR's nested ABI decoder can fail with a bare revert, allocation
+     *      panic or resource exhaustion; failures are propagated unchanged.
      */
     function _validateConstraints(
         Constraint[] calldata constraints,
@@ -1013,10 +1031,13 @@ contract Assertions {
 
     /**
      * @dev Resolves a LEN-terminated path: navigates the non-sentinel steps
-     *      to a dynamic value and returns its length word. Static values,
-     *      dynamic tuples and empty paths revert with InvalidNavigation
-     *      (a fixed array's length is known at composition time). The
-     *      selected bytes/string payload or array element heads must fit
+     *      to a dynamic value and returns its length word. Static values
+     *      and empty paths revert with InvalidNavigation. Dynamic tuples
+     *      and fixed arrays of dynamic elements are also unsupported, but
+     *      their selected word is read first: truncation can raise
+     *      ReturnDataOutOfBounds before InvalidNavigation. A fixed array's
+     *      length is known at composition time. The selected bytes/string
+     *      payload or array element heads must fit
      *      in the resolved data; dynamic element tails are not traversed.
      */
     function _navLength(bytes memory result, bytes calldata t, int256[] calldata path) internal pure returns (uint256) {

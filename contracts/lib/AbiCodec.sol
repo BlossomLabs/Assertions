@@ -28,7 +28,8 @@ error InvalidTypeDescriptor(uint256 position);
  *      narrow ABI types, admit every word; their meaning stays the
  *      caller's claim. A "canonical single-value encoding" throughout
  *      this repo means abi.encode(value) of exactly one value: the bare
- *      word for a static type, [0x20][tail] for a dynamic one, with tight
+ *      static footprint (one word for a scalar, multiple for static tuples
+ *      and fixed arrays), [0x20][tail] for a dynamic one, with tight
  *      offsets, zero padding and in-range words. Every function is
  *      internal and knows nothing of ERC-8211.
  */
@@ -41,7 +42,8 @@ library AbiCodec {
      *         length overrunning the data, nonzero padding, a static word
      *         outside its type's range, or trailing bytes after the last
      *         tail)
-     * @param offset The byte offset of the offending word within the value
+     * @param offset The offending byte offset within the value (a word
+     *        start, a dirty padding byte, or the expected end)
      */
     error InvalidValue(uint256 offset);
 
@@ -69,7 +71,8 @@ library AbiCodec {
      *         envelope but a non-canonical body, or a static component
      *         has a word outside its type's range
      * @param index The component's position in the tuple
-     * @param offset The byte offset of the offending word within the value
+     * @param offset The offending byte offset within the value (a word
+     *        start, a dirty padding byte, or the expected end)
      */
     error InvalidComponentValue(uint256 index, uint256 offset);
 
@@ -753,7 +756,8 @@ library AbiCodec {
                 revert InvalidComponentEnvelope(index, value.length, head);
             }
         } else if (value.length != words * 32) {
-            // typeShape caps a footprint at 2^32 - 1 words, so words * 32 cannot overflow.
+            // Fixed-array footprints are capped; bare tuple widths sum their components.
+            // A parsed descriptor cannot express enough words to overflow this byte size.
             revert InvalidComponentLength(index, words * 32, value.length);
         }
         Context memory context = Context(ContextKind.TupleComponent, bytes4(0), index, 0, address(0));

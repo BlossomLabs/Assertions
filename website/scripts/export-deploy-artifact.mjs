@@ -66,8 +66,8 @@ const CONTRACTS = [
     artifact: "artifacts/contracts/Assertions.sol/Assertions.json",
     output: "src/lib/assertions-deployment.ts",
     // Vanity salt for the 2.0 release.
-    salt: "0x70d03cef338b40b5f77a051a796ca7770cf9ddc0322d0901cee1fbc49c283efb",
-    expectedAddress: "0xa55e471cE89f66FaACF21E7E7cC22F2E9E2facab",
+    salt: "0xac4f653e0f39a7902c55a47d066d971b914216f5d250a18493b189274fa39398",
+    expectedAddress: "0xa55e47A8F0701e231a9c0ac916776074e5c561d5",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
     includeProxyConstants: true,
@@ -81,8 +81,8 @@ const CONTRACTS = [
     artifact: "artifacts/contracts/Operations.sol/Operations.json",
     output: "src/lib/operations-deployment.ts",
     // Vanity salt for the 2.0 release.
-    salt: "0x1ce8efdd7b880e1a19c01c3a1c8d247e8b5eb548827475dbc8f7f94dec06adb1",
-    expectedAddress: "0x09e4A7e2BDDf5783F7e67765354d8090DB658c9D",
+    salt: "0x8b8252b29b4cbe333ad57e9f4e2a48ff63b305dae3c67c2e362792da8402e086",
+    expectedAddress: "0x09e4A7EA7868aEC605bE16FE64Bd5b56A8B9601A",
     prefix: "OPERATIONS",
     description: "Operations plain-value vocabulary contract",
     includeProxyConstants: false,
@@ -97,8 +97,8 @@ const CONTRACTS = [
     output: "src/lib/collections-deployment.ts",
     // Vanity salt for the 2.0 release. The callback interface is local, so
     // Expressions source edits do not move this address.
-    salt: "0xfece70700b91dff83ae8fc733ffd59f1bf0ab1a7cda729c4bbc4aca1bfa138da",
-    expectedAddress: "0xC011Ec7d80189d7425976eC7B338e32129fc2E43",
+    salt: "0xec85ac536ff902724cdebfa95c3c01ff75e1871c78857f18f8454916eaa39ad0",
+    expectedAddress: "0xc011eC7071DA62522F0DCD03606e5A299a8e6323",
     prefix: "COLLECTIONS",
     description: "generic ABI collection vocabulary contract",
     includeProxyConstants: false,
@@ -113,8 +113,8 @@ const CONTRACTS = [
     output: "src/lib/expressions-deployment.ts",
     // Vanity salt for the 2.0 release. The core interface is local, so core
     // source edits do not move this address.
-    salt: "0xa45857d10fd50213876ec7b9cf8488b1bfb04011cb7279f8c76af3fbecf5bd49",
-    expectedAddress: "0xE5594E55D68156e9E87dC083aEdC6D57aB09e66d",
+    salt: "0x646a57a2771212fae7de4542741dea3c060e5cb57f60341aa4d30225bbaf4615",
+    expectedAddress: "0xE5594e5577165b73F3f3CFcc4F3983345c5F0F48",
     prefix: "EXPRESSIONS",
     description: "typed expression graphs contract",
     includeProxyConstants: false,

@@ -36,11 +36,12 @@ interface ICore {
  *      single-value ABI encodings throughout (see AbiCodec): a Call node's
  *      arguments, a Tuple node's components and an Array node's elements
  *      all arrive that way, and each node's result must be one for its
- *      `valueType`. A graph costs about 10k gas fixed plus 3.5k per node
- *      plus 20k per Call (measured 2026-09-07, ExpressionsGas.t.sol), so
- *      it wins only when the resolutions it saves cost more than that;
- *      `Assertions.get` is the cheaper host for a single call with
- *      several dynamic arguments. Errors identify the node: InvalidNode for
+ *      `valueType`. A graph pays setup, per-node and call overhead, so
+ *      it wins only when the resolutions it saves cost more than that
+ *      overhead; ExpressionsGas.t.sol measures the tradeoff for this build;
+ *      `Assertions.get` constructs a single call with several dynamic
+ *      arguments directly; a gas comparison against an equivalent graph
+ *      has not been recorded. Errors identify the node: InvalidNode for
  *      a structural fault, InvalidReference for a reference that is not
  *      strictly backwards (or a parameter index out of range),
  *      InvalidTarget for a code-less call target and NodeCallFailed carrying
@@ -56,7 +57,8 @@ contract Expressions {
      *      Literal (`data` is the value); Parameter (`data` is
      *      abi.encode(uint256 index) into the evaluation's parameters);
      *      Resolve (`data` is abi.encode(InputParam), resolved through the
-     *      expression's core; data solc cannot decode reverts without data); Call (`refs[0]` is the target address word,
+     *      expression's core; malformed data can cause a bare revert, allocation
+     *      panic or resource failure); Call (`refs[0]` is the target address word,
      *      `refs[1..]` the arguments encoded as the tuple `arguments`
      *      describes, prefixed by `selector`); Select (`refs` are condition,
      *      then-branch, else-branch); Wrap (`refs[0]`'s value wrapped as a
@@ -86,8 +88,9 @@ contract Expressions {
     /**
      * @notice One node of an expression graph
      * @dev `valueType` is the descriptor every evaluated value is validated
-     *      against. `refs` index earlier nodes only; the fields a kind does
-     *      not read (see Kind) are ignored and may be left empty.
+     *      against. `refs` index earlier nodes only and must satisfy the
+     *      structural ref-count rules even for unevaluated nodes. Unused
+     *      `data`, `selector` and `arguments` fields are ignored (see Kind).
      */
     struct Node {
         Kind kind;
@@ -225,8 +228,9 @@ contract Expressions {
      *      nonzero evaluates refs[1] and zero refs[2], and only the chosen
      *      branch executes. TryOrElse and IsValid run their attempt in an
      *      external self-call so that a failure inside it, a reverting
-     *      target or a type mismatch, rolls back and selects the fallback,
-     *      except an attempt that burned all its gas, which reverts
+     *      target or a type mismatch, discards the attempt's cache changes;
+     *      TryOrElse selects the fallback and IsValid returns false,
+     *      except exhaustion, near-exhausting failures and exact reserved signals, which revert
      *      SubcallOutOfGas like the core's `orElse` (do not use them to
      *      distinguish other failure causes). Values memoized inside a successful attempt are kept.
      *      Every node's value is validated against its `valueType` and a
@@ -305,8 +309,11 @@ contract Expressions {
      *      slots as `parameters`. Evaluation happens through an external
      *      self-call, so a failure inside the graph surfaces as
      *      NodeCallFailed(0, this, callData, reason) with the inner error as
-     *      the reason. Returns the same raw value as `evaluate`. An
-     *      `expression` solc cannot decode reverts without data.
+     *      the reason, except exhaustion and exact SubcallOutOfGas signals,
+     *      which propagate unchanged. Returns the same raw value as `evaluate`.
+     *      Decoding the outer `expression` precedes the self-call; malformed
+     *      payloads can cause a bare revert, allocation panic or resource failure
+     *      before graph evaluation, without a NodeCallFailed wrapper.
      * @param expression abi.encode(Expression)
      * @param parameters The values Parameter nodes read
      */
@@ -382,8 +389,9 @@ contract Expressions {
     /**
      * @dev Evaluates node `index` behind the `evaluateGuarded` boundary:
      *      on success adopts the attempt's memoized values into `cache`
-     *      and returns them, on any failure leaves `cache` untouched and
-     *      returns (false, "").
+     *      and returns the value; ordinary failures leave `cache` untouched
+     *      and return (false, ""). Exhaustion and exact SubcallOutOfGas
+     *      signals propagate unchanged.
      */
     function _tryEvaluate(
         Expression calldata expression,
@@ -464,8 +472,9 @@ contract Expressions {
 
     /**
      * @dev Executes a staticcall and returns the raw result bytes. A
-     *      code-less target reverts with InvalidTarget(index) and a revert
-     *      with NodeCallFailed(index, ...) carrying the reason.
+     *      code-less target reverts with InvalidTarget(index, target); ordinary
+     *      reverts raise NodeCallFailed(index, ...) carrying the reason.
+     *      Exhaustion and exact SubcallOutOfGas signals propagate unchanged.
      */
     function _call(address target, bytes memory data, uint256 index) private view returns (bytes memory result) {
         _checkPublicCall(target, data);

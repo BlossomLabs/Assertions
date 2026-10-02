@@ -55,8 +55,8 @@ contract Operations {
 
     /**
      * @dev Exponents at or above this go to the modexp precompile in
-     *      _powMod; below it the MULMOD loop is cheaper. See _powMod for
-     *      the crossover arithmetic.
+     *      _powMod; below it the MULMOD loop is used. This is a fixed
+     *      routing policy, not a universal gas crossover; see _powMod.
      */
     uint256 private constant POW_MOD_PRECOMPILE_THRESHOLD = 1 << 32;
 
@@ -120,7 +120,7 @@ contract Operations {
      * @notice Thrown when a negative modular exponent needs an inverse that
      *         does not exist: the base and modulus magnitudes are not
      *         coprime
-     * @param base The base magnitude, as reduced
+     * @param base The original base magnitude, before modular reduction
      * @param modulus The modulus magnitude
      */
     error ModularInverseDoesNotExist(uint256 base, uint256 modulus);
@@ -380,9 +380,9 @@ contract Operations {
 
     /**
      * @notice a ** exponent % m without overflowing the intermediate power
-     *         (0 ** 0 == 1, and a modulus of 1 yields 0)
+     *         (0 ** 0 yields 1 % m, and a modulus of 1 yields 0)
      * @dev Square-and-multiply over MULMOD for small exponents, the
-     *      modexp precompile for exponents of 32 bits or more (the loop
+     *      modexp precompile for exponents at or above 2^32 (the loop
      *      remains the fallback if the precompile is unavailable). A zero
      *      modulus reverts with Panic(0x12).
      */
@@ -473,13 +473,15 @@ contract Operations {
     }
 
     /**
-     * @notice e^x in wad fixed point (1e18), for continuous compounding
-     *         and the inverse of lnWad
+     * @notice A rational approximation of e^x in wad fixed point (1e18),
+     *         for continuous compounding
      * @dev Remco Bloemen's algorithm: range-reduce by ln(2), evaluate a
      *      rational approximation, then scale by 2^k. Reverts with
      *      Panic(0x11) at or above 135305999368893231589 (where the result
      *      leaves int256) and returns 0 at or below -42139678854452767551
-     *      (where it underflows wad).
+     *      (where it underflows wad). The source proof covers the quantized
+     *      finite-word calculation; global real-function accuracy,
+     *      monotonicity and inverse-error bounds are not established.
      */
     function expWad(int256 x) external pure returns (int256 r) {
         unchecked {
@@ -516,10 +518,12 @@ contract Operations {
     }
 
     /**
-     * @notice The natural log of x in wad fixed point (1e18): the inverse
-     *         of expWad, and how a growth factor becomes a rate
+     * @notice A rational approximation of the natural log of x in wad
+     *         fixed point (1e18), for converting a growth factor to a rate
      * @dev Remco Bloemen's algorithm. Reverts with LogarithmUndefined for
-     *      x <= 0, where the log is undefined.
+     *      x <= 0, where the log is undefined. As with expWad, the source
+     *      proof does not establish global real-function accuracy,
+     *      monotonicity or inverse-error bounds.
      */
     function lnWad(int256 x) external pure returns (int256 r) {
         unchecked {
@@ -1017,15 +1021,16 @@ contract Operations {
      *      2. That is delimiter semantics, so splitting and occurrence
      *      counting agree. Requesting an occurrence that does not exist
      *      (in either direction) returns the sentinel `s.length` (it
-     *      composes: includes = lt(indexOf(s, n, 0), byteLen(s))).
-     *      Split segments are two indexOf reads and a slice: segment
-     *      k >= 0 spans [indexOf(s, d, k-1) + dlen, indexOf(s, d, k))
-     *      (0 for k == 0; the sentinel ends the trailing segment for
-     *      free), and segment -k spans
-     *      [indexOf(s, d, -k) + dlen, indexOf(s, d, -k+1))
-     *      (byteLen(s) for k == 1). Total by design: an empty needle
-     *      vacuously matches at every position 0 .. s.length, and nothing
-     *      here ever reverts.
+     *      composes for a nonempty needle:
+     *      includes = lt(indexOf(s, n, 0), byteLen(s))). For an empty needle,
+     *      use contains: the final valid match shares the sentinel position.
+     *      For a nonempty delimiter d with m matches, segment j in 0 .. m
+     *      starts at 0 when j == 0, otherwise indexOf(s, d, j-1) + dlen;
+     *      it ends at indexOf(s, d, j) when j < m, otherwise byteLen(s).
+     *      Normalize negative segment indices against m+1 first. This
+     *      includes the first and last segments when no delimiter occurs. Total by design: an empty needle
+     *      vacuously matches at every position 0 .. s.length. No explicit
+     *      validation error is raised; execution still needs enough resources.
      * @param s The haystack
      * @param needle The exact byte sequence to find
      * @param occurrence The signed occurrence ordinal (see above)
@@ -1202,7 +1207,7 @@ contract Operations {
 
     /**
      * @notice The signed integer units a decimal ASCII string denotes at
-     *         `decimals` places: viem's parseUnits, e.g. "1.5" at 18
+     *         `decimals` places, with explicit rounding, e.g. "1.5" at 18
      *         decimals is 1500000000000000000
      * @dev Accepts an optional leading + or -, digits with at most one
      *      decimal point anywhere (".5" and "5." are fine) and at least
@@ -1306,7 +1311,8 @@ contract Operations {
      * @notice Runtime abi.encode: assembles the canonical ABI encoding of
      *         a tuple from pre-encoded component values, nav's inverse
      * @dev `types` is the tuple's type as a parenthesized descriptor
-     *      (nav's grammar, only the SHAPE is parsed). `values[i]` is the
+     *      (the shared AbiCodec grammar). Values are checked for canonical
+     *      layout and in-range static words. `values[i]` is the
      *      canonical single-value encoding of component i:
      *      - static component with head footprint w words: exactly w * 32
      *        bytes (one word for uint256/address/bool/bytes32, the
@@ -1392,11 +1398,14 @@ contract Operations {
     /**
      * @dev base ** exponent % modulus. Reverts with Panic(0x12) when the
      *      modulus is zero. Exponents below POW_MOD_PRECOMPILE_THRESHOLD
-     *      run square-and-multiply over MULMOD (about 45 gas per exponent
-     *      bit); larger ones go to the modexp precompile at 0x05, whose
-     *      cost is flat (500 gas since EIP-7883, plus the call) and beats
-     *      the loop from roughly 30 bits up. The loop is also the fallback
-     *      when the precompile call fails or returns nothing, so a chain
+     *      run square-and-multiply over MULMOD; larger ones try the modexp
+     *      precompile at 0x05. Pricing depends on the chain's active fork
+     *      and exponent: for this 32-byte input, EIP-7883 charges
+     *      max(500, 16 * max(1, bitLength(exponent) - 1)), excluding call
+     *      overhead; EIP-2565 uses max(200, floor(16 * iterations / 3)).
+     *      The threshold is a fixed policy, not a universal gas crossover.
+     *      The loop is also the fallback when the precompile call fails
+     *      or returns anything other than exactly 32 bytes, so a chain
      *      without modexp still computes the right answer, only slower.
      */
     function _powMod(uint256 base, uint256 exponent, uint256 modulus) private view returns (uint256 result) {

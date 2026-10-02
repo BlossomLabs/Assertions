@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "completedAt": "2026-10-02T18:03:05.100589+00:00",
+  "scope": "Focused concrete tests for the eight claim gaps. This is not a new formal baseline, a full-suite run, or a deployment rebuild.",
+  "sourceSha256": {
+    "contracts/Assertions.sol": "95800d099f06de8930c412073de3bf1deda20ce9f38f7bc546c370b369c8e87b",
+    "contracts/Collections.sol": "a3011f23b4cf86bd6151ce45ff70f6716730a46a814c622b7b5e7124266214dd",
+    "contracts/Expressions.sol": "43ea4e46844e883a463a7500d826f8198b39fd2a99a8c97c54b7825ae3938d3c",
+    "contracts/Operations.sol": "247134b8d15bc7663bd4f581169ab4e2eb202238b17152a7be52a391d5b107b8",
+    "contracts/lib/AbiCodec.sol": "2608528ad5c77422f6ae79f437f360e197d45171a6964b3f32d9940caa9cdf88",
+    "contracts/lib/ERC8211.sol": "9ac520a152fc8600ae739b491addca71343e0ab480121896b86362fd728b4bb8",
+    "contracts/tests/ClaimEvidenceGaps.t.sol": "5a26fb86bd7477a416bbffe521069ac961b059390bcbdca8d79894bee4d93d70",
+    "scripts/test-claim-structure.py": "12048f5ffad4a2ee686bb914c4caa51e5883fd58bb23c41ccb567c79a52144e7",
+    "test/claim-structure.test.ts": "251a03aab42c6322dbd1bc7f4c46e75cbaab62797d6735c14e76f85e54890236",
+    "foundry.toml": "f4ced6c1776fda3b8c7d2ed7b61a1962f5e9edca529bbaab261569e90f2a8223",
+    "node_modules/@openzeppelin/contracts/utils/math/Math.sol": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+    "node_modules/@openzeppelin/contracts/utils/math/SafeCast.sol": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+    "node_modules/@openzeppelin/contracts/utils/Panic.sol": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec",
+    "node_modules/forge-std/src/StdUtils.sol": "52d713d886305184e7ed3b3a2e5941ea1440f071d9c9a4d6fea618135e1d3f67",
+    "node_modules/forge-std/src/StdStorage.sol": "8835d2e5de9ceca2a4988a212916216de052634584f832d5364dc8c42d460113",
+    "node_modules/forge-std/src/console2.sol": "62d8ccbd118fec4f99c5e847322d6ca0d7fbe6a0a16e5a26b0590869fcd69357",
+    "node_modules/forge-std/src/StdMath.sol": "7224cea66fc06c7a9d303084cccb14eaedffe4b21b3f9695d06dc590d2894d7d",
+    "node_modules/forge-std/src/LibVariable.sol": "0b789ace36e54d1746d08b9b161f5ab4c2fa55c8d30808421349ae33f703c797",
+    "node_modules/forge-std/src/safeconsole.sol": "fd74d8ed377e1470217cd6dce7699dcbc4e79b3893f17ae2a298c0e7e4418181",
+    "node_modules/forge-std/src/StdToml.sol": "682e9c74bd02de5df7be595d27fa44eeaf0a5d96ad5c2db507065386d35eb433",
+    "node_modules/forge-std/src/Test.sol": "2e69383110d088b4c413edf79bb71f9d05e4791625fb7fa53429d34440ea50dd",
+    "node_modules/forge-std/src/StdError.sol": "c1f7271f11a44628810ef6beb2da0c43add131ff9cfcac4d7acd633c269ccf7d",
+    "node_modules/forge-std/src/StdInvariant.sol": "7d3a62087c7d06766e99f8e4f4e50997b0ff8730fb304986f2c4cd895a67fbbd",
+    "node_modules/forge-std/src/StdAssertions.sol": "203de35565c3d68b6599f84e88068f79c23b53a80d18c46056e85d4c5f48613c",
+    "node_modules/forge-std/src/StdConstants.sol": "17dfd996881264de1e6af6697a3dc7a56ae8ff0717e4cb4f1685bd7fb3a45147",
+    "node_modules/forge-std/src/Script.sol": "cfb5be01f4ddbc037a3502dac3d487d629a4c8b58aa9e2ec48c9fa1b334d96ec",
+    "node_modules/forge-std/src/StdStyle.sol": "903ea6f4e4aa31e416b5043abecc09ced41dc78c9ce9dabb5c745337ee13139d",
+    "node_modules/forge-std/src/Vm.sol": "ad4bc58d4a2cfdb45c6439fe977a7ad390fd83e3e7485ec4597458a278993eeb",
+    "node_modules/forge-std/src/StdCheats.sol": "988843996b3e8ebab594c659fba9502bab437220f84e7ded9a9e3f6e730d358e",
+    "node_modules/forge-std/src/Base.sol": "76b05dda37981797d3d403f29fc6cad79b46e2fc11da47d649ff13acb69158b2",
+    "node_modules/forge-std/src/Config.sol": "850649e2ede6e0e1384ba00eba1335a7af7e97643c731a4587335c0f51f67041",
+    "node_modules/forge-std/src/console.sol": "894dc6e40fe62d887df6243112d8c775df2db60babc3024ee04a5564b90af64d",
+    "node_modules/forge-std/src/StdChains.sol": "981b7ce12f4bc3193c7914c68f51be74d1d03c33732db894f5d36ad8025ab4f5",
+    "node_modules/forge-std/src/StdJson.sol": "556494110d1e791ce0992bf22c2ac6df5e614122659a97cd1269a8d9dce139c0",
+    "node_modules/forge-std/src/StdConfig.sol": "bc9e89ad0fab53103f8301322739aaafc32a0cccb571132ee7f54f10b6a2feb5",
+    "node_modules/forge-std/src/interfaces/IERC7540.sol": "5b9e0d90816f47628b2023351c84e9b8d8667f685c98234742be99dc8eaf2fb6",
+    "node_modules/forge-std/src/interfaces/IMulticall3.sol": "890a5b361034daa6006b3ba2275e743cd6197c4d81e3df5732cdce731d3c0868",
+    "node_modules/forge-std/src/interfaces/IERC6909.sol": "44ef6ba5ab803241ed5992f35606820322e2df5947da488870c78f2181d97840",
+    "node_modules/forge-std/src/interfaces/IERC4626.sol": "5b9da91e1215dc84a606c06f636b34582aec6cdf35ae828dce3852f727d9278e",
+    "node_modules/forge-std/src/interfaces/IERC165.sol": "d9bea769cd3aa52c5dfbfe7b447a63b00ab22baaa4f9d2af789f44553078a27b",
+    "node_modules/forge-std/src/interfaces/IERC1155.sol": "d10916158da2bbecc56364cda787da303b57313d478c150b1c79ac05d3b2936c",
+    "node_modules/forge-std/src/interfaces/IERC20.sol": "cb4bf7f4c0bc513e2c82f251a84e67d2e950cef12e570f40a0d4880b2e25fc9f",
+    "node_modules/forge-std/src/interfaces/IERC7575.sol": "15163bc29d96c6b905b53da06e243fbd2ae6b7c8984b8306ff4c9b0716ec055b",
+    "node_modules/forge-std/src/interfaces/IERC721.sol": "2e6e000940bf5278cf64f170ac839682667368a5aee7222b312e255ec8eda275"
+  },
+  "tools": {
+    "forge": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:39:01.425730780Z (1766403541)\nBuild Profile: maxperf",
+    "solc": "solc, the solidity compiler commandline interface\nVersion: 0.8.36+commit.8a079791.Linux.g++",
+    "python": "Python 3.14.4",
+    "node": "v26.9.0"
+  },
+  "compilerSettings": {
+    "version": "0.8.36",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "cancun"
+  },
+  "commands": {
+    "solidity": "forge test --match-contract ClaimEvidenceGapsTest --out /tmp/assertions-claim-gaps-out --cache-path /tmp/assertions-claim-gaps-cache -vv",
+    "compilerChecks": "python3 scripts/test-claim-structure.py",
+    "nodeWrapper": "node --experimental-strip-types --test test/claim-structure.test.ts (outside sandbox: Node/Python subprocess IPC requires permission)"
+  },
+  "results": [
+    {
+      "claim": "A29",
+      "test": "test_A29_ShapeCompatibleWrongDescriptorReinterpretsWord",
+      "file": "contracts/tests/ClaimEvidenceGaps.t.sol",
+      "status": "passed",
+      "evidenceType": "UNIT",
+      "partial": false,
+      "scope": "Nonempty tuple navigation path [0] accepts the int256(-1) encoding as uint256.max under (uint256); the matching (int256) descriptor is a control. This is an example of semantic reinterpretation, not a promise that every wrong descriptor succeeds."
+    },
+    {
+      "claim": "A34",
+      "test": "test_A34_imported_comment_changes_metadata_and_bytecode_for_all_four",
+      "file": "scripts/test-claim-structure.py",
+      "status": "passed",
+      "evidenceType": "UNIT",
+      "partial": false,
+      "scope": "Compiler AST checks all four direct AbiCodec imports. Appending one comment in the in-memory imported source changes metadata and creation/runtime bytecode, while executable bytes remain unchanged. Uses Solidity 0.8.36, optimizer 200 runs and Cancun; does not claim arbitrary edits or hash-collision impossibility. No production source or release artifact is rewritten."
+    },
+    {
+      "claim": "W27",
+      "test": "test_W27_judge_uses_execution_encoding_without_payable_executor_interface",
+      "file": "scripts/test-claim-structure.py",
+      "status": "passed",
+      "evidenceType": "UNIT",
+      "partial": false,
+      "scope": "Compiled ABI checks both assertBatch overloads are view and use the same execution tuple components as the payable reference executor. Assertions has no executeComposable, payable function, receive or fallback entry."
+    },
+    {
+      "claim": "O17",
+      "test": "test_O17_ModexpAcceptsExactlyOneWordAndFallsBackOtherwise",
+      "file": "contracts/tests/ClaimEvidenceGaps.t.sol",
+      "status": "passed",
+      "evidenceType": "UNIT",
+      "partial": false,
+      "scope": "All four public overloads exercise failed, empty, 1-byte, 31-byte and 64-byte MODEXP replies using Foundry call mocks. An intentionally incorrect successful 32-byte sentinel confirms interception and that the result is trusted. The fallback is checked against an independent modular-period example; this does not verify a real precompile implementation or gas availability."
+    },
+    {
+      "claim": "L16",
+      "test": "test_L16_IotaAllocationOverflowAndGasExhaustion",
+      "file": "contracts/tests/ClaimEvidenceGaps.t.sol",
+      "status": "passed",
+      "evidenceType": "UNIT",
+      "partial": false,
+      "scope": "Checks multiplication Panic(0x11), allocator Panic(0x41), empty failure under a 50,000-gas memory-expansion budget, and a normal three-word output. The failure sizes are concrete examples, not a portable maximum successful allocation."
+    },
+    {
+      "claim": "L23",
+      "test": "test_L23_MergeSortComparisonCountsOnPowersOfTwo",
+      "file": "contracts/tests/ClaimEvidenceGaps.t.sol",
+      "status": "passed",
+      "evidenceType": "UNIT",
+      "partial": true,
+      "scope": "Partial: exact sortValues comparator counts for sorted lengths 2, 4, 8, 16, 32 and 64 equal n/2 * log2(n). Each size uses a distinct comparator address and its expectation is retained until test end. An isolated +1 expected-count mutation fails. These are finite comparison checks, not a general asymptotic bound, worst-case input proof, sortWords complexity proof or linear-scratch-memory proof."
+    },
+    {
+      "claim": "L60",
+      "test": "test_L60_CollectionCallbacksDoNotShareEvaluationCaches",
+      "file": "contracts/tests/ClaimEvidenceGaps.t.sol",
+      "status": "passed",
+      "evidenceType": "UNIT",
+      "partial": false,
+      "scope": "Three mapValues expression callbacks make exactly three external reads although each graph uses its Resolve leaf twice. Returned values are checked as well, demonstrating cache sharing within a callback and fresh evaluation between these callbacks."
+    },
+    {
+      "claim": "E41",
+      "test": "test_E41_EvaluateAndEncodedCallsStartFreshCaches",
+      "file": "contracts/tests/ClaimEvidenceGaps.t.sol",
+      "status": "passed",
+      "evidenceType": "UNIT",
+      "partial": false,
+      "scope": "Two evaluate and two evaluateEncoded invocations make exactly four external reads while each result refers twice to the same Resolve leaf. Results and exact call counts check fresh caches and within-invocation sharing."
+    }
+  ],
+  "summary": {
+    "claimChecksPassed": 8,
+    "claimChecksFailed": 0,
+    "solidityTestsPassed": 6,
+    "compilerTestsPassed": 2,
+    "nodeWrapperTestsPassed": 1
+  },
+  "negativeControl": {
+    "claim": "L23",
+    "mutation": "Each expected comparator count increased by one in an isolated temporary checkout",
+    "status": "detected",
+    "expectedProcessExit": "nonzero"
+  },
+  "outputs": {
+    "solidity": "Compiling 1 files with Solc 0.8.36\nSolc 0.8.36 finished in 3.02s\nCompiler run successful!\n2026-10-02T17:59:20.195393Z  WARN evm::traces::external: etherscan config not found\n\nRan 6 tests for contracts/tests/ClaimEvidenceGaps.t.sol:ClaimEvidenceGapsTest\n[PASS] test_A29_ShapeCompatibleWrongDescriptorReinterpretsWord() (gas: 25361)\n[PASS] test_E41_EvaluateAndEncodedCallsStartFreshCaches() (gas: 226888)\n[PASS] test_L16_IotaAllocationOverflowAndGasExhaustion() (gas: 68542)\n[PASS] test_L23_MergeSortComparisonCountsOnPowersOfTwo() (gas: 3954834)\n[PASS] test_L60_CollectionCallbacksDoNotShareEvaluationCaches() (gas: 253257)\n[PASS] test_O17_ModexpAcceptsExactlyOneWordAndFallsBackOtherwise() (gas: 143758)\nSuite result: ok. 6 passed; 0 failed; 0 skipped; finished in 34.33ms (38.56ms CPU time)\n\nRan 1 test suite in 36.18ms (34.33ms CPU time): 6 tests passed, 0 failed, 0 skipped (6 total tests)\n2026-10-02T17:59:20.434063Z  WARN evm::traces: failed to flush signature cache err=failed to create file \"/home/sem/.foundry/cache/signatures\": Read-only file system (os error 30)\n",
+    "compilerChecks": "test_A34_imported_comment_changes_metadata_and_bytecode_for_all_four (__main__.ClaimStructureTests.test_A34_imported_comment_changes_metadata_and_bytecode_for_all_four) ... ok\ntest_W27_judge_uses_execution_encoding_without_payable_executor_interface (__main__.ClaimStructureTests.test_W27_judge_uses_execution_encoding_without_payable_executor_interface) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 5.155s\n\nOK\n",
+    "nodeWrapper": "\u2714 claim structural evidence: A34 imports/metadata and W27 judge ABI (5300.977954ms)\n\u2139 tests 1\n\u2139 suites 0\n\u2139 pass 1\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 5459.471121\n",
+    "negativeControl": "Compiling 29 files with Solc 0.8.36\nSolc 0.8.36 finished in 5.23s\nCompiler run successful!\n2026-10-02T17:59:48.652816Z  WARN evm::traces::external: etherscan config not found\n\nRan 1 test for contracts/tests/ClaimEvidenceGaps.t.sol:ClaimEvidenceGapsTest\n[FAIL: expected call to 0xc7183455a4C133Ae270771860664b6B7ec320bB1 with data 0xf360234c to be called 2 times, but was called 1 time] test_L23_MergeSortComparisonCountsOnPowersOfTwo() (gas: 3955284)\nSuite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 34.16ms (30.74ms CPU time)\n\nRan 1 test suite in 35.80ms (34.16ms CPU time): 0 tests passed, 1 failed, 0 skipped (1 total tests)\n\nFailing tests:\nEncountered 1 failing test in contracts/tests/ClaimEvidenceGaps.t.sol:ClaimEvidenceGapsTest\n[FAIL: expected call to 0xc7183455a4C133Ae270771860664b6B7ec320bB1 with data 0xf360234c to be called 2 times, but was called 1 time] test_L23_MergeSortComparisonCountsOnPowersOfTwo() (gas: 3955284)\n\nEncountered a total of 1 failing tests, 0 tests succeeded\n\nTip: Run `forge test --rerun` to retry only the 1 failed test\n"
+  }
+}

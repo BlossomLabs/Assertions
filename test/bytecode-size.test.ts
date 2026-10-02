@@ -1,5 +1,5 @@
 // EIP-170 guard for every production artifact. The computation contracts are
-// the ones that grow (Collections sits a few hundred bytes under the limit),
+// the ones that grow (Collections has little headroom under the limit),
 // and a size regression must fail here rather than at deployment time.
 //
 // The second case pins the artifact SET: a renamed or added production

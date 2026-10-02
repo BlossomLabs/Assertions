@@ -7,18 +7,13 @@ import {Operations} from "../Operations.sol";
 import {HostileTarget} from "./CollectionsNoPanic.t.sol";
 
 /**
- * @notice Expressions never panics and never runs out of gas on hostile
- *         graphs, cores or call targets: every failure carries a declared
- *         selector. The documented exception is bytes solc's decoder cannot
- *         read (an out-of-range Kind, a Resolve node's undecodable data, an
- *         undecodable evaluateEncoded payload), which revert without data;
- *         the test knows when it injected those, and half the runs inject
- *         none.
- * @dev RawNode and RawExpression mirror the Expressions structs with a
- *      uint8 kind, so they encode identically and an out-of-range kind
- *      reaches the decoder. Graphs have up to six nodes of every kind with
- *      mostly well-formed references, and each call gets a fixed gas
- *      budget like the other NoPanic suites.
+ * @notice Fuzz checks for declared failures on generated graphs, cores and
+ *         targets, plus exact regressions for impossible decoder allocations.
+ * @dev RawNode and RawExpression mirror the real structs with uint8 kinds.
+ *      Graphs have up to six nodes and each call gets a fixed gas budget.
+ *      Malformed payloads may fail with empty data or allocation Panic(0x41);
+ *      other panics remain failures of the bounded fuzz check. These sweeps
+ *      do not prove resource-independent success or selector-bearing errors.
  */
 contract ExpressionsNoPanicTest is Test {
     bytes4 constant PANIC = 0x4e487b71;
@@ -67,7 +62,7 @@ contract ExpressionsNoPanicTest is Test {
         targets[10] = address(0xdead);
     }
 
-    function testFuzzGraphsNeverPanic(
+    function testFuzzGraphsDocumentedFailures(
         NodeInput[] calldata inputs,
         uint8 coreCase,
         uint8 resultCase,
@@ -79,6 +74,34 @@ contract ExpressionsNoPanicTest is Test {
         call(abi.encodeWithSignature(string.concat("evaluate(", EXPRESSION, ",bytes[])"), e, parameters), malformed);
         call(abi.encodeCall(Expressions.evaluateEncoded, (abi.encode(e), parameters)), malformed);
         call(abi.encodeCall(Expressions.evaluateEncoded, (payload, parameters)), true);
+    }
+
+    function testResolveRejectsImpossibleDecoderAllocation() public view {
+        RawExpression memory e;
+        e.core = address(core);
+        e.nodes = new RawNode[](1);
+        e.nodes[0].kind = uint8(Expressions.Kind.Resolve);
+        e.nodes[0].valueType = "uint256";
+        e.nodes[0].refs = new uint256[](0);
+        // InputParam tuple: two enum words, data/constraints offsets, empty
+        // data, then an impossible constraints count. The target is not called.
+        e.nodes[0].data =
+            abi.encode(uint256(32), uint256(2), uint256(0), uint256(128), uint256(160), uint256(0), type(uint256).max);
+        assertAllocationPanic(
+            abi.encodeWithSignature(string.concat("evaluate(", EXPRESSION, ",bytes[])"), e, new bytes[](0))
+        );
+    }
+
+    function testEvaluateEncodedRejectsImpossibleDecoderAllocation() public view {
+        // Expression tuple: core, nodes offset, result, impossible nodes count.
+        bytes memory payload = abi.encode(uint256(32), address(core), uint256(96), uint256(0), type(uint256).max);
+        assertAllocationPanic(abi.encodeCall(Expressions.evaluateEncoded, (payload, new bytes[](0))));
+    }
+
+    function assertAllocationPanic(bytes memory data) internal view {
+        (bool ok, bytes memory out) = address(expressions).staticcall{gas: CALL_GAS}(data);
+        assertFalse(ok);
+        assertEq(out, abi.encodeWithSignature("Panic(uint256)", uint256(0x41)));
     }
 
     // ============ Builders ============
@@ -175,13 +198,15 @@ contract ExpressionsNoPanicTest is Test {
     // ============ Helpers ============
 
     /**
-     * @dev A failure must carry a selector and never be a Panic; a bare
-     *      revert is accepted only where undecodable bytes were injected
+     * @dev Ordinary failures require a non-panic selector. Injected malformed
+     *      payloads may additionally return empty data or exact allocation
+     *      Panic(0x41), as pinned by the decoder regressions
      */
     function call(bytes memory data, bool malformed) internal view {
         (bool ok, bytes memory out) = address(expressions).staticcall{gas: CALL_GAS}(data);
         if (ok) return;
         if (out.length == 0 && malformed) return;
+        if (malformed && keccak256(out) == keccak256(abi.encodeWithSignature("Panic(uint256)", uint256(0x41)))) return;
         assertGe(out.length, 4, "no selector (out of gas?)");
         assertTrue(bytes4(out) != PANIC, "expressions panicked");
     }

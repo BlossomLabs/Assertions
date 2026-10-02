@@ -4,16 +4,18 @@ import "forge-std/Test.sol";
 import {Operations} from "../Operations.sol";
 
 /**
- * @notice Operations' byte, string, search and number-text functions never
- *         panic and never run out of gas on hostile input: every failure
- *         carries a declared selector. The documented panics are the only
- *         exceptions: Panic(0x11) when a parsed number leaves its type, and
- *         the ABI decoder's bare revert for a Rounding outside 0..2.
+ * @notice Bounded fuzz checks for selector-bearing failures in byte, string,
+ *         search and number-text operations, with selected overflow and ABI
+ *         decoder exceptions.
  * @dev Fuzzed rather than proved: these scan every byte, and a branch per
  *      symbolic byte explodes Halmos paths. Each call gets a fixed gas
  *      budget, so running out of it shows up as empty revert data. The
  *      index arithmetic (slice, byteAt, sliceRange and friends) is proved
- *      in OperationsNoPanicSymbolic.
+ *      in OperationsNoPanicSymbolic. The search sweep caps inputs and
+ *      replacement expansion and requires
+ *      success or the exact EmptyNeedle error. A separate large-output regression pins an empty resource
+ *      revert; the contract does not promise resource-independent success
+ *      or errors.
  */
 contract OperationsNoPanicTest is Test {
     bytes4 constant PANIC = 0x4e487b71;
@@ -37,19 +39,80 @@ contract OperationsNoPanicTest is Test {
         call(abi.encodeCall(Operations.hash, (data)), false);
     }
 
-    function testFuzzSearchNeverPanics(bytes calldata s, bytes calldata needle, bytes calldata repl, int256 occurrence)
-        public
-        view
-    {
-        // Short needles match often enough to exercise the counting paths.
-        bytes memory shortNeedle = needle.length > 2 ? needle[:2] : needle;
+    function testFuzzBoundedSearchResults(
+        bytes calldata s,
+        bytes calldata needle,
+        bytes calldata repl,
+        int256 occurrence
+    ) public view {
+        // Cap the input geometry, including worst-case replacement expansion:
+        // 256 one-byte matches with a 64-byte replacement emit at most 16 KiB.
+        bytes memory haystack = s[:s.length > 256 ? 256 : s.length];
+        bytes memory fullNeedle = needle[:needle.length > 64 ? 64 : needle.length];
+        bytes memory replacement = repl[:repl.length > 64 ? 64 : repl.length];
+        bytes memory shortNeedle = needle[:needle.length > 2 ? 2 : needle.length];
         for (uint256 i; i < 2; i++) {
-            bytes memory n = i == 0 ? needle : shortNeedle;
-            call(abi.encodeCall(Operations.contains, (s, n)), false);
-            call(abi.encodeCall(Operations.indexOf, (s, n, occurrence)), false);
-            call(abi.encodeCall(Operations.split, (s, n)), false);
-            call(abi.encodeCall(Operations.replace, (s, n, repl)), false);
+            bytes memory n = i == 0 ? fullNeedle : shortNeedle;
+            assertSuccess(abi.encodeCall(Operations.contains, (haystack, n)));
+            assertSuccess(abi.encodeCall(Operations.indexOf, (haystack, n, occurrence)));
+            if (n.length == 0) {
+                assertEmptyNeedle(abi.encodeCall(Operations.split, (haystack, n)));
+                assertEmptyNeedle(abi.encodeCall(Operations.replace, (haystack, n, replacement)));
+            } else {
+                assertSuccess(abi.encodeCall(Operations.split, (haystack, n)));
+                assertSuccess(abi.encodeCall(Operations.replace, (haystack, n, replacement)));
+            }
         }
+    }
+
+    function testBoundedSearchMaximumExpansionSucceeds() public view {
+        bytes memory haystack = new bytes(256);
+        bytes memory needle = new bytes(1);
+        bytes memory replacement = new bytes(64);
+        (bool ok, bytes memory out) =
+            address(ops).staticcall{gas: CALL_GAS}(abi.encodeCall(Operations.replace, (haystack, needle, replacement)));
+        assertTrue(ok);
+        assertEq(abi.decode(out, (bytes)), new bytes(16_384));
+        (ok, out) = address(ops).staticcall{gas: CALL_GAS}(abi.encodeCall(Operations.split, (haystack, needle)));
+        assertTrue(ok);
+        bytes[] memory parts = abi.decode(out, (bytes[]));
+        assertEq(parts.length, 257);
+        for (uint256 i; i < parts.length; i++) {
+            assertEq(parts[i].length, 0);
+        }
+    }
+
+    /**
+     * @dev A valid replacement can require more gas than the fixed call budget.
+     *      The same matching geometry with a small replacement must succeed.
+     */
+    function testReplacementExpansionExhaustsBudget() public view {
+        bytes memory haystack = new bytes(900);
+        bytes memory replacement = new bytes(9280);
+        bytes memory needle = new bytes(1);
+        (bool ok, bytes memory out) =
+            address(ops).staticcall{gas: CALL_GAS}(abi.encodeCall(Operations.replace, (haystack, needle, replacement)));
+        assertFalse(ok);
+        assertEq(out, hex"", "resource exhaustion must return no data");
+        assertEq(ops.replace(haystack, needle, bytes("x")), repeatedX(900));
+    }
+
+    function repeatedX(uint256 count) internal pure returns (bytes memory out) {
+        out = new bytes(count);
+        for (uint256 i; i < count; i++) {
+            out[i] = 0x78;
+        }
+    }
+
+    function assertEmptyNeedle(bytes memory data) internal view {
+        (bool ok, bytes memory out) = address(ops).staticcall{gas: CALL_GAS}(data);
+        assertFalse(ok);
+        assertEq(out, abi.encodeWithSignature("EmptyNeedle()"));
+    }
+
+    function assertSuccess(bytes memory data) internal view {
+        (bool ok,) = address(ops).staticcall{gas: CALL_GAS}(data);
+        assertTrue(ok, "bounded search must succeed");
     }
 
     function testFuzzTextNeverPanics(bytes calldata s, uint256 mask, bytes[] calldata parts) public view {

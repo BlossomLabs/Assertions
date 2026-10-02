@@ -9,8 +9,8 @@ pragma solidity ^0.8.28;
  *         standard `IComposableExecution` interface, and the shared errors
  *         of the standard's resolution semantics. Pure vocabulary, no code:
  *         the Assertions core implements resolution and constraint
- *         validation internally, and the periphery contracts speak plain
- *         ABI types and need none of this.
+ *         validation internally. Operations and Collections speak plain ABI
+ *         types; Expressions uses InputParam for its Resolve nodes.
  * @dev The structs and enums mirror the ERC-8211 wire format byte-for-byte,
  *      so batches produced by any ERC-8211 SDK decode here unchanged, and
  *      predicate entries encoded for this repo's contracts are valid
@@ -39,8 +39,9 @@ enum InputParamType {
  *      is abi.encodePacked(address token, address account), exactly 40
  *      bytes; token == address(0) reads the native balance, otherwise
  *      IERC20(token).balanceOf(account); the result is abi.encode(uint256)).
- *      STATIC_CALL paramData that solc cannot decode reverts without data,
- *      as solc's decoder and the Biconomy reference do.
+ *      STATIC_CALL paramData is read with solc's ABI decoder. Malformed
+ *      data can revert without data; impossible allocation requests can
+ *      instead raise Panic(0x41), and decoding can exhaust resources.
  */
 enum InputParamFetcherType {
     RAW_BYTES,
@@ -70,8 +71,10 @@ enum OutputParamFetcherType {
  *      OR 6 (abi.encode(Constraint[]) of non-OR leaves), SKIP 7 (empty
  *      referenceData), and IN_SIGNED 8 (two signed bounds). Signed kinds
  *      reinterpret complete words as int256; unsigned kinds use uint256.
- *      OR referenceData that solc cannot decode as Constraint[] reverts
- *      without data, as solc's decoder and the Biconomy reference do.
+ *      OR referenceData is read with solc's ABI decoder as Constraint[].
+ *      Malformed data can revert without data; impossible allocation
+ *      requests can instead raise Panic(0x41), and decoding can exhaust
+ *      resources. A bare revert is not guaranteed for every bad payload.
  */
 enum ConstraintType {
     EQ,

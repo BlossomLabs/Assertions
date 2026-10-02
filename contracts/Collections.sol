@@ -21,8 +21,8 @@ interface IExpressions {
  * @author Sembrestels
  * @notice Iteration and collection processing for the Assertions core, in
  *         two families. The WORD family works on payloads: a `bytes` value
- *         holding N packed 32-byte words (an array's elements without the
- *         envelope, as `nav` returns them or a fold builds them), with
+ *         holding N packed 32-byte words (one-word array elements with
+ *         the ABI offset and length stripped, or another packed payload), with
  *         lambdas expressed as a calldata template whose 32-byte windows
  *         are rewritten per element. The VALUES family works on `bytes[]`
  *         of canonical single-value ABI encodings of any type, with
@@ -33,14 +33,18 @@ interface IExpressions {
  *      the core, whose `read` splices resolved operands into this
  *      contract's calldata. Every lambda and callback application is a
  *      staticcall, so callbacks cannot have side effects, and they are
- *      trusted to be consistent (a comparator that is not a total order,
- *      or an equality that is not transitive, produces unspecified
- *      orderings, never a revert). Gas is the loop bound: every application
+ *      trusted to satisfy their semantic laws: sorting needs a total
+ *      preorder, and uniqueness needs an equivalence relation.
+ *      Inconsistency is not checked; the algorithms follow the callback's
+ *      decisions, so their advertised semantic guarantees may fail. Call
+ *      failures and invalid callback results still revert. Gas is the loop bound: every application
  *      pays real call overhead, so domain sizes are naturally limited by
  *      the block gas limit. Silent truncation is always a bug here:
  *      UnalignedWords, WordCountMismatch and LengthMismatch exist so a
  *      partial word or a length mismatch reverts instead of producing a
- *      plausible answer.
+ *      plausible answer. Checked arithmetic, allocation limits and exhausted
+ *      gas, stack or memory can still fail; a selector-bearing error is not
+ *      guaranteed for every possible input or resource budget.
  * @custom:version 2.0
  */
 contract Collections {
@@ -91,8 +95,9 @@ contract Collections {
      * @notice Thrown when a Callback descriptor is inconsistent: a slot
      *         index past the constants, a binary callback binding both
      *         elements to the same slot, an argument descriptor that is
-     *         not a parenthesized tuple, or a constants count that differs
-     *         from the descriptor's component count
+     *         well-formed but not a parenthesized tuple, or a constants count that differs
+     *         from the descriptor's component count. Malformed descriptors
+     *         revert with AbiCodec's InvalidTypeDescriptor instead
      */
     error InvalidCallback();
 
@@ -269,7 +274,10 @@ contract Collections {
     /**
      * @notice Folds the lambda over the bytes of `s` (the element is the
      *         byte VALUE as a word): with bitSet(mask, elem) as the lambda
-     *         and the All exit, this is the character-set test
+     *         and the All exit, this is the character-set test when the mask
+     *         stays constant, init is 1, and the accumulator and element
+     *         windows share the byte-argument offset (the byte completely
+     *         overwrites the unused accumulator)
      * @dev Engine and rules as foldRange
      */
     function foldBytes(
@@ -286,8 +294,9 @@ contract Collections {
 
     /**
      * @notice Folds the lambda over the 32-byte words of `s` (the element
-     *         is the word): feed it an array PAYLOAD, the elements without
-     *         the envelope, e.g. sliced out of a returned array
+     *         is the word): feed it a packed payload, e.g. one-word static
+     *         array elements with the ABI offset and length sliced off.
+     *         The nav PAYLOAD sentinel accepts only bytes/string, not arrays
      * @dev Engine and rules as foldRange; s.length must be a multiple of
      *      32 or the fold reverts with UnalignedWords
      */
@@ -556,7 +565,7 @@ contract Collections {
      * @dev The rules shared by every callback operation below: the
      *      Callback is checked once up front (InvalidCallback), its
      *      constant slots validated against their declared types, every
-     *      input validated as a canonical `inputType` (AbiCodec's
+     *      visited input validated as a canonical `inputType` (AbiCodec's
      *      InvalidValue), and the target's code checked lazily before the
      *      first application (InvalidCallbackTarget), so an empty input
      *      never touches the target. Each application is one staticcall
@@ -644,14 +653,17 @@ contract Collections {
     }
 
     /**
-     * @notice The values sorted ascending by a comparator callback, stably
+     * @notice Merge-sorts values by a comparator callback; ascending order
+     *         and stable ties require comparisons consistent with a total preorder
      * @dev Rules as mapValues. The comparator receives two elements in
      *      slots `first` and `second` and returns one word read as a
      *      signed ordering: at most zero keeps `first` ahead, positive
      *      puts `second` ahead (a return other than one word reverts with
      *      InvalidCallbackResult). Bottom-up merge sort, O(n log n)
-     *      comparator calls; the comparator is trusted to be a total
-     *      order.
+     *      comparator calls. The comparator's ordering is trusted, not
+     *      checked; history-sensitive or inconsistent comparisons need not
+     *      produce globally sorted values. Successful output preserves every
+     *      input occurrence once, even without that ordering premise.
      * @param inputType The element type descriptor
      * @param values The input elements
      * @param cb The binary comparator callback
@@ -694,12 +706,13 @@ contract Collections {
     }
 
     /**
-     * @notice The values with duplicates removed under a callback-defined
-     *         equality, keeping the first representative of each class in
-     *         its original position
+     * @notice Keeps each value unless the callback matches it to a retained
+     *         value, preserving original order. First representatives of
+     *         equality classes require consistent equivalence comparisons
      * @dev Rules as mapValues; the equality callback is a binary predicate
      *      (slot `first` a retained value, slot `second` the candidate)
-     *      returning a canonical 0 or 1
+     *      returning a canonical 0 or 1. The greedy scan follows the actual
+     *      callback answers; equivalence and consistency are trusted, not checked
      * @param inputType The element type descriptor
      * @param values The input elements
      * @param cb The binary equality callback
@@ -1243,7 +1256,8 @@ contract Collections {
      * @dev Checks a Callback once and parses its argument tuple: the slot
      *      indices must be in range (and distinct for a binary callback),
      *      the descriptor must be a parenthesized tuple with exactly one
-     *      constant per component (InvalidCallback otherwise), and every
+     *      constant per component (InvalidCallback otherwise; malformed
+     *      descriptors raise InvalidTypeDescriptor), and every
      *      constant outside the substituted slots must be a canonical
      *      value of its component type
      */

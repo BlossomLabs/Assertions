@@ -1,0 +1,193 @@
+{
+  "scope": "In-memory sizing prototype; only Assertions changes. No production file or canonical artifact edits. Requires behavior/formal review before implementation.",
+  "sourceSha256": {
+    "contracts/Expressions.sol": "43ea4e46844e883a463a7500d826f8198b39fd2a99a8c97c54b7825ae3938d3c",
+    "contracts/lib/ERC8211.sol": "9ac520a152fc8600ae739b491addca71343e0ab480121896b86362fd728b4bb8",
+    "contracts/lib/AbiCodec.sol": "2608528ad5c77422f6ae79f437f360e197d45171a6964b3f32d9940caa9cdf88",
+    "contracts/Collections.sol": "a3011f23b4cf86bd6151ce45ff70f6716730a46a814c622b7b5e7124266214dd",
+    "contracts/Operations.sol": "247134b8d15bc7663bd4f581169ab4e2eb202238b17152a7be52a391d5b107b8",
+    "node_modules/@openzeppelin/contracts/utils/math/Math.sol": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+    "node_modules/@openzeppelin/contracts/utils/math/SafeCast.sol": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+    "node_modules/@openzeppelin/contracts/utils/Panic.sol": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec",
+    "contracts/Assertions.sol": "95800d099f06de8930c412073de3bf1deda20ce9f38f7bc546c370b369c8e87b"
+  },
+  "compiler": "0.8.36",
+  "optimizerRuns": 200,
+  "evmVersion": "cancun",
+  "results": {
+    "Assertions": {
+      "beforeBytes": 20049,
+      "guardedBytes": 20327,
+      "delta": 278,
+      "remainingHeadroom": 4249,
+      "executableUnchanged": false
+    },
+    "Operations": {
+      "beforeBytes": 21346,
+      "guardedBytes": 21346,
+      "delta": 0,
+      "remainingHeadroom": 3230,
+      "executableUnchanged": true
+    },
+    "Collections": {
+      "beforeBytes": 24560,
+      "guardedBytes": 24560,
+      "delta": 0,
+      "remainingHeadroom": 16,
+      "executableUnchanged": true
+    },
+    "Expressions": {
+      "beforeBytes": 17776,
+      "guardedBytes": 17776,
+      "delta": 0,
+      "remainingHeadroom": 6800,
+      "executableUnchanged": true
+    }
+  },
+  "prototypeSourceSha256": "666e558919f3efa9cb59d34e71cc2904e13ed1dc34818b338cfe9be512253650",
+  "sizingMethodSource": "import importlib.util,sys,json,hashlib\nfrom pathlib import Path\nsys.dont_write_bytecode=True\nr=Path('/home/sem/Projects/Assertions');spec=importlib.util.spec_from_file_location('h',r/'scripts/test-claim-structure.py');h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)\nsources=h.source_closure();original=h.compile_sources(sources);changed={k:dict(v) for k,v in sources.items()}\ntext=changed['contracts/Assertions.sol']['content']\nfixture=Path('/tmp/assertions-halmos-current/replay/DecoderCost.t.sol').read_text()\ncall=fixture.split('contract CallDecodeGuard {',1)[1].split('return abi.decode',1)[0].split('assembly (\"memory-safe\") {',1)[1].rsplit('}',1)[0]\nor_=fixture.split('contract OrDecodeGuard {',1)[1].split('return abi.decode',1)[0].split('assembly (\"memory-safe\") {',1)[1].rsplit('}',1)[0]\nfor marker,data in [('(address target, bytes memory callData) = abi.decode(a.paramData, (address, bytes));','a.paramData'),('(address callTarget, bytes memory callData) = abi.decode(param.paramData, (address, bytes));','param.paramData')]:\n assert text.count(marker)==1;text=text.replace(marker,'_guardCallData('+data+');\\n        '+marker)\nmarker='Constraint[] memory alternatives = abi.decode(c.referenceData, (Constraint[]));';assert text.count(marker)==1;text=text.replace(marker,'_guardOrData(c.referenceData);\\n                '+marker)\ntext=text.rsplit('}',1)[0]+'function _guardCallData(bytes calldata p) private pure { assembly (\"memory-safe\") {'+call+'} }\\nfunction _guardOrData(bytes memory p) private pure { assembly (\"memory-safe\") {'+or_+'} }\\n}\\n';changed['contracts/Assertions.sol']['content']=text\nmodified=h.compile_sources(changed)\nresults={}\nfor name in h.PRODUCTION:\n key='contracts/'+name+'.sol';a=original['contracts'][key][name]['evm']['deployedBytecode']['object'];b=modified['contracts'][key][name]['evm']['deployedBytecode']['object']\n results[name]={'beforeBytes':len(a)//2,'guardedBytes':len(b)//2,'delta':(len(b)-len(a))//2,'remainingHeadroom':24576-len(b)//2,'executableUnchanged':h.executable_hex(a)==h.executable_hex(b)}\nrecord={'scope':'In-memory sizing prototype; only Assertions changes. No production file or canonical artifact edits. Requires behavior/formal review before implementation.','sourceSha256':{k:hashlib.sha256(v['content'].encode()).hexdigest() for k,v in sources.items()},'compiler':'0.8.36','optimizerRuns':200,'evmVersion':'cancun','results':results,'assertionsPrototypeSource':text}\nPath('/tmp/assertions-halmos-current/decoder-guard-sizes.json').write_text(json.dumps(record,indent=2)+'\\n');print(json.dumps(results,indent=2))\n",
+  "decoderBenchmarkSource": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.28;\nimport \"forge-std/Test.sol\";\nimport \"contracts/lib/ERC8211.sol\";\ncontract CallDecodeBase {\n    function decode(bytes calldata p) external pure returns (address,bytes memory) { return abi.decode(p,(address,bytes)); }\n}\ncontract CallDecodeGuard {\n    function decode(bytes calldata p) external pure returns (address,bytes memory) {\n        assembly (\"memory-safe\") {\n            if lt(p.length,64) { revert(0,0) }\n            let off := calldataload(add(p.offset,32))\n            if gt(off,sub(p.length,32)) { revert(0,0) }\n            let n := calldataload(add(p.offset,off))\n            if gt(n,sub(sub(p.length,off),32)) { revert(0,0) }\n        }\n        return abi.decode(p,(address,bytes));\n    }\n}\ncontract OrDecodeBase {\n    function decode(bytes memory p) external pure returns (Constraint[] memory) { return abi.decode(p,(Constraint[])); }\n}\ncontract OrDecodeGuard {\n    function decode(bytes memory p) external pure returns (Constraint[] memory) {\n        assembly (\"memory-safe\") {\n            let size := mload(p)\n            if lt(size,32) { revert(0,0) }\n            let start := add(p,32)\n            let off := mload(start)\n            if gt(off,sub(size,32)) { revert(0,0) }\n            let count := mload(add(start,off))\n            let table := add(off,32)\n            if gt(count,div(sub(size,table),32)) { revert(0,0) }\n            for { let i := 0 } lt(i,count) { i := add(i,1) } {\n                let rel := mload(add(add(start,table),mul(i,32)))\n                if lt(sub(size,table),64) { revert(0,0) }\n                if gt(rel,sub(sub(size,table),64)) { revert(0,0) }\n                let entry := add(table,rel)\n                let dataoff := mload(add(add(start,entry),32))\n                if gt(dataoff,sub(sub(size,entry),32)) { revert(0,0) }\n                let head := add(entry,dataoff)\n                let n := mload(add(start,head))\n                if gt(n,sub(sub(size,head),32)) { revert(0,0) }\n            }\n        }\n        return abi.decode(p,(Constraint[]));\n    }\n}\ncontract DecoderCostTest is Test {\n    function test_callDecodeGuardCost() public {\n        CallDecodeBase b = new CallDecodeBase(); CallDecodeGuard g = new CallDecodeGuard();\n        emit log_named_uint(\"STATIC_CALL added runtime bytes\", address(g).code.length-address(b).code.length);\n        uint256[5] memory sizes=[uint256(0),4,32,256,1024];\n        for(uint256 i;i<sizes.length;i++) {\n            bytes memory p=abi.encode(address(0x1234),new bytes(sizes[i]));\n            uint256 a=gasleft(); b.decode(p); a-=gasleft();\n            uint256 z=gasleft(); g.decode(p); z-=gasleft();\n            emit log_named_uint(\"call data bytes\",sizes[i]); emit log_named_uint(\"extra gas\",z-a);\n        }\n    }\n    function test_orDecodeGuardCost() public {\n        OrDecodeBase b = new OrDecodeBase(); OrDecodeGuard g = new OrDecodeGuard();\n        emit log_named_uint(\"OR added runtime bytes\", address(g).code.length-address(b).code.length);\n        uint256[5] memory sizes=[uint256(0),1,2,4,8];\n        for(uint256 i;i<sizes.length;i++) {\n            Constraint[] memory c=new Constraint[](sizes[i]); for(uint256 j;j<c.length;j++) c[j]=Constraint(ConstraintType.EQ,abi.encode(uint256(1)));\n            bytes memory p=abi.encode(c);\n            uint256 a=gasleft(); b.decode(p); a-=gasleft();\n            uint256 z=gasleft(); g.decode(p); z-=gasleft();\n            emit log_named_uint(\"OR entries\",sizes[i]); emit log_named_uint(\"extra gas\",z-a);\n        }\n    }\n}\n",
+  "benchmarkOutput": "Unable to resolve imports:\n      \"contracts/lib/ERC8211.sol\" in \"/tmp/assertions-halmos-current/replay/DecoderCost.t.sol\"\n      \"contracts/Operations.sol\" in \"/tmp/assertions-halmos-current/replay/Replay.t.sol\"\n      \"contracts/Assertions.sol\" in \"/tmp/assertions-halmos-current/replay/Replay.t.sol\"\nwith remappings:\n      forge-std/=/home/sem/Projects/Assertions/node_modules/forge-std/src/\n      @openzeppelin/contracts/=/home/sem/Projects/Assertions/node_modules/@openzeppelin/contracts/\n      hardhat/=/home/sem/Projects/Assertions/node_modules/hardhat/\nCompiling 99 files with Solc 0.8.36\nSolc 0.8.36 finished in 40.50s\nCompiler run successful with warnings:\nWarning (6335): \"layout\" will be promoted to keyword in the future and will not be allowed as an identifier anymore.\n  --> contracts/tests/AbiCodecGas.t.sol:18:5:\n   |\n18 |     function layout(string calldata t) external pure returns (uint256) {\n   |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (6335): \"layout\" will be promoted to keyword in the future and will not be allowed as an identifier anymore.\n  --> contracts/tests/AbiCodecGas.t.sol:73:9:\n   |\n73 |         uint256 layout = _cost(address(h), abi.encodeCall(CodecHarness.layout, (\"(uint256,uint256)\")));\n   |         ^^^^^^^^^^^^^^\n\nWarning (6335): \"error\" will be promoted to keyword in the future and will not be allowed as an identifier anymore.\n  --> contracts/tests/AbiTrailingOffsets.t.sol:29:23:\n   |\n29 |             (bool ok, bytes memory error) = address(this).staticcall(abi.encodeCall(this.validate, (descriptor, dirty)));\n   |                       ^^^^^^^^^^^^^^^^^^\n\nWarning (6335): \"at\" will be promoted to keyword in the future and will not be allowed as an identifier anymore.\n   --> contracts/tests/ExpressionsGas.t.sol:155:9:\n    |\n155 |         uint256 at = 32 * L;\n    |         ^^^^^^^^^^\n\nWarning (6335): \"at\" will be promoted to keyword in the future and will not be allowed as an identifier anymore.\n   --> contracts/tests/WordsSymbolic.t.sol:193:5:\n    |\n193 |     function at(bytes memory s, uint256 i) internal pure returns (bytes32 v) {\n    |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (2519): This declaration shadows an existing declaration.\n  --> contracts/tests/WordsSymbolic.t.sol:61:10:\n   |\n61 |         (bool ok, bytes memory out) = address(collections).staticcall(abi.encodeCall(Collections.zipWords, (sa, sb)));\n   |          ^^^^^^^\nNote: The shadowed declaration is here:\n   --> contracts/tests/WordsSymbolic.t.sol:179:5:\n    |\n179 |     function ok(bytes memory data) internal view returns (bytes memory) {\n    |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (2519): This declaration shadows an existing declaration.\n   --> contracts/tests/WordsSymbolic.t.sol:124:10:\n    |\n124 |         (bool ok, bytes memory out) = address(collections).staticcall(abi.encodeCall(Collections.sumWords, (s)));\n    |          ^^^^^^^\nNote: The shadowed declaration is here:\n   --> contracts/tests/WordsSymbolic.t.sol:179:5:\n    |\n179 |     function ok(bytes memory data) internal view returns (bytes memory) {\n    |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (2519): This declaration shadows an existing declaration.\n   --> contracts/tests/WordsSymbolic.t.sol:141:9:\n    |\n141 |         bytes memory call;\n    |         ^^^^^^^^^^^^^^^^^\nNote: The shadowed declaration is here:\n   --> contracts/tests/WordsSymbolic.t.sol:170:5:\n    |\n170 |     function call(bytes memory data) internal view returns (bytes memory out) {\n    |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (2519): This declaration shadows an existing declaration.\n   --> contracts/tests/WordsSymbolic.t.sol:149:10:\n    |\n149 |         (bool ok, bytes memory out) = address(collections).staticcall(call);\n    |          ^^^^^^^\nNote: The shadowed declaration is here:\n   --> contracts/tests/WordsSymbolic.t.sol:179:5:\n    |\n179 |     function ok(bytes memory data) internal view returns (bytes memory) {\n    |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (2018): Function state mutability can be restricted to view\n   --> contracts/tests/CoreExtensions.t.sol:244:5:\n    |\n244 |     function test_caller_coreForReadAndGet() public {\n    |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (2018): Function state mutability can be restricted to view\n   --> contracts/tests/CoreReads.t.sol:358:5:\n    |\n358 |     function test_nav_lenSentinel_dynamicElementArray() public {\n    |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (2018): Function state mutability can be restricted to view\n   --> contracts/tests/ExpressionsGas.t.sol:349:5:\n    |\n349 |     function test_caller() public {\n    |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (2018): Function state mutability can be restricted to view\n   --> contracts/tests/MutationGaps.t.sol:344:5:\n    |\n344 |     function packOne(string memory t, bytes memory value) internal {\n    |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (2018): Function state mutability can be restricted to view\n   --> contracts/tests/MutationGaps.t.sol:595:5:\n    |\n595 |     function test_twoDigitFixedSizes() public {\n    |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (2018): Function state mutability can be restricted to view\n  --> contracts/tests/NavSymbolic.t.sol:75:5:\n   |\n75 |     function check_staticTerminals(uint8 index, bytes32[5] memory w, uint8 lengthCase) public {\n   |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (2018): Function state mutability can be restricted to view\n  --> contracts/tests/NavSymbolic.t.sol:97:5:\n   |\n97 |     function check_dynamicArray(\n   |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (2018): Function state mutability can be restricted to view\n   --> contracts/tests/NavSymbolic.t.sol:146:5:\n    |\n146 |     function check_bytesValue(uint8 offsetCase, uint8 lengthCase, uint8 pathCase, bytes32 w1, bytes32[2] memory p)\n    |     ^ (Relevant source part starts here and spans across multiple lines).\n\nWarning (2018): Function state mutability can be restricted to view\n   --> contracts/tests/NavSymbolic.t.sol:180:5:\n    |\n180 |     function check_arrayOfBytes(\n    |     ^ (Relevant source part starts here and spans across multiple lines).\n\n2026-10-02T18:53:38.537882Z  WARN evm::traces::external: etherscan config not found\n\nRan 2 tests for /tmp/assertions-halmos-current/replay/DecoderCost.t.sol:DecoderCostTest\n[PASS] test_callDecodeGuardCost() (gas: 356231)\nLogs:\n  STATIC_CALL added runtime bytes: 57\n  call data bytes: 0\n  extra gas: 127\n  call data bytes: 4\n  extra gas: 124\n  call data bytes: 32\n  extra gas: 123\n  call data bytes: 256\n  extra gas: 129\n  call data bytes: 1024\n  extra gas: 144\n\n[PASS] test_orDecodeGuardCost() (gas: 606076)\nLogs:\n  OR added runtime bytes: 179\n  OR entries: 0\n  extra gas: 184\n  OR entries: 1\n  extra gas: 465\n  OR entries: 2\n  extra gas: 715\n  OR entries: 4\n  extra gas: 1247\n  OR entries: 8\n  extra gas: 2324\n\nSuite result: ok. 2 passed; 0 failed; 0 skipped; finished in 2.71ms (2.08ms CPU time)\n\nRan 4 tests for /tmp/assertions-halmos-current/replay/Replay.t.sol:CurrentDecoderReplayTest\n[PASS] test_decoderAllocationFailure0() (gas: 4060573)\n[PASS] test_decoderAllocationFailure1() (gas: 4060984)\n[PASS] test_largeReplacementExhaustsBudget() (gas: 14335698)\n[PASS] test_orDecoderAllocationFailure() (gas: 4060545)\nSuite result: ok. 4 passed; 0 failed; 0 skipped; finished in 32.87ms (32.12ms CPU time)\n\nRan 2 test suites in 35.45ms (35.58ms CPU time): 6 tests passed, 0 failed, 0 skipped (6 total tests)\n2026-10-02T18:53:38.909077Z  WARN evm::traces: failed to flush signature cache err=failed to create file \"/home/sem/.foundry/cache/signatures\": Read-only file system (os error 30)\n",
+  "benchmarkCommand": "FOUNDRY_TEST=/tmp/assertions-halmos-current/replay FOUNDRY_OUT=/tmp/assertions-halmos-current/replay-out FOUNDRY_CACHE_PATH=/tmp/assertions-halmos-current/replay-cache forge test --match-contract 'CurrentDecoderReplayTest|DecoderCostTest' -vv",
+  "gasOverhead": {
+    "staticCall": {
+      "payloadBytes": [
+        0,
+        4,
+        32,
+        256,
+        1024
+      ],
+      "addedGas": [
+        127,
+        124,
+        123,
+        129,
+        144
+      ]
+    },
+    "or": {
+      "entries": [
+        0,
+        1,
+        2,
+        4,
+        8
+      ],
+      "addedGas": [
+        184,
+        465,
+        715,
+        1247,
+        2324
+      ]
+    }
+  },
+  "limitations": [
+    "Sizing changes Assertions only, with three guard insertion sites. No production source changes were made.",
+    "Gas measurements use isolated decoder contracts, not a full routed assertion transaction.",
+    "The prototype requires preservation of Solidity decoder acceptance and error-precedence checks before adoption.",
+    "Guards concern nested STATIC_CALL and OR payload decoders, not every compiler-generated public ABI decoder or all allocation/resource failures."
+  ],
+  "afterCommentUpdate": {
+    "Assertions": {
+      "runtimeBytes": 20049,
+      "headroom": 4527,
+      "executableUnchanged": true,
+      "metadataChanged": true
+    },
+    "Operations": {
+      "runtimeBytes": 21346,
+      "headroom": 3230,
+      "executableUnchanged": true,
+      "metadataChanged": false
+    },
+    "Collections": {
+      "runtimeBytes": 24560,
+      "headroom": 16,
+      "executableUnchanged": true,
+      "metadataChanged": true
+    },
+    "Expressions": {
+      "runtimeBytes": 17776,
+      "headroom": 6800,
+      "executableUnchanged": true,
+      "metadataChanged": true
+    }
+  },
+  "commentUpdateSourceSha256": {
+    "contracts/Operations.sol": "247134b8d15bc7663bd4f581169ab4e2eb202238b17152a7be52a391d5b107b8",
+    "contracts/Expressions.sol": "43ea4e46844e883a463a7500d826f8198b39fd2a99a8c97c54b7825ae3938d3c",
+    "contracts/Collections.sol": "0e7ed9761a69c5fa60ebf363a6063d8e9456693a63da29013c83aa589f918ce0",
+    "contracts/Assertions.sol": "46b8e161fa27c68bdca05c479ccec7891adcc91e48fb869612fb0775c876b508",
+    "contracts/tests/ClaimCoverageModerate.t.sol": "414942328b7ba0e5e01d040bcf76acb8d5cd61a8b36df1d63f00b1b28a14fa85",
+    "contracts/tests/CodecCanonicalSymbolic.t.sol": "107e1a35d9822df5fc1b5f1dd43c05cdb3badbac1e0d8877c22868f5613a3c37",
+    "contracts/tests/NavSymbolic.t.sol": "c3399930c5e364e86259f3dff16641d10569cc1e64c1fa897008f380eb3a3976",
+    "contracts/tests/NoPanicSymbolic.t.sol": "19683ccc4d86a05db636fa825b3a3b0797674be1b5b151fe21da6a0bb2fb7783",
+    "contracts/tests/Collections.t.sol": "4b794cc43bf2d95257c5dbc43a0855648e45aa661b814cd3379cbaa5dac4809a",
+    "contracts/tests/CallbackContextSymbolic.t.sol": "8fe819d168a8cba66a54eda01e5d61187b5805e3b7b1cf53800fc639deb82891",
+    "contracts/tests/CoreTargetLambda.t.sol": "b3196670babbf1258c3bd10f009375439b5f66686298a3091956c52604d3938b",
+    "contracts/tests/BiconomyERC8211Runtime.sol": "501bcda0d887350e6226998200b1e5dc392f72bfe50b1a3ba6eaa8a1df18035d",
+    "contracts/tests/ClaimCoverageSort.t.sol": "f5eb370bea4fdb5030bd5e16bdb3a0418aea88f76428f4b283f0f6f72865f04d",
+    "contracts/tests/ExpressionsGuardedBoundary.t.sol": "142a38675059fa48095ee9e2c380c9c5eb398d0fd1db2f0506ac0551a71d0291",
+    "contracts/tests/ExpressionsGas.t.sol": "59b8606aff42ed0b4ec770e040c7cf47f0fbba857a680d4b1d41580fb9394583",
+    "contracts/tests/OperationsModular.t.sol": "f0ff497449e6a9396043faf3d654bc303d42706500a802c59c98455937f4eb14",
+    "contracts/tests/MutationGaps.t.sol": "9f7767cd9caf640a8379704e1a5adee457ed3e68289253e007768bc505f88da8",
+    "contracts/tests/ConstraintCompositionSymbolic.t.sol": "19a848331f3fa4a7b24a81b5f6a7e33cdb47249bb78fad2f73b88e81780b081f",
+    "contracts/tests/CollectionsNoPanic.t.sol": "30c933287bd2424ffbf1bd6eb7d02f7486d3ead476ad5640deb13f33b64d4d5d",
+    "contracts/tests/ExpressionsSymbolic.t.sol": "2bb7b2e0d36825c6bc0a882dd58a0bf706e53790267bcd9e675839d72499a34c",
+    "contracts/tests/WordsSymbolic.t.sol": "be8de8a80a5190d05d26d321fc20f5401654eb92dbb46614213fd6424eabb474",
+    "contracts/tests/CoreNoPanic.t.sol": "8b4458e303f9d18b306eafcd82c9f939dbb28c7361764fc87c81946d05cc519a",
+    "contracts/tests/PositionalConstraints.t.sol": "9714a05eb45a945982410624175ecec6af7cf249ea135157c06f115cc082227c",
+    "contracts/tests/AbiTrailingOffsets.t.sol": "df3a786b041564908b931ab450fc647c8fa351af3816673a95d155c4cbb7acf2",
+    "contracts/tests/Stateless.t.sol": "057f128c77074de656adecf9b15d7b4272d4620027e4fcc09c63b173fbd3099c",
+    "contracts/tests/StaticLenses.t.sol": "7941e5eab01f12e9dd16d0db27243daa70036a3d66d38500166ef21ea6dd23b8",
+    "contracts/tests/ValuesSymbolic.t.sol": "5becb88b663031efbfe9e781aa333f363f380b1155adbb65f9b4269e81408257",
+    "contracts/tests/ClaimCoverageOracle.t.sol": "69412a30589621943e1bcd43f76006ec433d9c5b8bb1b1b970bb9bfb2ee6c87a",
+    "contracts/tests/Expressions.t.sol": "264d16c1666ced31ef5cd89456d896e37167b869bb37853ee2a68cc9ccebe17b",
+    "contracts/tests/OperationsGas.t.sol": "3dc52ddb240937da9bc0fd08fa8e34d9f8e3838ed863a6163c9e8d5f4fb5fd85",
+    "contracts/tests/OperationsNoPanicSymbolic.t.sol": "77712598e0795c57584f80ab2fb2566839ccaabfceafedde1b14025d6297f65e",
+    "contracts/tests/ParserSymbolic.t.sol": "268d41a3eb6f01457118b28ec5fa4716e527c6c6750c945546069b4bdd9a58d6",
+    "contracts/tests/ControlSymbolic.t.sol": "baef4c3f9ab6e8df101db961a9d65e1e0a49950da472c6dbd708bc34dc6f874a",
+    "contracts/tests/CoreSymbolic.t.sol": "c0ac3891a240a913dc10ac65b7bb4af3abf6b5f7db4bfeb9ac4e59a99bff0f00",
+    "contracts/tests/AbiCodec.t.sol": "9490a8cd98bfec38e749ebae5eb80674ba8383b7040317131e96cba519cf418a",
+    "contracts/tests/ERC8211Symbolic.t.sol": "581d5d53727fcf61197a3994755e754e091e57048f214d90c7bbd502619ca427",
+    "contracts/tests/WordLambdasSymbolic.t.sol": "54979a7ce1ee7f0a94aa829d90ddce351a0da4b94f7645d3835e9e697a1eacb6",
+    "contracts/tests/ERC8211ReferenceHarness.sol": "ff261e9b0d6cb804204293e0298b752de23fe821ab82c322ad2b16fbe05c5d9c",
+    "contracts/tests/CompositionSymbolic.t.sol": "b1a783b3e76f2cc1972aafb9979ab3973eef0c2875b16d62ca25552d25e7aa96",
+    "contracts/tests/ClaimBoundaries.t.sol": "7453a72c774523c74e9d162de91ae77c01499d8ba8832fd67b61dd397262fdcf",
+    "contracts/tests/GasPropagation.t.sol": "a9c79633868a13fb66dc772f14f3d7b0117671c61e7501faed8679324f0f6469",
+    "contracts/tests/TupleLayoutSymbolic.t.sol": "4bc5b8e2f637b0d7b92384d6a454bfd6f092d97407cc0433996c1306894d375e",
+    "contracts/tests/OperationsExtensionIntegration.t.sol": "90418855c76430f11976eaa8aed9847cf270d10552c1280e48abc03313646d62",
+    "contracts/tests/ClaimCoverageEasy.t.sol": "2db461cd1f641f2f2bf996fc654dccbb2c914b5445b816e87cc48c42d36bf4f3",
+    "contracts/tests/AbiWordBoundaries.t.sol": "b0f3adbe8527b05cb2881eae1c9e71ac297d5af7333104ee3d8806e5c54e9d6f",
+    "contracts/tests/ReadsCallbacksSymbolic.t.sol": "332218d4d35a48eaaaca41af4ad9989a8b3ba3d9d78218b2acfc99a05ade0aed",
+    "contracts/tests/ExpressionsStructureSymbolic.t.sol": "db7b4495cf1bb2b18b4a9954a142b7d6c2498544030c16772ae703f066fecb72",
+    "contracts/tests/ExpressionsCallsSymbolic.t.sol": "26677ea50cb90ff477bb8774e8fde3de0d5a44051ce898c1d4c9172d1a797cbc",
+    "contracts/tests/BatchSymbolic.t.sol": "2d52c5c5259a454ba95a2a466a3825d9154c2eba66fa199a1e1876ac27f62870",
+    "contracts/tests/CallCountsAndFallbacks.t.sol": "593e3ec8af6576dc9e16e49efc97d88c7db198897a623d06160d201fe68c2528",
+    "contracts/tests/OperationsNumeric.t.sol": "e139d45b11cff1558bf9076b1e27c071f1b01f707e3fbd503ff6af5a5b76dadb",
+    "contracts/tests/AbiCodecSymbolic.t.sol": "3fe6ea7f87e70371906ceb3fd098bcf7f2e05b153b4a88a488984e869ca832e4",
+    "contracts/tests/AbiCodecGas.t.sol": "d5ad0e48e6035d6eaba96d93373d0f5dc603da34d974579a7c7221769cfe8a96",
+    "contracts/tests/BatchDifferentialSymbolic.t.sol": "dbda8859f2bcdb1d96a761787b895a2d2d656c264374e537dbd8b7c822d480fd",
+    "contracts/tests/OperationsSymbolic.t.sol": "8c52ecdc76b455d5882c9fd9be182aa9ac424614063c38fb80022f210f6f8962",
+    "contracts/tests/ExpressionsNoPanic.t.sol": "9e02c26fc4e37fa3e92359ec9a3c2fae59694520f3d1577e74191edc62aa8b2f",
+    "contracts/tests/NoPanic.t.sol": "d71a34421f03c2b7d044ffdfb30940cf85eaf50eac6fba61f0cc1b291c3e2b34",
+    "contracts/tests/OperandsSymbolic.t.sol": "aaac89bfe4033a9987f8ac83e0ea3c5f5101593d8003ea2419fa478999974b4f",
+    "contracts/tests/Assertions.t.sol": "4183e7413078e45c825582296b071f2682159752df6f0f8e911a5f1bcadd032a",
+    "contracts/tests/RecipesOffsetsSymbolic.t.sol": "7687b01ec5fc9a486f79f88dab644d14d123be9106884c0a873a0c1133d0322a",
+    "contracts/tests/CanonicalBoundsSymbolic.t.sol": "818d367382a2c849c1db019645c8b085acbfc0e6ad6c60560b6167a8e590b45a",
+    "contracts/tests/CoreExtensions.t.sol": "1615479b37df6305de0c5f0fb27f60b3b7326e63abf7e25b778bb3d5a9f3bd3b",
+    "contracts/tests/NarrowWordsSymbolic.t.sol": "390620fd6669f166423f2d83ca2953f996217d366e050c7ea05f0caff4f9e9d7",
+    "contracts/tests/OperationsCollections.t.sol": "33dd909da768dd92d4bf609626e9be59464f8f470dfff037d2cd9c100c954b5d",
+    "contracts/tests/CoreReads.t.sol": "f5da5fab083947fe5d80b9b4d40d4ccf406f6febdd940129102470a3cd067eb9",
+    "contracts/tests/ClaimEvidenceGaps.t.sol": "5a26fb86bd7477a416bbffe521069ac961b059390bcbdca8d79894bee4d93d70",
+    "contracts/tests/ConstructorsSymbolic.t.sol": "438eee3e19a8c36e39dd960f9d29a1514c8e37c97fac170df9d2e28ee51c5f10",
+    "contracts/tests/Mocks.sol": "d88a1cbd9af7f6ee90703dda2f9c8792144c45b5c6673fb73addf71fa7a64f9b",
+    "contracts/tests/OperationsNoPanic.t.sol": "309ec2e36d5e8fe15f98fea1116a722c98c2adc9d52a618c083ddd5db1102056",
+    "contracts/tests/SlotsSplitSymbolic.t.sol": "ba2091463d26cfa3827d5c896485adbf8cd712c157f62838fbb28d9de6a3df47",
+    "contracts/tests/Operations.t.sol": "a3e57d52a80e63c41b1775640c747c077fff7ccd1b1c1417455c59f0abb4a04f",
+    "contracts/lib/AbiCodec.sol": "2608528ad5c77422f6ae79f437f360e197d45171a6964b3f32d9940caa9cdf88",
+    "contracts/lib/ERC8211.sol": "cc6cfb97bb1ca7e76b7c64b0c4ceff6c4b1d7c4d74ff453a30ccbecf98657705"
+  }
+}

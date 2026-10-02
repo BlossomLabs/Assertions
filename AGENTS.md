@@ -332,9 +332,14 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   uint8-enum mirror structs, which encode identically to the real ones. Wire
   bytes solc cannot decode (a STATIC_CALL paramData, an OR referenceData, a
   Resolve node's data, an evaluateEncoded payload, an out-of-range enum)
-  revert WITHOUT data, as in the Biconomy reference: documented, not
-  pre-validated, since a canonical check would reject what the reference
-  accepts and tax every STATIC_CALL. The suites accept a bare revert only when
+  can revert without data; nested STATIC_CALL/OR allocation requests can
+  instead raise Panic(0x41), and resource exhaustion can return empty data.
+  These are documented, not pre-validated: a canonical check would reject
+  what the reference accepts and tax every STATIC_CALL. Core reads/batches
+  fuzz canonical nested encodings with bounded payloads; explicit regressions
+  assert impossible-allocation panics. Operations search bounds inputs and
+  replacement expansion, requires success or exact EmptyNeedle, and separately
+  asserts exhaustion for a large replacement output. The suites accept a bare revert only when
   they injected such bytes, and half their runs inject none: with junk in
   most runs a real bare revert hides behind the excuse. A WELL-TYPED graph
   must never reach a bare decode: ProbeCall once decoded any calldata

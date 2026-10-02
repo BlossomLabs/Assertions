@@ -4,6 +4,23 @@ What an agent needs to know to work in this repo without relearning it the hard 
 Learnings only: no status, no task lists. When something here stops being true,
 fix it in the same change that falsified it.
 
+## Source proof library
+
+`formal/` is the canonical source proof library. Start with `formal/README.md`
+and run `python3 formal/tools/check.py` before changing proof sources or metadata.
+Packages bind complete canonical import closures; contract indexes preserve
+logical interfaces and original premises. New proof-source changes require
+updated preservation bindings, independent review and fresh affected closures.
+Native verification, compiler/generator correspondence, source fault tests and
+source acceptance are separate gates; none supplies exact-bytecode credit.
+
+Earlier source, migration and bytecode proof campaigns remain on PR #3's
+`codex/formal-proofs-pr` branch. Historical paths/hashes are provenance, not
+working-tree dependencies. Never discard retained evidence or rewrite a receipt.
+Generated evidence, snapshots, compiler outputs and installed tools stay local
+or in CI artifacts. Canonical proof sources and frozen generator gates are
+tracked. Production changes still require the contract/deployment checks below.
+
 ## The two trees
 
 - **Main repo**: `contracts/` (the `Assertions` core (currently open to changes), the versionable

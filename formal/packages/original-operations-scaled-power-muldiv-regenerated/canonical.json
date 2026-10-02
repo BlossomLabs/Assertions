@@ -1,0 +1,36 @@
+{
+  "id": "original-operations-scaled-power-muldiv-regenerated",
+  "status": "blocked-missing-inputs",
+  "selectedImplementationStatus": "blocked-missing-inputs",
+  "entry": "formal/source/operations/scaled-power/muldiv-regenerated/Control.generated.dfy",
+  "verificationEntries": [
+    "formal/source/operations/scaled-power/muldiv-regenerated/Control.generated.dfy"
+  ],
+  "implementations": [
+    "formal/source/operations/scaled-power/muldiv-regenerated/Control.generated.dfy",
+    "formal/source/operations/scaled-power/muldiv-regenerated/Helpers.generated.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [],
+    "execution": [
+      "formal/source/operations/scaled-power/muldiv-regenerated/Control.generated.dfy",
+      "formal/source/operations/scaled-power/muldiv-regenerated/Helpers.generated.dfy"
+    ],
+    "correspondence": [],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/operations/scaled-power/muldiv-regenerated/Control.generated.dfy": "819effb2eab6b4f1636c0577a111fd4aed25189bc68b5df02114b41b3e4cac29",
+    "formal/source/operations/scaled-power/muldiv-regenerated/Helpers.generated.dfy": "d8636615787f5fb88b6aaddbf80a09756185429bea0c34fa6f25d031f28e315a"
+  },
+  "missingInputs": [
+    "formal/source/operations/scaled-power/muldiv-regenerated/Memory.dfy"
+  ],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

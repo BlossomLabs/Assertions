@@ -1,0 +1,7 @@
+[
+  {
+    "signature": "rawCall(address,bytes)",
+    "selector": "09acaa96",
+    "symbol": "rawCall"
+  }
+]

@@ -1,0 +1,61 @@
+{
+  "id": "original-collections-word-sort",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/collections/word-sort/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/collections/word-sort/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/collections/word-sort/Connection.dfy",
+    "formal/source/collections/word-sort/Model.dfy",
+    "formal/source/collections/word-sort/Representation.dfy",
+    "formal/source/collections/word-sort/Source.generated.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/abi/Frames.dfy",
+      "formal/source/collections/sort-core/Merge.dfy",
+      "formal/source/collections/sort-core/Model.dfy",
+      "formal/source/collections/sort-core/Ranges.dfy",
+      "formal/source/collections/word-memory/Model.dfy",
+      "formal/source/collections/word-sort/Model.dfy",
+      "formal/source/collections/word-sort/Representation.dfy"
+    ],
+    "execution": [
+      "formal/source/collections/word-memory/Source.generated.dfy",
+      "formal/source/collections/word-sort/Source.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/collections/sort-core/Connection.dfy",
+      "formal/source/collections/word-memory/Connection.dfy",
+      "formal/source/collections/word-sort/Connection.dfy"
+    ],
+    "foundations": [
+      "formal/foundations/SourceSequenceMemoryV1.dfy"
+    ]
+  },
+  "closureSha256": {
+    "formal/source/collections/word-sort/Connection.dfy": "85a9842c52f8f4cd825e908024c2bf60ecf2685d6f9989c82ca7e786638ebcff",
+    "formal/source/collections/word-sort/Source.generated.dfy": "818334ad07bb3739534de6550b576c3663ccc8d164ae5a5a1f4ff9c405472b5a",
+    "formal/source/collections/word-sort/Representation.dfy": "8fee4d806910ea7849419ab098ceadf06517fdff54124d216e1266687549f063",
+    "formal/source/collections/word-sort/Model.dfy": "555e0b05d31461a572c28a4d57846ef6b1e6e72da04ae2523053fcbec14d7dec",
+    "formal/source/collections/word-memory/Connection.dfy": "28cfbf859c8bd2464d772a6fe11018364747ad92f0919e073fa29191b2f715fe",
+    "formal/source/collections/word-memory/Source.generated.dfy": "f5cd81a8a45eb35483546521480caa6f0d012e38531e20fcec3806900b34e203",
+    "formal/source/collections/word-memory/Model.dfy": "47c5a211c3c28737af9f6c62b5091bfb93834ec266920a7e7624fc6b568db6ba",
+    "formal/source/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
+    "formal/foundations/SourceSequenceMemoryV1.dfy": "368897bc49d5826c5e60df858cfee7009d0a7ccd82570daef148ac861ee0cc38",
+    "formal/source/collections/sort-core/Connection.dfy": "7574916b597311b26e95349897aab10e2fdfac3bec169e0132572acc46aae6b9",
+    "formal/source/collections/sort-core/Ranges.dfy": "8c98f2d0b23db5ae862a50a1c0c3ebfb29b865445bda15623333dde2d89edeab",
+    "formal/source/collections/sort-core/Merge.dfy": "2f9405f5d219b0ea4c5a10e657c20e73e64a792e1aa8f35723a0dd5d1ac1a6f2",
+    "formal/source/collections/sort-core/Model.dfy": "1b73d1d7aaa59051903118d267e827d207bc7e4ee8695b6e492eacc4a5f6d954"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

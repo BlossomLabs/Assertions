@@ -1,0 +1,55 @@
+{
+  "id": "word-windows",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "native-passed-correspondence-pending",
+  "entry": "formal/source/collections/word-windows/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/collections/word-windows/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/collections/word-windows/Connection.dfy",
+    "formal/source/collections/word-windows/Model.dfy",
+    "formal/source/collections/word-windows/Properties.dfy",
+    "formal/source/collections/word-windows/Source.generated.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/abi/Frames.dfy",
+      "formal/source/collections/word-memory/Model.dfy",
+      "formal/source/collections/word-windows/Model.dfy",
+      "formal/source/collections/word-windows/Properties.dfy"
+    ],
+    "execution": [
+      "formal/source/collections/word-memory/Source.generated.dfy",
+      "formal/source/collections/word-windows/Source.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/collections/word-memory/Connection.dfy",
+      "formal/source/collections/word-windows/Connection.dfy"
+    ],
+    "foundations": [
+      "formal/foundations/SourceSequenceCellV4.dfy",
+      "formal/foundations/SourceSequenceMemoryV1.dfy"
+    ]
+  },
+  "closureSha256": {
+    "formal/source/collections/word-windows/Connection.dfy": "ca6007ba4d580431af9954448f2b7fb38bcfea295dcf5cb0b900de9f91fba3da",
+    "formal/source/collections/word-windows/Source.generated.dfy": "0c5fa6072a246c71312a98651b43ea7c5610aaa330fd1228f62cf99ff925da55",
+    "formal/source/collections/word-windows/Properties.dfy": "27e9928c56523de7ff15d772cc7e033c2de0d947d32044870ae16e3b987b0600",
+    "formal/source/collections/word-windows/Model.dfy": "b0bb6054b7192f2183b8e6b1fa535a950494f316b0ac41ffb500d33fd6a3c26d",
+    "formal/source/collections/word-memory/Connection.dfy": "28cfbf859c8bd2464d772a6fe11018364747ad92f0919e073fa29191b2f715fe",
+    "formal/source/collections/word-memory/Source.generated.dfy": "f5cd81a8a45eb35483546521480caa6f0d012e38531e20fcec3806900b34e203",
+    "formal/source/collections/word-memory/Model.dfy": "47c5a211c3c28737af9f6c62b5091bfb93834ec266920a7e7624fc6b568db6ba",
+    "formal/source/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
+    "formal/foundations/SourceSequenceMemoryV1.dfy": "368897bc49d5826c5e60df858cfee7009d0a7ccd82570daef148ac861ee0cc38",
+    "formal/foundations/SourceSequenceCellV4.dfy": "eb2b525f608f4bde64e33a1db2ffad3fb59b68333b19b3132da49999c7f32464"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

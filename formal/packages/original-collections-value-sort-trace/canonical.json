@@ -1,0 +1,52 @@
+{
+  "id": "original-collections-value-sort-trace",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/collections/value-sort-trace/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/collections/value-sort-trace/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/collections/value-sort-trace/Connection.dfy",
+    "formal/source/collections/value-sort-trace/Model.dfy",
+    "formal/source/collections/value-sort-trace/Properties.dfy",
+    "formal/source/collections/value-sort-trace/Source.generated.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/abi/Frames.dfy",
+      "formal/source/collections/sort-core/Merge.dfy",
+      "formal/source/collections/sort-core/Model.dfy",
+      "formal/source/collections/sort-core/Ranges.dfy",
+      "formal/source/collections/value-sort-trace/Model.dfy",
+      "formal/source/collections/value-sort-trace/Properties.dfy"
+    ],
+    "execution": [
+      "formal/source/collections/value-sort-trace/Source.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/collections/sort-core/Connection.dfy",
+      "formal/source/collections/value-sort-trace/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/collections/value-sort-trace/Connection.dfy": "df7506753816ba06e26446207a3fd55ee940e70cdde4db471366fc6a2e17acb0",
+    "formal/source/collections/value-sort-trace/Source.generated.dfy": "5484ce6f0fdfa0ee742a60a7fbb5fe1cb7f35076018a9ae25f45cd622bfa6663",
+    "formal/source/collections/value-sort-trace/Properties.dfy": "655a85d749b7089ab9dc59760aa6064b8f88f914b5e164267db4caec4ebc0af6",
+    "formal/source/collections/value-sort-trace/Model.dfy": "72d19eff078df08fb967f0a0c8ab7f721ade34db09e3287422425f09c9ca428a",
+    "formal/source/collections/sort-core/Connection.dfy": "7574916b597311b26e95349897aab10e2fdfac3bec169e0132572acc46aae6b9",
+    "formal/source/collections/sort-core/Ranges.dfy": "8c98f2d0b23db5ae862a50a1c0c3ebfb29b865445bda15623333dde2d89edeab",
+    "formal/source/collections/sort-core/Merge.dfy": "2f9405f5d219b0ea4c5a10e657c20e73e64a792e1aa8f35723a0dd5d1ac1a6f2",
+    "formal/source/collections/sort-core/Model.dfy": "1b73d1d7aaa59051903118d267e827d207bc7e4ee8695b6e492eacc4a5f6d954",
+    "formal/source/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

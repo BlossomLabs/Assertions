@@ -1,0 +1,39 @@
+{
+  "id": "original-operations-checked-power",
+  "status": "canonical-relocated-unverified",
+  "selectedImplementationStatus": "original-unrecertified",
+  "entry": "formal/source/operations/checked-power/Connection.dfy",
+  "verificationEntries": [
+    "formal/source/operations/checked-power/Connection.dfy"
+  ],
+  "implementations": [
+    "formal/source/operations/checked-power/Connection.dfy",
+    "formal/source/operations/checked-power/Control.generated.dfy",
+    "formal/source/operations/checked-power/Model.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "mathematics": [
+      "formal/source/operations/checked-power/Model.dfy"
+    ],
+    "execution": [
+      "formal/source/operations/checked-power/Control.generated.dfy"
+    ],
+    "correspondence": [
+      "formal/source/operations/checked-power/Connection.dfy"
+    ],
+    "foundations": []
+  },
+  "closureSha256": {
+    "formal/source/operations/checked-power/Connection.dfy": "a9d0efa33f1eff28162dd25536412d798898102b460a229314655c84ec2765ad",
+    "formal/source/operations/checked-power/Control.generated.dfy": "cd560605ff4778e8fa37b3e07af99bc99ed0eeb36860a6a9f327be024628d5cc",
+    "formal/source/operations/checked-power/Model.dfy": "12c1637fad74d68e16fda3406b04cc783a6219fc682779d9e18e605c103e491a"
+  },
+  "missingInputs": [],
+  "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."
+}

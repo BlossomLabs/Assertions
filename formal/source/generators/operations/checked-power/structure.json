@@ -1,0 +1,224 @@
+{
+  "Unsigned": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "expression": {
+            "translated-slot": "UNSIGNED"
+          },
+          "nodeType": "Return"
+        }
+      ]
+    },
+    "functionSelector": "f5f565f8",
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "exp",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "a",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "b",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "external"
+  },
+  "Signed": {
+    "body": {
+      "nodeType": "Block",
+      "statements": [
+        {
+          "expression": {
+            "leftHandSide": {
+              "name": "result",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": []
+            },
+            "nodeType": "Assignment",
+            "operator": "=",
+            "rightHandSide": {
+              "hexValue": "31",
+              "kind": "number",
+              "nodeType": "Literal",
+              "value": "1"
+            }
+          },
+          "nodeType": "ExpressionStatement"
+        },
+        {
+          "body": {
+            "nodeType": "Block",
+            "statements": [
+              {
+                "condition": {
+                  "translated-slot": "ODD"
+                },
+                "nodeType": "IfStatement",
+                "trueBody": {
+                  "expression": {
+                    "leftHandSide": {
+                      "name": "result",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "*=",
+                    "rightHandSide": {
+                      "translated-slot": "PRODUCT"
+                    }
+                  },
+                  "nodeType": "ExpressionStatement"
+                }
+              },
+              {
+                "expression": {
+                  "leftHandSide": {
+                    "name": "b",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": []
+                  },
+                  "nodeType": "Assignment",
+                  "operator": ">>=",
+                  "rightHandSide": {
+                    "translated-slot": "HALF"
+                  }
+                },
+                "nodeType": "ExpressionStatement"
+              },
+              {
+                "condition": {
+                  "translated-slot": "SQUARE_GUARD"
+                },
+                "nodeType": "IfStatement",
+                "trueBody": {
+                  "expression": {
+                    "leftHandSide": {
+                      "name": "a",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": []
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "*=",
+                    "rightHandSide": {
+                      "translated-slot": "SQUARE"
+                    }
+                  },
+                  "nodeType": "ExpressionStatement"
+                }
+              }
+            ]
+          },
+          "condition": {
+            "translated-slot": "LOOP"
+          },
+          "nodeType": "WhileStatement"
+        }
+      ]
+    },
+    "functionSelector": "185af0ad",
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "exp",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "a",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "int256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        },
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "b",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "uint256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "returnParameters": {
+      "nodeType": "ParameterList",
+      "parameters": [
+        {
+          "constant": false,
+          "mutability": "mutable",
+          "name": "result",
+          "nodeType": "VariableDeclaration",
+          "stateVariable": false,
+          "storageLocation": "default",
+          "typeName": {
+            "name": "int256",
+            "nodeType": "ElementaryTypeName"
+          },
+          "visibility": "internal"
+        }
+      ]
+    },
+    "stateMutability": "pure",
+    "virtual": false,
+    "visibility": "external"
+  }
+}

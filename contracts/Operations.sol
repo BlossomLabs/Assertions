@@ -1412,7 +1412,8 @@ contract Operations {
                 mstore(add(p, 0x60), base)
                 mstore(add(p, 0x80), exponent)
                 mstore(add(p, 0xa0), modulus)
-                if and(staticcall(gas(), 0x05, p, 0xc0, p, 0x20), eq(returndatasize(), 32)) {
+                let success := staticcall(gas(), 0x05, p, 0xc0, p, 0x20)
+                if and(success, eq(returndatasize(), 32)) {
                     result := mload(p)
                     done := 1
                 }

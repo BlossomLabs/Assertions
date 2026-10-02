@@ -114,7 +114,8 @@ contract Expressions {
      *      plus each node's parsed `valueType` shape so a descriptor is
      *      parsed once per evaluation rather than once per visit. Public
      *      only because guarded evaluation hands it across an external
-     *      self-call; nothing outside this contract can inject one.
+     *      self-call. Generic Call and ProbeCall dispatch cannot target that
+     *      guarded entry; only the typed internal guard supplies the cache.
      */
     struct Cache {
         bytes[] values;
@@ -170,6 +171,12 @@ contract Expressions {
      * @param caller The offending msg.sender
      */
     error NotSelf(address caller);
+
+    /**
+     * @notice Thrown when generic call or probe dispatch targets this
+     *         contract's internal guarded-evaluation entry point
+     */
+    error GuardedCallForbidden();
 
     /**
      * @notice Thrown when a ProbeCall's target did NOT revert
@@ -267,8 +274,9 @@ contract Expressions {
      *         NotSelf for any caller other than this contract
      * @dev External only because the EVM's sole catch primitive is a call
      *      boundary: TryOrElse and IsValid evaluate their attempt through
-     *      it so a failure rolls back cleanly. The msg.sender check keeps
-     *      outside callers from injecting a cache. Returns the node's value
+     *      it so a failure rolls back cleanly. The msg.sender check rejects
+     *      direct outside callers, and generic self-call dispatch rejects this
+     *      selector, so only the typed internal guard can supply a cache. Returns the node's value
      *      and the cache as extended by the attempt, which the caller
      *      adopts on success.
      * @param expression The graph being evaluated
@@ -426,6 +434,7 @@ contract Expressions {
      *      so both probes decode alike.
      */
     function _probe(address target, bytes memory callData, bytes4 expected) private view returns (bytes memory reason) {
+        _checkPublicCall(target, callData);
         if (target.code.length == 0) {
             if (expected != bytes4(0)) revert UnexpectedRevertData(expected, bytes4(0));
             return "";
@@ -459,6 +468,7 @@ contract Expressions {
      *      with NodeCallFailed(index, ...) carrying the reason.
      */
     function _call(address target, bytes memory data, uint256 index) private view returns (bytes memory result) {
+        _checkPublicCall(target, data);
         if (target.code.length == 0) revert InvalidTarget(index, target);
         bool ok;
         uint256 gasBefore = gasleft();
@@ -466,6 +476,17 @@ contract Expressions {
         if (!ok) {
             _rejectOutOfGas(gasBefore, result);
             revert NodeCallFailed(index, target, data, result);
+        }
+    }
+
+    /**
+     * @dev Only _tryEvaluate may supply a guarded cache. Generic self-calls
+     *      may still use evaluate/evaluateEncoded, which initialize a fresh
+     *      cache. Check both call and probe dispatch before executing a target.
+     */
+    function _checkPublicCall(address target, bytes memory data) private view {
+        if (target == address(this) && data.length >= 4 && bytes4(data) == this.evaluateGuarded.selector) {
+            revert GuardedCallForbidden();
         }
     }
 

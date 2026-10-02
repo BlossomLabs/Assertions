@@ -81,8 +81,8 @@ const CONTRACTS = [
     artifact: "artifacts/contracts/Operations.sol/Operations.json",
     output: "src/lib/operations-deployment.ts",
     // Vanity salt for the 2.0 release.
-    salt: "0x986eccda3c8e38a832036e410657b1b5aef8bf9b7555c7d2a40aa0653d5e258a",
-    expectedAddress: "0x09e4a7E60e349232CC2B87296692F613eB216184",
+    salt: "0x1ce8efdd7b880e1a19c01c3a1c8d247e8b5eb548827475dbc8f7f94dec06adb1",
+    expectedAddress: "0x09e4A7e2BDDf5783F7e67765354d8090DB658c9D",
     prefix: "OPERATIONS",
     description: "Operations plain-value vocabulary contract",
     includeProxyConstants: false,
@@ -113,8 +113,8 @@ const CONTRACTS = [
     output: "src/lib/expressions-deployment.ts",
     // Vanity salt for the 2.0 release. The core interface is local, so core
     // source edits do not move this address.
-    salt: "0xb8c166f9f834cfc8d1d605b5491942160da436eaf8f9d8f75c355558f669aa43",
-    expectedAddress: "0xe5594e5561557B43ef3041F149C20A4cb849C64E",
+    salt: "0xa45857d10fd50213876ec7b9cf8488b1bfb04011cb7279f8c76af3fbecf5bd49",
+    expectedAddress: "0xE5594E55D68156e9E87dC083aEdC6D57aB09e66d",
     prefix: "EXPRESSIONS",
     description: "typed expression graphs contract",
     includeProxyConstants: false,

@@ -26,6 +26,10 @@ Wire bytes that solc's decoder cannot read revert **without data**, exactly as t
 
 `InvalidTypeDescriptor` is declared at file level in `AbiCodec.sol` and the rest inside the library; all four contracts share its descriptor grammar and canonical-value validation. `ElementIndexOutOfBounds` is declared at file level in `Assertions.sol` for navigation:
 
+Descriptor and value diagnostics assume sufficient gas, stack and memory. Very
+large or deeply nested inputs can exhaust those resources; checked descriptor
+and cursor arithmetic can also raise `Panic(0x11)`.
+
 | Error | Description |
 |-------|-------------|
 | `InvalidTypeDescriptor(uint256)` | a type descriptor cannot be parsed: empty, non-tuple where a tuple is required, an unknown character where a type was expected, an unterminated array suffix, a fixed length of 0 or above 2^32 − 1 (or a static fixed-array footprint above 2^32 − 1 words), or trailing garbage (the argument is the byte position where parsing failed) |
@@ -48,7 +52,7 @@ View-mode batch restrictions from the judge, plus the primitives' own errors:
 | `DuplicateTargetParam(uint256)` | a batch entry carries more than one `TARGET` input parameter |
 | `BalanceCannotBeTarget(uint256, uint256)` | a `TARGET` input parameter uses the `BALANCE` fetcher (a balance is not an address) |
 | `EmptyCallChain()` | `chain` received an empty `calls` array |
-| `InvalidNavigation(uint256)` | a `nav` path step indexes a non-composite value, `LEN`/`PAYLOAD` is applied to a value without a length word or byte payload (descriptor *parse* failures revert with `InvalidTypeDescriptor` instead) |
+| `InvalidNavigation(uint256)` | a `nav` path step indexes a non-composite value, or `LEN`/`PAYLOAD` is applied to an unsupported type; truncated dynamic tuples/fixed arrays can raise a bounds error before LEN's type rejection, while PAYLOAD rejects these types before reading their length word (descriptor *parse* failures use the parser's diagnostics) |
 | `RevertProbeNotACall(uint8)` | `revertData`'s operand is not a `STATIC_CALL` fetcher: a literal or a balance read has no call whose reason could be reported |
 | `RevertProbeConstrained(uint256)` | `revertData`'s operand carries constraints; the call itself is the subject, so its value is never validated |
 | `DidNotRevert(address, bytes)` | the call `revertData` (or an Expressions `ProbeCall`) probed succeeded; an assertion that a call fails is not satisfied by it working (identifies the offending call) |
@@ -95,6 +99,7 @@ A malformed callback result reverts with `AbiCodec.InvalidCallbackResult` (above
 |-------|-------------|
 | `InvalidNode(uint256)` | a malformed node: the `result` index out of range, the wrong reference count for the node's kind, a `Parameter` whose data is not one word, a `ProbeCall` whose calldata node is not typed `bytes`, a target word that is not a clean address |
 | `NotSelf(address)` | `evaluateGuarded` was called by anyone other than the Expressions contract itself |
+| `GuardedCallForbidden()` | Expressions generic call or probe dispatch targeted its own internal guarded entry |
 | `InvalidReference(uint256, uint256)` | a node references itself or a later node, or a `Parameter` index is past the supplied parameters |
 | `InvalidTarget(uint256, address)` | a `Call`, a `Resolve` or the `evaluateEncoded` self-call targets an address without code (the argument is the node index) |
 | `NodeCallFailed(uint256, address, bytes, bytes)` | the staticcall a node made reverted without exhaustion or the reserved signal; carries the node index, the target, the calldata and the reason. A different error from the core's two-argument `CallFailed` |

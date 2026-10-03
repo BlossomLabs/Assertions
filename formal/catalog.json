@@ -500,7 +500,7 @@
       "contract": "Operations",
       "signature": "add(uint256,uint256)",
       "selector": "0x771602f7",
-      "status": "failed-incomplete",
+      "status": "implemented-unverified",
       "theorems": [
         {
           "file": "formal/contracts/Operations/add/Unsigned.dfy",

@@ -6,7 +6,7 @@ Proof homes for `add(uint256,uint256)` and `add(int256,int256)`:
 - [Signed.dfy](Signed.dfy): `OperationsSignedAdd.VerifyAdd`.
 - [Spec.dfy](Spec.dfy): independent mathematical outcomes and exact ABI return or `Panic(0x11)` payload.
 
-Both top-level obligations remain incomplete. They have no accepted public-function proof credit. The dispatcher and common initialization blocks are supporting obligations, not replacements for the top-level theorems.
+The unsigned public-entry theorem has passed its focused native check. Its complete closure, independent review and acceptance gates remain pending; the signed theorem is incomplete. Neither has accepted public-function proof credit. The dispatcher and common initialization blocks are supporting obligations, not replacements for the top-level theorems.
 
 Each theorem quantifies over all operands in its ABI domain and an arbitrary hash/precompile backend. Execution begins at PC 0 with the complete runtime bound by [runtime.json](../runtime.json), empty stack and memory, canonical calldata and zero call value. The current sufficient-gas premise is 600, with a bounded execution budget of 163 instructions. Reachable-path composition must establish these bounds for all inputs; measured concrete paths alone do not establish them.
 

@@ -390,6 +390,37 @@ contract OperationsGasTest is Test {
             CEIL_MAP_WORDS
         );
         _ceiling(
+            "reduceWords (All, GE) with an Operations lambda, per element",
+            _perUnit(
+                address(cols),
+                abi.encodeCall(
+                    Collections.reduceWords,
+                    (
+                        _wordsOf(SMALL),
+                        address(ops),
+                        tpl,
+                        _offs(4),
+                        Collections.Reduce.All,
+                        Collections.Cmp.GE,
+                        bytes32(0)
+                    )
+                ),
+                abi.encodeCall(
+                    Collections.reduceWords,
+                    (
+                        _wordsOf(LARGE),
+                        address(ops),
+                        tpl,
+                        _offs(4),
+                        Collections.Reduce.All,
+                        Collections.Cmp.GE,
+                        bytes32(0)
+                    )
+                )
+            ),
+            CEIL_REDUCE_WORDS
+        );
+        _ceiling(
             "reverseValues over addresses, per element",
             _perUnit(
                 address(cols),
@@ -458,6 +489,7 @@ contract OperationsGasTest is Test {
     uint256 constant CEIL_SUM_WORDS = 230;
     uint256 constant CEIL_ZIP_WORDS = 345;
     uint256 constant CEIL_MAP_WORDS = 1700;
+    uint256 constant CEIL_REDUCE_WORDS = 2100;
     uint256 constant CEIL_REVERSE_VALUES = 3700;
     uint256 constant CEIL_MAP_VALUES = 9500;
     uint256 constant CEIL_PACK_ARRAY = 3700;
@@ -465,4 +497,91 @@ contract OperationsGasTest is Test {
     uint256 constant CEIL_STRING_SLICE = 200;
     uint256 constant CEIL_TO_LOWER = 1600;
     uint256 constant CEIL_PARSE_UINT = 250;
+
+    // ============ reduceWords against the composed fold it replaces ============
+
+    bytes4 constant GT_U = bytes4(keccak256("gt(uint256,uint256)"));
+    uint256 constant SENTINEL = uint256(keccak256("element window"));
+
+    /**
+     * @dev The byte offset of the sentinel word in `data`, found by scanning
+     */
+    function _find(bytes memory data) internal pure returns (uint256 at) {
+        for (; at + 32 <= data.length; at++) {
+            uint256 w;
+            assembly ("memory-safe") {
+                w := mload(add(add(data, 32), at))
+            }
+            if (w == SENTINEL) return at;
+        }
+        revert("no sentinel");
+    }
+
+    /**
+     * @dev "every add(x, 7) is above 0", two ways: reduceWords (All, GT, 0)
+     *      over the add lambda, against a fold with the All exit whose
+     *      lambda is a core read of gt(add(x, 7), 0), the comparison
+     *      composed around the call
+     */
+    function test_gas_reduceWordsAgainstComposedFold() public {
+        bytes memory tpl = abi.encodeWithSelector(ADD_U, uint256(0), uint256(7));
+        uint256 direct = _perUnit(
+            address(cols),
+            abi.encodeCall(
+                Collections.reduceWords,
+                (_wordsOf(SMALL), address(ops), tpl, _offs(4), Collections.Reduce.All, Collections.Cmp.GT, bytes32(0))
+            ),
+            abi.encodeCall(
+                Collections.reduceWords,
+                (_wordsOf(LARGE), address(ops), tpl, _offs(4), Collections.Reduce.All, Collections.Cmp.GT, bytes32(0))
+            )
+        );
+        bytes memory composedTpl = _opsRead(
+            GT_U,
+            _args2(
+                InputParam(
+                    InputParamType.CALL_DATA,
+                    InputParamFetcherType.STATIC_CALL,
+                    abi.encode(address(ops), abi.encodeWithSelector(ADD_U, SENTINEL, uint256(7))),
+                    _none()
+                ),
+                _lit(0)
+            )
+        );
+        uint256 at = _find(composedTpl);
+        uint256 composed = _perUnit(
+            address(cols),
+            abi.encodeCall(
+                Collections.fold,
+                (
+                    Collections.FoldDomain.Words,
+                    0,
+                    _wordsOf(SMALL),
+                    address(assertions),
+                    composedTpl,
+                    at,
+                    _offs(at),
+                    bytes32(uint256(1)),
+                    Collections.FoldExit.All
+                )
+            ),
+            abi.encodeCall(
+                Collections.fold,
+                (
+                    Collections.FoldDomain.Words,
+                    0,
+                    _wordsOf(LARGE),
+                    address(assertions),
+                    composedTpl,
+                    at,
+                    _offs(at),
+                    bytes32(uint256(1)),
+                    Collections.FoldExit.All
+                )
+            )
+        );
+        emit log_named_uint("reduceWords (All, GT) over add, per element", direct);
+        emit log_named_uint("fold (All) over a core read of gt(add), per element", composed);
+        assertLt(direct * 3, composed, "reduceWords must stay well under the composed fold");
+    }
 }

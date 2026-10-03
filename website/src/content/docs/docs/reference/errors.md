@@ -81,7 +81,7 @@ Arithmetic failures in Operations surface as Solidity panics: overflow/underflow
 
 | Error | Description |
 |-------|-------------|
-| `LambdaOffsetOutOfBounds(uint256, uint256)` | a `fold` or `applyWords` window offset does not leave room for a 32-byte word inside the template (arguments: the offending offset, the template length) |
+| `LambdaOffsetOutOfBounds(uint256, uint256)` | a `fold`, `applyWords` or `reduceWords` window offset does not leave room for a 32-byte word inside the template (arguments: the offending offset, the template length) |
 | `UnalignedWords(uint256)` | a `Words` fold or a word-array function received data that is not a whole number of 32-byte words |
 | `UnusedFoldArgument(uint8)` | a `fold` was handed the argument its domain does not use: a subject for `Range`, or a count for `Bytes` or `Words` (the argument is the domain) |
 | `WordCountMismatch(uint256, uint256)` | `zipWords` received payloads of different word counts (silent truncation would be a wrong-answer machine) |
@@ -92,7 +92,7 @@ Arithmetic failures in Operations surface as Solidity panics: overflow/underflow
 | `CallbackFailed(bytes4, uint256, uint256, address, bytes, bytes)` | a callback or lambda reverted without exhaustion; carries the operation selector, the element indices, the target, the calldata and the revert data |
 | `SubcallOutOfGas()` | a failed subcall exhausted its forwarded gas or returned this exact four-byte signal; rethrown before ordinary error wrapping, with the core's conservative exhaustion semantics |
 
-A malformed callback result reverts with `AbiCodec.InvalidCallbackResult` (above). An out-of-range `FoldExit` (like an out-of-range `Rounding` on Operations) is refused by the ABI decoder, which reverts without data, and `sumWords` overflow as `Panic(0x11)`.
+A malformed callback result reverts with `AbiCodec.InvalidCallbackResult` (above). An out-of-range `FoldExit`, `FoldDomain`, `Reduce` or `Cmp` (like an out-of-range `Rounding` on Operations) is refused by the ABI decoder, which reverts without data. A `sumWords` overflow, and a `Sum` overflow in `reduceWords`, surface as `Panic(0x11)`.
 
 ## Expressions
 

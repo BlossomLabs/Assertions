@@ -48,15 +48,15 @@ module OperationsUnsignedArithmetic {
     ExecutionTraceProof.Append(states,s3); states := states+[s3];
   }
 
-  lemma Check(st: ExecutingState, a: u256, b: u256) returns (states: seq<State>)
+  lemma Sum(st: ExecutingState, a: u256, b: u256) returns (states: seq<State>)
     requires st.evm.code.contents == OperationsRuntime.Code()
     requires st.evm.fork == EvmFork.CANCUN
-    requires st.Gas() >= 35 && st.PC() == 20232
+    requires st.Gas() >= 10 && st.PC() == 20232
     requires st.evm.stack.contents == [a,b,3085,0,b,a,1329,0x771602f7]
     ensures ExecutionTraceProof.Valid(states)
-    ensures |states| == 11 && states[0] == st
-    ensures states[10] == EXECUTING(st.evm.(pc:=(if a as int+b as int < TWO_256 then 2984 else 20244),gas:=st.Gas()-35,
-                                    stack:=Stack.Make([U256.Add(a,b),a,b,3085,0,b,a,1329,0x771602f7])))
+    ensures |states| == 5 && states[0] == st
+    ensures states[4] == EXECUTING(st.evm.(pc:=20236,gas:=st.Gas()-10,
+                                   stack:=Stack.Make([U256.Add(a,b),a,b,3085,0,b,a,1329,0x771602f7])))
   {
     CheckedAddition.Unsigned(a,b);
     CheckedAddition.Unsigned(b,a);
@@ -73,29 +73,85 @@ module OperationsUnsignedArithmetic {
     var s3: ExecutingState := EVM.Execute(s2);
     InstructionSteps.AddStep(s3);
     var s4: ExecutingState := EVM.Execute(s3);
-    PureSteps.Dup(s4,1);
-    var s5: ExecutingState := EVM.Execute(s4);
-    PureSteps.Dup(s5,3);
-    var s6: ExecutingState := EVM.Execute(s5);
-    PureSteps.Gt(s6);
-    var s7: ExecutingState := EVM.Execute(s6);
-    PureSteps.IsZero(s7);
-    var s8: ExecutingState := EVM.Execute(s7);
-    PushSummaries.PushTwo(s8,11,168);
-    var s9: ExecutingState := EVM.Execute(s8);
-    OperationsCodeFacts.Destination2984(s9.evm.code);
-    InstructionSteps.JumpIfStep(s9);
-    var s10: ExecutingState := EVM.Execute(s9);
     states := [st];
     ExecutionTraceProof.Append(states,s1); states := states+[s1];
     ExecutionTraceProof.Append(states,s2); states := states+[s2];
     ExecutionTraceProof.Append(states,s3); states := states+[s3];
     ExecutionTraceProof.Append(states,s4); states := states+[s4];
-    ExecutionTraceProof.Append(states,s5); states := states+[s5];
-    ExecutionTraceProof.Append(states,s6); states := states+[s6];
-    ExecutionTraceProof.Append(states,s7); states := states+[s7];
-    ExecutionTraceProof.Append(states,s8); states := states+[s8];
-    ExecutionTraceProof.Append(states,s9); states := states+[s9];
-    ExecutionTraceProof.Append(states,s10); states := states+[s10];
+  }
+
+  lemma OverflowFlag(st: ExecutingState, a: u256, b: u256) returns (states: seq<State>)
+    requires st.evm.code.contents == OperationsRuntime.Code()
+    requires st.evm.fork == EvmFork.CANCUN
+    requires st.Gas() >= 12 && st.PC() == 20236
+    requires st.evm.stack.contents == [U256.Add(a,b),a,b,3085,0,b,a,1329,0x771602f7]
+    ensures ExecutionTraceProof.Valid(states)
+    ensures |states| == 5 && states[0] == st
+    ensures states[4] == EXECUTING(st.evm.(pc:=20240,gas:=st.Gas()-12,
+                                   stack:=Stack.Make([(if a as int+b as int < TWO_256 then 1 else 0),U256.Add(a,b),a,b,3085,0,b,a,1329,0x771602f7])))
+  {
+    CheckedAddition.Unsigned(a,b);
+    CheckedAddition.Unsigned(b,a);
+    assert U256.Add(a,b) == U256.Add(b,a);
+    ForkFacts.CancunMembership();
+    reveal EvmFork.CANCUN; reveal EvmFork.CANCUN_BYTECODES; reveal EvmFork.GENISIS_BYTECODES;
+    EvmFork.EipSet(EvmFork.CANCUN_EIPS,EvmFork.GENISIS_BYTECODES);
+    OperationsCodeFacts.Window079(st.evm.code); reveal OperationsRuntime.Chunk079();
+    PureSteps.Dup(st,1);
+    var s1: ExecutingState := EVM.Execute(st);
+    PureSteps.Dup(s1,3);
+    var s2: ExecutingState := EVM.Execute(s1);
+    PureSteps.Gt(s2);
+    var s3: ExecutingState := EVM.Execute(s2);
+    PureSteps.IsZero(s3);
+    var s4: ExecutingState := EVM.Execute(s3);
+    states := [st];
+    ExecutionTraceProof.Append(states,s1); states := states+[s1];
+    ExecutionTraceProof.Append(states,s2); states := states+[s2];
+    ExecutionTraceProof.Append(states,s3); states := states+[s3];
+    ExecutionTraceProof.Append(states,s4); states := states+[s4];
+  }
+
+  lemma Branch(st: ExecutingState, a: u256, b: u256) returns (states: seq<State>)
+    requires st.evm.code.contents == OperationsRuntime.Code()
+    requires st.evm.fork == EvmFork.CANCUN
+    requires st.Gas() >= 13 && st.PC() == 20240
+    requires st.evm.stack.contents == [(if a as int+b as int < TWO_256 then 1 else 0),U256.Add(a,b),a,b,3085,0,b,a,1329,0x771602f7]
+    ensures ExecutionTraceProof.Valid(states)
+    ensures |states| == 3 && states[0] == st
+    ensures states[2] == EXECUTING(st.evm.(pc:=(if a as int+b as int < TWO_256 then 2984 else 20244),gas:=st.Gas()-13,
+                                   stack:=Stack.Make([U256.Add(a,b),a,b,3085,0,b,a,1329,0x771602f7])))
+  {
+    ForkFacts.CancunMembership();
+    reveal EvmFork.CANCUN; reveal EvmFork.CANCUN_BYTECODES; reveal EvmFork.GENISIS_BYTECODES;
+    EvmFork.EipSet(EvmFork.CANCUN_EIPS,EvmFork.GENISIS_BYTECODES);
+    OperationsCodeFacts.Window079(st.evm.code); reveal OperationsRuntime.Chunk079();
+    PushSummaries.PushTwo(st,11,168);
+    var s1: ExecutingState := EVM.Execute(st);
+    OperationsCodeFacts.Destination2984(s1.evm.code);
+    InstructionSteps.JumpIfStep(s1);
+    var s2: ExecutingState := EVM.Execute(s1);
+    states := [st];
+    ExecutionTraceProof.Append(states,s1); states := states+[s1];
+    ExecutionTraceProof.Append(states,s2); states := states+[s2];
+  }
+
+  lemma Check(st: ExecutingState, a: u256, b: u256) returns (states: seq<State>)
+    requires st.evm.code.contents == OperationsRuntime.Code()
+    requires st.evm.fork == EvmFork.CANCUN
+    requires st.Gas() >= 35 && st.PC() == 20232
+    requires st.evm.stack.contents == [a,b,3085,0,b,a,1329,0x771602f7]
+    ensures ExecutionTraceProof.Valid(states)
+    ensures |states| == 11 && states[0] == st
+    ensures states[10] == EXECUTING(st.evm.(pc:=(if a as int+b as int < TWO_256 then 2984 else 20244),gas:=st.Gas()-35,
+                                    stack:=Stack.Make([U256.Add(a,b),a,b,3085,0,b,a,1329,0x771602f7])))
+  {
+    var sum := Sum(st,a,b);
+    var flag := OverflowFlag(sum[4],a,b);
+    ExecutionTraceProof.Join(sum,flag);
+    var prefix := sum+flag[1..];
+    var branch := Branch(flag[4],a,b);
+    ExecutionTraceProof.Join(prefix,branch);
+    states := prefix+branch[1..];
   }
 }

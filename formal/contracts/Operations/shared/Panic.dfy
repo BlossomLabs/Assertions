@@ -13,6 +13,7 @@ module OperationsPanic {
   import Memory
   import Gas
   import Code
+  import Arrays
   import ByteUtils
   import U256
   import ShiftFacts
@@ -57,7 +58,14 @@ module OperationsPanic {
     assert U256.Shl(0x4e487b71,224) == ShiftedSelector;
     InstructionSteps.JumpDestStep(st);
     var s1: ExecutingState := EVM.Execute(st);
-    assert Code.Slice(s1.evm.code,20127,4) == [0x4e,0x48,0x7b,0x71];
+    assert s1.evm.code == st.evm.code;
+    assert s1.evm.code.contents[20127] == 0x4e;
+    assert s1.evm.code.contents[20128] == 0x48;
+    assert s1.evm.code.contents[20129] == 0x7b;
+    assert s1.evm.code.contents[20130] == 0x71;
+    assert Code.Slice(s1.evm.code,20127,4) == [0x4e,0x48,0x7b,0x71] by {
+      reveal Code.Slice(); reveal Arrays.SliceAndPad();
+    }
     assert ByteUtils.ConvertBytesTo256([0x4e,0x48,0x7b,0x71]) == 0x4e487b71;
     PureSteps.Push(s1,4);
     var s2: ExecutingState := EVM.Execute(s1);

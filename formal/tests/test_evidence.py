@@ -148,7 +148,7 @@ class ReceiptTests(unittest.TestCase):
         parts = evidence.partitions(self.snapshot, sources)
         recorded = []
         for i, selection in enumerate(parts):
-            rows = self.rows if selection == ['--filter-position', self.entry] else []
+            rows = self.rows if selection in [['--filter-position', self.entry], ['--filter-symbol', self.name + '.']] else []
             with (self.directory / f'native-{i:03d}.csv').open('w') as output:
                 writer = csv.writer(output)
                 writer.writerow(['TestResult.DisplayName', 'TestResult.Outcome'])

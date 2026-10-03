@@ -14,13 +14,14 @@ Unsigned addition returns the unbounded sum below 2^256, otherwise reverting. Si
 
 These obligations provide partial coverage of public claim O1, which also includes subtraction and multiplication. Existing claim wording, qualifications and evidence remain preserved.
 
-Development command, after bootstrap and runtime capture:
+Verification command, after bootstrap and runtime capture:
 
 ```sh
-proof-tools/dafny/dafny verify formal/contracts/Operations/add/Unsigned.dfy \
-  --verify-included-files --manual-lemma-induction --isolate-assertions \
-  --cores 2 --verification-time-limit 30 \
-  --solver-path proof-tools/dafny/z3/bin/z3-4.12.1
+python3 formal/tools/verify.py --run \
+  --signature 'Operations.add(uint256,uint256)' \
+  --output formal/.generated/unsigned
 ```
 
-Repeat for `Signed.dfy`. Complete source closures, audit, compiler reproduction, independent receipt review, concrete execution and native proof mutation gates are separately required for acceptance.
+Select `Operations.add(int256,int256)` for the signed overload and use a fresh output directory. The verifier partitions the complete closure into bounded processes, with unchanged two-core and 30-second isolated-obligation limits. Direct symbol-selected Dafny runs are development diagnostics.
+
+Complete source closures, audit, compiler reproduction, independent receipt review, concrete execution and native proof mutation gates are separately required for acceptance.

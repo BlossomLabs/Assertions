@@ -78,7 +78,14 @@ def partitions(root, sources):
             for name in re.findall(r'^\s*lemma (Destination\d+|JumpDestinations)\(', path.read_text(), re.M):
                 result.append(['--filter-symbol', 'OperationsCodeFacts.' + name + '.'])
         else:
-            result.append(['--filter-position', relative])
+            text = re.sub(r'/\*.*?\*/|//[^\n]*', '', path.read_text(), flags=re.S)
+            modules = re.findall(r'\bmodule\s+(\w+)\s*\{', text)
+            lemmas = re.findall(r'\blemma\s+(?:\{:[^}]*\}\s*)*(\w+)\s*\(', text)
+            other = re.search(r'\b(?:function|predicate|const|datatype|type|method)\b', text)
+            if relative.startswith('formal/') and len(modules) == 1 and lemmas and not other:
+                result.extend(['--filter-symbol', modules[0] + '.' + name + '.'] for name in lemmas)
+            else:
+                result.append(['--filter-position', relative])
     return result
 
 

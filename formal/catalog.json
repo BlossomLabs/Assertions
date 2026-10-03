@@ -1388,6 +1388,13 @@
       "contractSha256": "59b17ed2ca12821a75d451f1019ceecf2841cd861e0a1b10d86c452bcf9aca9c"
     },
     {
+      "id": "OperationsDecode.AcceptWordPair",
+      "file": "formal/contracts/Operations/shared/Decode.dfy",
+      "status": "implemented-unverified",
+      "scope": "Canonical argument size check",
+      "contractSha256": "3ac5fed82148a587024210893280d78694f7ed19e2f6bb9ff40e2dbccf02e163"
+    },
+    {
       "id": "OperationsDecode.CheckWordPair",
       "file": "formal/contracts/Operations/shared/Decode.dfy",
       "status": "implemented-unverified",
@@ -1395,11 +1402,25 @@
       "contractSha256": "e71b9f1e26579e8802edd2c17b684b76a6ce82b3212fe2901677b4920c177d5d"
     },
     {
+      "id": "OperationsDecode.PrepareWordPair",
+      "file": "formal/contracts/Operations/shared/Decode.dfy",
+      "status": "implemented-unverified",
+      "scope": "Canonical argument size check",
+      "contractSha256": "ab7171e612c53386327c02b573fec383d073dcdbcbdbf4601cf99029e9de2846"
+    },
+    {
       "id": "OperationsDecode.ReadWordPair",
       "file": "formal/contracts/Operations/shared/Decode.dfy",
       "status": "implemented-unverified",
       "scope": "Canonical argument decoding",
       "contractSha256": "69bb4ed9ccec84d8d2eb87e7085145d3f7ceef1d30f5849240a14e0881637894"
+    },
+    {
+      "id": "OperationsDecode.WordPairDifference",
+      "file": "formal/contracts/Operations/shared/Decode.dfy",
+      "status": "implemented-unverified",
+      "scope": "Canonical argument size check",
+      "contractSha256": "9866dc25c20bc2d3960beed74b83afd6ebd4e5aa4b3c25ec17dde113d676dfee"
     },
     {
       "id": "OperationsDispatcher.Selector",

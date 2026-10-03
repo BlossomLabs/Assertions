@@ -14,12 +14,13 @@
     "isolateAssertions": true
   },
   "closureSha256": {
-    "formal/bridges/dafnyevm/AdoptedModels.dfy": "91e979c0e2756615c9a0cab23e44c6f79ccf2a1b661ccb626a61e7f36b7272c6",
+    "formal/bridges/dafnyevm/AdoptedModels.dfy": "88c3752a83ecf962af883893e4838f32c720b08ba05ed72aa34f361fd4d5b48c",
     "formal/bridges/dafnyevm/FoundationRefinement.dfy": "b0865c1d8859d1d3de61cdbd193fbe099ace4cdbdc7510a3b5309791edca0105",
     "formal/bridges/dafnyevm/HelperModelBridge.dfy": "7471fa130b9b52de08c6242c50d1697f74cda364840e88882fce0f556cd685ba",
     "formal/bridges/dafnyevm/MemoryProjection.dfy": "4ec70f1cd1e1e01974cef80624546fe8127765bc06e3970cdfce25af33600aa9",
     "formal/bridges/dafnyevm/SourceRefinement.dfy": "c91dad6e5ef66c02e6c3deeab458eb371e39bb598d2c59fd78312acb41bbb09b",
     "formal/bytecode/dafnyevm/Helpers.dfy": "b78646e6be02dffe3a8c620b957ccff206d6260381325341ad0c12524be357cf",
+    "formal/bytecode/dafnyevm/PublicResolve.dfy": "ab50dd313af9c2075997d3a491f543cee32316ef1e52d8b9aa9837907c339eee",
     "formal/foundations/EvmEncoding.dfy": "684f4088f6bf8ae6aea2848fd876f7b99f96339715d4e904ba45c7ded83d2883",
     "formal/foundations/EvmScalarValues.dfy": "61e7a1aad128470206bc1f10adc2b3d9c3184a5a32358711eed60d1bfc98af07",
     "formal/foundations/EvmValues.dfy": "8f0e47b3ef3251230c9f1a31d832e8804438e1b5728b1a07093e4151337ff541",
@@ -59,6 +60,7 @@
     "proof-tools/dafnyevm/src/dafny/core/transient.dfy": "e43c3600cf69ccbda555ac5e2dc47f48b501a5d050867908bfec27310fa701f9",
     "proof-tools/dafnyevm/src/dafny/core/worldstate.dfy": "37bfcd606bed5cd59e1d5cafcd579f2b8e31dbe0815b90d33fc351e777251073",
     "proof-tools/dafnyevm/src/dafny/evm.dfy": "be49e35246d4bf7476c174e6f08c8296bfd786443927fad9b87d80f6ceaf2df9",
+    "proof-tools/dafnyevm/src/dafny/execution.dfy": "aa2b09cd8cd0a7fb498a0b3d55d6784d8861019072f276adf9b0ee965fc98ba2",
     "proof-tools/dafnyevm/src/dafny/gas.dfy": "b413970354c9d4083191242136d17e76a94d3c545254c5a3e00404da98abb71a",
     "proof-tools/dafnyevm/src/dafny/opcodes.dfy": "890779ca65d4df9d586e4fd167b3d8c1dd1a090e2b65d95d905ae5a170a48f0c",
     "proof-tools/dafnyevm/src/dafny/state.dfy": "8bfea41358fbec2752ea37c61167b4c4b4ca63e8439338602513376752717692",

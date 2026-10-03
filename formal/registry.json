@@ -2259,6 +2259,18 @@
       "descriptor": "formal/packages/dafnyevm-adoption/canonical.json",
       "canonicalDescriptor": "formal/packages/dafnyevm-adoption/canonical.json",
       "selectionRole": "proof-package"
+    },
+    {
+      "id": "dafnyevm-public-resolve",
+      "status": "source-acceptance-pending",
+      "implementations": [
+        "formal/bytecode/dafnyevm/PublicResolve.dfy"
+      ],
+      "declarations": 7,
+      "bytecodeCredit": false,
+      "descriptor": "formal/packages/dafnyevm-public-resolve/canonical.json",
+      "canonicalDescriptor": "formal/packages/dafnyevm-public-resolve/canonical.json",
+      "selectionRole": "proof-package"
     }
   ],
   "uniqueMappedDeclarations": 659,

@@ -43,6 +43,7 @@ jobs:
       - run: python3 -m unittest discover -s formal/tests -v
         env:
           FORMAL_NATIVE_EVIDENCE: formal/evidence/ci-evm/native
+          FORMAL_PUBLIC_EVIDENCE: formal/evidence/ci-evm/public-resolve.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:

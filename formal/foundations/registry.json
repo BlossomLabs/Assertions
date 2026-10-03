@@ -597,7 +597,8 @@
         "dafnyevm-foundations",
         "dafnyevm-helpers",
         "dafnyevm-source-closure-1",
-        "dafnyevm-adoption"
+        "dafnyevm-adoption",
+        "dafnyevm-public-resolve"
       ]
     },
     {
@@ -786,7 +787,8 @@
         "dafnyevm-foundations",
         "dafnyevm-helpers",
         "dafnyevm-source-closure-1",
-        "dafnyevm-adoption"
+        "dafnyevm-adoption",
+        "dafnyevm-public-resolve"
       ]
     }
   ]

@@ -9,6 +9,7 @@ from pathlib import Path
 from check import ROOT, LIBRARY, check, digest
 from evm_dependency import LOCK, external_sources
 from bootstrap_evm import validate_python
+from evm_inputs import producer_paths
 
 
 def main():
@@ -22,13 +23,13 @@ def main():
     validate_python(ROOT/'proof-tools/evm-python',lock['requirementsSha256'])
     output=args.output.resolve()
     assert not output.exists(),'Adoption evidence must be fresh'
-    plan={'scope':'Clean native semantics, all rewritten models and representation bridges; current runtime capture and concrete helper/generic validation. Legacy source acceptance and exact deployed/public-entry proofs remain separate.',
+    plan={'scope':'Clean native semantics, all rewritten models and representation bridges; current runtime capture and complete concrete public RAW_BYTES resolve calls plus helper/generic validation. Universal public-entry bytecode correctness and legacy source acceptance remain separate.',
           'nativePackage':'dafnyevm-adoption','affectedSourceRequired':args.affected_source,
           'sourceAcceptance':False,'bytecodeCredit':False}
     if not args.run:
         print(json.dumps(plan,indent=2));return
     output.mkdir(parents=True)
-    producers=[p for p in (LIBRARY/'tools').glob('*.py')]+[LOCK,LOCK.parent/'generic.patch',LOCK.parent/'crypto.patch',LOCK.parent/'tools.json',LOCK.parent/'requirements.lock',LIBRARY/'migrations/dafnyevm.json',LIBRARY/'bytecode/dafnyevm/runtime-binding.json',LIBRARY/'claims.json',ROOT/'docs/claim-evidence.json']
+    producers=producer_paths()
     producers={str(p.relative_to(ROOT)):digest(p) for p in producers}
     for relative in producers:
         dest=output/'producer'/relative;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(ROOT/relative,dest)
@@ -51,9 +52,10 @@ def main():
         run('generation-review',[sys.executable,str(LIBRARY/'tools/review_generation.py'),'original-operations-scalars','--evidence',str(generation),'--output',str(output/'generation-review.json')])
         run('capture',[sys.executable,str(LIBRARY/'tools/capture_evm.py'),'--output',str(output/'runtime')])
         # Translation has no proof credit. It uses only the already reviewed exact snapshot.
-        root=native/'snapshot/proof-tools/dafnyevm/src/dafny/evm.dfy'
+        root=native/'snapshot/formal/bytecode/dafnyevm/PublicResolve.dfy'
         run('python-build',[str(ROOT/'proof-tools/assertions/dafny/dafny'),'build','--target','py','--no-verify',str(root),'--output',str(output/'interpreter/evm')])
         run('smoke',[sys.executable,str(LIBRARY/'tools/evm_smoke.py'),'--interpreter',str(output/'interpreter/evm-py'),'--vendor',str(ROOT/'proof-tools/evm-python'),'--runtime',str(output/'runtime/runtime.hex'),'--output',str(output/'smoke.json')])
+        run('public-resolve',[sys.executable,str(LIBRARY/'tools/evm_public_resolve.py'),'--interpreter',str(output/'interpreter/evm-py'),'--vendor',str(ROOT/'proof-tools/evm-python'),'--runtime',str(output/'runtime/runtime.hex'),'--output',str(output/'public-resolve.json')])
         if args.affected_source:
             run('affected-source',[sys.executable,str(LIBRARY/'tools/campaign.py'),'--migration','--output',str(output/'affected-source'),'--run'])
             campaign=json.loads((output/'affected-source/manifest.json').read_text())

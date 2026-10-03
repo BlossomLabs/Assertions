@@ -170,7 +170,16 @@ The first/address success proofs start at explicit helper PCs and require adequa
 gas, stacks, valid jump destinations and memory representations. Runtime binding
 is conditional compiler-bytecode evidence, not deployed-runtime or public-entry
 correctness. There is no complete Assertions proof, full Cancun opcode claim,
-Prague/Osaka support claim or cryptographic proof. The Java compatibility build
+Prague/Osaka support claim or cryptographic proof. The public RAW_BYTES profile is described in
+[its package guide](packages/dafnyevm-public-resolve/README.md). Native proofs
+bind its source result and canonical ABI layout. Complete concrete calls start at
+PC 0 with empty stack and memory, compare every instruction state against py-evm,
+and require 84 cases, 24 boundary/rejection probes and four detected bytecode
+mutations. Independent review rebuilds and repeats this gate. This adds public
+call conformance evidence; a universal dispatcher/decoder/return theorem remains
+separate.
+
+The Java compatibility build
 uses the optional concrete adapter separately from clean native verification.
 
 `--affected-source` additionally requires the full affected legacy source campaign.

@@ -9,4 +9,5 @@ include "../../source/operations/full-mul-div/Memory.dfy"
 include "../../source/operations/modular-power/Memory.dfy"
 include "../../source/operations/scalars/Model.dfy"
 include "SourceRefinement.dfy"
+include "../../bytecode/dafnyevm/PublicResolve.dfy"
 module EvmAdoptedModels {}

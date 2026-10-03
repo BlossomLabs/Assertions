@@ -9,6 +9,8 @@ from pathlib import Path
 from check import ROOT, LIBRARY, check, digest
 from bootstrap_evm import validate_python
 from evm_dependency import LOCK
+from evm_inputs import producer_paths
+from evm_public_evidence import validate as validate_public
 
 
 def review(evidence, output):
@@ -18,16 +20,14 @@ def review(evidence, output):
     assert manifest['status']=='adoption-gates-passed'
     assert manifest['nativePackage']=='dafnyevm-adoption'
     assert manifest['sourceAcceptance'] is False and manifest['bytecodeCredit'] is False
-    expected=['native','native-review','generation','generation-review','capture','python-build','smoke']
+    expected=['native','native-review','generation','generation-review','capture','python-build','smoke','public-resolve']
     if manifest['affectedSourceRequired']:expected.append('affected-source')
     assert [c['gate'] for c in manifest['commands']]==expected,'Missing adoption gate'
     assert all(c['exitCode']==0 for c in manifest['commands'])
     assert digest(Path(sys.executable).resolve())==manifest['pythonExecutableSha256']
     for relative,value in manifest['producerInputs'].items():
         assert digest(ROOT/relative)==value==digest(evidence/'producer'/relative),'Producer binding drift'
-    required={str(p.relative_to(ROOT)) for p in (LIBRARY/'tools').glob('*.py')}
-    required.update(['formal/dependencies/dafnyevm/'+n for n in ['lock.json','generic.patch','crypto.patch','tools.json','requirements.lock']])
-    required.update(['formal/migrations/dafnyevm.json','formal/bytecode/dafnyevm/runtime-binding.json','formal/claims.json','docs/claim-evidence.json'])
+    required={str(p.relative_to(ROOT)) for p in producer_paths()}
     assert set(manifest['producerInputs'])==required,'Incomplete producer binding'
     for relative,value in manifest['evidenceSha256'].items():assert digest(evidence/relative)==value,'Evidence drift: '+relative
     lock=json.loads(LOCK.read_text())
@@ -43,7 +43,7 @@ def review(evidence, output):
         run([sys.executable,str(LIBRARY/'tools/capture_evm.py'),'--output',str(replay/'runtime')])
         for name in ['solc-input.json','solc-output.json','runtime.hex']:
             assert (replay/'runtime'/name).read_bytes()==(evidence/'runtime'/name).read_bytes(),'Runtime replay mismatch'
-        snapshot=evidence/'native/snapshot/proof-tools/dafnyevm/src/dafny/evm.dfy'
+        snapshot=evidence/'native/snapshot/formal/bytecode/dafnyevm/PublicResolve.dfy'
         run([str(ROOT/'proof-tools/assertions/dafny/dafny'),'build','--target','py','--no-verify',str(snapshot),'--output',str(replay/'interpreter/evm')])
         def generated_files(base):return {str(p.relative_to(base)):digest(p) for p in base.rglob('*.py')}
         assert generated_files(replay/'interpreter')==generated_files(evidence/'interpreter'),'Interpreter translation replay mismatch'
@@ -54,6 +54,12 @@ def review(evidence, output):
         assert all(c['agree'] and c['specMatches'] for c in smoke['cases']+smoke['genericCases'])
         assert all(c['agree'] and c['killed'] for c in smoke['mutations'])
         assert all(c['rejected'] for c in smoke['negativeProbes'])
+        run([sys.executable,str(LIBRARY/'tools/evm_public_resolve.py'),'--interpreter',str(replay/'interpreter/evm-py'),'--vendor',str(ROOT/'proof-tools/evm-python'),'--runtime',str(replay/'runtime/runtime.hex'),'--output',str(replay/'public-resolve.json')])
+        public=json.loads((replay/'public-resolve.json').read_text())
+        assert public==json.loads((evidence/'public-resolve.json').read_text()),'Public-call replay mismatch'
+        profile=json.loads((LIBRARY/'bytecode/dafnyevm/public-resolve.json').read_text())
+        assert public['profileSha256']==digest(LIBRARY/'bytecode/dafnyevm/public-resolve.json')
+        public_counts=validate_public(public,profile)
         if manifest['affectedSourceRequired']:
             campaign=json.loads((evidence/'affected-source/manifest.json').read_text())
             assert campaign['status']=='finished' and campaign['results']
@@ -64,6 +70,7 @@ def review(evidence, output):
         assert native==json.loads((evidence/'native-review.json').read_text()), 'Native review receipt mismatch'
         assert json.loads((replay/'generation.json').read_text())==json.loads((evidence/'generation-review.json').read_text()), 'Generation review receipt mismatch'
     receipt={'status':'independently-reviewed-dafnyevm-adoption','evidence':str(evidence),'manifestSha256':digest(evidence/'manifest.json'),'reviewerSha256':digest(Path(__file__)),'nativeRows':native['nativeRows'],'helperCases':46,'mutants':4,'genericCases':len(smoke['genericCases']),'affectedSourceRequired':manifest['affectedSourceRequired'],'sourceAcceptance':False,'bytecodeCredit':False,'scope':manifest['scope']}
+    receipt.update(public_counts)
     output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(receipt,indent=2)+'\n')
     return receipt
 
@@ -72,4 +79,4 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--evidence',type=Path,required=True);parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args();result=review(args.evidence.resolve(),args.output.resolve())
-    print('PASS independent adoption replay:',result['nativeRows'],'native rows;',result['helperCases'],'helper cases;',result['mutants'],'mutants;',result['genericCases'],'generic cases.')
+    print('PASS independent adoption replay:',result['nativeRows'],'native rows;',result['helperCases'],'helper cases;',result['mutants'],'mutants;',result['genericCases'],'generic cases;',result['publicCases'],'public calls;',result['publicMutants'],'public mutants.')

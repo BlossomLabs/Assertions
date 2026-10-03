@@ -540,6 +540,7 @@
     "dafnyevm-foundations",
     "dafnyevm-helpers",
     "dafnyevm-kernel",
+    "dafnyevm-public-resolve",
     "dafnyevm-source-closure-1",
     "original-abi-construction",
     "original-abi-outcomes",

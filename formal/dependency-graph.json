@@ -37,6 +37,10 @@
       {
         "path": "formal/bridges/dafnyevm/SourceRefinement.dfy",
         "exists": true
+      },
+      {
+        "path": "formal/bytecode/dafnyevm/PublicResolve.dfy",
+        "exists": true
       }
     ],
     "formal/bridges/dafnyevm/FoundationRefinement.dfy": [
@@ -208,6 +212,16 @@
     "formal/bytecode/dafnyevm/Helpers.dfy": [
       {
         "path": "proof-tools/dafnyevm/src/test/dafny/proofs/InstructionSummaries.dfy",
+        "exists": true
+      }
+    ],
+    "formal/bytecode/dafnyevm/PublicResolve.dfy": [
+      {
+        "path": "proof-tools/dafnyevm/src/dafny/execution.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/resolution/Model.dfy",
         "exists": true
       }
     ],

@@ -16660,7 +16660,7 @@
       "declarations": {}
     },
     "formal/bridges/dafnyevm/AdoptedModels.dfy": {
-      "sha256": "91e979c0e2756615c9a0cab23e44c6f79ccf2a1b661ccb626a61e7f36b7272c6",
+      "sha256": "88c3752a83ecf962af883893e4838f32c720b08ba05ed72aa34f361fd4d5b48c",
       "declarations": {}
     },
     "formal/bridges/dafnyevm/SourceRefinement.dfy": {
@@ -16713,6 +16713,39 @@
         "ModularReply": {
           "kind": "lemma",
           "fullSha256": "753fd3ac983c865adc346cc9502321d740a0e221b2153138f4ac2b3f14f51edc"
+        }
+      }
+    },
+    "formal/bytecode/dafnyevm/PublicResolve.dfy": {
+      "sha256": "ab50dd313af9c2075997d3a491f543cee32316ef1e52d8b9aa9837907c339eee",
+      "declarations": {
+        "Selector": {
+          "kind": "function",
+          "fullSha256": "f990d7a8992fd50e815cdc6b3214ea57008383c3d0b95e9cb2b0238ac0fc3c12"
+        },
+        "RouteTag": {
+          "kind": "function",
+          "fullSha256": "698da61cfd6dacda6428f251813d2e281b1d53ea9a02eddb37cdd1740d30a6e0"
+        },
+        "PaddingSize": {
+          "kind": "function",
+          "fullSha256": "087f4745d9253ef5b19546343c0118d0f19f01eb54dcaec055a0c27126fad6b3"
+        },
+        "Zeroes": {
+          "kind": "function",
+          "fullSha256": "36c9084d89584f838772634fc17185108c2a8a56946c11193882c5cb89390788"
+        },
+        "Calldata": {
+          "kind": "function",
+          "fullSha256": "f39fd774e592918e7d04e02f370d4a6a86fd5c84a1da9b389d21b470fa23b5fd"
+        },
+        "CanonicalLayout": {
+          "kind": "lemma",
+          "fullSha256": "c2cca0a0417b7160190d406081abbf44e45b4a917d414e21c92feef8ec5aa0ba"
+        },
+        "RawBytesSource": {
+          "kind": "lemma",
+          "fullSha256": "fe6f11067f598ddec2ebe877d5fe97dfb71528b0bcf6868702618e5448ada0cd"
         }
       }
     }

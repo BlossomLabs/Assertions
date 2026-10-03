@@ -1272,6 +1272,90 @@
       "canonicalDeclarationId": "formal/source/operations/fixed-point-accuracy/Bridge.dfy::QuotientZero",
       "origin": "additional-proof-repair-helper",
       "nativeAcceptance": "Requires fresh included-closure evidence and independent review; source and bytecode acceptance remain separate."
+    },
+    {
+      "id": "formal/bytecode/dafnyevm/PublicResolve.dfy::Selector",
+      "canonicalDeclarationId": "formal/bytecode/dafnyevm/PublicResolve.dfy::Selector",
+      "contract": "Assertions",
+      "kind": "function",
+      "symbol": "Selector",
+      "logicalInterface": "function Selector(): seq<C.Byte>",
+      "interfaceSha256": "e95c5bde0b7d0a89fd726f19644f32e4321dd27ab1fd477d3532f8256e02de92",
+      "canonicalFile": "formal/bytecode/dafnyevm/PublicResolve.dfy",
+      "origin": "assertions-public-resolve-profile",
+      "nativeAcceptance": "Needs exact closure evidence; publication grants no acceptance."
+    },
+    {
+      "id": "formal/bytecode/dafnyevm/PublicResolve.dfy::RouteTag",
+      "canonicalDeclarationId": "formal/bytecode/dafnyevm/PublicResolve.dfy::RouteTag",
+      "contract": "Assertions",
+      "kind": "function",
+      "symbol": "RouteTag",
+      "logicalInterface": "function RouteTag(route: R.Route): C.Word",
+      "interfaceSha256": "fc05ffa09a9e195c5295935a8f5146488126d203c8ae48878194974191dafc3f",
+      "canonicalFile": "formal/bytecode/dafnyevm/PublicResolve.dfy",
+      "origin": "assertions-public-resolve-profile",
+      "nativeAcceptance": "Needs exact closure evidence; publication grants no acceptance."
+    },
+    {
+      "id": "formal/bytecode/dafnyevm/PublicResolve.dfy::PaddingSize",
+      "canonicalDeclarationId": "formal/bytecode/dafnyevm/PublicResolve.dfy::PaddingSize",
+      "contract": "Assertions",
+      "kind": "function",
+      "symbol": "PaddingSize",
+      "logicalInterface": "function PaddingSize(length: nat): nat\n    ensures PaddingSize(length) < 32\n    ensures (length+PaddingSize(length)) % 32 == 0",
+      "interfaceSha256": "1b508cccd55f246a0ba839442b718065a2f87e3cfed15c567976f080005ec5f5",
+      "canonicalFile": "formal/bytecode/dafnyevm/PublicResolve.dfy",
+      "origin": "assertions-public-resolve-profile",
+      "nativeAcceptance": "Needs exact closure evidence; publication grants no acceptance."
+    },
+    {
+      "id": "formal/bytecode/dafnyevm/PublicResolve.dfy::Zeroes",
+      "canonicalDeclarationId": "formal/bytecode/dafnyevm/PublicResolve.dfy::Zeroes",
+      "contract": "Assertions",
+      "kind": "function",
+      "symbol": "Zeroes",
+      "logicalInterface": "function Zeroes(length: nat): seq<C.Byte>\n    ensures |Zeroes(length)| == length\n    ensures forall i :: 0 <= i < length ==> Zeroes(length)[i] == 0",
+      "interfaceSha256": "6adee6775297573ab12ea637ac9eb2808701b2fedcc9e5e728f67b520f2ca4c9",
+      "canonicalFile": "formal/bytecode/dafnyevm/PublicResolve.dfy",
+      "origin": "assertions-public-resolve-profile",
+      "nativeAcceptance": "Needs exact closure evidence; publication grants no acceptance."
+    },
+    {
+      "id": "formal/bytecode/dafnyevm/PublicResolve.dfy::Calldata",
+      "canonicalDeclarationId": "formal/bytecode/dafnyevm/PublicResolve.dfy::Calldata",
+      "contract": "Assertions",
+      "kind": "function",
+      "symbol": "Calldata",
+      "logicalInterface": "function Calldata(route: R.Route, payload: seq<C.Byte>): seq<C.Byte>\n    requires |payload|+PaddingSize(|payload|)+160 < W.Limit()",
+      "interfaceSha256": "f7b0bb36dd82daaabcc8743c2dd01884a9552536ae30bc0d117bc29f5eaaee5c",
+      "canonicalFile": "formal/bytecode/dafnyevm/PublicResolve.dfy",
+      "origin": "assertions-public-resolve-profile",
+      "nativeAcceptance": "Needs exact closure evidence; publication grants no acceptance."
+    },
+    {
+      "id": "formal/bytecode/dafnyevm/PublicResolve.dfy::CanonicalLayout",
+      "canonicalDeclarationId": "formal/bytecode/dafnyevm/PublicResolve.dfy::CanonicalLayout",
+      "contract": "Assertions",
+      "kind": "lemma",
+      "symbol": "CanonicalLayout",
+      "logicalInterface": "lemma CanonicalLayout(route: R.Route, payload: seq<C.Byte>)\n    requires |payload|+PaddingSize(|payload|)+160 < W.Limit()\n    ensures |Calldata(route,payload)| == 228+|payload|+PaddingSize(|payload|)\n    ensures Calldata(route,payload)[..4] == Selector()\n    ensures C.Read(Calldata(route,payload)[4..36]) == 32\n    ensures C.Read(Calldata(route,payload)[36..68]) == RouteTag(route)\n    ensures C.Read(Calldata(route,payload)[68..100]) == 0\n    ensures C.Read(Calldata(route,payload)[100..132]) == 128\n    ensures C.Read(Calldata(route,payload)[132..164]) == 160+|payload|+PaddingSize(|payload|)\n    ensures C.Read(Calldata(route,payload)[164..196]) == |payload|\n    ensures Calldata(route,payload)[196..196+|payload|] == payload\n    ensures C.Read(Calldata(route,payload)[196+|payload|+PaddingSize(|payload|)..]) == 0",
+      "interfaceSha256": "6ba57bebe997d4c73d982b05b63ec739f8199dc7cb6d9a5fddef507759ec82f3",
+      "canonicalFile": "formal/bytecode/dafnyevm/PublicResolve.dfy",
+      "origin": "assertions-public-resolve-profile",
+      "nativeAcceptance": "Needs exact closure evidence; publication grants no acceptance."
+    },
+    {
+      "id": "formal/bytecode/dafnyevm/PublicResolve.dfy::RawBytesSource",
+      "canonicalDeclarationId": "formal/bytecode/dafnyevm/PublicResolve.dfy::RawBytesSource",
+      "contract": "Assertions",
+      "kind": "lemma",
+      "symbol": "RawBytesSource",
+      "logicalInterface": "lemma RawBytesSource(route: R.Route, payload: seq<C.Byte>, context: C.Context,\n                       env: R.Environment, history: seq<R.Request>)\n    ensures R.Resolve(R.Param(route,R.RAW_BYTES,payload,[]),context,env,history)\n         == R.Outcome(R.Value(payload),history)",
+      "interfaceSha256": "f58e3d82752706a57954376ded4ecbcfa1307d514334303de1e036bcb20f75f3",
+      "canonicalFile": "formal/bytecode/dafnyevm/PublicResolve.dfy",
+      "origin": "assertions-public-resolve-profile",
+      "nativeAcceptance": "Needs exact closure evidence; publication grants no acceptance."
     }
   ]
 }

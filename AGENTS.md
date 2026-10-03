@@ -17,6 +17,11 @@ uses explicit backend injection and excludes the optional crypto adapter's debt.
 `migrations/dafnyevm.json` binds original logical contracts and current replacement
 theorems. `verify_evm.py` and `review_evm.py` keep native, generator, runtime and
 concrete evidence separate; `--affected-source` requires fresh legacy closures too.
+The public RAW_BYTES resolve gate runs from PC 0 and compares complete instruction
+states; its finite conformance evidence is separate from universal public-entry
+correctness. In this method, solc skips validation of the unused `paramType` enum
+field: malformed routing tags can still return RAW_BYTES, so decoder rejection
+claims must identify the fields actually consumed.
 Packages bind complete canonical import closures; contract declaration indexes preserve
 logical interfaces. `formal/claims.json` binds current public claim IDs and wording;
 historical mappings do not establish coverage. New proof-source changes require

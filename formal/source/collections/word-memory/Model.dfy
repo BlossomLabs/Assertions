@@ -1,17 +1,23 @@
+include "../../../foundations/EvmEncoding.dfy"
 // SPDX-License-Identifier: MIT
 include "../../abi/Frames.dfy"
 module CollectionsWordMemoryModel {
+  import V = EvmValues
+  import E = EvmEncoding
+  import Arrays
   import opened AbiFrames
   predicate Fits(n: nat) { n < Pow256(32) }
-  function Add(a: nat,b: nat): nat { (a+b) % Pow256(32) }
-  function Mul(a: nat,b: nat): nat { (a*b) % Pow256(32) }
+  function Add(a: nat,b: nat): nat
+  { E.Add(a,b) }
+  function Mul(a: nat,b: nat): nat
+  { E.Mul(a,b) }
   function Load(memory: seq<Byte>,address: nat): nat
     requires address+32 <= |memory|
-  { ReadNat(memory[address..address+32]) }
+  { E.Load(memory,address) }
   function Store(memory: seq<Byte>,address: nat,value: nat): seq<Byte>
     requires address+32 <= |memory|
     ensures |Store(memory,address,value)| == |memory|
-  { memory[..address]+Word(value)+memory[address+32..] }
+  { E.Store(memory,address,value) }
   predicate Frame(memory: seq<Byte>,base: nat,payload: seq<Byte>) {
     base+32+|payload| <= |memory| && memory[base..base+32] == Word(|payload|) &&
     memory[base+32..base+32+|payload|] == payload

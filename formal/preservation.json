@@ -540,11 +540,11 @@
       }
     },
     "formal/foundations/SourceSequenceMemoryV1.dfy": {
-      "sha256": "368897bc49d5826c5e60df858cfee7009d0a7ccd82570daef148ac861ee0cc38",
+      "sha256": "94bdbaeddc8b0d96a9edfc4672554ba625c6c9abf80f27006cee0905dcd011c6",
       "declarations": {
         "Replace": {
           "kind": "function",
-          "fullSha256": "c082351e3d198cc56267d9917eb979700d375860b015291d0a6af2f81d1a3c71"
+          "fullSha256": "a78d8173a84747c373cb5c0cb086866a62ae5c094f0ad0769d80c3a1297909b1"
         },
         "NestedSlice": {
           "kind": "lemma",
@@ -690,7 +690,7 @@
       }
     },
     "formal/source/assertions/resolution/Words.dfy": {
-      "sha256": "daf1ffcd4c0003b1ecdf888d5a6e3978d1f5939500c7ffded7323d38b236b5f5",
+      "sha256": "69623ce6592d6ccf8a7d25424877abb570a28da3ab0f544fdff8f3e6454b29e3",
       "declarations": {
         "Limit": {
           "kind": "function",
@@ -714,11 +714,11 @@
         },
         "EncodeWord": {
           "kind": "function",
-          "fullSha256": "9e70d4afd6d1ce6f3accddf7736848fe369caf6a44c7d2bae93d8fb0605603fd"
+          "fullSha256": "342eff11472fa1ca44a8f1fb21c54fcbc85354580c4518c9f5e9707b551ce063"
         },
         "EncodedWord": {
           "kind": "lemma",
-          "fullSha256": "4e042d0626a3684c6c675d1c99473fc667b85bd59aa9f651f932e461db9746e5"
+          "fullSha256": "c24e2b8be467ffaa93ec253e6adc3bc8b8f86a405ac0eefcda7f60159588067e"
         },
         "PackedAddress": {
           "kind": "function",
@@ -1556,7 +1556,7 @@
       }
     },
     "formal/source/assertions/constraints/Model.dfy": {
-      "sha256": "67905d6c00c411f4b04ed6343d06d55ce43ca2088a602b1651b04e4f0a40ddb8",
+      "sha256": "b8496115c0578960b322ad24b051945ebdfacfc822e7eb392719794f3fb67961",
       "declarations": {
         "Byte": {
           "kind": "type",
@@ -1588,11 +1588,11 @@
         },
         "Read": {
           "kind": "function",
-          "fullSha256": "c90679ecdb90f27646edc911b59f44646acb2010852d169ffca96538bf4138e0"
+          "fullSha256": "3c838bd2bdc27e98b4ee9a72cfb8b465670cf644247d51306ab15ce64f976014"
         },
         "Signed": {
           "kind": "function",
-          "fullSha256": "d96e8a243e408113518ae19baff8b894ad0b3b649dbb55cb20c4f755c66d9ddd"
+          "fullSha256": "2e1da8b93e86412cb413cdba4e3311b4f11447e51eeb879810784bb00cfb5cc8"
         },
         "Width": {
           "kind": "function",
@@ -3527,7 +3527,7 @@
       }
     },
     "formal/source/collections/word-memory/Model.dfy": {
-      "sha256": "47c5a211c3c28737af9f6c62b5091bfb93834ec266920a7e7624fc6b568db6ba",
+      "sha256": "5738c0164d1c5cc1410f2b961aafe6146d1abb95085e5b188b88d938c7eccf82",
       "declarations": {
         "Fits": {
           "kind": "predicate",
@@ -3535,19 +3535,19 @@
         },
         "Add": {
           "kind": "function",
-          "fullSha256": "2f7cf07d86a08c72f5d94fa33978711b9c6eb31f587da5fb37ec6f109f7eb614"
+          "fullSha256": "88ffac90c1c1b9a71bca8783a1353a956e689c8d400d0325dfea9a1aeabc8ef7"
         },
         "Mul": {
           "kind": "function",
-          "fullSha256": "d9550d914e9cb9d7e25ea47991577b0c23ac698087140e79665bf552ecd2763f"
+          "fullSha256": "231168f26df7b03d34e1ede9600a8fa80585561479fd09c2a9907309954836db"
         },
         "Load": {
           "kind": "function",
-          "fullSha256": "cb40d8b483c49ea83d0ad9166c8fc29f8b7e9a5d7bec67bf2aabf8a09c52dc3c"
+          "fullSha256": "897db3bb6984cc3f1b786cb86d3f1dc5b14e3478285c28126e40c858fbcbae61"
         },
         "Store": {
           "kind": "function",
-          "fullSha256": "4a95242c1f8e40cb5ba8e67ed79e0dab28ffe34e6a7f2aef589c1667a2221cb5"
+          "fullSha256": "c46e5e49b54a11478163c2e038b58ad3d8bd192a71eb4a4a4c1faf0ca89db883"
         },
         "Frame": {
           "kind": "predicate",
@@ -12333,7 +12333,7 @@
       }
     },
     "formal/source/operations/modular-power/Memory.dfy": {
-      "sha256": "0b9649a93af48a9af59a10ba58daae84d14677de6bb733a0a7adb8b2f01ca755",
+      "sha256": "446986b8707aee26e003c3fa122a198c19e5e6f511b325370ed4cd37c14d356f",
       "declarations": {
         "Radix": {
           "kind": "function",
@@ -12377,7 +12377,7 @@
         },
         "Store": {
           "kind": "function",
-          "fullSha256": "200914617da82f0503ba626b94960e87b78126297d8575ec1ad4b6ad46b7df8b"
+          "fullSha256": "1a39ab7f55cb54f0a6e6f571db4078bb6843d5d8716190cc802f812624248660"
         },
         "Load": {
           "kind": "function",
@@ -12385,7 +12385,7 @@
         },
         "CopyReply": {
           "kind": "function",
-          "fullSha256": "85aad57d839e3c79a1722812913733914296cfa2270007b7c02e118f587432e5"
+          "fullSha256": "7c57afe52d19c6ee29dbf2834701843ae4ff4307ff0a8f5fc977223f8788dc97"
         },
         "ReplyLoad": {
           "kind": "lemma",
@@ -13472,7 +13472,7 @@
       }
     },
     "formal/source/operations/full-mul-div/Memory.dfy": {
-      "sha256": "fa793dd9cdcafd53da4117f3e6a2e7f45dc9f10eb142c75a88eb0d9fc6b64207",
+      "sha256": "f8358c07dd2164e8a9a252380a89c9016e1d25d5576ba71529aece77ab3f344d",
       "declarations": {
         "Word": {
           "kind": "function",
@@ -13480,7 +13480,7 @@
         },
         "Store": {
           "kind": "function",
-          "fullSha256": "c18a66c8fb7686c256ca2020f1a39820752bf2f95c9d680929adf2f344d089e7"
+          "fullSha256": "0795b767c28f8bb0d0bde49f301a05967e0a9c554f8496b5eb6edb4c6eebbd45"
         },
         "Canonical": {
           "kind": "function",
@@ -13853,7 +13853,7 @@
       }
     },
     "formal/source/operations/scalars/Model.dfy": {
-      "sha256": "79f96caa06c00019b435820e188d3a5ca4dcd66bf5e0c1e7957a8aae7b561520",
+      "sha256": "aab23c802619542aebf18e5c7ea5f2c04cc17e522bef2eee90d27d0f4943bdca",
       "declarations": {
         "Mod": {
           "kind": "const",
@@ -13885,7 +13885,7 @@
         },
         "Abs": {
           "kind": "function",
-          "fullSha256": "9bf710c59afb7afeb7028284c3bb9c09f8bd2e204c621a9c8a716b2773783e30"
+          "fullSha256": "27978939bbcb828f0e5f12433d87991d6185b5dd31567307a02052c65973e373"
         },
         "Wrap": {
           "kind": "function",
@@ -13909,23 +13909,23 @@
         },
         "Trunc": {
           "kind": "function",
-          "fullSha256": "254b60e198e6222537fbbf3341c5b398ea2421656ea2b0d098cd0fdab60807c4"
+          "fullSha256": "16ce047d94ef3317cbffcc578dde56c16eaf32a0aa8a4a4c3a3bebc84e957c70"
         },
         "Rem": {
           "kind": "function",
-          "fullSha256": "e1590855925d6ed9a782cc6fa789e9176bd74cefb2e52d77c68ccaf70ece0044"
+          "fullSha256": "9bc222a1558a64939871604ac242b65c3eaff224493e05cdfda74c4e5eb2f47e"
         },
         "And": {
           "kind": "function",
-          "fullSha256": "8a150a251bee54742150bfb97b5403da8b7a896a0b1ff2f3f97d72080f72ebda"
+          "fullSha256": "967ae1f4e074e60c5142af36900345bfc2a0a755455dcbbf9692def641e6732a"
         },
         "Or": {
           "kind": "function",
-          "fullSha256": "7227365cbacea31b11f02700c2dcaf58786edc0ca4b6d2c4a2148669c3bed3ca"
+          "fullSha256": "0ff57fb2f8d6c1e6aad24ca465ba51f7e3fb8b69205b0ec4094d93665472df5b"
         },
         "Xor": {
           "kind": "function",
-          "fullSha256": "151362187977795927ed515148c5639027c491a7d9910ec6af2ca278ff357224"
+          "fullSha256": "e2f10df4240a3d98cc6875a9bd980b9b8264cfc6bf2dacf45c51170df5d295b4"
         },
         "Left": {
           "kind": "function",
@@ -16421,6 +16421,298 @@
         "SeedWitness": {
           "kind": "method",
           "fullSha256": "6a9283f8e618a5b9822abd2509c99afb049a8fffd7c695970aa53b523f042bd4"
+        }
+      }
+    },
+    "formal/bridges/dafnyevm/FoundationRefinement.dfy": {
+      "sha256": "b0865c1d8859d1d3de61cdbd193fbe099ace4cdbdc7510a3b5309791edca0105",
+      "declarations": {
+        "ReadReference": {
+          "kind": "function",
+          "fullSha256": "8bdab83572ddb262811ed53974e26982e75647bc9a8549cbaff7f089d34d74e3"
+        },
+        "ReadPreserved": {
+          "kind": "lemma",
+          "fullSha256": "e4e94d96cd6ae4f915467eb491c1de0b51be31953bc7706e2fe4fa3e2b3ff11d"
+        },
+        "SignedPreserved": {
+          "kind": "lemma",
+          "fullSha256": "10519fa10733fedd7ca388f9be68cdaa98a1446b9a72cc816b2167533895514f"
+        },
+        "TruncPreserved": {
+          "kind": "lemma",
+          "fullSha256": "9f28225ec5386af1b7d301eea9959ebbd831cca9e331e9152eb3dda5c51e2099"
+        },
+        "BitwisePreserved": {
+          "kind": "lemma",
+          "fullSha256": "8429387d4453aba5910753ec190b86768feb8c67c5e594929a8963024a886719"
+        },
+        "AddPreserved": {
+          "kind": "lemma",
+          "fullSha256": "80243b9ecd1b413db8e5123c556fb92da80535912ccd5b21f515fb7b6f89e251"
+        },
+        "MulPreserved": {
+          "kind": "lemma",
+          "fullSha256": "c2d9b5d58c5dd8d7896c9c941411dce3d2d39631f201c544e1ef5425fe94dbb2"
+        },
+        "CopyPreserved": {
+          "kind": "lemma",
+          "fullSha256": "7de26a539ad944630d7343fe3fe1c23a5ae943d117930ca5a5c0e3ebe0a05abd"
+        },
+        "StorePreserved": {
+          "kind": "lemma",
+          "fullSha256": "1ec09ceeb7bb0f3f1ad67d1a85762af4bfeb41614d97d8b1cc913b43e0b2ef95"
+        }
+      }
+    },
+    "formal/bridges/dafnyevm/HelperModelBridge.dfy": {
+      "sha256": "7471fa130b9b52de08c6242c50d1697f74cda364840e88882fce0f556cd685ba",
+      "declarations": {
+        "FirstRepresentation": {
+          "kind": "predicate",
+          "fullSha256": "7710af05056656b5831a4a3276999c269453e1603279072fb21eb28342b6b256"
+        },
+        "FirstRefinement": {
+          "kind": "method",
+          "fullSha256": "cb53be6c9f0bb303a535548704e0f865b556b341941ce7a1c670af3f27e073f8"
+        },
+        "AddressRefinement": {
+          "kind": "method",
+          "fullSha256": "423b53c806f6bffc57b152bd5a863f95bc0d164b131cf1fe2d302884faf9d9f9"
+        }
+      }
+    },
+    "formal/bridges/dafnyevm/MemoryProjection.dfy": {
+      "sha256": "4ec70f1cd1e1e01974cef80624546fe8127765bc06e3970cdfce25af33600aa9",
+      "declarations": {
+        "Bits": {
+          "kind": "function",
+          "fullSha256": "5d3d7b0580778774895f059cbce37b1f3419d438fcc7ff9c8f63bb92206afa2b"
+        },
+        "Represents": {
+          "kind": "predicate",
+          "fullSha256": "eb38df817944c0b6189491685695bf41378a6bc96276a4fee054e95c612e3aad"
+        },
+        "CopyWindow": {
+          "kind": "lemma",
+          "fullSha256": "b0b433afaed729453b20b14411f2fbcd04259c1149f9a11842c2f13458e8a3d4"
+        }
+      }
+    },
+    "formal/bytecode/dafnyevm/Helpers.dfy": {
+      "sha256": "b78646e6be02dffe3a8c620b957ccff206d6260381325341ad0c12524be357cf",
+      "declarations": {
+        "Window": {
+          "kind": "function",
+          "fullSha256": "54656896d1fa48f959084f8b6749e8932a45775c626e45a310c612aa050048dd"
+        },
+        "WindowFacts": {
+          "kind": "lemma",
+          "fullSha256": "6cb1e395e0d021d615d6215236449b3523a530b5c4d4469aa010b2e549b2c339"
+        },
+        "FirstSuccess": {
+          "kind": "method",
+          "fullSha256": "0c1aff815e16e2c00cb4f23eea76d9a9c305845c26c4f2dad77192c587f00cc2"
+        },
+        "AddressSuccess": {
+          "kind": "method",
+          "fullSha256": "a7c6bd647803de20fde583c5dcee6b44fb02b9b83d78104acaf97b3d21d35869"
+        }
+      }
+    },
+    "formal/foundations/EvmEncoding.dfy": {
+      "sha256": "684f4088f6bf8ae6aea2848fd876f7b99f96339715d4e904ba45c7ded83d2883",
+      "declarations": {
+        "Add": {
+          "kind": "function",
+          "fullSha256": "511d923b578e829830f63b535e01bf47c8474d09e4c14c4e059f708e31581003"
+        },
+        "Mul": {
+          "kind": "function",
+          "fullSha256": "1d58513cc4c33e64b68fdc1a647090873a43b9c83a8c3f72a241fdb181f161f3"
+        },
+        "Load": {
+          "kind": "function",
+          "fullSha256": "d239d40479c8f2a62af2149a723b411f3df882c0739bee1f54c9cd3a88ec400e"
+        },
+        "Store": {
+          "kind": "function",
+          "fullSha256": "12594ac49e9318c7085223bed172551190cd7af3b530ec3f4f00ab3cf87933a0"
+        },
+        "NatBytesModulo": {
+          "kind": "lemma",
+          "fullSha256": "3a896fd29dff955a02eb5be7736136e45eac5718dd3b56312ea67ed7902b476a"
+        },
+        "ReadSame": {
+          "kind": "lemma",
+          "fullSha256": "388dfc5f765d157325c1e93bc5acdf90cb4f2a23c591574ecc853bba14cade8a"
+        },
+        "WordSame": {
+          "kind": "lemma",
+          "fullSha256": "0d89d5dc9d3af58dd9cc1561ac38eef5fa34174cd7596b80741adae9360e2cea"
+        },
+        "WordSameWrapped": {
+          "kind": "lemma",
+          "fullSha256": "6ec4f184b804bddd3a091d9a8c32971912a075091a1b51cd064bc5409c874eac"
+        },
+        "LoadSame": {
+          "kind": "lemma",
+          "fullSha256": "0ee1f484a8bbed724046697be38f64241dd4b3572aa1d8d11a0270e4e2f18d4b"
+        }
+      }
+    },
+    "formal/foundations/EvmScalarValues.dfy": {
+      "sha256": "61e7a1aad128470206bc1f10adc2b3d9c3184a5a32358711eed60d1bfc98af07",
+      "declarations": {
+        "Word": {
+          "kind": "predicate",
+          "fullSha256": "777b79cc76ea0afdf2ab85eebeae711fc8c61b12cf6c8d63d029cfc8d93ce3c1"
+        },
+        "Signed": {
+          "kind": "predicate",
+          "fullSha256": "5b9bb0bf93578ac0dabd55b20abef2b7d692987295e7b9e7675428eb92e6be26"
+        },
+        "Abs": {
+          "kind": "function",
+          "fullSha256": "e3461aff003e9c5bac7a795ee7ddb1a079fda3b1f38907b20c5d4cd47ff1aa3e"
+        },
+        "Trunc": {
+          "kind": "function",
+          "fullSha256": "ab683e589e15dbd75ab6ebb93d27d59ce914a5a6fee87eee70ed2e65ac71bab7"
+        },
+        "Rem": {
+          "kind": "function",
+          "fullSha256": "44cbec19201924926a1fbf91326b6d6a0867bb00b1631c500ffe095f8d8b2fb3"
+        },
+        "And": {
+          "kind": "function",
+          "fullSha256": "e5c2862fffb92a98be9e4a67ad89532d2491723f5459917184db78696c7e1864"
+        },
+        "Or": {
+          "kind": "function",
+          "fullSha256": "e577303ef68fa65647b97b16023bbb535d97bf6450f51911a76a130f0a9d93b5"
+        },
+        "Xor": {
+          "kind": "function",
+          "fullSha256": "5145f07138fc8de232c9837ec7a3ffecda73782f56f0324542d685d335c5d798"
+        }
+      }
+    },
+    "formal/foundations/EvmValues.dfy": {
+      "sha256": "8f0e47b3ef3251230c9f1a31d832e8804438e1b5728b1a07093e4151337ff541",
+      "declarations": {
+        "Byte": {
+          "kind": "type",
+          "fullSha256": "af4f3493bd62429233396fa91b408edf2fe3c2a4c87dd6dd4662b9500f914e20"
+        },
+        "Word": {
+          "kind": "type",
+          "fullSha256": "048606d7bba1b2b576c38a10591908cef8fbdad3314d614da886025baa7f7932"
+        },
+        "Bytes": {
+          "kind": "function",
+          "fullSha256": "e1ea06ea76cac39f60d98374ced6afcf91b43bc54f664cbef6a2b11a46e2fead"
+        },
+        "Naturals": {
+          "kind": "function",
+          "fullSha256": "f777e4d566397f56556b4cf2d141e265fc765803e570d1eab49feda5dbbbb05e"
+        },
+        "BytesSlice": {
+          "kind": "lemma",
+          "fullSha256": "9872202030ed0436eacb5c1948fcd238efb633cad200feec9c87bc46dfae636e"
+        },
+        "BytesInverse": {
+          "kind": "lemma",
+          "fullSha256": "3aea0986415437dde477d26a31a3e76329a4caf78f61ae28da85ecc4c3b3adad"
+        },
+        "Read": {
+          "kind": "function",
+          "fullSha256": "de01e70bd65912ebedcf57b7d4dd591c633792285956ee0a58dbf69fa631c5a9"
+        },
+        "Serialize": {
+          "kind": "function",
+          "fullSha256": "7d206d10a3a2f87884dea1f602132e403e38fca1872037a7bd494ce1066b7e9a"
+        },
+        "Signed": {
+          "kind": "function",
+          "fullSha256": "c9f27414c8666bb7fda38bbb6f47bc488e5c5b351f144a559922d91bbf9a9fbe"
+        },
+        "Add": {
+          "kind": "function",
+          "fullSha256": "73925e051d9f2b50952a639b4a158df4c575170e098289f0d451b1af96911cd6"
+        },
+        "Mul": {
+          "kind": "function",
+          "fullSha256": "49258e83de74997e527afc657270016d58864a1b1d21c5a4cfe3b2de39354377"
+        },
+        "Load": {
+          "kind": "function",
+          "fullSha256": "b8c6fac633a81ad01a3d0a9b5e17de7e28b9a328392e5a717b5876424e48ed11"
+        },
+        "Store": {
+          "kind": "function",
+          "fullSha256": "74d42a12c3f0f385f0e036dc076e418ef6ba826f33f003d26c61b9e8094bca13"
+        }
+      }
+    },
+    "formal/bridges/dafnyevm/SourceClosure1.dfy": {
+      "sha256": "2d2f096644b63efca6ace871c57cead0eaa4ae09f6bdab16e892830a00dbece3",
+      "declarations": {}
+    },
+    "formal/bridges/dafnyevm/AdoptedModels.dfy": {
+      "sha256": "91e979c0e2756615c9a0cab23e44c6f79ccf2a1b661ccb626a61e7f36b7272c6",
+      "declarations": {}
+    },
+    "formal/bridges/dafnyevm/SourceRefinement.dfy": {
+      "sha256": "c91dad6e5ef66c02e6c3deeab458eb371e39bb598d2c59fd78312acb41bbb09b",
+      "declarations": {
+        "ConstraintRead": {
+          "kind": "lemma",
+          "fullSha256": "71a8d7f2d48d30691894493b24249f31b761e1542791fd17590c98048d70899c"
+        },
+        "ConstraintSigned": {
+          "kind": "lemma",
+          "fullSha256": "4564b0d2d7f24daeb6fc2e274c57283d47109bc6e1a6b029b9069ed18f5a1c79"
+        },
+        "SerializedWord": {
+          "kind": "lemma",
+          "fullSha256": "a3c99575ec730743f9a4128bf0d238f796b4fce737c0b7ca8c5a553772cedb0b"
+        },
+        "SequenceCopy": {
+          "kind": "lemma",
+          "fullSha256": "e5f2c020b078cdda88f20846bfbe174eb317c151caf27a951efda9973335cef0"
+        },
+        "ScalarDivision": {
+          "kind": "lemma",
+          "fullSha256": "09b60c4f5e411d86a4a385de3fa70a20c59cb6d77b7790217b2dad71b350e2aa"
+        },
+        "ScalarBits": {
+          "kind": "lemma",
+          "fullSha256": "da4a7bacfcc412d43d261a55a1436bd60ebb9e8f93e775a0a42f6ed1e8a6b6fa"
+        },
+        "CollectionArithmetic": {
+          "kind": "lemma",
+          "fullSha256": "d45c369ca356dd1ce1321d1366257309cc88700a7a7a8e43c5cd155f323eb663"
+        },
+        "CollectionLoad": {
+          "kind": "lemma",
+          "fullSha256": "ecc7d7d514e13e86ff11c12f9e5e195465f0edecc4fc4016e57f8b18f3a42738"
+        },
+        "CollectionStore": {
+          "kind": "lemma",
+          "fullSha256": "e9be1235e0d936a88702ea7e01c879965b1bad035b5da995a057190cf34aab9e"
+        },
+        "FullMultiplyStore": {
+          "kind": "lemma",
+          "fullSha256": "5f3451cb58d8435a0f35e8c2514cbd7683634b712d5571c7c57363135427fd6e"
+        },
+        "ModularStore": {
+          "kind": "lemma",
+          "fullSha256": "2e11586072b2cd4722a3aca0d1588170be72408ae5954a834130fab75b0a75a6"
+        },
+        "ModularReply": {
+          "kind": "lemma",
+          "fullSha256": "753fd3ac983c865adc346cc9502321d740a0e221b2153138f4ac2b3f14f51edc"
         }
       }
     }

@@ -11,12 +11,20 @@ ROOT=LIBRARY.parent
 sys.path.insert(0,str(LIBRARY/'tools'))
 from declarations import declarations
 
+def foreign_fixture(root):
+    lock=json.loads((LIBRARY/'dependencies/dafnyevm/lock.json').read_text())
+    for relative in lock['installationSources']:
+        destination=root/relative;destination.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(ROOT/relative,destination)
+
+
 class LibraryTests(unittest.TestCase):
     def test_bootstrap_restores_all_adapters_from_missing_files(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)
             target=root/'formal'
             shutil.copytree(LIBRARY,target,ignore=shutil.ignore_patterns('*.generated.dfy','evidence','__pycache__'))
+            foreign_fixture(root)
             (root/'docs').mkdir()
             shutil.copy(ROOT/'docs/claim-evidence.json',root/'docs/claim-evidence.json')
             subprocess.run(['git','init',str(root)],capture_output=True,check=True)
@@ -51,6 +59,7 @@ class LibraryTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             target=Path(directory)/'formal'
             shutil.copytree(LIBRARY,target,ignore=shutil.ignore_patterns('evidence','__pycache__'))
+            foreign_fixture(Path(directory))
             (Path(directory)/'docs').mkdir()
             shutil.copy(ROOT/'docs/claim-evidence.json',Path(directory)/'docs/claim-evidence.json')
             preservation=target/'preservation.json'

@@ -2198,6 +2198,67 @@
       "provenance": "original-inventory.json",
       "canonicalDescriptor": "formal/packages/original-signed-mod/canonical.json",
       "selectionRole": "proof-package"
+    },
+    {
+      "id": "dafnyevm-kernel",
+      "status": "source-acceptance-pending",
+      "implementations": [
+        "proof-tools/dafnyevm/src/test/dafny/proofs/InstructionSummaries.dfy"
+      ],
+      "declarations": 0,
+      "bytecodeCredit": false,
+      "descriptor": "formal/packages/dafnyevm-kernel/canonical.json",
+      "canonicalDescriptor": "formal/packages/dafnyevm-kernel/canonical.json",
+      "selectionRole": "proof-package"
+    },
+    {
+      "id": "dafnyevm-foundations",
+      "status": "source-acceptance-pending",
+      "implementations": [
+        "formal/bridges/dafnyevm/FoundationRefinement.dfy",
+        "formal/bridges/dafnyevm/MemoryProjection.dfy"
+      ],
+      "declarations": 14,
+      "bytecodeCredit": false,
+      "descriptor": "formal/packages/dafnyevm-foundations/canonical.json",
+      "canonicalDescriptor": "formal/packages/dafnyevm-foundations/canonical.json",
+      "selectionRole": "proof-package"
+    },
+    {
+      "id": "dafnyevm-helpers",
+      "status": "source-acceptance-pending",
+      "implementations": [
+        "formal/bridges/dafnyevm/HelperModelBridge.dfy"
+      ],
+      "declarations": 3,
+      "bytecodeCredit": false,
+      "descriptor": "formal/packages/dafnyevm-helpers/canonical.json",
+      "canonicalDescriptor": "formal/packages/dafnyevm-helpers/canonical.json",
+      "selectionRole": "proof-package"
+    },
+    {
+      "id": "dafnyevm-source-closure-1",
+      "status": "source-acceptance-pending",
+      "implementations": [
+        "formal/bridges/dafnyevm/SourceClosure1.dfy"
+      ],
+      "declarations": 0,
+      "bytecodeCredit": false,
+      "descriptor": "formal/packages/dafnyevm-source-closure-1/canonical.json",
+      "canonicalDescriptor": "formal/packages/dafnyevm-source-closure-1/canonical.json",
+      "selectionRole": "proof-package"
+    },
+    {
+      "id": "dafnyevm-adoption",
+      "status": "source-acceptance-pending",
+      "implementations": [
+        "formal/bridges/dafnyevm/AdoptedModels.dfy"
+      ],
+      "declarations": 0,
+      "bytecodeCredit": false,
+      "descriptor": "formal/packages/dafnyevm-adoption/canonical.json",
+      "canonicalDescriptor": "formal/packages/dafnyevm-adoption/canonical.json",
+      "selectionRole": "proof-package"
     }
   ],
   "uniqueMappedDeclarations": 659,

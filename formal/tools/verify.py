@@ -37,6 +37,11 @@ def main():
     producer_paths = [Path(__file__), LIBRARY/'tools/check.py', LIBRARY/'tools/declarations.py',
                       LIBRARY/'tools/declaration_body.py', ROOT/matches[0]['canonicalDescriptor'],
                       LIBRARY/'registry.json']
+    producer_paths += [LIBRARY/'tools/evm_dependency.py',LIBRARY/'tools/migration.py']
+    for relative in ['dependencies/dafnyevm/lock.json','dependencies/dafnyevm/generic.patch','dependencies/dafnyevm/crypto.patch','dependencies/dafnyevm/tools.json','dependencies/dafnyevm/requirements.lock','migrations/dafnyevm.json','bytecode/dafnyevm/runtime-binding.json']:
+        path = LIBRARY/relative
+        if path.exists():
+            producer_paths.append(path)
     producer_inputs = {str(path.relative_to(ROOT)):digest(path) for path in producer_paths}
     commands = []
     for i, entry in enumerate(package['verificationEntries']):

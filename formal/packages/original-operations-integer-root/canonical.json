@@ -37,14 +37,14 @@
     "foundations": []
   },
   "closureSha256": {
+    "formal/source/operations/binary-log/Connection.dfy": "8594c44f6816e38809ea4addfe6a6c904ad0c60ce9aa2e2f5812b2aaa37ac805",
+    "formal/source/operations/binary-log/Control.generated.dfy": "0df721883a8efe7a1f26a18f6c207d12519d8497b063187200fb42c1cbde9eed",
+    "formal/source/operations/binary-log/Model.dfy": "aaf63b8efc1db2c1f34b0f4c4489773029351e909e60473bbc1596d48f0d30d2",
     "formal/source/operations/integer-root/Connection.dfy": "41f37ade918503356f6b62b13fa0e4f614d82e4253ddaf5c25913a67b0db6bdd",
     "formal/source/operations/integer-root/Control.generated.dfy": "5c29f0691ea5e7dd00e2405c58d8c49677113a568df81fa43d8c7efb01076726",
     "formal/source/operations/integer-root/Convergence.dfy": "1fd704c2db1c8c2dabae054b0e2857371534278cfefa0b4bbbec9abb56433352",
-    "formal/source/operations/integer-root/Seed.dfy": "98921613035178d1d50b7dacb922cf701529109c3c2492a91ce1d67a6ef9de95",
     "formal/source/operations/integer-root/Model.dfy": "071020b78e4c20c57dbc4b8591e3a2dbed1c24cd0578e9d62a3b52a390266b07",
-    "formal/source/operations/binary-log/Connection.dfy": "8594c44f6816e38809ea4addfe6a6c904ad0c60ce9aa2e2f5812b2aaa37ac805",
-    "formal/source/operations/binary-log/Control.generated.dfy": "0df721883a8efe7a1f26a18f6c207d12519d8497b063187200fb42c1cbde9eed",
-    "formal/source/operations/binary-log/Model.dfy": "aaf63b8efc1db2c1f34b0f4c4489773029351e909e60473bbc1596d48f0d30d2"
+    "formal/source/operations/integer-root/Seed.dfy": "98921613035178d1d50b7dacb922cf701529109c3c2492a91ce1d67a6ef9de95"
   },
   "missingInputs": [],
   "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."

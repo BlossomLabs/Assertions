@@ -1,5 +1,7 @@
+include "../../../../proof-tools/dafnyevm/src/dafny/util/arrays.dfy"
 include "Model.dfy"
 module OperationsFullMulDivMemory {
+  import Arrays
   import B = OperationsBinaryLogModel
   function Word(value: nat): seq<nat>
     ensures |Word(value)| == 32
@@ -7,7 +9,7 @@ module OperationsFullMulDivMemory {
   function Store(memory: seq<nat>,offset: nat,value: nat): seq<nat>
     requires offset+32 <= |memory|
     ensures |Store(memory,offset,value)| == |memory|
-  { seq(|memory|,(i: int) requires 0 <= i < |memory| => if offset <= i < offset+32 then Word(value)[i-offset] else memory[i]) }
+  { Arrays.Copy(Word(value),memory,offset) }
   function Canonical(code: nat): seq<nat> { [78,72,123,113]+Word(code) }
   lemma LowSelector()
     ensures Word(0x4e487b71)[28..32] == [78,72,123,113]

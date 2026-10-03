@@ -1,0 +1,43 @@
+{
+  "id": "dafnyevm-foundations",
+  "status": "source-acceptance-pending",
+  "selectedImplementationStatus": "new-adoption",
+  "verificationEntries": [
+    "formal/bridges/dafnyevm/FoundationRefinement.dfy",
+    "formal/bridges/dafnyevm/MemoryProjection.dfy"
+  ],
+  "entry": "formal/bridges/dafnyevm/FoundationRefinement.dfy",
+  "implementations": [
+    "formal/bridges/dafnyevm/FoundationRefinement.dfy",
+    "formal/bridges/dafnyevm/MemoryProjection.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "correspondence": [
+      "formal/bridges/dafnyevm/FoundationRefinement.dfy",
+      "formal/bridges/dafnyevm/MemoryProjection.dfy"
+    ]
+  },
+  "closureSha256": {
+    "formal/bridges/dafnyevm/FoundationRefinement.dfy": "b0865c1d8859d1d3de61cdbd193fbe099ace4cdbdc7510a3b5309791edca0105",
+    "formal/bridges/dafnyevm/MemoryProjection.dfy": "4ec70f1cd1e1e01974cef80624546fe8127765bc06e3970cdfce25af33600aa9",
+    "formal/foundations/EvmEncoding.dfy": "684f4088f6bf8ae6aea2848fd876f7b99f96339715d4e904ba45c7ded83d2883",
+    "formal/foundations/EvmScalarValues.dfy": "61e7a1aad128470206bc1f10adc2b3d9c3184a5a32358711eed60d1bfc98af07",
+    "formal/foundations/EvmValues.dfy": "8f0e47b3ef3251230c9f1a31d832e8804438e1b5728b1a07093e4151337ff541",
+    "formal/foundations/SourceTotalMemoryV1.dfy": "3712cf486aeb49e614a4611f78000e9e6268659daced25e46600388bf5ca11a8",
+    "formal/source/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
+    "proof-tools/dafnyevm/libs/DafnyCrypto/src/dafny/util/option.dfy": "af96ca0dcc4a992d9c22a552b1c596e680aaf63910eb32df0833b70355708410",
+    "proof-tools/dafnyevm/src/dafny/core/memory.dfy": "61d6b8bf811054d9b5d7d23b979f82caa9ed2be791cfa4aad148344c489f8271",
+    "proof-tools/dafnyevm/src/dafny/util/arithmetic.dfy": "421231ed3b83057b8ec418296fe006338e308ba176a735c1b36760053aa1a5ff",
+    "proof-tools/dafnyevm/src/dafny/util/arrays.dfy": "df314099807115480704c9c2dfe24274372fce6bb8192bfd6c8ffc6b3a96c156",
+    "proof-tools/dafnyevm/src/dafny/util/bytes.dfy": "6bb7fded17c1628e055e543c60bf80a2185b62b64cf09f8657ab5e028162ce22",
+    "proof-tools/dafnyevm/src/dafny/util/int.dfy": "9b089348e458ae7508b87cf61f990f8f03d77039707b07c2b7b9d29a4a233e72"
+  },
+  "missingInputs": [],
+  "verificationScope": "Original source equations refined by generic words, arrays and memory with unchanged mathematical domains."
+}

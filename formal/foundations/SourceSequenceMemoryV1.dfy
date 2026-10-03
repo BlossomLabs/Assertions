@@ -1,9 +1,11 @@
+include "../../proof-tools/dafnyevm/src/dafny/util/arrays.dfy"
 // SPDX-License-Identifier: MIT
 module SourceSequenceMemoryV1 {
+  import Arrays
   function Replace<T>(memory: seq<T>, address: nat, data: seq<T>): seq<T>
     requires address+|data| <= |memory|
     ensures |Replace(memory,address,data)| == |memory|
-  { memory[..address]+data+memory[address+|data|..] }
+  { Arrays.Copy(data,memory,address) }
   lemma NestedSlice<T>(memory: seq<T>,lo: nat,hi: nat,a: nat,b: nat)
     requires lo <= hi <= |memory| && a <= b <= hi-lo
     ensures memory[lo..hi][a..b] == memory[lo+a..lo+b]

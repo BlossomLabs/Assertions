@@ -9,6 +9,14 @@ fix it in the same change that falsified it.
 `formal/` is the canonical source proof library. Start with `formal/README.md`
 and run `python3 formal/tools/bootstrap_adapters.py --fetch` on a clean checkout,
 then `python3 formal/tools/check.py` before changing proof sources or metadata.
+The shared interpreter and tools are restored with
+`python3 formal/tools/bootstrap_evm.py --fetch`; modified installations are refused.
+DafnyEVM changes belong in the generic upstream patch bundle, while Assertions
+models, refinements and runtime windows belong in `formal/`. The clean closure
+uses explicit backend injection and excludes the optional crypto adapter's debt.
+`migrations/dafnyevm.json` binds original logical contracts and current replacement
+theorems. `verify_evm.py` and `review_evm.py` keep native, generator, runtime and
+concrete evidence separate; `--affected-source` requires fresh legacy closures too.
 Packages bind complete canonical import closures; contract declaration indexes preserve
 logical interfaces. `formal/claims.json` binds current public claim IDs and wording;
 historical mappings do not establish coverage. New proof-source changes require

@@ -29,9 +29,16 @@
     ]
   },
   "closureSha256": {
+    "formal/foundations/EvmValues.dfy": "8f0e47b3ef3251230c9f1a31d832e8804438e1b5728b1a07093e4151337ff541",
+    "formal/foundations/SourceConstraintFactsV1.dfy": "6a0bd8f33adbb4ddfafb1d52a57745c47a3e2520ba387ecffa78b203bb395572",
     "formal/source/assertions/constraints/Engine.generated.dfy": "5b5efbec4cdffe9739027b4fb0eee872f1db1f03d5512bca088b3fc6a1ba1339",
-    "formal/source/assertions/constraints/Model.dfy": "67905d6c00c411f4b04ed6343d06d55ce43ca2088a602b1651b04e4f0a40ddb8",
-    "formal/foundations/SourceConstraintFactsV1.dfy": "6a0bd8f33adbb4ddfafb1d52a57745c47a3e2520ba387ecffa78b203bb395572"
+    "formal/source/assertions/constraints/Model.dfy": "b8496115c0578960b322ad24b051945ebdfacfc822e7eb392719794f3fb67961",
+    "proof-tools/dafnyevm/libs/DafnyCrypto/src/dafny/util/option.dfy": "af96ca0dcc4a992d9c22a552b1c596e680aaf63910eb32df0833b70355708410",
+    "proof-tools/dafnyevm/src/dafny/core/memory.dfy": "61d6b8bf811054d9b5d7d23b979f82caa9ed2be791cfa4aad148344c489f8271",
+    "proof-tools/dafnyevm/src/dafny/util/arithmetic.dfy": "421231ed3b83057b8ec418296fe006338e308ba176a735c1b36760053aa1a5ff",
+    "proof-tools/dafnyevm/src/dafny/util/arrays.dfy": "df314099807115480704c9c2dfe24274372fce6bb8192bfd6c8ffc6b3a96c156",
+    "proof-tools/dafnyevm/src/dafny/util/bytes.dfy": "6bb7fded17c1628e055e543c60bf80a2185b62b64cf09f8657ab5e028162ce22",
+    "proof-tools/dafnyevm/src/dafny/util/int.dfy": "9b089348e458ae7508b87cf61f990f8f03d77039707b07c2b7b9d29a4a233e72"
   },
   "missingInputs": [],
   "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."

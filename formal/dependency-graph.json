@@ -1,10 +1,273 @@
 {
   "scope": "Direct canonical include edges, with missing inputs explicit.",
   "files": {
-    "formal/source/abi/Frames.dfy": [],
-    "formal/source/abi/Validation.dfy": [
+    "formal/bridges/dafnyevm/AdoptedModels.dfy": [
       {
-        "path": "formal/source/abi/Encoding.dfy",
+        "path": "formal/bridges/dafnyevm/HelperModelBridge.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/foundations/SourceSequenceMemoryV1.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/constraints/Model.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/resolution/Words.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/word-memory/Model.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/full-mul-div/Memory.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/modular-power/Memory.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/scalars/Model.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/bridges/dafnyevm/SourceRefinement.dfy",
+        "exists": true
+      }
+    ],
+    "formal/bridges/dafnyevm/FoundationRefinement.dfy": [
+      {
+        "path": "formal/foundations/EvmEncoding.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/foundations/EvmScalarValues.dfy",
+        "exists": true
+      }
+    ],
+    "formal/bridges/dafnyevm/HelperModelBridge.dfy": [
+      {
+        "path": "formal/bridges/dafnyevm/MemoryProjection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/bytecode/dafnyevm/Helpers.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/bridges/dafnyevm/FoundationRefinement.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/resolution/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/bridges/dafnyevm/MemoryProjection.dfy": [
+      {
+        "path": "formal/foundations/EvmValues.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/foundations/SourceTotalMemoryV1.dfy",
+        "exists": true
+      }
+    ],
+    "formal/bridges/dafnyevm/SourceClosure1.dfy": [
+      {
+        "path": "formal/bridges/dafnyevm/HelperModelBridge.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/core/completion/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-codec/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-entry/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-pairs/Inverses.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-search/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-sort-entry/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-structure/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-unique/Classes.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/word-apply/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/word-fold-entry/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/word-layout/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/word-scans/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/word-sort/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/word-unique/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/tree/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/validation/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/fixed-point-accuracy/Kernel.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/fixed-point/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/modular-power/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/scalars/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/scaled-power/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/tuple-encode/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/bridges/dafnyevm/SourceRefinement.dfy": [
+      {
+        "path": "formal/bridges/dafnyevm/FoundationRefinement.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/foundations/SourceSequenceMemoryV1.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/constraints/Model.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/resolution/Words.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/scalars/Model.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/word-memory/Model.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/full-mul-div/Memory.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/modular-power/Memory.dfy",
+        "exists": true
+      }
+    ],
+    "formal/bytecode/dafnyevm/Helpers.dfy": [
+      {
+        "path": "proof-tools/dafnyevm/src/test/dafny/proofs/InstructionSummaries.dfy",
+        "exists": true
+      }
+    ],
+    "formal/foundations/EvmEncoding.dfy": [
+      {
+        "path": "formal/foundations/EvmValues.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/abi/Frames.dfy",
+        "exists": true
+      }
+    ],
+    "formal/foundations/EvmScalarValues.dfy": [
+      {
+        "path": "formal/foundations/EvmValues.dfy",
+        "exists": true
+      }
+    ],
+    "formal/foundations/EvmValues.dfy": [
+      {
+        "path": "proof-tools/dafnyevm/src/dafny/util/bytes.dfy",
+        "exists": true
+      },
+      {
+        "path": "proof-tools/dafnyevm/src/dafny/core/memory.dfy",
+        "exists": true
+      }
+    ],
+    "formal/foundations/SourceConstraintFactsV1.dfy": [
+      {
+        "path": "formal/source/assertions/constraints/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/foundations/SourceFlattenV6.dfy": [],
+    "formal/foundations/SourceMemoOrderV3.dfy": [],
+    "formal/foundations/SourceNaturalProductV8.dfy": [],
+    "formal/foundations/SourceReplacementSpanV7.dfy": [
+      {
+        "path": "formal/foundations/SourceSequenceMemoryV1.dfy",
+        "exists": true
+      }
+    ],
+    "formal/foundations/SourceSequenceCellV4.dfy": [
+      {
+        "path": "formal/foundations/SourceSequenceMemoryV1.dfy",
+        "exists": true
+      }
+    ],
+    "formal/foundations/SourceSequenceMemoryV1.dfy": [
+      {
+        "path": "proof-tools/dafnyevm/src/dafny/util/arrays.dfy",
+        "exists": true
+      }
+    ],
+    "formal/foundations/SourceTotalMemoryV1.dfy": [],
+    "formal/source/abi/Encoding.dfy": [
+      {
+        "path": "formal/source/abi/Frames.dfy",
         "exists": true
       }
     ],
@@ -14,67 +277,10 @@
         "exists": true
       }
     ],
-    "formal/source/abi/Encoding.dfy": [
+    "formal/source/abi/Frames.dfy": [],
+    "formal/source/abi/Validation.dfy": [
       {
-        "path": "formal/source/abi/Frames.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/parser/Completeness.dfy": [
-      {
-        "path": "formal/source/abi/parser/Parser.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/parser/Parser.generated.dfy": [
-      {
-        "path": "formal/source/abi/parser/Spec.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/parser/Spec.dfy": [
-      {
-        "path": "formal/source/abi/shape/Refinement.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/tuples/CheckWords.generated.dfy": [
-      {
-        "path": "formal/source/abi/tuples/Semantics.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/tuples/Words.dfy": [
-      {
-        "path": "formal/source/abi/parser/Completeness.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/foundations/SourceNaturalProductV8.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/tuples/Names.generated.dfy": [
-      {
-        "path": "formal/source/abi/tuples/Words.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/tuples/Refinement.dfy": [
-      {
-        "path": "formal/source/abi/tuples/CheckWords.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/tuples/Semantics.dfy": [
-      {
-        "path": "formal/source/abi/tuples/Names.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/aggregate/Refinement.dfy": [
-      {
-        "path": "formal/source/abi/aggregate/Cursors.generated.dfy",
+        "path": "formal/source/abi/Encoding.dfy",
         "exists": true
       }
     ],
@@ -90,107 +296,63 @@
         "exists": true
       }
     ],
-    "formal/source/abi/outcomes/Cached.generated.dfy": [
+    "formal/source/abi/aggregate/Refinement.dfy": [
       {
-        "path": "formal/source/abi/outcomes/Static.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/abi/outcomes/Dynamic.generated.dfy",
+        "path": "formal/source/abi/aggregate/Cursors.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/abi/outcomes/Static.generated.dfy": [
+    "formal/source/abi/connection/Bridge.generated.dfy": [
       {
-        "path": "formal/source/abi/outcomes/Spec.dfy",
+        "path": "formal/source/abi/connection/Descriptor.dfy",
         "exists": true
       }
     ],
-    "formal/source/abi/outcomes/Dynamic.generated.dfy": [
+    "formal/source/abi/connection/Descriptor.dfy": [
       {
-        "path": "formal/source/abi/outcomes/Body.generated.dfy",
+        "path": "formal/source/abi/connection/Static.dfy",
         "exists": true
       }
     ],
-    "formal/source/abi/outcomes/Receipt.generated.dfy": [
+    "formal/source/abi/connection/Model.dfy": [
       {
-        "path": "formal/source/expressions/codec-errors/Encoding.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/abi/outcomes/Cached.generated.dfy",
+        "path": "formal/source/abi/tuples/Refinement.dfy",
         "exists": true
       }
     ],
-    "formal/source/abi/outcomes/Body.generated.dfy": [
+    "formal/source/abi/connection/Refinement.dfy": [
       {
-        "path": "formal/source/abi/outcomes/Spec.dfy",
+        "path": "formal/source/abi/connection/Bridge.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/abi/outcomes/Spec.dfy": [
+    "formal/source/abi/connection/Static.dfy": [
       {
-        "path": "formal/source/abi/dynamic/Semantics.dfy",
+        "path": "formal/source/abi/connection/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/abi/outcomes/Connection.dfy": [
+    "formal/source/abi/construction/Assembly.generated.dfy": [
       {
-        "path": "formal/source/abi/outcomes/Receipt.generated.dfy",
+        "path": "formal/source/abi/construction/Memory.dfy",
         "exists": true
       }
     ],
-    "formal/source/abi/shape/TypeShape.generated.dfy": [
+    "formal/source/abi/construction/Component.generated.dfy": [
       {
-        "path": "formal/source/abi/shape/Semantics.dfy",
+        "path": "formal/source/abi/construction/Context.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/abi/shape/Refinement.dfy": [
+    "formal/source/abi/construction/Context.generated.dfy": [
       {
-        "path": "formal/source/abi/shape/TypeShape.generated.dfy",
+        "path": "formal/source/abi/construction/Validation.dfy",
         "exists": true
       }
     ],
-    "formal/source/abi/shape/Semantics.dfy": [
+    "formal/source/abi/construction/Endpoints.dfy": [
       {
-        "path": "formal/source/abi/descriptor/Refinement.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/layout/Soundness.dfy": [
-      {
-        "path": "formal/source/abi/layout/Canonical.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/layout/Layout.generated.dfy": [
-      {
-        "path": "formal/source/abi/layout/Spec.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/layout/Count.generated.dfy": [
-      {
-        "path": "formal/source/abi/layout/Scan.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/layout/Scan.dfy": [
-      {
-        "path": "formal/source/abi/dynamic/Validation.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/layout/Canonical.dfy": [
-      {
-        "path": "formal/source/abi/layout/Layout.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/layout/Spec.dfy": [
-      {
-        "path": "formal/source/abi/layout/Count.generated.dfy",
+        "path": "formal/source/abi/construction/Unpack.generated.dfy",
         "exists": true
       }
     ],
@@ -226,27 +388,9 @@
         "exists": true
       }
     ],
-    "formal/source/abi/construction/Unpack.generated.dfy": [
-      {
-        "path": "formal/source/abi/construction/Splitting.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/construction/Endpoints.dfy": [
-      {
-        "path": "formal/source/abi/construction/Unpack.generated.dfy",
-        "exists": true
-      }
-    ],
     "formal/source/abi/construction/Splitting.dfy": [
       {
         "path": "formal/source/abi/construction/Pack.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/construction/Assembly.generated.dfy": [
-      {
-        "path": "formal/source/abi/construction/Memory.dfy",
         "exists": true
       }
     ],
@@ -256,15 +400,9 @@
         "exists": true
       }
     ],
-    "formal/source/abi/construction/Component.generated.dfy": [
+    "formal/source/abi/construction/Unpack.generated.dfy": [
       {
-        "path": "formal/source/abi/construction/Context.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/construction/Context.generated.dfy": [
-      {
-        "path": "formal/source/abi/construction/Validation.dfy",
+        "path": "formal/source/abi/construction/Splitting.dfy",
         "exists": true
       }
     ],
@@ -274,13 +412,167 @@
         "exists": true
       }
     ],
-    "formal/source/abi/source/Correspondence.dfy": [
+    "formal/source/abi/descriptor/Refinement.dfy": [
       {
-        "path": "formal/source/abi/source/BytesBody.generated.dfy",
+        "path": "formal/source/abi/descriptor/Suffixes.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/descriptor/Semantics.dfy": [
+      {
+        "path": "formal/source/abi/words/Refinement.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/descriptor/Suffixes.generated.dfy": [
+      {
+        "path": "formal/source/abi/descriptor/Semantics.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/dynamic/Body.generated.dfy": [
+      {
+        "path": "formal/source/abi/dynamic/Semantics.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/dynamic/Semantics.dfy": [
+      {
+        "path": "formal/source/abi/dynamic/Zero.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/dynamic/Validation.generated.dfy": [
+      {
+        "path": "formal/source/abi/dynamic/Body.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/dynamic/Zero.dfy": [
+      {
+        "path": "formal/source/abi/connection/Refinement.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/layout/Canonical.dfy": [
+      {
+        "path": "formal/source/abi/layout/Layout.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/layout/Count.generated.dfy": [
+      {
+        "path": "formal/source/abi/layout/Scan.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/layout/Layout.generated.dfy": [
+      {
+        "path": "formal/source/abi/layout/Spec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/layout/Scan.dfy": [
+      {
+        "path": "formal/source/abi/dynamic/Validation.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/layout/Soundness.dfy": [
+      {
+        "path": "formal/source/abi/layout/Canonical.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/layout/Spec.dfy": [
+      {
+        "path": "formal/source/abi/layout/Count.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/outcomes/Body.generated.dfy": [
+      {
+        "path": "formal/source/abi/outcomes/Spec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/outcomes/Cached.generated.dfy": [
+      {
+        "path": "formal/source/abi/outcomes/Static.generated.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/abi/Examples.dfy",
+        "path": "formal/source/abi/outcomes/Dynamic.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/outcomes/Connection.dfy": [
+      {
+        "path": "formal/source/abi/outcomes/Receipt.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/outcomes/Dynamic.generated.dfy": [
+      {
+        "path": "formal/source/abi/outcomes/Body.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/outcomes/Receipt.generated.dfy": [
+      {
+        "path": "formal/source/expressions/codec-errors/Encoding.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/abi/outcomes/Cached.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/outcomes/Spec.dfy": [
+      {
+        "path": "formal/source/abi/dynamic/Semantics.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/outcomes/Static.generated.dfy": [
+      {
+        "path": "formal/source/abi/outcomes/Spec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/parser/Completeness.dfy": [
+      {
+        "path": "formal/source/abi/parser/Parser.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/parser/Parser.generated.dfy": [
+      {
+        "path": "formal/source/abi/parser/Spec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/parser/Spec.dfy": [
+      {
+        "path": "formal/source/abi/shape/Refinement.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/shape/Refinement.dfy": [
+      {
+        "path": "formal/source/abi/shape/TypeShape.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/shape/Semantics.dfy": [
+      {
+        "path": "formal/source/abi/descriptor/Refinement.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/shape/TypeShape.generated.dfy": [
+      {
+        "path": "formal/source/abi/shape/Semantics.dfy",
         "exists": true
       }
     ],
@@ -296,33 +588,47 @@
         "exists": true
       }
     ],
-    "formal/source/abi/connection/Model.dfy": [
+    "formal/source/abi/source/Correspondence.dfy": [
       {
-        "path": "formal/source/abi/tuples/Refinement.dfy",
+        "path": "formal/source/abi/source/BytesBody.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/abi/Examples.dfy",
         "exists": true
       }
     ],
-    "formal/source/abi/connection/Descriptor.dfy": [
+    "formal/source/abi/tuples/CheckWords.generated.dfy": [
       {
-        "path": "formal/source/abi/connection/Static.dfy",
+        "path": "formal/source/abi/tuples/Semantics.dfy",
         "exists": true
       }
     ],
-    "formal/source/abi/connection/Refinement.dfy": [
+    "formal/source/abi/tuples/Names.generated.dfy": [
       {
-        "path": "formal/source/abi/connection/Bridge.generated.dfy",
+        "path": "formal/source/abi/tuples/Words.dfy",
         "exists": true
       }
     ],
-    "formal/source/abi/connection/Bridge.generated.dfy": [
+    "formal/source/abi/tuples/Refinement.dfy": [
       {
-        "path": "formal/source/abi/connection/Descriptor.dfy",
+        "path": "formal/source/abi/tuples/CheckWords.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/abi/connection/Static.dfy": [
+    "formal/source/abi/tuples/Semantics.dfy": [
       {
-        "path": "formal/source/abi/connection/Model.dfy",
+        "path": "formal/source/abi/tuples/Names.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/abi/tuples/Words.dfy": [
+      {
+        "path": "formal/source/abi/parser/Completeness.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/foundations/SourceNaturalProductV8.dfy",
         "exists": true
       }
     ],
@@ -348,1032 +654,35 @@
         "exists": true
       }
     ],
-    "formal/source/abi/dynamic/Validation.generated.dfy": [
+    "formal/source/assertions/arguments/Model.dfy": [
       {
-        "path": "formal/source/abi/dynamic/Body.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/dynamic/Zero.dfy": [
-      {
-        "path": "formal/source/abi/connection/Refinement.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/dynamic/Body.generated.dfy": [
-      {
-        "path": "formal/source/abi/dynamic/Semantics.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/dynamic/Semantics.dfy": [
-      {
-        "path": "formal/source/abi/dynamic/Zero.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/descriptor/Suffixes.generated.dfy": [
-      {
-        "path": "formal/source/abi/descriptor/Semantics.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/descriptor/Refinement.dfy": [
-      {
-        "path": "formal/source/abi/descriptor/Suffixes.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/abi/descriptor/Semantics.dfy": [
-      {
-        "path": "formal/source/abi/words/Refinement.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/byte-replace/Model.dfy": [
-      {
-        "path": "formal/source/operations/occurrence-index/Connection.dfy",
+        "path": "formal/source/assertions/core/Source.generated.dfy",
         "exists": true
       },
-      {
-        "path": "formal/source/operations/concat/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/byte-replace/Matcher.generated.dfy": [
-      {
-        "path": "formal/source/operations/word-match/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/byte-replace/Connection.dfy": [
-      {
-        "path": "formal/source/operations/byte-replace/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/byte-replace/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/byte-replace/Model.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/operations/byte-replace/Matcher.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/tuple-encode/Model.dfy": [
       {
         "path": "formal/source/abi/construction/Endpoints.dfy",
         "exists": true
       }
     ],
-    "formal/source/operations/tuple-encode/Connection.dfy": [
+    "formal/source/assertions/arguments/Source.generated.dfy": [
       {
-        "path": "formal/source/operations/tuple-encode/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/tuple-encode/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/tuple-encode/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/occurrence-index/Model.dfy": [
-      {
-        "path": "formal/source/operations/word-match/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/occurrence-index/Connection.dfy": [
-      {
-        "path": "formal/source/operations/occurrence-index/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/occurrence-index/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/occurrence-index/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/fixed-point/Model.dfy": [
-      {
-        "path": "formal/source/operations/full-mul-div/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/fixed-point/Connection.dfy": [
-      {
-        "path": "formal/source/operations/fixed-point/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/fixed-point/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/fixed-point/Bounds.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/fixed-point/Bounds.dfy": [
-      {
-        "path": "formal/source/operations/fixed-point/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/signed-mod/SignedMod.dfy": [],
-    "formal/source/operations/signed-mod/Reference.dfy": [
-      {
-        "path": "formal/source/operations/signed-mod/SignedMod.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/modular-power/Memory.dfy": [
-      {
-        "path": "formal/source/operations/modular-power/Power.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/modular-power/Model.dfy": [
-      {
-        "path": "formal/source/operations/modular-power/InverseConnection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/modular-power/InverseConnection.dfy": [
-      {
-        "path": "formal/source/operations/modular-power/Inverse.generated.dfy",
+        "path": "formal/source/assertions/arguments/Model.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/operations/modular-power/InverseModel.dfy",
+        "path": "formal/source/assertions/arguments/Tuple.generated.dfy",
         "exists": true
-      },
-      {
-        "path": "formal/source/operations/modular-power/Power.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/modular-power/Euclid.dfy": [
-      {
-        "path": "formal/source/operations/full-mul-div/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/modular-power/Power.dfy": [
-      {
-        "path": "formal/source/operations/modular-power/Euclid.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/modular-power/Inverse.generated.dfy": [
-      {
-        "path": "formal/source/operations/modular-power/Euclid.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/modular-power/World.dfy": [
-      {
-        "path": "formal/source/operations/modular-power/Memory.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/modular-power/Connection.dfy": [
-      {
-        "path": "formal/source/operations/modular-power/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/modular-power/InverseModel.dfy": [
-      {
-        "path": "formal/source/operations/modular-power/Power.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/modular-power/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/modular-power/Model.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/operations/modular-power/World.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/modular/Connection.dfy": [
-      {
-        "path": "formal/source/operations/modular/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/modular/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/modular/Math.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/modular/Math.generated.dfy": [],
-    "formal/source/operations/environment/Model.dfy": [],
-    "formal/source/operations/environment/Connection.dfy": [
-      {
-        "path": "formal/source/operations/environment/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/environment/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/environment/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/byte-bounds/Model.dfy": [],
-    "formal/source/operations/byte-bounds/Connection.dfy": [
-      {
-        "path": "formal/source/operations/byte-bounds/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/byte-bounds/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/byte-bounds/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/byte-split/Model.dfy": [
-      {
-        "path": "formal/source/operations/occurrence-index/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/byte-split/Connection.dfy": [
-      {
-        "path": "formal/source/operations/byte-split/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/byte-split/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/byte-split/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/raw-call/Model.dfy": [],
-    "formal/source/operations/raw-call/Connection.dfy": [
-      {
-        "path": "formal/source/operations/raw-call/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/raw-call/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/raw-call/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/parse-units/Model.dfy": [
-      {
-        "path": "formal/source/operations/decimal-units/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/parse-units/Connection.dfy": [
-      {
-        "path": "formal/source/operations/parse-units/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/parse-units/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/parse-units/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/utf8/Model.dfy": [
-      {
-        "path": "formal/source/operations/byte-bounds/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/utf8/Connection.dfy": [
-      {
-        "path": "formal/source/operations/utf8/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/utf8/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/utf8/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/full-mul-div/Memory.dfy": [
-      {
-        "path": "formal/source/operations/full-mul-div/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/full-mul-div/Model.dfy": [
-      {
-        "path": "formal/source/operations/full-mul-div/Recombine.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/full-mul-div/Helpers.generated.dfy": [],
-    "formal/source/operations/full-mul-div/Product.dfy": [
-      {
-        "path": "formal/source/operations/binary-log/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/full-mul-div/Inverse.dfy": [
-      {
-        "path": "formal/source/operations/full-mul-div/Bits.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/full-mul-div/Connection.dfy": [
-      {
-        "path": "formal/source/operations/full-mul-div/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/full-mul-div/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/full-mul-div/Memory.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/operations/full-mul-div/Helpers.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/full-mul-div/Recombine.dfy": [
-      {
-        "path": "formal/source/operations/full-mul-div/Inverse.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/full-mul-div/Bits.dfy": [
-      {
-        "path": "formal/source/operations/full-mul-div/Product.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/scalars/Model.dfy": [],
-    "formal/source/operations/scalars/Connection.dfy": [
-      {
-        "path": "formal/source/operations/scalars/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/scalars/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/scalars/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/concat/Model.dfy": [
-      {
-        "path": "formal/foundations/SourceTotalMemoryV1.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/concat/Connection.dfy": [
-      {
-        "path": "formal/source/operations/concat/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/concat/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/concat/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/word-match/Model.dfy": [],
-    "formal/source/operations/word-match/Connection.dfy": [
-      {
-        "path": "formal/source/operations/word-match/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/word-match/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/word-match/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/binary-log/Model.dfy": [],
-    "formal/source/operations/binary-log/Connection.dfy": [
-      {
-        "path": "formal/source/operations/binary-log/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/binary-log/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/binary-log/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/scaled-power/Model.dfy": [
-      {
-        "path": "formal/source/operations/full-mul-div/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/scaled-power/Connection.dfy": [
-      {
-        "path": "formal/source/operations/scaled-power/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/scaled-power/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/scaled-power/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/checked-power/Model.dfy": [],
-    "formal/source/operations/checked-power/Connection.dfy": [
-      {
-        "path": "formal/source/operations/checked-power/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/checked-power/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/checked-power/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/decimal-units/Model.dfy": [
-      {
-        "path": "formal/source/operations/decimal-render/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/decimal-units/Connection.dfy": [
-      {
-        "path": "formal/source/operations/decimal-units/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/decimal-units/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/decimal-units/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/fixed-point-accuracy/Kernel.dfy": [
-      {
-        "path": "formal/source/operations/fixed-point-accuracy/Intervals.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/fixed-point-accuracy/Bridge.dfy": [
-      {
-        "path": "formal/source/operations/fixed-point/Bounds.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/operations/fixed-point-accuracy/Series.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/fixed-point-accuracy/Series.dfy": [],
-    "formal/source/operations/fixed-point-accuracy/Intervals.dfy": [
-      {
-        "path": "formal/source/operations/fixed-point-accuracy/Spec.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/fixed-point-accuracy/Spec.dfy": [
-      {
-        "path": "formal/source/operations/fixed-point-accuracy/Bridge.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/decimal-render/Model.dfy": [
-      {
-        "path": "formal/source/operations/modular/Math.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/decimal-render/Connection.dfy": [
-      {
-        "path": "formal/source/operations/decimal-render/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/decimal-render/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/decimal-render/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/decimal-digits/Model.dfy": [
-      {
-        "path": "formal/source/operations/modular/Math.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/decimal-digits/Connection.dfy": [
-      {
-        "path": "formal/source/operations/decimal-digits/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/decimal-digits/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/decimal-digits/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/integer-root/Model.dfy": [
-      {
-        "path": "formal/source/operations/binary-log/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/integer-root/Convergence.dfy": [
-      {
-        "path": "formal/source/operations/integer-root/Seed.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/integer-root/Seed.dfy": [
-      {
-        "path": "formal/source/operations/integer-root/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/integer-root/Connection.dfy": [
-      {
-        "path": "formal/source/operations/integer-root/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/integer-root/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/integer-root/Convergence.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/ascii/Model.dfy": [],
-    "formal/source/operations/ascii/Connection.dfy": [
-      {
-        "path": "formal/source/operations/ascii/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/ascii/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/ascii/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/scaled-power/muldiv-regenerated/Helpers.generated.dfy": [],
-    "formal/source/operations/scaled-power/muldiv-regenerated/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/scaled-power/muldiv-regenerated/Memory.dfy",
-        "exists": false
-      },
-      {
-        "path": "formal/source/operations/scaled-power/muldiv-regenerated/Helpers.generated.dfy",
-        "exists": true
       }
     ],
-    "formal/source/operations/modular-power/muldiv-regenerated/Helpers.generated.dfy": [],
-    "formal/source/operations/modular-power/muldiv-regenerated/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/modular-power/muldiv-regenerated/Memory.dfy",
-        "exists": false
-      },
-      {
-        "path": "formal/source/operations/modular-power/muldiv-regenerated/Helpers.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/fixed-point/muldiv-regenerated/Helpers.generated.dfy": [],
-    "formal/source/operations/fixed-point/muldiv-regenerated/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/fixed-point/muldiv-regenerated/Memory.dfy",
-        "exists": false
-      },
-      {
-        "path": "formal/source/operations/fixed-point/muldiv-regenerated/Helpers.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/operations/tuple-encode/compiler/Helpers.generated.dfy": [],
-    "formal/source/operations/tuple-encode/compiler/Control.generated.dfy": [
-      {
-        "path": "formal/source/operations/tuple-encode/compiler/Memory.dfy",
-        "exists": false
-      },
-      {
-        "path": "formal/source/operations/tuple-encode/compiler/Helpers.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/guarded/Model.dfy": [
-      {
-        "path": "formal/source/expressions/guarded/Encoding.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/guarded/Source.generated.dfy": [
-      {
-        "path": "formal/source/expressions/guarded/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/guarded/Encoding.dfy": [
-      {
-        "path": "formal/source/expressions/entry/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/guarded/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/guarded/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/compound/Source.generated.dfy": [
-      {
-        "path": "formal/source/assertions/arguments/Source.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/abi/construction/Pack.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/execution/Model.dfy": [
-      {
-        "path": "formal/source/expressions/oracle-stability/Append.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/execution/Run.dfy": [
-      {
-        "path": "formal/source/expressions/execution/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/execution/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/execution/Run.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/primitives/Model.dfy": [
-      {
-        "path": "formal/source/expressions/resolve/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/codec-errors/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/probe-input/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/primitives/Dispatch.dfy": [
-      {
-        "path": "formal/source/expressions/primitives/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/primitives/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/primitives/Dispatch.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/returns/Model.dfy": [
-      {
-        "path": "formal/source/abi/source/ByteSemantics.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/returns/Source.generated.dfy": [
-      {
-        "path": "formal/source/expressions/returns/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/returns/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/returns/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/probe-input/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/receipts/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/requests/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/frames/Model.dfy": [
-      {
-        "path": "formal/source/expressions/guarded/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/frames/Source.generated.dfy": [
-      {
-        "path": "formal/source/expressions/frames/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/frames/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/frames/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/dispatch/Model.dfy": [],
-    "formal/source/expressions/context/Shift.dfy": [
-      {
-        "path": "formal/source/expressions/frames/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/context/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/context/Shift.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/public/Encoded.dfy": [
-      {
-        "path": "formal/source/expressions/public/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/self-call/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/public/Model.dfy": [
-      {
-        "path": "formal/source/expressions/public/Entry.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/rejections/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/guard-receipts/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/admission-errors/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/returns/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/public/Guarded.generated.dfy": [
-      {
-        "path": "formal/source/expressions/public/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/public/Entry.generated.dfy": [
-      {
-        "path": "formal/source/expressions/entry/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/rejections/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/public/Guards.dfy": [
-      {
-        "path": "formal/source/expressions/public/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/public/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/public/Guards.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/public/Guarded.dfy": [
-      {
-        "path": "formal/source/expressions/public/Encoded.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/public/Guarded.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/scalars/Model.dfy": [
-      {
-        "path": "formal/source/expressions/evaluation/CacheBridge.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/scalars/Source.generated.dfy": [
-      {
-        "path": "formal/source/expressions/scalars/Model.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/abi/source/BytesBody.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/scalars/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/scalars/Source.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/recursive/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/codec-errors/Encoding.dfy": [
-      {
-        "path": "formal/source/expressions/compound/Source.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/evaluation/CacheBridge.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/codec-errors/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/codec-errors/Encoding.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/recursive/Source.generated.dfy": [
-      {
-        "path": "formal/source/expressions/recursive/Spec.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/recursive/Spec.dfy": [
-      {
-        "path": "formal/source/expressions/evaluation/Control.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/recursive/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/recursive/Source.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/evaluation/CacheBridge.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/self-call/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/entry/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/admission-errors/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/encoded/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/calls/Model.dfy": [
-      {
-        "path": "formal/source/expressions/scalars/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/calls/Source.generated.dfy": [
-      {
-        "path": "formal/source/expressions/calls/Model.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/scalars/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/trace-bounds/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/trace-bounds/Bounds.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/trace-bounds/Bounds.dfy": [
-      {
-        "path": "formal/source/expressions/context/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/evaluation/Control.dfy": [
-      {
-        "path": "formal/foundations/SourceMemoOrderV3.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/evaluation/CacheBridge.dfy": [
-      {
-        "path": "formal/source/expressions/evaluation/Control.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/cache/Model.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/admission/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/encoded/Model.dfy": [
-      {
-        "path": "formal/source/expressions/receipts/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/admission/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/encoded/Source.generated.dfy": [
-      {
-        "path": "formal/source/expressions/encoded/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/encoded/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/encoded/Source.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/expressions/returns/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/receipts/Encoding.dfy": [
-      {
-        "path": "formal/source/expressions/calls/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/receipts/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/receipts/Encoding.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/tree/Equivalence.dfy": [
-      {
-        "path": "formal/source/expressions/tree/Spec.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/tree/Spec.dfy": [
-      {
-        "path": "formal/source/expressions/recursive/Spec.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/tree/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/tree/Equivalence.dfy",
-        "exists": true
-      },
+    "formal/source/assertions/arguments/Tuple.generated.dfy": [
       {
-        "path": "formal/source/expressions/public/Guarded.dfy",
+        "path": "formal/source/abi/construction/Tuple.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/expressions/cache/Model.dfy": [
+    "formal/source/assertions/composition/Model.dfy": [
       {
-        "path": "formal/source/abi/construction/Validation.dfy",
+        "path": "formal/source/assertions/navigation/Correspondence.dfy",
         "exists": true
       },
       {
@@ -1381,205 +690,409 @@
         "exists": true
       }
     ],
-    "formal/source/expressions/cache/Source.generated.dfy": [
+    "formal/source/assertions/composition/Source.generated.dfy": [
       {
-        "path": "formal/source/expressions/cache/Model.dfy",
+        "path": "formal/source/assertions/composition/Model.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/expressions/admission/Source.generated.dfy",
+        "path": "formal/source/assertions/resolution/Source.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/expressions/resolve/Model.dfy": [
+    "formal/source/assertions/constraints/Engine.generated.dfy": [
       {
-        "path": "formal/source/expressions/receipts/Connection.dfy",
+        "path": "formal/source/assertions/constraints/Model.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/assertions/core/Source.generated.dfy",
+        "path": "formal/foundations/SourceConstraintFactsV1.dfy",
         "exists": true
       }
     ],
-    "formal/source/expressions/resolve/Source.generated.dfy": [
+    "formal/source/assertions/constraints/Model.dfy": [
       {
-        "path": "formal/source/expressions/resolve/Model.dfy",
+        "path": "formal/foundations/EvmValues.dfy",
         "exists": true
       }
     ],
-    "formal/source/expressions/resolve/Connection.dfy": [
+    "formal/source/assertions/control/Guard.dfy": [
       {
-        "path": "formal/source/expressions/resolve/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/admission/Model.dfy": [
-      {
-        "path": "formal/source/abi/parser/Parser.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/admission/Source.generated.dfy": [
-      {
-        "path": "formal/source/expressions/admission/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/validation/Completion.dfy": [
-      {
-        "path": "formal/source/expressions/validation/Control.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/validation/Control.dfy": [
-      {
-        "path": "formal/source/expressions/validation/Bytes.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/validation/Bytes.dfy": [
-      {
-        "path": "formal/source/expressions/trace-bounds/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/validation/Body.generated.dfy": [
-      {
-        "path": "formal/source/expressions/validation/Completion.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/validation/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/validation/Body.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/entry/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/execution/Connection.dfy",
+        "path": "formal/source/assertions/control/Probe.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/expressions/cache/Source.generated.dfy",
+        "path": "formal/source/assertions/resolution/Words.dfy",
         "exists": true
       }
     ],
-    "formal/source/expressions/requests/Model.dfy": [
+    "formal/source/assertions/control/GuardSource.generated.dfy": [
       {
-        "path": "formal/source/expressions/scalars/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/requests/Source.dfy": [
-      {
-        "path": "formal/source/expressions/requests/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/requests/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/requests/Source.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/rejections/Model.dfy": [
-      {
-        "path": "formal/source/abi/outcomes/Connection.dfy",
+        "path": "formal/source/assertions/control/Guard.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/expressions/validation/Completion.dfy",
+        "path": "formal/source/assertions/resolution/Source.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/expressions/rejections/Cold.generated.dfy": [
+    "formal/source/assertions/control/Probe.dfy": [
       {
-        "path": "formal/source/expressions/rejections/Completion.generated.dfy",
+        "path": "formal/source/assertions/resolution/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/control/ProbeSource.generated.dfy": [
+      {
+        "path": "formal/source/assertions/control/Probe.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/control/Source.dfy": [
+      {
+        "path": "formal/source/assertions/control/ProbeSource.generated.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/expressions/validation/Body.generated.dfy",
+        "path": "formal/source/assertions/control/GuardSource.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/expressions/rejections/Completion.generated.dfy": [
+    "formal/source/assertions/core/Model.dfy": [
       {
-        "path": "formal/source/expressions/rejections/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/rejections/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/rejections/Cold.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/oracle/Model.dfy": [
-      {
-        "path": "formal/source/expressions/primitives/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/oracle/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/oracle/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/oracle-stability/Append.dfy": [
-      {
-        "path": "formal/source/expressions/oracle-stability/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/oracle-stability/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/oracle/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/guard-receipts/Events.dfy": [
-      {
-        "path": "formal/source/expressions/trace-bounds/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/guard-receipts/Connection.dfy": [
-      {
-        "path": "formal/source/expressions/guard-receipts/Events.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/expressions/admission-errors/Encoding.dfy": [
-      {
-        "path": "formal/source/expressions/codec-errors/Encoding.dfy",
+        "path": "formal/source/assertions/core/Words.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/expressions/scalars/Model.dfy",
+        "path": "formal/foundations/SourceFlattenV6.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/expressions/admission/Source.generated.dfy",
+        "path": "formal/source/assertions/resolution/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/expressions/admission-errors/Connection.dfy": [
+    "formal/source/assertions/core/Source.generated.dfy": [
       {
-        "path": "formal/source/expressions/admission-errors/Bounds.dfy",
+        "path": "formal/source/assertions/core/Model.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/resolution/Source.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/expressions/admission-errors/Bounds.dfy": [
+    "formal/source/assertions/core/Words.dfy": [
       {
-        "path": "formal/source/expressions/admission-errors/Encoding.dfy",
+        "path": "formal/source/assertions/resolution/Words.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/value-sort-trace/Model.dfy": [
+    "formal/source/assertions/core/completion/Connection.dfy": [
       {
-        "path": "formal/source/collections/sort-core/Connection.dfy",
+        "path": "formal/source/assertions/core/serialization/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/frame-tree/Connection.dfy": [
+      {
+        "path": "formal/source/assertions/core/frame-tree/Tree.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/frame-tree/Tree.dfy": [
+      {
+        "path": "formal/source/assertions/core/frame-tree/Wire.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/frame-tree/Wire.dfy": [
+      {
+        "path": "formal/source/assertions/core/recursive/Dispatch.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/public-boundary/Connection.dfy": [
+      {
+        "path": "formal/source/assertions/core/public-boundary/Getters.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/public-boundary/Getters.generated.dfy": [
+      {
+        "path": "formal/source/assertions/core/raw-tree/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/raw-tree/Connection.dfy": [
+      {
+        "path": "formal/source/assertions/core/raw-tree/Tree.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/raw-tree/Tree.dfy": [
+      {
+        "path": "formal/source/assertions/core/frame-tree/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/recursive/Dispatch.dfy": [
+      {
+        "path": "formal/source/assertions/core/recursive/Invocation.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/recursive/Invocation.dfy": [
+      {
+        "path": "formal/source/assertions/arguments/Source.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/composition/Source.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/control/Source.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/serialization/Bounds.dfy": [
+      {
+        "path": "formal/source/assertions/core/serialization/Errors.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/serialization/Connection.dfy": [
+      {
+        "path": "formal/source/assertions/core/serialization/Bounds.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/serialization/Encoding.dfy": [
+      {
+        "path": "formal/source/assertions/core/serialization/Signatures.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/serialization/Errors.dfy": [
+      {
+        "path": "formal/source/assertions/core/serialization/Encoding.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/core/serialization/Signatures.generated.dfy": [
+      {
+        "path": "formal/source/assertions/core/public-boundary/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/Canonical.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/Traversal.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/navigation/Layout.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/CanonicalSource.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/Canonical.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/navigation/Traverse.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/navigation/ModesSource.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/Correspondence.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/CanonicalSource.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/navigation/NavSource.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/Cursor.generated.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/CursorSpec.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/navigation/Kernels.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/abi/connection/Bridge.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/CursorSpec.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/Runtime.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/abi/connection/Descriptor.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/DynamicSource.generated.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/TerminalSource.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/Entry.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/Modes.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/Kernels.generated.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/Runtime.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/Layout.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/Model.dfy": [
+      {
+        "path": "formal/source/abi/Encoding.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/Modes.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/Traversal.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/ModesSource.generated.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/Modes.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/navigation/Traverse.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/NavSource.generated.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/Entry.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/navigation/ValueSource.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/navigation/ModesSource.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/ReturnMemory.generated.dfy": [
+      {
+        "path": "formal/source/abi/construction/Memory.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/Runtime.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/Model.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/abi/source/ByteSemantics.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/TerminalSource.generated.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/Terminals.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/navigation/Traverse.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/Terminals.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/Modes.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/abi/dynamic/Body.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/Traversal.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/CursorSpec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/Traverse.generated.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/Traversal.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/navigation/Cursor.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/navigation/ValueSource.generated.dfy": [
+      {
+        "path": "formal/source/assertions/navigation/DynamicSource.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/navigation/ReturnMemory.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/navigation/Layout.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/resolution/Model.dfy": [
+      {
+        "path": "formal/source/assertions/resolution/Words.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/resolution/Source.generated.dfy": [
+      {
+        "path": "formal/source/assertions/resolution/Model.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/constraints/Engine.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/assertions/resolution/Words.dfy": [
+      {
+        "path": "formal/foundations/EvmEncoding.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/constraints/Model.dfy",
         "exists": true
       },
       {
@@ -1587,21 +1100,125 @@
         "exists": true
       }
     ],
-    "formal/source/collections/value-sort-trace/Properties.dfy": [
+    "formal/source/collections/admission/Connection.dfy": [
       {
-        "path": "formal/source/collections/value-sort-trace/Model.dfy",
+        "path": "formal/source/collections/admission/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/value-sort-trace/Source.generated.dfy": [
+    "formal/source/collections/admission/Model.dfy": [
       {
-        "path": "formal/source/collections/value-sort-trace/Properties.dfy",
+        "path": "formal/source/collections/admission/Signatures.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/constants/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/abi/layout/Soundness.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/value-sort-trace/Connection.dfy": [
+    "formal/source/collections/admission/Signatures.generated.dfy": [
       {
-        "path": "formal/source/collections/value-sort-trace/Source.generated.dfy",
+        "path": "formal/source/abi/Frames.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/bound-call/Connection.dfy": [
+      {
+        "path": "formal/source/collections/bound-call/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/bound-call/Model.dfy": [
+      {
+        "path": "formal/source/collections/codec-errors/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/call-results/Connection.dfy": [
+      {
+        "path": "formal/source/collections/call-results/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/call-results/Model.dfy": [
+      {
+        "path": "formal/source/collections/validation/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/repeated-call/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/callback-results/Connection.dfy": [
+      {
+        "path": "formal/source/collections/callback-results/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/callback-results/Model.dfy": [
+      {
+        "path": "formal/source/collections/traversal/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/callback-results/Source.generated.dfy": [
+      {
+        "path": "formal/source/collections/callback-results/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/calls/Connection.dfy": [
+      {
+        "path": "formal/source/collections/calls/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/calls/Model.dfy": [
+      {
+        "path": "formal/source/collections/preparation/Source.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/callback-results/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/calls/Source.generated.dfy": [
+      {
+        "path": "formal/source/collections/calls/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/codec-errors/Connection.dfy": [
+      {
+        "path": "formal/source/collections/codec-errors/Encoding.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/codec-errors/Encoding.dfy": [
+      {
+        "path": "formal/source/collections/codec-errors/Signatures.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/admission/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/codec-errors/Signatures.generated.dfy": [
+      {
+        "path": "formal/source/abi/Frames.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/codec-state/Connection.dfy": [
+      {
+        "path": "formal/source/collections/codec-state/Model.dfy",
         "exists": true
       }
     ],
@@ -1619,141 +1236,90 @@
         "exists": true
       }
     ],
-    "formal/source/collections/codec-state/Connection.dfy": [
+    "formal/source/collections/completion/Boundary.generated.dfy": [],
+    "formal/source/collections/constants/Connection.dfy": [
       {
-        "path": "formal/source/collections/codec-state/Model.dfy",
+        "path": "formal/source/collections/constants/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/value-unique/FlowReplay.dfy": [
+    "formal/source/collections/constants/Model.dfy": [
       {
-        "path": "formal/source/collections/value-unique/Flow.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/value-unique/Environment.dfy",
+        "path": "formal/source/collections/codec-state/Connection.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/value-unique/Facts.dfy": [
+    "formal/source/collections/environment/Connection.dfy": [
       {
-        "path": "formal/source/collections/value-unique/Entry.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/value-unique/Decisions.dfy",
+        "path": "formal/source/collections/environment/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/value-unique/Model.dfy": [
-      {
-        "path": "formal/source/collections/value-unique/Environment.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-unique/Compare.dfy": [
-      {
-        "path": "formal/source/collections/value-unique/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-unique/Source.dfy": [
-      {
-        "path": "formal/source/collections/value-unique/Control.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/value-unique/Flow.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-unique/Decisions.dfy": [
-      {
-        "path": "formal/source/collections/value-unique/Flow.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-unique/Classes.dfy": [
-      {
-        "path": "formal/source/collections/value-unique/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-unique/EntryModel.dfy": [
-      {
-        "path": "formal/source/collections/value-unique/Engine.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/value-unique/Source.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-unique/Environment.dfy": [
-      {
-        "path": "formal/source/collections/value-unique/Spec.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-unique/Engine.dfy": [
-      {
-        "path": "formal/source/collections/value-unique/Compare.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/value-unique/FlowReplay.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-unique/Spec.dfy": [
-      {
-        "path": "formal/source/collections/iteration-chain/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-unique/Connection.dfy": [
-      {
-        "path": "formal/source/collections/value-unique/Facts.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-unique/Control.generated.dfy": [
-      {
-        "path": "formal/source/collections/value-unique/Spec.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-unique/Flow.dfy": [
-      {
-        "path": "formal/source/collections/value-unique/Spec.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-unique/Entry.dfy": [
-      {
-        "path": "formal/source/collections/value-unique/EntryModel.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/callback-results/Model.dfy": [
+    "formal/source/collections/environment/Model.dfy": [
       {
         "path": "formal/source/collections/traversal/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/callback-results/Source.generated.dfy": [
+    "formal/source/collections/iteration/Connection.dfy": [
       {
-        "path": "formal/source/collections/callback-results/Model.dfy",
+        "path": "formal/source/collections/iteration/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/callback-results/Connection.dfy": [
+    "formal/source/collections/iteration/Model.dfy": [
       {
-        "path": "formal/source/collections/callback-results/Source.generated.dfy",
+        "path": "formal/source/collections/call-results/Connection.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/repeated-call/Model.dfy": [
+    "formal/source/collections/iteration-chain/Connection.dfy": [
+      {
+        "path": "formal/source/collections/iteration-chain/Step.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/iteration-chain/Model.dfy": [
+      {
+        "path": "formal/source/collections/iteration/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/environment/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/iteration-chain/Step.dfy": [
+      {
+        "path": "formal/source/collections/iteration-chain/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/preparation/Connection.dfy": [
+      {
+        "path": "formal/source/collections/preparation/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/preparation/Model.dfy": [
+      {
+        "path": "formal/source/abi/Frames.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/preparation/Source.generated.dfy": [
+      {
+        "path": "formal/source/collections/preparation/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/prepared-entry/Connection.dfy": [
+      {
+        "path": "formal/source/collections/prepared-entry/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/prepared-entry/Model.dfy": [
       {
         "path": "formal/source/collections/bound-call/Connection.dfy",
         "exists": true
@@ -1765,131 +1331,15 @@
         "exists": true
       }
     ],
-    "formal/source/collections/word-unique/Model.dfy": [
+    "formal/source/collections/repeated-call/Model.dfy": [
       {
-        "path": "formal/source/collections/word-memory/Connection.dfy",
+        "path": "formal/source/collections/bound-call/Connection.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-unique/Source.dfy": [
+    "formal/source/collections/sort-admission/Connection.dfy": [
       {
-        "path": "formal/source/collections/word-unique/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-unique/Connection.dfy": [
-      {
-        "path": "formal/source/collections/word-unique/Source.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-unique/Control.generated.dfy": [
-      {
-        "path": "formal/source/collections/word-unique/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/iteration/Model.dfy": [
-      {
-        "path": "formal/source/collections/call-results/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/iteration/Connection.dfy": [
-      {
-        "path": "formal/source/collections/iteration/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/constants/Model.dfy": [
-      {
-        "path": "formal/source/collections/codec-state/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/constants/Connection.dfy": [
-      {
-        "path": "formal/source/collections/constants/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-memory/Model.dfy": [
-      {
-        "path": "formal/source/abi/Frames.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-memory/Source.generated.dfy": [
-      {
-        "path": "formal/source/collections/word-memory/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-memory/Connection.dfy": [
-      {
-        "path": "formal/source/collections/word-memory/Source.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/foundations/SourceSequenceMemoryV1.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-scans/Model.dfy": [
-      {
-        "path": "formal/source/collections/word-memory/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-scans/Source.dfy": [
-      {
-        "path": "formal/source/collections/word-scans/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-scans/Connection.dfy": [
-      {
-        "path": "formal/source/collections/word-scans/Source.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-scans/Control.generated.dfy": [
-      {
-        "path": "formal/source/collections/word-scans/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-fold-entry/Model.dfy": [
-      {
-        "path": "formal/source/collections/word-fold-entry/Selectors.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/word-fold-loop/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-fold-entry/Selectors.generated.dfy": [
-      {
-        "path": "formal/source/abi/Frames.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-fold-entry/Source.generated.dfy": [
-      {
-        "path": "formal/source/collections/word-fold-entry/Ready.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-fold-entry/Ready.dfy": [
-      {
-        "path": "formal/source/collections/word-fold-entry/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-fold-entry/Connection.dfy": [
-      {
-        "path": "formal/source/collections/word-fold-entry/Source.generated.dfy",
+        "path": "formal/source/collections/sort-admission/Source.generated.dfy",
         "exists": true
       }
     ],
@@ -1915,21 +1365,106 @@
         "exists": true
       }
     ],
-    "formal/source/collections/sort-admission/Connection.dfy": [
+    "formal/source/collections/sort-comparator/Connection.dfy": [
       {
-        "path": "formal/source/collections/sort-admission/Source.generated.dfy",
+        "path": "formal/source/collections/sort-comparator/Source.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/environment/Model.dfy": [
+    "formal/source/collections/sort-comparator/Model.dfy": [
+      {
+        "path": "formal/source/collections/bound-call/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/abi/source/BytesBody.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/sort-comparator/Source.generated.dfy": [
+      {
+        "path": "formal/source/collections/sort-comparator/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/sort-core/Connection.dfy": [
+      {
+        "path": "formal/source/collections/sort-core/Ranges.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/sort-core/Merge.dfy": [
+      {
+        "path": "formal/source/collections/sort-core/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/sort-core/Model.dfy": [],
+    "formal/source/collections/sort-core/Ranges.dfy": [
+      {
+        "path": "formal/source/collections/sort-core/Merge.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/traversal/Connection.dfy": [
+      {
+        "path": "formal/source/collections/traversal/Properties.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/traversal/Loops.dfy": [
       {
         "path": "formal/source/collections/traversal/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/environment/Connection.dfy": [
+    "formal/source/collections/traversal/Model.dfy": [
       {
-        "path": "formal/source/collections/environment/Model.dfy",
+        "path": "formal/source/abi/Frames.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/traversal/Properties.dfy": [
+      {
+        "path": "formal/source/collections/traversal/Loops.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/validation/Connection.dfy": [
+      {
+        "path": "formal/source/collections/validation/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/validation/Model.dfy": [
+      {
+        "path": "formal/source/collections/codec-errors/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/abi/outcomes/Cached.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/validation/Source.generated.dfy": [
+      {
+        "path": "formal/source/collections/validation/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-codec/Connection.dfy": [
+      {
+        "path": "formal/source/collections/value-codec/Pack.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-codec/Unpack.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-codec/Control.generated.dfy": [
+      {
+        "path": "formal/source/collections/value-codec/Model.dfy",
         "exists": true
       }
     ],
@@ -1955,75 +1490,395 @@
         "exists": true
       }
     ],
-    "formal/source/collections/value-codec/Connection.dfy": [
+    "formal/source/collections/value-entry/Admission.dfy": [
       {
-        "path": "formal/source/collections/value-codec/Pack.generated.dfy",
+        "path": "formal/source/collections/value-entry/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-entry/Connection.dfy": [
+      {
+        "path": "formal/source/collections/value-entry/Admission.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-entry/Model.dfy": [
+      {
+        "path": "formal/source/collections/value-entry/Selectors.generated.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/collections/value-codec/Unpack.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-codec/Control.generated.dfy": [
-      {
-        "path": "formal/source/collections/value-codec/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-windows/Model.dfy": [
-      {
-        "path": "formal/source/collections/word-memory/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-windows/Properties.dfy": [
-      {
-        "path": "formal/source/collections/word-windows/Model.dfy",
+        "path": "formal/source/collections/iteration-chain/Connection.dfy",
         "exists": true
       },
       {
-        "path": "formal/foundations/SourceSequenceCellV4.dfy",
+        "path": "formal/source/collections/value-loops/Connection.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-windows/Source.generated.dfy": [
+    "formal/source/collections/value-entry/Selectors.generated.dfy": [
       {
-        "path": "formal/source/collections/word-windows/Properties.dfy",
+        "path": "formal/source/abi/Frames.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-windows/Connection.dfy": [
+    "formal/source/collections/value-loops/Connection.dfy": [
       {
-        "path": "formal/source/collections/word-windows/Source.generated.dfy",
+        "path": "formal/source/collections/value-loops/Source.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-fold-loop/Memory.dfy": [
+    "formal/source/collections/value-loops/Source.generated.dfy": [
       {
-        "path": "formal/source/collections/word-fold-loop/Model.dfy",
+        "path": "formal/source/collections/traversal/Connection.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-fold-loop/Model.dfy": [
+    "formal/source/collections/value-pairs/Connection.dfy": [
       {
-        "path": "formal/source/collections/word-call/Connection.dfy",
+        "path": "formal/source/collections/value-pairs/Facts.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-pairs/Control.generated.dfy": [
+      {
+        "path": "formal/source/collections/value-pairs/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-pairs/Entry.dfy": [
+      {
+        "path": "formal/source/collections/value-pairs/EntryModel.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-pairs/EntryModel.dfy": [
+      {
+        "path": "formal/source/collections/value-pairs/Properties.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/collections/word-windows/Connection.dfy",
+        "path": "formal/source/collections/value-pairs/Source.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-fold-loop/Source.generated.dfy": [
+    "formal/source/collections/value-pairs/Facts.dfy": [
       {
-        "path": "formal/source/collections/word-fold-loop/Memory.dfy",
+        "path": "formal/source/collections/value-pairs/Entry.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-pairs/Reconstruction.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-fold-loop/Connection.dfy": [
+    "formal/source/collections/value-pairs/Inverses.dfy": [
       {
-        "path": "formal/source/collections/word-fold-loop/Source.generated.dfy",
+        "path": "formal/source/collections/value-pairs/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-pairs/Success.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-pairs/Model.dfy": [
+      {
+        "path": "formal/source/collections/validation/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-pairs/Properties.dfy": [
+      {
+        "path": "formal/source/collections/value-pairs/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-pairs/Reconstruction.dfy": [
+      {
+        "path": "formal/source/collections/value-pairs/Properties.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-pairs/Source.dfy": [
+      {
+        "path": "formal/source/collections/value-pairs/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-pairs/Success.dfy": [
+      {
+        "path": "formal/source/collections/value-pairs/Facts.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-search/Connection.dfy": [
+      {
+        "path": "formal/source/collections/value-search/Entry.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-search/Control.generated.dfy": [
+      {
+        "path": "formal/source/collections/value-search/Spec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-search/Engine.dfy": [
+      {
+        "path": "formal/source/collections/value-search/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-search/Entry.dfy": [
+      {
+        "path": "formal/source/collections/value-search/EntryModel.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-search/EntryModel.dfy": [
+      {
+        "path": "formal/source/collections/value-search/Engine.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-search/Source.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-search/Environment.dfy": [
+      {
+        "path": "formal/source/collections/value-search/Spec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-search/Model.dfy": [
+      {
+        "path": "formal/source/collections/value-search/Environment.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-search/Source.dfy": [
+      {
+        "path": "formal/source/collections/value-search/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-search/Spec.dfy": [
+      {
+        "path": "formal/source/collections/iteration-chain/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-sort-entry/Connection.dfy": [
+      {
+        "path": "formal/source/collections/value-sort-entry/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-sort-entry/Model.dfy": [
+      {
+        "path": "formal/source/collections/value-sort-execution/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/sort-admission/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-sort-execution/Connection.dfy": [
+      {
+        "path": "formal/source/collections/value-sort-execution/Records.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-sort-execution/Model.dfy": [
+      {
+        "path": "formal/source/collections/sort-comparator/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-sort-trace/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-sort-execution/Records.dfy": [
+      {
+        "path": "formal/source/collections/value-sort-execution/Replay.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-sort-execution/Replay.dfy": [
+      {
+        "path": "formal/source/collections/value-sort-execution/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-sort-trace/Connection.dfy": [
+      {
+        "path": "formal/source/collections/value-sort-trace/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-sort-trace/Model.dfy": [
+      {
+        "path": "formal/source/collections/sort-core/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/abi/Frames.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-sort-trace/Properties.dfy": [
+      {
+        "path": "formal/source/collections/value-sort-trace/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-sort-trace/Source.generated.dfy": [
+      {
+        "path": "formal/source/collections/value-sort-trace/Properties.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-structure/Connection.dfy": [
+      {
+        "path": "formal/source/collections/value-structure/Source.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-structure/Control.generated.dfy": [
+      {
+        "path": "formal/source/collections/value-structure/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-structure/Model.dfy": [
+      {
+        "path": "formal/source/collections/validation/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-structure/Source.dfy": [
+      {
+        "path": "formal/source/collections/value-structure/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/Classes.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/Compare.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/Connection.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/Facts.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/Control.generated.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/Spec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/Decisions.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/Flow.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/Engine.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/Compare.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-unique/FlowReplay.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/Entry.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/EntryModel.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/EntryModel.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/Engine.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-unique/Source.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/Environment.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/Spec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/Facts.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/Entry.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-unique/Decisions.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/Flow.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/Spec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/FlowReplay.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/Flow.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-unique/Environment.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/Model.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/Environment.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/Source.dfy": [
+      {
+        "path": "formal/source/collections/value-unique/Control.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/value-unique/Flow.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/value-unique/Spec.dfy": [
+      {
+        "path": "formal/source/collections/iteration-chain/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/wire/Connection.dfy": [
+      {
+        "path": "formal/source/collections/wire/Model.dfy",
         "exists": true
       }
     ],
@@ -2045,462 +1900,53 @@
         "exists": true
       }
     ],
-    "formal/source/collections/wire/Connection.dfy": [
-      {
-        "path": "formal/source/collections/wire/Model.dfy",
-        "exists": true
-      }
-    ],
     "formal/source/collections/wire/Signatures.generated.dfy": [
       {
         "path": "formal/source/abi/Frames.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/codec-errors/Encoding.dfy": [
+    "formal/source/collections/word-apply/Connection.dfy": [
       {
-        "path": "formal/source/collections/codec-errors/Signatures.generated.dfy",
+        "path": "formal/source/collections/word-apply/Source.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-apply/Control.generated.dfy": [
+      {
+        "path": "formal/source/collections/word-memory/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-apply/Engine.dfy": [
+      {
+        "path": "formal/source/collections/word-apply/Memory.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/collections/admission/Connection.dfy",
+        "path": "formal/source/collections/word-apply/Control.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/codec-errors/Connection.dfy": [
+    "formal/source/collections/word-apply/EntryModel.dfy": [
       {
-        "path": "formal/source/collections/codec-errors/Encoding.dfy",
+        "path": "formal/source/collections/word-apply/LoopConnection.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/codec-errors/Signatures.generated.dfy": [
+    "formal/source/collections/word-apply/EntryReady.dfy": [
       {
-        "path": "formal/source/abi/Frames.dfy",
+        "path": "formal/source/collections/word-apply/EntryModel.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-call/Model.dfy": [
+    "formal/source/collections/word-apply/LoopConnection.dfy": [
       {
-        "path": "formal/source/collections/wire/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/abi/source/BytesBody.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-call/Source.generated.dfy": [
-      {
-        "path": "formal/source/collections/word-call/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-call/Connection.dfy": [
-      {
-        "path": "formal/source/collections/word-call/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/calls/Model.dfy": [
-      {
-        "path": "formal/source/collections/preparation/Source.generated.dfy",
+        "path": "formal/source/collections/word-apply/Engine.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/collections/callback-results/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/calls/Source.generated.dfy": [
-      {
-        "path": "formal/source/collections/calls/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/calls/Connection.dfy": [
-      {
-        "path": "formal/source/collections/calls/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-sort-execution/Replay.dfy": [
-      {
-        "path": "formal/source/collections/value-sort-execution/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-sort-execution/Model.dfy": [
-      {
-        "path": "formal/source/collections/sort-comparator/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/value-sort-trace/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-sort-execution/Records.dfy": [
-      {
-        "path": "formal/source/collections/value-sort-execution/Replay.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-sort-execution/Connection.dfy": [
-      {
-        "path": "formal/source/collections/value-sort-execution/Records.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/iteration-chain/Model.dfy": [
-      {
-        "path": "formal/source/collections/iteration/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/environment/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/iteration-chain/Step.dfy": [
-      {
-        "path": "formal/source/collections/iteration-chain/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/iteration-chain/Connection.dfy": [
-      {
-        "path": "formal/source/collections/iteration-chain/Step.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/call-results/Model.dfy": [
-      {
-        "path": "formal/source/collections/validation/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/repeated-call/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/call-results/Connection.dfy": [
-      {
-        "path": "formal/source/collections/call-results/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/prepared-entry/Model.dfy": [
-      {
-        "path": "formal/source/collections/bound-call/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/prepared-entry/Connection.dfy": [
-      {
-        "path": "formal/source/collections/prepared-entry/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/sort-comparator/Model.dfy": [
-      {
-        "path": "formal/source/collections/bound-call/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/abi/source/BytesBody.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/sort-comparator/Source.generated.dfy": [
-      {
-        "path": "formal/source/collections/sort-comparator/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/sort-comparator/Connection.dfy": [
-      {
-        "path": "formal/source/collections/sort-comparator/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/completion/Boundary.generated.dfy": [],
-    "formal/source/collections/preparation/Model.dfy": [
-      {
-        "path": "formal/source/abi/Frames.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/preparation/Source.generated.dfy": [
-      {
-        "path": "formal/source/collections/preparation/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/preparation/Connection.dfy": [
-      {
-        "path": "formal/source/collections/preparation/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/bound-call/Model.dfy": [
-      {
-        "path": "formal/source/collections/codec-errors/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/bound-call/Connection.dfy": [
-      {
-        "path": "formal/source/collections/bound-call/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/admission/Model.dfy": [
-      {
-        "path": "formal/source/collections/admission/Signatures.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/constants/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/abi/layout/Soundness.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/admission/Connection.dfy": [
-      {
-        "path": "formal/source/collections/admission/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/admission/Signatures.generated.dfy": [
-      {
-        "path": "formal/source/abi/Frames.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-loops/Source.generated.dfy": [
-      {
-        "path": "formal/source/collections/traversal/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-loops/Connection.dfy": [
-      {
-        "path": "formal/source/collections/value-loops/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-search/Model.dfy": [
-      {
-        "path": "formal/source/collections/value-search/Environment.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-search/Source.dfy": [
-      {
-        "path": "formal/source/collections/value-search/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-search/EntryModel.dfy": [
-      {
-        "path": "formal/source/collections/value-search/Engine.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/value-search/Source.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-search/Environment.dfy": [
-      {
-        "path": "formal/source/collections/value-search/Spec.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-search/Engine.dfy": [
-      {
-        "path": "formal/source/collections/value-search/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-search/Spec.dfy": [
-      {
-        "path": "formal/source/collections/iteration-chain/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-search/Connection.dfy": [
-      {
-        "path": "formal/source/collections/value-search/Entry.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-search/Control.generated.dfy": [
-      {
-        "path": "formal/source/collections/value-search/Spec.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-search/Entry.dfy": [
-      {
-        "path": "formal/source/collections/value-search/EntryModel.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-layout/Memory.dfy": [
-      {
-        "path": "formal/source/collections/word-layout/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-layout/Model.dfy": [
-      {
-        "path": "formal/source/collections/word-memory/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-layout/Source.dfy": [
-      {
-        "path": "formal/source/collections/word-layout/Memory.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-layout/Connection.dfy": [
-      {
-        "path": "formal/source/collections/word-layout/Source.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-layout/Control.generated.dfy": [
-      {
-        "path": "formal/source/collections/word-layout/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/traversal/Model.dfy": [
-      {
-        "path": "formal/source/abi/Frames.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/traversal/Loops.dfy": [
-      {
-        "path": "formal/source/collections/traversal/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/traversal/Properties.dfy": [
-      {
-        "path": "formal/source/collections/traversal/Loops.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/traversal/Connection.dfy": [
-      {
-        "path": "formal/source/collections/traversal/Properties.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/validation/Model.dfy": [
-      {
-        "path": "formal/source/collections/codec-errors/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/abi/outcomes/Cached.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/validation/Source.generated.dfy": [
-      {
-        "path": "formal/source/collections/validation/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/validation/Connection.dfy": [
-      {
-        "path": "formal/source/collections/validation/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-pairs/Inverses.dfy": [
-      {
-        "path": "formal/source/collections/value-pairs/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/value-pairs/Success.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-pairs/Facts.dfy": [
-      {
-        "path": "formal/source/collections/value-pairs/Entry.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/value-pairs/Reconstruction.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-pairs/Model.dfy": [
-      {
-        "path": "formal/source/collections/validation/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-pairs/Source.dfy": [
-      {
-        "path": "formal/source/collections/value-pairs/Control.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-pairs/Reconstruction.dfy": [
-      {
-        "path": "formal/source/collections/value-pairs/Properties.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-pairs/EntryModel.dfy": [
-      {
-        "path": "formal/source/collections/value-pairs/Properties.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/value-pairs/Source.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-pairs/Success.dfy": [
-      {
-        "path": "formal/source/collections/value-pairs/Facts.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-pairs/Properties.dfy": [
-      {
-        "path": "formal/source/collections/value-pairs/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-pairs/Connection.dfy": [
-      {
-        "path": "formal/source/collections/value-pairs/Facts.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-pairs/Control.generated.dfy": [
-      {
-        "path": "formal/source/collections/value-pairs/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-pairs/Entry.dfy": [
-      {
-        "path": "formal/source/collections/value-pairs/EntryModel.dfy",
+        "path": "formal/source/collections/word-apply/Output.dfy",
         "exists": true
       }
     ],
@@ -2526,81 +1972,185 @@
         "exists": true
       }
     ],
-    "formal/source/collections/word-apply/Source.dfy": [
-      {
-        "path": "formal/source/collections/word-apply/EntryReady.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-apply/LoopConnection.dfy": [
-      {
-        "path": "formal/source/collections/word-apply/Engine.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/word-apply/Output.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/word-apply/EntryModel.dfy": [
-      {
-        "path": "formal/source/collections/word-apply/LoopConnection.dfy",
-        "exists": true
-      }
-    ],
     "formal/source/collections/word-apply/Properties.dfy": [
       {
         "path": "formal/source/collections/word-apply/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-apply/EntryReady.dfy": [
+    "formal/source/collections/word-apply/Source.dfy": [
       {
-        "path": "formal/source/collections/word-apply/EntryModel.dfy",
+        "path": "formal/source/collections/word-apply/EntryReady.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-apply/Engine.dfy": [
+    "formal/source/collections/word-call/Connection.dfy": [
       {
-        "path": "formal/source/collections/word-apply/Memory.dfy",
+        "path": "formal/source/collections/word-call/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-call/Model.dfy": [
+      {
+        "path": "formal/source/collections/wire/Connection.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/collections/word-apply/Control.generated.dfy",
+        "path": "formal/source/abi/source/BytesBody.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-apply/Connection.dfy": [
+    "formal/source/collections/word-call/Source.generated.dfy": [
       {
-        "path": "formal/source/collections/word-apply/Source.dfy",
+        "path": "formal/source/collections/word-call/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-apply/Control.generated.dfy": [
+    "formal/source/collections/word-fold-entry/Connection.dfy": [
+      {
+        "path": "formal/source/collections/word-fold-entry/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-fold-entry/Model.dfy": [
+      {
+        "path": "formal/source/collections/word-fold-entry/Selectors.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/word-fold-loop/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-fold-entry/Ready.dfy": [
+      {
+        "path": "formal/source/collections/word-fold-entry/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-fold-entry/Selectors.generated.dfy": [
+      {
+        "path": "formal/source/abi/Frames.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-fold-entry/Source.generated.dfy": [
+      {
+        "path": "formal/source/collections/word-fold-entry/Ready.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-fold-loop/Connection.dfy": [
+      {
+        "path": "formal/source/collections/word-fold-loop/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-fold-loop/Memory.dfy": [
+      {
+        "path": "formal/source/collections/word-fold-loop/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-fold-loop/Model.dfy": [
+      {
+        "path": "formal/source/collections/word-call/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/collections/word-windows/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-fold-loop/Source.generated.dfy": [
+      {
+        "path": "formal/source/collections/word-fold-loop/Memory.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-layout/Connection.dfy": [
+      {
+        "path": "formal/source/collections/word-layout/Source.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-layout/Control.generated.dfy": [
+      {
+        "path": "formal/source/collections/word-layout/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-layout/Memory.dfy": [
+      {
+        "path": "formal/source/collections/word-layout/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-layout/Model.dfy": [
+      {
+        "path": "formal/source/collections/word-memory/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-layout/Source.dfy": [
+      {
+        "path": "formal/source/collections/word-layout/Memory.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-memory/Connection.dfy": [
+      {
+        "path": "formal/source/collections/word-memory/Source.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/foundations/SourceSequenceMemoryV1.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-memory/Model.dfy": [
+      {
+        "path": "formal/foundations/EvmEncoding.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/abi/Frames.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-memory/Source.generated.dfy": [
       {
         "path": "formal/source/collections/word-memory/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/value-sort-entry/Model.dfy": [
+    "formal/source/collections/word-scans/Connection.dfy": [
       {
-        "path": "formal/source/collections/value-sort-execution/Connection.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/collections/sort-admission/Connection.dfy",
+        "path": "formal/source/collections/word-scans/Source.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/value-sort-entry/Connection.dfy": [
+    "formal/source/collections/word-scans/Control.generated.dfy": [
       {
-        "path": "formal/source/collections/value-sort-entry/Model.dfy",
+        "path": "formal/source/collections/word-scans/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-sort/Representation.dfy": [
+    "formal/source/collections/word-scans/Model.dfy": [
       {
-        "path": "formal/source/collections/word-sort/Model.dfy",
+        "path": "formal/source/collections/word-memory/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-scans/Source.dfy": [
+      {
+        "path": "formal/source/collections/word-scans/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-sort/Connection.dfy": [
+      {
+        "path": "formal/source/collections/word-sort/Source.generated.dfy",
         "exists": true
       }
     ],
@@ -2614,122 +2164,111 @@
         "exists": true
       }
     ],
+    "formal/source/collections/word-sort/Representation.dfy": [
+      {
+        "path": "formal/source/collections/word-sort/Model.dfy",
+        "exists": true
+      }
+    ],
     "formal/source/collections/word-sort/Source.generated.dfy": [
       {
         "path": "formal/source/collections/word-sort/Representation.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/word-sort/Connection.dfy": [
+    "formal/source/collections/word-unique/Connection.dfy": [
       {
-        "path": "formal/source/collections/word-sort/Source.generated.dfy",
+        "path": "formal/source/collections/word-unique/Source.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/sort-core/Merge.dfy": [
+    "formal/source/collections/word-unique/Control.generated.dfy": [
       {
-        "path": "formal/source/collections/sort-core/Model.dfy",
+        "path": "formal/source/collections/word-unique/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/sort-core/Model.dfy": [],
-    "formal/source/collections/sort-core/Ranges.dfy": [
+    "formal/source/collections/word-unique/Model.dfy": [
       {
-        "path": "formal/source/collections/sort-core/Merge.dfy",
+        "path": "formal/source/collections/word-memory/Connection.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/sort-core/Connection.dfy": [
+    "formal/source/collections/word-unique/Source.dfy": [
       {
-        "path": "formal/source/collections/sort-core/Ranges.dfy",
+        "path": "formal/source/collections/word-unique/Control.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/value-structure/Model.dfy": [
+    "formal/source/collections/word-windows/Connection.dfy": [
       {
-        "path": "formal/source/collections/validation/Connection.dfy",
+        "path": "formal/source/collections/word-windows/Source.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/value-structure/Source.dfy": [
+    "formal/source/collections/word-windows/Model.dfy": [
       {
-        "path": "formal/source/collections/value-structure/Control.generated.dfy",
+        "path": "formal/source/collections/word-memory/Connection.dfy",
         "exists": true
       }
     ],
-    "formal/source/collections/value-structure/Connection.dfy": [
+    "formal/source/collections/word-windows/Properties.dfy": [
       {
-        "path": "formal/source/collections/value-structure/Source.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-structure/Control.generated.dfy": [
-      {
-        "path": "formal/source/collections/value-structure/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-entry/Model.dfy": [
-      {
-        "path": "formal/source/collections/value-entry/Selectors.generated.dfy",
+        "path": "formal/source/collections/word-windows/Model.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/collections/iteration-chain/Connection.dfy",
+        "path": "formal/foundations/SourceSequenceCellV4.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/collections/word-windows/Source.generated.dfy": [
+      {
+        "path": "formal/source/collections/word-windows/Properties.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/admission/Model.dfy": [
+      {
+        "path": "formal/source/abi/parser/Parser.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/admission/Source.generated.dfy": [
+      {
+        "path": "formal/source/expressions/admission/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/admission-errors/Bounds.dfy": [
+      {
+        "path": "formal/source/expressions/admission-errors/Encoding.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/admission-errors/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/admission-errors/Bounds.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/admission-errors/Encoding.dfy": [
+      {
+        "path": "formal/source/expressions/codec-errors/Encoding.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/collections/value-loops/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-entry/Selectors.generated.dfy": [
-      {
-        "path": "formal/source/abi/Frames.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-entry/Connection.dfy": [
-      {
-        "path": "formal/source/collections/value-entry/Admission.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/collections/value-entry/Admission.dfy": [
-      {
-        "path": "formal/source/collections/value-entry/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/resolution/Model.dfy": [
-      {
-        "path": "formal/source/assertions/resolution/Words.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/resolution/Words.dfy": [
-      {
-        "path": "formal/source/assertions/constraints/Model.dfy",
+        "path": "formal/source/expressions/scalars/Model.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/abi/Frames.dfy",
+        "path": "formal/source/expressions/admission/Source.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/assertions/resolution/Source.generated.dfy": [
+    "formal/source/expressions/cache/Model.dfy": [
       {
-        "path": "formal/source/assertions/resolution/Model.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/constraints/Engine.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/composition/Model.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Correspondence.dfy",
+        "path": "formal/source/abi/construction/Validation.dfy",
         "exists": true
       },
       {
@@ -2737,429 +2276,1157 @@
         "exists": true
       }
     ],
-    "formal/source/assertions/composition/Source.generated.dfy": [
+    "formal/source/expressions/cache/Source.generated.dfy": [
       {
-        "path": "formal/source/assertions/composition/Model.dfy",
+        "path": "formal/source/expressions/cache/Model.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/assertions/resolution/Source.generated.dfy",
+        "path": "formal/source/expressions/admission/Source.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/assertions/arguments/Model.dfy": [
+    "formal/source/expressions/calls/Model.dfy": [
       {
-        "path": "formal/source/assertions/core/Source.generated.dfy",
+        "path": "formal/source/expressions/scalars/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/calls/Source.generated.dfy": [
+      {
+        "path": "formal/source/expressions/calls/Model.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/abi/construction/Endpoints.dfy",
+        "path": "formal/source/expressions/scalars/Source.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/assertions/arguments/Tuple.generated.dfy": [
+    "formal/source/expressions/codec-errors/Connection.dfy": [
       {
-        "path": "formal/source/abi/construction/Tuple.generated.dfy",
+        "path": "formal/source/expressions/codec-errors/Encoding.dfy",
         "exists": true
       }
     ],
-    "formal/source/assertions/arguments/Source.generated.dfy": [
+    "formal/source/expressions/codec-errors/Encoding.dfy": [
       {
-        "path": "formal/source/assertions/arguments/Model.dfy",
+        "path": "formal/source/expressions/compound/Source.generated.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/assertions/arguments/Tuple.generated.dfy",
+        "path": "formal/source/expressions/evaluation/CacheBridge.dfy",
         "exists": true
       }
     ],
-    "formal/source/assertions/navigation/Terminals.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Modes.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/abi/dynamic/Body.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/Modes.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Traversal.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/ReturnMemory.generated.dfy": [
-      {
-        "path": "formal/source/abi/construction/Memory.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/DynamicSource.generated.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/TerminalSource.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/Model.dfy": [
-      {
-        "path": "formal/source/abi/Encoding.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/ValueSource.generated.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/DynamicSource.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/navigation/ReturnMemory.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/navigation/Layout.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/NavSource.generated.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Entry.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/navigation/ValueSource.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/navigation/ModesSource.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/Correspondence.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/CanonicalSource.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/navigation/NavSource.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/CanonicalSource.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Canonical.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/navigation/Traverse.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/navigation/ModesSource.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/Traversal.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/CursorSpec.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/TerminalSource.generated.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Terminals.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/navigation/Traverse.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/Layout.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/Canonical.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Traversal.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/navigation/Layout.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/Traverse.generated.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Traversal.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/navigation/Cursor.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/ModesSource.generated.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Modes.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/navigation/Traverse.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/Cursor.generated.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/CursorSpec.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/navigation/Kernels.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/abi/connection/Bridge.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/Runtime.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Model.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/abi/source/ByteSemantics.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/Kernels.generated.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Runtime.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/CursorSpec.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Runtime.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/abi/connection/Descriptor.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/navigation/Entry.dfy": [
-      {
-        "path": "formal/source/assertions/navigation/Modes.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/core/Model.dfy": [
-      {
-        "path": "formal/source/assertions/core/Words.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/foundations/SourceFlattenV6.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/resolution/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/core/Words.dfy": [
-      {
-        "path": "formal/source/assertions/resolution/Words.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/core/Source.generated.dfy": [
-      {
-        "path": "formal/source/assertions/core/Model.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/resolution/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/constraints/Model.dfy": [],
-    "formal/source/assertions/constraints/Engine.generated.dfy": [
-      {
-        "path": "formal/source/assertions/constraints/Model.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/foundations/SourceConstraintFactsV1.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/control/Probe.dfy": [
-      {
-        "path": "formal/source/assertions/resolution/Model.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/control/GuardSource.generated.dfy": [
-      {
-        "path": "formal/source/assertions/control/Guard.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/resolution/Source.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/control/Source.dfy": [
-      {
-        "path": "formal/source/assertions/control/ProbeSource.generated.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/control/GuardSource.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/control/ProbeSource.generated.dfy": [
-      {
-        "path": "formal/source/assertions/control/Probe.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/control/Guard.dfy": [
-      {
-        "path": "formal/source/assertions/control/Probe.dfy",
-        "exists": true
-      },
-      {
-        "path": "formal/source/assertions/resolution/Words.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/core/public-boundary/Connection.dfy": [
-      {
-        "path": "formal/source/assertions/core/public-boundary/Getters.generated.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/core/public-boundary/Getters.generated.dfy": [
-      {
-        "path": "formal/source/assertions/core/raw-tree/Connection.dfy",
-        "exists": true
-      }
-    ],
-    "formal/source/assertions/core/recursive/Invocation.dfy": [
+    "formal/source/expressions/compound/Source.generated.dfy": [
       {
         "path": "formal/source/assertions/arguments/Source.generated.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/assertions/composition/Source.generated.dfy",
+        "path": "formal/source/abi/construction/Pack.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/context/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/context/Shift.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/context/Shift.dfy": [
+      {
+        "path": "formal/source/expressions/frames/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/dispatch/Model.dfy": [],
+    "formal/source/expressions/encoded/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/encoded/Source.generated.dfy",
         "exists": true
       },
       {
-        "path": "formal/source/assertions/control/Source.dfy",
+        "path": "formal/source/expressions/returns/Source.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/assertions/core/recursive/Dispatch.dfy": [
+    "formal/source/expressions/encoded/Model.dfy": [
       {
-        "path": "formal/source/assertions/core/recursive/Invocation.dfy",
+        "path": "formal/source/expressions/receipts/Connection.dfy",
         "exists": true
-      }
-    ],
-    "formal/source/assertions/core/serialization/Errors.dfy": [
+      },
       {
-        "path": "formal/source/assertions/core/serialization/Encoding.dfy",
+        "path": "formal/source/expressions/admission/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/assertions/core/serialization/Encoding.dfy": [
+    "formal/source/expressions/encoded/Source.generated.dfy": [
       {
-        "path": "formal/source/assertions/core/serialization/Signatures.generated.dfy",
+        "path": "formal/source/expressions/encoded/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/assertions/core/serialization/Connection.dfy": [
+    "formal/source/expressions/entry/Connection.dfy": [
       {
-        "path": "formal/source/assertions/core/serialization/Bounds.dfy",
+        "path": "formal/source/expressions/execution/Connection.dfy",
         "exists": true
-      }
-    ],
-    "formal/source/assertions/core/serialization/Signatures.generated.dfy": [
+      },
       {
-        "path": "formal/source/assertions/core/public-boundary/Connection.dfy",
+        "path": "formal/source/expressions/cache/Source.generated.dfy",
         "exists": true
       }
     ],
-    "formal/source/assertions/core/serialization/Bounds.dfy": [
+    "formal/source/expressions/evaluation/CacheBridge.dfy": [
       {
-        "path": "formal/source/assertions/core/serialization/Errors.dfy",
+        "path": "formal/source/expressions/evaluation/Control.dfy",
         "exists": true
-      }
-    ],
-    "formal/source/assertions/core/completion/Connection.dfy": [
+      },
       {
-        "path": "formal/source/assertions/core/serialization/Connection.dfy",
+        "path": "formal/source/expressions/cache/Model.dfy",
         "exists": true
-      }
-    ],
-    "formal/source/assertions/core/frame-tree/Tree.dfy": [
+      },
       {
-        "path": "formal/source/assertions/core/frame-tree/Wire.dfy",
+        "path": "formal/source/expressions/admission/Model.dfy",
         "exists": true
       }
     ],
-    "formal/source/assertions/core/frame-tree/Connection.dfy": [
+    "formal/source/expressions/evaluation/Control.dfy": [
       {
-        "path": "formal/source/assertions/core/frame-tree/Tree.dfy",
+        "path": "formal/foundations/SourceMemoOrderV3.dfy",
         "exists": true
       }
     ],
-    "formal/source/assertions/core/frame-tree/Wire.dfy": [
+    "formal/source/expressions/execution/Connection.dfy": [
       {
-        "path": "formal/source/assertions/core/recursive/Dispatch.dfy",
+        "path": "formal/source/expressions/execution/Run.dfy",
         "exists": true
       }
     ],
-    "formal/source/assertions/core/raw-tree/Tree.dfy": [
+    "formal/source/expressions/execution/Model.dfy": [
       {
-        "path": "formal/source/assertions/core/frame-tree/Connection.dfy",
+        "path": "formal/source/expressions/oracle-stability/Append.dfy",
         "exists": true
       }
     ],
-    "formal/source/assertions/core/raw-tree/Connection.dfy": [
+    "formal/source/expressions/execution/Run.dfy": [
       {
-        "path": "formal/source/assertions/core/raw-tree/Tree.dfy",
+        "path": "formal/source/expressions/execution/Model.dfy",
         "exists": true
       }
     ],
-    "formal/foundations/SourceSequenceCellV4.dfy": [
+    "formal/source/expressions/frames/Connection.dfy": [
       {
-        "path": "formal/foundations/SourceSequenceMemoryV1.dfy",
+        "path": "formal/source/expressions/frames/Source.generated.dfy",
         "exists": true
       }
     ],
-    "formal/foundations/SourceConstraintFactsV1.dfy": [
+    "formal/source/expressions/frames/Model.dfy": [
       {
-        "path": "formal/source/assertions/constraints/Model.dfy",
+        "path": "formal/source/expressions/guarded/Connection.dfy",
         "exists": true
       }
     ],
-    "formal/foundations/SourceFlattenV6.dfy": [],
-    "formal/foundations/SourceNaturalProductV8.dfy": [],
-    "formal/foundations/SourceReplacementSpanV7.dfy": [
+    "formal/source/expressions/frames/Source.generated.dfy": [
       {
-        "path": "formal/foundations/SourceSequenceMemoryV1.dfy",
+        "path": "formal/source/expressions/frames/Model.dfy",
         "exists": true
       }
     ],
-    "formal/foundations/SourceMemoOrderV3.dfy": [],
-    "formal/foundations/SourceTotalMemoryV1.dfy": [],
-    "formal/foundations/SourceSequenceMemoryV1.dfy": []
+    "formal/source/expressions/guard-receipts/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/guard-receipts/Events.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/guard-receipts/Events.dfy": [
+      {
+        "path": "formal/source/expressions/trace-bounds/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/guarded/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/guarded/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/guarded/Encoding.dfy": [
+      {
+        "path": "formal/source/expressions/entry/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/guarded/Model.dfy": [
+      {
+        "path": "formal/source/expressions/guarded/Encoding.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/guarded/Source.generated.dfy": [
+      {
+        "path": "formal/source/expressions/guarded/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/oracle/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/oracle/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/oracle/Model.dfy": [
+      {
+        "path": "formal/source/expressions/primitives/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/oracle-stability/Append.dfy": [
+      {
+        "path": "formal/source/expressions/oracle-stability/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/oracle-stability/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/oracle/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/primitives/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/primitives/Dispatch.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/primitives/Dispatch.dfy": [
+      {
+        "path": "formal/source/expressions/primitives/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/primitives/Model.dfy": [
+      {
+        "path": "formal/source/expressions/resolve/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/codec-errors/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/probe-input/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/probe-input/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/receipts/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/requests/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/public/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/public/Guards.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/public/Encoded.dfy": [
+      {
+        "path": "formal/source/expressions/public/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/self-call/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/public/Entry.generated.dfy": [
+      {
+        "path": "formal/source/expressions/entry/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/rejections/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/public/Guarded.dfy": [
+      {
+        "path": "formal/source/expressions/public/Encoded.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/public/Guarded.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/public/Guarded.generated.dfy": [
+      {
+        "path": "formal/source/expressions/public/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/public/Guards.dfy": [
+      {
+        "path": "formal/source/expressions/public/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/public/Model.dfy": [
+      {
+        "path": "formal/source/expressions/public/Entry.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/rejections/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/guard-receipts/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/admission-errors/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/returns/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/receipts/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/receipts/Encoding.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/receipts/Encoding.dfy": [
+      {
+        "path": "formal/source/expressions/calls/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/recursive/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/recursive/Source.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/evaluation/CacheBridge.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/recursive/Source.generated.dfy": [
+      {
+        "path": "formal/source/expressions/recursive/Spec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/recursive/Spec.dfy": [
+      {
+        "path": "formal/source/expressions/evaluation/Control.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/rejections/Cold.generated.dfy": [
+      {
+        "path": "formal/source/expressions/rejections/Completion.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/validation/Body.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/rejections/Completion.generated.dfy": [
+      {
+        "path": "formal/source/expressions/rejections/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/rejections/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/rejections/Cold.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/rejections/Model.dfy": [
+      {
+        "path": "formal/source/abi/outcomes/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/validation/Completion.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/requests/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/requests/Source.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/requests/Model.dfy": [
+      {
+        "path": "formal/source/expressions/scalars/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/requests/Source.dfy": [
+      {
+        "path": "formal/source/expressions/requests/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/resolve/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/resolve/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/resolve/Model.dfy": [
+      {
+        "path": "formal/source/expressions/receipts/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/assertions/core/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/resolve/Source.generated.dfy": [
+      {
+        "path": "formal/source/expressions/resolve/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/returns/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/returns/Source.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/returns/Model.dfy": [
+      {
+        "path": "formal/source/abi/source/ByteSemantics.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/returns/Source.generated.dfy": [
+      {
+        "path": "formal/source/expressions/returns/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/scalars/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/scalars/Source.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/recursive/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/scalars/Model.dfy": [
+      {
+        "path": "formal/source/expressions/evaluation/CacheBridge.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/scalars/Source.generated.dfy": [
+      {
+        "path": "formal/source/expressions/scalars/Model.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/abi/source/BytesBody.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/self-call/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/entry/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/admission-errors/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/encoded/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/trace-bounds/Bounds.dfy": [
+      {
+        "path": "formal/source/expressions/context/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/trace-bounds/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/trace-bounds/Bounds.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/tree/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/tree/Equivalence.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/expressions/public/Guarded.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/tree/Equivalence.dfy": [
+      {
+        "path": "formal/source/expressions/tree/Spec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/tree/Spec.dfy": [
+      {
+        "path": "formal/source/expressions/recursive/Spec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/validation/Body.generated.dfy": [
+      {
+        "path": "formal/source/expressions/validation/Completion.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/validation/Bytes.dfy": [
+      {
+        "path": "formal/source/expressions/trace-bounds/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/validation/Completion.dfy": [
+      {
+        "path": "formal/source/expressions/validation/Control.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/validation/Connection.dfy": [
+      {
+        "path": "formal/source/expressions/validation/Body.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/expressions/validation/Control.dfy": [
+      {
+        "path": "formal/source/expressions/validation/Bytes.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/ascii/Connection.dfy": [
+      {
+        "path": "formal/source/operations/ascii/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/ascii/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/ascii/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/ascii/Model.dfy": [],
+    "formal/source/operations/binary-log/Connection.dfy": [
+      {
+        "path": "formal/source/operations/binary-log/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/binary-log/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/binary-log/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/binary-log/Model.dfy": [],
+    "formal/source/operations/byte-bounds/Connection.dfy": [
+      {
+        "path": "formal/source/operations/byte-bounds/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/byte-bounds/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/byte-bounds/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/byte-bounds/Model.dfy": [],
+    "formal/source/operations/byte-replace/Connection.dfy": [
+      {
+        "path": "formal/source/operations/byte-replace/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/byte-replace/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/byte-replace/Model.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/byte-replace/Matcher.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/byte-replace/Matcher.generated.dfy": [
+      {
+        "path": "formal/source/operations/word-match/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/byte-replace/Model.dfy": [
+      {
+        "path": "formal/source/operations/occurrence-index/Connection.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/concat/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/byte-split/Connection.dfy": [
+      {
+        "path": "formal/source/operations/byte-split/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/byte-split/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/byte-split/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/byte-split/Model.dfy": [
+      {
+        "path": "formal/source/operations/occurrence-index/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/checked-power/Connection.dfy": [
+      {
+        "path": "formal/source/operations/checked-power/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/checked-power/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/checked-power/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/checked-power/Model.dfy": [],
+    "formal/source/operations/concat/Connection.dfy": [
+      {
+        "path": "formal/source/operations/concat/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/concat/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/concat/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/concat/Model.dfy": [
+      {
+        "path": "formal/foundations/SourceTotalMemoryV1.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/decimal-digits/Connection.dfy": [
+      {
+        "path": "formal/source/operations/decimal-digits/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/decimal-digits/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/decimal-digits/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/decimal-digits/Model.dfy": [
+      {
+        "path": "formal/source/operations/modular/Math.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/decimal-render/Connection.dfy": [
+      {
+        "path": "formal/source/operations/decimal-render/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/decimal-render/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/decimal-render/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/decimal-render/Model.dfy": [
+      {
+        "path": "formal/source/operations/modular/Math.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/decimal-units/Connection.dfy": [
+      {
+        "path": "formal/source/operations/decimal-units/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/decimal-units/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/decimal-units/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/decimal-units/Model.dfy": [
+      {
+        "path": "formal/source/operations/decimal-render/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/environment/Connection.dfy": [
+      {
+        "path": "formal/source/operations/environment/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/environment/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/environment/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/environment/Model.dfy": [],
+    "formal/source/operations/fixed-point/Bounds.dfy": [
+      {
+        "path": "formal/source/operations/fixed-point/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/fixed-point/Connection.dfy": [
+      {
+        "path": "formal/source/operations/fixed-point/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/fixed-point/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/fixed-point/Bounds.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/fixed-point/Model.dfy": [
+      {
+        "path": "formal/source/operations/full-mul-div/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/fixed-point/muldiv-regenerated/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/fixed-point/muldiv-regenerated/Memory.dfy",
+        "exists": false
+      },
+      {
+        "path": "formal/source/operations/fixed-point/muldiv-regenerated/Helpers.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/fixed-point/muldiv-regenerated/Helpers.generated.dfy": [],
+    "formal/source/operations/fixed-point-accuracy/Bridge.dfy": [
+      {
+        "path": "formal/source/operations/fixed-point/Bounds.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/fixed-point-accuracy/Series.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/fixed-point-accuracy/Intervals.dfy": [
+      {
+        "path": "formal/source/operations/fixed-point-accuracy/Spec.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/fixed-point-accuracy/Kernel.dfy": [
+      {
+        "path": "formal/source/operations/fixed-point-accuracy/Intervals.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/fixed-point-accuracy/Series.dfy": [],
+    "formal/source/operations/fixed-point-accuracy/Spec.dfy": [
+      {
+        "path": "formal/source/operations/fixed-point-accuracy/Bridge.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/full-mul-div/Bits.dfy": [
+      {
+        "path": "formal/source/operations/full-mul-div/Product.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/full-mul-div/Connection.dfy": [
+      {
+        "path": "formal/source/operations/full-mul-div/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/full-mul-div/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/full-mul-div/Memory.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/full-mul-div/Helpers.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/full-mul-div/Helpers.generated.dfy": [],
+    "formal/source/operations/full-mul-div/Inverse.dfy": [
+      {
+        "path": "formal/source/operations/full-mul-div/Bits.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/full-mul-div/Memory.dfy": [
+      {
+        "path": "proof-tools/dafnyevm/src/dafny/util/arrays.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/full-mul-div/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/full-mul-div/Model.dfy": [
+      {
+        "path": "formal/source/operations/full-mul-div/Recombine.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/full-mul-div/Product.dfy": [
+      {
+        "path": "formal/source/operations/binary-log/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/full-mul-div/Recombine.dfy": [
+      {
+        "path": "formal/source/operations/full-mul-div/Inverse.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/integer-root/Connection.dfy": [
+      {
+        "path": "formal/source/operations/integer-root/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/integer-root/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/integer-root/Convergence.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/integer-root/Convergence.dfy": [
+      {
+        "path": "formal/source/operations/integer-root/Seed.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/integer-root/Model.dfy": [
+      {
+        "path": "formal/source/operations/binary-log/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/integer-root/Seed.dfy": [
+      {
+        "path": "formal/source/operations/integer-root/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular/Connection.dfy": [
+      {
+        "path": "formal/source/operations/modular/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/modular/Math.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular/Math.generated.dfy": [],
+    "formal/source/operations/modular-power/Connection.dfy": [
+      {
+        "path": "formal/source/operations/modular-power/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular-power/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/modular-power/Model.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/modular-power/World.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular-power/Euclid.dfy": [
+      {
+        "path": "formal/source/operations/full-mul-div/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular-power/Inverse.generated.dfy": [
+      {
+        "path": "formal/source/operations/modular-power/Euclid.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular-power/InverseConnection.dfy": [
+      {
+        "path": "formal/source/operations/modular-power/Inverse.generated.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/modular-power/InverseModel.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/modular-power/Power.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular-power/InverseModel.dfy": [
+      {
+        "path": "formal/source/operations/modular-power/Power.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular-power/Memory.dfy": [
+      {
+        "path": "proof-tools/dafnyevm/src/dafny/util/arrays.dfy",
+        "exists": true
+      },
+      {
+        "path": "formal/source/operations/modular-power/Power.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular-power/Model.dfy": [
+      {
+        "path": "formal/source/operations/modular-power/InverseConnection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular-power/Power.dfy": [
+      {
+        "path": "formal/source/operations/modular-power/Euclid.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular-power/World.dfy": [
+      {
+        "path": "formal/source/operations/modular-power/Memory.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular-power/muldiv-regenerated/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/modular-power/muldiv-regenerated/Memory.dfy",
+        "exists": false
+      },
+      {
+        "path": "formal/source/operations/modular-power/muldiv-regenerated/Helpers.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/modular-power/muldiv-regenerated/Helpers.generated.dfy": [],
+    "formal/source/operations/occurrence-index/Connection.dfy": [
+      {
+        "path": "formal/source/operations/occurrence-index/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/occurrence-index/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/occurrence-index/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/occurrence-index/Model.dfy": [
+      {
+        "path": "formal/source/operations/word-match/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/parse-units/Connection.dfy": [
+      {
+        "path": "formal/source/operations/parse-units/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/parse-units/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/parse-units/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/parse-units/Model.dfy": [
+      {
+        "path": "formal/source/operations/decimal-units/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/raw-call/Connection.dfy": [
+      {
+        "path": "formal/source/operations/raw-call/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/raw-call/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/raw-call/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/raw-call/Model.dfy": [],
+    "formal/source/operations/scalars/Connection.dfy": [
+      {
+        "path": "formal/source/operations/scalars/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/scalars/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/scalars/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/scalars/Model.dfy": [
+      {
+        "path": "formal/foundations/EvmScalarValues.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/scaled-power/Connection.dfy": [
+      {
+        "path": "formal/source/operations/scaled-power/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/scaled-power/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/scaled-power/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/scaled-power/Model.dfy": [
+      {
+        "path": "formal/source/operations/full-mul-div/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/scaled-power/muldiv-regenerated/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/scaled-power/muldiv-regenerated/Memory.dfy",
+        "exists": false
+      },
+      {
+        "path": "formal/source/operations/scaled-power/muldiv-regenerated/Helpers.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/scaled-power/muldiv-regenerated/Helpers.generated.dfy": [],
+    "formal/source/operations/signed-mod/Reference.dfy": [
+      {
+        "path": "formal/source/operations/signed-mod/SignedMod.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/signed-mod/SignedMod.dfy": [],
+    "formal/source/operations/tuple-encode/Connection.dfy": [
+      {
+        "path": "formal/source/operations/tuple-encode/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/tuple-encode/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/tuple-encode/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/tuple-encode/Model.dfy": [
+      {
+        "path": "formal/source/abi/construction/Endpoints.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/tuple-encode/compiler/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/tuple-encode/compiler/Memory.dfy",
+        "exists": false
+      },
+      {
+        "path": "formal/source/operations/tuple-encode/compiler/Helpers.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/tuple-encode/compiler/Helpers.generated.dfy": [],
+    "formal/source/operations/utf8/Connection.dfy": [
+      {
+        "path": "formal/source/operations/utf8/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/utf8/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/utf8/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/utf8/Model.dfy": [
+      {
+        "path": "formal/source/operations/byte-bounds/Connection.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/word-match/Connection.dfy": [
+      {
+        "path": "formal/source/operations/word-match/Control.generated.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/word-match/Control.generated.dfy": [
+      {
+        "path": "formal/source/operations/word-match/Model.dfy",
+        "exists": true
+      }
+    ],
+    "formal/source/operations/word-match/Model.dfy": []
   }
 }

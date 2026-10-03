@@ -23,3 +23,9 @@ Bytecode evidence additionally needs an exact-runtime bridge and its own review.
 No acceptance mechanism is implemented here yet; adding mappings never upgrades
 public evidence labels. Shared foundation lemmas are dependencies of claim proofs
 and do not introduce public claims.
+
+DafnyEVM adoption preserves the exact public ledger and mapping inventory through
+`migrations/dafnyevm.json`. A proved replacement equation preserves a source model's
+logical meaning; it does not upgrade public evidence. Native adoption, source
+correspondence, fault tests, conditional helper execution and deployed/runtime
+correctness remain separate evidence types.

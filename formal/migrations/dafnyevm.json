@@ -1,0 +1,736 @@
+{
+  "schemaVersion": 1,
+  "baselineCommit": "2ab889bb6c5532a1ba7fff03f2d61a1f35c7dac9",
+  "publicLedgerSha256": "66cab17609e04fad5dbf2ddc9b442888869ecf4489f898e74cc25d3610d44126",
+  "publicClaimsSha256": "fc6d711f9b94d57e21077aa6dd19cc50d31bd9f218c6654992fb333c3d21cdbc",
+  "files": [
+    {
+      "file": "formal/source/assertions/constraints/Model.dfy",
+      "originalSha256": "67905d6c00c411f4b04ed6343d06d55ce43ca2088a602b1651b04e4f0a40ddb8",
+      "originalDeclarations": {
+        "Byte": {
+          "kind": "type",
+          "interface": "type Byte = x: nat | x < 256 witness 0",
+          "fullSha256": "beda7319f07609bcba15ca48269b1527e6684efd5c0766f6bb119b233604b2fc"
+        },
+        "Word": {
+          "kind": "type",
+          "interface": "type Word = x: nat | x < 0x10000000000000000000000000000000000000000000000000000000000000000 witness 0",
+          "fullSha256": "2453ed4125882c119e7831e843b85f92841107f190d558ef4ce06da42f7c54be"
+        },
+        "Kind": {
+          "kind": "datatype",
+          "interface": "datatype Kind = EQ | GTE | LTE | IN | GTE_SIGNED | LTE_SIGNED | OR | SKIP | IN_SIGNED",
+          "fullSha256": "50e163807ad4807f1452b48159d3bc5d4c316d38f31ce18bab8d896f8c2b9292"
+        },
+        "Constraint": {
+          "kind": "datatype",
+          "interface": "datatype Constraint = C(kind: Kind, data: seq<Byte>)\n  // The Solidity ABI decoder is an explicit environmental input. It may reject\n  // or return any finite decoded list; no canonical-encoding assumption is made.",
+          "fullSha256": "bed6cb35d4bef797b573c7f252fead2cdd4aa68871bb71306a10ef33c7a16f47"
+        },
+        "Decoded": {
+          "kind": "datatype",
+          "interface": "datatype Decoded = Rejected | Leaves(items: seq<Constraint>)",
+          "fullSha256": "065fd147ed015b9174f6d33814cf7a96e8373871c6834181897b1b19e4f58702"
+        },
+        "Verdict": {
+          "kind": "datatype",
+          "interface": "datatype Verdict = Yes | No | BadData(length: nat) | BadRange | BadOr | DecodeFailure",
+          "fullSha256": "7ad81f0eef2bb52c21ee9f94edb3c1703db989129958d247480b692945d6b576"
+        },
+        "Result": {
+          "kind": "datatype",
+          "interface": "datatype Result = Success | Bounds(words: nat, length: nat)\n                  | Failure(index: nat, constraint: Constraint, actual: Word, reason: Verdict)",
+          "fullSha256": "e3923e4af27c93ae4e2f2605b1c76275c1d158e3931837aaa8d5c89a9eb5da9b"
+        },
+        "Read": {
+          "kind": "function",
+          "interface": "opaque function Read(bytes: seq<Byte>): Word\n    decreases |bytes|",
+          "fullSha256": "c90679ecdb90f27646edc911b59f44646acb2010852d169ffca96538bf4138e0"
+        },
+        "Signed": {
+          "kind": "function",
+          "interface": "function Signed(w: Word): int",
+          "fullSha256": "d96e8a243e408113518ae19baff8b894ad0b3b649dbb55cb20c4f755c66d9ddd"
+        },
+        "Width": {
+          "kind": "function",
+          "interface": "function Width(k: Kind): nat",
+          "fullSha256": "c99fd59af3b1c95df774fa195802cd0ea24a3944ca0a1943fcb90408908e5d58"
+        },
+        "Holds": {
+          "kind": "function",
+          "interface": "function Holds(k: Kind, x: Word, lo: Word, hi: Word): bool\n    requires k != OR",
+          "fullSha256": "c7f70532d4dc1f5e4af8ac14f6bd36df5a5e2679efd37d363cf7c842ab26e578"
+        },
+        "Leaf": {
+          "kind": "function",
+          "interface": "function Leaf(x: Word, c: Constraint): Verdict\n    requires c.kind != OR",
+          "fullSha256": "754a51e86a94ebc30a98b1e23b6efa92a14b098bafe07cde04c6e46aa77a9d19"
+        },
+        "Alternatives": {
+          "kind": "function",
+          "interface": "function Alternatives(x: Word, cs: seq<Constraint>, start: nat): Verdict\n    requires start <= |cs| && (forall c <- cs :: c.kind != OR)\n    decreases |cs|-start",
+          "fullSha256": "508faf2cfae5dec8185531d3ba323d88aee3e821ed3eaf0dce0bdde70164519c"
+        },
+        "Judge": {
+          "kind": "function",
+          "interface": "function Judge(x: Word, c: Constraint, decode: seq<Byte> -> Decoded): Verdict",
+          "fullSha256": "59cc41d89478e251d94950931c37654eb5faa404658c867ba52cab27194f4a32"
+        },
+        "Scan": {
+          "kind": "function",
+          "interface": "function Scan(cs: seq<Constraint>, data: seq<Byte>, decode: seq<Byte> -> Decoded, start: nat): Result\n    requires start <= |cs| <= |data|/32\n    decreases |cs|-start",
+          "fullSha256": "fe6e55fbe60a215329f5fa34eb5aa65fa07fa9cade356745908a1a8805d9e7ab"
+        },
+        "Validate": {
+          "kind": "function",
+          "interface": "function Validate(cs: seq<Constraint>, data: seq<Byte>, decode: seq<Byte> -> Decoded): Result",
+          "fullSha256": "a9b9e629f1dd951adf93c32b3d5c17452e1e2071ed4a357b1eb688382a65f7c1"
+        },
+        "FirstFailure": {
+          "kind": "lemma",
+          "interface": "lemma FirstFailure(cs: seq<Constraint>, data: seq<Byte>, decode: seq<Byte> -> Decoded, start: nat)\n    requires start <= |cs| <= |data|/32\n    ensures Scan(cs,data,decode,start).Success? <==>\n            (forall i :: start <= i < |cs| ==> Judge(Read(data[32*i..32*i+32]),cs[i],decode) == Yes)\n    ensures Scan(cs,data,decode,start).Failure? ==>\n              start <= Scan(cs,data,decode,start).index < |cs| &&\n              (forall i :: start <= i < Scan(cs,data,decode,start).index ==>\n                             Judge(Read(data[32*i..32*i+32]),cs[i],decode) == Yes)\n    decreases |cs|-start",
+          "fullSha256": "2ca0a58334d902ba047ae6cd6bb1fc5eab03e10f1e3fe768f0cad0c63ff49bde"
+        },
+        "SignedBounds": {
+          "kind": "lemma",
+          "interface": "lemma SignedBounds(w: Word)\n    ensures -0x8000000000000000000000000000000000000000000000000000000000000000 <= Signed(w)\n    ensures Signed(w) < 0x8000000000000000000000000000000000000000000000000000000000000000",
+          "fullSha256": "f704ee623e34c3155f66361d18bd7b99d7a8e245150361b7b2774c3870ca6e1c"
+        },
+        "Context": {
+          "kind": "datatype",
+          "interface": "datatype Context = Context(assertion: seq<Byte>, entry: nat, param: nat)",
+          "fullSha256": "4472ab066c02163d91971d0583d6e5b9ca04fec55e069d9bd36878231bd17e46"
+        },
+        "Error": {
+          "kind": "datatype",
+          "interface": "datatype Error = ReturnDataOutOfBounds(words: nat, length: nat)\n                 | ConstraintFailed(context: Context, index: nat, kind: Kind, actual: Word, reference: seq<Byte>)\n                 | InvalidConstraintData(entry: nat, param: nat, index: nat, length: nat)\n                 | InvalidConstraintRange(entry: nat, param: nat, index: nat)\n                 | InvalidOrConstraint(entry: nat, param: nat, index: nat)\n                 | BareRevert",
+          "fullSha256": "3773275fe5a0b0d887f821ecbc440aec785173aa182f9c3a71c2a62e7adfb724"
+        },
+        "Execution": {
+          "kind": "datatype",
+          "interface": "datatype Execution = Accepted | Reverted(error: Error)",
+          "fullSha256": "cdae2538de0d7c16d50fc364be172d08184494e758d1ebb36f151424039ae03a"
+        },
+        "Execute": {
+          "kind": "function",
+          "interface": "function Execute(r: Result, context: Context): Execution",
+          "fullSha256": "02c5edf1519738eaeeb04b8dae5cdfeec983b026ebb5c49f663ac6f12ac7fabc"
+        },
+        "FailureFields": {
+          "kind": "lemma",
+          "interface": "lemma FailureFields(cs: seq<Constraint>, data: seq<Byte>, decode: seq<Byte> -> Decoded, start: nat)\n    requires start <= |cs| <= |data|/32\n    ensures Scan(cs,data,decode,start).Failure? ==>\n              Scan(cs,data,decode,start).reason != Yes &&\n              start <= Scan(cs,data,decode,start).index < |cs| &&\n              Scan(cs,data,decode,start).constraint == cs[Scan(cs,data,decode,start).index] &&\n              Scan(cs,data,decode,start).actual == Read(data[32*Scan(cs,data,decode,start).index..32*Scan(cs,data,decode,start).index+32]) &&\n              Scan(cs,data,decode,start).reason == Judge(Scan(cs,data,decode,start).actual,Scan(cs,data,decode,start).constraint,decode)\n    decreases |cs|-start",
+          "fullSha256": "17a5938350e046d4425ea61a5ba57b164e37b04cf96bfbdd33933bbd76b6575f"
+        },
+        "AlternativeFirstStop": {
+          "kind": "lemma",
+          "interface": "lemma AlternativeFirstStop(x: Word, cs: seq<Constraint>, start: nat, stop: nat)\n    requires start <= stop < |cs| && (forall c <- cs :: c.kind != OR)\n    requires forall j :: start <= j < stop ==> Leaf(x,cs[j]) == No\n    requires Leaf(x,cs[stop]) != No\n    ensures Alternatives(x,cs,start) == Leaf(x,cs[stop])\n    decreases stop-start",
+          "fullSha256": "6b86f0525d0ba53378d3cf9cdfbb30a1f18d1e1b5690f895a0fa2ae586bd3fa2"
+        },
+        "StructuralRejection": {
+          "kind": "lemma",
+          "interface": "lemma StructuralRejection(x: Word, c: Constraint, decode: seq<Byte> -> Decoded)\n    requires c.kind == OR && decode(c.data).Leaves?\n    requires |decode(c.data).items| == 0 || (exists leaf <- decode(c.data).items :: leaf.kind == OR)\n    ensures Judge(x,c,decode) == BadOr",
+          "fullSha256": "0b45b685991255a5af25fbdaf712d417fcab98dc7fe7d812f3fa0556eab7f5f8"
+        },
+        "WordWindow": {
+          "kind": "lemma",
+          "interface": "lemma WordWindow(length: nat, count: nat, i: nat)\n    requires length < 0x10000000000000000000000000000000000000000000000000000000000000000\n    requires i < count <= length/32\n    ensures 32*i+32 <= length\n    ensures i+1 <= count < 0x10000000000000000000000000000000000000000000000000000000000000000\n    ensures length/32 < 0x8000000000000000000000000000000000000000000000000000000000000000",
+          "fullSha256": "f1e792b49f5e5190396252c36514d90f47bd87342da8fd2bc8c53738feabd3ec"
+        }
+      },
+      "replacementSha256": "b8496115c0578960b322ad24b051945ebdfacfc822e7eb392719794f3fb67961",
+      "replacements": {
+        "Read": "formal/bridges/dafnyevm/SourceRefinement.dfy::ConstraintRead",
+        "Signed": "formal/bridges/dafnyevm/SourceRefinement.dfy::ConstraintSigned"
+      }
+    },
+    {
+      "file": "formal/source/assertions/resolution/Words.dfy",
+      "originalSha256": "daf1ffcd4c0003b1ecdf888d5a6e3978d1f5939500c7ffded7323d38b236b5f5",
+      "originalDeclarations": {
+        "Limit": {
+          "kind": "function",
+          "interface": "function Limit(): nat",
+          "fullSha256": "06caa1d2c890e0324d3736cde68f34cb71bfefa0233cdabc4513fe080b5d3edf"
+        },
+        "AddressLimit": {
+          "kind": "function",
+          "interface": "function AddressLimit(): nat",
+          "fullSha256": "c44c7163b3f9f356bbca9815d3001675a3350181528edb8dd29e487bd2802013"
+        },
+        "PowerConstants": {
+          "kind": "lemma",
+          "interface": "lemma {:fuel Frames.Pow256, 34} PowerConstants()\n    ensures Frames.Pow256(32) == Limit()\n    ensures Frames.Pow256(20) == AddressLimit()",
+          "fullSha256": "dd071e1d7ecd0c94e450aa3d023aeecf51bbe84acc2d4c2b74ead267a35bc46b"
+        },
+        "PowerMonotone": {
+          "kind": "lemma",
+          "interface": "lemma PowerMonotone(a: nat, b: nat)\n    requires a <= b\n    ensures Frames.Pow256(a) <= Frames.Pow256(b)\n    decreases b-a",
+          "fullSha256": "3c07dbfe3d04fe3f767b5f8c48a8709c767b89f355b724cb5f17c20a0277791b"
+        },
+        "ReadBridge": {
+          "kind": "lemma",
+          "interface": "lemma ReadBridge(data: seq<Byte>)\n    requires |data| <= 32\n    ensures Read(data) == Frames.ReadNat(data)\n    ensures Read(data) < Frames.Pow256(|data|)\n    decreases |data|",
+          "fullSha256": "2ab6ea0cc02b37f063334472d25b471934c111d9552be9f300a76b84a4888c64"
+        },
+        "EncodeWord": {
+          "kind": "function",
+          "interface": "function EncodeWord(w: Word): seq<Byte>\n    ensures |EncodeWord(w)| == 32",
+          "fullSha256": "9e70d4afd6d1ce6f3accddf7736848fe369caf6a44c7d2bae93d8fb0605603fd"
+        },
+        "EncodedWord": {
+          "kind": "lemma",
+          "interface": "lemma EncodedWord(w: Word)\n    ensures Read(EncodeWord(w)) == w\n    ensures |EncodeWord(w)| == 32",
+          "fullSha256": "4e042d0626a3684c6c675d1c99473fc667b85bd59aa9f651f932e461db9746e5"
+        },
+        "PackedAddress": {
+          "kind": "function",
+          "interface": "function PackedAddress(data: seq<Byte>): nat\n    requires |data| == 20",
+          "fullSha256": "95198e988e9ab1567d97cefea4b934e0df5c0d97d713745203f4fdb33655f84d"
+        },
+        "AddressFits": {
+          "kind": "lemma",
+          "interface": "lemma AddressFits(data: seq<Byte>)\n    requires |data| == 20\n    ensures PackedAddress(data) < AddressLimit()",
+          "fullSha256": "c8b7983b022e657ef0bc95f2bb393d5c80ac7a6e7b092a1de16316c4a2dc64fd"
+        }
+      },
+      "replacementSha256": "69623ce6592d6ccf8a7d25424877abb570a28da3ab0f544fdff8f3e6454b29e3",
+      "replacements": {
+        "EncodeWord": "formal/bridges/dafnyevm/SourceRefinement.dfy::SerializedWord",
+        "EncodedWord": "formal/bridges/dafnyevm/SourceRefinement.dfy::SerializedWord"
+      }
+    },
+    {
+      "file": "formal/foundations/SourceSequenceMemoryV1.dfy",
+      "originalSha256": "368897bc49d5826c5e60df858cfee7009d0a7ccd82570daef148ac861ee0cc38",
+      "originalDeclarations": {
+        "Replace": {
+          "kind": "function",
+          "interface": "function Replace<T>(memory: seq<T>, address: nat, data: seq<T>): seq<T>\n    requires address+|data| <= |memory|\n    ensures |Replace(memory,address,data)| == |memory|",
+          "fullSha256": "c082351e3d198cc56267d9917eb979700d375860b015291d0a6af2f81d1a3c71"
+        },
+        "NestedSlice": {
+          "kind": "lemma",
+          "interface": "lemma NestedSlice<T>(memory: seq<T>,lo: nat,hi: nat,a: nat,b: nat)\n    requires lo <= hi <= |memory| && a <= b <= hi-lo\n    ensures memory[lo..hi][a..b] == memory[lo+a..lo+b]",
+          "fullSha256": "9dabdb4c157801489ffd0d25d8f333a0795b5c990a923bf55596b7d16f8ad112"
+        },
+        "Outside": {
+          "kind": "lemma",
+          "interface": "lemma Outside<T>(memory: seq<T>,address: nat,data: seq<T>,lo: nat,hi: nat)\n    requires address+|data| <= |memory| && lo <= hi <= |memory|\n    requires hi <= address || address+|data| <= lo\n    ensures Replace(memory,address,data)[lo..hi] == memory[lo..hi]",
+          "fullSha256": "07b1cb0241789263ed11ae5681190037a4abb3732065030bd24abc0c626ab302"
+        }
+      },
+      "replacementSha256": "94bdbaeddc8b0d96a9edfc4672554ba625c6c9abf80f27006cee0905dcd011c6",
+      "replacements": {
+        "Replace": "formal/bridges/dafnyevm/SourceRefinement.dfy::SequenceCopy"
+      }
+    },
+    {
+      "file": "formal/source/operations/scalars/Model.dfy",
+      "originalSha256": "79f96caa06c00019b435820e188d3a5ca4dcd66bf5e0c1e7957a8aae7b561520",
+      "originalDeclarations": {
+        "Mod": {
+          "kind": "const",
+          "interface": "const Mod: int := 0x10000000000000000000000000000000000000000000000000000000000000000",
+          "fullSha256": "58ef7000b1ec01df5a6599216c821866347cd5fbbb8f8b71e22dee6142359b28"
+        },
+        "Half": {
+          "kind": "const",
+          "interface": "const Half: int := 0x8000000000000000000000000000000000000000000000000000000000000000",
+          "fullSha256": "d58e143cffe4050fbdf342bdf2f035423da77e315792e4c73886e9e6320824b3"
+        },
+        "Low": {
+          "kind": "const",
+          "interface": "const Low: int := -Half",
+          "fullSha256": "0a46e61cca0907cb9703efe869dceac6bdd5c3ee1211bb7729b6f67bf87e9406"
+        },
+        "High": {
+          "kind": "const",
+          "interface": "const High: int := Half - 1",
+          "fullSha256": "be4c24f3622df2da197aad0d95d29c291124d55c891799153cf7a7afa20ed9ab"
+        },
+        "Outcome": {
+          "kind": "datatype",
+          "interface": "datatype Outcome = Value(value: int) | Panic(code: int)",
+          "fullSha256": "60c32df036a9b9e16fdb3d99df124accaf5b60c935c6276a63248ac21242c479"
+        },
+        "Word": {
+          "kind": "predicate",
+          "interface": "predicate Word(x: int)",
+          "fullSha256": "56267ff42ca47bd016ba22a9ddb9076db3e185b20a5e21d446ec664cce8d06cc"
+        },
+        "Signed": {
+          "kind": "predicate",
+          "interface": "predicate Signed(x: int)",
+          "fullSha256": "6194ab6837d7b0fa3f173d06492d8bef9e27c16d8316f95b189bd791d11c5b84"
+        },
+        "Abs": {
+          "kind": "function",
+          "interface": "function Abs(x: int): int",
+          "fullSha256": "9bf710c59afb7afeb7028284c3bb9c09f8bd2e204c621a9c8a716b2773783e30"
+        },
+        "Wrap": {
+          "kind": "function",
+          "interface": "function Wrap(x: int): int",
+          "fullSha256": "87d559247fd50ab1c561351040b8dd5e537b0e378fde5576cd2183052a25a54b"
+        },
+        "CheckedU": {
+          "kind": "function",
+          "interface": "function CheckedU(x: int): Outcome",
+          "fullSha256": "26e53d367e95805ffc15d7b0f80c152db6cdd84d519c4861b28a3d3c41088bdf"
+        },
+        "CheckedS": {
+          "kind": "function",
+          "interface": "function CheckedS(x: int): Outcome",
+          "fullSha256": "2fa9062c451ad73e5d4704312b8b795b007f9c850d632c64af59c84bcb5e5727"
+        },
+        "Quotient": {
+          "kind": "function",
+          "interface": "function Quotient(a: int, b: int): int",
+          "fullSha256": "bd4f68e2f7f438da00a89312b3bb9962323e1f0351959e9f78cb4a80d51a285f"
+        },
+        "Remainder": {
+          "kind": "function",
+          "interface": "function Remainder(a: int, b: int): int",
+          "fullSha256": "1cfd2227760a7b312eabfe948a02134b4b964ef21f9307901de4586d90ced300"
+        },
+        "Trunc": {
+          "kind": "function",
+          "interface": "function Trunc(a: int, b: int): int",
+          "fullSha256": "254b60e198e6222537fbbf3341c5b398ea2421656ea2b0d098cd0fdab60807c4"
+        },
+        "Rem": {
+          "kind": "function",
+          "interface": "function Rem(a: int, b: int): int",
+          "fullSha256": "e1590855925d6ed9a782cc6fa789e9176bd74cefb2e52d77c68ccaf70ece0044"
+        },
+        "And": {
+          "kind": "function",
+          "interface": "function And(a: int, b: int): int\n    requires Word(a) && Word(b)\n    ensures Word(And(a,b))",
+          "fullSha256": "8a150a251bee54742150bfb97b5403da8b7a896a0b1ff2f3f97d72080f72ebda"
+        },
+        "Or": {
+          "kind": "function",
+          "interface": "function Or(a: int, b: int): int\n    requires Word(a) && Word(b)\n    ensures Word(Or(a,b))",
+          "fullSha256": "7227365cbacea31b11f02700c2dcaf58786edc0ca4b6d2c4a2148669c3bed3ca"
+        },
+        "Xor": {
+          "kind": "function",
+          "interface": "function Xor(a: int, b: int): int\n    requires Word(a) && Word(b)\n    ensures Word(Xor(a,b))",
+          "fullSha256": "151362187977795927ed515148c5639027c491a7d9910ec6af2ca278ff357224"
+        },
+        "Left": {
+          "kind": "function",
+          "interface": "function Left(a: int, b: int): int\n    requires Word(a) && Word(b)\n    ensures Word(Left(a,b))",
+          "fullSha256": "3a4adfcdf2e62f43b4ff8c097477d74d0c2c705fcf0160c09c02b08660200600"
+        },
+        "Right": {
+          "kind": "function",
+          "interface": "function Right(a: int, b: int): int\n    requires Word(a) && Word(b)\n    ensures Word(Right(a,b))",
+          "fullSha256": "4c45dc12a33028aca540bf7c6e2098428cf8affdd9759e9f4367e14e23dde033"
+        },
+        "ArithmeticRight": {
+          "kind": "function",
+          "interface": "function ArithmeticRight(a: int, b: int): int\n    requires Signed(a) && Word(b)",
+          "fullSha256": "ff4311e2b8d8a60c4658edffd9031904abe103be219a5f95e3d13031125576ff"
+        }
+      },
+      "replacementSha256": "aab23c802619542aebf18e5c7ea5f2c04cc17e522bef2eee90d27d0f4943bdca",
+      "replacements": {
+        "Abs": "formal/bridges/dafnyevm/SourceRefinement.dfy::ScalarDivision",
+        "And": "formal/bridges/dafnyevm/SourceRefinement.dfy::ScalarBits",
+        "Or": "formal/bridges/dafnyevm/SourceRefinement.dfy::ScalarBits",
+        "Rem": "formal/bridges/dafnyevm/SourceRefinement.dfy::ScalarDivision",
+        "Trunc": "formal/bridges/dafnyevm/SourceRefinement.dfy::ScalarDivision",
+        "Xor": "formal/bridges/dafnyevm/SourceRefinement.dfy::ScalarBits"
+      }
+    },
+    {
+      "file": "formal/source/collections/word-memory/Model.dfy",
+      "originalSha256": "47c5a211c3c28737af9f6c62b5091bfb93834ec266920a7e7624fc6b568db6ba",
+      "originalDeclarations": {
+        "Fits": {
+          "kind": "predicate",
+          "interface": "predicate Fits(n: nat)",
+          "fullSha256": "da5363360aecf8eacc0c67e4ced610d5cbf9442c0dec3d5918eeae858d507d82"
+        },
+        "Add": {
+          "kind": "function",
+          "interface": "function Add(a: nat,b: nat): nat",
+          "fullSha256": "2f7cf07d86a08c72f5d94fa33978711b9c6eb31f587da5fb37ec6f109f7eb614"
+        },
+        "Mul": {
+          "kind": "function",
+          "interface": "function Mul(a: nat,b: nat): nat",
+          "fullSha256": "d9550d914e9cb9d7e25ea47991577b0c23ac698087140e79665bf552ecd2763f"
+        },
+        "Load": {
+          "kind": "function",
+          "interface": "function Load(memory: seq<Byte>,address: nat): nat\n    requires address+32 <= |memory|",
+          "fullSha256": "cb40d8b483c49ea83d0ad9166c8fc29f8b7e9a5d7bec67bf2aabf8a09c52dc3c"
+        },
+        "Store": {
+          "kind": "function",
+          "interface": "function Store(memory: seq<Byte>,address: nat,value: nat): seq<Byte>\n    requires address+32 <= |memory|\n    ensures |Store(memory,address,value)| == |memory|",
+          "fullSha256": "4a95242c1f8e40cb5ba8e67ed79e0dab28ffe34e6a7f2aef589c1667a2221cb5"
+        },
+        "Frame": {
+          "kind": "predicate",
+          "interface": "predicate Frame(memory: seq<Byte>,base: nat,payload: seq<Byte>)",
+          "fullSha256": "1a3d39822cfb52261deb4eb62ea8b658fe58b5ad3127b9049d08b41bdfe269b4"
+        },
+        "Words": {
+          "kind": "function",
+          "interface": "function Words(payload: seq<Byte>): seq<nat>",
+          "fullSha256": "ca9e456ef4bf2d5a0111b2cf8716d85fb9a6418b3a67626bcae750954edf44b8"
+        },
+        "Room": {
+          "kind": "predicate",
+          "interface": "predicate Room(memory: seq<Byte>,base: nat,payload: seq<Byte>,index: nat)",
+          "fullSha256": "72194fb1a7b2205db5cca7ea7fa1b06577356c789d9a8f12c0187a996915b5e4"
+        }
+      },
+      "replacementSha256": "5738c0164d1c5cc1410f2b961aafe6146d1abb95085e5b188b88d938c7eccf82",
+      "replacements": {
+        "Add": "formal/bridges/dafnyevm/SourceRefinement.dfy::CollectionArithmetic",
+        "Load": "formal/bridges/dafnyevm/SourceRefinement.dfy::CollectionLoad",
+        "Mul": "formal/bridges/dafnyevm/SourceRefinement.dfy::CollectionArithmetic",
+        "Store": "formal/bridges/dafnyevm/SourceRefinement.dfy::CollectionStore"
+      }
+    },
+    {
+      "file": "formal/source/operations/full-mul-div/Memory.dfy",
+      "originalSha256": "fa793dd9cdcafd53da4117f3e6a2e7f45dc9f10eb142c75a88eb0d9fc6b64207",
+      "originalDeclarations": {
+        "Word": {
+          "kind": "function",
+          "interface": "function Word(value: nat): seq<nat>\n    ensures |Word(value)| == 32",
+          "fullSha256": "bf356b552348b181f81ee88c866587e8d888038ff8dbd4ff951ff9959c2f10dc"
+        },
+        "Store": {
+          "kind": "function",
+          "interface": "function Store(memory: seq<nat>,offset: nat,value: nat): seq<nat>\n    requires offset+32 <= |memory|\n    ensures |Store(memory,offset,value)| == |memory|",
+          "fullSha256": "c18a66c8fb7686c256ca2020f1a39820752bf2f95c9d680929adf2f344d089e7"
+        },
+        "Canonical": {
+          "kind": "function",
+          "interface": "function Canonical(code: nat): seq<nat>",
+          "fullSha256": "5e23a1f8d58a911481d5efa43887032345de74c3589743aded16f94efa85d828"
+        },
+        "LowSelector": {
+          "kind": "lemma",
+          "interface": "lemma LowSelector()\n    ensures Word(0x4e487b71)[28..32] == [78,72,123,113]",
+          "fullSha256": "9e845a34bfaa392c04a0669bc438de1783a6f9c5a3e7e757db606987caa869f6"
+        },
+        "HighSelector": {
+          "kind": "lemma",
+          "interface": "lemma HighSelector()\n    ensures Word(0x4e487b7100000000000000000000000000000000000000000000000000000000)[0..4] == [78,72,123,113]",
+          "fullSha256": "69065668b1465b578ea56c759253e2bf6fb722971b721e94b84e9a6a2297eb95"
+        }
+      },
+      "replacementSha256": "f8358c07dd2164e8a9a252380a89c9016e1d25d5576ba71529aece77ab3f344d",
+      "replacements": {
+        "Store": "formal/bridges/dafnyevm/SourceRefinement.dfy::FullMultiplyStore"
+      }
+    },
+    {
+      "file": "formal/source/operations/modular-power/Memory.dfy",
+      "originalSha256": "0b9649a93af48a9af59a10ba58daae84d14677de6bb733a0a7adb8b2f01ca755",
+      "originalDeclarations": {
+        "Radix": {
+          "kind": "function",
+          "interface": "function Radix(n: nat): nat\n    ensures Radix(n) > 0\n    decreases n",
+          "fullSha256": "09510dd339b493a12575bba62563fae9c816791cbe8a1dd70e1bf7f696550aa2"
+        },
+        "RadixBits": {
+          "kind": "lemma",
+          "interface": "lemma RadixBits(n: nat)\n    ensures Radix(n) == B.Power(8*n)\n    decreases n",
+          "fullSha256": "a0c73464974df108eadde271a4df864fac45cec9dab3628b6f9dd28003aaa762"
+        },
+        "WordRadix": {
+          "kind": "lemma",
+          "interface": "lemma WordRadix()\n    ensures Radix(32) == B.Word",
+          "fullSha256": "2a23c0a5e3509f5aadffa657a2ef0246fd6ce0577134a2c742ec315fb1289164"
+        },
+        "Bytes": {
+          "kind": "predicate",
+          "interface": "predicate Bytes(s: seq<nat>)",
+          "fullSha256": "361d320eae9e88dd4ac1a5039b5ba38df1fd447f6e45399b6a1cad0d343902c4"
+        },
+        "Encode": {
+          "kind": "function",
+          "interface": "function Encode(value: nat,n: nat): seq<nat>\n    ensures |Encode(value,n)| == n && Bytes(Encode(value,n))\n    decreases n",
+          "fullSha256": "3f5ffee0e9d99094520b56b239b52b8bf2d95be1b71518956c601b6edddb8301"
+        },
+        "Pack": {
+          "kind": "function",
+          "interface": "function Pack(s: seq<nat>): nat\n    decreases |s|",
+          "fullSha256": "14c47b87bfb321073d3309178802e94c46b6e2852a71243e55480b53a9b4a8e3"
+        },
+        "RoundTrip": {
+          "kind": "lemma",
+          "interface": "lemma RoundTrip(value: nat,n: nat)\n    requires value < Radix(n)\n    ensures Pack(Encode(value,n)) == value\n    decreases n",
+          "fullSha256": "e60cce7c0e3685fad4e7c0d9cb446426d0a2f5065ceac7cb3033a90513544b80"
+        },
+        "PackBound": {
+          "kind": "lemma",
+          "interface": "lemma PackBound(s: seq<nat>)\n    requires Bytes(s)\n    ensures Pack(s) < Radix(|s|)\n    decreases |s|",
+          "fullSha256": "313cea4586500e7528f734a3a78f5fe9d5b524564dc0c9a41291ad904da365c4"
+        },
+        "Word": {
+          "kind": "function",
+          "interface": "function Word(value: nat): seq<nat>\n    requires value < B.Word\n    ensures |Word(value)| == 32 && Bytes(Word(value))",
+          "fullSha256": "7276909fd23e7879885acb7afbd78af0a48c597a32b3901f043d6dd5684e1e5b"
+        },
+        "WordRoundTrip": {
+          "kind": "lemma",
+          "interface": "lemma WordRoundTrip(value: nat)\n    requires value < B.Word\n    ensures Pack(Word(value)) == value",
+          "fullSha256": "d7a22123ae72ac4d5e113396ecaebff9f369bc94fd3cbd1bd073a684fefae37c"
+        },
+        "Store": {
+          "kind": "function",
+          "interface": "function Store(memory: seq<nat>,offset: nat,value: nat): seq<nat>\n    requires Bytes(memory) && value < B.Word && offset+32 <= |memory|\n    ensures |Store(memory,offset,value)| == |memory| && Bytes(Store(memory,offset,value))",
+          "fullSha256": "200914617da82f0503ba626b94960e87b78126297d8575ec1ad4b6ad46b7df8b"
+        },
+        "Load": {
+          "kind": "function",
+          "interface": "function Load(memory: seq<nat>,offset: nat): nat\n    requires Bytes(memory) && offset+32 <= |memory|\n    ensures Load(memory,offset) < B.Word",
+          "fullSha256": "933918034710944901d6d8b0ce9d3fcf75e4919f075b020816bda1773bb218e1"
+        },
+        "CopyReply": {
+          "kind": "function",
+          "interface": "function CopyReply(memory: seq<nat>,offset: nat,data: seq<nat>): seq<nat>\n    requires Bytes(memory) && Bytes(data) && offset+32 <= |memory|\n    ensures |CopyReply(memory,offset,data)| == |memory| && Bytes(CopyReply(memory,offset,data))",
+          "fullSha256": "85aad57d839e3c79a1722812913733914296cfa2270007b7c02e118f587432e5"
+        },
+        "ReplyLoad": {
+          "kind": "lemma",
+          "interface": "lemma ReplyLoad(memory: seq<nat>,offset: nat,value: nat)\n    requires Bytes(memory) && offset+32 <= |memory| && value < B.Word\n    ensures Load(CopyReply(memory,offset,Word(value)),offset) == value",
+          "fullSha256": "6b6e91690a73d133f3d309194d552578fc22c71eb81ba5eeed0525ec09c307e3"
+        },
+        "Heap": {
+          "kind": "predicate",
+          "interface": "predicate Heap(memory: seq<nat>,ptr: nat)",
+          "fullSha256": "c5feb39a1e46eb025056fe3d59bd7fa2c89bf8edf52e4b278877923ca93e15e1"
+        },
+        "HeapPointer": {
+          "kind": "lemma",
+          "interface": "lemma HeapPointer(memory: seq<nat>,ptr: nat)\n    requires Heap(memory,ptr)\n    ensures Load(memory,64) == ptr",
+          "fullSha256": "3df6b8bb6a443442fd780b5aed5cf07bd981d4eb1e22634e6b23911ab4e7a448"
+        },
+        "Request": {
+          "kind": "function",
+          "interface": "function Request(base: nat,exponent: nat,modulus: nat): seq<nat>\n    requires base < B.Word && exponent < B.Word && modulus < B.Word\n    ensures |Request(base,exponent,modulus)| == 192",
+          "fullSha256": "b85dfc9596941ace9fcbef4cffcd2d32878a36683f93772be9c64d222db60303"
+        }
+      },
+      "replacementSha256": "446986b8707aee26e003c3fa122a198c19e5e6f511b325370ed4cd37c14d356f",
+      "replacements": {
+        "CopyReply": "formal/bridges/dafnyevm/SourceRefinement.dfy::ModularReply",
+        "Store": "formal/bridges/dafnyevm/SourceRefinement.dfy::ModularStore"
+      }
+    }
+  ],
+  "scope": "Logical interfaces preserved; original bodies retained by baseline commit. Native, generation, source and bytecode acceptance remain separate.",
+  "affectedPackages": [
+    "abi",
+    "constraints",
+    "core-raw",
+    "dafnyevm-adoption",
+    "dafnyevm-foundations",
+    "dafnyevm-helpers",
+    "dafnyevm-kernel",
+    "dafnyevm-source-closure-1",
+    "original-abi-construction",
+    "original-abi-outcomes",
+    "original-arguments",
+    "original-collections-admission",
+    "original-collections-bound-call",
+    "original-collections-call-results",
+    "original-collections-codec-errors",
+    "original-collections-codec-state",
+    "original-collections-constants",
+    "original-collections-iteration",
+    "original-collections-iteration-chain",
+    "original-collections-prepared-entry",
+    "original-collections-repeated-call",
+    "original-collections-sort-admission",
+    "original-collections-sort-comparator",
+    "original-collections-validation",
+    "original-collections-value-codec",
+    "original-collections-value-entry",
+    "original-collections-value-pairs",
+    "original-collections-value-search",
+    "original-collections-value-sort-entry",
+    "original-collections-value-sort-execution",
+    "original-collections-value-structure",
+    "original-collections-value-unique",
+    "original-collections-wire",
+    "original-collections-word-apply",
+    "original-collections-word-call",
+    "original-collections-word-fold-entry",
+    "original-collections-word-fold-loop",
+    "original-collections-word-layout",
+    "original-collections-word-memory",
+    "original-collections-word-scans",
+    "original-collections-word-sort",
+    "original-collections-word-unique",
+    "original-collections-word-windows",
+    "original-composition",
+    "original-constraints",
+    "original-control",
+    "original-core",
+    "original-core-completion",
+    "original-core-frame-tree",
+    "original-core-public-boundary",
+    "original-core-raw-tree",
+    "original-core-recursive",
+    "original-core-serialization",
+    "original-expressions-admission-errors",
+    "original-expressions-cache",
+    "original-expressions-calls",
+    "original-expressions-codec-errors",
+    "original-expressions-compound",
+    "original-expressions-context",
+    "original-expressions-encoded",
+    "original-expressions-entry",
+    "original-expressions-evaluation",
+    "original-expressions-execution",
+    "original-expressions-frames",
+    "original-expressions-guard-receipts",
+    "original-expressions-guarded",
+    "original-expressions-oracle",
+    "original-expressions-oracle-stability",
+    "original-expressions-primitives",
+    "original-expressions-probe-input",
+    "original-expressions-public",
+    "original-expressions-receipts",
+    "original-expressions-recursive",
+    "original-expressions-rejections",
+    "original-expressions-requests",
+    "original-expressions-resolve",
+    "original-expressions-scalars",
+    "original-expressions-self-call",
+    "original-expressions-trace-bounds",
+    "original-expressions-tree",
+    "original-expressions-validation",
+    "original-navigation",
+    "original-operations-fixed-point",
+    "original-operations-fixed-point-accuracy",
+    "original-operations-full-mul-div",
+    "original-operations-modular-power",
+    "original-operations-scalars",
+    "original-operations-scaled-power",
+    "original-operations-tuple-encode",
+    "original-resolution",
+    "word-memory",
+    "word-windows"
+  ],
+  "equivalenceTheorems": [
+    {
+      "declaration": "formal/bridges/dafnyevm/FoundationRefinement.dfy::ReadPreserved",
+      "fullSha256": "e4e94d96cd6ae4f915467eb491c1de0b51be31953bc7706e2fe4fa3e2b3ff11d"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/FoundationRefinement.dfy::SignedPreserved",
+      "fullSha256": "10519fa10733fedd7ca388f9be68cdaa98a1446b9a72cc816b2167533895514f"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/FoundationRefinement.dfy::TruncPreserved",
+      "fullSha256": "9f28225ec5386af1b7d301eea9959ebbd831cca9e331e9152eb3dda5c51e2099"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/FoundationRefinement.dfy::BitwisePreserved",
+      "fullSha256": "8429387d4453aba5910753ec190b86768feb8c67c5e594929a8963024a886719"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/FoundationRefinement.dfy::AddPreserved",
+      "fullSha256": "80243b9ecd1b413db8e5123c556fb92da80535912ccd5b21f515fb7b6f89e251"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/FoundationRefinement.dfy::MulPreserved",
+      "fullSha256": "c2d9b5d58c5dd8d7896c9c941411dce3d2d39631f201c544e1ef5425fe94dbb2"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/FoundationRefinement.dfy::CopyPreserved",
+      "fullSha256": "7de26a539ad944630d7343fe3fe1c23a5ae943d117930ca5a5c0e3ebe0a05abd"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/FoundationRefinement.dfy::StorePreserved",
+      "fullSha256": "1ec09ceeb7bb0f3f1ad67d1a85762af4bfeb41614d97d8b1cc913b43e0b2ef95"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/SourceRefinement.dfy::ConstraintRead",
+      "fullSha256": "71a8d7f2d48d30691894493b24249f31b761e1542791fd17590c98048d70899c"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/SourceRefinement.dfy::ConstraintSigned",
+      "fullSha256": "4564b0d2d7f24daeb6fc2e274c57283d47109bc6e1a6b029b9069ed18f5a1c79"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/SourceRefinement.dfy::SerializedWord",
+      "fullSha256": "a3c99575ec730743f9a4128bf0d238f796b4fce737c0b7ca8c5a553772cedb0b"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/SourceRefinement.dfy::SequenceCopy",
+      "fullSha256": "e5f2c020b078cdda88f20846bfbe174eb317c151caf27a951efda9973335cef0"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/SourceRefinement.dfy::ScalarDivision",
+      "fullSha256": "09b60c4f5e411d86a4a385de3fa70a20c59cb6d77b7790217b2dad71b350e2aa"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/SourceRefinement.dfy::ScalarBits",
+      "fullSha256": "da4a7bacfcc412d43d261a55a1436bd60ebb9e8f93e775a0a42f6ed1e8a6b6fa"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/SourceRefinement.dfy::CollectionArithmetic",
+      "fullSha256": "d45c369ca356dd1ce1321d1366257309cc88700a7a7a8e43c5cd155f323eb663"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/SourceRefinement.dfy::CollectionLoad",
+      "fullSha256": "ecc7d7d514e13e86ff11c12f9e5e195465f0edecc4fc4016e57f8b18f3a42738"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/SourceRefinement.dfy::CollectionStore",
+      "fullSha256": "e9be1235e0d936a88702ea7e01c879965b1bad035b5da995a057190cf34aab9e"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/SourceRefinement.dfy::FullMultiplyStore",
+      "fullSha256": "5f3451cb58d8435a0f35e8c2514cbd7683634b712d5571c7c57363135427fd6e"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/SourceRefinement.dfy::ModularStore",
+      "fullSha256": "2e11586072b2cd4722a3aca0d1588170be72408ae5954a834130fab75b0a75a6"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/SourceRefinement.dfy::ModularReply",
+      "fullSha256": "753fd3ac983c865adc346cc9502321d740a0e221b2153138f4ac2b3f14f51edc"
+    },
+    {
+      "declaration": "formal/bridges/dafnyevm/MemoryProjection.dfy::CopyWindow",
+      "fullSha256": "b0b433afaed729453b20b14411f2fbcd04259c1149f9a11842c2f13458e8a3d4"
+    },
+    {
+      "declaration": "formal/foundations/EvmEncoding.dfy::NatBytesModulo",
+      "fullSha256": "3a896fd29dff955a02eb5be7736136e45eac5718dd3b56312ea67ed7902b476a"
+    },
+    {
+      "declaration": "formal/foundations/EvmEncoding.dfy::ReadSame",
+      "fullSha256": "388dfc5f765d157325c1e93bc5acdf90cb4f2a23c591574ecc853bba14cade8a"
+    },
+    {
+      "declaration": "formal/foundations/EvmEncoding.dfy::WordSame",
+      "fullSha256": "0d89d5dc9d3af58dd9cc1561ac38eef5fa34174cd7596b80741adae9360e2cea"
+    },
+    {
+      "declaration": "formal/foundations/EvmEncoding.dfy::WordSameWrapped",
+      "fullSha256": "6ec4f184b804bddd3a091d9a8c32971912a075091a1b51cd064bc5409c874eac"
+    },
+    {
+      "declaration": "formal/foundations/EvmEncoding.dfy::LoadSame",
+      "fullSha256": "0ee1f484a8bbed724046697be38f64241dd4b3572aa1d8d11a0270e4e2f18d4b"
+    }
+  ],
+  "cleanNativePackage": "dafnyevm-adoption"
+}

@@ -1,0 +1,42 @@
+{
+  "scope": "Exact current compiler runtime; helper-entry refinements with explicit caller premises. No public-entry or deployed-runtime credit.",
+  "fork": "Cancun",
+  "compilerSha256": "c8d35afdddc3cd2743ee88b8f25e0fecd16e2bdd5f2120f37e52cd9cc45ae0e6",
+  "compilerVersion": "0.8.36",
+  "sources": {
+    "contracts/Assertions.sol": "46b8e161fa27c68bdca05c479ccec7891adcc91e48fb869612fb0775c876b508",
+    "contracts/lib/AbiCodec.sol": "2608528ad5c77422f6ae79f437f360e197d45171a6964b3f32d9940caa9cdf88",
+    "contracts/lib/ERC8211.sol": "cc6cfb97bb1ca7e76b7c64b0c4ceff6c4b1d7c4d74ff453a30ccbecf98657705"
+  },
+  "settings": {
+    "evmVersion": "cancun",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "remappings": [
+      "project/:@openzeppelin/contracts/=npm/@openzeppelin/contracts@5.6.1/"
+    ],
+    "outputSelection": {
+      "project/contracts/Assertions.sol": {
+        "Assertions": [
+          "evm.deployedBytecode.object"
+        ]
+      }
+    }
+  },
+  "runtimeSha256": "ecd2c7d66568b6f8acd9ab7360688062fd80a6bf05897edd76c73aea7a47103d",
+  "runtimeBytes": 20049,
+  "windows": [
+    {
+      "start": 3975,
+      "end": 4084,
+      "hex": "5b5f602082511015610fb7578151604051636ae5c21b60e11b81525f6004820152602481019190915260440161058f565b506020015190565b5f60a083901c15610fed576040516357bf944b60e01b8152600481018390526024810184905260440161058f565b509091905056"
+    },
+    {
+      "start": 1423,
+      "end": 1432,
+      "hex": "5b60405180910390fd"
+    }
+  ]
+}

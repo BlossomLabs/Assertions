@@ -8,7 +8,7 @@ import tempfile
 from pathlib import Path
 from check import ROOT, LIBRARY, check, digest
 from declarations import declarations
-from generate import CONFIG, format_dependency_path
+from generate import CONFIG, format_dependency_path, generated_path
 
 
 def main():
@@ -39,7 +39,7 @@ def main():
         assert digest(generator.parent/name)==manifest['inputs'][original]
     canonical=ROOT/config['canonical']
     assert digest(canonical)==manifest['inputs'][config['canonical']],'Canonical adapter changed'
-    generated=evidence/'generated'/config['adapter']
+    generated=generated_path(evidence/'generated',config)
     assert declarations(generated)==declarations(canonical),'Canonical declaration mismatch'
     request=json.loads((evidence/'generated/solc-input.json').read_text())
     for name,source in request['sources'].items():
@@ -61,9 +61,12 @@ def main():
             destination=format_dependency_path(replay,config,relative)
             destination.parent.mkdir(parents=True,exist_ok=True)
             destination.write_bytes((evidence/'inputs'/relative).read_bytes())
-        subprocess.run([str(ROOT/'proof-tools/assertions/dafny/dafny'),'format',str(replay/config['adapter'])],capture_output=True,text=True,check=True)
+        adapter=generated_path(replay,config)
+        adapter.parent.mkdir(parents=True,exist_ok=True)
+        adapter.write_bytes((replay/config['adapter']).read_bytes())
+        subprocess.run([str(ROOT/'proof-tools/assertions/dafny/dafny'),'format',str(adapter)],capture_output=True,text=True,check=True)
         assert json.loads((replay/'solc-input.json').read_text())==request,'Generator replay compiler settings mismatch'
-        assert declarations(replay/config['adapter'])==declarations(canonical),'Generator replay declaration mismatch'
+        assert declarations(adapter)==declarations(canonical),'Generator replay declaration mismatch'
         assert json.loads((replay/'mapping.json').read_text())==json.loads((evidence/'generated/mapping.json').read_text()),'Generator replay mapping mismatch'
     receipt={'package':args.package,'status':'independently-reviewed-generation-correspondence',
              'evidence':str(evidence.relative_to(ROOT)) if evidence.is_relative_to(ROOT) else str(evidence),'manifestSha256':digest(evidence/'manifest.json'),

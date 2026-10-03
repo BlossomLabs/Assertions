@@ -1,5 +1,7 @@
+include "../../../foundations/EvmValues.dfy"
 // SPDX-License-Identifier: MIT
 module ConstraintModel {
+  import V = EvmValues
   type Byte = x: nat | x < 256 witness 0
   type Word = x: nat | x < 0x10000000000000000000000000000000000000000000000000000000000000000 witness 0
   datatype Kind = EQ | GTE | LTE | IN | GTE_SIGNED | LTE_SIGNED | OR | SKIP | IN_SIGNED
@@ -13,12 +15,10 @@ module ConstraintModel {
 
   opaque function Read(bytes: seq<Byte>): Word
     decreases |bytes|
-  { if |bytes| == 0 then 0 else (Read(bytes[..|bytes|-1])*256 + bytes[|bytes|-1]) % 0x10000000000000000000000000000000000000000000000000000000000000000 }
+  { V.Read(bytes) }
 
-  function Signed(w: Word): int {
-    if w as nat < 0x8000000000000000000000000000000000000000000000000000000000000000
-    then w as nat else (w as nat) - 0x10000000000000000000000000000000000000000000000000000000000000000
-  }
+  function Signed(w: Word): int
+  { V.Signed(w) }
 
   function Width(k: Kind): nat { if k == SKIP then 0 else if k == IN || k == IN_SIGNED then 64 else 32 }
 

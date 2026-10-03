@@ -72,7 +72,7 @@ The second form routes through the core's [`resolve`](/docs/core/reads), so cons
 
 When you need the *conventional* digest of a single string or bytes value (the `keccak256(value)` the rest of the EVM computes: stored name hashes, Merkle leaves), keep the direct splice from the example above; the payload semantic is exactly right there.
 
-`hashPairSorted(a, b)` hashes the ascending-sorted pair of two words, byte-identical to OpenZeppelin MerkleProof's node combiner, so a `foldWords` over a proof payload with `hashPairSorted` as the lambda and the leaf as the initial accumulator reproduces the root (the crypto module's `@crypto:merkle.verify!` compiles exactly this fold). Order-preserving pair hashing needs no dedicated function: it composes as `hash` over `concat`.
+`hashPairSorted(a, b)` hashes the ascending-sorted pair of two words, byte-identical to OpenZeppelin MerkleProof's node combiner, so a `Words` fold over a proof payload with `hashPairSorted` as the lambda and the leaf as the initial accumulator reproduces the root (the crypto module's `@crypto:merkle.verify!` compiles exactly this fold). Order-preserving pair hashing needs no dedicated function: it composes as `hash` over `concat`.
 
 ## Byte length
 
@@ -116,7 +116,7 @@ Anchored checks compose from `slice` and `hash`: "starts with Curve" is `eq(hash
 
 `toLower(s)` and `toUpper(s)` fold ASCII letters and pass every other byte through verbatim. Multi-byte UTF-8 units have the high bit set, so they are untouched: the folds are ASCII-only and UTF-8 safe (`@str.lower!` / `@str.upper!`). A case-insensitive comparison is a two-node recipe: `toLower` both sides, then `eq` on their hashes.
 
-`charset(s, mask)` returns true when every byte of `s` is a member of the 256-bit character class `mask` (bit `i` set means byte value `i` is allowed), the native single-call form of the `foldBytes(bitSet, All)` recipe. The empty string is vacuously in every set, and the check is byte-level, so multi-byte UTF-8 characters fail any ASCII-only class. EVMcrispr's `@str.charset!` builds the mask from a class spec (`a-z0-9-`) at composition time and compiles to this call; see the [fold recipes](/docs/operators/fold#recipes) for the general per-byte-predicate form.
+`charset(s, mask)` returns true when every byte of `s` is a member of the 256-bit character class `mask` (bit `i` set means byte value `i` is allowed), the native single-call form of the `Bytes` fold with `bitSet` and the `All` exit. The empty string is vacuously in every set, and the check is byte-level, so multi-byte UTF-8 characters fail any ASCII-only class. EVMcrispr's `@str.charset!` builds the mask from a class spec (`a-z0-9-`) at composition time and compiles to this call; see the [fold recipes](/docs/operators/fold#recipes) for the general per-byte-predicate form.
 
 `split(s, delimiter)` returns every segment as a `bytes[]`, including empty leading, trailing and consecutive segments; matches are non-overlapping, and an empty delimiter reverts with `EmptyNeedle`. Where a single segment is all that is needed, the `indexOf`/`slice` pair above is cheaper and is what the compiler emits.
 

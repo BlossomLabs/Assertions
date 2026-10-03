@@ -63,8 +63,13 @@ Every terminal returns its canonical single-value encoding. Static words, fixed 
 
 Validation covers the selected value. Unvisited siblings and the enclosing
 frame's tight offset layout are not checked, so successful navigation does not
-validate the entire returndata. An empty path also skips descriptor validation;
-the operand's own fetch and constraints still have to succeed.
+validate the entire returndata. The descriptor is read the same way: each step
+validates the components it passes and the one it enters, so a malformed
+component on the path reverts with `InvalidTypeDescriptor`, while text after the
+selected component is never read and cannot change the result (a descriptor
+that is an array of tuples is still parsed whole). An empty path skips
+descriptor validation altogether; the operand's own fetch and constraints still
+have to succeed.
 
 ## Raw word extraction
 

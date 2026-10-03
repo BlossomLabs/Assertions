@@ -712,7 +712,17 @@ contract MutationGapsTest is Test {
         uint256[] memory elem = new uint256[](1);
         elem[0] = 36;
         vm.expectRevert(abi.encodeWithSelector(Collections.LambdaOffsetOutOfBounds.selector, uint256(40), uint256(68)));
-        collections.foldRange(0, address(lambdas), template, 40, elem, bytes32(0), Collections.FoldExit.Full);
+        collections.fold(
+            Collections.FoldDomain.Range,
+            0,
+            "",
+            address(lambdas),
+            template,
+            40,
+            elem,
+            bytes32(0),
+            Collections.FoldExit.Full
+        );
     }
 
     /**
@@ -845,6 +855,112 @@ contract MutationGapsTest is Test {
     function test_stringSliceClampsFarNegativeStart() public view {
         assertEq(ops.stringSlice("abc", -4, 3), bytes("abc"));
         assertEq(ops.stringSlice("abc", type(int256).min, 3), bytes("abc"));
+    }
+
+    /**
+     * @dev UTF-8 validation skips ASCII a word at a time. One offending byte
+     *      at every position of strings shorter than a word, exactly one or
+     *      two words long, and just past each boundary is still reported at
+     *      its own offset, and a well-formed two-byte character is accepted
+     *      wherever it falls.
+     */
+    function test_utf8WordSkipFindsEveryPosition() public view {
+        uint8[11] memory lengths = [1, 2, 31, 32, 33, 34, 63, 64, 65, 66, 70];
+        for (uint256 k; k < lengths.length; k++) {
+            uint256 length = lengths[k];
+            for (uint256 i; i < length; i++) {
+                bytes memory s = new bytes(length);
+                for (uint256 j; j < length; j++) {
+                    s[j] = "a";
+                }
+                s[i] = 0xff; // never valid
+                utf8Refused(s, i);
+                s[i] = 0x80; // a continuation byte with no lead
+                utf8Refused(s, i);
+                s[i] = 0xc3; // a lead byte
+                if (i + 1 == length) {
+                    utf8Refused(s, i); // truncated
+                    continue;
+                }
+                utf8Refused(s, i + 1); // followed by ASCII, not a continuation
+                s[i + 1] = 0xa9; // "e" with an acute accent
+                assertEq(ops.stringSlice(s, 0, int256(length)), s);
+                (bool ok, bytes memory out) =
+                    address(ops).staticcall(abi.encodeCall(Operations.stringAt, (s, int256(i))));
+                assertFalse(ok);
+                assertEq(out, abi.encodeWithSelector(Operations.InvalidUtf8.selector, i));
+            }
+        }
+    }
+
+    function utf8Refused(bytes memory s, uint256 at) internal view {
+        (bool ok, bytes memory out) =
+            address(ops).staticcall(abi.encodeCall(Operations.stringSlice, (s, int256(0), int256(s.length))));
+        assertFalse(ok);
+        assertEq(out, abi.encodeWithSelector(Operations.InvalidUtf8.selector, at));
+    }
+
+    /**
+     * @dev foldValues binds the accumulator into slot `first`. A slot declared
+     *      with the INPUT type's text does not excuse an accumulator of
+     *      another type from validation: a two-word accumulator is refused
+     *      for a one-word slot.
+     */
+    function test_foldValuesValidatesAccumulatorAgainstItsOwnSlot() public {
+        bytes[] memory values = new bytes[](1);
+        values[0] = abi.encode(uint256(1));
+        vm.expectRevert(
+            abi.encodeWithSelector(AbiCodec.InvalidComponentLength.selector, uint256(0), uint256(32), uint256(64))
+        );
+        collections.foldValues(
+            "uint256", "(uint256,uint256)", values, abi.encode(uint256(1), uint256(2)), binary(GapLambdas.add.selector)
+        );
+    }
+
+    /**
+     * @dev A fold takes its count from one argument and refuses the other: a
+     *      subject handed to a Range fold, or a count handed to a Bytes or
+     *      Words fold, is not silently ignored
+     */
+    function test_foldRefusesTheArgumentItsDomainDoesNotUse() public {
+        bytes memory template = abi.encodeWithSelector(GapLambdas.add.selector, uint256(0), uint256(0));
+        uint256[] memory at = new uint256[](1);
+        at[0] = 36;
+        Collections.FoldExit full = Collections.FoldExit.Full;
+        vm.expectRevert(abi.encodeWithSelector(Collections.UnusedFoldArgument.selector, Collections.FoldDomain.Range));
+        collections.fold(Collections.FoldDomain.Range, 2, hex"00", address(lambdas), template, 4, at, 0, full);
+        vm.expectRevert(abi.encodeWithSelector(Collections.UnusedFoldArgument.selector, Collections.FoldDomain.Bytes));
+        collections.fold(Collections.FoldDomain.Bytes, 1, hex"00", address(lambdas), template, 4, at, 0, full);
+        vm.expectRevert(abi.encodeWithSelector(Collections.UnusedFoldArgument.selector, Collections.FoldDomain.Words));
+        collections.fold(Collections.FoldDomain.Words, 1, new bytes(32), address(lambdas), template, 4, at, 0, full);
+        // The same folds with only their own argument run: 0 + 1, one zero byte, one zero word.
+        assertEq(
+            uint256(collections.fold(Collections.FoldDomain.Range, 2, "", address(lambdas), template, 4, at, 0, full)),
+            1
+        );
+        assertEq(
+            uint256(
+                collections.fold(Collections.FoldDomain.Bytes, 0, hex"05", address(lambdas), template, 4, at, 0, full)
+            ),
+            5
+        );
+        assertEq(
+            uint256(
+                collections.fold(
+                    Collections.FoldDomain.Words, 0, abi.encode(uint256(9)), address(lambdas), template, 4, at, 0, full
+                )
+            ),
+            9
+        );
+    }
+
+    /**
+     * @dev Case folding touches exactly A-Z or a-z: the first and last letter
+     *      fold, the bytes on either side of each range do not
+     */
+    function test_caseFoldBoundaryLetters() public view {
+        assertEq(ops.toLower("@AMZ[`amz{"), bytes("@amz[`amz{"));
+        assertEq(ops.toUpper("@AMZ[`amz{"), bytes("@AMZ[`AMZ{"));
     }
 
     /**

@@ -77,11 +77,35 @@ fix it in the same change that falsified it.
   carries real fixed overhead, so it only wins when the resolutions it saves cost
   more than the nodes it adds: over an expensive leaf a graph beats the equivalent
   tree, over a cheap one it loses badly. Loops in this inline assembly cost over
-  100 gas per iteration (`scanName` is about 900 gas over `uint256`), so the
+  100 gas per iteration (`scanName` was about 900 gas over `uint256` until it
+  learned to skip `uint256`/`address`/`bytes32`/`string`/`bytes`/`bool` as one
+  word, about 200 now; the loop still decides where the name ends), so the
   canonical-word check matches names as one word, returns loop-free for
   `uint256`/`bytes32`/`int256`, and walks each descriptor once with checking
   folded into the parse; a separate re-parse per component cost 4.6k more on
-  `(uint256,uint256)`. Measure with `forge test --decode-internal -vvvv`, which
+  `(uint256,uint256)`. The same rule holds one level up: `AbiCodec.validate(t, v)`
+  re-parses `t`, so a loop over values must parse once and call the
+  cached-shape overload (re-parsing per element cost about 1,400 gas each in
+  every Collections `*Values` traversal and in `pack`). Outside assembly, a
+  checked calldata slice (`bytes32(s[i * 32:i * 32 + 32])`) costs about 450 gas
+  per word and a checked `data[i]` about 100 per byte: per-element loops read
+  through `calldataload` helpers whose callers have already bounded the index.
+  A value validated as a canonical `T` is a valid tuple component of type `T`
+  by the same rules, so Collections skips the per-binding re-validation when
+  the callback declares the slot with byte-identical descriptor text
+  (`firstSame`/`secondSame`); any other spelling still validates.
+  Every `AbiCodec.validate` overload without a context allocates a zeroed one
+  (about 170 gas), so loops allocate one and pass it to the context overload.
+  `evaluateEncoded` forwards the payload without decoding it, and puts it LAST
+  in the forwarded call, after the head and the encoded parameters. With the
+  payload first, an offset inside it could point past its end into the
+  parameters, so a stub payload could take its node list from runtime data
+  (an independent review reproduced that through `mapValues`: the element was
+  the program). ABI offsets only point forward, so last means confined.
+  `check_evaluateEncodedMatchesEvaluate` pins the calldata `NodeCallFailed`
+  reports, and has to build the same layout.
+  `scripts/test-claim-coverage-structure.py` pins the first two statements of
+  the loop in `Expressions.evaluate`; new locals go after them. Measure with `forge test --decode-internal -vvvv`, which
   prints gas per internal library call. The thresholds live in `AbiCodecGas.t.sol`
   and `ExpressionsGas.t.sol`; read them there rather than quoting a number here.
   A full-word name match must fit inside the descriptor before selecting its
@@ -132,6 +156,26 @@ fix it in the same change that falsified it.
   reverts `InvalidTypeDescriptor(1)`, and the
   core's `get` and Expressions' `_arguments` special-case `"()"` with no values
   before ever calling it.
+- **Validate what is read** (since 2026-10-03): every byte that can influence a
+  result is validated, and malformed input that cannot influence it is not an
+  error. `nav` already treated DATA this way (skipped siblings); it now treats
+  its DESCRIPTOR the same, parsing along the path, and `evaluateEncoded` no
+  longer decodes the graph before forwarding it. The price is early diagnosis:
+  a malformed branch nobody takes passes until it is taken, and then fails
+  closed. Three things stay eager on purpose: constraint and OR structure
+  (parity with the reference decides), graph admission (references, counts and
+  every `valueType`, which E42's structural evidence depends on), and anything
+  whose unread part would change how the read part is located: a top-level
+  array of tuples is parsed whole, and a tuple descriptor has its parentheses
+  counted so the one opened at byte 0 closes at the last byte. Requiring only
+  a final `)` was not enough: `(a,b)junk)` was read as the tuple `(a,b)` and
+  returned a word from the wrong position until a review caught it. A test
+  that asserts "unread text cannot matter" must not fuzz the text that decides
+  where the read part ends, or it blesses exactly that hole. A claim of this kind is
+  relational ("the result does not depend on the unread bytes"), so its test
+  mutates the unread region and requires the same result. In `docs/claims.md`
+  a claim text starting with `\*` changed after the rc1 snapshot; the ID cell
+  stays bare because the evidence checkers match `| ID |` exactly.
 - **No wrong-answer machines**: silent truncation is always a bug
   (`UnalignedWords`, `WordCountMismatch` exist for this). At the raw Solidity boundary,
   splicing an ARRAY return directly into `hash`/`byteLen` silently digests N bytes
@@ -155,6 +199,17 @@ fix it in the same change that falsified it.
   Collections `*Values` traversals have SDK consumers through `modules/lang`;
   eligible word-sized workloads retain the word fast path. When Collections needs more
   bytecode space, split `*Values` into a fourth computation contract.
+- **One entry point per engine in Collections** (since 2026-10-03): the three
+  word folds are `fold(domain, n, s, ...)` and the word map and filter are
+  `applyWords(..., filter)`. The siblings already shared one loop, so merging
+  them only recovered dispatcher and decoder stubs (about 260 bytes) for a few
+  hundred gas per call. A merged signature carries
+  an argument one domain does not use, and it is refused, not ignored
+  (`UnusedFoldArgument`): a Range fold given a subject, or a Words fold given a
+  count, would otherwise run a different fold than the caller wrote.
+  `anyValues`/`allValues` were NOT merged into `findValues`: turning the index
+  back into a boolean costs about 15,000 gas whenever the result feeds another
+  expression.
 - **Signedness is a dimension in every word-level design.** Unsigned order and
   signed order disagree about which value absorbs, which element is minimal, and
   how a two's-complement word reads. One SDK path returning `elemType: "uint256"`
@@ -316,7 +371,8 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   needle cost 5.3M gas over 964 bytes); `_matchesAt` now compares words. A
   budget judges the algorithm, not the output: skip inputs whose OUTPUT alone
   exhausts it (concat of 1.66 MB costs 28.6M in memory expansion). An
-  out-of-range enum argument (`Rounding`, `FoldExit`) never reaches the code:
+  out-of-range enum argument (`Rounding`, `FoldExit`, `FoldDomain`) never
+  reaches the code:
   solc's ABI decoder reverts with empty data, not Panic(0x21). Collections
   follows the same split (`CollectionsNoPanic`), with a target per way a lambda
   or callback can misbehave; each fails declared, a gas burner included
@@ -331,8 +387,11 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   The core and Expressions (`CoreNoPanic`, `ExpressionsNoPanic`) fuzz through
   uint8-enum mirror structs, which encode identically to the real ones. Wire
   bytes solc cannot decode (a STATIC_CALL paramData, an OR referenceData, a
-  Resolve node's data, an evaluateEncoded payload, an out-of-range enum)
-  can revert without data; nested STATIC_CALL/OR allocation requests can
+  Resolve node's data, an out-of-range enum)
+  can revert without data (an evaluateEncoded payload is forwarded undecoded,
+  so what `evaluate` cannot read fails inside the self-call and arrives as
+  NodeCallFailed with an empty reason; only a payload shorter than a word is
+  bare); nested STATIC_CALL/OR allocation requests can
   instead raise Panic(0x41), and resource exhaustion can return empty data.
   These are documented, not pre-validated: a canonical check would reject
   what the reference accepts and tax every STATIC_CALL. Core reads/batches

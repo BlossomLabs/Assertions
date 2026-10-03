@@ -31,8 +31,8 @@ Why named functions instead of op-code enums: decoded calldata reads on explorer
 
 | Group | Functions |
 |---|---|
-| [Folds](/docs/operators/fold) | `foldRange`, `foldBytes`, `foldWords`, with `FoldExit` `Full`/`Any`/`All` |
-| [Word arrays](/docs/operators/fold#word-arrays) | `mapWords`/`filterWords` (lambda map/filter over a word payload), `iotaWords(n)` (the index generator), `wordIndexOf` (word-count sentinel), `reverseWords`, `zipWords`, `unzipWords`, `sortWords`, `uniqueWords(s, ordered)`, `sumWords` (checked sum of a payload, native) |
+| [Folds](/docs/operators/fold) | `fold` over the `Range`, `Bytes` or `Words` domain, with `FoldExit` `Full`/`Any`/`All` |
+| [Word arrays](/docs/operators/fold#word-arrays) | `applyWords` (lambda map or filter over a word payload), `iotaWords(n)` (the index generator), `wordIndexOf` (word-count sentinel), `reverseWords`, `zipWords`, `unzipWords`, `sortWords`, `uniqueWords(s, ordered)`, `sumWords` (checked sum of a payload, native) |
 | [Generic values](/docs/operators/collections) | `mapValues`, `filterValues`, `foldValues`, `sortValues`, `uniqueValues`, `flattenValues`, `reverseValues`, `sliceValues`, `indexOfValues`, `anyValues`, `allValues`, `findValues`, `zipValues`, `unzipValues` over arrays of canonical ABI values, with typed `Callback`s (direct, or through an [expression graph](/docs/operators/expressions)) |
 | [Envelope adapters](/docs/operators/collections#value-envelopes) | `packArray`, `unpackArray` |
 
@@ -40,7 +40,7 @@ Both word sorting and generic comparator sorting use stable bottom-up merge sort
 
 ## What earns a slot here
 
-Admission is a demand test: a function earns a slot only when it is not expressible as a few-node recipe at practical cost AND a concrete assertion workload needs it. What passes the first half is hot loops that would otherwise cost one external call per element (`charset`, `sumWords`, the lambda-shaped `bitSet` and `hashPairSorted`) and calldata-exponential compositions (`rpow`, `log2`: a raw operand tree cannot name a subterm, so squaring duplicates its whole operand). Everything else composes and stays out: `join` uses `concat`'s delimiter argument, unsorted pair hashing is `hash` over an encoder-built two-word payload, packed encoding is `concat` over `slice`-narrowed words, and specialist families go to optional contracts. Signed `sortWords` is the standard refusal: flip the sign bit with `mapWords`, sort, flip back. The measurements behind the rule live in `contracts/tests/OperationsGas.t.sol` and move with the compiler.
+Admission is a demand test: a function earns a slot only when it is not expressible as a few-node recipe at practical cost AND a concrete assertion workload needs it. What passes the first half is hot loops that would otherwise cost one external call per element (`charset`, `sumWords`, the lambda-shaped `bitSet` and `hashPairSorted`) and calldata-exponential compositions (`rpow`, `log2`: a raw operand tree cannot name a subterm, so squaring duplicates its whole operand). Everything else composes and stays out: `join` uses `concat`'s delimiter argument, unsorted pair hashing is `hash` over an encoder-built two-word payload, packed encoding is `concat` over `slice`-narrowed words, and specialist families go to optional contracts. Signed `sortWords` is the standard refusal: flip the sign bit with `applyWords`, sort, flip back. The measurements behind the rule live in `contracts/tests/OperationsGas.t.sol` and move with the compiler.
 
 ## Signedness rides on overloads
 

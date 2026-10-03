@@ -133,6 +133,14 @@ contract Collections {
      */
     error SubcallOutOfGas();
 
+    /**
+     * @notice Thrown when a fold is handed the argument its domain does not
+     *         use: a subject for Range, or a count for Bytes or Words
+     *         (ignoring it would run a different fold than the caller wrote)
+     * @param domain The fold's domain
+     */
+    error UnusedFoldArgument(FoldDomain domain);
+
     // ============ Types ============
 
     /**
@@ -202,12 +210,29 @@ contract Collections {
      *      tuple layout, the argument slots (constants with the element
      *      slots overwritten per application) and whether the target's code
      *      has been checked yet (lazily, so an operation with nothing to
-     *      call never touches the target)
+     *      call never touches the target). `dynamic`/`words` hold the parsed
+     *      shape of the operation's input type and `outDynamic`/`outWords`
+     *      that of its result type, so values are validated against a
+     *      descriptor parsed once rather than once per element.
+     *      `firstSame`/`secondSame` record that the callback declares that
+     *      argument slot with exactly the type its values were validated as,
+     *      which makes re-validating them on every binding redundant.
+     *      `plain` and `result` are the two error contexts validation needs
+     *      (a plain value, a callback result), allocated once per operation
+     *      instead of once per validated value.
      */
     struct PreparedCallback {
         AbiCodec.TupleLayout plan;
         bytes[] args;
         bool targetChecked;
+        bool dynamic;
+        uint256 words;
+        bool outDynamic;
+        uint256 outWords;
+        bool firstSame;
+        bool secondSame;
+        AbiCodec.Context plain;
+        AbiCodec.Context result;
     }
 
     /**
@@ -227,29 +252,47 @@ contract Collections {
     // ============ Word Folds ============
 
     /**
-     * @notice Folds the lambda over the index range 0 .. n-1 (the element
-     *         substituted into the template is the index itself)
-     * @dev The one loop primitive; foldBytes and foldWords share its
-     *      engine and rules. The lambda is a single staticcall: `template`
-     *      is complete calldata for `target` in which 32-byte windows are
-     *      rewritten per element, the accumulator at `accOffset` first,
-     *      then the element at each offset in `elemOffsets` in the supplied
-     *      order (the element wins on overlap with the accumulator, later
-     *      element windows win on mutual overlap, and every byte outside
-     *      the windows stays pristine template). The single returned word
-     *      becomes the new accumulator; `Any` stops at the first nonzero
-     *      accumulator, `All` at the first zero, `Full` scans everything;
-     *      the final accumulator is returned either way. An empty domain
-     *      validates the template windows, then returns `init` without
-     *      inspecting or calling the target. Exhaustion and exact
-     *      SubcallOutOfGas signals are rethrown unchanged. Other lambda
-     *      reverts fail the fold with CallbackFailed
+     * @notice Folds a single-staticcall lambda over one of three domains:
+     *         Range, the indices 0 .. n-1 (the element is the index);
+     *         Bytes, the bytes of `s` (the element is the byte VALUE as a
+     *         word); Words, the 32-byte words of `s` (the element is the
+     *         word)
+     * @dev The one loop primitive. `template` is complete calldata for
+     *      `target` in which 32-byte windows are rewritten per element, the
+     *      accumulator at `accOffset` first, then the element at each
+     *      offset in `elemOffsets` in the supplied order (the element wins
+     *      on overlap with the accumulator, later element windows win on
+     *      mutual overlap, and every byte outside the windows stays pristine
+     *      template). The single returned word becomes the new accumulator;
+     *      `Any` stops at the first nonzero accumulator, `All` at the first
+     *      zero, `Full` scans everything; the final accumulator is returned
+     *      either way. An empty domain validates the template windows, then
+     *      returns `init` without inspecting or calling the target.
+     *
+     *      Each domain takes its count from one argument and refuses the
+     *      other, so nothing supplied is silently ignored: Range iterates
+     *      `n` times and requires an empty `s`; Bytes and Words iterate over
+     *      `s` and require `n` to be zero (UnusedFoldArgument otherwise).
+     *      A Words payload must be a whole number of words (UnalignedWords).
+     *      With bitSet(mask, elem) as the lambda and the All exit, the Bytes
+     *      domain is the character-set test when the mask stays constant,
+     *      init is 1, and the accumulator and element windows share the
+     *      byte-argument offset. A Words payload is a packed one, e.g.
+     *      one-word static array elements with the ABI offset and length
+     *      sliced off (the nav PAYLOAD sentinel accepts only bytes/string,
+     *      not arrays).
+     *
+     *      Exhaustion and exact SubcallOutOfGas signals are rethrown
+     *      unchanged. Other lambda reverts fail the fold with CallbackFailed
      *      carrying the operation, element, calldata and revert reason.
      *      Offsets must leave room for a word inside the template
      *      (LambdaOffsetOutOfBounds), a code-less target reverts with
      *      InvalidCallbackTarget, and a lambda returning other than 32
-     *      bytes with InvalidCallbackResult.
-     * @param n The number of iterations
+     *      bytes with InvalidCallbackResult. An out-of-range `domain` or
+     *      `exit` is refused by the ABI decoder, without data.
+     * @param domain What the fold iterates over (see FoldDomain)
+     * @param n The number of iterations for Range; zero otherwise
+     * @param s The subject bytes for Bytes and Words; empty for Range
      * @param target The lambda contract
      * @param template Complete calldata for `target`, with the windows
      * @param accOffset Byte offset of the accumulator window
@@ -259,28 +302,9 @@ contract Collections {
      * @param exit The early-exit mode (see FoldExit)
      * @return The final accumulator
      */
-    function foldRange(
+    function fold(
+        FoldDomain domain,
         uint256 n,
-        address target,
-        bytes calldata template,
-        uint256 accOffset,
-        uint256[] calldata elemOffsets,
-        bytes32 init,
-        FoldExit exit
-    ) external view returns (bytes32) {
-        return _fold(FoldDomain.Range, n, msg.data[0:0], target, template, accOffset, elemOffsets, init, exit);
-    }
-
-    /**
-     * @notice Folds the lambda over the bytes of `s` (the element is the
-     *         byte VALUE as a word): with bitSet(mask, elem) as the lambda
-     *         and the All exit, this is the character-set test when the mask
-     *         stays constant, init is 1, and the accumulator and element
-     *         windows share the byte-argument offset (the byte completely
-     *         overwrites the unused accumulator)
-     * @dev Engine and rules as foldRange
-     */
-    function foldBytes(
         bytes calldata s,
         address target,
         bytes calldata template,
@@ -289,76 +313,56 @@ contract Collections {
         bytes32 init,
         FoldExit exit
     ) external view returns (bytes32) {
-        return _fold(FoldDomain.Bytes, s.length, s, target, template, accOffset, elemOffsets, init, exit);
+        if (domain == FoldDomain.Range) {
+            if (s.length != 0) revert UnusedFoldArgument(domain);
+        } else {
+            if (n != 0) revert UnusedFoldArgument(domain);
+            n = s.length;
+            if (domain == FoldDomain.Words) {
+                _aligned(s);
+                n = s.length / 32;
+            }
+        }
+        return _fold(domain, n, s, target, template, accOffset, elemOffsets, init, exit);
     }
 
-    /**
-     * @notice Folds the lambda over the 32-byte words of `s` (the element
-     *         is the word): feed it a packed payload, e.g. one-word static
-     *         array elements with the ABI offset and length sliced off.
-     *         The nav PAYLOAD sentinel accepts only bytes/string, not arrays
-     * @dev Engine and rules as foldRange; s.length must be a multiple of
-     *      32 or the fold reverts with UnalignedWords
-     */
-    function foldWords(
-        bytes calldata s,
-        address target,
-        bytes calldata template,
-        uint256 accOffset,
-        uint256[] calldata elemOffsets,
-        bytes32 init,
-        FoldExit exit
-    ) external view returns (bytes32) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
-        return _fold(FoldDomain.Words, s.length / 32, s, target, template, accOffset, elemOffsets, init, exit);
-    }
-
-    // ============ Word Maps and Filters ============
+    // ============ Word Maps, Filters and Reductions ============
 
     /**
-     * @notice Applies a single-staticcall lambda to every word of `s` and
-     *         returns the transformed payload: the bytes-producing map the
-     *         scalar folds cannot express
+     * @notice Applies a single-staticcall lambda to every word of `s`. As a
+     *         map (`filter` false) it returns the transformed payload, the
+     *         bytes-producing map the scalar folds cannot express. As a
+     *         filter (`filter` true) it returns the words of `s` whose
+     *         application returns canonical ABI true, in order.
      * @dev Lambda conventions match the folds: `template` is complete
      *      calldata for `target` whose 32-byte windows at `elemOffsets`
      *      are rewritten per element (supplied order; later windows win on
-     *      mutual overlap), and the lambda must return exactly one word,
-     *      the mapped element. An empty payload validates the template
+     *      mutual overlap), and the lambda must return exactly one word:
+     *      the mapped element, or for a filter a canonical 0 or 1
+     *      (InvalidCallbackResult otherwise). A filter's output length is
+     *      the kept count, so filters nest into byteLen, folds and further
+     *      word operations. An empty payload validates the template
      *      windows, then returns empty without inspecting the target. A
      *      code-less target reverts with InvalidCallbackTarget, a
      *      exhausted application with SubcallOutOfGas, and other reverting
      *      applications with CallbackFailed preserving calldata
      *      and reason, and a return other than one word with
      *      InvalidCallbackResult. One call per word.
-     * @param s The word payload to map
+     * @param s The word payload
      * @param target The lambda contract
      * @param template Complete calldata for `target` with the element windows
      * @param elemOffsets Byte offsets of the element windows
-     * @return The mapped payload, same word count as `s`
+     * @param filter Whether to keep the passing words instead of mapping
+     * @return The mapped payload (same word count as `s`) or the kept words
      */
-    function mapWords(bytes calldata s, address target, bytes calldata template, uint256[] calldata elemOffsets)
-        external
-        view
-        returns (bytes memory)
-    {
-        return _applyWords(s, target, template, elemOffsets, false);
-    }
-
-    /**
-     * @notice The words of `s` whose lambda application returns canonical
-     *         ABI true, in order: the variable-length sibling of mapWords
-     * @dev Lambda conventions and errors match mapWords, with one more
-     *      rule: the returned word must be a canonical 0 or 1
-     *      (InvalidCallbackResult otherwise). The output length is the
-     *      kept count, so filters nest into byteLen, folds and further
-     *      word operations.
-     */
-    function filterWords(bytes calldata s, address target, bytes calldata template, uint256[] calldata elemOffsets)
-        external
-        view
-        returns (bytes memory)
-    {
-        return _applyWords(s, target, template, elemOffsets, true);
+    function applyWords(
+        bytes calldata s,
+        address target,
+        bytes calldata template,
+        uint256[] calldata elemOffsets,
+        bool filter
+    ) external view returns (bytes memory) {
+        return _applyWords(s, target, template, elemOffsets, filter);
     }
 
     // ============ Word Payloads ============
@@ -385,10 +389,10 @@ contract Collections {
      *      as for every word operation below
      */
     function wordIndexOf(bytes calldata s, bytes32 w) external pure returns (uint256) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        _aligned(s);
         uint256 count = s.length / 32;
         for (uint256 i = 0; i < count; i++) {
-            if (bytes32(s[i * 32:i * 32 + 32]) == w) return i;
+            if (_cdWord(s, i) == w) return i;
         }
         return count;
     }
@@ -397,11 +401,11 @@ contract Collections {
      * @notice The payload with its word order reversed
      */
     function reverseWords(bytes calldata s) external pure returns (bytes memory out) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        _aligned(s);
         uint256 count = s.length / 32;
         out = new bytes(s.length);
         for (uint256 i = 0; i < count; i++) {
-            bytes32 w = bytes32(s[i * 32:i * 32 + 32]);
+            bytes32 w = _cdWord(s, i);
             assembly ("memory-safe") {
                 mstore(add(add(out, 32), mul(sub(sub(count, 1), i), 32)), w)
             }
@@ -415,14 +419,14 @@ contract Collections {
      *      truncation would be a wrong-answer machine)
      */
     function zipWords(bytes calldata a, bytes calldata b) external pure returns (bytes memory out) {
-        if (a.length % 32 != 0) revert UnalignedWords(a.length);
-        if (b.length % 32 != 0) revert UnalignedWords(b.length);
+        _aligned(a);
+        _aligned(b);
         if (a.length != b.length) revert WordCountMismatch(a.length / 32, b.length / 32);
         uint256 count = a.length / 32;
         out = new bytes(a.length * 2);
         for (uint256 i = 0; i < count; i++) {
-            bytes32 wa = bytes32(a[i * 32:i * 32 + 32]);
-            bytes32 wb = bytes32(b[i * 32:i * 32 + 32]);
+            bytes32 wa = _cdWord(a, i);
+            bytes32 wb = _cdWord(b, i);
             assembly ("memory-safe") {
                 mstore(add(add(out, 32), mul(mul(i, 2), 32)), wa)
                 mstore(add(add(out, 32), mul(add(mul(i, 2), 1), 32)), wb)
@@ -437,13 +441,13 @@ contract Collections {
      *      leaves the extra word in lane 0
      */
     function unzipWords(bytes calldata s, uint256 which) external pure returns (bytes memory out) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        _aligned(s);
         if (which > 1) revert InvalidLane(which);
         uint256 count = s.length / 32;
         uint256 laneCount = which == 0 ? (count + 1) / 2 : count / 2;
         out = new bytes(laneCount * 32);
         for (uint256 i = 0; i < laneCount; i++) {
-            bytes32 w = bytes32(s[(i * 2 + which) * 32:(i * 2 + which) * 32 + 32]);
+            bytes32 w = _cdWord(s, (i * 2 + which));
             assembly ("memory-safe") {
                 mstore(add(add(out, 32), mul(i, 32)), w)
             }
@@ -454,11 +458,11 @@ contract Collections {
      * @notice The payload sorted ascending as unsigned words
      * @dev Stable bottom-up merge sort: O(n log n) comparisons and moves,
      *      with O(n) scratch memory. Signed sorting is a three-node recipe
-     *      instead of an overload: flip the sign bit (mapWords with
+     *      instead of an overload: flip the sign bit (applyWords with
      *      bitXor(2^255, elem)), sort, flip back.
      */
     function sortWords(bytes calldata s) external pure returns (bytes memory out) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        _aligned(s);
         out = s;
         uint256 count = s.length / 32;
         bytes memory scratch = new bytes(s.length);
@@ -484,13 +488,13 @@ contract Collections {
     /**
      * @notice The checked sum of the payload's 32-byte words: a native
      *         single-call loop, the fixed-operation form of the
-     *         foldWords(add) recipe (overflow reverts with Panic(0x11))
+     *         Words fold (add) recipe (overflow reverts with Panic(0x11))
      */
     function sumWords(bytes calldata s) external pure returns (uint256 total) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        _aligned(s);
         uint256 count = s.length / 32;
         for (uint256 i = 0; i < count; i++) {
-            total += uint256(bytes32(s[i * 32:i * 32 + 32]));
+            total += uint256(_cdWord(s, i));
         }
     }
 
@@ -505,11 +509,11 @@ contract Collections {
      *        payload declared ordered keeps non-adjacent duplicates.
      */
     function uniqueWords(bytes calldata s, bool ordered) external pure returns (bytes memory out) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        _aligned(s);
         out = new bytes(s.length);
         uint256 kept;
         for (uint256 i = 0; i < s.length / 32; i++) {
-            uint256 word = uint256(bytes32(s[i * 32:i * 32 + 32]));
+            uint256 word = uint256(_cdWord(s, i));
             bool seen;
             if (ordered) {
                 seen = kept != 0 && _wordAt(out, kept - 1) == word;
@@ -584,14 +588,20 @@ contract Collections {
         bytes[] calldata values,
         Callback calldata cb
     ) external view returns (bytes[] memory out) {
-        PreparedCallback memory prepared = _prepareCallback(cb, false);
-        AbiCodec.shape(bytes(inputType));
-        AbiCodec.shape(bytes(outputType));
+        PreparedCallback memory prepared = _prepare(cb, false, inputType);
+        (prepared.outDynamic, prepared.outWords) = AbiCodec.shape(bytes(outputType));
         out = new bytes[](values.length);
         for (uint256 i; i < values.length; i++) {
-            AbiCodec.validate(bytes(inputType), values[i]);
-            out[i] = _callValue(cb, prepared, values[i], "", false, i, 0);
-            _validateResult(outputType, out[i], cb, i);
+            out[i] = _callValue(
+                cb,
+                prepared,
+                _valid(inputType, values, i, prepared.dynamic, prepared.words, prepared.plain),
+                "",
+                false,
+                i,
+                0
+            );
+            _validateResult(outputType, out[i], cb, i, prepared);
         }
     }
 
@@ -609,13 +619,12 @@ contract Collections {
         view
         returns (bytes[] memory out)
     {
-        PreparedCallback memory prepared = _prepareCallback(cb, false);
-        AbiCodec.shape(bytes(inputType));
+        PreparedCallback memory prepared = _prepare(cb, false, inputType);
         out = new bytes[](values.length);
         uint256 count;
         for (uint256 i; i < values.length; i++) {
-            AbiCodec.validate(bytes(inputType), values[i]);
-            if (_predicate(cb, prepared, values[i], "", false, i, 0)) out[count++] = values[i];
+            bytes memory v = _valid(inputType, values, i, prepared.dynamic, prepared.words, prepared.plain);
+            if (_predicate(cb, prepared, v, "", false, i, 0)) out[count++] = v;
         }
         assembly ("memory-safe") { mstore(out, count) }
     }
@@ -641,14 +650,15 @@ contract Collections {
         bytes calldata initial,
         Callback calldata cb
     ) external view returns (bytes memory result) {
-        PreparedCallback memory prepared = _prepareCallback(cb, true);
-        AbiCodec.shape(bytes(inputType));
-        AbiCodec.validate(bytes(accumulatorType), initial);
+        PreparedCallback memory prepared = _prepare(cb, true, inputType);
+        (prepared.outDynamic, prepared.outWords) = AbiCodec.shape(bytes(accumulatorType));
+        prepared.firstSame = _sameType(cb, prepared, cb.first, accumulatorType);
+        AbiCodec.validate(bytes(accumulatorType), initial, prepared.outDynamic, prepared.outWords, prepared.plain);
         result = initial;
         for (uint256 i; i < values.length; i++) {
-            AbiCodec.validate(bytes(inputType), values[i]);
+            AbiCodec.validate(bytes(inputType), values[i], prepared.dynamic, prepared.words, prepared.plain);
             result = _callValue(cb, prepared, result, values[i], true, i, 0);
-            _validateResult(accumulatorType, result, cb, i);
+            _validateResult(accumulatorType, result, cb, i, prepared);
         }
     }
 
@@ -673,14 +683,13 @@ contract Collections {
         view
         returns (bytes[] memory out)
     {
-        PreparedCallback memory prepared = _prepareCallback(cb, true);
-        AbiCodec.shape(bytes(inputType));
+        PreparedCallback memory prepared = _prepare(cb, true, inputType);
         out = values;
         SortCursor memory c;
         c.n = out.length;
         bytes[] memory scratch = new bytes[](c.n);
         for (uint256 i; i < c.n; i++) {
-            AbiCodec.validate(bytes(inputType), out[i]);
+            AbiCodec.validate(bytes(inputType), out[i], prepared.dynamic, prepared.words, prepared.plain);
         }
         for (c.width = 1; c.width < c.n; c.width *= 2) {
             for (c.start = 0; c.start < c.n; c.start += 2 * c.width) {
@@ -692,7 +701,7 @@ contract Collections {
                     bool takeA = c.b == c.end;
                     if (c.a < c.middle && c.b < c.end) {
                         bytes memory answer = _callValue(cb, prepared, out[c.a], out[c.b], true, c.a, c.b);
-                        if (answer.length != 32) revert AbiCodec.InvalidCallbackResult(msg.sig, c.a, c.b, cb.target);
+                        if (answer.length != 32) _badResult(c.a, c.b, cb.target);
                         takeA = int256(AbiCodec.word(answer, 0)) <= 0;
                     }
                     if (c.a == c.middle) takeA = false;
@@ -726,20 +735,19 @@ contract Collections {
         view
         returns (bytes[] memory out)
     {
-        PreparedCallback memory prepared = _prepareCallback(cb, true);
-        AbiCodec.shape(bytes(inputType));
+        PreparedCallback memory prepared = _prepare(cb, true, inputType);
         out = new bytes[](values.length);
         uint256 count;
         for (uint256 i; i < values.length; i++) {
-            AbiCodec.validate(bytes(inputType), values[i]);
+            bytes memory v = _valid(inputType, values, i, prepared.dynamic, prepared.words, prepared.plain);
             bool duplicate;
             for (uint256 j = ordered && count != 0 ? count - 1 : 0; j < count; j++) {
-                if (_predicate(cb, prepared, out[j], values[i], true, i, j)) {
+                if (_predicate(cb, prepared, out[j], v, true, i, j)) {
                     duplicate = true;
                     break;
                 }
             }
-            if (!duplicate) out[count++] = values[i];
+            if (!duplicate) out[count++] = v;
         }
         assembly ("memory-safe") { mstore(out, count) }
     }
@@ -756,7 +764,8 @@ contract Collections {
         pure
         returns (bytes[] memory out)
     {
-        AbiCodec.shape(bytes(inputType));
+        (bool dynamic, uint256 words) = AbiCodec.shape(bytes(inputType));
+        AbiCodec.Context memory plain;
         uint256 count;
         for (uint256 i; i < values.length; i++) {
             count += values[i].length;
@@ -765,8 +774,7 @@ contract Collections {
         uint256 k;
         for (uint256 i; i < values.length; i++) {
             for (uint256 j; j < values[i].length; j++) {
-                AbiCodec.validate(bytes(inputType), values[i][j]);
-                out[k++] = values[i][j];
+                out[k++] = _valid(inputType, values[i], j, dynamic, words, plain);
             }
         }
     }
@@ -782,11 +790,11 @@ contract Collections {
         pure
         returns (bytes[] memory out)
     {
-        AbiCodec.shape(bytes(inputType));
+        (bool dynamic, uint256 words) = AbiCodec.shape(bytes(inputType));
+        AbiCodec.Context memory plain;
         out = new bytes[](values.length);
         for (uint256 i; i < values.length; i++) {
-            AbiCodec.validate(bytes(inputType), values[i]);
-            out[values.length - i - 1] = values[i];
+            out[values.length - i - 1] = _valid(inputType, values, i, dynamic, words, plain);
         }
     }
 
@@ -807,13 +815,13 @@ contract Collections {
         pure
         returns (bytes[] memory out)
     {
-        AbiCodec.shape(bytes(inputType));
+        (bool dynamic, uint256 words) = AbiCodec.shape(bytes(inputType));
+        AbiCodec.Context memory plain;
         uint256 a = _sliceIndex(start, values.length);
         uint256 b = _sliceIndex(end, values.length);
         out = new bytes[](b > a ? b - a : 0);
         for (uint256 i; i < out.length; i++) {
-            AbiCodec.validate(bytes(inputType), values[a + i]);
-            out[i] = values[a + i];
+            out[i] = _valid(inputType, values, a + i, dynamic, words, plain);
         }
     }
 
@@ -835,11 +843,18 @@ contract Collections {
         bytes calldata needle,
         Callback calldata cb
     ) external view returns (uint256) {
-        PreparedCallback memory prepared = _prepareCallback(cb, true);
-        AbiCodec.validate(bytes(inputType), needle);
+        PreparedCallback memory prepared = _prepare(cb, true, inputType);
+        AbiCodec.validate(bytes(inputType), needle, prepared.dynamic, prepared.words, prepared.plain);
         for (uint256 i; i < values.length; i++) {
-            AbiCodec.validate(bytes(inputType), values[i]);
-            if (_predicate(cb, prepared, values[i], needle, true, i, 0)) return i;
+            if (_predicate(
+                    cb,
+                    prepared,
+                    _valid(inputType, values, i, prepared.dynamic, prepared.words, prepared.plain),
+                    needle,
+                    true,
+                    i,
+                    0
+                )) return i;
         }
         return type(uint256).max;
     }
@@ -915,13 +930,12 @@ contract Collections {
         AbiCodec.TupleLayout memory plan = _zipPlan(leftType, rightType);
         out = new bytes[](left.length);
         bytes[] memory pair = new bytes[](2);
+        AbiCodec.Context memory plain;
         for (uint256 i; i < left.length; i++) {
-            AbiCodec.validate(bytes(leftType), left[i]);
-            AbiCodec.validate(bytes(rightType), right[i]);
-            pair[0] = left[i];
-            pair[1] = right[i];
+            pair[0] = _valid(leftType, left, i, plan.dynamic[0], plan.words[0], plain);
+            pair[1] = _valid(rightType, right, i, plan.dynamic[1], plan.words[1], plain);
             bytes memory tuple = AbiCodec.assemble(plan.dynamic, plan.headSize, pair, false);
-            out[i] = plan.dynamic[0] || plan.dynamic[1] ? bytes.concat(abi.encode(uint256(32)), tuple) : tuple;
+            out[i] = plan.dynamic[0] || plan.dynamic[1] ? _envelope(tuple) : tuple;
         }
     }
 
@@ -946,10 +960,11 @@ contract Collections {
         if (lane > 1) revert InvalidLane(lane);
         AbiCodec.TupleLayout memory plan = _zipPlan(leftType, rightType);
         out = new bytes[](pairs.length);
+        AbiCodec.Context memory plain;
         for (uint256 i; i < pairs.length; i++) {
             bytes[] memory parts = _unzipPair(pairs[i], plan);
-            AbiCodec.validate(bytes(leftType), parts[0]);
-            AbiCodec.validate(bytes(rightType), parts[1]);
+            AbiCodec.validate(bytes(leftType), parts[0], plan.dynamic[0], plan.words[0], plain);
+            AbiCodec.validate(bytes(rightType), parts[1], plan.dynamic[1], plan.words[1], plain);
             out[i] = parts[lane];
         }
     }
@@ -969,7 +984,7 @@ contract Collections {
         uint256[] calldata elemOffsets,
         bool filterMode
     ) private view returns (bytes memory out) {
-        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+        _aligned(s);
         _checkElementWindows(template, elemOffsets);
         uint256 count = s.length / 32;
         out = new bytes(s.length);
@@ -978,11 +993,11 @@ contract Collections {
             _checkTarget(target);
             bytes memory callData = template;
             for (uint256 i = 0; i < count; i++) {
-                bytes32 elem = bytes32(s[i * 32:i * 32 + 32]);
+                bytes32 elem = _cdWord(s, i);
                 _stampElements(callData, elemOffsets, elem);
                 bytes32 word = _callWord(target, callData, i);
                 if (filterMode) {
-                    if (uint256(word) > 1) revert AbiCodec.InvalidCallbackResult(msg.sig, i, 0, target);
+                    if (uint256(word) > 1) _badResult(i, 0, target);
                     if (word != bytes32(0)) {
                         _setWord(out, kept, uint256(elem));
                         kept++;
@@ -1051,7 +1066,7 @@ contract Collections {
     function _domainElem(FoldDomain domain, uint256 i, bytes calldata s) private pure returns (bytes32) {
         if (domain == FoldDomain.Range) return bytes32(i);
         if (domain == FoldDomain.Bytes) return bytes32(uint256(uint8(s[i])));
-        return bytes32(s[i * 32:i * 32 + 32]);
+        return _cdWord(s, i);
     }
 
     /**
@@ -1085,7 +1100,7 @@ contract Collections {
     }
 
     /**
-     * @dev The shared fold engine (see foldRange for the full rules).
+     * @dev The shared fold engine (see `fold` for the full rules).
      *      `count` is the domain size; `s` carries the subject bytes for
      *      the Bytes/Words domains and is empty for Range.
      */
@@ -1118,17 +1133,26 @@ contract Collections {
     /**
      * @dev One lambda application: the staticcall, CallbackFailed with the
      *      reason on a revert, InvalidCallbackResult unless exactly one
-     *      word came back
+     *      word came back. The word is read from scratch space, so a
+     *      successful application allocates nothing; the return data is
+     *      copied only to report a failure.
      */
     function _callWord(address target, bytes memory callData, uint256 index) private view returns (bytes32 word) {
         uint256 gasBefore = gasleft();
-        (bool success, bytes memory ret) = target.staticcall(callData);
-        if (!success) {
-            _rejectOutOfGas(gasBefore, ret);
-            revert CallbackFailed(msg.sig, index, 0, target, callData, ret);
+        bool success;
+        uint256 size;
+        assembly ("memory-safe") {
+            success := staticcall(gas(), target, add(callData, 32), mload(callData), 0, 32)
+            size := returndatasize()
+            word := mload(0)
         }
-        if (ret.length != 32) revert AbiCodec.InvalidCallbackResult(msg.sig, index, 0, target);
-        assembly ("memory-safe") { word := mload(add(ret, 32)) }
+        if (!success) {
+            bytes memory ret = new bytes(size);
+            assembly ("memory-safe") { returndatacopy(add(ret, 32), 0, size) }
+            _rejectOutOfGas(gasBefore, ret);
+            _failed(index, 0, target, callData, ret);
+        }
+        if (size != 32) _badResult(index, 0, target);
     }
 
     /**
@@ -1178,11 +1202,19 @@ contract Collections {
         view
         returns (uint256)
     {
-        PreparedCallback memory prepared = _prepareCallback(cb, false);
-        AbiCodec.shape(bytes(inputType));
+        PreparedCallback memory prepared = _prepare(cb, false, inputType);
         for (uint256 i; i < values.length; i++) {
-            AbiCodec.validate(bytes(inputType), values[i]);
-            if (_predicate(cb, prepared, values[i], "", false, i, 0) == wanted) return i;
+            if (
+                _predicate(
+                        cb,
+                        prepared,
+                        _valid(inputType, values, i, prepared.dynamic, prepared.words, prepared.plain),
+                        "",
+                        false,
+                        i,
+                        0
+                    ) == wanted
+            ) return i;
         }
         return type(uint256).max;
     }
@@ -1208,7 +1240,7 @@ contract Collections {
                 if (AbiCodec.word(pair, base + head) != tail) revert AbiCodec.InvalidValue(base + head);
                 uint256 end = i == 0 && plan.dynamic[1] ? AbiCodec.word(pair, base + head + 32) : pair.length - base;
                 if (end < tail) revert AbiCodec.InvalidValue(base + head);
-                parts[i] = bytes.concat(abi.encode(uint256(32)), AbiCodec.slice(pair, base + tail, end - tail));
+                parts[i] = _envelope(AbiCodec.slice(pair, base + tail, end - tail));
                 tail = end;
             } else {
                 parts[i] = AbiCodec.slice(pair, base + head, plan.words[i] * 32);
@@ -1243,13 +1275,19 @@ contract Collections {
      * @dev Validates a callback result as a canonical `valueType`,
      *      reporting a mismatch as InvalidCallbackResult for element `i`
      */
-    function _validateResult(string calldata valueType, bytes memory value, Callback calldata cb, uint256 i)
-        private
-        pure
-    {
-        AbiCodec.validate(
-            bytes(valueType), value, AbiCodec.Context(AbiCodec.ContextKind.CallbackResult, msg.sig, i, 0, cb.target)
-        );
+    function _validateResult(
+        string calldata valueType,
+        bytes memory value,
+        Callback calldata cb,
+        uint256 i,
+        PreparedCallback memory prepared
+    ) private pure {
+        AbiCodec.Context memory context = prepared.result;
+        context.kind = AbiCodec.ContextKind.CallbackResult;
+        context.operation = msg.sig;
+        context.index = i;
+        context.target = cb.target;
+        AbiCodec.validate(bytes(valueType), value, prepared.outDynamic, prepared.outWords, context);
     }
 
     /**
@@ -1278,7 +1316,7 @@ contract Collections {
         for (uint256 i; i < cb.constants.length; i++) {
             if (i != cb.first && (!binary || i != cb.second)) {
                 AbiCodec.validateComponent(
-                    descriptor[prepared.plan.starts[i]:prepared.plan.ends[i]],
+                    AbiCodec.component(prepared.plan, descriptor, i),
                     prepared.args[i],
                     i,
                     prepared.plan.dynamic[i],
@@ -1297,7 +1335,7 @@ contract Collections {
         pure
     {
         AbiCodec.validateComponent(
-            bytes(cb.arguments)[prepared.plan.starts[slot]:prepared.plan.ends[slot]],
+            AbiCodec.component(prepared.plan, bytes(cb.arguments), slot),
             value,
             slot,
             prepared.plan.dynamic[slot],
@@ -1313,7 +1351,11 @@ contract Collections {
      *      tuple, or `Expressions.evaluateEncoded` over the slots when the
      *      Callback carries an expression. Returns the raw result; a revert
      *      surfaces as CallbackFailed with the reason, except exhaustion and
-     *      exact SubcallOutOfGas signals, which are rethrown unchanged.
+     *      exact SubcallOutOfGas signals, which are rethrown unchanged. The
+     *      caller has validated `a` and `b`; a slot declared with exactly
+     *      the type its value was validated as takes it as it is
+     *      (`firstSame`/`secondSame`), any other slot validates it again
+     *      as a component.
      */
     function _callValue(
         Callback calldata cb,
@@ -1331,8 +1373,12 @@ contract Collections {
             _checkTarget(cb.target);
             prepared.targetChecked = true;
         }
-        _bindValue(cb, prepared, cb.first, a);
-        if (binary) _bindValue(cb, prepared, cb.second, b);
+        if (prepared.firstSame) prepared.args[cb.first] = a;
+        else _bindValue(cb, prepared, cb.first, a);
+        if (binary) {
+            if (prepared.secondSame) prepared.args[cb.second] = b;
+            else _bindValue(cb, prepared, cb.second, b);
+        }
         bytes memory data;
         if (cb.expression.length == 0) {
             data = bytes.concat(
@@ -1346,7 +1392,7 @@ contract Collections {
         (ok, out) = cb.target.staticcall(data);
         if (!ok) {
             _rejectOutOfGas(gasBefore, out);
-            revert CallbackFailed(msg.sig, i, j, cb.target, data, out);
+            _failed(i, j, cb.target, data, out);
         }
     }
 
@@ -1383,9 +1429,95 @@ contract Collections {
         uint256 j
     ) private view returns (bool) {
         bytes memory out = _callValue(cb, prepared, a, b, binary, i, j);
-        if (out.length != 32) revert AbiCodec.InvalidCallbackResult(msg.sig, i, j, cb.target);
+        if (out.length != 32) _badResult(i, j, cb.target);
         uint256 answer = AbiCodec.word(out, 0);
-        if (answer > 1) revert AbiCodec.InvalidCallbackResult(msg.sig, i, j, cb.target);
+        if (answer > 1) _badResult(i, j, cb.target);
         return answer == 1;
+    }
+
+    /**
+     * @dev Requires a word payload to be a whole number of 32-byte words
+     *      (UnalignedWords)
+     */
+    function _aligned(bytes calldata s) private pure {
+        if (s.length % 32 != 0) revert UnalignedWords(s.length);
+    }
+
+    /**
+     * @dev Word `i` of a calldata payload, without a bounds check. The
+     *      caller must have `i` below `s.length / 32`.
+     */
+    function _cdWord(bytes calldata s, uint256 i) private pure returns (bytes32 w) {
+        assembly ("memory-safe") { w := calldataload(add(s.offset, mul(i, 32))) }
+    }
+
+    /**
+     * @dev Reverts with InvalidCallbackResult for the running operation
+     */
+    function _badResult(uint256 i, uint256 j, address target) private pure {
+        revert AbiCodec.InvalidCallbackResult(msg.sig, i, j, target);
+    }
+
+    /**
+     * @dev Reverts with CallbackFailed for the running operation
+     */
+    function _failed(uint256 i, uint256 j, address target, bytes memory data, bytes memory reason) private pure {
+        revert CallbackFailed(msg.sig, i, j, target, data, reason);
+    }
+
+    /**
+     * @dev Copies `values[i]` to memory once and validates it as a canonical
+     *      `t` (AbiCodec's InvalidValue). `dynamic` and `words` must be the
+     *      shape `AbiCodec.shape` returned for `t`, and `plain` a
+     *      zero-initialized context the caller reuses across values.
+     */
+    function _valid(
+        string calldata t,
+        bytes[] calldata values,
+        uint256 i,
+        bool dynamic,
+        uint256 words,
+        AbiCodec.Context memory plain
+    ) private pure returns (bytes memory v) {
+        v = values[i];
+        AbiCodec.validate(bytes(t), v, dynamic, words, plain);
+    }
+
+    /**
+     * @dev Prefixes the 0x20 offset word a dynamic value's single-value
+     *      encoding carries
+     */
+    function _envelope(bytes memory body) private pure returns (bytes memory) {
+        return bytes.concat(abi.encode(uint256(32)), body);
+    }
+
+    /**
+     * @dev `_prepareCallback`, then the up-front check of the input type
+     *      descriptor every callback traversal starts with
+     */
+    function _prepare(Callback calldata cb, bool binary, string calldata inputType)
+        private
+        pure
+        returns (PreparedCallback memory prepared)
+    {
+        prepared = _prepareCallback(cb, binary);
+        (prepared.dynamic, prepared.words) = AbiCodec.shape(bytes(inputType));
+        prepared.firstSame = _sameType(cb, prepared, cb.first, inputType);
+        if (binary) prepared.secondSame = _sameType(cb, prepared, cb.second, inputType);
+    }
+
+    /**
+     * @dev Whether callback argument slot `slot` is declared with exactly
+     *      the descriptor `valueType`. A value already validated as a
+     *      canonical `valueType` is then a valid component for that slot by
+     *      the same rules, so binding it needs no second validation.
+     */
+    function _sameType(Callback calldata cb, PreparedCallback memory prepared, uint256 slot, string calldata valueType)
+        private
+        pure
+        returns (bool)
+    {
+        bytes calldata declared = AbiCodec.component(prepared.plan, bytes(cb.arguments), slot);
+        return declared.length == bytes(valueType).length && keccak256(declared) == keccak256(bytes(valueType));
     }
 }

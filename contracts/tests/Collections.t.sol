@@ -300,19 +300,31 @@ contract CollectionsTest is Test {
         bytes memory template = abi.encodeCall(this.nonCanonicalWord, (0));
         vm.expectRevert(
             abi.encodeWithSelector(
-                AbiCodec.InvalidCallbackResult.selector, ops.filterWords.selector, 0, 0, address(this)
+                AbiCodec.InvalidCallbackResult.selector, ops.applyWords.selector, 0, 0, address(this)
             )
         );
-        ops.filterWords(abi.encode(uint256(42)), address(this), template, offsets);
+        ops.applyWords(abi.encode(uint256(42)), address(this), template, offsets, true);
         template = abi.encodeCall(this.extraWord, (0));
         vm.expectRevert(
-            abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector, ops.mapWords.selector, 0, 0, address(this))
+            abi.encodeWithSelector(
+                AbiCodec.InvalidCallbackResult.selector, ops.applyWords.selector, 0, 0, address(this)
+            )
         );
-        ops.mapWords(abi.encode(uint256(42)), address(this), template, offsets);
+        ops.applyWords(abi.encode(uint256(42)), address(this), template, offsets, false);
         vm.expectRevert(
-            abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector, ops.foldRange.selector, 0, 0, address(this))
+            abi.encodeWithSelector(AbiCodec.InvalidCallbackResult.selector, ops.fold.selector, 0, 0, address(this))
         );
-        ops.foldRange(1, address(this), template, 4, offsets, bytes32(0), Collections.FoldExit.Full);
+        ops.fold(
+            Collections.FoldDomain.Range,
+            1,
+            "",
+            address(this),
+            template,
+            4,
+            offsets,
+            bytes32(0),
+            Collections.FoldExit.Full
+        );
     }
 
     function testGenericCallbacksRejectCodelessTargetsWhenCalled() public {

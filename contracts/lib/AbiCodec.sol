@@ -172,6 +172,23 @@ library AbiCodec {
     function scanName(bytes calldata t, uint256 p, uint256 limit) private pure returns (uint256 q) {
         assembly ("memory-safe") {
             q := p
+            // The commonest names are recognised as one word and skipped whole;
+            // the loop below still decides where the run ends, so the result
+            // is the same position a byte-by-byte scan reaches.
+            let head := calldataload(add(t.offset, p))
+            if iszero(gt(add(p, 7), limit)) {
+                let name := shr(200, head)
+                // "uint256", "address", "bytes32"
+                if or(eq(name, 0x75696e74323536), or(eq(name, 0x61646472657373), eq(name, 0x62797465733332))) {
+                    q := add(p, 7)
+                }
+            }
+            if eq(q, p) {
+                // "string", "bytes", "bool"
+                if and(iszero(gt(add(p, 6), limit)), eq(shr(208, head), 0x737472696e67)) { q := add(p, 6) }
+                if and(iszero(gt(add(p, 5), limit)), eq(shr(216, head), 0x6279746573)) { q := add(p, 5) }
+                if and(iszero(gt(add(p, 4), limit)), eq(shr(224, head), 0x626f6f6c)) { q := add(p, 4) }
+            }
             for {} lt(q, limit) {} {
                 let c := byte(0, calldataload(add(t.offset, q)))
                 if iszero(or(and(gt(c, 0x60), lt(c, 0x7b)), and(gt(c, 0x2f), lt(c, 0x3a)))) { break }
@@ -481,9 +498,9 @@ library AbiCodec {
      * @dev The 32-byte word at byte offset `p` of `data`, reverting with
      *      InvalidValue(p) when it lies outside the data
      */
-    function word(bytes memory data, uint256 p) internal pure returns (uint256) {
-        Context memory context;
-        return word(data, p, context);
+    function word(bytes memory data, uint256 p) internal pure returns (uint256 v) {
+        if (p > data.length || data.length - p < 32) revert InvalidValue(p);
+        assembly ("memory-safe") { v := mload(add(add(data, 32), p)) }
     }
 
     /**
@@ -552,6 +569,16 @@ library AbiCodec {
      */
     function validate(bytes calldata t, bytes memory v, bool dynamic, uint256 words) internal pure {
         Context memory context;
+        validate(t, v, dynamic, words, context);
+    }
+
+    /**
+     * @dev The cached-shape `validate` reporting through `context`
+     */
+    function validate(bytes calldata t, bytes memory v, bool dynamic, uint256 words, Context memory context)
+        internal
+        pure
+    {
         if (dynamic) validateDynamic(t, v, context);
         else validateStatic(t, v, words, context);
     }
@@ -702,16 +729,19 @@ library AbiCodec {
             let depth := 0
             for { let i := 1 } lt(i, limit) { i := add(i, 1) } {
                 let c := byte(0, calldataload(add(t.offset, i)))
-                switch c
-                case 0x28 { depth := add(depth, 1) }
-                case 0x29 {
-                    if iszero(depth) {
-                        stray := i
-                        i := limit
+                // "(", ")" and "," all sit below "-"; names, digits and brackets do not.
+                if lt(c, 0x2d) {
+                    switch c
+                    case 0x28 { depth := add(depth, 1) }
+                    case 0x29 {
+                        if iszero(depth) {
+                            stray := i
+                            i := limit
+                        }
+                        depth := sub(depth, 1)
                     }
-                    depth := sub(depth, 1)
+                    case 0x2c { if iszero(depth) { count := add(count, 1) } }
                 }
-                case 0x2c { if iszero(depth) { count := add(count, 1) } }
             }
         }
         if (stray != 0) revert InvalidTypeDescriptor(stray);
@@ -722,10 +752,14 @@ library AbiCodec {
         uint256 p = 1;
         for (uint256 i; i < count; i++) {
             (uint256 end, bool dynamic, uint256 words) = typeShape(t, p, limit);
-            plan.starts[i] = p;
-            plan.ends[i] = end;
-            plan.dynamic[i] = dynamic;
-            plan.words[i] = words;
+            // `i` is below `count`, the length all four arrays were allocated with.
+            assembly ("memory-safe") {
+                let slot := shl(5, add(i, 1))
+                mstore(add(mload(plan), slot), p)
+                mstore(add(mload(add(plan, 0x20)), slot), end)
+                mstore(add(mload(add(plan, 0x40)), slot), dynamic)
+                mstore(add(mload(add(plan, 0x60)), slot), words)
+            }
             plan.headSize += words * 32;
             if (i + 1 == count) {
                 if (end != limit) revert InvalidTypeDescriptor(end);
@@ -778,6 +812,25 @@ library AbiCodec {
      *      envelope of its own: it is a calldata segment, or a tuple body
      *      the caller wraps.
      */
+    /**
+     * @dev The descriptor of component `index` of the tuple `plan` was
+     *      parsed from: `tupleLayout` set its span inside `t`, so the slice
+     *      needs no second bounds check. `index` is checked against the
+     *      component count.
+     */
+    function component(TupleLayout memory plan, bytes calldata t, uint256 index)
+        internal
+        pure
+        returns (bytes calldata c)
+    {
+        uint256 start = plan.starts[index];
+        uint256 end = plan.ends[index];
+        assembly ("memory-safe") {
+            c.offset := add(t.offset, start)
+            c.length := sub(end, start)
+        }
+    }
+
     function tuple(bytes calldata t, bytes[] memory args) internal pure returns (bytes memory) {
         return tuple(tupleLayout(t), t, args);
     }
@@ -795,7 +848,7 @@ library AbiCodec {
             revert ComponentCountMismatch(plan.starts.length, args.length);
         }
         for (uint256 i; i < args.length; i++) {
-            validateComponent(t[plan.starts[i]:plan.ends[i]], args[i], i, plan.dynamic[i], plan.words[i]);
+            validateComponent(component(plan, t, i), args[i], i, plan.dynamic[i], plan.words[i]);
         }
         return assemble(plan.dynamic, plan.headSize, args, false);
     }
@@ -819,7 +872,8 @@ library AbiCodec {
      *      prefixed by the 0x20 envelope word and the element count, which
      *      makes it abi.encode(T[]). Offsets inside the frame stay relative
      *      to the head start, as the ABI requires. The caller has validated
-     *      every value against the plan; nothing is checked here.
+     *      every value against the plan and passes one flag per value (or
+     *      the single shared flag of an array); nothing is checked here.
      */
     function assemble(bool[] memory dynamic, uint256 headSize, bytes[] memory values, bool array)
         internal
@@ -828,19 +882,33 @@ library AbiCodec {
     {
         uint256 prefix = array ? 64 : 0;
         uint256 size = headSize;
-        for (uint256 i; i < values.length; i++) {
-            if (dynamic[array ? 0 : i]) size += values[i].length - 32;
+        uint256 count = values.length;
+        // `dynamic` holds one flag per value, or a single flag for an array;
+        // both arrays are read without a second bounds check.
+        for (uint256 i; i < count; i++) {
+            bool d;
+            bytes memory v;
+            assembly ("memory-safe") {
+                d := mload(add(add(dynamic, 32), shl(5, mul(i, iszero(array)))))
+                v := mload(add(add(values, 32), shl(5, i)))
+            }
+            if (d) size += v.length - 32;
         }
         out = new bytes(prefix + size);
         if (array) {
             store(out, 0, 32);
-            store(out, 32, values.length);
+            store(out, 32, count);
         }
         uint256 head;
         uint256 tail = headSize;
-        for (uint256 i; i < values.length; i++) {
-            bytes memory v = values[i];
-            if (dynamic[array ? 0 : i]) {
+        for (uint256 i; i < count; i++) {
+            bool d;
+            bytes memory v;
+            assembly ("memory-safe") {
+                d := mload(add(add(dynamic, 32), shl(5, mul(i, iszero(array)))))
+                v := mload(add(add(values, 32), shl(5, i)))
+            }
+            if (d) {
                 store(out, prefix + head, tail);
                 copy(out, prefix + tail, v, 32, v.length - 32);
                 head += 32;
@@ -860,8 +928,9 @@ library AbiCodec {
      */
     function pack(bytes calldata t, bytes[] memory values) internal pure returns (bytes memory) {
         (bool dynamic, uint256 words) = shape(t);
+        Context memory context;
         for (uint256 i; i < values.length; i++) {
-            validate(t, values[i]);
+            validate(t, values[i], dynamic, words, context);
         }
         bool[] memory dynamics = new bool[](1);
         dynamics[0] = dynamic;

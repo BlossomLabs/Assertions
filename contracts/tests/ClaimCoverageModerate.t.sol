@@ -146,16 +146,140 @@ contract ClaimCoverageModerateTest is Test {
         );
     }
 
-    function test_C38_DescriptorErrorsPrecedeInvalidData() public view {
+    /**
+     * @dev The descriptor is parsed along the path. A malformed component the
+     *      path enters or passes is refused before that step reads any data,
+     *      valid or not; the same text after the selected component is never
+     *      read.
+     */
+    function test_C38_DescriptorParsedAlongThePath() public view {
         int256[] memory path = new int256[](1);
+        path[0] = 1;
         for (uint256 i; i < 2; i++) {
-            bytes memory data = i == 0 ? bytes("") : abi.encode(uint256(7));
+            bytes memory data = i == 0 ? bytes("") : abi.encode(uint256(7), uint256(9));
+            // entered: uint8[0] is component 1
             failure(
                 address(core),
                 abi.encodeCall(core.nav, (raw(data), "(uint256,uint8[0])", path)),
                 abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(16))
             );
+            // passed: uint8[0] is component 0, on the way to component 1
+            failure(
+                address(core),
+                abi.encodeCall(core.nav, (raw(data), "(uint8[0],uint256)", path)),
+                abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(8))
+            );
         }
+        // not reached: component 0 is selected, the malformed component 1 is not read
+        path[0] = 0;
+        assertEq(nav(abi.encode(uint256(7), uint256(9)), "(uint256,uint8[0])", path), abi.encode(uint256(7)));
+        // the selected component is validated through its own delimiter
+        failure(
+            address(core),
+            abi.encodeCall(core.nav, (raw(abi.encode(uint256(7))), "(uint256 uint8)", path)),
+            abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(8))
+        );
+        // the type as a whole must close as a tuple or an array does
+        failure(
+            address(core),
+            abi.encodeCall(core.nav, (raw(abi.encode(uint256(7))), "(uint256", path)),
+            abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(8))
+        );
+        // and the parenthesis opened at byte 0 must close at the last byte: text after the
+        // tuple is refused even when it ends in ")", so it is never read as the tuple alone
+        bytes memory two = abi.encode(uint256(7), uint256(9));
+        failure(
+            address(core),
+            abi.encodeCall(core.nav, (raw(two), "(uint256,uint256))", path)),
+            abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(17))
+        );
+        failure(
+            address(core),
+            abi.encodeCall(core.nav, (raw(two), "(uint256,uint256)(uint256)", path)),
+            abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(17))
+        );
+        // the same holds past one word of descriptor text, and when the stray text carries
+        // exactly as many parentheses as a flat tuple would
+        failure(
+            address(core),
+            abi.encodeCall(
+                core.nav, (raw(two), "(uint256,uint256)aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)", path)
+            ),
+            abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(17))
+        );
+        failure(
+            address(core),
+            abi.encodeCall(core.nav, (raw(two), "(uint256,uint256(", path)),
+            abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(17))
+        );
+        // while well-formed tuples of every shape still navigate: flat and longer than a
+        // word, and nested with the inner tuple closing before the outer one
+        assertEq(
+            nav(
+                abi.encode(uint256(1), address(2), bytes32(uint256(3)), uint256(4), uint256(5)),
+                "(uint256,address,bytes32,uint256,uint256)",
+                path
+            ),
+            abi.encode(uint256(1))
+        );
+        path[0] = 1;
+        assertEq(
+            nav(abi.encode(uint256(1), uint256(2), uint256(3)), "((uint256,uint256),uint256)", path),
+            abi.encode(uint256(3))
+        );
+        path[0] = 0;
+        // "((uint256,bytes)[],uint256)" with its first parenthesis dropped
+        failure(
+            address(core),
+            abi.encodeCall(core.nav, (raw(two), "(uint256,bytes)[],uint256)", path)),
+            abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(15))
+        );
+        // a tuple that never closes is refused whichever component is selected
+        failure(
+            address(core),
+            abi.encodeCall(core.nav, (raw(abi.encode(uint256(7), uint256(9))), "(uint256,address", path)),
+            abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(16))
+        );
+        path[0] = 1;
+        failure(
+            address(core),
+            abi.encodeCall(core.nav, (raw(abi.encode(uint256(7), uint256(9))), "(uint256,(address)", path)),
+            abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(18))
+        );
+        path[0] = 0;
+        // an array of tuples is still parsed whole: stray text, a zero length and an
+        // oversized length are refused where the whole-descriptor parser refuses them
+        bytes memory rows = abi.encode(uint256(32), uint256(0));
+        failure(
+            address(core),
+            abi.encodeCall(core.nav, (raw(rows), "(uint256)x[]", path)),
+            abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(9))
+        );
+        failure(
+            address(core),
+            abi.encodeCall(core.nav, (raw(rows), "(uint256)[0]", path)),
+            abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(11))
+        );
+        failure(
+            address(core),
+            abi.encodeCall(core.nav, (raw(rows), "(uint256)[99999999999]", path)),
+            abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(20))
+        );
+    }
+
+    /**
+     * @dev Whatever the descriptor says after the selected component, the
+     *      selected value is the same. Parentheses are the one thing that is
+     *      counted up front, so the unread text carries none.
+     */
+    function testFuzz_C38_UnreadDescriptorTextCannotChangeTheResult(bytes calldata rest, uint256 value) public view {
+        int256[] memory path = new int256[](1);
+        bytes memory text = rest;
+        for (uint256 i; i < text.length; i++) {
+            if (text[i] == "(" || text[i] == ")") text[i] = "#";
+        }
+        string memory descriptor = string(bytes.concat("(uint256,", text, ")"));
+        assertEq(nav(abi.encode(value, uint256(9)), descriptor, path), abi.encode(value));
     }
 
     function encodedQuad(uint256[][][][] memory a) internal pure returns (bytes memory) {

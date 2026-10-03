@@ -107,7 +107,9 @@ contract GasPropagationTest is Test {
             return (
                 operand(
                     address(collections),
-                    abi.encodeCall(Collections.mapWords, (abi.encode(value), address(target), data, new uint256[](0)))
+                    abi.encodeCall(
+                        Collections.applyWords, (abi.encode(value), address(target), data, new uint256[](0), false)
+                    )
                 ),
                 "bytes"
             );
@@ -278,7 +280,7 @@ contract GasPropagationTest is Test {
                     ? abi.encodeWithSelector(Operations.RawCallFailed.selector, address(target), data)
                     : abi.encodeWithSelector(
                         Collections.CallbackFailed.selector,
-                        route == 2 ? Collections.mapWords.selector : Collections.mapValues.selector,
+                        route == 2 ? Collections.applyWords.selector : Collections.mapValues.selector,
                         uint256(0),
                         uint256(0),
                         address(target),

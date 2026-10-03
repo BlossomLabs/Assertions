@@ -92,10 +92,28 @@ contract ExpressionsNoPanicTest is Test {
         );
     }
 
-    function testEvaluateEncodedRejectsImpossibleDecoderAllocation() public view {
+    /**
+     * @dev An impossible node count is no longer decoded into memory, so it
+     *      cannot ask for an impossible allocation: `evaluate` refuses the
+     *      count against the calldata it was handed, and the failure comes
+     *      back wrapped like any other failure inside the self-call
+     */
+    function testEvaluateEncodedRefusesImpossibleNodeCountInsideTheSelfCall() public view {
         // Expression tuple: core, nodes offset, result, impossible nodes count.
         bytes memory payload = abi.encode(uint256(32), address(core), uint256(96), uint256(0), type(uint256).max);
-        assertAllocationPanic(abi.encodeCall(Expressions.evaluateEncoded, (payload, new bytes[](0))));
+        (bool ok, bytes memory out) = address(expressions).staticcall{gas: CALL_GAS}(
+            abi.encodeCall(Expressions.evaluateEncoded, (payload, new bytes[](0)))
+        );
+        assertFalse(ok);
+        assertEq(bytes4(out), Expressions.NodeCallFailed.selector);
+        bytes memory arguments = new bytes(out.length - 4);
+        for (uint256 i; i < arguments.length; i++) {
+            arguments[i] = out[i + 4];
+        }
+        (uint256 index, address target,, bytes memory reason) = abi.decode(arguments, (uint256, address, bytes, bytes));
+        assertEq(index, 0);
+        assertEq(target, address(expressions));
+        assertEq(reason, "");
     }
 
     function assertAllocationPanic(bytes memory data) internal view {

@@ -20,7 +20,7 @@ Defined once in `ERC8211.sol`, the standard's shared vocabulary, thrown by the c
 | `InvalidOrConstraint(uint256, uint256, uint256)` | empty OR or nested OR; identifies entry, operand and outer constraint/word index |
 | `InvalidConstraintRange(uint256, uint256, uint256)` | range lower bound exceeds upper bound under its signedness; identifies entry, operand and outer constraint/word index |
 
-Wire bytes that solc's decoder cannot read revert **without data**, exactly as they do in Biconomy's reference: a `STATIC_CALL` fetcher's `paramData` that is not `abi.encode(address, bytes)`, an `OR` constraint's `referenceData` that is not `abi.encode(Constraint[])`, and, on Expressions, a Resolve node's `data` or an `evaluateEncoded` payload. The SDK always encodes these correctly; a bare revert here means hand-built calldata.
+Wire bytes that solc's decoder cannot read revert **without data**, exactly as they do in Biconomy's reference: a `STATIC_CALL` fetcher's `paramData` that is not `abi.encode(address, bytes)`, an `OR` constraint's `referenceData` that is not `abi.encode(Constraint[])`, and, on Expressions, a Resolve node's `data`. An `evaluateEncoded` payload is not decoded up front: one shorter than a word reverts without data, and a field that evaluation reads and cannot decode fails inside the self-call, so it arrives as `NodeCallFailed` with an empty reason. The SDK always encodes these correctly; a bare revert or an empty reason here means hand-built calldata.
 
 ## AbiCodec (shared ABI machinery)
 
@@ -81,8 +81,9 @@ Arithmetic failures in Operations surface as Solidity panics: overflow/underflow
 
 | Error | Description |
 |-------|-------------|
-| `LambdaOffsetOutOfBounds(uint256, uint256)` | a fold, `mapWords` or `filterWords` window offset does not leave room for a 32-byte word inside the template (arguments: the offending offset, the template length) |
-| `UnalignedWords(uint256)` | `foldWords` or a word-array function received data that is not a whole number of 32-byte words |
+| `LambdaOffsetOutOfBounds(uint256, uint256)` | a `fold` or `applyWords` window offset does not leave room for a 32-byte word inside the template (arguments: the offending offset, the template length) |
+| `UnalignedWords(uint256)` | a `Words` fold or a word-array function received data that is not a whole number of 32-byte words |
+| `UnusedFoldArgument(uint8)` | a `fold` was handed the argument its domain does not use: a subject for `Range`, or a count for `Bytes` or `Words` (the argument is the domain) |
 | `WordCountMismatch(uint256, uint256)` | `zipWords` received payloads of different word counts (silent truncation would be a wrong-answer machine) |
 | `LengthMismatch(uint256, uint256)` | `zipValues` received arrays of different lengths (silent truncation would be a wrong-answer machine) |
 | `InvalidLane(uint256)` | `unzipWords` or `unzipValues` received a lane other than 0 or 1 |

@@ -86,8 +86,18 @@ contract WordLambdasSymbolicTest is Test {
         }
         bytes32 got = fold(
             abi.encodeCall(
-                Collections.foldWords,
-                (s, address(lambdas), stepTemplate(), 4, offsets(36), init, Collections.FoldExit.Full)
+                Collections.fold,
+                (
+                    Collections.FoldDomain.Words,
+                    0,
+                    s,
+                    address(lambdas),
+                    stepTemplate(),
+                    4,
+                    offsets(36),
+                    init,
+                    Collections.FoldExit.Full
+                )
             )
         );
         assertEq(uint256(got), expected);
@@ -111,15 +121,35 @@ contract WordLambdasSymbolicTest is Test {
         }
         bytes32 got = fold(
             abi.encodeCall(
-                Collections.foldRange,
-                (n, address(lambdas), stepTemplate(), 4, offsets(36), init, Collections.FoldExit.Full)
+                Collections.fold,
+                (
+                    Collections.FoldDomain.Range,
+                    n,
+                    "",
+                    address(lambdas),
+                    stepTemplate(),
+                    4,
+                    offsets(36),
+                    init,
+                    Collections.FoldExit.Full
+                )
             )
         );
         assertEq(uint256(got), byIndex, "foldRange");
         got = fold(
             abi.encodeCall(
-                Collections.foldBytes,
-                (s, address(lambdas), stepTemplate(), 4, offsets(36), init, Collections.FoldExit.Full)
+                Collections.fold,
+                (
+                    Collections.FoldDomain.Bytes,
+                    0,
+                    s,
+                    address(lambdas),
+                    stepTemplate(),
+                    4,
+                    offsets(36),
+                    init,
+                    Collections.FoldExit.Full
+                )
             )
         );
         assertEq(uint256(got), byByte, "foldBytes");
@@ -143,8 +173,18 @@ contract WordLambdasSymbolicTest is Test {
             : exitCase == ANY ? Collections.FoldExit.Any : Collections.FoldExit.All;
         bytes32 got = fold(
             abi.encodeCall(
-                Collections.foldWords,
-                (s, address(lambdas), abi.encodeCall(WordLambdas.take, (0, 0)), 4, offsets(36), init, exit)
+                Collections.fold,
+                (
+                    Collections.FoldDomain.Words,
+                    0,
+                    s,
+                    address(lambdas),
+                    abi.encodeCall(WordLambdas.take, (0, 0)),
+                    4,
+                    offsets(36),
+                    init,
+                    exit
+                )
             )
         );
         assertEq(got, expected);
@@ -160,7 +200,18 @@ contract WordLambdasSymbolicTest is Test {
         both[1] = 36;
         bytes32 got = fold(
             abi.encodeCall(
-                Collections.foldWords, (s, address(lambdas), stepTemplate(), 4, both, init, Collections.FoldExit.Full)
+                Collections.fold,
+                (
+                    Collections.FoldDomain.Words,
+                    0,
+                    s,
+                    address(lambdas),
+                    stepTemplate(),
+                    4,
+                    both,
+                    init,
+                    Collections.FoldExit.Full
+                )
             )
         );
         unchecked {
@@ -178,7 +229,8 @@ contract WordLambdasSymbolicTest is Test {
         bytes memory out = abi.decode(
             call(
                 abi.encodeCall(
-                    Collections.mapWords, (s, address(lambdas), abi.encodeCall(WordLambdas.mix, (0, tag)), offsets(4))
+                    Collections.applyWords,
+                    (s, address(lambdas), abi.encodeCall(WordLambdas.mix, (0, tag)), offsets(4), false)
                 )
             ),
             (bytes)
@@ -198,8 +250,8 @@ contract WordLambdasSymbolicTest is Test {
         (bool ok, bytes memory out) = address(collections)
             .staticcall(
                 abi.encodeCall(
-                    Collections.filterWords,
-                    (s, address(lambdas), abi.encodeCall(WordLambdas.oddOrTwo, (0)), offsets(4))
+                    Collections.applyWords,
+                    (s, address(lambdas), abi.encodeCall(WordLambdas.oddOrTwo, (0)), offsets(4), true)
                 )
             );
         uint256 five = type(uint256).max;
@@ -212,7 +264,7 @@ contract WordLambdasSymbolicTest is Test {
                 out,
                 abi.encodeWithSelector(
                     AbiCodec.InvalidCallbackResult.selector,
-                    Collections.filterWords.selector,
+                    Collections.applyWords.selector,
                     five,
                     uint256(0),
                     address(lambdas)
@@ -246,20 +298,30 @@ contract WordLambdasSymbolicTest is Test {
         if (caseId == 0) {
             // A window past the template, even with nothing to fold.
             data = abi.encodeCall(
-                Collections.foldWords,
-                (s, address(lambdas), stepTemplate(), 4, offsets(60), bytes32(0), Collections.FoldExit.Full)
+                Collections.fold,
+                (
+                    Collections.FoldDomain.Words,
+                    0,
+                    s,
+                    address(lambdas),
+                    stepTemplate(),
+                    4,
+                    offsets(60),
+                    bytes32(0),
+                    Collections.FoldExit.Full
+                )
             );
             want = abi.encodeWithSelector(Collections.LambdaOffsetOutOfBounds.selector, uint256(60), uint256(68));
             shouldFail = true;
         } else if (caseId == 1) {
             data = abi.encodeCall(
-                Collections.mapWords, (s, address(0xE0A), abi.encodeCall(WordLambdas.boom, (0)), offsets(4))
+                Collections.applyWords, (s, address(0xE0A), abi.encodeCall(WordLambdas.boom, (0)), offsets(4), false)
             );
             want = abi.encodeWithSelector(Collections.InvalidCallbackTarget.selector, address(0xE0A));
             shouldFail = n != 0;
         } else if (caseId == 2) {
             data = abi.encodeCall(
-                Collections.mapWords, (s, address(lambdas), abi.encodeCall(WordLambdas.boom, (0)), offsets(4))
+                Collections.applyWords, (s, address(lambdas), abi.encodeCall(WordLambdas.boom, (0)), offsets(4), false)
             );
             uint256 seven = type(uint256).max;
             for (uint256 i; i < n && seven == type(uint256).max; i++) {
@@ -268,7 +330,7 @@ contract WordLambdasSymbolicTest is Test {
             shouldFail = seven != type(uint256).max;
             want = abi.encodeWithSelector(
                 Collections.CallbackFailed.selector,
-                Collections.mapWords.selector,
+                Collections.applyWords.selector,
                 seven,
                 uint256(0),
                 address(lambdas),
@@ -277,11 +339,11 @@ contract WordLambdasSymbolicTest is Test {
             );
         } else {
             data = abi.encodeCall(
-                Collections.mapWords, (s, address(lambdas), abi.encodeCall(WordLambdas.wide, (0)), offsets(4))
+                Collections.applyWords, (s, address(lambdas), abi.encodeCall(WordLambdas.wide, (0)), offsets(4), false)
             );
             want = abi.encodeWithSelector(
                 AbiCodec.InvalidCallbackResult.selector,
-                Collections.mapWords.selector,
+                Collections.applyWords.selector,
                 uint256(0),
                 uint256(0),
                 address(lambdas)

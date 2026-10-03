@@ -220,6 +220,17 @@ export const COLLECTIONS_ABI = [
   {
     "inputs": [
       {
+        "internalType": "enum Collections.FoldDomain",
+        "name": "domain",
+        "type": "uint8"
+      }
+    ],
+    "name": "UnusedFoldArgument",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "aWords",
         "type": "uint256"
@@ -368,6 +379,45 @@ export const COLLECTIONS_ABI = [
   {
     "inputs": [
       {
+        "internalType": "bytes",
+        "name": "s",
+        "type": "bytes"
+      },
+      {
+        "internalType": "address",
+        "name": "target",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "template",
+        "type": "bytes"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "elemOffsets",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "bool",
+        "name": "filter",
+        "type": "bool"
+      }
+    ],
+    "name": "applyWords",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string",
         "name": "inputType",
         "type": "string"
@@ -426,40 +476,6 @@ export const COLLECTIONS_ABI = [
         "internalType": "bytes[]",
         "name": "out",
         "type": "bytes[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes",
-        "name": "s",
-        "type": "bytes"
-      },
-      {
-        "internalType": "address",
-        "name": "target",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "template",
-        "type": "bytes"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "elemOffsets",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "filterWords",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
       }
     ],
     "stateMutability": "view",
@@ -558,6 +574,16 @@ export const COLLECTIONS_ABI = [
   {
     "inputs": [
       {
+        "internalType": "enum Collections.FoldDomain",
+        "name": "domain",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "n",
+        "type": "uint256"
+      },
+      {
         "internalType": "bytes",
         "name": "s",
         "type": "bytes"
@@ -593,56 +619,7 @@ export const COLLECTIONS_ABI = [
         "type": "uint8"
       }
     ],
-    "name": "foldBytes",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "n",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "target",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "template",
-        "type": "bytes"
-      },
-      {
-        "internalType": "uint256",
-        "name": "accOffset",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "elemOffsets",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "init",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "enum Collections.FoldExit",
-        "name": "exit",
-        "type": "uint8"
-      }
-    ],
-    "name": "foldRange",
+    "name": "fold",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -724,55 +701,6 @@ export const COLLECTIONS_ABI = [
         "internalType": "bytes",
         "name": "result",
         "type": "bytes"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes",
-        "name": "s",
-        "type": "bytes"
-      },
-      {
-        "internalType": "address",
-        "name": "target",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "template",
-        "type": "bytes"
-      },
-      {
-        "internalType": "uint256",
-        "name": "accOffset",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "elemOffsets",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "init",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "enum Collections.FoldExit",
-        "name": "exit",
-        "type": "uint8"
-      }
-    ],
-    "name": "foldWords",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
       }
     ],
     "stateMutability": "view",
@@ -934,40 +862,6 @@ export const COLLECTIONS_ABI = [
         "internalType": "bytes[]",
         "name": "out",
         "type": "bytes[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes",
-        "name": "s",
-        "type": "bytes"
-      },
-      {
-        "internalType": "address",
-        "name": "target",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "template",
-        "type": "bytes"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "elemOffsets",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "mapWords",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
       }
     ],
     "stateMutability": "view",

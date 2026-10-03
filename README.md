@@ -16,8 +16,8 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 ```
 Assertions  v2.0   0xA55e4722883831c97d20E4Cb26E9a3C8569D9F6e   (judge + primitives)
 Operations  v2.0   0x09e4A7eb757a41c78e2c1E810a2B162683AD903e   (scalar vocabulary)
-Collections v2.0   0xc011Ec71894f81c491DD8D278B14f32caD5d57DB   (folds, word arrays, generic traversals)
-Expressions v2.0   0xE5594e5585476e8B68E03Aa1222196c5C2ee293D   (typed expression graphs)
+Collections v2.0   0xc011Ec76C3f40945184b93F79377Bca9662165d5   (folds, word arrays, generic traversals)
+Expressions v2.0   0xe5594e5554FaF731C4ce9DE8b4Ea078CB52B62F2   (typed expression graphs)
 ```
 
 These are the CREATE2 addresses of the current artifact set, and they change whenever the bytecode does. `website/src/lib/deployments.json` is the source of truth that the SDK, the builder and the docs all read; prefer it to this snapshot. An address listed here says where the code goes, not that it is already there: check the website's Deployments page for per-chain availability before you rely on one. The SDK compiles against all four. Only prior public releases are retained in the release history; the release with public-chain history is Assertions v1.0, reachable as `assertions.eth`.

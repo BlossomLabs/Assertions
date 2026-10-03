@@ -457,6 +457,15 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   minute, e5594e55 is 32 bits and takes minutes. Regenerate and verify deployment
   artifacts, fixtures and SDK addresses together; the SDK lives in the vendored
   checkout, so an address move is not finished until the pin is bumped.
+- Mine salts from `hardhat compile --force`, never from an incremental build
+  (measured 2026-10-04). Hardhat's metadata records the solc job's remappings,
+  so the same source hashes differently depending on which job it lands in:
+  the forced build compiles the four contracts in one job carrying the
+  OpenZeppelin remapping, while an incremental build after editing one
+  contract compiles it alone, without it. Collections and Expressions were
+  once mined from incremental artifacts, `sync:artifact` accepted them, and a
+  clean checkout predicted two other addresses. Run the forced build again
+  before `sync:artifact` and before believing its check.
 - Operations' `mulDiv`, `sqrt`, `log2` (also inside `lnWad`) and the inverse behind
   negative `powMod` exponents call OpenZeppelin's `Math`, pinned to an exact
   `@openzeppelin/contracts` version in `package.json` (and remapped in

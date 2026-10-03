@@ -157,7 +157,9 @@ export const VERIFICATION_INPUTS: Record<
             ]
           }
         },
-        "remappings": []
+        "remappings": [
+          "project/:@openzeppelin/contracts/=npm/@openzeppelin/contracts@5.6.1/"
+        ]
       }
     }
   },
@@ -203,7 +205,9 @@ export const VERIFICATION_INPUTS: Record<
             ]
           }
         },
-        "remappings": []
+        "remappings": [
+          "project/:@openzeppelin/contracts/=npm/@openzeppelin/contracts@5.6.1/"
+        ]
       }
     }
   }

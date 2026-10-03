@@ -97,8 +97,8 @@ const CONTRACTS = [
     output: "src/lib/collections-deployment.ts",
     // Vanity salt for the 2.0 release. The callback interface is local, so
     // Expressions source edits do not move this address.
-    salt: "0xcf96c8067c596a1e54889f95fd692fb079f3238e29d719e68fe3606bc2fc7910",
-    expectedAddress: "0xc011Ec71894f81c491DD8D278B14f32caD5d57DB",
+    salt: "0x01ddc7451148afa72236e59209c84d4ac96eae6c4c4703ce82ff7fa9d39df923",
+    expectedAddress: "0xc011Ec76C3f40945184b93F79377Bca9662165d5",
     prefix: "COLLECTIONS",
     description: "generic ABI collection vocabulary contract",
     includeProxyConstants: false,
@@ -113,8 +113,8 @@ const CONTRACTS = [
     output: "src/lib/expressions-deployment.ts",
     // Vanity salt for the 2.0 release. The core interface is local, so core
     // source edits do not move this address.
-    salt: "0x738843a65732452b88b3835ca174046dee059cff966bd2af05f097efd27108ca",
-    expectedAddress: "0xE5594e5585476e8B68E03Aa1222196c5C2ee293D",
+    salt: "0x7a7ba2e33a01f3984aab6f8bd83914bf5ef0283ee9becda68363219c3c3507c0",
+    expectedAddress: "0xe5594e5554FaF731C4ce9DE8b4Ea078CB52B62F2",
     prefix: "EXPRESSIONS",
     description: "typed expression graphs contract",
     includeProxyConstants: false,

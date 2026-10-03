@@ -1,0 +1,64 @@
+name: Public-function proofs
+on:
+  pull_request:
+    paths:
+      - 'formal/**'
+      - 'contracts/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'hardhat.config.ts'
+      - 'docs/claim-evidence.json'
+      - '.github/workflows/public-function-proofs.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        overload: [Unsigned, Signed]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '26.10.0'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Production compilation
+        run: |
+          npm install --global pnpm@10.11.0
+          pnpm install --frozen-lockfile
+          pnpm compile
+      - name: Restore published interpreter and pinned tools
+        run: python3 formal/tools/bootstrap.py --fetch
+      - name: Integrity and negative evidence tests
+        run: |
+          python3 formal/tools/verify.py --check
+          python3 -m unittest discover -s formal/tests -v
+      - name: Public-entry closure
+        env:
+          OVERLOAD: ${{ matrix.overload }}
+        run: |
+          if [ "$OVERLOAD" = Unsigned ]; then
+            signature='Operations.add(uint256,uint256)'
+          else
+            signature='Operations.add(int256,int256)'
+          fi
+          python3 formal/tools/verify.py --signature "$signature" --output formal/.generated/native --run
+      - name: Independent receipt review
+        run: python3 formal/tools/verify.py --review formal/.generated/native --output formal/.generated/review
+      - name: Concrete bytecode regression
+        run: |
+          python3 -m pip install --require-hashes --target proof-tools/evm-python -r formal/dependencies/dafnyevm/requirements.lock
+          proof-tools/dafny/dafny translate py proof-tools/dafnyevm/src/dafny/execution.dfy --no-verify --include-runtime --output formal/.generated/interpreter/evm
+          python3 formal/tools/concrete.py --interpreter formal/.generated/interpreter/evm-py --vendor proof-tools/evm-python --runtime formal/.generated/Operations.runtime.hex --output formal/.generated/concrete.json
+      - name: Retain generated evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-add-${{ matrix.overload }}
+          path: formal/.generated/

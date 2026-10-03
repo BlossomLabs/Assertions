@@ -44,3 +44,7 @@
 /formal/**/physical-preflight.json
 # Local retained-evidence ledgers; tracked historical records remain tracked.
 /docs/verification/
+
+# Pinned proof dependencies and generated runtime/evidence artifacts
+/proof-tools/
+/formal/.generated/

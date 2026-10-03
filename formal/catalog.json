@@ -1,0 +1,1338 @@
+{
+  "schemaVersion": 1,
+  "functions": [
+    {
+      "id": "Assertions.LEN()",
+      "contract": "Assertions",
+      "signature": "LEN()",
+      "selector": "0x694464da",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.PAYLOAD()",
+      "contract": "Assertions",
+      "signature": "PAYLOAD()",
+      "selector": "0x268e878d",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.assertBatch((bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[],(uint8,bytes)[])[])",
+      "contract": "Assertions",
+      "signature": "assertBatch((bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[],(uint8,bytes)[])[])",
+      "selector": "0xba4290b9",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.assertBatch((bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[],(uint8,bytes)[])[],string)",
+      "contract": "Assertions",
+      "signature": "assertBatch((bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[],(uint8,bytes)[])[],string)",
+      "selector": "0x77488849",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.assertParam((uint8,uint8,bytes,(uint8,bytes)[]))",
+      "contract": "Assertions",
+      "signature": "assertParam((uint8,uint8,bytes,(uint8,bytes)[]))",
+      "selector": "0x12fb5fe2",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.assertParam((uint8,uint8,bytes,(uint8,bytes)[]),string)",
+      "contract": "Assertions",
+      "signature": "assertParam((uint8,uint8,bytes,(uint8,bytes)[]),string)",
+      "selector": "0x0ce105e2",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.chain((uint8,uint8,bytes,(uint8,bytes)[]),bytes[])",
+      "contract": "Assertions",
+      "signature": "chain((uint8,uint8,bytes,(uint8,bytes)[]),bytes[])",
+      "selector": "0xa5c16924",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.cond((uint8,uint8,bytes,(uint8,bytes)[]),(uint8,uint8,bytes,(uint8,bytes)[]),(uint8,uint8,bytes,(uint8,bytes)[]))",
+      "contract": "Assertions",
+      "signature": "cond((uint8,uint8,bytes,(uint8,bytes)[]),(uint8,uint8,bytes,(uint8,bytes)[]),(uint8,uint8,bytes,(uint8,bytes)[]))",
+      "selector": "0x5fe917dc",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.gather((uint8,uint8,bytes,(uint8,bytes)[])[])",
+      "contract": "Assertions",
+      "signature": "gather((uint8,uint8,bytes,(uint8,bytes)[])[])",
+      "selector": "0x6db7211f",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.get((uint8,uint8,bytes,(uint8,bytes)[]),bytes4,string,(uint8,uint8,bytes,(uint8,bytes)[])[])",
+      "contract": "Assertions",
+      "signature": "get((uint8,uint8,bytes,(uint8,bytes)[]),bytes4,string,(uint8,uint8,bytes,(uint8,bytes)[])[])",
+      "selector": "0x14a44dc2",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.isValid((uint8,uint8,bytes,(uint8,bytes)[]))",
+      "contract": "Assertions",
+      "signature": "isValid((uint8,uint8,bytes,(uint8,bytes)[]))",
+      "selector": "0xcfc641a0",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.nav((uint8,uint8,bytes,(uint8,bytes)[]),string,int256[])",
+      "contract": "Assertions",
+      "signature": "nav((uint8,uint8,bytes,(uint8,bytes)[]),string,int256[])",
+      "selector": "0x1fb053e3",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.orElse((uint8,uint8,bytes,(uint8,bytes)[]),(uint8,uint8,bytes,(uint8,bytes)[]))",
+      "contract": "Assertions",
+      "signature": "orElse((uint8,uint8,bytes,(uint8,bytes)[]),(uint8,uint8,bytes,(uint8,bytes)[]))",
+      "selector": "0xb035f8c0",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.pick((uint8,uint8,bytes,(uint8,bytes)[]),int256)",
+      "contract": "Assertions",
+      "signature": "pick((uint8,uint8,bytes,(uint8,bytes)[]),int256)",
+      "selector": "0xbf50f520",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.read((uint8,uint8,bytes,(uint8,bytes)[]),bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[])",
+      "contract": "Assertions",
+      "signature": "read((uint8,uint8,bytes,(uint8,bytes)[]),bytes4,(uint8,uint8,bytes,(uint8,bytes)[])[])",
+      "selector": "0x3efa16b7",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.resolve((uint8,uint8,bytes,(uint8,bytes)[]))",
+      "contract": "Assertions",
+      "signature": "resolve((uint8,uint8,bytes,(uint8,bytes)[]))",
+      "selector": "0x1fa99b32",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Assertions.revertData((uint8,uint8,bytes,(uint8,bytes)[]),bytes4)",
+      "contract": "Assertions",
+      "signature": "revertData((uint8,uint8,bytes,(uint8,bytes)[]),bytes4)",
+      "selector": "0x65d811ea",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.allValues(string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "contract": "Collections",
+      "signature": "allValues(string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "selector": "0x124eac60",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.anyValues(string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "contract": "Collections",
+      "signature": "anyValues(string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "selector": "0xca68b282",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.filterValues(string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "contract": "Collections",
+      "signature": "filterValues(string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "selector": "0x3b41e5a5",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.filterWords(bytes,address,bytes,uint256[])",
+      "contract": "Collections",
+      "signature": "filterWords(bytes,address,bytes,uint256[])",
+      "selector": "0x7787eb48",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.findValues(string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "contract": "Collections",
+      "signature": "findValues(string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "selector": "0x8fd19c6f",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.flattenValues(string,bytes[][])",
+      "contract": "Collections",
+      "signature": "flattenValues(string,bytes[][])",
+      "selector": "0x174e3d2a",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.foldBytes(bytes,address,bytes,uint256,uint256[],bytes32,uint8)",
+      "contract": "Collections",
+      "signature": "foldBytes(bytes,address,bytes,uint256,uint256[],bytes32,uint8)",
+      "selector": "0x6d24e79c",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.foldRange(uint256,address,bytes,uint256,uint256[],bytes32,uint8)",
+      "contract": "Collections",
+      "signature": "foldRange(uint256,address,bytes,uint256,uint256[],bytes32,uint8)",
+      "selector": "0xf1d88dc8",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.foldValues(string,string,bytes[],bytes,(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "contract": "Collections",
+      "signature": "foldValues(string,string,bytes[],bytes,(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "selector": "0x750d82d7",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.foldWords(bytes,address,bytes,uint256,uint256[],bytes32,uint8)",
+      "contract": "Collections",
+      "signature": "foldWords(bytes,address,bytes,uint256,uint256[],bytes32,uint8)",
+      "selector": "0x6de60cb0",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.indexOfValues(string,bytes[],bytes,(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "contract": "Collections",
+      "signature": "indexOfValues(string,bytes[],bytes,(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "selector": "0xb2e76231",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.iotaWords(uint256)",
+      "contract": "Collections",
+      "signature": "iotaWords(uint256)",
+      "selector": "0x8d27f48d",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.mapValues(string,string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "contract": "Collections",
+      "signature": "mapValues(string,string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "selector": "0x3951380d",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.mapWords(bytes,address,bytes,uint256[])",
+      "contract": "Collections",
+      "signature": "mapWords(bytes,address,bytes,uint256[])",
+      "selector": "0xed6dc3be",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.packArray(string,bytes[])",
+      "contract": "Collections",
+      "signature": "packArray(string,bytes[])",
+      "selector": "0x9c780aab",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.reverseValues(string,bytes[])",
+      "contract": "Collections",
+      "signature": "reverseValues(string,bytes[])",
+      "selector": "0xc5485722",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.reverseWords(bytes)",
+      "contract": "Collections",
+      "signature": "reverseWords(bytes)",
+      "selector": "0xab590638",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.sliceValues(string,bytes[],int256,int256)",
+      "contract": "Collections",
+      "signature": "sliceValues(string,bytes[],int256,int256)",
+      "selector": "0xe9c26f9f",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.sortValues(string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "contract": "Collections",
+      "signature": "sortValues(string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes))",
+      "selector": "0xdcd9dc3b",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.sortWords(bytes)",
+      "contract": "Collections",
+      "signature": "sortWords(bytes)",
+      "selector": "0x2ed74f49",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.sumWords(bytes)",
+      "contract": "Collections",
+      "signature": "sumWords(bytes)",
+      "selector": "0x1787098b",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.uniqueValues(string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes),bool)",
+      "contract": "Collections",
+      "signature": "uniqueValues(string,bytes[],(address,bytes4,string,bytes[],uint256,uint256,bytes),bool)",
+      "selector": "0x1c6948cc",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.uniqueWords(bytes,bool)",
+      "contract": "Collections",
+      "signature": "uniqueWords(bytes,bool)",
+      "selector": "0xb58889b6",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.unpackArray(string,bytes)",
+      "contract": "Collections",
+      "signature": "unpackArray(string,bytes)",
+      "selector": "0xcb533ade",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.unzipValues(string,string,bytes[],uint256)",
+      "contract": "Collections",
+      "signature": "unzipValues(string,string,bytes[],uint256)",
+      "selector": "0x40b7d863",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.unzipWords(bytes,uint256)",
+      "contract": "Collections",
+      "signature": "unzipWords(bytes,uint256)",
+      "selector": "0xb2303db4",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.wordIndexOf(bytes,bytes32)",
+      "contract": "Collections",
+      "signature": "wordIndexOf(bytes,bytes32)",
+      "selector": "0xe8bc8883",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.zipValues(string,string,bytes[],bytes[])",
+      "contract": "Collections",
+      "signature": "zipValues(string,string,bytes[],bytes[])",
+      "selector": "0x09ebd0b5",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Collections.zipWords(bytes,bytes)",
+      "contract": "Collections",
+      "signature": "zipWords(bytes,bytes)",
+      "selector": "0x1008e959",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Expressions.evaluate((address,(uint8,string,bytes,uint256[],bytes4,string)[],uint256),bytes[])",
+      "contract": "Expressions",
+      "signature": "evaluate((address,(uint8,string,bytes,uint256[],bytes4,string)[],uint256),bytes[])",
+      "selector": "0x0d93beea",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Expressions.evaluateEncoded(bytes,bytes[])",
+      "contract": "Expressions",
+      "signature": "evaluateEncoded(bytes,bytes[])",
+      "selector": "0x8f1ea4ef",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Expressions.evaluateGuarded((address,(uint8,string,bytes,uint256[],bytes4,string)[],uint256),bytes[],uint256,(bytes[],bool[],bool[],uint256[]))",
+      "contract": "Expressions",
+      "signature": "evaluateGuarded((address,(uint8,string,bytes,uint256[],bytes4,string)[],uint256),bytes[],uint256,(bytes[],bool[],bool[],uint256[]))",
+      "selector": "0xfdf54763",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.absDiff(int256,int256)",
+      "contract": "Operations",
+      "signature": "absDiff(int256,int256)",
+      "selector": "0x1e4812c8",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.absDiff(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "absDiff(uint256,uint256)",
+      "selector": "0xa09ae0aa",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.add(int256,int256)",
+      "contract": "Operations",
+      "signature": "add(int256,int256)",
+      "selector": "0xa5f3c23b",
+      "status": "failed-incomplete",
+      "theorems": [
+        {
+          "file": "formal/contracts/Operations/add/Signed.dfy",
+          "entrypoint": "OperationsSignedAdd.VerifyAdd",
+          "contractSha256": "5a17cbbbff1d9c2edf29066863bc202560a31286afab66f60daa356d5f0baebb"
+        }
+      ],
+      "evidence": [],
+      "proofHome": "formal/contracts/Operations/add",
+      "runtimeBinding": "formal/contracts/Operations/runtime.json",
+      "premises": [
+        "PC 0",
+        "complete runtime",
+        "empty stack and memory",
+        "canonical 68-byte calldata",
+        "zero call value",
+        "sufficient execution gas"
+      ],
+      "claims": [
+        {
+          "id": "O1",
+          "coverage": "partial; addition overload only"
+        }
+      ],
+      "bounds": {
+        "instructionFuel": 163,
+        "sufficientGas": 600
+      }
+    },
+    {
+      "id": "Operations.add(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "add(uint256,uint256)",
+      "selector": "0x771602f7",
+      "status": "failed-incomplete",
+      "theorems": [
+        {
+          "file": "formal/contracts/Operations/add/Unsigned.dfy",
+          "entrypoint": "OperationsUnsignedAdd.VerifyAdd",
+          "contractSha256": "7f816aa91bf78a391ab32d156cc6fe901b41ad9ba0cc7f5bf49c3edc54e11579"
+        }
+      ],
+      "evidence": [],
+      "proofHome": "formal/contracts/Operations/add",
+      "runtimeBinding": "formal/contracts/Operations/runtime.json",
+      "premises": [
+        "PC 0",
+        "complete runtime",
+        "empty stack and memory",
+        "canonical 68-byte calldata",
+        "zero call value",
+        "sufficient execution gas"
+      ],
+      "claims": [
+        {
+          "id": "O1",
+          "coverage": "partial; addition overload only"
+        }
+      ],
+      "bounds": {
+        "instructionFuel": 163,
+        "sufficientGas": 600
+      }
+    },
+    {
+      "id": "Operations.addMod(int256,int256,int256)",
+      "contract": "Operations",
+      "signature": "addMod(int256,int256,int256)",
+      "selector": "0x289b860c",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.addMod(uint256,uint256,uint256)",
+      "contract": "Operations",
+      "signature": "addMod(uint256,uint256,uint256)",
+      "selector": "0xb12fe826",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.balance(address)",
+      "contract": "Operations",
+      "signature": "balance(address)",
+      "selector": "0xe3d670d7",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.baseFee()",
+      "contract": "Operations",
+      "signature": "baseFee()",
+      "selector": "0x6ef25c3a",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.bitAnd(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "bitAnd(uint256,uint256)",
+      "selector": "0x7598b508",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.bitOr(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "bitOr(uint256,uint256)",
+      "selector": "0xb0229c96",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.bitSet(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "bitSet(uint256,uint256)",
+      "selector": "0xb280615c",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.bitXor(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "bitXor(uint256,uint256)",
+      "selector": "0x496e22b8",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.blobBaseFee()",
+      "contract": "Operations",
+      "signature": "blobBaseFee()",
+      "selector": "0xf8206140",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.blobHash(uint256)",
+      "contract": "Operations",
+      "signature": "blobHash(uint256)",
+      "selector": "0x0ba54e32",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.blockHash(uint256)",
+      "contract": "Operations",
+      "signature": "blockHash(uint256)",
+      "selector": "0x85df51fd",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.blockNumber()",
+      "contract": "Operations",
+      "signature": "blockNumber()",
+      "selector": "0x57e871e7",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.byteAt(bytes,int256)",
+      "contract": "Operations",
+      "signature": "byteAt(bytes,int256)",
+      "selector": "0x9ae8e8ea",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.byteLen(bytes)",
+      "contract": "Operations",
+      "signature": "byteLen(bytes)",
+      "selector": "0x248d6c38",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.chainId()",
+      "contract": "Operations",
+      "signature": "chainId()",
+      "selector": "0x9a8a0592",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.charset(bytes,uint256)",
+      "contract": "Operations",
+      "signature": "charset(bytes,uint256)",
+      "selector": "0x3e8c97e3",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.code(address)",
+      "contract": "Operations",
+      "signature": "code(address)",
+      "selector": "0x5b90b752",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.codeHash(address)",
+      "contract": "Operations",
+      "signature": "codeHash(address)",
+      "selector": "0x3dc44827",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.coinbase()",
+      "contract": "Operations",
+      "signature": "coinbase()",
+      "selector": "0xa6ae0aac",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.concat(bytes[],bytes)",
+      "contract": "Operations",
+      "signature": "concat(bytes[],bytes)",
+      "selector": "0xdb38e786",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.contains(bytes,bytes)",
+      "contract": "Operations",
+      "signature": "contains(bytes,bytes)",
+      "selector": "0x9a32ab77",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.div(int256,int256)",
+      "contract": "Operations",
+      "signature": "div(int256,int256)",
+      "selector": "0x43509138",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.div(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "div(uint256,uint256)",
+      "selector": "0xa391c15b",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.encode(string,bytes[])",
+      "contract": "Operations",
+      "signature": "encode(string,bytes[])",
+      "selector": "0xffe9205d",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.encodeBytes(string,bytes[])",
+      "contract": "Operations",
+      "signature": "encodeBytes(string,bytes[])",
+      "selector": "0x821f167b",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.eq(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "eq(uint256,uint256)",
+      "selector": "0x32148d73",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.exp(int256,uint256)",
+      "contract": "Operations",
+      "signature": "exp(int256,uint256)",
+      "selector": "0x185af0ad",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.exp(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "exp(uint256,uint256)",
+      "selector": "0xf5f565f8",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.expWad(int256)",
+      "contract": "Operations",
+      "signature": "expWad(int256)",
+      "selector": "0x40816fae",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.formatUnits(int256,uint256)",
+      "contract": "Operations",
+      "signature": "formatUnits(int256,uint256)",
+      "selector": "0x6470c9a3",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.formatUnits(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "formatUnits(uint256,uint256)",
+      "selector": "0xaff33dd9",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.gasLimit()",
+      "contract": "Operations",
+      "signature": "gasLimit()",
+      "selector": "0xf68016b7",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.gasPrice()",
+      "contract": "Operations",
+      "signature": "gasPrice()",
+      "selector": "0xfe173b97",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.ge(int256,int256)",
+      "contract": "Operations",
+      "signature": "ge(int256,int256)",
+      "selector": "0x6552f187",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.ge(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "ge(uint256,uint256)",
+      "selector": "0x85e1f66c",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.gt(int256,int256)",
+      "contract": "Operations",
+      "signature": "gt(int256,int256)",
+      "selector": "0xac08973d",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.gt(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "gt(uint256,uint256)",
+      "selector": "0x21e5749b",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.hash(bytes)",
+      "contract": "Operations",
+      "signature": "hash(bytes)",
+      "selector": "0xaa1e84de",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.hashPairSorted(bytes32,bytes32)",
+      "contract": "Operations",
+      "signature": "hashPairSorted(bytes32,bytes32)",
+      "selector": "0xc203edb3",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.indexOf(bytes,bytes,int256)",
+      "contract": "Operations",
+      "signature": "indexOf(bytes,bytes,int256)",
+      "selector": "0x31470145",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.le(int256,int256)",
+      "contract": "Operations",
+      "signature": "le(int256,int256)",
+      "selector": "0x00136bb8",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.le(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "le(uint256,uint256)",
+      "selector": "0xd3662cfd",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.lnWad(int256)",
+      "contract": "Operations",
+      "signature": "lnWad(int256)",
+      "selector": "0x620ef2b4",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.log2(uint256)",
+      "contract": "Operations",
+      "signature": "log2(uint256)",
+      "selector": "0x5456bf13",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.lt(int256,int256)",
+      "contract": "Operations",
+      "signature": "lt(int256,int256)",
+      "selector": "0x30880038",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.lt(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "lt(uint256,uint256)",
+      "selector": "0x118fc88c",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.max(int256,int256)",
+      "contract": "Operations",
+      "signature": "max(int256,int256)",
+      "selector": "0x81fe5786",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.max(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "max(uint256,uint256)",
+      "selector": "0x6d5433e6",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.min(int256,int256)",
+      "contract": "Operations",
+      "signature": "min(int256,int256)",
+      "selector": "0x29aa9cbe",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.min(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "min(uint256,uint256)",
+      "selector": "0x7ae2b5c7",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.mod(int256,int256)",
+      "contract": "Operations",
+      "signature": "mod(int256,int256)",
+      "selector": "0x24e28928",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.mod(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "mod(uint256,uint256)",
+      "selector": "0xf43f523a",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.mul(int256,int256)",
+      "contract": "Operations",
+      "signature": "mul(int256,int256)",
+      "selector": "0xbbe93d91",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.mul(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "mul(uint256,uint256)",
+      "selector": "0xc8a4ac9c",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.mulDiv(int256,int256,int256,uint8)",
+      "contract": "Operations",
+      "signature": "mulDiv(int256,int256,int256,uint8)",
+      "selector": "0x693741c1",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.mulDiv(uint256,uint256,uint256,uint8)",
+      "contract": "Operations",
+      "signature": "mulDiv(uint256,uint256,uint256,uint8)",
+      "selector": "0x1a134248",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.mulMod(int256,int256,int256)",
+      "contract": "Operations",
+      "signature": "mulMod(int256,int256,int256)",
+      "selector": "0x3daa08a5",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.mulMod(uint256,uint256,uint256)",
+      "contract": "Operations",
+      "signature": "mulMod(uint256,uint256,uint256)",
+      "selector": "0xa4ad2ee9",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.ne(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "ne(uint256,uint256)",
+      "selector": "0x33151e4c",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.origin()",
+      "contract": "Operations",
+      "signature": "origin()",
+      "selector": "0x938b5f32",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.parseInt(bytes)",
+      "contract": "Operations",
+      "signature": "parseInt(bytes)",
+      "selector": "0xe08bc3fe",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.parseUint(bytes)",
+      "contract": "Operations",
+      "signature": "parseUint(bytes)",
+      "selector": "0x1cce87ec",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.parseUnits(bytes,uint256,uint8)",
+      "contract": "Operations",
+      "signature": "parseUnits(bytes,uint256,uint8)",
+      "selector": "0x47417024",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.parseUnitsUnsigned(bytes,uint256,uint8)",
+      "contract": "Operations",
+      "signature": "parseUnitsUnsigned(bytes,uint256,uint8)",
+      "selector": "0xa7334963",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.powMod(int256,int256,int256)",
+      "contract": "Operations",
+      "signature": "powMod(int256,int256,int256)",
+      "selector": "0x08198add",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.powMod(int256,uint256,int256)",
+      "contract": "Operations",
+      "signature": "powMod(int256,uint256,int256)",
+      "selector": "0x640c3e5a",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.powMod(uint256,int256,uint256)",
+      "contract": "Operations",
+      "signature": "powMod(uint256,int256,uint256)",
+      "selector": "0xdec28c5b",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.powMod(uint256,uint256,uint256)",
+      "contract": "Operations",
+      "signature": "powMod(uint256,uint256,uint256)",
+      "selector": "0x44852766",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.prevRandao()",
+      "contract": "Operations",
+      "signature": "prevRandao()",
+      "selector": "0xfd6e98c4",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.rawCall(address,bytes)",
+      "contract": "Operations",
+      "signature": "rawCall(address,bytes)",
+      "selector": "0x09acaa96",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.replace(bytes,bytes,bytes)",
+      "contract": "Operations",
+      "signature": "replace(bytes,bytes,bytes)",
+      "selector": "0x801cc257",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.rpow(uint256,uint256,uint256)",
+      "contract": "Operations",
+      "signature": "rpow(uint256,uint256,uint256)",
+      "selector": "0x67b870af",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.shl(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "shl(uint256,uint256)",
+      "selector": "0x9da760ef",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.shr(int256,uint256)",
+      "contract": "Operations",
+      "signature": "shr(int256,uint256)",
+      "selector": "0x1b7d7318",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.shr(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "shr(uint256,uint256)",
+      "selector": "0x75f4479a",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.slice(bytes,uint256,uint256)",
+      "contract": "Operations",
+      "signature": "slice(bytes,uint256,uint256)",
+      "selector": "0xe0041396",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.sliceRange(bytes,int256,int256)",
+      "contract": "Operations",
+      "signature": "sliceRange(bytes,int256,int256)",
+      "selector": "0x305dda92",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.split(bytes,bytes)",
+      "contract": "Operations",
+      "signature": "split(bytes,bytes)",
+      "selector": "0x98131876",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.sqrt(uint256)",
+      "contract": "Operations",
+      "signature": "sqrt(uint256)",
+      "selector": "0x677342ce",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.stringAt(bytes,int256)",
+      "contract": "Operations",
+      "signature": "stringAt(bytes,int256)",
+      "selector": "0xa1bc2139",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.stringSlice(bytes,int256,int256)",
+      "contract": "Operations",
+      "signature": "stringSlice(bytes,int256,int256)",
+      "selector": "0xc926204b",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.sub(int256,int256)",
+      "contract": "Operations",
+      "signature": "sub(int256,int256)",
+      "selector": "0xadefc37b",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.sub(uint256,uint256)",
+      "contract": "Operations",
+      "signature": "sub(uint256,uint256)",
+      "selector": "0xb67d77c5",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.timestamp()",
+      "contract": "Operations",
+      "signature": "timestamp()",
+      "selector": "0xb80777ea",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.toLower(bytes)",
+      "contract": "Operations",
+      "signature": "toLower(bytes)",
+      "selector": "0xc1459c04",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.toString(int256)",
+      "contract": "Operations",
+      "signature": "toString(int256)",
+      "selector": "0xa322c40e",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.toString(uint256)",
+      "contract": "Operations",
+      "signature": "toString(uint256)",
+      "selector": "0x6900a3ae",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    },
+    {
+      "id": "Operations.toUpper(bytes)",
+      "contract": "Operations",
+      "signature": "toUpper(bytes)",
+      "selector": "0xfeec0cff",
+      "status": "pending",
+      "theorems": [],
+      "evidence": []
+    }
+  ],
+  "sharedTheorems": [
+    {
+      "id": "OperationsEntry.Initialize",
+      "file": "formal/contracts/Operations/shared/Entry.dfy",
+      "status": "implemented-unverified",
+      "scope": "PC 0 to 25; complete runtime closure pending"
+    }
+  ],
+  "specifications": {
+    "formal/contracts/Operations/add/Spec.dfy": "b4df96d339a90d4b9b3af6f2524a6fc1063a49285688ccb1e06889ca050ad218",
+    "formal/shared/abi/Encoding.dfy": "01be9c7c4d8e2ddabd28ac7c6ce7651103002477cae3feccd90bd195880acc8b"
+  }
+}

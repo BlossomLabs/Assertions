@@ -1,0 +1,1637 @@
+{
+  "schemaVersion": 1,
+  "ledger": "docs/claim-evidence.json",
+  "ledgerSha256": "66cab17609e04fad5dbf2ddc9b442888869ecf4489f898e74cc25d3610d44126",
+  "claims": {
+    "C1": {
+      "recordedClaim": "A violated constraint reverts the judge call. Guarded actions roll back only when assertions execute mandatorily in the same transaction and the enclosing executor propagates failure. `assertBatch` evaluates entries in order and stops at the first failure.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C2": {
+      "recordedClaim": "`assertParam` resolves one `InputParam` through its fetcher and validates its inline constraints",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C3": {
+      "recordedClaim": "`assertParam`/`resolve` ignore `paramType` (nothing is routed)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C4": {
+      "recordedClaim": "`assertBatch` entries without a TARGET are predicate entries: resolve and validate only, no call",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C5": {
+      "recordedClaim": "For a nonzero TARGET, the constructed staticcall sends functionSig followed by CALL_DATA values in order; target position does not change that layout.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C6": {
+      "recordedClaim": "A TARGET resolving to `address(0)` skips the constructed call",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C7": {
+      "recordedClaim": "View-mode refusals: outputParams `OutputParamsNotSupported(entry)`, VALUE `ValueParamNotSupported(entry,param)`, second TARGET `DuplicateTargetParam(entry)`, BALANCE target `BalanceCannotBeTarget(entry,param)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C8": {
+      "recordedClaim": "A TARGET word with dirty upper bytes reverts `InvalidAddressWord(paramIndex, word)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C9": {
+      "recordedClaim": "`ConstraintFailed` carries message, entry index, param index, constraint index, kind, actual word and echoed reference",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C10": {
+      "recordedClaim": "Every judge function has a custom-message overload echoed in `ConstraintFailed`; defaults are \"PARAM\", \"COMPOSABLE\", and \"\" on primitive operands",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C11": {
+      "recordedClaim": "A reverting constructed batch call reverts `CallFailed(target, builtCalldata)`; exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C12": {
+      "recordedClaim": "Call-based fetchers and constructed calls use STATICCALL; literals and native balances are read directly, with no storage writes.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C13": {
+      "recordedClaim": "A STATIC_CALL operand can invoke `assertBatch`, allowing validity, fallback and revert probes over a batch.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C14": {
+      "recordedClaim": "RAW_BYTES resolves to `paramData` unchanged",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C15": {
+      "recordedClaim": "STATIC_CALL resolution preserves raw returndata bytes after constraints; other caller/gas contexts may produce different values.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C16": {
+      "recordedClaim": "A STATIC_CALL to a code-less address reverts `CallFailed(target, callData)` instead of yielding empty data",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C17": {
+      "recordedClaim": "A reverting STATIC_CALL target reverts `CallFailed(target, data)`; exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C18": {
+      "recordedClaim": "BALANCE: 40-byte `token ++ account`; token 0 reads the native balance, else `balanceOf` first word; other lengths `InvalidBalanceData(entry,param,len)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C19": {
+      "recordedClaim": "A failure inside a nested STATIC_CALL surfaces as `CallFailed` in the resolving frame (inner reason lost); exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C20": {
+      "recordedClaim": "Malformed STATIC_CALL `paramData` can produce ABI-decoder bare reverts; decoder allocation panics and resource failures remain possible.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C21": {
+      "recordedClaim": "`resolve` validates constraints before returning; a violation reverts `ConstraintFailed(\"\",0,0,..)`, making any node an inline assert",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C22": {
+      "recordedClaim": "STATIC_CALL operands can nest core primitives into finite trees; each call has its own caller and gas context.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C23": {
+      "recordedClaim": "`gather` returns raw operand results as canonical `bytes[]`; element contents remain untyped until a consumer validates them.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C24": {
+      "recordedClaim": "`gather` and `get` resolve each supplied operand once; duplicated entries are independent operands.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C25": {
+      "recordedClaim": "`gather` names a failing operand by its list index",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C26": {
+      "recordedClaim": "`gather`'s result feeds a `bytes[]` position of `get` as one whole argument",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C27": {
+      "recordedClaim": "`pick` selects a full raw word, with negative indices counted from the end; invalid indices raise `ReturnDataOutOfBounds(index,length)`.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C28": {
+      "recordedClaim": "After successful resolution, an empty `nav` path returns the bytes unchanged without checking the descriptor.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C29": {
+      "recordedClaim": "Static `nav` terminals return their complete bare ABI footprint after bounds and word-range checks.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C30": {
+      "recordedClaim": "Every static word returned by `nav` must satisfy its descriptor range; failures report `InvalidValue` at the resolved-data offset.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C31": {
+      "recordedClaim": "Only the returned value is checked; siblings the path skips are not",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C32": {
+      "recordedClaim": "A string/bytes terminal returns `[0x20][len][payload]`; nonzero padding reverts `InvalidValue` at the first dirty byte",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C33": {
+      "recordedClaim": "Dynamic array/tuple terminals return canonical single-value ABI encoding; malformed selected nested values raise codec errors.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C34": {
+      "recordedClaim": "Arrays of static elements return `[0x20][len][elements]`, bounds- and range-checked in place",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C35": {
+      "recordedClaim": "`nav` indexes tuple components nonnegatively and array elements with signed indices; index errors follow descriptor/data validation order.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C36": {
+      "recordedClaim": "A step into a non-composite reverts `InvalidNavigation(descriptor position)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C37": {
+      "recordedClaim": "Ordinary nonempty `nav` selection returns canonical encoding of the declared terminal; parent offsets, skipped siblings and sentinels have weaker validation.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C38": {
+      "recordedClaim": "Nonempty navigation parses the complete descriptor before reading data; malformed syntax raises `InvalidTypeDescriptor`, subject to arithmetic/resource limits.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C39": {
+      "recordedClaim": "Navigation supports finite recursive tuples and arrays when intermediate arithmetic, gas, stack and memory suffice.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C40": {
+      "recordedClaim": "`LEN` (`int256.min`) as last entry returns the decoded length: element count, or byte length for string/bytes",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C41": {
+      "recordedClaim": "`LEN` rejects static values and empty prefixes. For unsupported dynamic tuples/fixed arrays, a truncated selected word can fail before `InvalidNavigation`.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C42": {
+      "recordedClaim": "`LEN` checks padded bytes or array heads fit; it does not validate array tails, narrow element ranges or byte padding contents.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C43": {
+      "recordedClaim": "`PAYLOAD` (`int256.min + 1`) returns the raw string/bytes payload, exact length, unpadded; an outer nav re-enters it",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C44": {
+      "recordedClaim": "`PAYLOAD` accepts only bytes/string after a nonempty prefix; other terminal kinds raise `InvalidNavigation` before reading a length.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C45": {
+      "recordedClaim": "A `PAYLOAD` length overrunning the data reverts `ReturnDataOutOfBounds`; nothing past the data is read",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C46": {
+      "recordedClaim": "Nonfinal LEN/PAYLOAD sentinels undergo ordinary navigation checks and cannot select a valid element.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C47": {
+      "recordedClaim": "Navigation may fail on checked arithmetic or exhausted gas/stack/memory; no unconditional no-panic or no-exhaustion guarantee applies.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C48": {
+      "recordedClaim": "`chain`: `start` resolves to a clean address; each non-final hop returns the next target in its first word; the final returndata passes through raw",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C49": {
+      "recordedClaim": "`chain` dirty address words revert `InvalidAddressWord` (0 for start, hop index + 1 mid-chain)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C50": {
+      "recordedClaim": "`chain` with empty `calls` reverts `EmptyCallChain`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C51": {
+      "recordedClaim": "A mid-chain hop returning under 32 bytes reverts `ReturnDataOutOfBounds`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C52": {
+      "recordedClaim": "A failing hop reverts `CallFailed(target, hopCalldata)`, identifying the exact hop; exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C53": {
+      "recordedClaim": "`read` sends `selector ++` each segment's full resolved bytes, in order, to the resolved target and returns raw returndata",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C54": {
+      "recordedClaim": "`read`, `get` and `chain` require a clean target word: dirty upper bytes revert `InvalidAddressWord(0, word)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C55": {
+      "recordedClaim": "`read`/`get` revert `CallFailed` on a code-less target or a reverting constructed call; exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C56": {
+      "recordedClaim": "`read`/`get` name operands as target 0 and args at index + 1",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C57": {
+      "recordedClaim": "The destination sees the core as `msg.sender` (`read`, `get`, `chain`)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C58": {
+      "recordedClaim": "`get` constructs canonical ABI arguments from the declared descriptor and resolved component values; unknown names retain unrestricted-word semantics.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C59": {
+      "recordedClaim": "`get` reverts with codec errors naming the argument (`ComponentCountMismatch`, `InvalidComponentEnvelope`, `InvalidComponentLength`, `InvalidComponentValue`) and `InvalidTypeDescriptor`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C60": {
+      "recordedClaim": "`get` with `\"()\"` and no args calls the bare selector",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C62": {
+      "recordedClaim": "`cond` is lazy: the losing branch is never resolved",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C63": {
+      "recordedClaim": "`cond` truth is the first word nonzero; under 32 bytes reverts `ReturnDataOutOfBounds(0,len)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C64": {
+      "recordedClaim": "The winning branch is resolved with its constraints and returned byte-identically",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C65": {
+      "recordedClaim": "A violated condition constraint reverts the whole `cond`; operands are 0 (condition), 1 (then), 2 (else)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C66": {
+      "recordedClaim": "`orElse` returns the attempt on success or resolves the fallback on an ordinary failure; exhaustion classification propagates `SubcallOutOfGas`.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C67": {
+      "recordedClaim": "The fallback resolves in-frame, its failures propagate, and it is operand 1",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C68": {
+      "recordedClaim": "`orElse(a, orElse(b, c))` tries sources in order; exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C69": {
+      "recordedClaim": "Failed calls classify reserved exact four-byte `SubcallOutOfGas` or remaining gas <= gasBefore/63 as exhaustion. The marker is unauthenticated, near-exhausting reverts may be refused, and external targets can hide failures.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C70": {
+      "recordedClaim": "`isValid` reports successful resolution and constraints, not returned boolean truth; ordinary failure yields 0, exhaustion classification propagates.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C71": {
+      "recordedClaim": "`isValid(revertData(a,selector))` reflects the probe rules, including zero-selector/code-less acceptance and the exhaustion exception.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C72": {
+      "recordedClaim": "`revertData`: zero selector returns the whole revert data; a nonzero one must match and is stripped; mismatch or under 4 bytes reverts `UnexpectedRevertData(expected, actual or 0)`; exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C73": {
+      "recordedClaim": "`revertData` over a succeeding call reverts `DidNotRevert(target, callData)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C74": {
+      "recordedClaim": "`revertData` refuses a non-STATIC_CALL operand (`RevertProbeNotACall(fetcherType)`) and a constrained one (`RevertProbeConstrained(count)`)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C75": {
+      "recordedClaim": "`revertData` on a code-less target: zero selector returns empty data, a nonzero one reverts `UnexpectedRevertData(sel, 0)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C76": {
+      "recordedClaim": "`revertData` calls in-frame so the direct target's revert reason survives; a nested core primitive reports the core's own error; exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C77": {
+      "recordedClaim": "Core failures may be declared errors, ABI-decoder bare reverts, checked panics or resource failures; selector-bearing failures are not universal.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C78": {
+      "recordedClaim": "The core has only view entrypoints, no storage writes, no payable entrypoint and no authorization or fund-management logic.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C79": {
+      "recordedClaim": "Deployed bytecode fits EIP-170 (24,576 bytes)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C81": {
+      "recordedClaim": "An empty `assertBatch` succeeds",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C82": {
+      "recordedClaim": "An unconstrained RAW_BYTES operand may be empty and still pass `assertParam`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C83": {
+      "recordedClaim": "A constructed batch call must succeed, but all its returndata is discarded, including encoded `false`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "C84": {
+      "recordedClaim": "`isValid` reports successful resolution and inline constraints, not boolean truth of the returned value",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A1": {
+      "recordedClaim": "Descriptors use nonempty `[a-z0-9]+` names/tuples and dynamic or positive fixed-array suffixes, subject to parser arithmetic/resource bounds.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A2": {
+      "recordedClaim": "`bytes` and `string` are the only dynamic base names; `T[]` and any tuple with a dynamic component are dynamic; every other name is one 32-byte word",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A3": {
+      "recordedClaim": "Head footprint in words: 1 for a dynamic type, component sum for a static tuple, k times element footprint for a static `T[k]`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A4": {
+      "recordedClaim": "Fixed lengths and static fixed-array footprints are at most `2^32-1`; bare tuple widths sum their components separately.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A5": {
+      "recordedClaim": "InvalidTypeDescriptor for an oversized length is raised \"at the length\" (the closing bracket, or the digit that crosses the bound)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A6": {
+      "recordedClaim": "`T[0]` is refused (as solc refuses to declare it), including `[00]` and `T[0]` nested inside a tuple; a leading zero before a nonzero digit is still a length",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A7": {
+      "recordedClaim": "Every supported canonical value spans at least one ABI word; zero-width descriptors are rejected.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A8": {
+      "recordedClaim": "Malformed descriptors ordinarily raise `InvalidTypeDescriptor`; checked arithmetic and resource failures remain possible.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A9": {
+      "recordedClaim": "Codec traversal requires representable cursors and adequate execution resources; no unlimited-input no-panic guarantee applies.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A10": {
+      "recordedClaim": "Static words are held to their base name's range as solc's decoder does: uintN/address/bool high bits clear, intN sign-extended, bytesN/function low bits clear",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A11": {
+      "recordedClaim": "The 256-bit names and names that are not well-formed narrow ABI types (`uint7`, `uint08`, `int1000`, `bytes0`, `foo`) admit every word",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A12": {
+      "recordedClaim": "Range checks apply on every path: static elements of arrays, static components of dynamic tuples, static tuples nested in static tuples, fixed arrays (every copy), tuple components, words inside dynamic components",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A13": {
+      "recordedClaim": "Canonical single-value encoding is the bare static footprint or `[0x20][body]` for a dynamic value, with tight offsets, clean padding and in-range words.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A14": {
+      "recordedClaim": "Offsets must be tight: every offset points exactly where the previous tail ended",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A15": {
+      "recordedClaim": "bytes/string padding must be zero; a dirty padding byte reverts InvalidValue at that byte",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A16": {
+      "recordedClaim": "Encoded lengths/counts are bounded before stride multiplication; descriptor/cursor arithmetic still requires representability.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A17": {
+      "recordedClaim": "Trailing bytes after the last tail are rejected (InvalidValue at their offset)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A18": {
+      "recordedClaim": "`packArray`/`pack` returns the canonical `abi.encode(T[])` of the values",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A19": {
+      "recordedClaim": "`unpack` validates an encoded array and returns canonical elements; `pack` reconstructs the same canonical array under the codec size bounds.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A20": {
+      "recordedClaim": "`tupleLayout` requires a nonempty parenthesized tuple. Call constructors separately accept `()` with no arguments.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A21": {
+      "recordedClaim": "`tuple(t, args)` is the canonical ABI encoding of the tuple: static components copied verbatim, dynamic envelopes stripped with the true offset written, verbatim splicing correct at any nesting depth",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A22": {
+      "recordedClaim": "ComponentCountMismatch when `args.length` differs from the component count",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A23": {
+      "recordedClaim": "InvalidComponentLength(index, expected, actual) when a static component is not exactly its head footprint",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A24": {
+      "recordedClaim": "InvalidComponentEnvelope(index, length, head) when a dynamic component is shorter than two words, unaligned, or not headed by 0x20",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A25": {
+      "recordedClaim": "InvalidComponentValue(index, offset) for a malformed body or an out-of-range static word inside a component, with the codec's error rerouted through the caller's context",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A26": {
+      "recordedClaim": "Codec error offsets identify a word start, dirty padding byte or expected consumed end, depending on the failed check.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A27": {
+      "recordedClaim": "InvalidCallbackResult routing: a Collections callback result not canonical for its declared type reverts InvalidCallbackResult(operation, index, other, target) via the Context",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A28": {
+      "recordedClaim": "Canonical values of supported descriptors are accepted within the codec arithmetic and execution-resource bounds.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A29": {
+      "recordedClaim": "A shape-compatible but semantically wrong descriptor can reinterpret a value without rejection.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "A34": {
+      "recordedClaim": "All four production contracts import AbiCodec; imported-source metadata changes affect their deployment bytecode.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W1": {
+      "recordedClaim": "ConstraintType IDs are EQ=0, GTE=1, LTE=2, IN=3, GTE_SIGNED=4, LTE_SIGNED=5, OR=6, SKIP=7, IN_SIGNED=8, identical to the Biconomy reference",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W2": {
+      "recordedClaim": "The shared structs/enums use the ERC-8211 ABI wire layout; compatible predicate encodings decode without a private format extension.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W3": {
+      "recordedClaim": "InputParamType TARGET=0, VALUE=1, CALL_DATA=2; InputParamFetcherType RAW_BYTES=0, STATIC_CALL=1, BALANCE=2; OutputParamFetcherType EXEC_RESULT=0, STATIC_CALL=1",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W4": {
+      "recordedClaim": "Constraint i checks complete resolved word i (positional semantics)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W5": {
+      "recordedClaim": "The same positions apply to STATIC_CALL and BALANCE fetchers; a BALANCE value is one word, so `[GTE(lo), LTE(hi)]` checks two words and reverts on a balance (use one IN for a scalar range)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W6": {
+      "recordedClaim": "Constrained positions are raw ABI words: a dynamic return starts with its offset, not its contents",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W7": {
+      "recordedClaim": "Every constraint needs a complete word, SKIP included",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W8": {
+      "recordedClaim": "All word bounds are checked before any predicate is evaluated (short data reverts `ReturnDataOutOfBounds(words, length)` even when an earlier predicate would fail)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W9": {
+      "recordedClaim": "EQ compares raw words; GTE and LTE compare unsigned; each takes exactly one 32-byte reference word",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W10": {
+      "recordedClaim": "GTE_SIGNED / LTE_SIGNED reinterpret complete words as int256; signed constraints are supported at the wire boundary (the SDK may still lower through Operations)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W11": {
+      "recordedClaim": "IN and IN_SIGNED are inclusive ranges over `abi.encode(lo, hi)` (unsigned / signed)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W12": {
+      "recordedClaim": "A range whose lower bound exceeds its upper bound (under its signedness) reverts `InvalidConstraintRange(entry, param, constraint)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W13": {
+      "recordedClaim": "SKIP takes empty referenceData and leaves its word unconstrained; a SKIP payload reverts `InvalidConstraintData`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W14": {
+      "recordedClaim": "Reference lengths are exact: 32 bytes for EQ/GTE/LTE/signed leaves, 64 for ranges, 0 for SKIP; anything else reverts `InvalidConstraintData(entry, param, constraint, length)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W15": {
+      "recordedClaim": "Deliberate stricter rejection: IN / IN_SIGNED require exactly 64 bytes where Biconomy's decoder tolerates trailing bytes",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W16": {
+      "recordedClaim": "Constraint acceptance preserves the reference predicate rules, with stricter exact range lengths and view-mode routing restrictions.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W17": {
+      "recordedClaim": "Canonical predicate constraints use the reference positional comparison, OR and SKIP rules.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W18": {
+      "recordedClaim": "OR (6) carries `abi.encode(Constraint[])` of non-OR leaves and passes when at least one leaf matches the same word",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W19": {
+      "recordedClaim": "An empty OR reverts `InvalidOrConstraint(entry, param, constraint)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W20": {
+      "recordedClaim": "A nested OR is rejected wherever it sits, before short-circuiting, even after a matching leaf",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W21": {
+      "recordedClaim": "Non-OR leaves are evaluated in order and short-circuit on the first match (a malformed leaf before a match rejects; one after a match is never examined)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W22": {
+      "recordedClaim": "Malformed OR `referenceData` can produce ABI-decoder bare reverts; decoder allocation panics and resource failures remain possible.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W23": {
+      "recordedClaim": "An out-of-range ConstraintType (9..255) is never accepted and reverts without data",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W24": {
+      "recordedClaim": "`ConstraintFailed` carries the assertion message, entry index, param index, constraint index, constraint kind, the actual word at that index and the reference data echoed as given",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W25": {
+      "recordedClaim": "Every judge function has a custom-message overload whose message is reported in `ConstraintFailed`; the message is `\"\"` when the constraint sits on a primitive's operand",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W26": {
+      "recordedClaim": "`InvalidConstraintData`, `InvalidOrConstraint` and `InvalidConstraintRange` identify the entry, operand and outer constraint (word) index",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W27": {
+      "recordedClaim": "Assertions does not implement `IComposableExecution`: the judge is a view function over the same encoding, not a payable executor",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W28": {
+      "recordedClaim": "A predicate check encoded as an ERC-8211 predicate entry (no TARGET) passes through `assertBatch` unchanged and is judged as `assertParam` judges it",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W29": {
+      "recordedClaim": "Constraints on primitive operands (`resolve`, graph Resolve nodes, etc.) use the same positional semantics as the judge",
+      "coverage": [],
+      "status": "pending"
+    },
+    "W30": {
+      "recordedClaim": "The reference-oracle fixture is pinned bytecode; fixture identity does not establish current public-chain code availability.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O1": {
+      "recordedClaim": "`add`/`sub`/`mul` (uint256 and int256) are checked: overflow or underflow reverts with Panic(0x11)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O2": {
+      "recordedClaim": "Unsigned `div`/`mod` truncate; zero divisor reverts with Panic(0x12)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O3": {
+      "recordedClaim": "Signed `div` truncates toward zero, `type(int256).min / -1` reverts Panic(0x11); signed `mod` takes the dividend's sign",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O4": {
+      "recordedClaim": "Unsigned `exp` is checked `**` with `0 ** 0 == 1`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O5": {
+      "recordedClaim": "Signed-base exponentiation checks every selected multiplication/square; success equals the integer power and intermediate overflow raises Panic(0x11).",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O6": {
+      "recordedClaim": "`min`/`max` for both overloads (signed ordering on int256)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O7": {
+      "recordedClaim": "`absDiff` is total and never reverts; the int256 overload returns the exact uint256 distance even for int256.min to int256.max",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O8": {
+      "recordedClaim": "Unsigned `mulDiv` uses the full 512-bit product and rounds once per `rounding` (Trunc = Floor, Ceil up); a result past uint256 reverts Panic(0x11)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O9": {
+      "recordedClaim": "`mulDiv` with a zero denominator reverts Panic(0x12) (both overloads, every rounding)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O10": {
+      "recordedClaim": "Signed `mulDiv`: magnitude 512-bit product, Trunc toward zero, Floor toward -inf, Ceil toward +inf, negative denominators and int256.min operands allowed, a rounded result outside int256 reverts Panic(0x11)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O11": {
+      "recordedClaim": "An out-of-range `Rounding` value is refused by the ABI decoder with a bare revert",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O12": {
+      "recordedClaim": "Unsigned `addMod`/`mulMod` use the full 512-bit sum/product (EVM ADDMOD/MULMOD); zero modulus reverts Panic(0x12)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O13": {
+      "recordedClaim": "Signed `addMod`/`mulMod`: overflow-free intermediate; the remainder takes the sign of the mathematical sum/product, independent of m's sign",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O14": {
+      "recordedClaim": "Signed `addMod`/`mulMod` support int256.min in every operand; zero modulus reverts Panic(0x12)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O15": {
+      "recordedClaim": "Unsigned `powMod` returns the modular power without intermediate power overflow; exponent zero yields `1 % m`, and m=0 raises Panic(0x12).",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O16": {
+      "recordedClaim": "Exponents >= `2^32` try MODEXP; smaller exponents use MULMOD. The threshold is a policy, not a universal gas crossover.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O17": {
+      "recordedClaim": "Failed or non-32-byte MODEXP replies select the MULMOD fallback. A successful 32-byte reply is trusted to represent the precompile result.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O18": {
+      "recordedClaim": "Signed-base `powMod(int256,uint256,int256)`: power of abs(a) mod abs(m), negative iff a < 0 and the exponent is odd; modulus sign ignored; int256.min supported",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O19": {
+      "recordedClaim": "Negative modular exponents require an inverse; failure reports the original base/modulus magnitudes, and modulus 1 yields zero.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O20": {
+      "recordedClaim": "`powMod(int256,int256,int256)`: signed base and signed exponent, sign rule \"in either direction\", magnitudes coprime for negative exponents",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O21": {
+      "recordedClaim": "`sqrt` is floor(sqrt(x)) via OpenZeppelin Math.sqrt",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O22": {
+      "recordedClaim": "`log2` is floor(log2(x)) (bit length minus one); `LogarithmUndefined(0)` at 0",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O23": {
+      "recordedClaim": "`rpow`: fixed-point binary exponentiation rounding down each step; 0^0 is one unit, 0^n is 0; Panic(0x11) on a scaled intermediate past uint256, Panic(0x12) for base 0",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O24": {
+      "recordedClaim": "`rpow`'s final error is not bounded by the number of multiplies: rpow(19, 16, 10) = 276889 vs a single rounding's 288441",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O26": {
+      "recordedClaim": "`expWad` executes a quantized rational approximation; x<=-42139678854452767551 yields zero, and x>=135305999368893231589 raises Panic(0x11).",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O27": {
+      "recordedClaim": "`lnWad` executes a quantized rational approximation; nonpositive inputs raise `LogarithmUndefined(x)`.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O28": {
+      "recordedClaim": "Global real-function accuracy, monotonicity, positivity and exp/log inverse-error bounds are not established by the finite-word source specifications.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O29": {
+      "recordedClaim": "`eq`/`ne` (bit-level) and `lt`/`gt`/`le`/`ge` (both overloads) return bool, spliced as a 0/1 word",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O30": {
+      "recordedClaim": "`bitAnd`/`bitOr`/`bitXor`; `bitXor(x, ~0)` is NOT",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O31": {
+      "recordedClaim": "Unsigned shifts follow EVM semantics: shifts >=256 yield zero.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O32": {
+      "recordedClaim": "`shr(int256,uint256)` is SAR: rounds toward -inf; shifts of 256 or more yield 0 or -1 by sign",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O33": {
+      "recordedClaim": "Sign-extension recipe `shr(int256(shl(x, 256 - bits)), 256 - bits)` re-widens a narrow two's-complement field",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O34": {
+      "recordedClaim": "`bitSet(mask, index)`: indices past 255 are never set",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O35": {
+      "recordedClaim": "Environment reads return judge-time values: `balance`, `timestamp`, `blockNumber`, `chainId`, `baseFee`, `prevRandao`, `coinbase`, `gasLimit`, `blobBaseFee`, `origin`, `gasPrice`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O36": {
+      "recordedClaim": "`blockHash(n)`: BLOCKHASH semantics, 0 for the current block, the future and blocks older than 256",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O37": {
+      "recordedClaim": "`codeHash`: EXTCODEHASH, 0 for a nonexistent account, keccak256(\"\") for an existing code-less account",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O38": {
+      "recordedClaim": "`blobHash(i)`: the versioned hash of blob i, zero when the tx carries none at i",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O39": {
+      "recordedClaim": "`rawCall` is a raw staticcall: no selector, no code-length check, returndata returned as bytes; reaches precompiles",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O40": {
+      "recordedClaim": "`rawCall` to a code-less non-precompile address succeeds with empty returndata",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O41": {
+      "recordedClaim": "A reverting `rawCall` target reverts `RawCallFailed(target, data)`; the reason is lost; exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O42": {
+      "recordedClaim": "`code(account)` returns the full runtime code; a code-less account yields empty bytes",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O43": {
+      "recordedClaim": "`concat(parts, delimiter)` joins in order with the delimiter between consecutive parts, preserves empty parts, empty `parts` yields empty bytes",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O44": {
+      "recordedClaim": "`slice(data, start, len)` returns the window or reverts `SliceOutOfBounds(start, len, dataLength)`, including when `start + len` would overflow",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O45": {
+      "recordedClaim": "`sliceRange` has JS Array.slice semantics (signed, clamped, end exclusive, empty when inverted) and never reverts",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O46": {
+      "recordedClaim": "`byteAt` is strict: outside -length..length-1 reverts `InvalidByteIndex(index, length)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O47": {
+      "recordedClaim": "`stringSlice`: validates the whole input as UTF-8 first, takes the clamped signed byte range, reverts `InvalidUtf8` at a boundary that splits a code point, empty range returns empty",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O48": {
+      "recordedClaim": "`stringAt`: returns an ASCII byte; `InvalidByteIndex` out of range; `InvalidUtf8` for any byte of a multi-byte code point; validates the whole string",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O49": {
+      "recordedClaim": "UTF-8 validation follows the Unicode well-formed table: leads C2-F4, overlong/surrogate/past-U+10FFFF refused at the second byte, bad continuation at itself, truncated at the lead; error at the first offending byte",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O50": {
+      "recordedClaim": "`byteLen` is the raw byte length; `hash` is keccak256 of the argument",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O51": {
+      "recordedClaim": "`hashPairSorted` is keccak256 of the ascending pair, byte-identical to OpenZeppelin MerkleProof's combiner; `foldWords` over a proof reproduces the root",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O52": {
+      "recordedClaim": "`indexOf` enumerates nonoverlapping matches left-to-right, supports signed occurrence ordinals and returns s.length when absent; empty needles match 0..s.length.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O53": {
+      "recordedClaim": "For nonempty delimiters, segment j starts after match j-1 (or zero) and ends at match j (or input length); normalize negative j against matchCount+1.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O54": {
+      "recordedClaim": "`contains`: true iff the needle occurs; an empty needle always matches, even in empty `s`; total",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O55": {
+      "recordedClaim": "`split`: count + 1 segments on the same enumeration as `indexOf`, empty segments preserved, `EmptyNeedle` for an empty delimiter",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O56": {
+      "recordedClaim": "`replace`: every non-overlapping occurrence replaced; empty `repl` deletes; empty needle reverts `EmptyNeedle`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O57": {
+      "recordedClaim": "`toLower`/`toUpper` fold ASCII letters only; every other byte (UTF-8 units included) passes through",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O58": {
+      "recordedClaim": "`charset` equals the All-mode byte fold with constant mask, init=1 and accumulator/element windows sharing the byte-argument offset.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O59": {
+      "recordedClaim": "Byte search compares complete words and masks the remaining tail bytes; it imposes no fixed gas-cost guarantee.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O60": {
+      "recordedClaim": "Byte/text operations retain their declared validation and overflow errors; sufficiently large inputs or outputs can exhaust resources.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O61": {
+      "recordedClaim": "`parseUint` is strict: `EmptyNumber` on empty input, `InvalidDecimalDigit(position, char)` outside 0-9, Panic(0x11) past 2^256 - 1, leading zeros accepted",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O62": {
+      "recordedClaim": "`toString(uint256)` renders without leading zeros; `toString(parseUint(s))` normalizes and `parseUint(toString(v)) == v`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O63": {
+      "recordedClaim": "`parseInt`: optional + or -, `EmptyNumber` on empty input or a bare sign, `InvalidDecimalDigit` elsewhere, Panic(0x11) outside int256, \"-2^255\" accepted",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O64": {
+      "recordedClaim": "`toString(int256)`: leading minus for negatives, no plus, no leading zeros; int256.min renders correctly",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O65": {
+      "recordedClaim": "`parseUnits` accepts an optional sign, at most one decimal point and at least one digit; precision is <=77 and overflow raises Panic(0x11).",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O66": {
+      "recordedClaim": "`parseUnits` rounds dropped fractional digits: Trunc toward zero, Floor toward -inf, Ceil toward +inf",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O67": {
+      "recordedClaim": "`parseUnitsUnsigned`: accepts a leading +, rejects - with `InvalidDecimalDigit` at 0 (negative zero included), Panic(0x11) outside uint256",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O68": {
+      "recordedClaim": "Unsigned `formatUnits` emits canonical decimal text with trimmed fractional zeros; parsing that text at the same precision recovers the value.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O69": {
+      "recordedClaim": "`formatUnits(int256)`: leading minus, int256.min renders, `InvalidPrecision` above 77",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O70": {
+      "recordedClaim": "`encode(types, values)` is runtime abi.encode from canonical component encodings (static: w * 32 bytes; dynamic: [0x20][tail]), nested dynamics spliced verbatim, returned raw without an envelope",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O71": {
+      "recordedClaim": "`encode` failures: `InvalidTypeDescriptor`, `ComponentCountMismatch`, `InvalidComponentLength`, `InvalidComponentEnvelope`, `InvalidComponentValue(component, offset)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O72": {
+      "recordedClaim": "`encodeBytes` returns the same tuple payload inside a bytes envelope",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O73": {
+      "recordedClaim": "`encode`/`encodeBytes` hold static words to their narrow type's range, as solc's decoder does",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O74": {
+      "recordedClaim": "A dirty word spliced into a typed Operations parameter (e.g. address) fails the callee's ABI decoding and surfaces as `CallFailed`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O75": {
+      "recordedClaim": "Operations' own panics (`rpow` base 0, `expWad` overflow, signed magnitude overflow) are byte-identical to the compiler's Panic reverts",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O76": {
+      "recordedClaim": "An Operations call made through the core's `read` IS the composition; judged via a STATIC_CALL at the core",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O79": {
+      "recordedClaim": "Operations' runtime bytecode fits EIP-170 (24,576 bytes)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O80": {
+      "recordedClaim": "Arithmetic helpers use the configured OpenZeppelin Math dependency; modular powers use their own checked-size precompile path.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "O81": {
+      "recordedClaim": "A string operand's resolved envelope splices into `hash`/`toLower`/`byteLen` so they see the decoded payload",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L1": {
+      "recordedClaim": "foldWords is a left fold: accumulator window rewritten with the running accumulator, element window with each word, final accumulator returned",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L2": {
+      "recordedClaim": "foldRange substitutes the index 0..n-1; foldBytes substitutes the byte VALUE as a word",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L3": {
+      "recordedClaim": "FoldExit: Full scans all, Any stops at first nonzero accumulator, All at first zero; final accumulator returned either way",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L4": {
+      "recordedClaim": "Early exit never touches later elements, so a would-revert application past the exit point never happens",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L5": {
+      "recordedClaim": "Window stamping: accumulator first, then element windows in supplied order; element wins over accumulator on overlap, later element windows win on mutual overlap; bytes outside windows stay pristine template",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L6": {
+      "recordedClaim": "Empty fold domain validates template windows, then returns init without inspecting or calling the target",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L7": {
+      "recordedClaim": "Window offsets must leave room for a 32-byte word (LambdaOffsetOutOfBounds(offset, templateLength)), accumulator window included, checked before any call",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L8": {
+      "recordedClaim": "A code-less lambda/callback target (precompiles included) reverts InvalidCallbackTarget",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L9": {
+      "recordedClaim": "Target code is checked lazily: an empty input never touches the target",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L10": {
+      "recordedClaim": "A lambda revert reverts with CallbackFailed(operation, index, other, target, callData, reason), reason preserved; exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L11": {
+      "recordedClaim": "A word lambda returning other than exactly 32 bytes reverts InvalidCallbackResult(op, index, 0, target)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L12": {
+      "recordedClaim": "filterWords keeps the ELEMENTS whose lambda returns canonical 1, in order; any result other than 0/1 reverts InvalidCallbackResult",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L13": {
+      "recordedClaim": "mapWords returns the lambda's word per element, same word count; empty payload returns empty without touching the target",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L14": {
+      "recordedClaim": "Every word operation (folds, map/filter, wordIndexOf, reverse, zip, unzip, sort, unique, sum) rejects a non-multiple-of-32 payload with UnalignedWords(length)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L15": {
+      "recordedClaim": "iotaWords(n) returns 0, 1, ..., n-1",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L16": {
+      "recordedClaim": "`iotaWords` allocates n*32 bytes; multiplication overflow, allocator limits and exhaustion can fail for sufficiently large n.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L17": {
+      "recordedClaim": "wordIndexOf returns the least matching index, or the word COUNT as not-found sentinel",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L18": {
+      "recordedClaim": "reverseWords reverses word order",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L19": {
+      "recordedClaim": "zipWords interleaves a0,b0,a1,b1...; different word counts revert WordCountMismatch(aWords, bWords)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L20": {
+      "recordedClaim": "unzipWords lane 0/1 is zipWords' inverse; lane > 1 reverts InvalidLane; odd count leaves the extra word in lane 0",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L21": {
+      "recordedClaim": "sortWords returns the payload sorted ascending as UNSIGNED words (a permutation)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L22": {
+      "recordedClaim": "Word sorting is stable. Callback sorting has stable ties and global order only for comparisons coherent with a total preorder.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L23": {
+      "recordedClaim": "Merge sort uses O(n log n) algorithmic comparisons/moves and O(n) scratch space; callback cost and EVM gas are separate.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L24": {
+      "recordedClaim": "Signed sort is the three-node recipe: flip sign bit via mapWords(bitXor), sortWords, flip back",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L25": {
+      "recordedClaim": "sumWords is the checked sum; overflow reverts Panic(0x11)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L26": {
+      "recordedClaim": "sumWords equals the foldWords(add) recipe",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L27": {
+      "recordedClaim": "uniqueWords keeps the first occurrence of each word in original order (ordered=false, O(n^2)) and only drops adjacent duplicates when ordered=true (grouping trusted, not validated)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L31": {
+      "recordedClaim": "An out-of-range FoldExit is refused by the ABI decoder with an empty revert",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L32": {
+      "recordedClaim": "Collection operations can fail through validation, callback errors, checked arithmetic, allocation or exhaustion; no universal resource-safety guarantee applies.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L33": {
+      "recordedClaim": "Hostile callback modes retain ordinary declared failures; a failed exhausted callback or exact reserved signal raises `SubcallOutOfGas()` before wrapping",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L34": {
+      "recordedClaim": "packArray assembles canonical abi.encode(T[]) from canonical abi.encode(T) elements; unpackArray is its inverse",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L35": {
+      "recordedClaim": "packArray/unpackArray validate the whole input; non-canonical encodings revert AbiCodec InvalidValue at the offending offset",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L37": {
+      "recordedClaim": "Traversals validate visited elements; descriptors and callback preparation are still checked on empty input.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L38": {
+      "recordedClaim": "mapValues applies the callback in order and validates each result as canonical outputType (InvalidCallbackResult otherwise)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L39": {
+      "recordedClaim": "filterValues keeps the original encodings of matching values, in order",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L40": {
+      "recordedClaim": "Predicate callbacks must return exactly one word holding canonical 0/1, else InvalidCallbackResult (stricter than core `cond`)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L41": {
+      "recordedClaim": "foldValues is a left fold, accumulator in slot `first`, element in `second`; empty input returns `initial`; no early exit",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L42": {
+      "recordedClaim": "foldValues validates each result as canonical accumulatorType and `initial` too",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L43": {
+      "recordedClaim": "`sortValues` interprets comparator results as signed words: <=0 selects the left occurrence, >0 the right; successful output preserves all occurrences.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L44": {
+      "recordedClaim": "Callback consistency is trusted, not checked; inconsistent answers may change ordering/selection, and failed or invalid replies still revert.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L45": {
+      "recordedClaim": "`uniqueValues` greedily compares retained values to each candidate. First equality-class representatives require coherent equivalence replies; ordered mode additionally requires grouped classes.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L46": {
+      "recordedClaim": "flattenValues concatenates inner arrays in order, one level, validating every element",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L47": {
+      "recordedClaim": "reverseValues reverses without changing encodings",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L48": {
+      "recordedClaim": "sliceValues has JavaScript Array.slice semantics (signed, clamped, end exclusive, empty when end <= start) and never reverts on the range",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L49": {
+      "recordedClaim": "sliceValues validates only the selected elements",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L50": {
+      "recordedClaim": "indexOfValues returns the first index whose equality callback (element in `first`, needle in `second`) is true, else type(uint256).max; needle validated",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L51": {
+      "recordedClaim": "anyValues/allValues/findValues: any false and all true on empty; find returns first index or max; each stops at the first decisive element",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L52": {
+      "recordedClaim": "zipValues pairs element-wise into canonical (leftType,rightType) values; a dynamic side gets the 0x20 envelope, a static pair is bare words; LengthMismatch on unequal lengths",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L53": {
+      "recordedClaim": "unzipValues is zipValues' inverse; lane > 1 reverts InvalidLane; BOTH sides validated even when the requested lane is well formed; envelope, offsets and exact consumption checked",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L54": {
+      "recordedClaim": "Callback slots/counts must match a tuple descriptor; malformed syntax raises `InvalidTypeDescriptor`, while structural mismatch raises `InvalidCallback`.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L55": {
+      "recordedClaim": "Constant slots validated once up front against their component types; substituted values validated at every binding against the slot type",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L56": {
+      "recordedClaim": "Calldata is rebuilt per application, so dynamic, variable-length slots (middle slot, string accumulator) are safe",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L57": {
+      "recordedClaim": "Every lambda/callback application is a staticcall, so callbacks cannot have side effects",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L58": {
+      "recordedClaim": "Expression callbacks: non-empty `expression` makes the call target.evaluateEncoded(expression, boundSlots), selector ignored; Parameter nodes read the bound slots",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L59": {
+      "recordedClaim": "An expression failure surfaces as NodeCallFailed wrapped inside CallbackFailed; exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L60": {
+      "recordedClaim": "Expression caches last one evaluation/callback invocation; sharing across collection iterations is not implied.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L61": {
+      "recordedClaim": "The locally declared IExpressions.evaluateEncoded selector matches Expressions'",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L62": {
+      "recordedClaim": "Collections is stateless and view/pure only",
+      "coverage": [],
+      "status": "pending"
+    },
+    "L63": {
+      "recordedClaim": "Collections runtime fits under the EIP-170 limit (and Operations plus Collections together would not)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E1": {
+      "recordedClaim": "A reference must point strictly backwards; a forward or self reference reverts `InvalidReference(node, ref)` before evaluation",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E2": {
+      "recordedClaim": "A Parameter node reads `parameters[index]`; an index past the supplied parameters reverts `InvalidReference(node, index)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E3": {
+      "recordedClaim": "A Parameter whose `data` is not exactly one word reverts `InvalidNode(node)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E4": {
+      "recordedClaim": "A `result` index past the last node reverts `InvalidNode(result)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E5": {
+      "recordedClaim": "Each kind carries an exact reference count (Call >= 1, Select 3, TryOrElse/ProbeCall 2, Wrap/IsValid 1, Literal/Parameter/Resolve 0, Array/Tuple any), else `InvalidNode(node)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E6": {
+      "recordedClaim": "ProbeCall calldata must reference a bytes-typed node and validate canonically; malformed Resolve/evaluateEncoded payloads can still revert without data.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E7": {
+      "recordedClaim": "Every node's `valueType` is parsed up front (unreachable nodes included), `InvalidTypeDescriptor` otherwise",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E8": {
+      "recordedClaim": "Every cold evaluated node is validated against valueType before caching; cached values originated from successful validation.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E10": {
+      "recordedClaim": "Evaluation is on demand from `result`: only reachable nodes execute",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E11": {
+      "recordedClaim": "Successful node values are cached; failed guarded attempts discard cache changes, so their work may execute again.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E12": {
+      "recordedClaim": "Select judges the first word of the condition: nonzero picks `refs[1]`, zero `refs[2]`; a multi-word condition counts only its first word",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E13": {
+      "recordedClaim": "Only the chosen Select branch executes (lazy)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E14": {
+      "recordedClaim": "Successfully validated node values occupy at least one ABI word, so Select can read their first word.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E15": {
+      "recordedClaim": "TryOrElse yields the attempt on success and the fallback on any ordinary failure; IsValid returns abi.encode(success); exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E17": {
+      "recordedClaim": "Values memoized inside a successful guarded attempt are kept for the rest of the evaluation",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E18": {
+      "recordedClaim": "A failed guarded attempt discards its cache changes",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E19": {
+      "recordedClaim": "Only typed internal guarded calls can supply a cache; outside callers fail NotSelf and generic self-targeted guarded calls are forbidden.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E20": {
+      "recordedClaim": "Call nodes construct canonical argument tuples and staticcall from Expressions; descriptor validity does not prove external target semantics.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E21": {
+      "recordedClaim": "A Call or ProbeCall target word must be a clean address, else `InvalidNode(node)`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E22": {
+      "recordedClaim": "A code-less call target reverts `InvalidTarget(node, target)` (Call, Resolve's core, evaluateEncoded self-call)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E23": {
+      "recordedClaim": "A reverting node call reverts `NodeCallFailed(node, target, callData, reason)` with the target's reason intact; exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E24": {
+      "recordedClaim": "A Resolve node's value is `core.resolve(InputParam)` on `expression.core`, inline constraints enforced, validated as the node's type",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E25": {
+      "recordedClaim": "Malformed Resolve node data can produce ABI-decoder bare reverts, allocation panics or resource failures before the core call.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E26": {
+      "recordedClaim": "ProbeCall: the target must revert (`DidNotRevert(target, callData)`); a nonzero selector must match the reason's first four bytes and is stripped, else `UnexpectedRevertData(expected, actual)` with `actual` zero under four bytes; a zero selector returns the whole reason; exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E27": {
+      "recordedClaim": "A code-less ProbeCall target yields empty bytes with a zero selector and `UnexpectedRevertData(expected, 0)` with a nonzero one",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E28": {
+      "recordedClaim": "ProbeCall runs in Expressions' own frame, so a dynamic reason survives intact and word-aligned after stripping; an argument-less error yields empty bytes",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E29": {
+      "recordedClaim": "Expressions' `DidNotRevert`, `UnexpectedRevertData` and local `ICore.resolve` share the core's selectors",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E30": {
+      "recordedClaim": "Wrap yields the referenced value as one bytes envelope, abi.encode(bytes)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E31": {
+      "recordedClaim": "An Array node packs its referenced values as a canonical `T[]` of element type `arguments`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E32": {
+      "recordedClaim": "A Tuple node assembles one canonical tuple value; a dynamic tuple gets its leading 0x20 offset word",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E33": {
+      "recordedClaim": "A Call or Tuple node whose value count differs from its descriptor reverts `ComponentCountMismatch`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E34": {
+      "recordedClaim": "Empty argument tuples are special-cased for call construction; `()` is not a valid node valueType.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E35": {
+      "recordedClaim": "`evaluate` returns the result node's value raw, so an evaluation nests as an operand like the value it computes",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E36": {
+      "recordedClaim": "`evaluateEncoded` decodes an Expression and evaluates it through a self-call, returning the raw result under that call context.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E37": {
+      "recordedClaim": "A failure inside `evaluateEncoded` surfaces as `NodeCallFailed(0, expressions, callData, reason)` wrapping the inner error, which Collections reports through `CallbackFailed`; exhaustion and the exact reserved signal propagate instead (C69)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E38": {
+      "recordedClaim": "Malformed `evaluateEncoded` payloads can produce ABI-decoder bare reverts, allocation panics or resource failures before graph evaluation.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E39": {
+      "recordedClaim": "An out-of-range `Kind` never reaches the code: solc's decoder reverts without data",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E40": {
+      "recordedClaim": "Malformed graphs/payloads can produce declared errors or decoder bare reverts; checked arithmetic and execution-resource failures remain possible.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E41": {
+      "recordedClaim": "Every evaluate/evaluateEncoded call initializes a fresh cache; traversal callbacks evaluate independently.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E42": {
+      "recordedClaim": "Each node valueType shape is parsed during admission and reused during validation; recursive canonical validation still walks its contents.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E46": {
+      "recordedClaim": "Expressions is stateless and view-only",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E47": {
+      "recordedClaim": "Collections reaches Expressions through a local `IExpressions` whose selector matches `evaluateEncoded`",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E48": {
+      "recordedClaim": "Errors identify the node by index (InvalidNode, InvalidReference, InvalidTarget, NodeCallFailed)",
+      "coverage": [],
+      "status": "pending"
+    },
+    "E49": {
+      "recordedClaim": "Graph/tree value and error equivalence requires history-independent primitive results and guard classification in matching call contexts; call counts and gas need not match.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "R1": {
+      "recordedClaim": "A release requires compiled artifacts, metadata, CREATE2 predictions, SDK addresses and runtime fixtures to agree; source edits require a coordinated rebuild.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "R2": {
+      "recordedClaim": "Execution requires the configured Cancun-compatible EVM/compiler semantics, supported environmental observations and correct used precompiles.",
+      "coverage": [],
+      "status": "pending"
+    },
+    "R3": {
+      "recordedClaim": "A CREATE2 prediction does not establish deployment or matching code on any particular public chain.",
+      "coverage": [],
+      "status": "pending"
+    }
+  }
+}

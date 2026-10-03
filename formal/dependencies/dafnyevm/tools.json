@@ -1,0 +1,21 @@
+{
+  "dafny": "4.11.0",
+  "z3": "4.12.1",
+  "solc": "0.8.36",
+  "dafnyUrl": "https://github.com/dafny-lang/dafny/releases/download/v4.11.0/dafny-4.11.0-x64-ubuntu-22.04.zip",
+  "dafnySha256": "a46a9ff7cdd720f7955854c78e95df13f4cfe6b80691b05f8654fe19e8267179",
+  "solcUrl": "https://raw.githubusercontent.com/ethereum/solc-bin/gh-pages/linux-amd64/solc-linux-amd64-v0.8.36+commit.8a079791",
+  "solcSha256": "c8d35afdddc3cd2743ee88b8f25e0fecd16e2bdd5f2120f37e52cd9cc45ae0e6",
+  "java": "21.0.12+101.0.LTS",
+  "jdkUrl": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jdk_x64_linux_hotspot_21.0.12.1_1.tar.gz",
+  "jdkSha256": "ce79869e1307ed8ee1e2baa86a412b1eb5b75d10a01006d788a6f968bcfaee94",
+  "gradle": "8.14.5",
+  "gradleUrl": "https://services.gradle.org/distributions/gradle-8.14.5-bin.zip",
+  "gradleSha256": "6f74b601422d6d6fc4e1f9a1ab6522f642c2fdcbc15ae33ebd30ba3d7198e854",
+  "installed": {
+    "dafny/dafny": "e540b4826363afb87c326446239a682d45086905425fa6299c103eca9693846d",
+    "dafny/z3/bin/z3-4.12.1": "22214e518eed9eec867d18b485e7b2570d09cbf1d94a47c8eec6ec4de0287eff",
+    "solc-0.8.36": "c8d35afdddc3cd2743ee88b8f25e0fecd16e2bdd5f2120f37e52cd9cc45ae0e6",
+    "dafny/Dafny.dll": "3551e32edc4ad7669e2af48e2985bbfd988d20ef75ab4f1f254a16414e43b957"
+  }
+}

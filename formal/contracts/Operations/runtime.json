@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "contract": "Operations",
+  "compiler": "0.8.36+commit.8a079791",
+  "settings": {
+    "evmVersion": "cancun",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "": [
+          "ast"
+        ],
+        "*": [
+          "abi",
+          "evm.bytecode.linkReferences",
+          "evm.bytecode.object",
+          "evm.bytecode.opcodes",
+          "evm.bytecode.sourceMap",
+          "evm.deployedBytecode.immutableReferences",
+          "evm.deployedBytecode.linkReferences",
+          "evm.deployedBytecode.object",
+          "evm.deployedBytecode.opcodes",
+          "evm.deployedBytecode.sourceMap",
+          "evm.methodIdentifiers"
+        ]
+      }
+    },
+    "remappings": [
+      "project/:@openzeppelin/contracts/=npm/@openzeppelin/contracts@5.6.1/"
+    ]
+  },
+  "inputSha256": "7b982d3de69cb6be894ae9649b6984e258b8cd9c4f043ae2a72ba7999595ecf5",
+  "runtimeSha256": "c9041fc83b99c0162884bceb4e616eacc946c09c01a23f4063835cb023be3272",
+  "runtimeBytes": 21346,
+  "metadataBytes": 53,
+  "sources": {
+    "npm/@openzeppelin/contracts@5.6.1/utils/math/Math.sol": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+    "npm/@openzeppelin/contracts@5.6.1/utils/math/SafeCast.sol": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+    "npm/@openzeppelin/contracts@5.6.1/utils/Panic.sol": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec",
+    "project/contracts/Assertions.sol": "46b8e161fa27c68bdca05c479ccec7891adcc91e48fb869612fb0775c876b508",
+    "project/contracts/Collections.sol": "0e7ed9761a69c5fa60ebf363a6063d8e9456693a63da29013c83aa589f918ce0",
+    "project/contracts/Expressions.sol": "86f519c26a4e84bab0a81dcade843b8041978cafb1b03f094eb9dc0ef085ec20",
+    "project/contracts/lib/AbiCodec.sol": "2608528ad5c77422f6ae79f437f360e197d45171a6964b3f32d9940caa9cdf88",
+    "project/contracts/lib/ERC8211.sol": "cc6cfb97bb1ca7e76b7c64b0c4ceff6c4b1d7c4d74ff453a30ccbecf98657705",
+    "project/contracts/Operations.sol": "237e7b472d7043082a7b8fbe8cbda77bd6b3a93e86031b8dba9a851bf1a65474",
+    "project/contracts/tests/BiconomyERC8211Runtime.sol": "501bcda0d887350e6226998200b1e5dc392f72bfe50b1a3ba6eaa8a1df18035d",
+    "project/contracts/tests/ERC8211ReferenceHarness.sol": "ff261e9b0d6cb804204293e0298b752de23fe821ab82c322ad2b16fbe05c5d9c",
+    "project/contracts/tests/Mocks.sol": "d88a1cbd9af7f6ee90703dda2f9c8792144c45b5c6673fb73addf71fa7a64f9b"
+  },
+  "localSources": {
+    "contracts/Assertions.sol": "46b8e161fa27c68bdca05c479ccec7891adcc91e48fb869612fb0775c876b508",
+    "contracts/Collections.sol": "0e7ed9761a69c5fa60ebf363a6063d8e9456693a63da29013c83aa589f918ce0",
+    "contracts/Expressions.sol": "86f519c26a4e84bab0a81dcade843b8041978cafb1b03f094eb9dc0ef085ec20",
+    "contracts/Operations.sol": "237e7b472d7043082a7b8fbe8cbda77bd6b3a93e86031b8dba9a851bf1a65474",
+    "contracts/lib/AbiCodec.sol": "2608528ad5c77422f6ae79f437f360e197d45171a6964b3f32d9940caa9cdf88",
+    "contracts/lib/ERC8211.sol": "cc6cfb97bb1ca7e76b7c64b0c4ceff6c4b1d7c4d74ff453a30ccbecf98657705"
+  },
+  "generatedRuntime": "formal/.generated/OperationsRuntime.dfy",
+  "artifact": "artifacts/contracts/Operations.sol/Operations.json"
+}

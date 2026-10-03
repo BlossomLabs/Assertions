@@ -1,0 +1,56 @@
+{
+  "id": "dafnyevm-public-resolve",
+  "status": "source-acceptance-pending",
+  "selectedImplementationStatus": "new-public-call-profile",
+  "verificationEntries": [
+    "formal/bytecode/dafnyevm/PublicResolve.dfy"
+  ],
+  "entry": "formal/bytecode/dafnyevm/PublicResolve.dfy",
+  "implementations": [
+    "formal/bytecode/dafnyevm/PublicResolve.dfy"
+  ],
+  "resourcePolicy": {
+    "cores": 2,
+    "secondsPerObligation": 30,
+    "manualLemmaInduction": true,
+    "isolateAssertions": true
+  },
+  "layers": {
+    "correspondence": [
+      "formal/bytecode/dafnyevm/PublicResolve.dfy"
+    ]
+  },
+  "closureSha256": {
+    "formal/bytecode/dafnyevm/PublicResolve.dfy": "ab50dd313af9c2075997d3a491f543cee32316ef1e52d8b9aa9837907c339eee",
+    "formal/foundations/EvmEncoding.dfy": "684f4088f6bf8ae6aea2848fd876f7b99f96339715d4e904ba45c7ded83d2883",
+    "formal/foundations/EvmValues.dfy": "8f0e47b3ef3251230c9f1a31d832e8804438e1b5728b1a07093e4151337ff541",
+    "formal/source/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
+    "formal/source/assertions/constraints/Model.dfy": "b8496115c0578960b322ad24b051945ebdfacfc822e7eb392719794f3fb67961",
+    "formal/source/assertions/resolution/Model.dfy": "d2cbdc4f61af9a506e4a8cae6fa3e43705d48cca120ecb94c6f4a0e1c6a2e3dd",
+    "formal/source/assertions/resolution/Words.dfy": "69623ce6592d6ccf8a7d25424877abb570a28da3ab0f544fdff8f3e6454b29e3",
+    "proof-tools/dafnyevm/libs/DafnyCrypto/src/dafny/util/option.dfy": "af96ca0dcc4a992d9c22a552b1c596e680aaf63910eb32df0833b70355708410",
+    "proof-tools/dafnyevm/src/dafny/bytecode.dfy": "896d0ea42798d64a354e67d8394a12c042712dd1da7542194c647c4d0adaa83b",
+    "proof-tools/dafnyevm/src/dafny/core/code.dfy": "5b1780d125acff52f1e17f33e90b5607161351122a2234666fe156997063c9d2",
+    "proof-tools/dafnyevm/src/dafny/core/context.dfy": "474c7878a04198512b05f5fc090adaa5873ec15e7bf671328201079ce607f09d",
+    "proof-tools/dafnyevm/src/dafny/core/fork.dfy": "82505e43179788bdb7e1b37bab59005cfd40767a3a5c851e4b21d2984211ccd3",
+    "proof-tools/dafnyevm/src/dafny/core/memory.dfy": "61d6b8bf811054d9b5d7d23b979f82caa9ed2be791cfa4aad148344c489f8271",
+    "proof-tools/dafnyevm/src/dafny/core/precompiled.dfy": "7bad9b71888a57e3019637ba59c9242db5cd12c6ad26fd0bae08097a38799eea",
+    "proof-tools/dafnyevm/src/dafny/core/stack.dfy": "686cbbf1a5dcb955aeeb35fafaf6b9f15a52e3c7a11ab130c41d1c24694997d2",
+    "proof-tools/dafnyevm/src/dafny/core/storage.dfy": "edaa966acb538a993356284a98f86f7dc550d7d8f03c95cbc106f1873da47d7e",
+    "proof-tools/dafnyevm/src/dafny/core/substate.dfy": "77d5d61d752e17975abebc92542647526b8a8bd2a75dfedf25487e453a9b883d",
+    "proof-tools/dafnyevm/src/dafny/core/transient.dfy": "e43c3600cf69ccbda555ac5e2dc47f48b501a5d050867908bfec27310fa701f9",
+    "proof-tools/dafnyevm/src/dafny/core/worldstate.dfy": "37bfcd606bed5cd59e1d5cafcd579f2b8e31dbe0815b90d33fc351e777251073",
+    "proof-tools/dafnyevm/src/dafny/evm.dfy": "be49e35246d4bf7476c174e6f08c8296bfd786443927fad9b87d80f6ceaf2df9",
+    "proof-tools/dafnyevm/src/dafny/execution.dfy": "aa2b09cd8cd0a7fb498a0b3d55d6784d8861019072f276adf9b0ee965fc98ba2",
+    "proof-tools/dafnyevm/src/dafny/gas.dfy": "b413970354c9d4083191242136d17e76a94d3c545254c5a3e00404da98abb71a",
+    "proof-tools/dafnyevm/src/dafny/opcodes.dfy": "890779ca65d4df9d586e4fd167b3d8c1dd1a090e2b65d95d905ae5a170a48f0c",
+    "proof-tools/dafnyevm/src/dafny/state.dfy": "8bfea41358fbec2752ea37c61167b4c4b4ca63e8439338602513376752717692",
+    "proof-tools/dafnyevm/src/dafny/util/arithmetic.dfy": "421231ed3b83057b8ec418296fe006338e308ba176a735c1b36760053aa1a5ff",
+    "proof-tools/dafnyevm/src/dafny/util/arrays.dfy": "df314099807115480704c9c2dfe24274372fce6bb8192bfd6c8ffc6b3a96c156",
+    "proof-tools/dafnyevm/src/dafny/util/bytes.dfy": "6bb7fded17c1628e055e543c60bf80a2185b62b64cf09f8657ab5e028162ce22",
+    "proof-tools/dafnyevm/src/dafny/util/extern.dfy": "5de28c1a29025da44e17f6283fe9c9aaa1b4dad55ddd0f889f6ffe512e8569b1",
+    "proof-tools/dafnyevm/src/dafny/util/int.dfy": "9b089348e458ae7508b87cf61f990f8f03d77039707b07c2b7b9d29a4a233e72"
+  },
+  "missingInputs": [],
+  "verificationScope": "Universal RAW_BYTES source equation and canonical ABI profile; generic bounded-driver correspondence. Full dispatcher/decoder/return behavior is checked concretely from PC 0, with no universal public-entry or deployed-bytecode proof credit."
+}

@@ -1,5 +1,7 @@
+include "../../../../proof-tools/dafnyevm/src/dafny/util/arrays.dfy"
 include "Power.dfy"
 module OperationsModularPowerMemory {
+  import Arrays
   import B = OperationsBinaryLogModel
   import P = OperationsFullMulDivProduct
   import E = OperationsModularPowerEuclid
@@ -59,9 +61,10 @@ module OperationsModularPowerMemory {
     ensures |Store(memory,offset,value)| == |memory| && Bytes(Store(memory,offset,value))
   {
     var encoded := Word(value);
-    assert Bytes(encoded);
-    seq(|memory|,(i: int) requires 0 <= i < |memory| =>
-      if offset <= i < offset+32 then encoded[i-offset] else memory[i])
+    var result := Arrays.Copy(encoded,memory,offset);
+    reveal Arrays.Copy();
+    assert Bytes(result);
+    result
   }
   function Load(memory: seq<nat>,offset: nat): nat
     requires Bytes(memory) && offset+32 <= |memory|
@@ -72,8 +75,10 @@ module OperationsModularPowerMemory {
     ensures |CopyReply(memory,offset,data)| == |memory| && Bytes(CopyReply(memory,offset,data))
   {
     var copied := if |data| < 32 then |data| else 32;
-    seq(|memory|,(i: int) requires 0 <= i < |memory| =>
-      if offset <= i < offset+copied then data[i-offset] else memory[i])
+    var result := Arrays.Copy(data[..copied],memory,offset);
+    reveal Arrays.Copy();
+    assert Bytes(result);
+    result
   }
   lemma ReplyLoad(memory: seq<nat>,offset: nat,value: nat)
     requires Bytes(memory) && offset+32 <= |memory| && value < B.Word

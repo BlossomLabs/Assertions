@@ -8,16 +8,19 @@ closure and an explicit native verification policy.
 
 ```sh
 python3 formal/tools/bootstrap_adapters.py --fetch
+python3 formal/tools/bootstrap_evm.py --fetch
 python3 formal/tools/check.py
 python3 formal/tools/query.py --contract Assertions --kind lemma --show
 python3 formal/tools/status.py
 python3 formal/tools/readiness.py
 ```
 
-The checker needs Python, this library and the current public claim ledger. The 469 canonical files preserve
-3,474 original declaration identities and 45 additional helper declarations.
-Contract declaration indexes describe canonical interfaces; they are not public claims.
-The registry contains 132 proof packages and four generation intermediates.
+The checker binds the canonical files, pinned foreign semantics and the current
+public claim ledger. The original 3,474 declaration identities and 3,481 indexed
+logical interfaces remain preserved. New adapter and bridge declarations have a
+separate helper inventory. `check.py` prints current file and package counts;
+`canonical-sources.json` retains the original export provenance.
+Contract declaration indexes describe interfaces; they are not public claims.
 [Claim mapping rules](CLAIMS.md) describe the integration.
 `claims.json` connects the current `docs/claim-evidence.json` IDs and wording to
 reviewed theorem mappings. All claims initially remain unmapped; historical
@@ -26,8 +29,10 @@ not proof completion percentages.
 
 ## Verification
 
-Install Dafny 4.11.0, Z3 4.12.1 and solc 0.8.36 into the expected `proof-tools`
-paths. Native runs use two cores, manual lemma induction, isolated assertions and
+Run `bootstrap_evm.py --fetch` to restore checksummed Dafny 4.11.0, bundled
+Z3 4.12.1, solc 0.8.36 and locked Python dependencies under `proof-tools/`.
+The installer needs Python with pip and network access on its first run. It
+refuses modified installs and publishes staged downloads only after hash checks. Native runs use two cores, manual lemma induction, isolated assertions and
 a 30-second per-obligation limit. Output directories must be fresh.
 
 ```sh
@@ -40,10 +45,6 @@ python3 formal/tools/campaign.py --output /tmp/fresh-library-campaign
 The runner snapshots complete source closures, producer scripts and descriptors,
 and binds source, tool and evidence hashes. Review checks the exact commands,
 all method/lemma batches, zero audits, full formatting and snapshot identity.
-The fixed-point accuracy proofs retain the original caller domains and mathematical
-error bounds. A proved postcondition hint supplies denominator well-formedness
-without adding a caller premise.
-
 Passing native gates does not establish production-source correspondence or
 exact-bytecode equivalence. No historical native acceptance is transferred to
 this branch.
@@ -90,15 +91,18 @@ local/CI artifacts. Production contracts and deployment artifacts are unchanged.
 ```text
 formal/
   source/        Contract models, source proofs, declaration indexes and AST gates
-  bytecode/      Future exact-runtime proof packages
+  bytecode/      Conditional helper windows and exact compiler runtime bindings
   foundations/   Shared mathematical, word, sequence and memory facts
-  bridges/       Future source-to-bytecode representation proofs
+  bridges/       Source-equation refinements and conditional execution bridges
+  dependencies/  Pinned upstream semantics, generic patch bundle and tool locks
+  migrations/    Original interfaces, claim-ledger hashes and replacement theorems
   tools/         Uniform verification, generation and independent review
 ```
 
 Package descriptors, provenance bindings and current claim mappings live at the
-root alongside this guide. `bytecode/` and `bridges/` are intentionally empty
-proof scaffolds; they grant no proof credit.
+root alongside this guide. The DafnyEVM packages grant only the evidence scope
+established by fresh verification and review; runtime capture alone grants no
+bytecode correctness credit.
 
 `docs/claims.md` remains the public claims ledger. This library supplies precise
 specifications, premises and evidence links; inventories and declaration counts
@@ -119,3 +123,66 @@ must be available on the remote branch before a fresh clone can fetch it.
 Artifact bootstrap is distinct from production AST generation. Thirteen
 Operations families support fresh compiler/generator replay; other families still
 need that generation coverage. Restoring an adapter grants no proof credit.
+
+## DafnyEVM adoption
+
+`dependencies/dafnyevm/lock.json` pins upstream `evm-dafny` and `DafnyCrypto`
+commits. `generic.patch` contains only reusable interpreter modernization,
+word/arithmetic/serialization proofs, memory-copy contracts, instruction summaries
+and explicit backend injection. It has no Assertions selectors or program counters.
+Apply it in a separate upstream checkout; bootstrap restores that checkout under
+ignored `proof-tools/dafnyevm`. Assertions adapters and program-specific proofs
+live under `foundations/Evm*`, `bridges/dafnyevm` and `bytecode/dafnyevm`.
+The clean native closure excludes the optional crypto adapter and t8n driver;
+their older cryptographic admission debt does not become accepted semantics.
+
+Seven source models reuse generic wrapping words, signed division/remainder,
+bitwise operations, serialization, full-word loads and sequence copying.
+`migrations/dafnyevm.json` binds each changed declaration to a theorem in
+`SourceRefinement.dfy`. Checks compare every original interface to the frozen
+Git baseline and reject lost declarations, narrowed premises or weakened
+conclusions. Mathematical heap domains, checked Solidity panic behavior and
+independent ABI equations remain explicit. Logical shifts retain their original
+source equations; this adoption does not claim a new universal shift bridge.
+All 326 public IDs, wording, mappings and existing evidence remain unchanged.
+
+```sh
+python3 formal/tools/verify_evm.py --output /tmp/fresh-evm-adoption
+python3 formal/tools/verify_evm.py --output /tmp/fresh-evm-adoption --run
+python3 formal/tools/review_evm.py --evidence /tmp/fresh-evm-adoption --output formal/evidence/reviews/fresh-evm-adoption.json
+FORMAL_NATIVE_EVIDENCE=/tmp/fresh-evm-adoption/native python3 -m unittest discover -s formal/tests -v
+python3 formal/tools/campaign.py --migration --output /tmp/fresh-affected-source
+```
+
+The unified run verifies the complete `dafnyevm-adoption` closure with the normal
+30-second policy, requires independent native review, replays scalar AST generation,
+recaptures the current compiler runtime, compiles the reviewed interpreter snapshot
+and compares 46 helper cases and four mutants against locked py-evm Cancun.
+Fifteen generic arithmetic/memory cases and rejection probes also run. Independent
+adoption review recompiles the runtime and interpreter and reruns the concrete cases.
+Callbacks fail if a cryptographic backend is unexpectedly used. Unsupported smoke
+opcodes, step limits and empty native result sets fail the gates.
+The evidence fault tests also remove an entire refinement's result rows, alter
+verification limits and tamper with snapshots while rebinding artifact hashes;
+independent review must still reject each corrupted receipt.
+
+The first/address success proofs start at explicit helper PCs and require adequate
+gas, stacks, valid jump destinations and memory representations. Runtime binding
+is conditional compiler-bytecode evidence, not deployed-runtime or public-entry
+correctness. There is no complete Assertions proof, full Cancun opcode claim,
+Prague/Osaka support claim or cryptographic proof. The public RAW_BYTES profile is described in
+[its package guide](packages/dafnyevm-public-resolve/README.md). Native proofs
+bind its source result and canonical ABI layout. Complete concrete calls start at
+PC 0 with empty stack and memory, compare every instruction state against py-evm,
+and require 84 cases, 24 boundary/rejection probes and four detected bytecode
+mutations. Independent review rebuilds and repeats this gate. This adds public
+call conformance evidence; a universal dispatcher/decoder/return theorem remains
+separate.
+
+The Java compatibility build
+uses the optional concrete adapter separately from clean native verification.
+
+`--affected-source` additionally requires the full affected legacy source campaign.
+Its acceptance is separate: older pending source obligations must be repaired and
+reviewed, rather than hidden or inherited from inventory counts. `SourceClosure1.dfy`
+collects the complete affected source roots without duplicate import verification.

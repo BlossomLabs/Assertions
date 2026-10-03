@@ -31,8 +31,8 @@
     ]
   },
   "closureSha256": {
-    "formal/source/expressions/evaluation/Control.dfy": "d7de2f9c37e1e80402761cbdbf888588079ab1630992dfa524ef0dceeef47693",
     "formal/foundations/SourceMemoOrderV3.dfy": "157c39da57e26a43abd6052d585deca8e5d039cfbe363cab0e0a63f0d32ebb1d",
+    "formal/source/expressions/evaluation/Control.dfy": "d7de2f9c37e1e80402761cbdbf888588079ab1630992dfa524ef0dceeef47693",
     "formal/source/expressions/recursive/Source.generated.dfy": "bdd06d709b0322877fa2b770177834d40f03d67390e88b2723d8b959349d51ec",
     "formal/source/expressions/recursive/Spec.dfy": "8cddfe997b95016af3b6de8d3b7ccc90acb81f3460bfa81b0cdd339b0decbc96"
   },

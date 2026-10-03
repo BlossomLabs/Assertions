@@ -38,15 +38,23 @@
     ]
   },
   "closureSha256": {
+    "formal/foundations/EvmEncoding.dfy": "684f4088f6bf8ae6aea2848fd876f7b99f96339715d4e904ba45c7ded83d2883",
+    "formal/foundations/EvmValues.dfy": "8f0e47b3ef3251230c9f1a31d832e8804438e1b5728b1a07093e4151337ff541",
+    "formal/foundations/SourceSequenceMemoryV1.dfy": "94bdbaeddc8b0d96a9edfc4672554ba625c6c9abf80f27006cee0905dcd011c6",
+    "formal/source/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
+    "formal/source/collections/word-memory/Connection.dfy": "28cfbf859c8bd2464d772a6fe11018364747ad92f0919e073fa29191b2f715fe",
+    "formal/source/collections/word-memory/Model.dfy": "5738c0164d1c5cc1410f2b961aafe6146d1abb95085e5b188b88d938c7eccf82",
+    "formal/source/collections/word-memory/Source.generated.dfy": "f5cd81a8a45eb35483546521480caa6f0d012e38531e20fcec3806900b34e203",
     "formal/source/collections/word-unique/Connection.dfy": "f6dcac6fec3f4f735ebb4e4c878b689a0068277f23aa2f6ce7b638d61a12f6ff",
-    "formal/source/collections/word-unique/Source.dfy": "5dd18b60cfe151962c1d427f07ca8386dc4685c5e358bcdbe1525d6ebc0e4912",
     "formal/source/collections/word-unique/Control.generated.dfy": "d6efd9db70c061449d4a449d6e3253b930b3818ad936210add7676f6e91c28d0",
     "formal/source/collections/word-unique/Model.dfy": "4ad1e65667d6a38617abe4cfee25ef676d9c56819f91408e31f34311d66aa878",
-    "formal/source/collections/word-memory/Connection.dfy": "28cfbf859c8bd2464d772a6fe11018364747ad92f0919e073fa29191b2f715fe",
-    "formal/source/collections/word-memory/Source.generated.dfy": "f5cd81a8a45eb35483546521480caa6f0d012e38531e20fcec3806900b34e203",
-    "formal/source/collections/word-memory/Model.dfy": "47c5a211c3c28737af9f6c62b5091bfb93834ec266920a7e7624fc6b568db6ba",
-    "formal/source/abi/Frames.dfy": "d866bbcd5a4ef9ae5706a8c4d232c98df0451bf5788c621d2ca03b8f8a42bed3",
-    "formal/foundations/SourceSequenceMemoryV1.dfy": "368897bc49d5826c5e60df858cfee7009d0a7ccd82570daef148ac861ee0cc38"
+    "formal/source/collections/word-unique/Source.dfy": "5dd18b60cfe151962c1d427f07ca8386dc4685c5e358bcdbe1525d6ebc0e4912",
+    "proof-tools/dafnyevm/libs/DafnyCrypto/src/dafny/util/option.dfy": "af96ca0dcc4a992d9c22a552b1c596e680aaf63910eb32df0833b70355708410",
+    "proof-tools/dafnyevm/src/dafny/core/memory.dfy": "61d6b8bf811054d9b5d7d23b979f82caa9ed2be791cfa4aad148344c489f8271",
+    "proof-tools/dafnyevm/src/dafny/util/arithmetic.dfy": "421231ed3b83057b8ec418296fe006338e308ba176a735c1b36760053aa1a5ff",
+    "proof-tools/dafnyevm/src/dafny/util/arrays.dfy": "df314099807115480704c9c2dfe24274372fce6bb8192bfd6c8ffc6b3a96c156",
+    "proof-tools/dafnyevm/src/dafny/util/bytes.dfy": "6bb7fded17c1628e055e543c60bf80a2185b62b64cf09f8657ab5e028162ce22",
+    "proof-tools/dafnyevm/src/dafny/util/int.dfy": "9b089348e458ae7508b87cf61f990f8f03d77039707b07c2b7b9d29a4a233e72"
   },
   "missingInputs": [],
   "verificationScope": "Canonical relocated source closure. Fresh native gates required; historical/source correspondence acceptance is not inherited automatically."

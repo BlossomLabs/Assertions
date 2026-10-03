@@ -1,7 +1,10 @@
+include "../../../foundations/EvmEncoding.dfy"
 // SPDX-License-Identifier: MIT
 include "../constraints/Model.dfy"
 include "../../abi/Frames.dfy"
 module ResolutionWords {
+  import V = EvmValues
+  import E = EvmEncoding
   import opened ConstraintModel
   import Frames = AbiFrames
 
@@ -36,13 +39,14 @@ module ResolutionWords {
 
   function EncodeWord(w: Word): seq<Byte>
     ensures |EncodeWord(w)| == 32
-  { Frames.Word(w) }
+  { V.Serialize(w) }
 
   lemma EncodedWord(w: Word)
     ensures Read(EncodeWord(w)) == w
     ensures |EncodeWord(w)| == 32
   {
     PowerConstants();
+    E.WordSame(w);
     Frames.NatBytesRoundTrip(w,32);
     ReadBridge(EncodeWord(w));
   }

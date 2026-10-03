@@ -27,7 +27,9 @@ def mask_literals_and_comments(text):
                     i += 2
                 else:
                     i += 1
-        elif text[i] in ('"', "'"):
+        elif text[i] in ('"', "'") and not (
+            text[i] == "'" and i > 0 and (text[i-1].isalnum() or text[i-1] in "_'")
+        ):
             quote = text[i]
             i += 1
             while i < len(text):

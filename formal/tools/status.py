@@ -52,7 +52,7 @@ def build_status():
                      'canonicalSourceAcceptance':'not-established-by-native-status',
                      'bytecodeCredit':False})
     return {'scope':'Evidence-backed library status. Native review does not establish source correspondence or bytecode equivalence.',
-            'canonicalFiles':json.loads((LIBRARY/'canonical-sources.json').read_text())['canonicalFiles'],
+            'canonicalFiles':len(json.loads((LIBRARY/'preservation.json').read_text())['files']),
             'originalDeclarationIdentities':registry['canonicalOriginalDeclarations'],
             'additionalHelperDeclarations':len(json.loads((LIBRARY/'helper-interfaces.json').read_text())['records']),
             'packages':rows}

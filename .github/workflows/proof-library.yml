@@ -1,19 +1,51 @@
 name: Source proof library integrity
 on:
   push:
-    paths: ["formal/**", "docs/claim-evidence.json", ".github/workflows/proof-library.yml"]
+    paths: ["formal/**", "contracts/**", "docs/claim-evidence.json", ".github/workflows/proof-library.yml"]
   pull_request:
-    paths: ["formal/**", "docs/claim-evidence.json", ".github/workflows/proof-library.yml"]
+    paths: ["formal/**", "contracts/**", "docs/claim-evidence.json", ".github/workflows/proof-library.yml"]
 jobs:
   integrity:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: python3 formal/tools/bootstrap_adapters.py --fetch
+      - run: python3 formal/tools/bootstrap_evm.py --fetch
       - run: python3 formal/tools/check.py
       - run: python3 formal/tools/status.py
       - run: python3 formal/tools/readiness.py
       - run: python3 -m unittest discover -s formal/tests -v
+  dafnyevm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: python3 formal/tools/bootstrap_adapters.py --fetch
+      - run: python3 formal/tools/bootstrap_evm.py --fetch
+      - run: python3 formal/tools/verify_evm.py --output formal/evidence/ci-evm --run
+      - run: python3 formal/tools/review_evm.py --evidence formal/evidence/ci-evm --output formal/evidence/reviews/ci-evm.json
+      - run: python3 -m unittest discover -s formal/tests -v
+        env:
+          FORMAL_NATIVE_EVIDENCE: formal/evidence/ci-evm/native
+          FORMAL_PUBLIC_EVIDENCE: formal/evidence/ci-evm/public-resolve.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dafnyevm-adoption-evidence
+          path: formal/evidence/

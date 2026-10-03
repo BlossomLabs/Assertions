@@ -11,9 +11,11 @@ def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
 def check():
     from declarations import declarations
+    from evm_dependency import external_sources
+    external = external_sources()
     registry=json.loads((LIBRARY/'registry.json').read_text())
     preservation=json.loads((LIBRARY/'preservation.json').read_text())['files']
-    actual={str(p.relative_to(ROOT)) for folder in ['source/assertions','source/operations','source/collections','source/expressions','source/abi','foundations'] for p in (LIBRARY/folder).rglob('*.dfy')}
+    actual={str(p.relative_to(ROOT)) for folder in ['source/assertions','source/operations','source/collections','source/expressions','source/abi','foundations','bridges','bytecode'] for p in (LIBRARY/folder).rglob('*.dfy')}
     assert actual==set(preservation),'Unbound canonical proof file'
     parsed={}
     for relative,record in preservation.items():
@@ -31,8 +33,9 @@ def check():
             if relative in visited:return
             visited.add(relative)
             path=ROOT/relative
-            assert relative in preservation and digest(path)==closure[relative]
-            for include in re.findall(r'^include "([^\"]+)"',path.read_text(),re.M):
+            assert relative in preservation or relative in external, 'Unbound closure dependency: '+relative
+            assert digest(path)==closure[relative]
+            for include in re.findall(r'^\s*include "([^\"]+)"',path.read_text(),re.M):
                 child=str((path.parent/include).resolve().relative_to(ROOT))
                 if child not in closure:
                     assert package['selectionRole']=='generation-intermediate'
@@ -65,6 +68,8 @@ def check():
             assert d['kind']==interface['kind'] and d['interface']==interface['logicalInterface']
     from claim_mapping import validate_mappings
     validate_mappings(ROOT, LIBRARY, parsed)
+    from migration import validate_migration
+    validate_migration(parsed)
     print(f'PASS: {len(actual)} canonical files, {count} indexed declarations, {len(packages)} descriptors. No acceptance transferred.')
 
 if __name__=='__main__':

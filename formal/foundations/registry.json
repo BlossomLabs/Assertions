@@ -40,7 +40,8 @@
         "original-expressions-trace-bounds",
         "original-expressions-tree",
         "original-expressions-validation",
-        "original-resolution"
+        "original-resolution",
+        "dafnyevm-source-closure-1"
       ],
       "interfaces": [
         {
@@ -90,7 +91,8 @@
         "original-expressions-self-call",
         "original-expressions-trace-bounds",
         "original-expressions-tree",
-        "original-expressions-validation"
+        "original-expressions-validation",
+        "dafnyevm-source-closure-1"
       ],
       "interfaces": [
         {
@@ -139,7 +141,8 @@
         "original-expressions-self-call",
         "original-expressions-trace-bounds",
         "original-expressions-tree",
-        "original-expressions-validation"
+        "original-expressions-validation",
+        "dafnyevm-source-closure-1"
       ],
       "interfaces": [
         {
@@ -241,7 +244,8 @@
         "original-expressions-tree",
         "original-expressions-validation",
         "original-navigation",
-        "original-operations-tuple-encode"
+        "original-operations-tuple-encode",
+        "dafnyevm-source-closure-1"
       ],
       "interfaces": [
         {
@@ -314,7 +318,8 @@
         "original-expressions-tree",
         "original-expressions-validation",
         "original-navigation",
-        "original-operations-tuple-encode"
+        "original-operations-tuple-encode",
+        "dafnyevm-source-closure-1"
       ],
       "interfaces": [
         {
@@ -331,11 +336,12 @@
       "sha256": "eb2b525f608f4bde64e33a1db2ffad3fb59b68333b19b3132da49999c7f32464",
       "role": "shared mathematical foundation",
       "consumers": [
+        "word-windows",
         "original-collections-word-apply",
         "original-collections-word-fold-entry",
         "original-collections-word-fold-loop",
         "original-collections-word-windows",
-        "word-windows"
+        "dafnyevm-source-closure-1"
       ],
       "interfaces": [
         {
@@ -349,9 +355,11 @@
     {
       "module": "SourceSequenceMemoryV1",
       "file": "formal/foundations/SourceSequenceMemoryV1.dfy",
-      "sha256": "368897bc49d5826c5e60df858cfee7009d0a7ccd82570daef148ac861ee0cc38",
+      "sha256": "94bdbaeddc8b0d96a9edfc4672554ba625c6c9abf80f27006cee0905dcd011c6",
       "role": "shared mathematical foundation",
       "consumers": [
+        "word-memory",
+        "word-windows",
         "abi",
         "original-abi-construction",
         "original-abi-outcomes",
@@ -415,8 +423,8 @@
         "original-expressions-validation",
         "original-navigation",
         "original-operations-tuple-encode",
-        "word-memory",
-        "word-windows"
+        "dafnyevm-source-closure-1",
+        "dafnyevm-adoption"
       ],
       "interfaces": [
         {
@@ -444,9 +452,13 @@
       "role": "shared mathematical foundation",
       "consumers": [
         "concat",
+        "replace-suite",
         "original-operations-byte-replace",
         "original-operations-concat",
-        "replace-suite"
+        "dafnyevm-foundations",
+        "dafnyevm-helpers",
+        "dafnyevm-source-closure-1",
+        "dafnyevm-adoption"
       ],
       "interfaces": [
         {
@@ -476,6 +488,308 @@
         }
       ],
       "acceptance": "No independent source or bytecode acceptance inferred from publication."
+    },
+    {
+      "module": "EvmEncoding",
+      "file": "formal/foundations/EvmEncoding.dfy",
+      "role": "Assertions representation adapter to pinned generic DafnyEVM",
+      "interfaces": [
+        {
+          "symbol": "Add",
+          "kind": "function",
+          "logicalInterface": "function {:fuel F.Pow256, 34} Add(a: nat, b: nat): nat\n    ensures Add(a,b) == (a+b) % F.Pow256(32)"
+        },
+        {
+          "symbol": "Mul",
+          "kind": "function",
+          "logicalInterface": "function {:fuel F.Pow256, 34} Mul(a: nat, b: nat): nat\n    ensures Mul(a,b) == (a*b) % F.Pow256(32)"
+        },
+        {
+          "symbol": "Load",
+          "kind": "function",
+          "logicalInterface": "function Load(data: seq<V.Byte>, address: nat): V.Word\n    requires address+32 <= |data|\n    ensures Load(data,address) == F.ReadNat(data[address..address+32])"
+        },
+        {
+          "symbol": "Store",
+          "kind": "function",
+          "logicalInterface": "function Store(data: seq<V.Byte>, address: nat, value: nat): seq<V.Byte>\n    requires address+32 <= |data|\n    ensures Store(data,address,value) == data[..address]+F.Word(value)+data[address+32..]\n    ensures |Store(data,address,value)| == |data|"
+        },
+        {
+          "symbol": "NatBytesModulo",
+          "kind": "lemma",
+          "logicalInterface": "lemma NatBytesModulo(n: nat, width: nat)\n    ensures F.NatBytes(n,width) == F.NatBytes(n % F.Pow256(width),width)\n    decreases width"
+        },
+        {
+          "symbol": "ReadSame",
+          "kind": "lemma",
+          "logicalInterface": "lemma ReadSame(data: seq<V.Byte>)\n    ensures F.ReadNat(data) == D.FromBytes(V.Bytes(data))\n    decreases |data|"
+        },
+        {
+          "symbol": "WordSame",
+          "kind": "lemma",
+          "logicalInterface": "lemma {:fuel F.Pow256, 34} WordSame(n: nat)\n    requires n < D.TWO_256\n    ensures V.Serialize(n) == F.Word(n)"
+        },
+        {
+          "symbol": "WordSameWrapped",
+          "kind": "lemma",
+          "logicalInterface": "lemma {:fuel F.Pow256, 34} WordSameWrapped(n: nat)\n    ensures V.Serialize(n) == F.Word(n)"
+        },
+        {
+          "symbol": "LoadSame",
+          "kind": "lemma",
+          "logicalInterface": "lemma LoadSame(data: seq<V.Byte>, address: nat)\n    requires address+32 <= |data|\n    ensures V.Load(data,address) == F.ReadNat(data[address..address+32])"
+        }
+      ],
+      "sha256": "684f4088f6bf8ae6aea2848fd876f7b99f96339715d4e904ba45c7ded83d2883",
+      "consumers": [
+        "word-memory",
+        "word-windows",
+        "core-raw",
+        "original-abi-outcomes",
+        "original-arguments",
+        "original-collections-word-apply",
+        "original-collections-word-fold-entry",
+        "original-collections-word-fold-loop",
+        "original-collections-word-layout",
+        "original-collections-word-memory",
+        "original-collections-word-scans",
+        "original-collections-word-sort",
+        "original-collections-word-unique",
+        "original-collections-word-windows",
+        "original-composition",
+        "original-control",
+        "original-core",
+        "original-core-completion",
+        "original-core-frame-tree",
+        "original-core-public-boundary",
+        "original-core-raw-tree",
+        "original-core-recursive",
+        "original-core-serialization",
+        "original-expressions-admission-errors",
+        "original-expressions-cache",
+        "original-expressions-calls",
+        "original-expressions-codec-errors",
+        "original-expressions-compound",
+        "original-expressions-context",
+        "original-expressions-encoded",
+        "original-expressions-entry",
+        "original-expressions-evaluation",
+        "original-expressions-execution",
+        "original-expressions-frames",
+        "original-expressions-guard-receipts",
+        "original-expressions-guarded",
+        "original-expressions-oracle",
+        "original-expressions-oracle-stability",
+        "original-expressions-primitives",
+        "original-expressions-probe-input",
+        "original-expressions-public",
+        "original-expressions-receipts",
+        "original-expressions-recursive",
+        "original-expressions-rejections",
+        "original-expressions-requests",
+        "original-expressions-resolve",
+        "original-expressions-scalars",
+        "original-expressions-self-call",
+        "original-expressions-trace-bounds",
+        "original-expressions-tree",
+        "original-expressions-validation",
+        "original-resolution",
+        "dafnyevm-foundations",
+        "dafnyevm-helpers",
+        "dafnyevm-source-closure-1",
+        "dafnyevm-adoption",
+        "dafnyevm-public-resolve"
+      ]
+    },
+    {
+      "module": "EvmScalarValues",
+      "file": "formal/foundations/EvmScalarValues.dfy",
+      "role": "Assertions representation adapter to pinned generic DafnyEVM",
+      "interfaces": [
+        {
+          "symbol": "Word",
+          "kind": "predicate",
+          "logicalInterface": "predicate Word(n: int)"
+        },
+        {
+          "symbol": "Signed",
+          "kind": "predicate",
+          "logicalInterface": "predicate Signed(n: int)"
+        },
+        {
+          "symbol": "Abs",
+          "kind": "function",
+          "logicalInterface": "function Abs(n: int): int"
+        },
+        {
+          "symbol": "Trunc",
+          "kind": "function",
+          "logicalInterface": "function Trunc(a: int, b: int): int"
+        },
+        {
+          "symbol": "Rem",
+          "kind": "function",
+          "logicalInterface": "function Rem(a: int, b: int): int"
+        },
+        {
+          "symbol": "And",
+          "kind": "function",
+          "logicalInterface": "function And(a: int, b: int): int\n    requires Word(a) && Word(b)\n    ensures Word(And(a,b))"
+        },
+        {
+          "symbol": "Or",
+          "kind": "function",
+          "logicalInterface": "function Or(a: int, b: int): int\n    requires Word(a) && Word(b)\n    ensures Word(Or(a,b))"
+        },
+        {
+          "symbol": "Xor",
+          "kind": "function",
+          "logicalInterface": "function Xor(a: int, b: int): int\n    requires Word(a) && Word(b)\n    ensures Word(Xor(a,b))"
+        }
+      ],
+      "sha256": "61e7a1aad128470206bc1f10adc2b3d9c3184a5a32358711eed60d1bfc98af07",
+      "consumers": [
+        "original-operations-scalars",
+        "dafnyevm-foundations",
+        "dafnyevm-helpers",
+        "dafnyevm-source-closure-1",
+        "dafnyevm-adoption"
+      ]
+    },
+    {
+      "module": "EvmValues",
+      "file": "formal/foundations/EvmValues.dfy",
+      "role": "Assertions representation adapter to pinned generic DafnyEVM",
+      "interfaces": [
+        {
+          "symbol": "Byte",
+          "kind": "type",
+          "logicalInterface": "type Byte = b: nat | b < 256 witness 0"
+        },
+        {
+          "symbol": "Word",
+          "kind": "type",
+          "logicalInterface": "type Word = w: nat | w < D.TWO_256 witness 0"
+        },
+        {
+          "symbol": "Bytes",
+          "kind": "function",
+          "logicalInterface": "function Bytes(data: seq<Byte>): seq<D.u8>\n    ensures |Bytes(data)| == |data|\n    ensures forall i :: 0 <= i < |data| ==> Bytes(data)[i] as nat == data[i]"
+        },
+        {
+          "symbol": "Naturals",
+          "kind": "function",
+          "logicalInterface": "function Naturals(data: seq<D.u8>): seq<Byte>\n    ensures |Naturals(data)| == |data|\n    ensures forall i :: 0 <= i < |data| ==> Naturals(data)[i] == data[i] as nat"
+        },
+        {
+          "symbol": "BytesSlice",
+          "kind": "lemma",
+          "logicalInterface": "lemma BytesSlice(data: seq<Byte>, lo: nat, hi: nat)\n    requires lo <= hi <= |data|\n    ensures Bytes(data[lo..hi]) == Bytes(data)[lo..hi]"
+        },
+        {
+          "symbol": "BytesInverse",
+          "kind": "lemma",
+          "logicalInterface": "lemma BytesInverse(data: seq<D.u8>)\n    ensures Bytes(Naturals(data)) == data"
+        },
+        {
+          "symbol": "Read",
+          "kind": "function",
+          "logicalInterface": "function Read(data: seq<Byte>): Word\n    ensures |data| == 0 ==> Read(data) == 0\n    ensures |data| > 0 ==> Read(data) == (Read(data[..|data|-1])*256+data[|data|-1]) % D.TWO_256\n    decreases |data|"
+        },
+        {
+          "symbol": "Serialize",
+          "kind": "function",
+          "logicalInterface": "function Serialize(n: nat): seq<Byte>\n    ensures |Serialize(n)| == 32"
+        },
+        {
+          "symbol": "Signed",
+          "kind": "function",
+          "logicalInterface": "function Signed(w: Word): int"
+        },
+        {
+          "symbol": "Add",
+          "kind": "function",
+          "logicalInterface": "function Add(a: nat, b: nat): nat\n    ensures Add(a,b) == (a+b) % D.TWO_256"
+        },
+        {
+          "symbol": "Mul",
+          "kind": "function",
+          "logicalInterface": "function Mul(a: nat, b: nat): nat\n    ensures Mul(a,b) == (a*b) % D.TWO_256"
+        },
+        {
+          "symbol": "Load",
+          "kind": "function",
+          "logicalInterface": "function Load(data: seq<Byte>, address: nat): Word\n    requires address+32 <= |data|"
+        },
+        {
+          "symbol": "Store",
+          "kind": "function",
+          "logicalInterface": "function Store(data: seq<Byte>, address: nat, value: nat): seq<Byte>\n    requires address+32 <= |data|\n    ensures |Store(data,address,value)| == |data|"
+        }
+      ],
+      "sha256": "8f0e47b3ef3251230c9f1a31d832e8804438e1b5728b1a07093e4151337ff541",
+      "consumers": [
+        "word-memory",
+        "word-windows",
+        "constraints",
+        "core-raw",
+        "original-abi-outcomes",
+        "original-arguments",
+        "original-collections-word-apply",
+        "original-collections-word-fold-entry",
+        "original-collections-word-fold-loop",
+        "original-collections-word-layout",
+        "original-collections-word-memory",
+        "original-collections-word-scans",
+        "original-collections-word-sort",
+        "original-collections-word-unique",
+        "original-collections-word-windows",
+        "original-composition",
+        "original-constraints",
+        "original-control",
+        "original-core",
+        "original-core-completion",
+        "original-core-frame-tree",
+        "original-core-public-boundary",
+        "original-core-raw-tree",
+        "original-core-recursive",
+        "original-core-serialization",
+        "original-expressions-admission-errors",
+        "original-expressions-cache",
+        "original-expressions-calls",
+        "original-expressions-codec-errors",
+        "original-expressions-compound",
+        "original-expressions-context",
+        "original-expressions-encoded",
+        "original-expressions-entry",
+        "original-expressions-evaluation",
+        "original-expressions-execution",
+        "original-expressions-frames",
+        "original-expressions-guard-receipts",
+        "original-expressions-guarded",
+        "original-expressions-oracle",
+        "original-expressions-oracle-stability",
+        "original-expressions-primitives",
+        "original-expressions-probe-input",
+        "original-expressions-public",
+        "original-expressions-receipts",
+        "original-expressions-recursive",
+        "original-expressions-rejections",
+        "original-expressions-requests",
+        "original-expressions-resolve",
+        "original-expressions-scalars",
+        "original-expressions-self-call",
+        "original-expressions-trace-bounds",
+        "original-expressions-tree",
+        "original-expressions-validation",
+        "original-operations-scalars",
+        "original-resolution",
+        "dafnyevm-foundations",
+        "dafnyevm-helpers",
+        "dafnyevm-source-closure-1",
+        "dafnyevm-adoption",
+        "dafnyevm-public-resolve"
+      ]
     }
   ]
 }

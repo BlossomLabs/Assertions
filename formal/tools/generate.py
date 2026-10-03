@@ -46,10 +46,19 @@ for family in ['binary-log','checked-power','decimal-digits','decimal-render','d
         'canonical':str((root/'Control.generated.dfy').relative_to(ROOT))}
 
 
+# Every formatting import is staged in the same repository layout as its root.
+for config in CONFIG.values():
+    from evm_dependency import closure
+    bound = closure([ROOT/config['canonical']])
+    config['formatDependencies'] = sorted(p for p in bound if p != config['canonical'])
+
+
 def format_dependency_path(output, config, relative):
-    destination=(output/os.path.relpath(ROOT/relative,(ROOT/config['canonical']).parent)).resolve()
-    assert destination.is_relative_to(output.parent.resolve()), 'Format dependency escapes evidence directory'
-    return destination
+    return output/'repository'/relative
+
+
+def generated_path(output, config):
+    return output/'repository'/config['canonical']
 
 
 def main():
@@ -94,14 +103,17 @@ def main():
             destination=format_dependency_path(generated,config,relative)
             destination.parent.mkdir(parents=True,exist_ok=True)
             shutil.copy2(ROOT/relative,destination)
-        command=[str(dafny),'format',str(generated/config['adapter'])]
+        adapter=generated_path(generated,config)
+        adapter.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(generated/config['adapter'],adapter)
+        command=[str(dafny),'format',str(adapter)]
         with (output/'format.log').open('w') as log:
             subprocess.run(command,stdout=log,stderr=subprocess.STDOUT,check=True)
-        assert declarations(generated/config['adapter'])==declarations(ROOT/config['canonical']), 'Generated declarations differ from canonical adapter'
+        assert declarations(adapter)==declarations(ROOT/config['canonical']), 'Generated declarations differ from canonical adapter'
         assert all(digest(ROOT/p)==h for p,h in bound.items()),'Generation inputs changed'
         assert all(digest(ROOT/p)==h for p,h in tools.items()),'Generation tools changed'
         receipt.update(status='generation-and-canonical-declarations-passed',formatCommand=command,
-                       declarations=len(declarations(generated/config['adapter'])),sourceAcceptance=False,bytecodeCredit=False)
+                       declarations=len(declarations(adapter)),sourceAcceptance=False,bytecodeCredit=False)
     except BaseException as error:
         receipt.update(status='failed-or-interrupted',error=str(error));save();raise
     receipt['completedAt']=datetime.datetime.now(datetime.timezone.utc).isoformat()

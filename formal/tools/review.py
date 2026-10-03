@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 from check import ROOT, LIBRARY, check, digest
 from declarations import declarations
+from evm_dependency import external_sources
 
 
 def main():
@@ -63,14 +64,20 @@ def main():
         descriptor_path = packages[0]['canonicalDescriptor']
         assert manifest['producerInputs'][descriptor_path] == digest(ROOT/descriptor_path), 'Descriptor provenance mismatch'
     inventory = {}
+    external = external_sources()
     for relative,value in manifest['sources'].items():
         original, snapshot = ROOT/relative, args.evidence/'snapshot'/relative
         assert digest(original) == value == digest(snapshot)
-        module = re.search(r'^module (\w+)',snapshot.read_text(),re.M)[1]
-        for symbol,d in declarations(snapshot).items():
-            name = module+'.'+symbol
+        # Read snapshots using the classification of their bound live path.
+        if relative in external:
+            from evm_dependency import qualified_inventory
+            members = qualified_inventory(snapshot)
+        else:
+            module = re.search(r'^module (\w+)',snapshot.read_text(),re.M)[1]
+            members = {module+'.'+symbol:d['kind'] for symbol,d in declarations(snapshot).items()}
+        for name,kind in members.items():
             assert name not in inventory, 'Conflicting modules in native closure: '+name
-            inventory[name] = d['kind']
+            inventory[name] = kind
     assert all(r['exitCode'] == 0 for r in manifest['results'])
     names = set()
     batches = 0

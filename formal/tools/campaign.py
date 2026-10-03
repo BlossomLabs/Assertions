@@ -9,13 +9,13 @@ from check import ROOT, LIBRARY, check, digest
 from status import build_status
 
 
-def plan():
+def plan(selection=None):
     registry=json.loads((LIBRARY/'registry.json').read_text())
     statuses={p['package']:p for p in build_status()['packages']}
     descriptors={p['id']:json.loads((ROOT/p['canonicalDescriptor']).read_text())
                  for p in registry['packages'] if p['selectionRole']=='proof-package'}
     pending={key:value for key,value in descriptors.items()
-             if statuses[key]['canonicalNativeStatus']!='independently-reviewed-native'}
+             if (selection is None or key in selection) and statuses[key]['canonicalNativeStatus']!='independently-reviewed-native'}
     closures={key:set(value['closureSha256'].items()) for key,value in pending.items()}
     maximal=[]
     for key,closure in closures.items():
@@ -32,9 +32,11 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--run',action='store_true')
+    parser.add_argument('--migration',action='store_true',help='Only the DafnyEVM migration affected closures')
     args=parser.parse_args()
     check()
-    receipt=plan()
+    selection=json.loads((LIBRARY/'migrations/dafnyevm.json').read_text())['affectedPackages'] if args.migration else None
+    receipt=plan(selection)
     if not args.run:
         print(json.dumps(receipt,indent=2));return
     output=args.output.resolve()
@@ -54,7 +56,7 @@ def main():
             with (output/(package+'.log')).open('w') as log:
                 verify=subprocess.run([sys.executable,str(LIBRARY/'tools/verify.py'),package,
                                        '--output',str(evidence),'--run'],cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
-                result={'package':package,'verifyExitCode':verify.returncode,'evidence':str(evidence.relative_to(ROOT))}
+                result={'package':package,'verifyExitCode':verify.returncode,'evidence':str(evidence.relative_to(ROOT)) if evidence.is_relative_to(ROOT) else str(evidence)}
                 if verify.returncode==0:
                     reviewed=subprocess.run([sys.executable,str(LIBRARY/'tools/review.py'),package,
                                              '--evidence',str(evidence),'--output',str(review)],cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
@@ -66,6 +68,7 @@ def main():
             print(json.dumps(result),flush=True)
         receipt['status']='finished' if all(r.get('reviewExitCode')==0 for r in receipt['results']) else 'finished-with-incomplete-closures'
         receipt['completedAt']=datetime.datetime.now(datetime.timezone.utc).isoformat();save()
+        if receipt['status']!='finished':sys.exit(1)
     except BaseException as error:
         receipt['status']='interrupted-or-error';receipt['error']=str(error);save();raise
 

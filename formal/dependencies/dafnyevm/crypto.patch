@@ -1,0 +1,45 @@
+diff --git a/src/dafny/util/option.dfy b/src/dafny/util/option.dfy
+index c054da5..dadc1e6 100644
+--- a/src/dafny/util/option.dfy
++++ b/src/dafny/util/option.dfy
+@@ -13,23 +13,23 @@
+  */
+ module Optional {
+ 
+-    datatype Option<T> = Some(v: T) | None {
+-        /**
+-         * Extract the value contained within this option.
+-         */
+-        function Unwrap() : T
+-        requires this.Some? {
+-            this.v
+-        }
++  datatype Option<T> = Some(v: T) | None {
++    /**
++      * Extract the value contained within this option.
++      */
++    function Unwrap() : T
++      requires this.Some? {
++      this.v
++    }
+ 
+-        /**
+-         * Returns the contained value (if it exists) or the default value
+-         * (otherwise).
+-         */
+-        function UnwrapOr(default: T) : T {
+-            match this
+-            case Some(v) => v
+-            case none => default
+-        }
++    /**
++      * Returns the contained value (if it exists) or the default value
++      * (otherwise).
++      */
++    function UnwrapOr(default: T) : T {
++      match this
++      case Some(v) => v
++      case none => default
+     }
++  }
+ }

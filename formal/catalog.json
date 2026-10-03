@@ -1477,6 +1477,20 @@
       "status": "implemented-unverified",
       "scope": "ABI word encoding and terminal execution",
       "contractSha256": "87eef776fe5289fa58c476c4ef97df7f0fe0fecb3f46cbd35ccd81e6a19f1f18"
+    },
+    {
+      "id": "OperationsReturn.ReturnBase",
+      "file": "formal/contracts/Operations/shared/Return.dfy",
+      "status": "implemented-unverified",
+      "scope": "ABI return range and terminal execution",
+      "contractSha256": "487433739f27e5f32e9bbf7d679b3680b22bd1d563441f62661377af9ff3cf6c"
+    },
+    {
+      "id": "OperationsReturn.ReturnLength",
+      "file": "formal/contracts/Operations/shared/Return.dfy",
+      "status": "implemented-unverified",
+      "scope": "ABI return range and terminal execution",
+      "contractSha256": "68dfa4e7055f3c6c4a6e5b94a6b6f4937bea5d72554c0f5b360a3736b8cee16f"
     }
   ],
   "specifications": {

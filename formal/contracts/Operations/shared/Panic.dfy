@@ -55,7 +55,11 @@ module OperationsPanic {
     OperationsCodeFacts.Window078(st.evm.code); reveal OperationsRuntime.Chunk078();
     ForkFacts.CancunMembership();
     ShiftFacts.Power();
-    assert U256.Shl(0x4e487b71,224) == ShiftedSelector;
+    assert U256.Shl(0x4e487b71,224) == ShiftedSelector by {
+      reveal U256.Shl();
+      assert 0x4e487b71 * ShiftFacts.Power224 == ShiftedSelector as int;
+      assert (ShiftedSelector as int) % TWO_256 == ShiftedSelector as int;
+    }
     InstructionSteps.JumpDestStep(st);
     var s1: ExecutingState := EVM.Execute(st);
     assert s1.evm.code == st.evm.code;

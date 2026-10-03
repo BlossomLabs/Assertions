@@ -111,15 +111,16 @@ module OperationsReturn {
     ExecutionTraceProof.Append(states,s10); states := states+[s10];
   }
 
-  lemma Finish(st: ExecutingState, value: u256, selector: u256) returns (states: seq<State>)
+  lemma ReturnBase(st: ExecutingState, value: u256, selector: u256) returns (states: seq<State>)
     requires st.evm.code.contents == OperationsRuntime.Code()
     requires st.evm.fork == EvmFork.CANCUN
-    requires st.PC() == 1301 && st.Gas() >= 19
+    requires st.PC() == 1301 && st.Gas() >= 10
     requires st.evm.stack.contents == [160,selector]
     requires st.evm.memory == EncodedMemory(value)
     ensures ExecutionTraceProof.Valid(states)
-    ensures |states| == 9 && states[0] == st
-    ensures states[8] == RETURNS(st.Gas()-19,AbiEncoding.Word(value as int),st.evm.world,st.evm.transient,st.evm.substate)
+    ensures |states| == 5 && states[0] == st
+    ensures states[4] == EXECUTING(st.evm.(pc:=1306,gas:=st.Gas()-10,
+                                   stack:=Stack.Make([128,128,160,selector])))
   {
     MemoryLayout(value);
     OperationsCodeFacts.Window005(st.evm.code); reveal OperationsRuntime.Chunk005();
@@ -134,23 +135,74 @@ module OperationsReturn {
     var s3: ExecutingState := EVM.Execute(s2);
     PureSteps.Dup(s3,1);
     var s4: ExecutingState := EVM.Execute(s3);
-    InstructionSteps.SwapStep(s4,2);
-    var s5: ExecutingState := EVM.Execute(s4);
-    PureSteps.Sub(s5);
-    var s6: ExecutingState := EVM.Execute(s5);
-    InstructionSteps.SwapStep(s6,1);
-    var s7: ExecutingState := EVM.Execute(s6);
-    assert Gas.CostExpandRange(s7,2,0,1) == 0;
-    PureSteps.Return(s7);
-    var s8 := EVM.Execute(s7);
     states := [st];
     ExecutionTraceProof.Append(states,s1); states := states+[s1];
     ExecutionTraceProof.Append(states,s2); states := states+[s2];
     ExecutionTraceProof.Append(states,s3); states := states+[s3];
     ExecutionTraceProof.Append(states,s4); states := states+[s4];
-    ExecutionTraceProof.Append(states,s5); states := states+[s5];
-    ExecutionTraceProof.Append(states,s6); states := states+[s6];
-    ExecutionTraceProof.Append(states,s7); states := states+[s7];
-    ExecutionTraceProof.Append(states,s8); states := states+[s8];
+  }
+
+  lemma ReturnLength(st: ExecutingState, selector: u256) returns (states: seq<State>)
+    requires st.evm.code.contents == OperationsRuntime.Code()
+    requires st.evm.fork == EvmFork.CANCUN
+    requires st.PC() == 1306 && st.Gas() >= 9
+    requires st.evm.stack.contents == [128,128,160,selector]
+    ensures ExecutionTraceProof.Valid(states)
+    ensures |states| == 4 && states[0] == st
+    ensures states[3] == EXECUTING(st.evm.(pc:=1309,gas:=st.Gas()-9,
+                                   stack:=Stack.Make([128,32,selector])))
+  {
+    OperationsCodeFacts.Window005(st.evm.code); reveal OperationsRuntime.Chunk005();
+    ForkFacts.CancunMembership();
+    reveal EvmFork.CANCUN; reveal EvmFork.CANCUN_BYTECODES; reveal EvmFork.GENISIS_BYTECODES;
+    EvmFork.EipSet(EvmFork.CANCUN_EIPS,EvmFork.GENISIS_BYTECODES);
+    InstructionSteps.SwapStep(st,2);
+    var s1: ExecutingState := EVM.Execute(st);
+    assert s1.evm.stack.contents == [160,128,128,selector];
+    assert (160-128) % TWO_256 == 32;
+    PureSteps.Sub(s1);
+    var s2: ExecutingState := EVM.Execute(s1);
+    assert s2.evm.stack.contents == [32,128,selector];
+    InstructionSteps.SwapStep(s2,1);
+    var s3: ExecutingState := EVM.Execute(s2);
+    assert s3.evm.stack.contents == [128,32,selector];
+    states := [st];
+    ExecutionTraceProof.Append(states,s1); states := states+[s1];
+    ExecutionTraceProof.Append(states,s2); states := states+[s2];
+    ExecutionTraceProof.Append(states,s3); states := states+[s3];
+  }
+
+  lemma Finish(st: ExecutingState, value: u256, selector: u256) returns (states: seq<State>)
+    requires st.evm.code.contents == OperationsRuntime.Code()
+    requires st.evm.fork == EvmFork.CANCUN
+    requires st.PC() == 1301 && st.Gas() >= 19
+    requires st.evm.stack.contents == [160,selector]
+    requires st.evm.memory == EncodedMemory(value)
+    ensures ExecutionTraceProof.Valid(states)
+    ensures |states| == 9 && states[0] == st
+    ensures states[8] == RETURNS(st.Gas()-19,AbiEncoding.Word(value as int),st.evm.world,st.evm.transient,st.evm.substate)
+  {
+    var base := ReturnBase(st,value,selector);
+    var length := ReturnLength(base[4],selector);
+    assert |base| == 5 && |length| == 4;
+    assert base[4] == length[0];
+    assert ExecutionTraceProof.Valid(base) && ExecutionTraceProof.Valid(length);
+    ExecutionTraceProof.Join(base,length);
+    var prefix := base+length[1..];
+    var ready: ExecutingState := length[3];
+    MemoryLayout(value);
+    OperationsCodeFacts.Window005(ready.evm.code); reveal OperationsRuntime.Chunk005();
+    ForkFacts.CancunMembership();
+    reveal EvmFork.CANCUN; reveal EvmFork.CANCUN_BYTECODES; reveal EvmFork.GENISIS_BYTECODES;
+    EvmFork.EipSet(EvmFork.CANCUN_EIPS,EvmFork.GENISIS_BYTECODES);
+    assert 0xf3 in ready.evm.fork.bytecodes;
+    assert ready.Peek(0) == 128 && ready.Peek(1) == 32;
+    assert ready.evm.memory == EncodedMemory(value);
+    assert |ready.evm.memory.contents| == 160;
+    assert Gas.CostExpandRange(ready,2,0,1) == 0;
+    PureSteps.Return(ready);
+    var terminal := EVM.Execute(ready);
+    ExecutionTraceProof.Append(prefix,terminal);
+    states := prefix+[terminal];
   }
 }

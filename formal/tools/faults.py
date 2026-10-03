@@ -14,9 +14,9 @@ import runtime_facts
 
 MUTATIONS = [
     ('unsigned-arithmetic', 'Operations.add(uint256,uint256)', 20235, 1, 3,
-     'formal/contracts/Operations/add/Arithmetic.dfy', 'OperationsUnsignedArithmetic.Check'),
+     'formal/contracts/Operations/add/Arithmetic.dfy', 'OperationsUnsignedArithmetic.Sum'),
     ('unsigned-overflow-branch', 'Operations.add(uint256,uint256)', 20239, 0x15, 0x5f,
-     'formal/contracts/Operations/add/Arithmetic.dfy', 'OperationsUnsignedArithmetic.Check'),
+     'formal/contracts/Operations/add/Arithmetic.dfy', 'OperationsUnsignedArithmetic.OverflowFlag'),
     ('unsigned-return-length', 'Operations.add(uint256,uint256)', 1337, 32, 31,
      'formal/contracts/Operations/shared/Return.dfy', 'OperationsReturn.Encode'),
     ('signed-arithmetic', 'Operations.add(int256,int256)', 20858, 1, 3,

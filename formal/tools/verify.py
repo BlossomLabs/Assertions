@@ -32,6 +32,10 @@ def check():
     assert len(catalog['functions']) == 141
     assert all(f['status'] in evidence.STATUSES for f in catalog['functions'])
     assert len({f['id'] for f in catalog['functions']}) == 141
+    assert len({t['id'] for t in catalog['sharedTheorems']}) == len(catalog['sharedTheorems']), 'Duplicate shared theorem'
+    for theorem in catalog['sharedTheorems']:
+        assert theorem['status'] in evidence.STATUSES and (ROOT / theorem['file']).is_file(), 'Missing shared theorem'
+        assert evidence.theorem_contract(ROOT / theorem['file'], theorem['id']) == theorem['contractSha256'], 'Changed shared theorem contract'
     for function in catalog['functions']:
         for theorem in function['theorems']:
             assert (ROOT / theorem['file']).is_file(), 'Missing theorem source'
@@ -134,11 +138,18 @@ def main():
     mode.add_argument('--status', action='store_true')
     mode.add_argument('--run', action='store_true')
     mode.add_argument('--review', type=Path)
+    mode.add_argument('--fault', type=Path)
+    parser.add_argument('--review-evidence', type=Path)
     parser.add_argument('--signature', action='append')
     parser.add_argument('--output', type=Path)
     parser.add_argument('--dafny', type=Path, default=ROOT / 'proof-tools/dafny/dafny')
     parser.add_argument('--solc', type=Path, default=ROOT / 'proof-tools/solc-0.8.36')
     args = parser.parse_args()
+    if args.fault:
+        import faults
+        assert args.output and args.review_evidence, '--fault needs --review-evidence and a fresh --output directory'
+        return faults.run(args.fault.resolve(), args.review_evidence.resolve(), args.dafny.absolute(),
+                          args.output.resolve(), args.signature)
     if args.review:
         import review
         assert args.output, '--review needs a fresh --output directory'

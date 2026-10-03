@@ -27,6 +27,9 @@ python3 formal/tools/verify.py --check
 python3 formal/tools/verify.py --status
 python3 formal/tools/verify.py --signature 'Operations.add(uint256,uint256)' --output formal/.generated/native --run
 python3 formal/tools/verify.py --review formal/.generated/native --output formal/.generated/review
+python3 formal/tools/verify.py --fault formal/.generated/native --review-evidence formal/.generated/review --output formal/.generated/faults
 ```
 
 Native verification partitions the complete imported closure into bounded processes, with the same isolated-obligation policy. Review reconstructs the complete partition schedule, regenerates runtime constants from bound bytes, reproduces solc output, and reruns every native partition. Missing partitions, missing correctness results, changed theorem premises and stale producer/source bindings fail review.
+
+Native fault checks require a verified, independently reviewed baseline. They regenerate runtime constants and byte bindings for isolated arithmetic, overflow-branch and return-length mutations, retain the unchanged specifications and proof sources, and require native correctness failures. Timeouts, parsing failures and an already failing baseline supply no mutation credit. These native checks remain pending until the public-entry proofs pass.

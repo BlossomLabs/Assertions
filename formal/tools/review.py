@@ -33,6 +33,9 @@ def inspect(directory):
     sources = evidence.closure(snapshot, entries)
     hashes = {str(p.relative_to(snapshot)): evidence.sha(p) for p in sources}
     assert hashes == manifest['sources'], 'Incomplete or modified imported closure'
+    for theorem in catalog.get('sharedTheorems', []):
+        if theorem['file'] in hashes:
+            assert evidence.theorem_contract(snapshot / theorem['file'], theorem['id']) == theorem['contractSha256'], 'Changed shared theorem contract'
     evidence.audit_sources(sources)
     lock = json.loads((snapshot / 'formal/dependencies/dafnyevm/lock.json').read_text())
     for path, digest in hashes.items():
@@ -54,6 +57,8 @@ def inspect(directory):
     assert (snapshot / 'formal/.generated/OperationsRuntime.dfy').read_text() == capture.runtime_source(code), 'Runtime constants differ from bound bytes'
     if 'formal/.generated/OperationsCodeFacts.dfy' in hashes:
         assert (snapshot / 'formal/.generated/OperationsCodeFacts.dfy').read_text() == runtime_facts.facts_source(code), 'Runtime facts differ from bound bytes'
+    assert all((evidence.ROOT / p).is_file() and evidence.sha(evidence.ROOT / p) == h
+               for p, h in hashes.items()), 'Stale proof source or imported dependency'
     data = json.loads((snapshot / 'formal/.generated/solc-input.json').read_text())
     canonical = json.dumps(data, sort_keys=True, separators=(',', ':')).encode()
     assert hashlib.sha256(canonical).hexdigest() == binding['inputSha256'], 'Wrong compiler input'
@@ -93,6 +98,7 @@ def inspect(directory):
 def run(directory, dafny, solc, output):
     assert not output.exists(), 'Use a fresh independent-review directory'
     manifest, original_rows = inspect(directory)
+    receipt_hash = evidence.sha(directory / 'manifest.json')
     z3, hashes = evidence.tools(dafny)
     assert hashes == manifest['tools'], 'Different proof tool binaries'
     output.mkdir(parents=True)
@@ -127,8 +133,10 @@ def run(directory, dafny, solc, output):
     with (output / 'format.log').open('w') as log:
         formatted = subprocess.run(format_command, stdout=log, stderr=subprocess.STDOUT)
     passed &= formatted.returncode == 0
+    assert evidence.sha(directory / 'manifest.json') == receipt_hash, 'Receipt changed during review'
+    inspect(directory)
     report = {'schemaVersion': 1, 'status': 'verified' if passed else 'failed-incomplete',
-              'receiptSha256': evidence.sha(directory / 'manifest.json'), 'tools': hashes,
+              'receiptSha256': receipt_hash, 'tools': hashes,
               'commands': commands + [audit_command, format_command], 'partitions': results, 'compiler': compiled, 'coverage': coverage, 'rows': len(rows),
               'scope': 'Independent native, audit, compiler and format rerun; concrete and fault gates remain separate'}
     report['evidenceSha256'] = {str(p.relative_to(output)): evidence.sha(p) for p in output.rglob('*') if p.is_file()}

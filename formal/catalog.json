@@ -1325,14 +1325,141 @@
   ],
   "sharedTheorems": [
     {
+      "id": "AbiBridge.Bound",
+      "file": "formal/shared/abi/Bridge.dfy",
+      "status": "implemented-unverified",
+      "scope": "ABI representation equivalence",
+      "contractSha256": "4796e756718dd4d37b22644b88d821baaf2524b28287946f2af07d58ffb4eefe"
+    },
+    {
+      "id": "AbiBridge.FullWord",
+      "file": "formal/shared/abi/Bridge.dfy",
+      "status": "implemented-unverified",
+      "scope": "ABI representation equivalence",
+      "contractSha256": "ef8b66493cd98d6ad1fc68698d1aebc9fdcf1be8a89c442df39ef0cb277d6887"
+    },
+    {
+      "id": "AbiBridge.Injective",
+      "file": "formal/shared/abi/Bridge.dfy",
+      "status": "implemented-unverified",
+      "scope": "ABI representation equivalence",
+      "contractSha256": "0cf1ac1268e9cf7804c54d78cd807aefc9c403f9a8f407ae0d124d160da3a495"
+    },
+    {
+      "id": "AbiBridge.Power",
+      "file": "formal/shared/abi/Bridge.dfy",
+      "status": "implemented-unverified",
+      "scope": "ABI representation equivalence",
+      "contractSha256": "f5e6328bcc37ea161f8382016c8e4789cd3424f38815f0990c535bcc9b8e19a3"
+    },
+    {
+      "id": "AbiBridge.Selector",
+      "file": "formal/shared/abi/Bridge.dfy",
+      "status": "implemented-unverified",
+      "scope": "ABI representation equivalence",
+      "contractSha256": "c40a4be502f36e1a104e0d426637201e745a1bed571c22141732b13a62fb1649"
+    },
+    {
+      "id": "AbiBridge.Value",
+      "file": "formal/shared/abi/Bridge.dfy",
+      "status": "implemented-unverified",
+      "scope": "ABI representation equivalence",
+      "contractSha256": "e55d54365332d5155b92cbb3c1abe6db0a30d76b8c087b06d487281098592656"
+    },
+    {
+      "id": "AbiBridge.Word",
+      "file": "formal/shared/abi/Bridge.dfy",
+      "status": "implemented-unverified",
+      "scope": "ABI representation equivalence",
+      "contractSha256": "687718b47a644bb434fbbd2d4a97dd009498780631acfeab2a537aa1d35e854a"
+    },
+    {
+      "id": "AbiEncoding.RoundTrip",
+      "file": "formal/shared/abi/Encoding.dfy",
+      "status": "implemented-unverified",
+      "scope": "Independent ABI equations",
+      "contractSha256": "2854c9ddfbf2863ed6ecf9b1b159fbd49cef05c780f50b58e5c0977af2b2df35"
+    },
+    {
+      "id": "AbiEncoding.WordWidth",
+      "file": "formal/shared/abi/Encoding.dfy",
+      "status": "implemented-unverified",
+      "scope": "Independent ABI equations",
+      "contractSha256": "59b17ed2ca12821a75d451f1019ceecf2841cd861e0a1b10d86c452bcf9aca9c"
+    },
+    {
+      "id": "OperationsDecode.CheckWordPair",
+      "file": "formal/contracts/Operations/shared/Decode.dfy",
+      "status": "implemented-unverified",
+      "scope": "Canonical argument decoding",
+      "contractSha256": "e71b9f1e26579e8802edd2c17b684b76a6ce82b3212fe2901677b4920c177d5d"
+    },
+    {
+      "id": "OperationsDecode.ReadWordPair",
+      "file": "formal/contracts/Operations/shared/Decode.dfy",
+      "status": "implemented-unverified",
+      "scope": "Canonical argument decoding",
+      "contractSha256": "69bb4ed9ccec84d8d2eb87e7085145d3f7ceef1d30f5849240a14e0881637894"
+    },
+    {
+      "id": "OperationsDispatcher.Selector",
+      "file": "formal/contracts/Operations/shared/Dispatcher.dfy",
+      "status": "implemented-unverified",
+      "scope": "Public-call selector extraction",
+      "contractSha256": "e0f6fef1cb0ccdf776026415529c45803e7c1c0eda03199374e4f2eea2d0ef9f"
+    },
+    {
       "id": "OperationsEntry.Initialize",
       "file": "formal/contracts/Operations/shared/Entry.dfy",
       "status": "implemented-unverified",
-      "scope": "PC 0 to 25; complete runtime closure pending"
+      "scope": "PC 0 to 25 initialization",
+      "contractSha256": "29fdded3773484cce7757c7fb0e9f8e26413b7ffd1c5ef61e4f8ee00d1de7b2e"
+    },
+    {
+      "id": "OperationsInitial.Shape",
+      "file": "formal/contracts/Operations/shared/Initial.dfy",
+      "status": "implemented-unverified",
+      "scope": "Canonical public-entry state and decoded operands",
+      "contractSha256": "5726ca0d167ead82baad3cd9c1e745bb54536d814437a3ce850287cd02e61a47"
+    },
+    {
+      "id": "OperationsPanic.Encoding",
+      "file": "formal/contracts/Operations/shared/Panic.dfy",
+      "status": "implemented-unverified",
+      "scope": "Exact Panic(0x11) encoding and terminal execution",
+      "contractSha256": "3c17da4d55cd277b817937fc3aa1e66012d26d1dd31e1195c81ad2390c899068"
+    },
+    {
+      "id": "OperationsPanic.Report",
+      "file": "formal/contracts/Operations/shared/Panic.dfy",
+      "status": "implemented-unverified",
+      "scope": "Exact Panic(0x11) encoding and terminal execution",
+      "contractSha256": "018501d51c1d9b6302d9f1f950d85f5687cfabc29e4e8e7018ef3a700a91b413"
+    },
+    {
+      "id": "OperationsReturn.Encode",
+      "file": "formal/contracts/Operations/shared/Return.dfy",
+      "status": "implemented-unverified",
+      "scope": "ABI word encoding and terminal execution",
+      "contractSha256": "faf80b2037ffc3fbc3d9826a69db2ec53acae35f20aae3d8d4b0f5e243b57fb5"
+    },
+    {
+      "id": "OperationsReturn.Finish",
+      "file": "formal/contracts/Operations/shared/Return.dfy",
+      "status": "implemented-unverified",
+      "scope": "ABI word encoding and terminal execution",
+      "contractSha256": "1bd626574df657128e39c77b5ac170cc73dceb9e75474653720a0616f74e99c0"
+    },
+    {
+      "id": "OperationsReturn.MemoryLayout",
+      "file": "formal/contracts/Operations/shared/Return.dfy",
+      "status": "implemented-unverified",
+      "scope": "ABI word encoding and terminal execution",
+      "contractSha256": "87eef776fe5289fa58c476c4ef97df7f0fe0fecb3f46cbd35ccd81e6a19f1f18"
     }
   ],
   "specifications": {
     "formal/contracts/Operations/add/Spec.dfy": "b4df96d339a90d4b9b3af6f2524a6fc1063a49285688ccb1e06889ca050ad218",
-    "formal/shared/abi/Encoding.dfy": "01be9c7c4d8e2ddabd28ac7c6ce7651103002477cae3feccd90bd195880acc8b"
+    "formal/shared/abi/Encoding.dfy": "ce3f79e0945ee4df31950a183a8e9d3db5a773e27d76150c99c2bb869caaa1ca"
   }
 }

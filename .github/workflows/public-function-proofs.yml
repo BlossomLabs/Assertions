@@ -36,6 +36,7 @@ jobs:
       - name: Restore published interpreter and pinned tools
         run: python3 formal/tools/bootstrap.py --fetch
       - name: Integrity and negative evidence tests
+        id: integrity
         run: |
           python3 formal/tools/verify.py --check
           python3 -m unittest discover -s formal/tests -v
@@ -51,7 +52,10 @@ jobs:
           python3 formal/tools/verify.py --signature "$signature" --output formal/.generated/native --run
       - name: Independent receipt review
         run: python3 formal/tools/verify.py --review formal/.generated/native --output formal/.generated/review
+      - name: Native proof mutations
+        run: python3 formal/tools/verify.py --fault formal/.generated/native --review-evidence formal/.generated/review --output formal/.generated/faults
       - name: Concrete bytecode regression
+        if: ${{ !cancelled() && steps.integrity.outcome == 'success' }}
         run: |
           python3 -m pip install --require-hashes --target proof-tools/evm-python -r formal/dependencies/dafnyevm/requirements.lock
           proof-tools/dafny/dafny translate py proof-tools/dafnyevm/src/dafny/execution.dfy --no-verify --include-runtime --output formal/.generated/interpreter/evm
@@ -62,3 +66,4 @@ jobs:
         with:
           name: public-add-${{ matrix.overload }}
           path: formal/.generated/
+          include-hidden-files: true

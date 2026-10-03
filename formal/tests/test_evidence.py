@@ -41,7 +41,7 @@ class ReceiptTests(unittest.TestCase):
         self.bindings = ['formal/catalog.json', 'formal/claims.json', 'docs/claim-evidence.json',
                          'formal/contracts/Operations/runtime.json', 'formal/dependencies/dafnyevm/lock.json',
                          'formal/dependencies/dafnyevm/tools.json']
-        for name in self.bindings:
+        for name in self.bindings + self.sources:
             dest = self.root / name
             dest.parent.mkdir(parents=True, exist_ok=True)
             dest.write_bytes((self.snapshot / name).read_bytes())
@@ -134,6 +134,13 @@ class ReceiptTests(unittest.TestCase):
         self.put(self.entry, (self.snapshot / self.entry).read_text().replace('VerifyAdd() {}', 'VerifyAdd() requires false {}'))
         self.refresh()
         with self.assertRaisesRegex(AssertionError, 'Changed public theorem contract'):
+            self.inspect()
+
+    def test_old_receipt_cannot_cover_a_changed_current_proof_body(self):
+        path = self.root / self.entry
+        path.write_text(path.read_text().replace('VerifyAdd() {}', 'VerifyAdd() { assert false; }'))
+        self.refresh()
+        with self.assertRaisesRegex(AssertionError, 'Stale proof source'):
             self.inspect()
 
     def partitioned_fixture(self):

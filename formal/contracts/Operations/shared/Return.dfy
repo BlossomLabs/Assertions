@@ -63,7 +63,7 @@ module OperationsReturn {
     ensures ExecutionTraceProof.Valid(states)
     ensures |states| == 11 && states[0] == st
     ensures states[10] == EXECUTING(st.evm.(pc:=1301,gas:=st.Gas()-39,
-      stack:=Stack.Make([160,selector]),memory:=EncodedMemory(value)))
+                                    stack:=Stack.Make([160,selector]),memory:=EncodedMemory(value)))
   {
     MemoryLayout(value);
     OperationsCodeFacts.Window005(st.evm.code); reveal OperationsRuntime.Chunk005();

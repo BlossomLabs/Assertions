@@ -31,7 +31,7 @@ module OperationsUnsignedArithmetic {
     ensures ExecutionTraceProof.Valid(states)
     ensures |states| == 4 && states[0] == st
     ensures states[3] == EXECUTING(st.evm.(pc:=20125,gas:=st.Gas()-14,
-      stack:=Stack.Make([2984]+st.evm.stack.contents)))
+                                   stack:=Stack.Make([2984]+st.evm.stack.contents)))
   {
     ForkFacts.CancunMembership();
     OperationsCodeFacts.Window079(st.evm.code); reveal OperationsRuntime.Chunk079();

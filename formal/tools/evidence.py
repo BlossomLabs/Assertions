@@ -24,7 +24,7 @@ def write(path, data):
 def theorem_contract(path, entrypoint):
     text = re.sub(r'/\*.*?\*/|//[^\n]*', '', path.read_text(), flags=re.S)
     name = entrypoint.rsplit('.', 1)[1]
-    matches = list(re.finditer(r'\blemma\s+' + re.escape(name) + r'\s*\(', text))
+    matches = list(re.finditer(r'\blemma\s+(?:\{:[^}]*\}\s*)*' + re.escape(name) + r'\s*\(', text))
     assert len(matches) == 1, 'Missing or ambiguous public-entry lemma'
     header = text[matches[0].start():text.index('{', matches[0].end())]
     return hashlib.sha256(re.sub(r'\s+', '', header).encode()).hexdigest()

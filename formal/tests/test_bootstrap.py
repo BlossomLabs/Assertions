@@ -1,5 +1,6 @@
 """Bootstrap must publish only complete validated installations."""
 import hashlib
+import io
 import json
 import sys
 import tempfile
@@ -29,6 +30,11 @@ class BootstrapTests(unittest.TestCase):
                      'cryptoSources': {'libs/DafnyCrypto/option.dfy': h(self.files['libs/DafnyCrypto/option.dfy'])},
                      'effectiveSources': {'core.dfy': h(self.files['core.dfy'])}}
         (self.deps / 'lock.json').write_text(json.dumps(self.lock))
+        self.solc = self.root / 'solc'
+        self.solc_bytes = b'pinned compiler'
+        (self.deps / 'tools.json').write_text(json.dumps({
+            'solcUrl': 'https://example.invalid/pinned-solc',
+            'solcSha256': hashlib.sha256(self.solc_bytes).hexdigest()}))
 
     def tearDown(self):
         self.temp.cleanup()
@@ -91,6 +97,40 @@ class BootstrapTests(unittest.TestCase):
         (self.destination / 'extra.dfy').write_text('module Extra {}')
         with self.assertRaisesRegex(AssertionError, 'inventory'):
             self.install()
+
+    def test_compiler_download_and_repeated_validation(self):
+        with patch.object(bootstrap, 'DEPS', self.deps), patch.object(bootstrap.urllib.request, 'urlopen', return_value=io.BytesIO(self.solc_bytes)) as download:
+            self.assertEqual(bootstrap.install_solc(self.solc, True), self.solc)
+            self.assertEqual(bootstrap.install_solc(self.solc, False), self.solc)
+            download.assert_called_once()
+        self.assertEqual(self.solc.read_bytes(), self.solc_bytes)
+
+    def test_tampered_compiler_download_never_publishes(self):
+        with patch.object(bootstrap, 'DEPS', self.deps), patch.object(bootstrap.urllib.request, 'urlopen', return_value=io.BytesIO(b'wrong compiler')):
+            with self.assertRaisesRegex(AssertionError, 'download hash mismatch'):
+                bootstrap.install_solc(self.solc, True)
+        self.assertFalse(self.solc.exists())
+        self.assertFalse(list(self.root.glob('.solc-stage-*')))
+
+    def test_existing_modified_compiler_is_preserved(self):
+        self.solc.write_bytes(b'local compiler')
+        with patch.object(bootstrap, 'DEPS', self.deps), patch.object(bootstrap.urllib.request, 'urlopen') as download:
+            with self.assertRaisesRegex(AssertionError, 'Modified Solidity compiler'):
+                bootstrap.install_solc(self.solc, True)
+            download.assert_not_called()
+        self.assertEqual(self.solc.read_bytes(), b'local compiler')
+
+    def test_interrupted_compiler_download_never_publishes(self):
+        class Interrupted(io.BytesIO):
+            def read(self, size=-1):
+                if self.tell():
+                    raise OSError('interrupted compiler download')
+                return super().read(2)
+        with patch.object(bootstrap, 'DEPS', self.deps), patch.object(bootstrap.urllib.request, 'urlopen', return_value=Interrupted(self.solc_bytes)):
+            with self.assertRaisesRegex(OSError, 'interrupted'):
+                bootstrap.install_solc(self.solc, True)
+        self.assertFalse(self.solc.exists())
+        self.assertFalse(list(self.root.glob('.solc-stage-*')))
 
 
 if __name__ == '__main__':

@@ -113,8 +113,8 @@ const CONTRACTS = [
     output: "src/lib/expressions-deployment.ts",
     // Vanity salt for the 2.0 release. The core interface is local, so core
     // source edits do not move this address.
-    salt: "0x738843a65732452b88b3835ca174046dee059cff966bd2af05f097efd27108ca",
-    expectedAddress: "0xE5594e5585476e8B68E03Aa1222196c5C2ee293D",
+    salt: "0x7a7ba2e33a01f3984aab6f8bd83914bf5ef0283ee9becda68363219c3c3507c0",
+    expectedAddress: "0xe5594e5554FaF731C4ce9DE8b4Ea078CB52B62F2",
     prefix: "EXPRESSIONS",
     description: "typed expression graphs contract",
     includeProxyConstants: false,

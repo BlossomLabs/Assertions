@@ -132,13 +132,13 @@ const sections: Section[] = [
       {
         group: 'Folds',
         fns: [
-          { name: 'foldRange, foldBytes, foldWords', desc: 'Bounded folds over an index range, a byte string, or 32-byte words: a single-staticcall template lambda per element, with Any/All short-circuit; iteration without Turing completeness' },
+          { name: 'fold', desc: 'Bounded folds over an index range, a byte string, or 32-byte words, chosen by a domain argument: a single-staticcall template lambda per element, with Any/All short-circuit; iteration without Turing completeness' },
         ],
       },
       {
         group: 'Word arrays',
         fns: [
-          { name: 'mapWords, filterWords', desc: 'Transform and select the words of a payload through a template lambda' },
+          { name: 'applyWords', desc: 'Transform or select the words of a payload through a template lambda' },
           { name: 'iotaWords, wordIndexOf, reverseWords, sumWords', desc: 'The index generator, membership (word-count sentinel), reversal, and a checked native sum' },
           { name: 'zipWords, unzipWords', desc: 'Interleave two payloads into pairs and pull one lane back out' },
           { name: 'sortWords, uniqueWords', desc: 'Stable bottom-up merge sort on unsigned words, and stable deduplication (ordered or full)' },

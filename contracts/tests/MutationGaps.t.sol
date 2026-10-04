@@ -31,6 +31,16 @@ contract GapLambdas {
     }
 
     /**
+     * @dev Declared bool, answers with the argument's raw word
+     */
+    function raw(uint256 x) external pure returns (bool) {
+        assembly ("memory-safe") {
+            mstore(0, x)
+            return(0, 32)
+        }
+    }
+
+    /**
      * @dev A predicate that answers with two words
      */
     function wide(uint256 x) external pure returns (uint256, uint256) {
@@ -1093,5 +1103,79 @@ contract MutationGapsTest is Test {
         cb.constants[0] = abi.encode(uint256(0));
         vm.expectRevert(abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(2)));
         collections.mapValues("uint256", "((", new bytes[](0), cb);
+    }
+
+    // ============ Lane and predicate refusals, 2026-10-04 ============
+
+    /**
+     * @dev unzipWords checks the lane after alignment; unzipValues checks it
+     *      before the descriptors are parsed, where an empty input reaches
+     *      nothing else that could refuse it. Only a Halmos property pinned
+     *      the second until now.
+     */
+    function test_laneCheckKeepsItsPlaceInBothUnzips() public {
+        vm.expectRevert(abi.encodeWithSelector(Collections.UnalignedWords.selector, uint256(33)));
+        collections.unzipWords(new bytes(33), 2);
+        vm.expectRevert(abi.encodeWithSelector(Collections.InvalidLane.selector, uint256(2)));
+        collections.unzipWords(new bytes(64), 2);
+
+        bytes[] memory none = new bytes[](0);
+        vm.expectRevert(abi.encodeWithSelector(Collections.InvalidLane.selector, uint256(2)));
+        collections.unzipValues("uint256", "uint256", none, 2);
+        vm.expectRevert(abi.encodeWithSelector(Collections.InvalidLane.selector, uint256(3)));
+        collections.unzipValues("uint256(", "uint256", none, 3);
+        bytes[] memory pair = new bytes[](1);
+        pair[0] = abi.encode(uint256(1), uint256(2));
+        vm.expectRevert(abi.encodeWithSelector(Collections.InvalidLane.selector, type(uint256).max));
+        collections.unzipValues("uint256", "uint256", pair, type(uint256).max);
+        assertEq(collections.unzipValues("uint256", "uint256", pair, 1)[0], abi.encode(uint256(2)));
+    }
+
+    /**
+     * @dev A predicate result that is not 0 or 1 is refused naming the
+     *      element that produced it, not element 0
+     */
+    function test_predicateRefusalsNameTheirElements() public {
+        bytes[] memory values = new bytes[](3);
+        values[0] = abi.encode(uint256(1));
+        values[1] = abi.encode(uint256(0));
+        values[2] = abi.encode(uint256(2));
+        // raw answers 1, 0, then 2 at element 2.
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AbiCodec.InvalidCallbackResult.selector,
+                Collections.filterValues.selector,
+                uint256(2),
+                uint256(0),
+                address(lambdas)
+            )
+        );
+        collections.filterValues("uint256", values, unary(GapLambdas.raw.selector));
+        // findValues stops at element 0, which answers 1, and never meets the 2.
+        assertEq(collections.findValues("uint256", values, unary(GapLambdas.raw.selector)), 0);
+        values[0] = abi.encode(uint256(0));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AbiCodec.InvalidCallbackResult.selector,
+                Collections.findValues.selector,
+                uint256(2),
+                uint256(0),
+                address(lambdas)
+            )
+        );
+        collections.findValues("uint256", values, unary(GapLambdas.raw.selector));
+        // uniqueValues compares element 1 with the kept element 0: add answers 3, not a boolean.
+        values[0] = abi.encode(uint256(2));
+        values[1] = abi.encode(uint256(1));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AbiCodec.InvalidCallbackResult.selector,
+                Collections.uniqueValues.selector,
+                uint256(1),
+                uint256(0),
+                address(lambdas)
+            )
+        );
+        collections.uniqueValues("uint256", values, binary(GapLambdas.add.selector), false);
     }
 }

@@ -97,8 +97,8 @@ const CONTRACTS = [
     output: "src/lib/collections-deployment.ts",
     // Vanity salt for the 2.0 release. The callback interface is local, so
     // Expressions source edits do not move this address.
-    salt: "0x01ddc7451148afa72236e59209c84d4ac96eae6c4c4703ce82ff7fa9d39df923",
-    expectedAddress: "0xc011Ec76C3f40945184b93F79377Bca9662165d5",
+    salt: "0x6725070a5eea13f020ae7e289a7f8ec11a877a2aef2f050169684b7949e0ffba",
+    expectedAddress: "0xC011eC77aE33213fAa3ec60D0f0C88C420cBc30E",
     prefix: "COLLECTIONS",
     description: "generic ABI collection vocabulary contract",
     includeProxyConstants: false,

@@ -73,6 +73,8 @@ The word-array family operates on the same payloads a `Words` fold consumes: ali
 ```solidity
 function applyWords  (bytes s, address target, bytes template, uint256[] elemOffsets, bool filter)
     external view returns (bytes);
+function reduceWords (bytes s, address target, bytes template, uint256[] elemOffsets,
+                      Reduce mode, Cmp cmp, bytes32 bound) external view returns (uint256);
 function iotaWords   (uint256 n) external pure returns (bytes);
 function wordIndexOf (bytes s, bytes32 w) external pure returns (uint256);
 function reverseWords(bytes s) external pure returns (bytes);
@@ -86,6 +88,31 @@ function sumWords    (bytes s) external pure returns (uint256);
 **`applyWords`** with `filter` false is the map: it applies a single-staticcall lambda to every word and returns the transformed payload: the bytes-producing map the scalar folds cannot express. Lambda conventions match the folds (`template` is complete calldata for `target` whose 32-byte windows at `elemOffsets` are rewritten per element; the lambda's single return word is the mapped element), and so do the failure modes below. An empty payload returns empty after validating the template length and window bounds, without inspecting or calling the target. In [EVMcrispr](/docs/evml) it is `@map!` applied to a named definition, e.g. `def @dbl! "$x: number -> number" @calc!($x * 2)` then `@map!($t::!{values()(uint256[])} @dbl!)`.
 
 With `filter` true it is the variable-length sibling, same lambda conventions: it keeps the ELEMENTS whose lambda application returns canonical ABI true, in order, so the output length is the kept count and the result nests into `len`, the folds and the other word ops. EVMcrispr compiles `@filter!` to it, and `@find!` is a core `pick` of the first kept word (no match leaves the pick out of bounds, so it reverts).
+
+**`reduceWords`** calls the lambda once per word, like the map, and reduces the returned words in the same loop, where a composed fold would need a second call per element to compare. `mode` picks the reduction and `cmp`/`bound` the test applied to each result:
+
+```solidity
+enum Reduce { All, Any, Count, Sum }
+enum Cmp    { EQ, NE, LT, LE, GT, GE, SLT, SLE, SGT, SGE }
+```
+
+- **`All`** returns 1 when every result passes, else 0, and stops at the first miss. An empty payload returns 1, so pair it with a length check when vacuous truth would be wrong.
+- **`Any`** returns 1 when some result passes, else 0, and stops at the first match.
+- **`Count`** returns how many results pass.
+- **`Sum`** returns the checked sum of the results (`Panic(0x11)` past 2^256 - 1) and ignores `cmp` and `bound`.
+
+The `S`-prefixed comparisons read both words as `int256`. With `balanceOf(<element>)` as the template and `(All, GE, min)`, one call answers "every holder has at least `min`":
+
+```solidity
+bytes memory template = abi.encodeWithSelector(IERC20.balanceOf.selector, address(0));
+uint256[] memory elemOffsets = new uint256[](1);
+elemOffsets[0] = 4;
+collections.reduceWords(holders, token, template, elemOffsets,
+    Collections.Reduce.All, Collections.Cmp.GE, bytes32(min));
+// = 1 when every holder's balance is at least min
+```
+
+Errors and lambda conventions are those of `applyWords`. The lambda must be a single direct call returning one word: a body that needs two calls, or arithmetic between them, still goes through a composed lambda.
 
 **`iotaWords(n)`** is the index generator: the payload `0, 1, ..., n-1`. Its canonical pairing is `zipWords(iotaWords(n), payload)`, the enumeration that EVMcrispr's `@enumerate!` compiles with a live `n`.
 

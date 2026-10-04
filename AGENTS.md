@@ -203,13 +203,22 @@ fix it in the same change that falsified it.
   word folds are `fold(domain, n, s, ...)` and the word map and filter are
   `applyWords(..., filter)`. The siblings already shared one loop, so merging
   them only recovered dispatcher and decoder stubs (about 260 bytes) for a few
-  hundred gas per call. A merged signature carries
+  hundred gas per call; that paid for `reduceWords`. A merged signature carries
   an argument one domain does not use, and it is refused, not ignored
   (`UnusedFoldArgument`): a Range fold given a subject, or a Words fold given a
   count, would otherwise run a different fold than the caller wrote.
   `anyValues`/`allValues` were NOT merged into `findValues`: turning the index
   back into a boolean costs about 15,000 gas whenever the result feeds another
-  expression.
+  expression. `reduceWords` (all/any/count/sum over one direct call per word)
+  exists because the comparison otherwise forces the lambda through a core
+  `read`: 1,493 gas per element against 8,891 for the composed fold
+  (`forge test --match-test test_gas_reduceWordsAgainstComposedFold -vv`).
+  `reduceValues` was measured on 2026-10-04: with `anyValues`/`allValues`
+  removed and five small restructurings it fits with 18 bytes to spare
+  (24,558). It was not taken: the SDK has no consumer for its new modes
+  (`@any!`/`@all!` would only be renamed; there is no `@count!` and no pass
+  that lifts a comparison out of a predicate), and it would spend all of
+  Collections' headroom. It belongs with the words/values split.
 - **Signedness is a dimension in every word-level design.** Unsigned order and
   signed order disagree about which value absorbs, which element is minimal, and
   how a two's-complement word reads. One SDK path returning `elemType: "uint256"`
@@ -371,8 +380,8 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   needle cost 5.3M gas over 964 bytes); `_matchesAt` now compares words. A
   budget judges the algorithm, not the output: skip inputs whose OUTPUT alone
   exhausts it (concat of 1.66 MB costs 28.6M in memory expansion). An
-  out-of-range enum argument (`Rounding`, `FoldExit`, `FoldDomain`) never
-  reaches the code:
+  out-of-range enum argument (`Rounding`, `FoldExit`, `FoldDomain`, `Reduce`,
+  `Cmp`) never reaches the code:
   solc's ABI decoder reverts with empty data, not Panic(0x21). Collections
   follows the same split (`CollectionsNoPanic`), with a target per way a lambda
   or callback can misbehave; each fails declared, a gas burner included

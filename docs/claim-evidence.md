@@ -3608,6 +3608,42 @@ The evidence records are preserved in [claim-evidence.json](claim-evidence.json)
 
 **Scope and limitations:** The "together would not fit" half is unbacked but trivially true by arithmetic
 
+## L64
+
+**Recorded evidence:** FUZZED / SUITE PASSED.
+
+**References:** `testFuzz_reduceMatchesReference`, `testFuzz_sumMatchesReference`, `test_earlyExitSkipsLaterElements`, `test_emptyPayloadTouchesNoTarget`, `test_sumOverflowPanics` [contracts/tests/ReduceWords.t.sol](../contracts/tests/ReduceWords.t.sol)
+
+**Supporting sources:** [contracts/Collections.sol](../contracts/Collections.sol) (`reduceWords`, `_reduce`); [website/src/content/docs/docs/operators/fold.md](../website/src/content/docs/docs/operators/fold.md)
+
+**Test/property definitions:** [testFuzz_reduceMatchesReference](../contracts/tests/ReduceWords.t.sol), [testFuzz_sumMatchesReference](../contracts/tests/ReduceWords.t.sol), [test_earlyExitSkipsLaterElements](../contracts/tests/ReduceWords.t.sol), [test_emptyPayloadTouchesNoTarget](../contracts/tests/ReduceWords.t.sol), [test_sumOverflowPanics](../contracts/tests/ReduceWords.t.sol).
+
+**Scope and limitations:** Added after rc1. Count, All and Any are compared with a reference that makes one call per element and compares in plain Solidity, over results spread across the whole word and bounds drawn from the results; Sum over uint128 elements. The early exits are shown by an element that would revert the lambda and is never reached.
+
+## L65
+
+**Recorded evidence:** UNIT / SUITE PASSED.
+
+**References:** `test_everyComparisonAtItsBoundary`, `testFuzz_reduceMatchesReference` [contracts/tests/ReduceWords.t.sol](../contracts/tests/ReduceWords.t.sol)
+
+**Supporting sources:** [contracts/Collections.sol](../contracts/Collections.sol) (`reduceWords`, `_compare`)
+
+**Test/property definitions:** [testFuzz_reduceMatchesReference](../contracts/tests/ReduceWords.t.sol), [test_everyComparisonAtItsBoundary](../contracts/tests/ReduceWords.t.sol).
+
+**Scope and limitations:** Added after rc1. Every comparison is pinned on both sides of its boundary, and the unsigned and signed orderings on the pair they disagree about (5 against 2^255). Planted single-operator swaps and a missing sign flip each fail a test.
+
+## L66
+
+**Recorded evidence:** UNIT / SUITE PASSED.
+
+**References:** `test_declaredErrors`, `test_outOfRangeEnumsAreRefusedByTheDecoder`, `test_emptyPayloadTouchesNoTarget` [contracts/tests/ReduceWords.t.sol](../contracts/tests/ReduceWords.t.sol); `testFuzzFoldsNeverPanic` [contracts/tests/CollectionsNoPanic.t.sol](../contracts/tests/CollectionsNoPanic.t.sol) (every mode, a fuzzed comparison, raw out-of-range enums)
+
+**Supporting sources:** [contracts/Collections.sol](../contracts/Collections.sol) (`reduceWords`, `_callWord`); [website/src/content/docs/docs/reference/errors.md](../website/src/content/docs/docs/reference/errors.md)
+
+**Test/property definitions:** [testFuzzFoldsNeverPanic](../contracts/tests/CollectionsNoPanic.t.sol), [test_declaredErrors](../contracts/tests/ReduceWords.t.sol), [test_emptyPayloadTouchesNoTarget](../contracts/tests/ReduceWords.t.sol), [test_outOfRangeEnumsAreRefusedByTheDecoder](../contracts/tests/ReduceWords.t.sol).
+
+**Scope and limitations:** Added after rc1. Exact revert data is asserted for each declared error. The no-panic fuzz runs every mode against the hostile targets and allows a Panic only for Sum.
+
 ## E1
 
 **Recorded evidence:** SYMBOLIC / PROVED.

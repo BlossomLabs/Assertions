@@ -3,14 +3,14 @@
 <!-- claim-coverage -->
 | | Formally verified | Partially verified | Tested | Partially tested | Scope limitation | Environment assumption | Unverified |
 |---|---|---|---|---|---|---|---|
-| Claims | 140 | 44 | 136 | 3 | 2 | 1 | 0 |
+| Claims | 140 | 44 | 139 | 3 | 2 | 1 | 0 |
 <!-- /claim-coverage -->
 
 Unless a claim specifies an error or resource limit, execution assumes valid ABI decoding, representable intermediate arithmetic, faithful EVM observations and enough gas, stack and memory. External call results may vary with caller, gas and history; consistency is required only where stated.
 
 Verification labels refer to the linked run's source snapshot and stated scope. **Formally verified** means the linked symbolic properties passed within their documented assumptions and bounds; **Partially verified** covers only part of the claim. **Prior snapshot** marks formal evidence not revalidated against the current sources. **Tested** identifies unit, fuzz or differential evidence; **Partially tested** covers only part of the claim. **Scope limitation** records a boundary of the guarantees; **Environment assumption** records a condition required for execution. **Unverified** means no retained passing evidence. Current formal labels reflect the bounded Halmos baseline; separate source and bytecode proof campaigns are excluded. Detailed scope, references and run limitations are in [per-claim evidence](claim-evidence.md).
 
-A claim whose text begins with \* changed after the rc1 snapshot: its statement, and the tests behind it, differ from what rc1 recorded.
+A claim whose text begins with \* changed or was added after the rc1 snapshot: its statement, and the tests behind it, differ from what rc1 recorded.
 
 ## Assertions
 
@@ -315,6 +315,9 @@ A claim whose text begins with \* changed after the rc1 snapshot: its statement,
 | L61 | The locally declared IExpressions.evaluateEncoded selector matches Expressions' | Tested (unit) | [Tests & scope](claim-evidence.md#l61) |
 | L62 | Collections is stateless and view/pure only | Tested (unit) | [Tests & scope](claim-evidence.md#l62) |
 | L63 | Collections runtime fits under the EIP-170 limit (and Operations plus Collections together would not) | Tested (unit) | [Tests & scope](claim-evidence.md#l63) |
+| L64 | \* `reduceWords` calls the lambda once per word and reduces the returned words: All is 1 when every result passes (1 on an empty payload, stopping at the first miss), Any is 1 when one does (stopping at the first match), Count is how many pass, Sum is their checked sum with the comparison and bound ignored (Panic(0x11) past 2^256 - 1) | Tested (fuzz) | [Tests & scope](claim-evidence.md#l64) |
+| L65 | \* `reduceWords` comparisons EQ, NE, LT, LE, GT, GE read both words as uint256; SLT, SLE, SGT, SGE read them as int256 | Tested (unit) | [Tests & scope](claim-evidence.md#l65) |
+| L66 | \* `reduceWords` fails as `applyWords` does: `UnalignedWords`, `LambdaOffsetOutOfBounds`, `InvalidCallbackTarget` (not on an empty payload), `CallbackFailed` naming the element, `InvalidCallbackResult` for a result that is not one word; an out-of-range mode or comparison is refused by the ABI decoder without data | Tested (unit) | [Tests & scope](claim-evidence.md#l66) |
 
 ## Expressions
 

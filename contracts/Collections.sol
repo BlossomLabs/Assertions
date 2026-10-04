@@ -167,6 +167,49 @@ contract Collections {
     }
 
     /**
+     * @notice What reduceWords returns
+     * @dev ABI-encoded as uint8 (see reduceWords)
+     */
+    enum Reduce {
+        All,
+        Any,
+        Count,
+        Sum
+    }
+
+    /**
+     * @notice How reduceWords compares a result with the bound
+     * @dev ABI-encoded as uint8. The S-prefixed orderings read both words
+     *      as two's-complement int256.
+     */
+    enum Cmp {
+        EQ,
+        NE,
+        LT,
+        LE,
+        GT,
+        GE,
+        SLT,
+        SLE,
+        SGT,
+        SGE
+    }
+
+    /**
+     * @dev A reduction's fixed inputs, kept in memory so the loop stays
+     *      under the stack limit. `op` is the unsigned comparison 0..5; a
+     *      signed one is that comparison after `flip` (the sign bit) is
+     *      applied to both sides.
+     */
+    struct ReduceRun {
+        address target;
+        Reduce mode;
+        uint256 op;
+        uint256 flip;
+        uint256 bound;
+    }
+
+    /**
      * @dev Stack-friendly bundle for the fold loop: a memory struct is one
      *      slot, where the same fields as free parameters blew the frame
      *      once `elemOffsets` became a dynamic array
@@ -363,6 +406,56 @@ contract Collections {
         bool filter
     ) external view returns (bytes memory) {
         return _applyWords(s, target, template, elemOffsets, filter);
+    }
+
+    /**
+     * @notice Applies a single-staticcall lambda to every word of `s` and
+     *         reduces the returned words without a second call per element:
+     *         with `balanceOf(<element>)` as the template and
+     *         (All, GE, min) this is "every holder has at least min"
+     * @dev Lambda conventions and errors match applyWords: one call per
+     *      word, exactly one word back. All returns 1 when every result
+     *      passes the comparison with `bound`, else 0, stopping at the first
+     *      miss (1 on an empty payload). Any returns 1 when some result
+     *      passes, else 0, stopping at the first match. Count returns how
+     *      many pass. Sum returns the unsigned sum of the results and
+     *      ignores `cmp` and `bound` (Panic 0x11 past 2^256 - 1). The
+     *      S-prefixed comparisons read both words as two's-complement
+     *      int256. Results are compared as raw words: no range check for a
+     *      narrower type is applied. An empty payload validates the
+     *      template windows, then returns without inspecting the target.
+     *      An out-of-range `mode` or `cmp` is refused by the ABI decoder,
+     *      without data.
+     * @param s The word payload: the elements, 32 bytes each
+     * @param target The lambda contract
+     * @param template Complete calldata for `target` with the element windows
+     * @param elemOffsets Byte offsets of the element windows
+     * @param mode The reduction (see Reduce)
+     * @param cmp The comparison applied to each result (ignored by Sum)
+     * @param bound The right-hand side of the comparison (ignored by Sum)
+     * @return The reduction's result word
+     */
+    function reduceWords(
+        bytes calldata s,
+        address target,
+        bytes calldata template,
+        uint256[] calldata elemOffsets,
+        Reduce mode,
+        Cmp cmp,
+        bytes32 bound
+    ) external view returns (uint256) {
+        _aligned(s);
+        _checkElementWindows(template, elemOffsets);
+        if (s.length == 0) return mode == Reduce.All ? 1 : 0;
+        _checkTarget(target);
+        ReduceRun memory run = ReduceRun(target, mode, uint256(cmp), 0, uint256(bound));
+        if (run.op > uint256(Cmp.GE)) {
+            // A signed ordering is the unsigned one with both sign bits flipped.
+            run.flip = 1 << 255;
+            run.op -= 4;
+            run.bound ^= run.flip;
+        }
+        return _reduce(run, s, template, elemOffsets);
     }
 
     // ============ Word Payloads ============
@@ -1153,6 +1246,48 @@ contract Collections {
             _failed(index, 0, target, callData, ret);
         }
         if (size != 32) _badResult(index, 0, target);
+    }
+
+    /**
+     * @dev The reduction loop: stamp, call, compare, honour the mode
+     */
+    function _reduce(ReduceRun memory run, bytes calldata s, bytes calldata template, uint256[] calldata elemOffsets)
+        private
+        view
+        returns (uint256 acc)
+    {
+        bytes memory callData = template;
+        if (run.mode == Reduce.All) acc = 1;
+        uint256 count = s.length / 32;
+        for (uint256 i = 0; i < count; i++) {
+            _stampElements(callData, elemOffsets, _cdWord(s, i));
+            uint256 word = uint256(_callWord(run.target, callData, i));
+            if (run.mode == Reduce.Sum) {
+                acc += word;
+                continue;
+            }
+            bool pass = _compare(word ^ run.flip, run.op, run.bound);
+            if (run.mode == Reduce.Count) {
+                if (pass) acc++;
+            } else if (run.mode == Reduce.All) {
+                if (!pass) return 0;
+            } else if (pass) {
+                return 1;
+            }
+        }
+    }
+
+    /**
+     * @dev The unsigned comparison `op` (Cmp.EQ .. Cmp.GE). The caller has
+     *      already flipped the sign bit of both sides for a signed ordering.
+     */
+    function _compare(uint256 a, uint256 op, uint256 b) private pure returns (bool) {
+        if (op == uint256(Cmp.EQ)) return a == b;
+        if (op == uint256(Cmp.NE)) return a != b;
+        if (op == uint256(Cmp.LT)) return a < b;
+        if (op == uint256(Cmp.LE)) return a <= b;
+        if (op == uint256(Cmp.GT)) return a > b;
+        return a >= b;
     }
 
     /**

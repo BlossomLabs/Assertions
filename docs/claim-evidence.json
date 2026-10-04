@@ -3350,6 +3350,33 @@
       "evidenceType": "LIMITATION",
       "executionStatus": "DOCUMENTED",
       "notes": "CREATE2 predicts an address from deployer, salt and creation-code hash; the prediction by itself does not establish code presence or matching runtime on a public chain. Local prediction/integration checks support the formula, not public deployment availability."
+    },
+    "L64": {
+      "id": "L64",
+      "recordedClaim": "\\* `reduceWords` calls the lambda once per word and reduces the returned words: All is 1 when every result passes (1 on an empty payload, stopping at the first miss), Any is 1 when one does (stopping at the first match), Count is how many pass, Sum is their checked sum with the comparison and bound ignored (Panic(0x11) past 2^256 - 1)",
+      "sources": "contracts/Collections.sol (`reduceWords`, `_reduce`); website/src/content/docs/docs/operators/fold.md",
+      "evidence": "`testFuzz_reduceMatchesReference`, `testFuzz_sumMatchesReference`, `test_earlyExitSkipsLaterElements`, `test_emptyPayloadTouchesNoTarget`, `test_sumOverflowPanics` `contracts/tests/ReduceWords.t.sol`",
+      "evidenceType": "FUZZED",
+      "executionStatus": "SUITE PASSED",
+      "notes": "Added after rc1. Count, All and Any are compared with a reference that makes one call per element and compares in plain Solidity, over results spread across the whole word and bounds drawn from the results; Sum over uint128 elements. The early exits are shown by an element that would revert the lambda and is never reached."
+    },
+    "L65": {
+      "id": "L65",
+      "recordedClaim": "\\* `reduceWords` comparisons EQ, NE, LT, LE, GT, GE read both words as uint256; SLT, SLE, SGT, SGE read them as int256",
+      "sources": "contracts/Collections.sol (`reduceWords`, `_compare`)",
+      "evidence": "`test_everyComparisonAtItsBoundary`, `testFuzz_reduceMatchesReference` `contracts/tests/ReduceWords.t.sol`",
+      "evidenceType": "UNIT",
+      "executionStatus": "SUITE PASSED",
+      "notes": "Added after rc1. Every comparison is pinned on both sides of its boundary, and the unsigned and signed orderings on the pair they disagree about (5 against 2^255). Planted single-operator swaps and a missing sign flip each fail a test."
+    },
+    "L66": {
+      "id": "L66",
+      "recordedClaim": "\\* `reduceWords` fails as `applyWords` does: `UnalignedWords`, `LambdaOffsetOutOfBounds`, `InvalidCallbackTarget` (not on an empty payload), `CallbackFailed` naming the element, `InvalidCallbackResult` for a result that is not one word; an out-of-range mode or comparison is refused by the ABI decoder without data",
+      "sources": "contracts/Collections.sol (`reduceWords`, `_callWord`); website/src/content/docs/docs/reference/errors.md",
+      "evidence": "`test_declaredErrors`, `test_outOfRangeEnumsAreRefusedByTheDecoder`, `test_emptyPayloadTouchesNoTarget` `contracts/tests/ReduceWords.t.sol`; `testFuzzFoldsNeverPanic` `contracts/tests/CollectionsNoPanic.t.sol` (every mode, a fuzzed comparison, raw out-of-range enums)",
+      "evidenceType": "UNIT",
+      "executionStatus": "SUITE PASSED",
+      "notes": "Added after rc1. Exact revert data is asserted for each declared error. The no-panic fuzz runs every mode against the hostile targets and allows a Panic only for Sum."
     }
   },
   "halmosRun": "docs/assertions-2.0-release-checks.json",

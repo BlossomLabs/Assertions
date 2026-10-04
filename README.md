@@ -16,7 +16,7 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 ```
 Assertions  v2.0   0xA55e4722883831c97d20E4Cb26E9a3C8569D9F6e   (judge + primitives)
 Operations  v2.0   0x09e4A7eb757a41c78e2c1E810a2B162683AD903e   (scalar vocabulary)
-Collections v2.0   0xc011Ec76C3f40945184b93F79377Bca9662165d5   (folds, word arrays, generic traversals)
+Collections v2.0   0xC011eC77aE33213fAa3ec60D0f0C88C420cBc30E   (folds, word arrays, generic traversals)
 Expressions v2.0   0xe5594e5554FaF731C4ce9DE8b4Ea078CB52B62F2   (typed expression graphs)
 ```
 

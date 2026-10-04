@@ -32,7 +32,7 @@ Why named functions instead of op-code enums: decoded calldata reads on explorer
 | Group | Functions |
 |---|---|
 | [Folds](/docs/operators/fold) | `fold` over the `Range`, `Bytes` or `Words` domain, with `FoldExit` `Full`/`Any`/`All` |
-| [Word arrays](/docs/operators/fold#word-arrays) | `applyWords` (lambda map or filter over a word payload), `iotaWords(n)` (the index generator), `wordIndexOf` (word-count sentinel), `reverseWords`, `zipWords`, `unzipWords`, `sortWords`, `uniqueWords(s, ordered)`, `sumWords` (checked sum of a payload, native) |
+| [Word arrays](/docs/operators/fold#word-arrays) | `applyWords` (lambda map or filter over a word payload), `reduceWords` (one call per word, then all/any/count/sum of the results), `iotaWords(n)` (the index generator), `wordIndexOf` (word-count sentinel), `reverseWords`, `zipWords`, `unzipWords`, `sortWords`, `uniqueWords(s, ordered)`, `sumWords` (checked sum of a payload, native) |
 | [Generic values](/docs/operators/collections) | `mapValues`, `filterValues`, `foldValues`, `sortValues`, `uniqueValues`, `flattenValues`, `reverseValues`, `sliceValues`, `indexOfValues`, `anyValues`, `allValues`, `findValues`, `zipValues`, `unzipValues` over arrays of canonical ABI values, with typed `Callback`s (direct, or through an [expression graph](/docs/operators/expressions)) |
 | [Envelope adapters](/docs/operators/collections#value-envelopes) | `packArray`, `unpackArray` |
 

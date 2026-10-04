@@ -396,9 +396,123 @@ contract ClaimCoverageEasyTest is Test {
         assertEq(out, "");
     }
 
-    function test_E38_EncodedDecoderBareRevert() public view {
-        failed(address(graph), abi.encodeCall(graph.evaluateEncoded, (hex"01", new bytes[](0))), "");
-        failed(address(graph), abi.encodeCall(graph.evaluateEncoded, (abi.encode(uint256(1024)), new bytes[](0))), "");
+    /**
+     * @dev The calldata `evaluateEncoded` forwards to `evaluate`: the two-word
+     *      head, the encoded parameters, then the payload after its leading
+     *      offset word
+     */
+    function forwarded(bytes memory payload, bytes[] memory parameters) internal pure returns (bytes memory) {
+        uint256 first;
+        assembly ("memory-safe") { first := mload(add(payload, 32)) }
+        bytes memory body = new bytes(payload.length - 32);
+        for (uint256 i; i < body.length; i++) {
+            body[i] = payload[i + 32];
+        }
+        bytes memory tail = abi.encode(parameters);
+        bytes memory params = new bytes(tail.length - 32);
+        for (uint256 i; i < params.length; i++) {
+            params[i] = tail[i + 32];
+        }
+        return
+            bytes.concat(
+                Expressions.evaluate.selector, bytes32(tail.length + first), bytes32(uint256(64)), params, body
+            );
+    }
+
+    function test_E38_EncodedPayloadFailsWhereItIsRead() public view {
+        bytes[] memory none = new bytes[](0);
+        // shorter than the leading offset word, or an offset outside the payload: nothing to forward
+        failed(address(graph), abi.encodeCall(graph.evaluateEncoded, (hex"01", none)), "");
+        failed(address(graph), abi.encodeCall(graph.evaluateEncoded, (abi.encode(uint256(1024)), none)), "");
+        failed(address(graph), abi.encodeCall(graph.evaluateEncoded, (abi.encode(uint256(0)), none)), "");
+        failed(address(graph), abi.encodeCall(graph.evaluateEncoded, (abi.encode(uint256(31), uint256(0)), none)), "");
+        // a nodes offset that points nowhere fails inside the self-call, wrapped with the forwarded calldata
+        bytes memory payload = abi.encode(uint256(32), address(core), uint256(1024), uint256(0));
+        failed(
+            address(graph),
+            abi.encodeCall(graph.evaluateEncoded, (payload, none)),
+            abi.encodeWithSelector(
+                Expressions.NodeCallFailed.selector, uint256(0), address(graph), forwarded(payload, none), bytes("")
+            )
+        );
+    }
+
+    /**
+     * @dev The payload alone determines the graph. A payload holding no nodes,
+     *      whose nodes offset points past its own end, cannot make `evaluate`
+     *      read a node list out of the parameters: they sit before the payload
+     *      in the forwarded calldata, and ABI offsets only point forward.
+     */
+    function test_E36_PayloadCannotReadItsGraphFromTheParameters() public view {
+        Expressions.Node[] memory planted = new Expressions.Node[](1);
+        planted[0].kind = Expressions.Kind.Literal;
+        planted[0].valueType = "uint256";
+        planted[0].data = abi.encode(uint256(0xdead));
+        bytes[] memory parameters = new bytes[](1);
+        parameters[0] = abi.encode(planted);
+        // Every nodes offset from the end of the payload onwards, well past where the
+        // parameters would sit if they followed it.
+        for (uint256 offset = 96; offset <= 96 + 32 * 12; offset += 32) {
+            bytes memory payload = abi.encode(uint256(32), address(core), offset, uint256(0));
+            (bool ok, bytes memory out) =
+                address(graph).staticcall(abi.encodeCall(graph.evaluateEncoded, (payload, parameters)));
+            assertFalse(ok);
+            assertEq(bytes4(out), Expressions.NodeCallFailed.selector);
+        }
+        // The same graph placed inside the payload evaluates.
+        Expressions.Expression memory e;
+        e.core = address(core);
+        e.nodes = planted;
+        (bool fine, bytes memory value) =
+            address(graph).staticcall(abi.encodeCall(graph.evaluateEncoded, (abi.encode(e), parameters)));
+        assertTrue(fine);
+        assertEq(value, abi.encode(uint256(0xdead)));
+    }
+
+    /**
+     * @dev A bad reference is reported before an out-of-range kind on the same node
+     */
+    function test_E1_BadReferencePrecedesInvalidKind() public view {
+        RawExpression memory e;
+        e.core = address(core);
+        e.nodes = new RawNode[](1);
+        uint256[] memory refs = new uint256[](1);
+        refs[0] = 5;
+        e.nodes[0] = RawNode(99, "uint256", "", refs, bytes4(0), "");
+        (bool ok, bytes memory out) = evaluateRaw(e);
+        assertFalse(ok);
+        assertEq(out, abi.encodeWithSelector(Expressions.InvalidReference.selector, uint256(0), uint256(5)));
+    }
+
+    /**
+     * @dev A node nothing reaches may carry any `data` length word, even an
+     *      impossible one: evaluation never reads it, so the result stands
+     */
+    function testFuzz_E38_UnreadNodeDataCannotChangeTheResult(bytes32 length) public view {
+        bytes32 mark = keccak256("unread node data");
+        Expressions.Expression memory e;
+        e.core = address(core);
+        e.nodes = new Expressions.Node[](2);
+        e.nodes[0].kind = Expressions.Kind.Literal;
+        e.nodes[0].valueType = "uint256";
+        e.nodes[0].data = abi.encode(uint256(7));
+        e.nodes[1].kind = Expressions.Kind.Literal;
+        e.nodes[1].valueType = "bytes32";
+        e.nodes[1].data = abi.encode(mark);
+        bytes memory payload = abi.encode(e);
+        // The word before the marker is the unread node's data length.
+        uint256 at = type(uint256).max;
+        for (uint256 i = 32; i + 32 <= payload.length; i += 32) {
+            bytes32 w;
+            assembly ("memory-safe") { w := mload(add(add(payload, 32), i)) }
+            if (w == mark) at = i - 32;
+        }
+        assertTrue(at != type(uint256).max);
+        assembly ("memory-safe") { mstore(add(add(payload, 32), at), length) }
+        (bool ok, bytes memory out) =
+            address(graph).staticcall(abi.encodeCall(graph.evaluateEncoded, (payload, new bytes[](0))));
+        assertTrue(ok);
+        assertEq(out, abi.encode(uint256(7)));
     }
 
     function test_E39_InvalidKindBareRevert() public view {

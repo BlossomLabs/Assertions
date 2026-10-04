@@ -947,8 +947,8 @@ contract Operations {
         uint256 a = _rangeIndex(start, data.length);
         uint256 b = _rangeIndex(end, data.length);
         if (b <= a) return data[0:0];
-        if (a < data.length && uint8(data[a]) & 0xc0 == 0x80) revert InvalidUtf8(a);
-        if (b < data.length && uint8(data[b]) & 0xc0 == 0x80) revert InvalidUtf8(b);
+        if (a < data.length && uint8(data[a]) & 0xc0 == 0x80) _badUtf8(a);
+        if (b < data.length && uint8(data[b]) & 0xc0 == 0x80) _badUtf8(b);
         return data[a:b];
     }
 
@@ -963,7 +963,7 @@ contract Operations {
     function stringAt(bytes calldata data, int256 index) external pure returns (bytes memory) {
         _checkUtf8(data);
         uint256 position = _strictIndex(index, data.length);
-        if (uint8(data[position]) >= 0x80) revert InvalidUtf8(position);
+        if (uint8(data[position]) >= 0x80) _badUtf8(position);
         return data[position:position + 1];
     }
 
@@ -1004,10 +1004,7 @@ contract Operations {
     function contains(bytes calldata s, bytes calldata needle) external pure returns (bool) {
         if (needle.length == 0) return true;
         if (needle.length > s.length) return false;
-        for (uint256 i; i <= s.length - needle.length; i++) {
-            if (_matchesAt(s, needle, i)) return true;
-        }
-        return false;
+        return _next(s, needle, 0) != type(uint256).max;
     }
 
     /**
@@ -1059,15 +1056,9 @@ contract Operations {
             wanted = uint256(occurrence);
         }
         uint256 seen;
-        uint256 p;
-        while (p + needle.length <= s.length) {
-            if (_matchesAt(s, needle, p)) {
-                if (seen == wanted) return p;
-                seen++;
-                p += needle.length;
-            } else {
-                p++;
-            }
+        for (uint256 p = _next(s, needle, 0); p != type(uint256).max; p = _next(s, needle, p + needle.length)) {
+            if (seen == wanted) return p;
+            seen++;
         }
         return s.length;
     }
@@ -1086,16 +1077,14 @@ contract Operations {
         if (delimiter.length == 0) revert EmptyNeedle();
         parts = new bytes[](_countOccurrences(data, delimiter) + 1);
         uint256 start;
-        uint256 position;
         uint256 index;
-        while (position + delimiter.length <= data.length) {
-            if (_matchesAt(data, delimiter, position)) {
-                parts[index++] = data[start:position];
-                position += delimiter.length;
-                start = position;
-            } else {
-                position++;
-            }
+        for (
+            uint256 position = _next(data, delimiter, 0);
+            position != type(uint256).max;
+            position = _next(data, delimiter, start)
+        ) {
+            parts[index++] = data[start:position];
+            start = position + delimiter.length;
         }
         parts[index] = data[start:];
     }
@@ -1120,13 +1109,8 @@ contract Operations {
         uint256[] memory matches = new uint256[](s.length / needle.length);
         uint256 count;
         uint256 p;
-        while (p + needle.length <= s.length) {
-            if (_matchesAt(s, needle, p)) {
-                matches[count++] = p;
-                p += needle.length;
-            } else {
-                p++;
-            }
+        for (p = _next(s, needle, 0); p != type(uint256).max; p = _next(s, needle, p + needle.length)) {
+            matches[count++] = p;
         }
         if (count == 0) return s;
         out = new bytes(s.length - count * needle.length + count * repl.length);
@@ -1168,10 +1152,17 @@ contract Operations {
      *         is vacuously in every set
      */
     function charset(bytes calldata s, uint256 mask) external pure returns (bool) {
-        for (uint256 i = 0; i < s.length; i++) {
-            if (mask & (uint256(1) << uint8(s[i])) == 0) return false;
+        bool inside = true;
+        assembly ("memory-safe") {
+            let end := add(s.offset, s.length)
+            for { let q := s.offset } lt(q, end) { q := add(q, 1) } {
+                if iszero(and(mask, shl(byte(0, calldataload(q)), 1))) {
+                    inside := 0
+                    break
+                }
+            }
         }
-        return true;
+        return inside;
     }
 
     // ============ Parse ============
@@ -1200,7 +1191,7 @@ contract Operations {
      *      accepted.
      */
     function parseInt(bytes calldata value) external pure returns (int256) {
-        if (value.length == 0) revert EmptyNumber();
+        if (value.length == 0) _emptyNumber();
         bool negative = value[0] == "-";
         return _signedMagnitude(_parseDigits(value, negative || value[0] == "+" ? 1 : 0), negative);
     }
@@ -1246,13 +1237,18 @@ contract Operations {
     function toString(uint256 v) public pure returns (string memory) {
         if (v == 0) return "0";
         uint256 digits;
-        for (uint256 t = v; t > 0; t /= 10) {
-            digits++;
+        unchecked {
+            for (uint256 t = v; t > 0; t /= 10) {
+                digits++;
+            }
         }
         bytes memory buf = new bytes(digits);
-        for (uint256 t = v; t > 0; t /= 10) {
-            digits--;
-            buf[digits] = bytes1(uint8(48 + (t % 10)));
+        assembly ("memory-safe") {
+            let q := add(add(buf, 32), digits)
+            for { let t := v } t { t := div(t, 10) } {
+                q := sub(q, 1)
+                mstore8(q, add(48, mod(t, 10)))
+            }
         }
         return string(buf);
     }
@@ -1283,13 +1279,17 @@ contract Operations {
         uint256 remainder = value % scale;
         if (remainder == 0) return integer;
         bytes memory fraction = new bytes(decimals);
-        for (uint256 i = decimals; i != 0;) {
-            fraction[--i] = bytes1(uint8(48 + remainder % 10));
-            remainder /= 10;
-        }
-        uint256 length = decimals;
-        while (fraction[length - 1] == "0") length--;
         assembly ("memory-safe") {
+            // Digits are written from the last place backwards. The remainder
+            // is non-zero, so a non-zero digit exists and the trim stops on it.
+            let first := add(fraction, 32)
+            for { let q := add(first, decimals) } gt(q, first) {} {
+                q := sub(q, 1)
+                mstore8(q, add(48, mod(remainder, 10)))
+                remainder := div(remainder, 10)
+            }
+            let length := decimals
+            for {} eq(byte(0, mload(add(first, sub(length, 1)))), 48) {} { length := sub(length, 1) }
             mstore(fraction, length)
         }
         return string.concat(integer, ".", string(fraction));
@@ -1477,7 +1477,17 @@ contract Operations {
      */
     function _checkUtf8(bytes calldata data) private pure {
         for (uint256 i; i < data.length;) {
-            uint8 first = uint8(data[i]);
+            // Thirty-two ASCII bytes are skipped as one word. Near the end the
+            // word also covers bytes past the string: if those are ASCII the
+            // remaining bytes of the string are too and the walk is over, and
+            // if they are not the byte-by-byte path below takes it from here.
+            uint256 chunk;
+            assembly ("memory-safe") { chunk := calldataload(add(data.offset, i)) }
+            if (chunk & 0x8080808080808080808080808080808080808080808080808080808080808080 == 0) {
+                i += 32;
+                continue;
+            }
+            uint8 first = _byte(data, i);
             if (first < 0x80) {
                 i++;
                 continue;
@@ -1486,15 +1496,15 @@ contract Operations {
             if (first >= 0xc2 && first <= 0xdf) count = 1;
             else if (first >= 0xe0 && first <= 0xef) count = 2;
             else if (first >= 0xf0 && first <= 0xf4) count = 3;
-            else revert InvalidUtf8(i);
-            if (data.length - i <= count) revert InvalidUtf8(i);
-            uint8 second = uint8(data[i + 1]);
+            else _badUtf8(i);
+            if (data.length - i <= count) _badUtf8(i);
+            uint8 second = _byte(data, i + 1);
             if (
                 (first == 0xe0 && second < 0xa0) || (first == 0xed && second >= 0xa0)
                     || (first == 0xf0 && second < 0x90) || (first == 0xf4 && second >= 0x90)
-            ) revert InvalidUtf8(i + 1);
+            ) _badUtf8(i + 1);
             for (uint256 j = 1; j <= count; j++) {
-                if (uint8(data[i + j]) & 0xc0 != 0x80) revert InvalidUtf8(i + j);
+                if (_byte(data, i + j) & 0xc0 != 0x80) _badUtf8(i + j);
             }
             i += count + 1;
         }
@@ -1506,14 +1516,8 @@ contract Operations {
      *      guarantees a non-empty needle)
      */
     function _countOccurrences(bytes calldata s, bytes calldata needle) private pure returns (uint256 count) {
-        uint256 p;
-        while (p + needle.length <= s.length) {
-            if (_matchesAt(s, needle, p)) {
-                count++;
-                p += needle.length;
-            } else {
-                p++;
-            }
+        for (uint256 p = _next(s, needle, 0); p != type(uint256).max; p = _next(s, needle, p + needle.length)) {
+            count++;
         }
     }
 
@@ -1552,9 +1556,14 @@ contract Operations {
      */
     function _foldCase(bytes calldata s, bytes1 low, bytes1 high) private pure returns (bytes memory out) {
         out = s;
-        for (uint256 i = 0; i < out.length; i++) {
-            bytes1 c = out[i];
-            if (c >= low && c <= high) out[i] = c ^ 0x20;
+        assembly ("memory-safe") {
+            let lo := byte(0, low)
+            let hi := byte(0, high)
+            let end := add(add(out, 32), mload(out))
+            for { let q := add(out, 32) } lt(q, end) { q := add(q, 1) } {
+                let c := byte(0, mload(q))
+                if iszero(or(lt(c, lo), gt(c, hi))) { mstore8(q, xor(c, 0x20)) }
+            }
         }
     }
 
@@ -1577,11 +1586,16 @@ contract Operations {
      *      position). The signed entry point consumes the sign first.
      */
     function _parseDigits(bytes calldata s, uint256 start) private pure returns (uint256 result) {
-        if (start == s.length) revert EmptyNumber();
+        if (start == s.length) _emptyNumber();
         for (uint256 i = start; i < s.length; i++) {
-            bytes1 c = s[i];
-            if (c < "0" || c > "9") revert InvalidDecimalDigit(i, c);
-            result = result * 10 + (uint8(c) - 48);
+            uint256 c = _byte(s, i);
+            unchecked {
+                uint256 digit = c - 48;
+                if (digit > 9) revert InvalidDecimalDigit(i, bytes1(uint8(c)));
+                // result * 10 + digit must fit: the checked form of the same step.
+                if (result > (type(uint256).max - digit) / 10) _panic(0x11);
+                result = result * 10 + digit;
+            }
         }
     }
 
@@ -1598,7 +1612,7 @@ contract Operations {
         returns (uint256 magnitude, bool negative)
     {
         if (decimals > 77) revert InvalidPrecision(decimals);
-        if (value.length == 0) revert EmptyNumber();
+        if (value.length == 0) _emptyNumber();
         negative = value[0] == "-";
         if (negative && !signed) revert InvalidDecimalDigit(0, value[0]);
         uint256 start = negative || value[0] == "+" ? 1 : 0;
@@ -1607,7 +1621,7 @@ contract Operations {
         bool remainder;
         uint256 fractional;
         for (uint256 i = start; i < value.length; i++) {
-            bytes1 c = value[i];
+            bytes1 c = bytes1(_byte(value, i));
             if (c == "." && !point) {
                 point = true;
                 continue;
@@ -1621,10 +1635,62 @@ contract Operations {
                 if (point) fractional++;
             }
         }
-        if (!digit) revert EmptyNumber();
+        if (!digit) _emptyNumber();
         magnitude *= 10 ** (decimals - fractional);
         if (remainder && ((negative && rounding == Rounding.Floor) || (!negative && rounding == Rounding.Ceil))) {
             magnitude++;
         }
+    }
+
+    /**
+     * @dev Reverts with InvalidUtf8 at `position`
+     */
+    function _badUtf8(uint256 position) private pure {
+        revert InvalidUtf8(position);
+    }
+
+    /**
+     * @dev Reverts with EmptyNumber
+     */
+    function _emptyNumber() private pure {
+        revert EmptyNumber();
+    }
+
+    /**
+     * @dev The position of the first occurrence of `needle` in `s` at or
+     *      after `p`, or type(uint256).max when there is none. `needle`
+     *      must not be empty. The first word of the needle (the whole of it
+     *      when it is at most 32 bytes) is compared per position; a longer
+     *      needle is confirmed with `_matchesAt`.
+     */
+    function _next(bytes calldata s, bytes calldata needle, uint256 p) private pure returns (uint256 found) {
+        uint256 n = needle.length;
+        if (n > s.length) return type(uint256).max;
+        uint256 last = s.length - n;
+        while (p <= last) {
+            assembly ("memory-safe") {
+                let drop := 0
+                if lt(n, 32) { drop := shl(3, sub(32, n)) }
+                let first := shr(drop, calldataload(needle.offset))
+                found := not(0)
+                for {} iszero(gt(p, last)) { p := add(p, 1) } {
+                    if eq(shr(drop, calldataload(add(s.offset, p))), first) {
+                        found := p
+                        break
+                    }
+                }
+            }
+            if (found == type(uint256).max || n <= 32 || _matchesAt(s, needle, found)) return found;
+            p = found + 1;
+        }
+        return type(uint256).max;
+    }
+
+    /**
+     * @dev Byte `i` of `data`, without a bounds check. The caller must have
+     *      `i` below `data.length`.
+     */
+    function _byte(bytes calldata data, uint256 i) private pure returns (uint8 c) {
+        assembly ("memory-safe") { c := byte(0, calldataload(add(data.offset, i))) }
     }
 }

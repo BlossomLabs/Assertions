@@ -244,29 +244,33 @@ contract Expressions {
      */
     function evaluate(Expression calldata expression, bytes[] calldata parameters) external view {
         uint256 count = expression.nodes.length;
-        if (expression.result >= count) revert InvalidNode(expression.result);
+        if (expression.result >= count) _bad(expression.result);
         Cache memory cache = Cache(new bytes[](count), new bool[](count), new bool[](count), new uint256[](count));
         for (uint256 i; i < count; i++) {
             Node calldata node = expression.nodes[i];
             (cache.dynamic[i], cache.words[i]) = AbiCodec.shape(bytes(node.valueType));
-            for (uint256 j; j < node.refs.length; j++) {
-                if (node.refs[j] >= i) revert InvalidReference(i, node.refs[j]);
+            uint256 refCount = node.refs.length;
+            for (uint256 j; j < refCount; j++) {
+                if (node.refs[j] >= i) _badRef(i, node.refs[j]);
             }
-            if (node.kind == Kind.Call) {
-                if (node.refs.length == 0) revert InvalidNode(i);
-            } else if (node.kind == Kind.Select) {
-                if (node.refs.length != 3) revert InvalidNode(i);
-            } else if (node.kind == Kind.TryOrElse || node.kind == Kind.ProbeCall) {
-                if (node.refs.length != 2) revert InvalidNode(i);
+            // Read after the reference checks: an out-of-range kind is refused
+            // by the ABI decoder, and a bad reference is reported first.
+            Kind kind = node.kind;
+            if (kind == Kind.Call) {
+                if (refCount == 0) _bad(i);
+            } else if (kind == Kind.Select) {
+                if (refCount != 3) _bad(i);
+            } else if (kind == Kind.TryOrElse || kind == Kind.ProbeCall) {
+                if (refCount != 2) _bad(i);
                 // ProbeCall decodes its calldata operand as bytes, so it must be typed so.
                 if (
-                    node.kind == Kind.ProbeCall
+                    kind == Kind.ProbeCall
                         && keccak256(bytes(expression.nodes[node.refs[1]].valueType)) != keccak256("bytes")
-                ) revert InvalidNode(i);
-            } else if (node.kind == Kind.Wrap || node.kind == Kind.IsValid) {
-                if (node.refs.length != 1) revert InvalidNode(i);
-            } else if (node.kind != Kind.Array && node.kind != Kind.Tuple && node.refs.length != 0) {
-                revert InvalidNode(i);
+                ) _bad(i);
+            } else if (kind == Kind.Wrap || kind == Kind.IsValid) {
+                if (refCount != 1) _bad(i);
+            } else if (kind != Kind.Array && kind != Kind.Tuple && refCount != 0) {
+                _bad(i);
             }
         }
         bytes memory result = _evaluate(expression, parameters, cache, expression.result);
@@ -311,15 +315,36 @@ contract Expressions {
      *      NodeCallFailed(0, this, callData, reason) with the inner error as
      *      the reason, except exhaustion and exact SubcallOutOfGas signals,
      *      which propagate unchanged. Returns the same raw value as `evaluate`.
-     *      Decoding the outer `expression` precedes the self-call; malformed
-     *      payloads can cause a bare revert, allocation panic or resource failure
-     *      before graph evaluation, without a NodeCallFailed wrapper.
+     *      The payload is not decoded here: its bytes are forwarded to
+     *      `evaluate`, which validates what it reads. They are placed LAST
+     *      in the forwarded calldata, after the call head and the encoded
+     *      parameters: ABI offsets only point forward, so every offset
+     *      inside the payload resolves inside the payload or past the end of
+     *      the calldata, never into the parameters. The payload alone
+     *      determines the graph. A payload malformed in a field evaluation
+     *      reads fails inside the self-call (NodeCallFailed, usually with an
+     *      empty reason); one malformed only in fields evaluation never
+     *      reads, such as the `data` of a node nothing reaches, is accepted.
+     *      A payload shorter than a word, or whose leading offset is below 32
+     *      or past its own end, reverts without data.
      * @param expression abi.encode(Expression)
      * @param parameters The values Parameter nodes read
      */
     function evaluateEncoded(bytes calldata expression, bytes[] calldata parameters) external view {
-        Expression memory decoded = abi.decode(expression, (Expression));
-        bytes memory result = _call(address(this), abi.encodeCall(this.evaluate, (decoded, parameters)), 0);
+        // abi.encode(parameters) is the offset word 32 followed by the array; the
+        // array goes right after the two head words, the payload after it.
+        bytes memory tail = abi.encode(parameters);
+        uint256 first = uint256(bytes32(expression[:32]));
+        // The Expression must start inside the payload, after its offset word.
+        if (first < 32 || first > expression.length) revert();
+        bytes memory callData = bytes.concat(
+            this.evaluate.selector,
+            bytes32(tail.length + first),
+            bytes32(uint256(64)),
+            AbiCodec.slice(tail, 32, tail.length - 32),
+            expression[32:]
+        );
+        bytes memory result = _call(address(this), callData, 0);
         assembly ("memory-safe") { return(add(result, 32), mload(result)) }
     }
 
@@ -335,37 +360,48 @@ contract Expressions {
         view
         returns (bytes memory result)
     {
-        if (cache.ready[index]) return cache.values[index];
+        {
+            // `index` is a node index the structural checks bounded by the node
+            // count, which is the length of all four cache arrays.
+            bool ready;
+            assembly ("memory-safe") {
+                let slot := shl(5, add(index, 1))
+                ready := mload(add(mload(add(cache, 0x20)), slot))
+                result := mload(add(mload(cache), slot))
+            }
+            if (ready) return result;
+        }
         Node calldata node = p.nodes[index];
-        if (node.kind == Kind.Literal) {
+        Kind kind = node.kind;
+        if (kind == Kind.Literal) {
             result = node.data;
-        } else if (node.kind == Kind.Parameter) {
-            if (node.data.length != 32) revert InvalidNode(index);
+        } else if (kind == Kind.Parameter) {
+            if (node.data.length != 32) _bad(index);
             uint256 parameter = abi.decode(node.data, (uint256));
-            if (parameter >= parameters.length) revert InvalidReference(index, parameter);
+            if (parameter >= parameters.length) _badRef(index, parameter);
             result = parameters[parameter];
-        } else if (node.kind == Kind.Resolve) {
+        } else if (kind == Kind.Resolve) {
             InputParam memory source = abi.decode(node.data, (InputParam));
             result = _call(p.core, abi.encodeCall(ICore.resolve, (source)), index);
-        } else if (node.kind == Kind.Select) {
-            bytes memory condition = _evaluate(p, parameters, cache, node.refs[0]);
-            result = _evaluate(p, parameters, cache, node.refs[AbiCodec.word(condition, 0) != 0 ? 1 : 2]);
-        } else if (node.kind == Kind.TryOrElse || node.kind == Kind.IsValid) {
+        } else if (kind == Kind.Select) {
+            bytes memory condition = _ref(p, parameters, cache, node, 0);
+            result = _ref(p, parameters, cache, node, AbiCodec.word(condition, 0) != 0 ? 1 : 2);
+        } else if (kind == Kind.TryOrElse || kind == Kind.IsValid) {
             (bool success, bytes memory attempted) = _tryEvaluate(p, parameters, cache, node.refs[0]);
-            if (node.kind == Kind.IsValid) result = abi.encode(success);
-            else result = success ? attempted : _evaluate(p, parameters, cache, node.refs[1]);
-        } else if (node.kind == Kind.ProbeCall) {
-            address target = _address(_evaluate(p, parameters, cache, node.refs[0]), index);
-            bytes memory callData = abi.decode(_evaluate(p, parameters, cache, node.refs[1]), (bytes));
+            if (kind == Kind.IsValid) result = abi.encode(success);
+            else result = success ? attempted : _ref(p, parameters, cache, node, 1);
+        } else if (kind == Kind.ProbeCall) {
+            address target = _address(_ref(p, parameters, cache, node, 0), index);
+            bytes memory callData = abi.decode(_ref(p, parameters, cache, node, 1), (bytes));
             result = abi.encode(_probe(target, callData, node.selector));
-        } else if (node.kind == Kind.Wrap) {
-            result = abi.encode(_evaluate(p, parameters, cache, node.refs[0]));
-        } else if (node.kind == Kind.Array || node.kind == Kind.Tuple) {
+        } else if (kind == Kind.Wrap) {
+            result = abi.encode(_ref(p, parameters, cache, node, 0));
+        } else if (kind == Kind.Array || kind == Kind.Tuple) {
             bytes[] memory values = new bytes[](node.refs.length);
             for (uint256 i; i < values.length; i++) {
-                values[i] = _evaluate(p, parameters, cache, node.refs[i]);
+                values[i] = _ref(p, parameters, cache, node, i);
             }
-            if (node.kind == Kind.Array) {
+            if (kind == Kind.Array) {
                 result = AbiCodec.pack(bytes(node.arguments), values);
             } else {
                 bool dynamic;
@@ -373,17 +409,20 @@ contract Expressions {
                 if (dynamic) result = bytes.concat(abi.encode(uint256(32)), result);
             }
         } else {
-            address target = _address(_evaluate(p, parameters, cache, node.refs[0]), index);
+            address target = _address(_ref(p, parameters, cache, node, 0), index);
             bytes[] memory args = new bytes[](node.refs.length - 1);
             for (uint256 i; i < args.length; i++) {
-                args[i] = _evaluate(p, parameters, cache, node.refs[i + 1]);
+                args[i] = _ref(p, parameters, cache, node, i + 1);
             }
             (bytes memory encoded,) = _arguments(node.arguments, args);
             result = _call(target, bytes.concat(node.selector, encoded), index);
         }
         AbiCodec.validate(bytes(node.valueType), result, cache.dynamic[index], cache.words[index]);
-        cache.values[index] = result;
-        cache.ready[index] = true;
+        assembly ("memory-safe") {
+            let slot := shl(5, add(index, 1))
+            mstore(add(mload(cache), slot), result)
+            mstore(add(mload(add(cache, 0x20)), slot), 1)
+        }
     }
 
     /**
@@ -466,7 +505,7 @@ contract Expressions {
      *      upper bytes, or InvalidNode(index)
      */
     function _address(bytes memory value, uint256 index) private pure returns (address) {
-        if (value.length != 32 || AbiCodec.word(value, 0) > type(uint160).max) revert InvalidNode(index);
+        if (value.length != 32 || AbiCodec.word(value, 0) > type(uint160).max) _bad(index);
         return address(uint160(AbiCodec.word(value, 0)));
     }
 
@@ -514,5 +553,32 @@ contract Expressions {
             }
         }
         if (gasleft() <= gasBefore / 63 || head == SubcallOutOfGas.selector) revert SubcallOutOfGas();
+    }
+
+    /**
+     * @dev Reverts with InvalidNode
+     */
+    function _bad(uint256 node) private pure {
+        revert InvalidNode(node);
+    }
+
+    /**
+     * @dev Evaluates the node that `node.refs[k]` names. The caller has run
+     *      `evaluate`'s structural checks, so `k` is within the ref count the
+     *      node's kind requires.
+     */
+    function _ref(Expression calldata p, bytes[] calldata parameters, Cache memory cache, Node calldata node, uint256 k)
+        private
+        view
+        returns (bytes memory)
+    {
+        return _evaluate(p, parameters, cache, node.refs[k]);
+    }
+
+    /**
+     * @dev Reverts with InvalidReference
+     */
+    function _badRef(uint256 node, uint256 ref) private pure {
+        revert InvalidReference(node, ref);
     }
 }

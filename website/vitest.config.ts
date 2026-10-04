@@ -7,7 +7,11 @@ import { getViteConfig } from "astro/config";
 // config, so a test sees exactly what the site bundles.
 export default getViteConfig({
   test: {
-    include: ["src/**/__tests__/**/*.test.ts"],
+    include: ["src/**/__tests__/**/*.test.{ts,tsx}"],
+    // Logic tests run in node. Component tests (*.test.tsx) opt into a DOM
+    // with a `// @vitest-environment jsdom` line at the top of the file;
+    // the setup file does nothing outside one.
     environment: "node",
+    setupFiles: ["src/test/setup-dom.ts"],
   },
 });

@@ -3,12 +3,23 @@
    surface/ink palette from global.css, and the same bp-blue accents, grid
    background, selection and scrollbar treatments. */
 
+/* No ligatures anywhere, matching global.css. */
+html,
+body,
+code,
+pre,
+kbd,
+samp {
+  font-variant-ligatures: none;
+  font-feature-settings: "calt" 0, "liga" 0;
+}
+
 :root {
   --sl-font: 'Outfit', system-ui, sans-serif;
   --sl-font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  /* Dark palette (site tokens: surface #080d18, surface-2 #0f1729,
-     surface-3 #162035, ink #e2eaf2, ink-2 #8da4b8, ink-3 #4a6478). */
+  /* Dark palette (site tokens: surface #0a1d40, surface-2 #0f2750,
+     surface-3 #173463, ink #e2eaf2, ink-2 #8da4b8, ink-3 #4a6478). */
   --sl-color-accent-low: #0c2438;
   --sl-color-accent: #1a7fd4;
   --sl-color-accent-high: #93c5fd;
@@ -18,11 +29,15 @@
   --sl-color-gray-3: #8da4b8;
   --sl-color-gray-4: #4a6478;
   --sl-color-gray-5: #2b3b55;
-  --sl-color-gray-6: #162035;
-  --sl-color-black: #080d18;
-  --sl-color-bg-nav: #0f1729;
-  --sl-color-bg-sidebar: #0f1729;
-  --grid-opacity: 0.08;
+  --sl-color-gray-6: #173463;
+  --sl-color-black: #0a1d40;
+  --sl-color-bg-nav: #0f2750;
+  --sl-color-bg-sidebar: #0f2750;
+  /* Blueprint sheet: blue lines, a heavier one every fifth cell. */
+  --grid-rgb: 59, 130, 246;
+  --grid-opacity: 0.09;
+  --grid-major-opacity: 0.15;
+  --grid-size: 32px;
 }
 
 :root[data-theme='light'] {
@@ -42,15 +57,24 @@
   --sl-color-black: #f0f4f8;
   --sl-color-bg-nav: #ffffff;
   --sl-color-bg-sidebar: #ffffff;
+  --grid-rgb: 0, 91, 166;
   --grid-opacity: 0.06;
+  --grid-major-opacity: 0;
+  --grid-size: 32px;
 }
 
 /* The main site's signature blueprint grid behind the content. */
 body {
   background-image:
-    linear-gradient(rgba(0, 91, 166, var(--grid-opacity)) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 91, 166, var(--grid-opacity)) 1px, transparent 1px);
-  background-size: 32px 32px;
+    linear-gradient(rgba(var(--grid-rgb), var(--grid-major-opacity)) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--grid-rgb), var(--grid-major-opacity)) 1px, transparent 1px),
+    linear-gradient(rgba(var(--grid-rgb), var(--grid-opacity)) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--grid-rgb), var(--grid-opacity)) 1px, transparent 1px);
+  background-size:
+    calc(var(--grid-size) * 5) calc(var(--grid-size) * 5),
+    calc(var(--grid-size) * 5) calc(var(--grid-size) * 5),
+    var(--grid-size) var(--grid-size),
+    var(--grid-size) var(--grid-size);
 }
 
 ::selection {

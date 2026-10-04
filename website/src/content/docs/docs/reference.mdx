@@ -1,0 +1,173 @@
+---
+title: EVML assertion reference
+description: "The assert command in full: its parts, the operators each type accepts, lenses, and every helper that reads the chain when the batch executes, by module."
+---
+
+import Helpers from '../../../components/docs/Helpers.astro';
+
+This page lists what an `assert` line accepts. To learn how to write one, start with [Writing assertions in EVML](/docs/evml). The helper tables below are read from the compiler the [builder](/builder) uses, so they match what it accepts.
+
+## The assert line
+
+```evml novalidate
+assert <value> [<operator> <expected>] ["message"] [--delta <amount>]
+```
+
+| Part | Required | What it is |
+|------|----------|------------|
+| `<value>` | yes | A live value: a `::!` read, or a helper whose name ends in `!` |
+| `<operator>` | no | One of `==`, `!=`, `>`, `<`, `>=`, `<=`, `~=` |
+| `<expected>` | with an operator | A fixed value, or another live value |
+| `"message"` | no | The text the revert carries when the check fails |
+| `--delta <amount>` | with `~=` | How far the value may be from the expected one |
+
+With no operator, the value must be a boolean and the line checks that it is true. The message comes after the expected value, so a line with a message always has an operator. For a boolean, write `== true`:
+
+```evml
+assert $vault::!{paused()(bool)}
+assert $vault::!{paused()(bool)} == false "vault is paused"
+```
+
+Anything after the message is an error. An expression with an infix operator such as `a + b` is not a value on its own: wrap it in `@calc!( )` or `@bool!( )`.
+
+## Live and fixed values
+
+| Kind | Read | Written as |
+|------|------|------------|
+| Live | when the batch executes | a `::!` read, or a helper ending in `!` such as `@balance!` |
+| Fixed | when the script is built | a literal (`100e18`, `"USDC"`, `true`), a `$variable`, or a helper without `!` such as `@token(WETH)` |
+
+The value on the left must be live. A read written with a plain `::` happens when the script is built, and is refused anywhere inside an assertion. To compare against a value read at build time, store it with `set` first and use the variable.
+
+## Operators
+
+| Type of the value | Operators |
+|-------------------|-----------|
+| `uint` and `int` of any width | `==` `!=` `>` `<` `>=` `<=` `~=` |
+| `address`, `bool`, `bytes32`, `string`, `bytes` | `==` `!=` |
+
+A value declared `int` compares as a signed number, and one declared `uint` as unsigned. The declared return type decides, so declare the type the function returns.
+
+### Approximately equal
+
+`~=` passes when the value and the expected value differ by at most `--delta`.
+
+- `--delta` is required.
+- Both sides and the delta must be numbers.
+- A fixed delta must be a whole number of base units and cannot be negative.
+- A fixed expected value must be a whole number.
+- The expected value and the delta can each be live.
+
+```evml
+assert $oracle::!{price()(uint256)} ~= 2000e8 --delta 50e8 "price out of range"
+```
+
+### Limits that are not whole numbers
+
+On-chain values are whole numbers. When a fixed limit has a fraction, it is rounded so that the comparison keeps its meaning:
+
+| Operator | A fractional limit is rounded | Example |
+|----------|-------------------------------|---------|
+| `>=` and `<` | up | `>= 0.5` checks `>= 1` |
+| `>` and `<=` | down | `<= 1.9` checks `<= 1` |
+| `==` and `!=` | not at all: the line is an error | |
+
+## Reads
+
+```evml novalidate
+<address>::!{<function>(<argument types>)(<return types>) <arguments>}
+```
+
+- The address is a literal, a `$variable`, a helper, or any expression that gives an address when the batch executes.
+- The signature is written in the line. The first parentheses hold the argument types and the second the return types.
+- Arguments are separated by spaces. An argument can itself be a `::!` read or a `!` helper.
+- Reads chain: `$pool::!{token()(address)}::!{symbol()(string)}`. Every read in a chain except the last must give an address.
+
+## Lenses
+
+A lens in square brackets after a read selects one part of what it returns.
+
+| In a lens | Meaning |
+|-----------|---------|
+| `$` | the part you want |
+| `_` | skip one part |
+| `...` | skip to the end, so the parts after it count from the end |
+| `[ ]` inside the lens | step into an array or a struct |
+
+```evml
+assert $pool::!{getReserves()(uint112,uint112,uint32)}[_ $ _] >= 1000 "low reserve"
+assert $safe::!{getOwners()(address[])}[[_ $]] == $signer "second owner changed"
+assert $safe::!{getOwners()(address[])}[[... $]] == $signer "last owner changed"
+```
+
+A position past the end of a live array makes the assertion revert.
+
+## Arithmetic and logic
+
+| Wrapper | Accepts |
+|---------|---------|
+| `@calc!( )` | `+` `-` `*` `//` `%` `^` on whole numbers, with overflow checked. `//` is integer division. |
+| `@calcFloor!( )`, `@calcCeil!( )` | the same, with `a * b / c` rounded down or up |
+| `@bool!( )` | the comparison operators, plus `and`, `or`, `xor` and `not` |
+
+Wrappers nest. `@ifElse!` needs spaces around `?` and `:`.
+
+## Definitions
+
+`@all!`, `@any!`, `@filter!`, `@find!`, `@map!`, `@reduce!` and `@sort!` take a named definition as the test or the transform. A definition states its parameters and its result, then its body:
+
+```evml
+def @ge100! "$x: number -> bool" @bool!($x >= 100)
+assert @all!($vault::!{caps()(uint256[])} @ge100!) == true "a cap is below 100"
+```
+
+## Helpers
+
+Every helper here ends in `!` and runs when the batch executes. Arguments in square brackets are optional, and `...` marks an argument that repeats. Arguments are separated by spaces.
+
+### Always available
+
+<Helpers module="std" />
+
+### Arrays, strings and bytes
+
+<Helpers module="lang" />
+
+### Arithmetic
+
+<Helpers module="math" />
+
+### Code and storage
+
+<Helpers module="contracts" />
+
+### Block, chain and transaction
+
+<Helpers module="receipts" />
+
+### Tokens
+
+<Helpers module="token" qualified />
+
+### Vaults
+
+<Helpers module="vault" qualified />
+
+### Roles and ownership
+
+<Helpers module="acl" qualified />
+
+### Safe
+
+<Helpers module="safe" qualified />
+
+### Governor
+
+<Helpers module="governor" qualified />
+
+Both state helpers return a number when they run in an assertion:
+
+| Helper | States |
+|--------|--------|
+| `@governor:proposalState!` | 0 Pending, 1 Active, 2 Canceled, 3 Defeated, 4 Succeeded, 5 Queued, 6 Expired, 7 Executed |
+| `@governor:timelockOperationState!` | 0 Unset, 1 Waiting, 2 Ready, 3 Done |

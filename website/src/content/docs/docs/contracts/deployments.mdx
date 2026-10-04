@@ -1,0 +1,93 @@
+---
+title: Deployments
+description: The contract addresses to use, the chains where assertions work, and what to do if your chain is missing.
+---
+
+import { getCollection } from 'astro:content';
+import manifest from '../../../../lib/deployments.json';
+import DeploymentsApp from '../../../../components/deployments/DeploymentsApp';
+import '../../../../styles/deployments-island.css';
+
+export const releases = await getCollection('releases');
+export const releaseFor = (version) => releases.find((r) => r.data.version === version);
+
+To use assertions on a chain, the four contracts must be deployed there. Check your chain below. If it is missing, you can deploy the contracts yourself.
+
+## Addresses
+
+Your batch calls these addresses. They are the same on every chain.
+
+<table>
+  <thead>
+    <tr><th>Contract</th><th>Version</th><th>Address</th><th>Released in</th></tr>
+  </thead>
+  <tbody>
+    {manifest.contracts.map((c) => (
+      <tr key={c.key}>
+        <td>{c.name}</td>
+        <td>{c.version}</td>
+        <td><code>{c.address}</code></td>
+        <td>{releaseFor(c.version) ? <a href={`/releases/${releaseFor(c.version).id}`}>{releaseFor(c.version).data.codename}</a> : null}{releaseFor(c.version)?.data.date ? ` · ${releaseFor(c.version).data.date}` : ''}{releaseFor(c.version)?.data.status === 'upcoming' ? ' (upcoming)' : ''}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+The builder fills these in for you. If you build calls by hand, copy the addresses from this page.
+
+## Check your chain
+
+Assertions work on any chain listed here as deployed. If your chain says it is not deployed, follow the steps under [Add your chain](#add-your-chain).
+
+<div class="deployments-island not-content">
+  <DeploymentsApp client:only="react" />
+</div>
+
+## Add your chain
+
+You can put assertions on any chain that meets the [requirements](#requirements). Anyone can do this, and the contracts end up at the same addresses as everywhere else.
+
+1. Pick your chain in the table above, or add a custom RPC.
+2. Connect your wallet.
+3. Send one transaction for each contract. Each contract is deployed through the [deterministic-deployment proxy](https://github.com/Arachnid/deterministic-deployment-proxy) at <code>{manifest.create2Proxy}</code>, and if your chain does not have the proxy yet, you are asked to install it first.
+4. Verify the contracts on your chain's explorer.
+
+Deploy only through the proxy. Another factory, such as CreateX, produces different addresses, and the builder will not find them.
+
+### Requirements
+
+The chain must support the Cancun upgrade (`MCOPY` and `PUSH0`). The blob reads in Operations also need the matching block context opcodes. Before relying on a chain, check that the code is there.
+
+## Verify the code on your chain
+
+To check that the code at an address is the published source, open the address on your chain's block explorer and look for verified source. If an explorer shows none, verify it yourself by submitting the Solidity source with these compiler settings, which reproduce the deployed bytecode:
+
+<ul>
+  <li>Compiler: <code>{manifest.compiler.solcLongVersion}</code></li>
+  <li>EVM version: <code>{manifest.compiler.evmVersion}</code></li>
+  <li>Optimizer: {manifest.compiler.optimizer.enabled ? 'enabled' : 'disabled'}, {manifest.compiler.optimizer.runs} runs</li>
+  <li>Metadata hash: <code>{manifest.compiler.bytecodeHash}</code></li>
+  <li>Constructor arguments: none</li>
+</ul>
+
+The deployment flow above submits the source for you on explorers supported by the Etherscan multichain API.
+
+## Earlier versions
+
+A deployed version keeps working at its own address. Anything that already references it keeps working when a new version ships.
+
+<table>
+  <thead>
+    <tr><th>Contract</th><th>Version</th><th>Address</th><th>Released in</th></tr>
+  </thead>
+  <tbody>
+    {manifest.history.map((row) => (
+      <tr key={row.address}>
+        <td>{row.name}</td>
+        <td>{row.version}</td>
+        <td><code>{row.address}</code></td>
+        <td>{releaseFor(row.version) ? <a href={`/releases/${releaseFor(row.version).id}`}>{releaseFor(row.version).data.codename}</a> : null}{releaseFor(row.version)?.data.date ? ` · ${releaseFor(row.version).data.date}` : ''}{releaseFor(row.version)?.data.status === 'upcoming' ? ' (upcoming)' : ''}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>

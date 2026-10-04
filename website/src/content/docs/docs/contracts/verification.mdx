@@ -1,0 +1,150 @@
+---
+title: Towards formal verification
+description: "How the four contracts are checked: a ledger of numbered claims, the tests and proofs behind each one, what is proved, what is only tested, and how to rerun it."
+---
+
+import ledger from '../../../../../../docs/claims.md?raw';
+
+export const coverage = (() => {
+  const block = ledger.split('<!-- claim-coverage -->')[1].split('<!-- /claim-coverage -->')[0];
+  const rows = block.trim().split('\n').map((row) => row.split('|').slice(2, -1).map((cell) => cell.trim()));
+  return rows[0].map((label, i) => ({ label, count: Number(rows[2][i]) }));
+})();
+export const count = (label) => coverage.find((c) => c.label === label).count;
+export const total = coverage.reduce((sum, c) => sum + c.count, 0);
+
+An assertion is a guard, and a guard that gives a wrong answer is worse than no guard. This page describes how the four contracts are checked, how far that checking goes, and where it stops.
+
+The short version: **{count('Formally verified')} of {total} claims are formally verified within stated bounds, {count('Partially verified')} are partially verified, and the rest are covered by tests.** The contracts have not been externally audited.
+
+## The ledger
+
+Everything the contracts are supposed to do is written down as a numbered claim: one sentence, one behaviour. "A violated constraint reverts the judge call" is a claim. So is the exact error a malformed descriptor produces.
+
+Each claim carries a label saying how strong its evidence is, and a link to that evidence: the test or property, the command that ran it, and the limits of what it shows.
+
+<table>
+  <thead>
+    <tr><th>Label</th><th>Claims</th></tr>
+  </thead>
+  <tbody>
+    {coverage.map((c) => (
+      <tr key={c.label}>
+        <td>{c.label}</td>
+        <td>{c.count}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+These counts are read from the ledger when the site is built.
+
+- [The claims](https://github.com/blossomlabs/Assertions/blob/master/docs/claims.md), grouped by contract.
+- [The evidence for each claim](https://github.com/blossomlabs/Assertions/blob/master/docs/claim-evidence.md), with scope and limitations.
+
+## What the labels mean
+
+- **Formally verified.** A symbolic property covering the claim passed, within the bounds and assumptions listed below. This is a bounded proof, not an unconditional one.
+- **Partially verified.** A property passed, but it covers only part of the claim. The evidence page says which part.
+- **Tested.** Unit, fuzz or differential tests pass. A test shows the claim holds on the inputs it tried.
+- **Partially tested.** Tests cover only part of the claim.
+- **Scope limitation.** Not a behaviour but a boundary: something the contracts do not promise.
+- **Environment assumption.** A condition the chain must meet for the claim to hold.
+- **Unverified.** No passing evidence is on record.
+
+A label belongs to a source snapshot. Each recorded run stores the hash of every Solidity file it ran against, and a refresh of the ledger refuses to proceed if any file has changed since. Editing a contract, even a comment, means running the baseline again.
+
+## How the evidence is built
+
+The methods stack. Each one catches what the one before it cannot.
+
+### Tests on a real EVM
+
+Every behaviour has Solidity tests that execute the compiled contracts. They run under Hardhat, which produces the build that gets deployed, and again under Foundry. The run recorded on 2026-10-02 passed 602 Solidity tests and 102 Node tests.
+
+Tests assert the exact revert data, not only that a call reverted. A test that accepts any failure does not show which error was raised or which operand it named.
+
+### Differential tests
+
+Where an independent reference exists, the contracts are compared against it instead of against expectations written by the same author.
+
+- **Constraints** are compared with the deployed Biconomy ERC-8211 reference bytecode, pinned and run offline.
+- **The ABI codec** is compared with the Solidity compiler's own `abi.encode` and `abi.decode`.
+- **Arithmetic** is compared with arbitrary-precision integers.
+- **Composed expressions** are compared with a separate interpreter written in TypeScript, on values and on error names.
+
+### Symbolic properties
+
+[Halmos](https://github.com/a16z/halmos) runs a property over symbolic inputs: instead of trying a thousand values, it reasons about all of them at once, up to a bound. The baseline of 2026-10-02 ran 172 properties: 172 passed, none failed, none were left incomplete.
+
+"Formally verified" in the ledger refers to this baseline. Its bounds are fixed and recorded with the run:
+
+- loops unroll up to 70 iterations;
+- dynamic byte inputs take the lengths 0, 1, 31, 32, 33, 64 and 65;
+- the solver is Yices 2.6.4, with Halmos 0.3.3 and solc 0.8.36.
+
+Halmos discards any path that reverts, so a property that expects success is written to fail loudly when the call reverts. Otherwise a bug that makes valid input revert would pass unnoticed.
+
+### No-panic fuzzing
+
+A separate set of fuzz suites feeds each contract malformed input under a fixed gas budget and requires a declared error every time: never a compiler panic, never a silent out-of-gas. The gas budget is what makes this a test of the algorithm. It found a string search that cost 170 gas per compared byte, which has since been rewritten.
+
+### Mutation testing
+
+Passing tests say little unless they would fail on broken code. [Gambit](https://github.com/Certora/gambit) generates small deliberate bugs (a `<` turned into `<=`, a deleted line) and each one is run against the whole stack above.
+
+The pass of 2026-09-26 produced 4,497 mutants. The tests, properties and fuzzers killed 98.7% of them. The remaining 59 were each examined and recorded as equivalent, meaning no input can tell them from the original, with the reason written down. [The full report](https://github.com/blossomlabs/Assertions/blob/master/docs/mutation-testing.md) lists them.
+
+### Source and bytecode proofs
+
+A second formal track is under way in [Dafny](https://dafny.org). It models the ABI codec independently and proves, by induction, that the Solidity source corresponds to the model. A separate track checks properties against the exact compiled bytecode.
+
+This work is unfinished, and it does not decide the labels above. Where a claim cites it, the evidence page marks it as supplemental and gives its own assumptions: it trusts the translation from Solidity to the model, and it does not prove the compiler. Its output is regenerated locally and not stored in the repository, so the checkout contains the means to rerun the proofs, not a record that they passed.
+
+## What it has caught
+
+The process has found real defects, each fixed before release:
+
+- A symbolic property found `nav` copying nonzero padding bytes through to its result.
+- The word-classification proof found that `bytes3` followed by an out-of-range `2` was read as `bytes32` and skipped its range check.
+- The first mutation pass found a fixed-size type whose footprint overflowed into a compiler panic instead of a declared error.
+- The gas-budgeted fuzzing found the slow string search described above.
+
+It has also found weak tests. Dozens of mutants that changed which error was raised survived until the tests asserted the exact revert data.
+
+## What is not proved
+
+Some of these are limits of the tools. Others are simply not done yet.
+
+**Limits of the tools**
+
+- **Gas.** Halmos has no gas model. Behaviour under gas exhaustion is covered by concrete tests at real gas values.
+- **Wide arithmetic.** Full-precision multiply and divide, signed modular arithmetic, exponentials, square root and modular power exceed the solver's time limit, because the code works at 256 and 512 bits whatever the size of the operands. These are fuzzed against arbitrary-precision references.
+- **Bounds.** A proof holds up to the loop and length bounds above. Beyond them the claim rests on tests.
+- **Unbounded recursion.** A path the tool cannot finish is dropped, not failed. Those cases are pinned by concrete tests.
+
+**Not done yet**
+
+- **Claims that are only tested.** {count('Tested') + count('Partially tested')} claims have no formal evidence at all.
+- **The Dafny tracks.** Source correspondence and exact-bytecode proofs are incomplete.
+- **An external audit.** Nobody outside the project has reviewed the contracts.
+
+**Outside the scope of any proof**
+
+- **Your assertion.** All of this is about whether the contracts do what the claims say. It says nothing about whether an assertion you wrote checks the right thing. A type you declare is your claim: if it is wrong but has the same shape, the contract reads the wrong value.
+- **The contracts you read from.** An external target can return different values depending on its caller, the gas it receives or the chain's history.
+- **The executor.** A failed assertion rolls back the batch only if the executor lets that failure propagate.
+
+## Run it yourself
+
+Clone [the repository](https://github.com/blossomlabs/Assertions) and install dependencies with `pnpm install`.
+
+```bash
+pnpm test         # Solidity and Node tests, on the Hardhat build
+pnpm test:forge   # the same Solidity tests under Foundry
+pnpm halmos       # the symbolic properties
+```
+
+Halmos installs with `uv tool install halmos`. The symbolic run takes about twenty minutes.
+
+To check a result against the record, compare it with [the baseline run](https://github.com/blossomlabs/Assertions/blob/master/docs/assertions-2.0-release-checks.json), which stores the commands, tool versions, source hashes and per-property results. For the Dafny tracks, see [the reproduction notes](https://github.com/blossomlabs/Assertions/blob/master/formal/REPRODUCING.md).

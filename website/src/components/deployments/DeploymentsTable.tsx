@@ -10,6 +10,7 @@ import {
   sepolia,
 } from "viem/chains";
 
+import { ChainIcon } from "../ui/ChainIcon";
 import {
   DEPLOYED_CONTRACTS,
   explorerAddressUrl,
@@ -84,6 +85,12 @@ export function DeploymentsTable({
                   className="border-b border-[var(--color-ink-3)]/10 last:border-b-0"
                 >
                   <td className="px-5 py-3 font-medium whitespace-nowrap">
+                    <ChainIcon
+                      chainId={chain.id}
+                      name={chain.name}
+                      size={18}
+                      className="inline-block align-[-0.2em] mr-2"
+                    />
                     {chain.name}
                     {chain.testnet && (
                       <span className="ml-2 text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded border border-[var(--color-ink-3)]/30 text-[var(--color-ink-3)]">

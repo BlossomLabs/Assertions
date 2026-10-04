@@ -113,7 +113,7 @@ try {
     "README.md",
     "hardhat.config.ts",
     "website/src/content/docs/docs/index.md",
-    "website/src/content/docs/docs/reference/deployments.mdx",
+    "website/src/content/docs/docs/contracts/deployments.mdx",
   ]);
   const scanned = ["../README.md", "../hardhat.config.ts", ...walk("src/content/docs/docs")];
   const violations = [];

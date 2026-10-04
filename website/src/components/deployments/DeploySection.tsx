@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Chain, EIP1193Provider } from "viem";
 import { concat, createWalletClient, custom, defineChain, numberToHex } from "viem";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
@@ -23,15 +23,21 @@ import {
   verifyContracts,
   type VerifyProgress,
 } from "./verification";
+import { ChainIcon } from "../ui/ChainIcon";
+import { WalletIcon } from "../ui/ExecutorIcon";
 import { ALL_CHAINS, chainById } from "./wagmi";
 
 const inputCls =
-  "w-full px-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/30 " +
+  "w-full px-3 py-2 rounded-[3px] bg-[var(--color-surface)] border border-[var(--color-ink-3)]/40 " +
   "focus:border-[var(--color-bp-400)] focus:outline-none font-mono text-sm placeholder:text-[var(--color-ink-3)]";
 
 const primaryBtnCls =
-  "px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] " +
+  "px-4 py-2 rounded-[3px] font-mono text-xs uppercase tracking-[0.12em] font-semibold bg-[var(--color-primary)] text-[var(--color-primary-fg)] " +
   "hover:bg-[var(--color-primary-hover)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors";
+
+const ghostBtnCls =
+  "px-3 py-1.5 rounded-[3px] font-mono text-xs uppercase tracking-[0.12em] border border-[var(--color-bp-400)] " +
+  "text-[var(--color-bp-300)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors";
 
 type DeployState =
   | { step: "idle" }
@@ -91,8 +97,15 @@ function ChainPicker({
 
   return (
     <div className="relative">
+      {!open && (
+        <ChainIcon
+          chainId={chain.id}
+          name={chain.name}
+          className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+        />
+      )}
       <input
-        className={inputCls}
+        className={`${inputCls} ${open ? "" : "pl-9"}`}
         placeholder={`Search ${ALL_CHAINS.length} networks by name or chain ID…`}
         value={open ? search : `${chain.name} (${chain.id})`}
         onFocus={() => {
@@ -107,7 +120,7 @@ function ChainPicker({
         spellCheck={false}
       />
       {open && (
-        <ul className="absolute z-20 mt-1 w-full max-h-72 overflow-y-auto rounded-lg border border-[var(--color-ink-3)]/30 bg-[var(--color-surface)] shadow-xl">
+        <ul className="absolute z-20 mt-1 w-full max-h-72 overflow-y-auto rounded-[3px] border border-[var(--color-ink-3)]/30 bg-[var(--color-surface)] shadow-xl">
           {filtered.length === 0 && (
             <li className="px-3 py-2 text-sm text-[var(--color-ink-3)]">
               No known network matches — add it as a custom network below.
@@ -127,6 +140,11 @@ function ChainPicker({
                 }`}
               >
                 <span>
+                  <ChainIcon
+                    chainId={c.id}
+                    name={c.name}
+                    className="inline-block align-[-0.2em] mr-2"
+                  />
                   {c.name}
                   {c.testnet && (
                     <span className="ml-2 text-[10px] uppercase tracking-wide text-[var(--color-ink-3)]">
@@ -165,7 +183,7 @@ function CustomChainForm({ onSubmit }: { onSubmit: (chain: Chain) => void }) {
     /^https?:\/\/.+/.test(rpcUrl.trim());
 
   return (
-    <div className="space-y-3 rounded-lg border border-[var(--color-ink-3)]/20 p-4">
+    <div className="space-y-3 rounded-[3px] border border-[var(--color-ink-3)]/30 p-4">
       <div className="grid sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs text-[var(--color-ink-2)] mb-1">
@@ -234,11 +252,48 @@ function CustomChainForm({ onSubmit }: { onSubmit: (chain: Chain) => void }) {
             }),
           );
         }}
-        className="px-3 py-1.5 rounded-lg text-sm font-medium border border-[var(--color-bp-400)] text-[var(--color-bp-300)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className={ghostBtnCls}
       >
         Use this network
       </button>
     </div>
+  );
+}
+
+type StationState = "done" | "active" | "todo" | "error" | "skipped";
+
+/** One step of the launch sequence: a numbered node on a vertical rail. */
+function Station({
+  index,
+  title,
+  state,
+  aside,
+  last,
+  children,
+}: {
+  index: number;
+  title: string;
+  state: StationState;
+  aside?: ReactNode;
+  last?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <li className="dp-station" data-state={state}>
+      <div className="dp-rail">
+        <span className="dp-node" aria-hidden="true">
+          {state === "done" ? "✓" : state === "error" ? "!" : String(index).padStart(2, "0")}
+        </span>
+        {!last && <span className="dp-line" />}
+      </div>
+      <div className="min-w-0 pb-8">
+        <div className="flex items-baseline justify-between gap-3 flex-wrap min-h-9">
+          <h3 className="dp-title">{title}</h3>
+          {aside}
+        </div>
+        <div className="mt-3 space-y-3">{children}</div>
+      </div>
+    </li>
   );
 }
 
@@ -478,331 +533,403 @@ export function DeploySection({
     bootstrapState.step === "broadcasting";
   const explorer = explorerAddressUrl(chain);
 
-  return (
-    <div className="rounded-2xl border border-[var(--color-ink-3)]/20 bg-[var(--color-surface-2)] p-6 space-y-6">
-      <h2 className="font-mono font-semibold">Deploy to a new network</h2>
+  const deployedNow = (i: number) =>
+    status.data?.deployed[i] === true || deployState.step === "success";
+  const busyName =
+    deployState.step === "sending" || deployState.step === "confirming"
+      ? deployState.contract
+      : undefined;
+  const needsFactory =
+    status.data !== undefined && status.data.anyMissing && !status.data.proxyPresent;
+  const readyToDeploy =
+    status.data !== undefined && status.data.anyMissing && status.data.proxyPresent;
 
-      {/* Wallet */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        {isConnected && address ? (
-          <div className="flex items-center gap-3">
-            <span className="size-2 rounded-full bg-[var(--color-ok)]" />
-            <span className="font-mono text-sm">{shortAddress(address)}</span>
-            {walletChainId !== undefined && (
-              <span className="text-xs px-2 py-0.5 rounded-full border border-[var(--color-ink-3)]/30 text-[var(--color-ink-2)]">
-                {chainById(walletChainId)?.name ?? `chain ${walletChainId}`}
-              </span>
-            )}
+  const walletState: StationState = isConnected ? "done" : "active";
+  const networkState: StationState = status.isError
+    ? "error"
+    : status.isPending
+      ? "active"
+      : "done";
+  const factoryState: StationState = !status.data
+    ? "todo"
+    : !status.data.anyMissing
+      ? "skipped"
+      : status.data.proxyPresent
+        ? "done"
+        : "active";
+  const contractsState: StationState =
+    isDeployedNow
+      ? "done"
+      : deployState.step === "error"
+        ? "error"
+        : deploying
+          ? "active"
+          : readyToDeploy
+            ? "active"
+            : "todo";
+  const verifyStationState: StationState =
+    verifyState.step === "verified" || verifiedStatus.data === true
+      ? "done"
+      : verifyState.step === "error"
+        ? "error"
+        : "todo";
+
+  return (
+    <section className="dp-panel" aria-label="Deploy to a new network">
+      <header className="dp-head">
+        <div>
+          <p className="dp-kicker">Launch sequence</p>
+          <h2 className="dp-heading">Deploy to a new network</h2>
+        </div>
+        <p className="dp-target">
+          <span className="dp-target-name inline-flex items-center gap-2">
+            <ChainIcon chainId={chain.id} name={chain.name} />
+            {chain.name}
+          </span>
+          <span className="dp-target-id">chain {chain.id}</span>
+        </p>
+      </header>
+
+      <ol className="dp-steps">
+        {/* 01 Wallet */}
+        <Station
+          index={1}
+          title="Wallet"
+          state={walletState}
+          aside={
+            isConnected && address ? (
+              <button
+                type="button"
+                onClick={() => disconnect()}
+                className="dp-link-quiet hover:text-[var(--color-err)]"
+              >
+                Disconnect
+              </button>
+            ) : undefined
+          }
+        >
+          {isConnected && address ? (
+            <p className="flex items-center gap-3 flex-wrap">
+              <span className="dp-led" data-on="true" />
+              <span className="font-mono text-sm">{shortAddress(address)}</span>
+              {walletChainId !== undefined && (
+                <span className="dp-chip inline-flex items-center gap-1.5">
+                  <ChainIcon
+                    chainId={walletChainId}
+                    name={chainById(walletChainId)?.name}
+                    size={12}
+                  />
+                  {chainById(walletChainId)?.name ?? `chain ${walletChainId}`}
+                </span>
+              )}
+            </p>
+          ) : (
             <button
               type="button"
-              onClick={() => disconnect()}
-              className="text-xs text-[var(--color-ink-3)] hover:text-[var(--color-err)] transition-colors"
+              disabled={connectPending || !injected}
+              onClick={() => injected && connect({ connector: injected })}
+              className={`${primaryBtnCls} inline-flex items-center gap-2`}
             >
-              Disconnect
+              <WalletIcon />
+              {connectPending ? "Connecting…" : "Connect wallet"}
             </button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            disabled={connectPending || !injected}
-            onClick={() => injected && connect({ connector: injected })}
-            className={primaryBtnCls}
-          >
-            {connectPending ? "Connecting…" : "Connect wallet"}
-          </button>
-        )}
-      </div>
+          )}
+        </Station>
 
-      {/* Network selection */}
-      <div className="space-y-3">
-        <label className="block text-sm text-[var(--color-ink-2)]">
-          Target network
-        </label>
-        <ChainPicker chain={chain} onChange={onChainChange} />
-        <div className="flex items-center gap-4 flex-wrap text-xs">
+        {/* 02 Network */}
+        <Station
+          index={2}
+          title="Network"
+          state={networkState}
+          aside={
+            status.isPending ? (
+              <span className="dp-note">Checking {chain.name}…</span>
+            ) : undefined
+          }
+        >
+          <ChainPicker chain={chain} onChange={onChainChange} />
           <button
             type="button"
             onClick={() => setShowCustom((v) => !v)}
-            className="text-[var(--color-bp-300)] hover:underline"
+            className="dp-link"
           >
-            {showCustom ? "Hide custom network" : "Can't find your network? Add it with an RPC URL"}
+            {showCustom
+              ? "Hide custom network"
+              : "Can't find your network? Add it with an RPC URL"}
           </button>
-        </div>
-        {showCustom && (
-          <CustomChainForm
-            onSubmit={(customChain) => {
-              onChainChange(customChain);
-              setShowCustom(false);
-            }}
-          />
-        )}
-        <div>
-          <label className="block text-xs text-[var(--color-ink-3)] mb-1">
-            Etherscan API key{" "}
-            <span>(optional — verifies the source automatically after deploying)</span>
-          </label>
-          <input
-            className={inputCls}
-            type="password"
-            placeholder="One key works on every Etherscan-family explorer"
-            value={apiKey}
-            onChange={(e) => saveApiKey(e.target.value.trim())}
-            spellCheck={false}
-            autoComplete="off"
-          />
-        </div>
-      </div>
+          {showCustom && (
+            <CustomChainForm
+              onSubmit={(customChain) => {
+                onChainChange(customChain);
+                setShowCustom(false);
+              }}
+            />
+          )}
+          {status.isError && (
+            <div className="dp-alert" data-tone="err">
+              <p>
+                Could not reach an RPC for {chain.name}: {errorMessage(status.error)}
+              </p>
+              <p className="dp-note mt-1">
+                Try re-adding the network as a custom network with a working RPC URL.
+              </p>
+            </div>
+          )}
+        </Station>
 
-      {/* Status */}
-      <div className="space-y-4">
-        {status.isPending && (
-          <p className="text-sm text-[var(--color-ink-3)]">
-            Checking {chain.name}…
-          </p>
-        )}
-        {status.isError && (
-          <div className="rounded-lg border border-[var(--color-err)]/40 bg-[var(--color-err)]/5 px-4 py-3 text-sm">
-            <p className="text-[var(--color-err)]">
-              Could not reach an RPC for {chain.name}:{" "}
-              {errorMessage(status.error)}
+        {/* 03 Factory */}
+        <Station
+          index={3}
+          title="CREATE2 factory"
+          state={factoryState}
+          aside={
+            factoryState === "skipped" ? (
+              <span className="dp-note">Not needed</span>
+            ) : status.data?.proxyPresent ? (
+              <span className="dp-note font-mono">
+                {shortAddress(CREATE2_PROXY)}
+              </span>
+            ) : undefined
+          }
+        >
+          {!status.data && <p className="dp-note">Waiting for the network check.</p>}
+          {factoryState === "skipped" && (
+            <p className="dp-note">
+              Every contract is already on {chain.name}, so the factory is not used.
             </p>
-            <p className="text-[var(--color-ink-3)] mt-1 text-xs">
-              Try re-adding the network as a custom network with a working RPC
-              URL.
+          )}
+          {status.data?.anyMissing && status.data.proxyPresent && (
+            <p className="dp-note">
+              The deterministic deployment proxy is present on {chain.name}.
             </p>
-          </div>
-        )}
+          )}
+          {needsFactory && (
+            <div className="dp-alert" data-tone="warn">
+              <p className="font-medium">
+                The CREATE2 factory is missing on {chain.name}.
+              </p>
+              <p className="dp-note mt-1 leading-relaxed">
+                Deterministic deployment relies on the{" "}
+                <a
+                  href="https://github.com/Arachnid/deterministic-deployment-proxy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="dp-link"
+                >
+                  deterministic deployment proxy
+                </a>{" "}
+                at <span className="font-mono">{shortAddress(CREATE2_PROXY)}</span>.
+                It can be installed permissionlessly: fund its one-time deployer
+                with 0.01 {chain.nativeCurrency.symbol} and broadcast a presigned
+                transaction.
+              </p>
+              <button
+                type="button"
+                disabled={!isConnected || bootstrapping}
+                onClick={() => void bootstrapFactory()}
+                className={`${primaryBtnCls} mt-3`}
+              >
+                {bootstrapState.step === "funding"
+                  ? "Funding the deployer…"
+                  : bootstrapState.step === "broadcasting"
+                    ? "Broadcasting the factory deployment…"
+                    : `Install the factory (0.01 ${chain.nativeCurrency.symbol})`}
+              </button>
+              {bootstrapState.step === "error" && (
+                <p className="text-xs text-[var(--color-err)] mt-2">
+                  {bootstrapState.message}
+                </p>
+              )}
+            </div>
+          )}
+        </Station>
 
-        {status.data?.allDeployed && (
-          <div className="rounded-lg border border-[var(--color-ok)]/40 bg-[var(--color-ok)]/5 px-4 py-3 text-sm">
-            <p className="text-[var(--color-ok)] font-medium">
-              All {DEPLOYED_CONTRACTS.length} contracts are already deployed on {chain.name}.
-            </p>
-            {DEPLOYED_CONTRACTS.map((contract) => {
+        {/* 04 Contracts */}
+        <Station
+          index={4}
+          title="Contracts"
+          state={contractsState}
+          aside={
+            status.data ? (
+              <span className="dp-note">
+                {DEPLOYED_CONTRACTS.filter((_, i) => deployedNow(i)).length} of{" "}
+                {DEPLOYED_CONTRACTS.length} deployed
+              </span>
+            ) : undefined
+          }
+        >
+          <ul className="dp-bay">
+            {DEPLOYED_CONTRACTS.map((contract, i) => {
+              const live = status.data ? deployedNow(i) : false;
+              const busy = busyName === contract.name;
               const url = explorerAddressUrl(chain, contract.address);
               return (
-                <p key={contract.key} className="font-mono text-xs mt-1">
-                  <span className="text-[var(--color-ink-3)]">
-                    {contract.name}{contract.released ? "" : " (unreleased)"}:{" "}
-                  </span>
-                  {url ? (
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[var(--color-bp-300)] hover:underline"
-                    >
-                      {contract.address} ↗
-                    </a>
-                  ) : (
-                    contract.address
-                  )}
-                </p>
-              );
-            })}
-          </div>
-        )}
-
-        {status.data && status.data.anyMissing && !status.data.proxyPresent && (
-          <div className="rounded-lg border border-[var(--color-warn,#b58900)]/40 bg-[var(--color-bp-500)]/5 px-4 py-3 text-sm space-y-2">
-            <p className="font-medium">
-              The CREATE2 factory is missing on {chain.name}.
-            </p>
-            <p className="text-[var(--color-ink-2)] text-xs leading-relaxed">
-              Deterministic deployment relies on the{" "}
-              <a
-                href="https://github.com/Arachnid/deterministic-deployment-proxy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--color-bp-300)] hover:underline"
-              >
-                deterministic deployment proxy
-              </a>{" "}
-              at{" "}
-              <span className="font-mono">{shortAddress(CREATE2_PROXY)}</span>.
-              It can be installed permissionlessly: fund its one-time deployer
-              with 0.01 {chain.nativeCurrency.symbol} and broadcast a presigned
-              transaction.
-            </p>
-            <button
-              type="button"
-              disabled={!isConnected || bootstrapping}
-              onClick={() => void bootstrapFactory()}
-              className={primaryBtnCls}
-            >
-              {bootstrapState.step === "funding"
-                ? "Funding the deployer…"
-                : bootstrapState.step === "broadcasting"
-                  ? "Broadcasting the factory deployment…"
-                  : `Install the factory (0.01 ${chain.nativeCurrency.symbol})`}
-            </button>
-            {bootstrapState.step === "error" && (
-              <p className="text-xs text-[var(--color-err)]">
-                {bootstrapState.message}
-              </p>
-            )}
-          </div>
-        )}
-
-        {status.data && status.data.anyMissing && status.data.proxyPresent && (
-          <div className="space-y-3">
-            <p className="text-sm text-[var(--color-ink-2)]">
-              Ready to deploy to{" "}
-              <span className="font-medium">{chain.name}</span>. One
-              transaction per missing contract:
-            </p>
-            <ul className="text-xs space-y-1">
-              {DEPLOYED_CONTRACTS.map((contract, i) => (
-                <li key={contract.key} className="flex items-baseline gap-2">
-                  {status.data.deployed[i] ? (
-                    <span className="text-[var(--color-ok)]">✓</span>
-                  ) : (
-                    <span className="text-[var(--color-ink-3)]">•</span>
-                  )}
-                  <span>
+                <li key={contract.key} className="dp-bay-row" data-live={live} data-busy={busy}>
+                  <span className="dp-led" data-on={live} data-busy={busy} />
+                  <span className="dp-bay-name">
                     {contract.name}
-                    {contract.released ? "" : " (unreleased)"} ({contract.gasLabel}{" "}
-                    gas) at{" "}
-                    <span className="font-mono">{contract.address}</span>
-                    {status.data.deployed[i] && (
-                      <span className="text-[var(--color-ok)]"> — deployed</span>
+                    <span className="dp-bay-ver">
+                      {contract.released ? "" : " unreleased"}
+                    </span>
+                  </span>
+                  <span className="dp-bay-addr">
+                    {url && live ? (
+                      <a href={url} target="_blank" rel="noopener noreferrer" className="dp-link">
+                        {contract.address} ↗
+                      </a>
+                    ) : (
+                      contract.address
                     )}
                   </span>
+                  <span className="dp-bay-gas">{contract.gasLabel} gas</span>
                 </li>
-              ))}
-            </ul>
-            <button
-              type="button"
-              disabled={!isConnected || deploying}
-              onClick={() => void deploy()}
-              className={primaryBtnCls}
-            >
-              {deployState.step === "switching"
-                ? "Switching network…"
-                : deployState.step === "sending"
-                  ? `Confirm ${deployState.contract} in your wallet…`
-                  : deployState.step === "confirming"
-                    ? `Waiting for ${deployState.contract} confirmation…`
-                    : `Deploy to ${chain.name}`}
-            </button>
-            {!isConnected && (
-              <p className="text-xs text-[var(--color-ink-3)]">
-                Connect a wallet to deploy.
-              </p>
-            )}
-          </div>
-        )}
-
-        {deployState.step === "success" && (
-          <div className="rounded-lg border border-[var(--color-ok)]/40 bg-[var(--color-ok)]/5 px-4 py-3 text-sm">
-            <p className="text-[var(--color-ok)] font-medium">
-              Deployed!{" "}
-              {DEPLOYED_CONTRACTS.map((contract) => contract.name).join(", ")}{" "}
-              now live on {chain.name}:
-            </p>
-            {DEPLOYED_CONTRACTS.map((contract) => (
-              <p key={contract.key} className="font-mono text-xs mt-1">
-                <span className="text-[var(--color-ink-3)]">
-                  {contract.name}{contract.released ? "" : " (unreleased)"}:{" "}
-                </span>
-                {contract.address}
-              </p>
-            ))}
-            {deployState.hashes.map((hash) => {
-              const tx = explorerTxUrl(chain, hash);
-              return (
-                <p key={hash} className="font-mono text-xs mt-1">
-                  {tx ? (
-                    <a
-                      href={tx}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[var(--color-bp-300)] hover:underline"
-                    >
-                      {shortAddress(hash)} ↗
-                    </a>
-                  ) : (
-                    hash
-                  )}
-                </p>
               );
             })}
-          </div>
-        )}
+          </ul>
 
-        {deployState.step === "error" && (
-          <div className="rounded-lg border border-[var(--color-err)]/40 bg-[var(--color-err)]/5 px-4 py-3 text-sm">
-            <p className="text-[var(--color-err)]">{deployState.message}</p>
-            <button
-              type="button"
-              onClick={() => setDeployState({ step: "idle" })}
-              className="text-xs text-[var(--color-ink-3)] hover:underline mt-1"
-            >
-              Dismiss
-            </button>
-          </div>
-        )}
+          {readyToDeploy && (
+            <>
+              <button
+                type="button"
+                disabled={!isConnected || deploying}
+                onClick={() => void deploy()}
+                className={primaryBtnCls}
+              >
+                {deployState.step === "switching"
+                  ? "Switching network…"
+                  : deployState.step === "sending"
+                    ? `Confirm ${deployState.contract} in your wallet…`
+                    : deployState.step === "confirming"
+                      ? `Waiting for ${deployState.contract} confirmation…`
+                      : `Deploy to ${chain.name}`}
+              </button>
+              <p className="dp-note">
+                One transaction per missing contract.
+                {!isConnected && " Connect a wallet to deploy."}
+              </p>
+            </>
+          )}
 
-        {/* Source verification: only offered once an API key is entered, and
-            hidden when the pre-check shows the source is already verified. */}
-        {isDeployedNow &&
-          Boolean(apiKey) &&
-          !(
-            verifyState.step === "idle" &&
-            etherscanSupported &&
-            (verifiedStatus.isPending || verifiedStatus.data === true)
-          ) && (
-          <div className="rounded-lg border border-[var(--color-ink-3)]/20 px-4 py-3 text-sm space-y-2">
-            <p className="font-medium">Source verification</p>
-            {!etherscanSupported ? (
-              <p className="text-xs text-[var(--color-ink-3)]">
-                {etherscanChains.isPending
-                  ? "Checking explorer support…"
-                  : `The Etherscan API does not cover ${chain.name}, so the source can't be verified from here.`}
+          {status.data?.allDeployed && deployState.step !== "success" && (
+            <div className="dp-alert" data-tone="ok">
+              <p className="font-medium">
+                All {DEPLOYED_CONTRACTS.length} contracts are already deployed on {chain.name}.
               </p>
-            ) : verifyState.step === "verified" ? (
-              <p className="text-[var(--color-ok)]">
-                {verifyState.already
-                  ? "The source is already verified on the explorer."
-                  : "Source verified."}{" "}
-                {explorer && (
-                  <a
-                    href={`${explorer}#code`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[var(--color-bp-300)] hover:underline"
-                  >
-                    View the code ↗
-                  </a>
-                )}
+            </div>
+          )}
+
+          {deployState.step === "success" && (
+            <div className="dp-alert" data-tone="ok">
+              <p className="font-medium">
+                Deployed. {DEPLOYED_CONTRACTS.map((c) => c.name).join(", ")} are now live on{" "}
+                {chain.name}.
               </p>
-            ) : verifyState.step === "running" ? (
-              <p className="text-xs text-[var(--color-ink-2)]">
-                {VERIFY_PROGRESS_LABELS[verifyState.progress]}
-              </p>
-            ) : (
-              <div className="space-y-2">
-                <p className="text-xs text-[var(--color-ink-3)] leading-relaxed">
-                  Submits the compiler input bundled with this site to the
-                  chain's explorer.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => void runVerification()}
-                  className="px-3 py-1.5 rounded-lg text-sm font-medium border border-[var(--color-bp-400)] text-[var(--color-bp-300)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                >
-                  Verify the source
-                </button>
-                {verifyState.step === "error" && (
-                  <p className="text-xs text-[var(--color-err)]">
-                    {verifyState.message}
+              {deployState.hashes.map((hash) => {
+                const tx = explorerTxUrl(chain, hash);
+                return (
+                  <p key={hash} className="font-mono text-xs mt-1">
+                    {tx ? (
+                      <a href={tx} target="_blank" rel="noopener noreferrer" className="dp-link">
+                        {shortAddress(hash)} ↗
+                      </a>
+                    ) : (
+                      hash
+                    )}
                   </p>
+                );
+              })}
+            </div>
+          )}
+
+          {deployState.step === "error" && (
+            <div className="dp-alert" data-tone="err">
+              <p>{deployState.message}</p>
+              <button
+                type="button"
+                onClick={() => setDeployState({ step: "idle" })}
+                className="dp-link-quiet mt-1"
+              >
+                Dismiss
+              </button>
+            </div>
+          )}
+        </Station>
+
+        {/* 05 Verify */}
+        <Station
+          index={5}
+          title="Verify the source"
+          state={verifyStationState}
+          aside={<span className="dp-note">Optional</span>}
+          last
+        >
+          <div>
+            <label className="block text-xs text-[var(--color-ink-3)] mb-1">
+              Etherscan API key{" "}
+              <span>(verifies the source automatically after deploying)</span>
+            </label>
+            <input
+              className={inputCls}
+              type="password"
+              placeholder="One key works on every Etherscan-family explorer"
+              value={apiKey}
+              onChange={(e) => saveApiKey(e.target.value.trim())}
+              spellCheck={false}
+              autoComplete="off"
+            />
+          </div>
+
+          {/* Offered once an API key is entered, and hidden when the
+              pre-check shows the source is already verified. */}
+          {isDeployedNow &&
+            Boolean(apiKey) &&
+            !(
+              verifyState.step === "idle" &&
+              etherscanSupported &&
+              (verifiedStatus.isPending || verifiedStatus.data === true)
+            ) && (
+              <div className="dp-alert" data-tone="plain">
+                {!etherscanSupported ? (
+                  <p className="dp-note">
+                    {etherscanChains.isPending
+                      ? "Checking explorer support…"
+                      : `The Etherscan API does not cover ${chain.name}, so the source can't be verified from here.`}
+                  </p>
+                ) : verifyState.step === "verified" ? (
+                  <p className="text-[var(--color-ok)]">
+                    {verifyState.already
+                      ? "The source is already verified on the explorer."
+                      : "Source verified."}{" "}
+                    {explorer && (
+                      <a
+                        href={`${explorer}#code`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="dp-link"
+                      >
+                        View the code ↗
+                      </a>
+                    )}
+                  </p>
+                ) : verifyState.step === "running" ? (
+                  <p className="dp-note">{VERIFY_PROGRESS_LABELS[verifyState.progress]}</p>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="dp-note leading-relaxed">
+                      Submits the compiler input bundled with this site to the chain's explorer.
+                    </p>
+                    <button type="button" onClick={() => void runVerification()} className={ghostBtnCls}>
+                      Verify the source
+                    </button>
+                    {verifyState.step === "error" && (
+                      <p className="text-xs text-[var(--color-err)]">{verifyState.message}</p>
+                    )}
+                  </div>
                 )}
               </div>
             )}
-          </div>
-        )}
-      </div>
-    </div>
+        </Station>
+      </ol>
+    </section>
   );
 }

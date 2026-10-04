@@ -1,176 +1,214 @@
 ---
-title: EVMcrispr integration
-description: Writing assertions as one-line EVML scripts with the assert command.
+title: Writing assertions in EVML
+description: A task-by-task guide to the assert command, from comparing values to lists, strings, fallbacks and changes over a batch.
 ---
 
-[EVMcrispr](https://evmcrispr.blossom.software)'s `assert` command compiles readable one-line scripts into the exact core, Operations, Collections and Expressions calldata described in the rest of these docs. It lives in the std module, which is always loaded, so an assertion needs no `load` line of its own. Scripts that use the lang module's array/string helpers (`@len!`, `@str.split!`, `@bytes.len!`, ...) also need `load lang`; the chain id and the block and transaction context reads (`@chainId!`, `@block.timestamp!`, `@tx.from!`, ...) need `load receipts`; the code and storage reads (`@codeHash!`, ...) need `load contracts`, and the arithmetic conveniences (`@min!`, `@sqrt!`, ...) need `load math`. The [visual builder](/builder) generates these lines for you and previews their live values.
+This guide is organized by what you want to check. Each section states the goal, shows the line, and says what to watch for. The [Overview](/docs) explains what an assertion is, and the [builder](/builder) writes many of these lines for you. 
 
-```evml
+## The shape of an assertion
 
-assert $token::!{balanceOf(address)(uint256) @me} >= 100e18 "not enough tokens"
+```evml novalidate
+assert <value> <operator> <expected> "message"
 ```
 
-## The assert command
+The value and the expected side are either **live** or **fixed**.
 
-### Builder compiler and execution account
+- A **live** side is read when the batch executes: a `::!` call, or a helper whose name ends in `!` (`@balance!`, `@calc!`, `@len!`).
+- A **fixed** side is frozen into the script when it is built: a literal such as `100e18`, a `$variable`, or an ordinary helper such as `@token(WETH)`.
 
-The builder and this site's EVML highlighting use a vendored EVMcrispr checkout (`website/.evmcrispr`), pinned by `evmcrispr.commit` in `website/package.json`. The pinned revision compiles against the canonical Assertions, Operations, Collections and Expressions addresses listed under [Deployments](/docs/reference/deployments): all four must exist on the selected chain, so check [the deployments page](/deployments) before executing. The addresses are the same on every chain, so there is nothing to configure; a fork that wants different code installs it at those addresses. Expressions has no helper faces of its own: the compiler emits graphs for you, behind the generic array faces and the recipes that share a resolved value.
+A plain `::` call reads the chain when the script builds, so it is refused inside an assertion. If you want to compare against a value read at build time, store it first with `set`.
 
-The builder supports `lang`, `receipts`, `contracts`, `math`, `token`, `vault`, `acl`, `sim`, `safe`, `governor` and `aragonosx`, in addition to the always-loaded `std`. Other modules in the full EVMcrispr terminal are not automatically available here. At the pinned revision, `receipts` and the protocol modules among these (`vault`, `acl`, `safe`, `governor`, `aragonosx`) are flagged experimental in the checkout: their faces may change between pins.
+The operators are `==`, `!=`, `>`, `<`, `>=`, `<=` and `~=` (approximately equal). An `assert` with no operator requires a boolean and checks that it is true. A message comes after the expected value, so to give a boolean check a message, write `== true "message"`.
 
-Use `@sender` for the account sending the surrounding block's calls. Inside a Safe, Governor or Aragon OSx block it refers to that executor; `@me` refers to the connected account. For example, inside a Safe block, an allowance assertion should usually check `allowance(@sender, spender)`. `@tx.from!` reads the transaction origin and is a different identity.
+Helpers come from modules. `std` is always loaded, and the others need a `load` line at the top of the script, which the examples below show. The [EVML assertion reference](/docs/reference) lists every operator, every helper and the module each helper belongs to.
 
-`@hash!` and `@bytes.len!` require a decoded `string` or `bytes` return. Use `@len!` for an array's element count; array envelopes cannot be passed to bytes operations because their length word counts elements, not bytes.
+## Check a balance or a state variable
 
-### Syntax
+Read the value with the function's signature written inline: `fn(argTypes)(returnTypes) args`.
 
 ```evml
-assert <target>::!{viewFn(argTypes)(returnType) <args>} <op> <expected> "revert msg"
+load token
+
+assert @token(WETH)::!{balanceOf(address)(uint256) @me} >= @token:amount(WETH 10) "insufficient balance"
+assert $vault::!{paused()(bool)} == false "vault is paused"
+assert $gov::!{paused()(bool)}
 ```
 
-Inside an assertion every call is a `::!` read, with its ABI written inline, and it is read when the assertion is judged. A plain `::` call (`$t::fn()` or `$t::{…}`) is a build-time call: it runs while the script builds, so it belongs in `set` or `print`, and inside an on-chain expression it is an error.
+The first line reads the connected account's WETH balance. The last line has no operator, so it requires `paused()` to return true.
 
-Comparison operators: `==` `!=` `>` `<` `>=` `<=` and `~=` (approximate equality, with `--delta`). Strings support `==` / `!=` anywhere (nested comparisons compile to on-chain keccak). A bare `assert <call>` with no operator requires a boolean call and compiles to an `EQ true` constraint.
+Use `@me` for the connected account and `@sender` for the account that sends the surrounding calls. Inside a Safe, Governor or Aragon OSx block, `@sender` is that executor, so an allowance check there usually reads `allowance(@sender, spender)`. `@tx.from!` is the transaction origin, which is a different identity again.
 
-Every line compiles to the ERC-8211 judge: the live expression becomes an `InputParam` (a staticcall, balance read, or nested core expression) validated by inline constraints via `assertParam`. Comparisons the [constraints](/docs/core/reads#constraints) can't express directly (`!=` and two-live-side comparisons) route through a read-spliced [Operations](/docs/operators) comparison judged `EQ 1`. The SDK also retains this lowering for signed comparisons, although the wire format now supports signed constraints directly.
+Native balances use `@balance!`:
 
-### Chained calls
+```evml
+assert @balance!(ETH $recipient) >= 1e18 "recipient underfunded"
+```
 
-`::!` chains hop through addresses and compile to the core's [`chain`](/docs/core/reads): every hop but the last must continue on an address, and a multi-value hop selects it with a lens.
+## Check that a value stayed in range
+
+For a price, a ratio or any number that should stay near a target, use `~=` with `--delta`:
+
+```evml
+assert $oracle::!{price()(uint256)} ~= 2000e8 --delta 50e8 "price out of range"
+```
+
+This passes when the price is within 50e8 of 2000e8. For two live values, use the absolute difference:
+
+```evml
+load math
+
+assert @absDiff!($a::!{price()(uint256)} $b::!{price()(uint256)}) <= 50e8 "oracles disagree"
+```
+
+Signed returns compare signed:
+
+```evml
+assert $oracle::!{drift()(int256)} <= -5 "drifted"
+```
+
+## Follow an address
+
+When one contract returns the address of another, chain the reads. Every hop except the last must return an address.
 
 ```evml
 assert $pool::!{token()(address)}::!{symbol()(string)} == "WETH"
-assert $t::!{f()(uint112,uint112,address)}[_ _ $]::!{b()(uint256)} > 0
 ```
 
-### Lenses
-
-A destructure lens after a call selects which return value the assertion uses:
-
-- `[_ $ _]` picks one output of a multi-value return (compiles to the core's [`pick`](/docs/core/reads) raw word selection).
-- Nested levels navigate into arrays and structs, one step per nesting level: `{owners()(address[],address)}[[_ $]]` is element 1 of the first return value; `{proposals()((address,uint256,bool)[])}[[_ [_ _ $]]]` is `proposals[1].executed`. These compile to the core's typed [`nav`](/docs/core/reads) navigation.
-- A `...` rest marker anchors the slots after it from the end: `[... $]` = last return value, `[[... $]]` = last array element, resolved against the live length on-chain.
-
-### Nested live calls as arguments
-
-A call's argument can itself be a call, resolved **at assertion time** and spliced into the enclosing calldata (any nesting depth):
+If a hop returns several values, a lens picks the address:
 
 ```evml
-assert $vault::!{sharesOf(address)(uint256) $registry::!{owner()(address)}} > 0
-assert $a::!{a(address)(uint256,uint256[]) $b::!{b(uint256,uint256)(address) $c::!{c(address)(uint256) @me} $d::!{d()(uint256)}}}[_ [$]] == 7
+assert $pool::!{poolInfo()(uint112,uint112,address)}[_ _ $]::!{symbol()(string)} == "WETH"
 ```
 
-A lens on a nested call argument selects the value to splice, including dynamic values (arrays) navigated at runtime:
-
-```evml
-assert $a::!{a(address[])(uint256) $b::!{b()(address,address[][])}[_ [_ $]]} == 5
-```
-
-These compile to the core's [`read`](/docs/core/reads): each nesting level becomes a `read` whose segments fetch the inner values and splice them into the enclosing calldata at judge time. Word-typed arguments (uint, int, address, bool, bytes32) splice anywhere. Up to four live dynamic values can share a call when the compiler can derive their runtime sizes. A live value whose size cannot be derived must be the last dynamic argument. Later offsets may re-resolve earlier values, so adding live parts increases execution cost.
-
-### Chain state
-
-Chain state has no commands of its own: every piece of it is an on-chain helper, so `assert` compares it like anything else.
-
-```evml
-assert @balance!(ETH $recipient) >= 1e18 "recipient underfunded"   # native balance
-assert @chainId! == 100 "wrong chain"                              # needs load receipts
-assert @block.timestamp! < 1780000000 "proposal expired"           # needs load receipts
-assert @codeHash!($proxy) == 0x1234… "implementation changed"      # needs load contracts
-assert @bytes.len!(@codeAt!($t)) > 0 "not a contract"              # needs load lang + contracts
-```
-
-## On-chain helpers (trailing `!`)
-
-Helpers with a trailing `!` evaluate **on-chain at assertion time** by compiling to core, Operations and Collections calldata; ordinary helpers (`@token`, `@get`, `@num`, ...) resolve at composition time and freeze into the calldata. Each helper is one name with up to two faces: the plain face runs (or snapshots) at script build time, the `!` face compiles to on-chain calldata.
-
-Array faces (`@map!`, `@filter!`, `@all!`, `@any!`, `@find!`, `@reduce!`) apply a NAMED definition rather than an inline expression. `def @name!` declares one, and the face supplies the arguments it takes:
-
-```evml
-def @ge100! "$x: number -> bool" @bool!($x >= 100)
-assert @all!($vault::!{caps()(uint256[])} @ge100!)
-```
-
-The definition is inlined where it is used, so naming a parameter more than once stamps the element at each place it appears: `@calc!($x * $x)` squares in one call. It compiles rather than runs, so it must be fully typed and cannot be called off-chain, and it is scoped like any other `def`.
-
-The on-chain surface of the builder's modules:
-
-- **std** (always available, no `load` needed): `@calc!`, `@bool!`, `@bytes!`, `@hash!`, `@balance!`, the control faces `@ifElse!`, `@orElse!` and `@reverts!`, the signature check `@sigValid!`, and the `@abi.*!` family (`@abi.encode!`, `@abi.encodePacked!`, `@abi.encodeCall!`, `@abi.decode!`, `@abi.decodeCall!`).
-- **lang** (needs `load lang`): the array and string faces, including `@len!`, `@bytes.len!`, `@str.len!`, `@str.split!`, `@str.includes!`, `@str.charset!`.
-- **receipts** (needs `load receipts`): the chain id `@chainId!`, plus the block and transaction context reads, the `@block.*!` and `@tx.*!` families, tabulated on [the words page](/docs/operators/words#environment-reads).
-- **contracts** (needs `load contracts`): the code reads `@codeHash!` and `@codeAt!`, and the storage-slot derivations `@slot.array!` and `@slot.mapping!`.
-- **math** (needs `load math`): the arithmetic conveniences `@min!`, `@max!`, `@absDiff!`, `@sqrt!`, and the fixed-point family `@exp!`, `@ln!`, `@log2!`, `@pow!`.
-
-| Helper | Module | Returns | Description |
-|--------|--------|---------|-------------|
-| `@abi.encode!(types values...)` | std | bytes | `abi.encode` over live values: live values must be elementary static types, at most 4 per call; dynamic, array and tuple types only encode when every value is constant |
-| `@abi.encodePacked!(types values...)` | std | bytes | Packed encoding, compiled to `concat` over `slice`-narrowed words: live values are cut to their packed width and live string/bytes values pass through whole, at most 4 per call |
-| `@abi.encodeCall!(signature params...)` | std | bytes | Calldata for a call: the signature must be a constant, live arguments must be elementary static types contributing one word each (at most 4 per call) |
-| `@abi.decode!(types data)[_ $]` | std | any | Decode a live bytes value: needs a `[_ $]` lens and returns only the selected value; array selections are refused |
-| `@abi.decodeCall!(contract calldata)[...]` | std | any | Decode live calldata against an inline signature: checks the selector on-chain (a mismatch reverts) and returns the selected argument |
-| `@absDiff!(a b)` | math | number | Absolute difference computed on-chain; never underflows. `@absDiff!(a b) <= d` is the composable approximate-equality (plain `@absDiff` computes off-chain) |
-| `@balance!(ETH\|token addr)` | std | number | Live balance: native for ETH, else ERC-20 `balanceOf` (token symbols resolve like `@token`) |
-| `@bool!(expr)` | std | bool | On-chain comparisons and logic: `== != < <= > >= and or xor not` |
-| `@bytes!(a "&" b)` | std | number | Bitwise word ops (`&` `\|` `xor` `<<` `>>`, the operator quoted; spelled `xor` rather than `^`, which `@calc!` uses for powers); single-arg `@bytes!(x)` is the raw-word cast |
-| `@bytes.at!(call i)` | lang | bytes | One byte of a bytes/string return, sliced on-chain; a negative index resolves against the live byte length |
-| `@bytes.len!(call)` / `@str.len!(call)` | lang | number | Decoded byte length of a bytes/string return (multi-byte UTF-8 characters count once per byte) |
-| `@bytes.slice!(call start end?)` | lang | bytes | A byte range of a bytes/string return, sliced on-chain; negative bounds resolve against the live byte length (inverted live ranges revert, there is no silent clamp) |
-| `@codeAt!(addr)` | contracts | bytes | The deployed bytecode at an address, read at assertion time through `Operations.code`; sees code a batch deployed in an earlier step |
-| `@codeHash!(addr-or-call)` | contracts | bytes32 | Live EXTCODEHASH; the argument may be a `::!` call resolving to an address |
-| `@enumerate!(call)` | lang | array | Pair every element with its index on-chain (`zipWords(iotaWords(n), payload)` with the live length); the result is an on-chain record ([records](/docs/operators/fold#on-chain-records)) |
-| `@exp!(x)` / `@ln!(x)` | math | number | e^x and the natural log in wad (1e18) fixed point, via `expWad`/`lnWad`; the result carries its wad scale so surrounding arithmetic aligns to it |
-| `@filter!(call pred)` | lang | array | Keep the elements passing `pred`, a named `def @name!` of one parameter returning bool; the kept words payload composes with the other array faces |
-| `@find!(call pred)` | lang | any | The first element passing the predicate: a core pick over the `filterWords` output; no match REVERTS the assertion at judge time |
-| `@hash!(call)` | std | bytes32 | Hash of the decoded return payload, on-chain: keccak256 by default, sha256 with a second `"sha256"` argument |
-| `@ifElse!(cond ? then : else)` | std | any | The lazy ternary, compiled to the core's `cond`: the condition's first word judges (nonzero = then) and the losing branch is never resolved; spaces are required around `?` and `:`. Branching on resolvability is `@ifElse!(@bool!(not @reverts!(call)) ? a : b)` |
-| `@keys!(record)` / `@values!(record)` / `@lookup!(record name)` | lang | array / any | The lanes of an on-chain record and a keyed read into it ([records](/docs/operators/fold#on-chain-records)) |
-| `@len!(call)` | lang | number | Decoded length of a dynamic return: element count for arrays (nested array faces included), byte length for string/bytes |
-| `@log2!(x)` | math | number | Floor binary logarithm on-chain (`log2`); 0 reverts |
-| `@min!(a b ...)` / `@max!(a b ...)` | math | number | On-chain minimum / maximum of two or more values (plain `@min` / `@max` compute off-chain) |
-| `@calc!(expr)` | std | number | On-chain checked integer arithmetic (`+ - * // % ^`, `xor`; integer division is `//`) over live calls and constants; unsigned `a * b / c` fuses into one 512-bit `mulDiv` with `Trunc` rounding, and a live string operand coerces through `parseUint` |
-| `@orElse!(a b)` | std | any | The core's `orElse`: the value of the first read, or the second one when the first reverts; both branches must resolve to the same kind of value, and a constant fallback must fit in one word |
-| `@pow!(x n base?)` | math | number | Fixed-point power via `rpow`, where `base` is one unit (default 1e18, 1e27 for a ray); unsigned operands only |
-| `@reverts!(call)` | std | bool | Whether a live call reverts: true when the chain refuses it, false when it resolves (the core's `isValid`, negated); `-!> ErrName(types)` matches the reason through `revertData` and a `[_ $]` lens selects an error argument |
-| `@sigValid!(signer data signature)` | std | bool | Whether a signature is valid on-chain: contract signers verify through ERC-1271, EOAs through the recovery precompile; the signer and message must be constants, and a delegated account verifies against its key |
-| `@slice!(call start end?)` | lang | array | Elements `[start, end)` of an array return as a live words payload (indices scale to byte offsets at composition time, negative bounds resolve against the live length); composes with the other array faces |
-| `@slot.array!(base index)` / `@slot.mapping!(base key)` | contracts | bytes32 | The storage slot of `array[index]` / `mapping[key]` declared at a constant base slot, with a live index or key; reading it on-chain needs a target with an extsload-style getter |
-| `@sqrt!(expr)` | math | number | Integer square root (floor) computed on-chain, e.g. `@sqrt!($pool::!{reserve0()(uint256)} * $pool::!{reserve1()(uint256)})` (plain `@sqrt` computes off-chain) |
-| `@str.charset!(call "a-z0-9-")` | lang | bool | Whether every byte of a string return is in the character class (ranges + literals, byte-level ASCII) |
-| `@str.concat!("a" call ...)` | lang | string | Concatenate constant strings with up to four live call parts through a single on-chain `concat` |
-| `@str.includes!(call "part")` | lang | bool | Whether a string return contains a substring (exact bytes, case-sensitive) |
-| `@str.split!(call "delim" i)` | lang | string | Split a string return and select one segment; negative index counts from the end (`-1` = last, `-2` = second-last) |
-| `@sum!(call)` | lang | number | The checked sum of an array return's single-word elements, on-chain (Collections' native `sumWords`); the fixed-operation form of `@reduce!(call add 0)` |
-
-Beyond these, the lang module gives most of its array and string helpers an on-chain face too: `@str.slice!`, `@str.at!`, `@str.concat!`, `@str.replace!`, `@str.lower!`, `@str.upper!`, `@str.join!`, the bytes twins `@bytes.at!`/`@bytes.slice!`/`@bytes.concat!`/`@bytes.not!`, and over arrays `@at!`, `@slice!`, `@includes!`, `@all!`, `@any!`, `@map!`, `@filter!`, `@find!`, `@reduce!`, `@sum!`, `@sort!`, `@unique!`, `@reverse!`, `@zip!`, `@unzip!`, `@enumerate!`, `@flat!`, `@concat!`, plus the record faces `@keys!`/`@values!`/`@lookup!`. Protocol modules follow the same pattern with live read faces: token's `@token:decimals!`, `@token:allowance!`, `@token:totalSupply!`, `@token:amount!` (scaled against a live `decimals()`) and `@token:symbol!` (digest-judged); safe's `@safe:threshold!`, `@safe:nonce!`, `@safe:guard!` (with `module:true`, the v1.5.0 module guard), `@safe:isOwner!` and the array operands `@safe:owners!`/`@safe:modules!` (composable with the lang array faces); governor's `@governor:proposalState!` and `@governor:timelockOperationState!` (OZ's numeric OperationState via nested conds), and the vault and acl reads.
-
-The string helpers compile to compositions rather than dedicated ops: `@str.split!` compiles to `indexOf`/`slice`, `@str.includes!` to the `indexOf`/`byteLen` sentinel comparison, and `@str.join!` to a single `concat` with the delimiter interleaved at composition time. `@str.charset!` compiles to the native `charset` op with its class-spec mask baked in at composition time (the `foldBytes` + `bitSet` form stays the general pattern for other per-byte predicates), and `@sum!` to Collections' native `sumWords`; `@unique!` removes adjacent duplicates (`uniqueWords` with `ordered = true`), so nest `@sort!` for set-uniqueness. See [the fold page](/docs/operators/fold).
-
-Examples:
-
-```evml
-load lang
-load contracts
-
-assert @calc!(@balance!(ETH $addr) + $weth::!{balanceOf(address)(uint256) $addr}) > 0
-assert @bool!(($gov::!{quorum()(uint256)} > 0) or (not $gov::!{paused()(bool)}))
-assert @str.split!($pool::!{name()(string)} " " -1) == "LP"
-assert @len!($registry::!{holders()(address[])}) >= 3
-assert @codeHash!($proxy::!{implementation()(address)}) == 0x1234...cdef
-```
-
-## Computed heads: what `::!` reads from
-
-The head of `<head>::!{sig(argTypes)(retTypes) args}` may be any expression: an address, a `::!` chain, an on-chain helper, or a computed word, as long as it resolves to a clean address word on-chain. With a fixed head and constant arguments the hop compiles to a direct staticcall. A live head or a live argument constructs the whole call **at assertion time** through the core's [`read`](/docs/core/reads), splicing the live parts like nested live calls. The inline ABI form is mandatory either way, since a live head has no composition-time address to fetch an ABI from.
-
-The `!` trails the `::` rather than leading it, so it never sits against the head. Leading, it would be indistinguishable from the trailing `!` of an on-chain helper face: `@name!::{…}` splits as `@name!` before a plain hop or as `@name` before a read hop, and the text does not say which. After the operator there is nothing to collide with, so `@me::!{…}` and `@name!::!{…}` each read one way only.
+The thing before `::!` can be any expression that gives an address when the batch executes, such as a helper. The signature is always written inline, since there is no address at build time to look an ABI up from:
 
 ```evml
 assert @bytes!($reg::!{packedPool()(uint256)} ">>" 96)::!{fee()(uint24)} <= 3000
 ```
 
-## Composition-time captures
+## Pick a value out of a return
 
-To assert a **change**, capture the pre-state at composition time and assert against it:
+A destructure lens in square brackets selects part of a return. `$` marks the part you want and `_` skips one.
+
+```evml
+# the second value of a three-value return
+assert $pool::!{getReserves()(uint112,uint112,uint32)}[_ $ _] >= 1000 "low reserve"
+
+# the second owner in an address array
+assert $safe::!{getOwners()(address[])}[[_ $]] == @me "second owner changed"
+
+# a field inside a struct inside an array
+assert $gov::!{proposals()((address,uint256,bool)[])}[[_ [_ _ $]]] == true
+```
+
+Each nesting level steps into an array or a struct. A `...` marker counts from the end: `[... $]` is the last value, `[[... $]]` is the last array element, resolved against the live length.
+
+## Use one read as the input to another
+
+An argument can itself be a read. It is resolved when the batch executes and inserted into the outer call.
+
+```evml
+assert $vault::!{sharesOf(address)(uint256) $registry::!{owner()(address)}} > 0
+```
+
+This reads the registry's owner, then reads that owner's shares in the vault. Reads can nest to any depth. A value that returns an array can also be selected with a lens and used as an argument. Each live part adds execution cost, so nest only what the claim needs.
+
+## Check chain state
+
+The block, the chain and a contract's code are helpers, like everything else.
+
+```evml
+load receipts
+load contracts
+
+assert @chainId! == 100 "wrong chain"
+assert @block.timestamp! < 1780000000 "proposal expired"
+assert @codeHash!($proxy::!{implementation()(address)}) == 0xdfff0c54be05b5df7dc8f015f8c813825344770fee1ba1202130a4652b529ca9 "implementation changed"
+```
+
+`@chainId!` and `@block.timestamp!` need `load receipts`, and `@codeHash!` needs `load contracts`. The last line reads a proxy's implementation address and compares the hash of the code at that address with the audited build.
+
+## Do arithmetic
+
+Wrap arithmetic in `@calc!`. It uses checked integer math: `+ - * // % ^`, where `//` is integer division.
+
+```evml
+assert @calc!(@balance!(ETH @me) + $weth::!{balanceOf(address)(uint256) @me}) > 0
+```
+
+Wrap logic in `@bool!`: comparisons plus `and`, `or`, `xor` and `not`.
+
+```evml
+assert @bool!(($gov::!{quorum()(uint256)} > 0) or (not $gov::!{paused()(bool)}))
+```
+
+An infix expression without a wrapper is an error, so write `@calc!(a + b)` and `@bool!(a or b)`.
+
+## Check every item in a list
+
+Array helpers need `load lang`. Count a list with `@len!`:
+
+```evml
+load lang
+
+assert @len!($registry::!{holders()(address[])}) >= 3 "not enough holders"
+```
+
+Test every element with `@all!`, any element with `@any!`, or sum the list with `@sum!`. The test is a named definition with `def`, and the definition takes the element as its parameter.
+
+```evml
+load lang
+
+def @ge100! "$x: number -> bool" @bool!($x >= 100)
+assert @all!($vault::!{caps()(uint256[])} @ge100!) == true "a cap is below 100"
+assert @sum!($vault::!{caps()(uint256[])}) <= 10000e18 "caps exceed the limit"
+```
+
+The definition is inlined where it is used, so it must be fully typed. The length of the list is read when the batch executes, so the check covers however many elements there are at that moment.
+
+`@filter!`, `@find!`, `@map!` and `@reduce!` work the same way. `@find!` reverts the assertion when no element matches.
+
+## Check a string
+
+```evml
+load lang
+
+assert @str.includes!($token::!{name()(string)} "Wrapped") == true "unexpected name"
+assert @str.split!($pool::!{name()(string)} " " -1) == "LP" "not an LP token"
+assert @str.charset!($token::!{symbol()(string)} "A-Z0-9") == true "odd characters in symbol"
+```
+
+`@str.split!` splits on a delimiter and selects one segment (`-1` is the last). `@str.charset!` requires every byte to be in the character class. Strings compare with `==` and `!=` anywhere.
+
+## Fall back, branch, and expect a failure
+
+Some reads revert on some contracts. Use `@orElse!` to supply a value when the first read fails:
+
+```evml
+assert @bool!(@orElse!($token::!{decimals()(uint8)} 18) <= 18)
+```
+
+If `decimals()` reverts, the assertion uses 18. Both sides must be the same kind of value, and a constant fallback must fit in one word.
+
+Use `@ifElse!` to choose a branch by a condition. Only the branch that is taken is read:
+
+```evml
+assert @ifElse!($gov::!{paused()(bool)} ? $a::!{safeLimit()(uint256)} : $a::!{limit()(uint256)}) >= 5
+```
+
+Spaces are required around `?` and `:`.
+
+Use `@reverts!` when the claim is that a call must fail:
+
+```evml
+assert @reverts!($vault::!{deposit(uint256)(uint256) 0}) == true "zero deposit accepted"
+```
+
+A fallback that hides a failure weakens whatever you assert on the result. Use `@orElse!` for contracts that lack a method, and `@reverts!` when the failure is the thing you want to observe.
+
+## Assert that something changed
+
+An on-chain read cannot see the past, so capture the starting value when the script builds and compare against it:
 
 ```evml
 set $before @get($token "balanceOf(address)(uint256)" @me)
@@ -178,4 +216,27 @@ set $before @get($token "balanceOf(address)(uint256)" @me)
 assert $token::!{balanceOf(address)(uint256) @me} == @num($before + 100e18)
 ```
 
-Composition-time captures go stale, so for proposals executed later prefer absolute thresholds or live `@bool!` / `@calc!` forms.
+A captured value is fixed when the script is built. If the batch executes later, as in a proposal that waits a week, the number may be stale. For delayed execution, prefer an absolute threshold or a live `@calc!`.
+
+## Read a Safe, a Governor or a token
+
+Protocol modules add reads for common systems. These take a Safe's signers and threshold from the Safe itself:
+
+```evml
+load lang
+load safe
+
+def @onCouncil! "$o: address -> bool" @includes!($council $o)
+assert @safe:threshold!($councilSafe) >= 3 "threshold too low"
+assert @all!(@safe:owners!($councilSafe) @onCouncil!) == true "unknown signer"
+```
+
+The `token`, `vault`, `acl`, `safe` and `governor` modules work the same way. Some of them are experimental, so their helpers may change between versions: the [reference](/docs/reference#helpers) says which, and lists every helper with its arguments.
+
+## Where to go next
+
+- [EVML assertion reference](/docs/reference): every operator and helper.
+- [Recipes](/docs/recipes): ready-made assertions for common situations.
+- [Test an assertion](/docs/test-an-assertion): make a check fail on purpose before you rely on it.
+- [Reviewing an assertion](/docs/reviewing): how the compiled calls read to someone approving a batch.
+- [The builder](/builder): write and simulate assertions without writing the script by hand.

@@ -1,0 +1,71 @@
+---
+/**
+ * The execution-time (`!`) helpers of one module, read from the same
+ * registries the builder compiles with, so the table cannot drift from the
+ * compiler. `qualified` writes names as `@module:name!`, the spelling the
+ * docs use for protocol modules.
+ */
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+
+import { evmcrisprSrc } from '../../../scripts/evmcrispr-sources.mjs';
+import { REGISTRIES } from '../builder/helper-owners';
+
+interface Props {
+  module: string;
+  qualified?: boolean;
+}
+
+const { module, qualified = false } = Astro.props;
+const registry = REGISTRIES[module];
+if (!registry) throw new Error(`Helpers: the builder registers no module named "${module}"`);
+
+const manifest = JSON.parse(readFileSync(path.resolve(evmcrisprSrc, 'modules', module, 'package.json'), 'utf-8'));
+const experimental = manifest.experimental === true;
+
+type Arg = { name: string; optional?: boolean; rest?: boolean };
+const signature = (name: string, args: Arg[] = []) => {
+  const call = `@${qualified ? `${module}:` : ''}${name}`;
+  if (args.length === 0) return call;
+  const parts = args.map((arg) => (arg.rest ? `...${arg.name}` : arg.optional ? `[${arg.name}]` : arg.name));
+  return `${call}(${parts.join(' ')})`;
+};
+
+/** Registry descriptions mark code with backticks. */
+const inline = (text: string) =>
+  text.split('`').map((part, i) => ({ code: i % 2 === 1, text: part }));
+
+const helpers = Object.entries(registry)
+  .filter(([name, entry]) => entry.onchain && name.endsWith('!'))
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([name, entry]) => ({
+    signature: signature(name, entry.argDefs as Arg[] | undefined),
+    returns: entry.returnType,
+    description: inline(entry.description ?? ''),
+  }));
+if (helpers.length === 0) throw new Error(`Helpers: module "${module}" has no execution-time helpers`);
+---
+
+<p>
+  {module === 'std' ? (
+    <>Always available: no <code>load</code> line is needed.</>
+  ) : (
+    <>Add <code>load {module}</code> at the top of the script.</>
+  )}
+  {experimental && <> This module is experimental, so its helpers may change between versions.</>}
+</p>
+
+<table>
+  <thead>
+    <tr><th>Helper</th><th>Returns</th><th>What it reads or computes</th></tr>
+  </thead>
+  <tbody>
+    {helpers.map((helper) => (
+      <tr>
+        <td><code>{helper.signature}</code></td>
+        <td>{helper.returns}</td>
+        <td>{helper.description.map((part) => (part.code ? <code>{part.text}</code> : part.text))}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>

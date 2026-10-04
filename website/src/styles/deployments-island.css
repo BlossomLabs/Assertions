@@ -1,0 +1,395 @@
+/* Tailwind utilities and the site's colour tokens, scoped to the deployments
+   island inside the docs. The docs pages load Starlight's CSS, not
+   global.css, so the island's utility classes and var(--color-*) references
+   would otherwise be unstyled. No preflight: Starlight's own base stays. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@source "../components/deployments";
+
+.deployments-island {
+  --color-bp-50: #e8f4ff;
+  --color-bp-100: #B8D2E8;
+  --color-bp-200: #bfdbfe;
+  --color-bp-300: #93c5fd;
+  --color-bp-400: #60a5fa;
+  --color-bp-500: #005BA6;
+  --color-bp-600: #004d8c;
+  --color-bp-700: #003d73;
+  --color-bp-800: #002b52;
+  --color-bp-900: #0c1a2e;
+  --color-bp-950: #080d18;
+  --color-primary: #2563eb;
+  --color-primary-hover: #3b82f6;
+  --color-primary-fg: #ffffff;
+  --color-ok: #22c55e;
+  --color-err: #ef4444;
+  --color-surface: #0a1d40;
+  --color-surface-2: #0f2750;
+  --color-surface-3: #173463;
+  --color-ink: #e2eaf2;
+  --color-ink-2: #8da4b8;
+  --color-ink-3: #4a6478;
+  font-family: 'Outfit', system-ui, sans-serif;
+}
+
+:root[data-theme='light'] .deployments-island {
+  --color-bp-200: #7ab0d4;
+  --color-bp-300: #4a90d9;
+  --color-bp-400: #1a7fd4;
+  --color-primary: #1e40af;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-fg: #ffffff;
+  --color-surface: #f0f4f8;
+  --color-surface-2: #ffffff;
+  --color-surface-3: #e2eaf2;
+  --color-ink: #0c1a2e;
+  --color-ink-2: #3a5068;
+  --color-ink-3: #6b8299;
+}
+
+/* ---------------------------------------------------------------------
+   Deploy to a new network: a launch sequence drawn like a blueprint.
+   A numbered rail of stations (wallet, network, factory, contracts,
+   verify); each node lights up as its step completes.
+   --------------------------------------------------------------------- */
+
+.deployments-island .dp-panel {
+  position: relative;
+  margin-top: 0.5rem;
+  padding: 1.5rem 1.5rem 0.25rem;
+  background-color: var(--color-surface-2);
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--color-bp-400) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-bp-400) 7%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+  border: 1px solid color-mix(in srgb, var(--color-ink-3) 45%, transparent);
+  border-radius: 4px;
+  color: var(--color-ink);
+}
+
+/* registration marks in two corners */
+.deployments-island .dp-panel::before,
+.deployments-island .dp-panel::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-bp-400);
+  pointer-events: none;
+}
+.deployments-island .dp-panel::before {
+  top: -2px;
+  left: -2px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.deployments-island .dp-panel::after {
+  right: -2px;
+  bottom: -2px;
+  border-left: 0;
+  border-top: 0;
+}
+
+.deployments-island .dp-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px dashed color-mix(in srgb, var(--color-ink-3) 55%, transparent);
+}
+.deployments-island .dp-kicker {
+  margin: 0 0 0.35rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-bp-400);
+}
+.deployments-island .dp-heading {
+  margin: 0;
+  border: 0;
+  padding: 0;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+.deployments-island .dp-target {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+.deployments-island .dp-target-name {
+  font-size: 0.9rem;
+  color: var(--color-bp-300);
+}
+.deployments-island .dp-target-id {
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+.deployments-island .dp-steps {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+}
+
+.deployments-island .dp-station {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  column-gap: 1rem;
+  margin: 0;
+}
+.deployments-island .dp-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.deployments-island .dp-node {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: none;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-3);
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-ink-3) 70%, transparent);
+  border-radius: 3px;
+  transition: color 200ms, border-color 200ms, background-color 200ms;
+}
+.deployments-island .dp-line {
+  flex: 1;
+  margin-top: 0.3rem;
+  border-left: 1px dashed color-mix(in srgb, var(--color-ink-3) 70%, transparent);
+}
+.deployments-island .dp-title {
+  margin: 0;
+  border: 0;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+  line-height: 2.25rem;
+}
+
+/* station states */
+.deployments-island .dp-station[data-state="active"] .dp-node {
+  color: var(--color-bp-300);
+  border-color: var(--color-bp-400);
+  animation: dp-ring 2.4s ease-in-out infinite;
+}
+.deployments-island .dp-station[data-state="active"] .dp-title {
+  color: var(--color-ink);
+}
+.deployments-island .dp-station[data-state="done"] .dp-node {
+  color: var(--color-surface);
+  background: var(--color-bp-400);
+  border-color: var(--color-bp-400);
+}
+.deployments-island .dp-station[data-state="done"] .dp-line {
+  border-left-style: solid;
+  border-left-color: var(--color-bp-400);
+}
+.deployments-island .dp-station[data-state="error"] .dp-node {
+  color: var(--color-err);
+  border-color: var(--color-err);
+}
+.deployments-island .dp-station[data-state="skipped"] .dp-node {
+  border-style: dashed;
+  opacity: 0.6;
+}
+.deployments-island .dp-station[data-state="skipped"] .dp-title {
+  opacity: 0.6;
+}
+
+.deployments-island .dp-note {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--color-ink-3);
+}
+.deployments-island .dp-link {
+  display: inline;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: var(--color-bp-300);
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  word-break: break-all;
+}
+.deployments-island .dp-link:hover {
+  text-decoration-style: solid;
+}
+.deployments-island .dp-link-quiet {
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-size: 0.72rem;
+  color: var(--color-ink-3);
+  transition: color 150ms;
+}
+.deployments-island .dp-chip {
+  padding: 0.1rem 0.5rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  color: var(--color-ink-2);
+  border: 1px solid color-mix(in srgb, var(--color-ink-3) 55%, transparent);
+  border-radius: 3px;
+}
+
+/* status LED */
+.deployments-island .dp-led {
+  display: inline-block;
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-ink-3) 60%, transparent);
+}
+.deployments-island .dp-led[data-on="true"] {
+  background: var(--color-ok);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ok) 22%, transparent);
+}
+.deployments-island .dp-led[data-busy="true"] {
+  background: var(--color-bp-400);
+  animation: dp-blink 1s ease-in-out infinite;
+}
+
+/* the contract bay */
+.deployments-island .dp-bay {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-ink-3) 40%, transparent);
+  border-radius: 3px;
+}
+.deployments-island .dp-bay-row {
+  display: grid;
+  grid-template-columns: 0.75rem minmax(6.5rem, max-content) minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 0.75rem;
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+}
+.deployments-island .dp-bay-row + .dp-bay-row {
+  border-top: 1px solid color-mix(in srgb, var(--color-ink-3) 25%, transparent);
+}
+.deployments-island .dp-bay-row[data-busy="true"] {
+  background: color-mix(in srgb, var(--color-bp-400) 8%, transparent);
+}
+.deployments-island .dp-bay-name {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.deployments-island .dp-bay-ver {
+  font-weight: 400;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+.deployments-island .dp-bay-addr {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.68rem;
+  color: var(--color-ink-2);
+  word-break: break-all;
+}
+.deployments-island .dp-bay-addr .dp-link {
+  font-size: 0.68rem;
+}
+.deployments-island .dp-bay-gas {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.66rem;
+  color: var(--color-ink-3);
+  white-space: nowrap;
+}
+@media (max-width: 40rem) {
+  .deployments-island .dp-bay-row {
+    grid-template-columns: 0.75rem minmax(0, 1fr) auto;
+    row-gap: 0.2rem;
+  }
+  .deployments-island .dp-bay-addr {
+    grid-column: 2 / -1;
+    grid-row: 2;
+  }
+}
+
+/* notices */
+.deployments-island .dp-alert {
+  padding: 0.7rem 0.9rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-ink-3) 40%, transparent);
+  border-left-width: 3px;
+  border-radius: 3px;
+}
+.deployments-island .dp-alert p {
+  margin: 0;
+}
+.deployments-island .dp-alert[data-tone="ok"] {
+  border-color: color-mix(in srgb, var(--color-ok) 45%, transparent);
+  border-left-color: var(--color-ok);
+  background: color-mix(in srgb, var(--color-ok) 6%, var(--color-surface));
+}
+.deployments-island .dp-alert[data-tone="warn"] {
+  border-color: color-mix(in srgb, #d99a2b 45%, transparent);
+  border-left-color: #d99a2b;
+  background: color-mix(in srgb, #d99a2b 7%, var(--color-surface));
+}
+.deployments-island .dp-alert[data-tone="err"] {
+  border-color: color-mix(in srgb, var(--color-err) 45%, transparent);
+  border-left-color: var(--color-err);
+  background: color-mix(in srgb, var(--color-err) 6%, var(--color-surface));
+  color: var(--color-err);
+}
+.deployments-island .dp-alert[data-tone="err"] .dp-note {
+  color: var(--color-ink-3);
+}
+
+@keyframes dp-ring {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-bp-400) 35%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-bp-400) 0%, transparent);
+  }
+}
+@keyframes dp-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .deployments-island .dp-station[data-state="active"] .dp-node,
+  .deployments-island .dp-led[data-busy="true"] {
+    animation: none;
+  }
+}

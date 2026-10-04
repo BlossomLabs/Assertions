@@ -1,0 +1,752 @@
+---
+// One abstract banner per release beast, drawn in the site's own palette.
+// Argos: a field of watching eyes. Byakko: a white tiger's stripes behind a
+// slit-pupil eye. Cerberos: three half-lidded eyes on a chain.
+// Dharmapala: four flame-haloed protectors, each with its own face, rising out of a wall of fire.
+// Erinyes: a wing, an eye in a triangle (one corner per Fury), and three
+// snakes. Fafnir: a scaled, spiked body leading to a ridged eye. Genbu: a
+// tortoise shell of hexagonal plates and a snake wound around a hexagonal eye.
+// Haetae: in the centre, one horn and a round eye under a curled brow, with a
+// mane of curls on both sides.
+// Issitoq: a great eye with a divided pupil, flying over ice under an aurora.
+// Janus: a gate on a threshold, and one eye cut in two by it, each half
+// looking its own way; the lines that cross the threshold change as they do.
+interface Props {
+  beast: 'argos' | 'byakko' | 'cerberos' | 'dharmapala' | 'erinyes' | 'fafnir' | 'genbu' | 'haetae' | 'issitoq' | 'janus';
+  class?: string;
+  /** Omit the filled background so the art can sit over the page. */
+  bare?: boolean;
+  /** Where a tracking eye looks: straight at the pointer, or at the part of the window the pointer is in. */
+  aim?: 'pointer' | 'window';
+}
+const { beast, class: className = '', bare = false, aim = 'pointer' } = Astro.props;
+
+const W = 1200;
+const H = 300;
+
+// Every banner is drawn with its eye on the right. These are mirrored so the
+// eye alternates sides from one release to the next: Byakko right, Cerberos
+// left, Dharmapala right, Genbu left, Haetae in the centre, Issitoq left,
+// Janus right. Erinyes and Fafnir both keep the eye on the right: Erinyes
+// reads better unmirrored. Janus is never mirrored: its left side is
+// "before" and its right side "after".
+const MIRRORED = ['cerberos', 'genbu', 'issitoq'];
+const mirror = MIRRORED.includes(beast) ? `translate(${W} 0) scale(-1 1)` : undefined;
+
+// Deterministic pseudo-random so the banner is stable between builds.
+const rand = (seed: number) => {
+  const x = Math.sin(seed * 9301 + 49297) * 233280;
+  return x - Math.floor(x);
+};
+
+const eyes: { x: number; y: number; s: number; o: number; look: number; halo: boolean; i: number }[] = [];
+// Four eyes, spread over the field, are each set inside three to five rings.
+const ARGOS_HALOS = [8, 15, 36, 44];
+const ARGOS_RINGS = [4, 3, 5, 3];
+if (beast === 'argos') {
+  for (let row = 0; row < 5; row++) {
+    for (let col = 0; col < 13; col++) {
+      const i = row * 13 + col;
+      eyes.push({
+        x: 50 + col * 92 + (row % 2) * 46 + (rand(i) - 0.5) * 18,
+        y: 30 + row * 60 + (rand(i + 99) - 0.5) * 12,
+        s: 0.55 + rand(i + 7) * 0.5,
+        o: 0.25 + rand(i + 31) * 0.6,
+        look: (rand(i + 13) - 0.5) * 10,
+        halo: ARGOS_HALOS.includes(i),
+        i,
+      });
+    }
+  }
+}
+
+const stripes: string[] = [];
+if (beast === 'byakko') {
+  for (let i = 0; i < 16; i++) {
+    const x = -40 + i * 82 + (rand(i) - 0.5) * 24;
+    const w = 14 + rand(i + 5) * 16;
+    const h = 150 + rand(i + 9) * 150;
+    const lean = 70 + rand(i + 3) * 40;
+    const y0 = (i % 2) * -30;
+    stripes.push(`${x},${y0} ${x + w},${y0} ${x + w + lean * 0.5},${y0 + h * 0.6} ${x + lean},${y0 + h}`);
+  }
+}
+
+// A chain sagging in from the left: alternate links face on (rings) and edge on (bars).
+const links: { x: number; y: number; a: number; ring: boolean }[] = [];
+if (beast === 'cerberos') {
+  const at = (i: number) => {
+    const x = -20 + i * 58;
+    const t = x / 720;
+    return { x, y: 96 + 110 * Math.sin(Math.PI * Math.min(t, 1) * 0.5) * (1 - 0.45 * t) };
+  };
+  for (let i = 0; i < 13; i++) {
+    const l = at(i);
+    const n = i < 12 ? at(i + 1) : { x: l.x + 58, y: l.y };
+    links.push({ ...l, a: (Math.atan2(n.y - l.y, n.x - l.x) * 180) / Math.PI, ring: i % 2 === 0 });
+  }
+}
+// The side heads are drawn first so the middle one overlaps them.
+const heads = [
+  { x: 770, y: 176, s: 0.78, o: 0.6 },
+  { x: 1030, y: 176, s: 0.78, o: 0.6 },
+  { x: 900, y: 136, s: 1, o: 1 },
+];
+
+// Dharmapala's fire: a tongue of flame w wide and h tall, its tip leaning one way.
+const flame = (w: number, h: number, lean = 1) =>
+  `M${-w} 0 C${-w} ${-h * 0.45} ${-w * 0.1 * lean} ${-h * 0.55} ${w * 0.3 * lean} ${-h} C${w * 0.1 * lean} ${-h * 0.7} ${w} ${-h * 0.45} ${w} 0 Z`;
+const fire: { d: string; x: number; o: number }[] = [];
+if (beast === 'dharmapala') {
+  // Two layers along the whole ground: tall and faint behind, short and denser in front.
+  for (const [layer, n, o] of [[0, 22, 0.1], [1, 28, 0.17]]) {
+    for (let i = 0; i < n; i++) {
+      const k = layer * 40 + i;
+      const h = (layer ? 50 : 110) + rand(k + 7) * (layer ? 70 : 120);
+      const w = (layer ? 22 : 34) + rand(k + 3) * 14;
+      fire.push({ d: flame(w, h, rand(k + 11) > 0.5 ? 1 : -1), x: -10 + i * (1220 / n) + (rand(k) - 0.5) * 20, o });
+    }
+  }
+}
+// Four protectors rising out of the fire, each with its own face, growing toward the right.
+const spirits = [
+  { face: 'upright', x: 200, y: 168, k: 0.56, o: 0.55 },
+  { face: 'narrow', x: 420, y: 150, k: 0.68, o: 0.7 },
+  { face: 'glaring', x: 670, y: 158, k: 0.82, o: 0.85 },
+  { face: 'fanged', x: 950, y: 150, k: 1, o: 1 },
+];
+// The upright third eye, drawn at scale k so its stroke stays 3 wide.
+const THIRD = 'M0 -56 Q40 0 0 56 Q-40 0 0 -56 Z';
+
+// The dragon's body: a band of scales around a wavy spine, thicker toward the head.
+const scales: { d: string; o: number; fill: boolean }[] = [];
+const spikes: { x: number; y: number; a: number; h: number }[] = [];
+if (beast === 'fafnir') {
+  const spine = (x: number) => 160 + 44 * Math.sin(x / 150 + 0.6);
+  const half = (x: number) => 30 + 46 * Math.min(1, Math.max(0, x + 40) / 620);
+  let k = 0;
+  for (let row = 0; row < 12; row++) {
+    for (let col = 0; col < 40; col++) {
+      const x = col * 34 + (row % 2) * 17 - 20;
+      const y = row * 26 + 4;
+      k++;
+      // Stop short of the eye's rings.
+      if (x > 900 || Math.hypot(x - 900, y - 150) < 136) continue;
+      if (Math.abs(y - spine(x)) > half(x)) continue;
+      const fill = rand(k + 50) > 0.72;
+      scales.push({ d: `M${x - 17} ${y} A17 17 0 0 0 ${x + 17} ${y}${fill ? ' Z' : ''}`, o: 0.16 + rand(k) * 0.3, fill });
+    }
+  }
+  for (let x = 10; x < 760; x += 46) {
+    const slope = (Math.cos(x / 150 + 0.6) * 44) / 150;
+    spikes.push({ x, y: spine(x) - half(x) - 6, a: (Math.atan(slope) * 180) / Math.PI, h: 14 + 16 * Math.min(1, x / 620) });
+  }
+}
+
+// The Fury's wing: three tiers of feathers hanging from a leading edge that
+// sweeps left from the shoulder, longest at the tip. Snakes: one per Fury.
+const feathers: { d: string; t: string; o: number }[] = [];
+let wingEdge = '';
+const snakes: string[] = [];
+if (beast === 'erinyes') {
+  const edge = (t: number) => ({ x: 792 - 770 * t, y: 96 - 70 * Math.sin(Math.PI * t * 0.85) + 40 * t * t });
+  const tiers = [
+    { n: 24, l0: 90, l1: 250, w: 15, o: 0.2 },
+    { n: 20, l0: 60, l1: 130, w: 13, o: 0.3 },
+    { n: 16, l0: 34, l1: 62, w: 11, o: 0.42 },
+  ];
+  for (const t of tiers) {
+    for (let i = 0; i < t.n; i++) {
+      const u = (i + 0.5) / t.n;
+      const p = edge(u);
+      const L = t.l0 + (t.l1 - t.l0) * Math.pow(u, 0.7);
+      feathers.push({
+        d: `M0 ${-t.w} L${L - t.w} ${-t.w} A${t.w} ${t.w} 0 0 1 ${L - t.w} ${t.w} L0 ${t.w * 0.4} Z`,
+        t: `translate(${p.x} ${p.y}) rotate(${84 + 62 * Math.pow(u, 0.8)})`,
+        o: t.o,
+      });
+    }
+  }
+  for (let i = 0; i <= 40; i++) {
+    const p = edge(i / 40);
+    wingEdge += `${i ? 'L' : 'M'}${p.x.toFixed(1)} ${(p.y - 4).toFixed(1)} `;
+  }
+  for (const i of [0, 1, 2]) {
+    const x0 = i === 1 ? 1024 : 1012;
+    const y0 = 150 + (i - 1) * 40;
+    let d = '';
+    for (let j = 0; j <= 48; j++) {
+      const y = y0 + (i - 1) * j * 0.55 + 11 * Math.sin(j / 4.2 + i * 2.1) * Math.min(1, j / 8);
+      d += `${j ? 'L' : 'M'}${x0 + j * 4} ${y.toFixed(1)} `;
+    }
+    snakes.push(d);
+  }
+}
+
+// Genbu: the tortoise's shell as a dome of hexagonal plates, and the snake
+// that crosses it and winds once around the eye.
+const hex = (r: number) =>
+  Array.from({ length: 6 }, (_, i) => `${(r * Math.cos((i * Math.PI) / 3)).toFixed(1)},${(r * Math.sin((i * Math.PI) / 3)).toFixed(1)}`).join(' ');
+const SHELL = { cx: 400, rx: 390, ry: 262, plate: 30 };
+const plates: { x: number; y: number; o: number; fill: boolean }[] = [];
+let snake = '';
+let snakeHead = '';
+if (beast === 'genbu') {
+  const R = SHELL.plate;
+  let k = 0;
+  for (let col = -1; col < 20; col++) {
+    for (let row = 0; row < 8; row++) {
+      const x = col * R * 1.5 + 10;
+      const y = row * R * Math.sqrt(3) + (col % 2 ? (R * Math.sqrt(3)) / 2 : 0) + 20;
+      k++;
+      if (((x - SHELL.cx) / (SHELL.rx - 24)) ** 2 + ((H + 10 - y) / (SHELL.ry - 14)) ** 2 > 1) continue;
+      plates.push({ x, y, o: 0.16 + rand(k) * 0.3, fill: rand(k + 50) > 0.7 });
+    }
+  }
+  for (let x = -10; x <= 700; x += 10) snake += `${x > -10 ? 'L' : 'M'}${x} ${(70 + 0.12 * x + 24 * Math.sin(x / 70)).toFixed(1)} `;
+  // Join the eye's ring where the snake is heading down and right, then go round it.
+  const on = (deg: number) => [900 + 118 * Math.cos((deg * Math.PI) / 180), 150 + 118 * Math.sin((deg * Math.PI) / 180)];
+  const [jx, jy] = on(135);
+  const [ex, ey] = on(210);
+  snake += `C750 132 ${(jx - 36).toFixed(1)} ${(jy - 36).toFixed(1)} ${jx.toFixed(1)} ${jy.toFixed(1)} A118 118 0 1 0 ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+  snakeHead = `translate(${ex.toFixed(1)} ${ey.toFixed(1)}) rotate(120)`;
+}
+
+// Haetae: a curl is a spiral winding in to its centre, R wide, `turns` times round.
+const curl = (R: number, turns = 2.1, dir = 1) => {
+  let d = '';
+  const n = Math.round(turns * 24);
+  for (let i = 0; i <= n; i++) {
+    const t = i / n;
+    const a = dir * t * turns * 2 * Math.PI;
+    const r = R * (1 - t * 0.92);
+    d += `${i ? 'L' : 'M'}${(r * Math.cos(a)).toFixed(1)} ${(r * Math.sin(a)).toFixed(1)} `;
+  }
+  return d;
+};
+// The mane: rows of curls on both sides of the head, larger and stronger toward it.
+const HAETAE_X = 600;
+const mane: { d: string; t: string; o: number; w: number }[] = [];
+if (beast === 'haetae') {
+  let k = 0;
+  for (const side of [-1, 1]) {
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 9; col++) {
+        k++;
+        const u = 1 - col / 8;
+        const x = HAETAE_X + side * (150 + col * 60 + (row % 2) * 30 + (rand(k + 3) - 0.5) * 14);
+        const y = 52 + row * 66 + (rand(k + 9) - 0.5) * 16;
+        mane.push({
+          d: curl(14 + 28 * u + rand(k) * 6, 2.1, side * ((row + col) % 2 ? 1 : -1)),
+          t: `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${Math.round(rand(k + 7) * 360)})`,
+          o: (0.1 + 0.32 * u) * (0.7 + rand(k + 5) * 0.5),
+          w: 3 + 2.5 * u,
+        });
+      }
+    }
+  }
+}
+
+// Issitoq: aurora curtains of hanging strokes, two ranges of ice, and the
+// streaks the eye leaves behind as it flies.
+const aurora: { d: string; o: number }[] = [];
+const ice: { d: string; o: number }[] = [];
+const streaks: { d: string; o: number; dash: string }[] = [];
+if (beast === 'issitoq') {
+  for (const [r, y0, amp, o] of [[0, 46, 22, 0.2], [1, 92, 30, 0.13]]) {
+    for (let x = 6; x < W; x += 9) {
+      if (Math.abs(x - 900) < 132) continue;
+      const y = y0 + amp * Math.sin(x / 92 + r * 1.7) + 9 * Math.sin(x / 31 + r);
+      const len = 34 + 30 * (0.5 + 0.5 * Math.sin(x / 57 + r * 2.3)) + rand(x + r * 500) * 16;
+      aurora.push({ d: `M${x} ${y.toFixed(1)} v${len.toFixed(1)}`, o: o * (0.55 + rand(x + r * 77) * 0.6) });
+    }
+  }
+  for (const [r, base, hgt, o] of [[0, 248, 64, 0.13], [1, 268, 40, 0.22]]) {
+    let d = `M0 ${H} `;
+    for (let i = 0; i <= 30; i++) {
+      const x = i * 40 + (rand(i + r * 60) - 0.5) * 22;
+      const peak = i % 2 ? hgt * (0.35 + rand(i * 3 + r * 91) * 0.65) : rand(i + r * 13) * 10;
+      d += `L${x.toFixed(1)} ${(base - peak).toFixed(1)} `;
+    }
+    ice.push({ d: `${d}L${W} ${H} Z`, o });
+  }
+  for (let i = 0; i < 9; i++) {
+    const y = 150 + (i - 4) * 19;
+    const edge = 1 - Math.abs(i - 4) / 5;
+    const x1 = 900 - Math.sqrt(118 * 118 - (y - 150) ** 2) - 12;
+    const len = 90 + 260 * edge * (0.6 + rand(i + 20) * 0.5);
+    streaks.push({
+      d: `M${x1.toFixed(1)} ${y} h${(-len).toFixed(1)}`,
+      o: 0.18 + 0.2 * edge,
+      dash: `${(len * 0.55).toFixed(0)} 14 ${(len * 0.2).toFixed(0)} 14 6 14`,
+    });
+  }
+}
+
+// Janus: strata that cross a threshold at x = 900, dashed and faint before
+// it, solid and shifted after it, stopping short of the gate on each side.
+const THRESHOLD = 900;
+const strata: { y: number; o: number; dash: string }[] = [];
+if (beast === 'janus') {
+  for (let i = 0; i < 9; i++) {
+    strata.push({ y: 30 + i * 30, o: 0.16 + rand(i) * 0.22, dash: `${14 + Math.round(rand(i + 9) * 30)} 10` });
+  }
+}
+
+const labels = {
+  argos: 'Argos: a field of watching eyes',
+  byakko: 'Byakko: tiger stripes and a slit-pupil eye',
+  cerberos: 'Cerberos: three half-lidded eyes held by a chain',
+  dharmapala: 'Dharmapala: four flame-haloed protectors rising out of a wall of fire',
+  erinyes: 'Erinyes: a wing, an eye in a triangle and three snakes',
+  fafnir: 'Fafnir: a scaled, spiked body and a ridged eye',
+  genbu: 'Genbu: a tortoise shell and a snake wound around a hexagonal eye',
+  haetae: 'Haetae: a mane of curls, a single horn and a round eye under a curled brow',
+  issitoq: 'Issitoq: a great eye with a divided pupil, flying over ice under an aurora',
+  janus: 'Janus: a gate on a threshold and one eye cut in two, each half looking its own way',
+};
+---
+
+<svg
+  viewBox={`0 0 ${W} ${H}`}
+  preserveAspectRatio="xMidYMid slice"
+  class={`block w-full h-full ${className}`}
+  role="img"
+  aria-label={labels[beast]}
+>
+  {!bare && <rect width={W} height={H} fill="var(--color-surface-2)" />}
+
+  <g transform={mirror}>
+
+  {beast === 'argos' && (
+    <g data-shy-field data-shy-half="28" data-shy-upper="-20" data-shy-lower="20">
+      {eyes.filter((e) => !e.halo).map((e) => (
+        <g transform={`translate(${e.x} ${e.y}) scale(${e.s})`} opacity={e.o}>
+          <g data-shy-eye data-doze="3" data-x={e.x} data-y={e.y}>
+            <clipPath id={`argos-opening-${e.i}`}><path data-lid d="M-28 0 Q0 -20 28 0 Q0 20 -28 0 Z" /></clipPath>
+            <g clip-path={`url(#argos-opening-${e.i})`}>
+              <circle cx={e.look} cy="0" r="8" fill="var(--color-bp-400)" />
+              <circle cx={e.look} cy="0" r="3" fill="var(--color-surface-2)" />
+            </g>
+            <path data-lid d="M-28 0 Q0 -20 28 0 Q0 20 -28 0 Z" fill="none" stroke="var(--color-bp-400)" stroke-width="2.4" stroke-linejoin="round" />
+          </g>
+        </g>
+      ))}
+      <!-- the ringed eyes: the same blue as the rest, at full strength, each inside three to five rings that fade outward, the white of the eye filled with the shared tint -->
+      {eyes.filter((e) => e.halo).map((e) => (
+        <g transform={`translate(${e.x} ${e.y})`}>
+          {Array.from({ length: ARGOS_RINGS[ARGOS_HALOS.indexOf(e.i)] }, (_, k) => (
+            <circle r={32 + k * 11} fill="none" stroke="var(--color-bp-400)" stroke-opacity={0.6 - k * 0.11} stroke-width="1.5" />
+          ))}
+          <g transform="scale(0.85)">
+            <g data-shy-eye data-doze data-x={e.x} data-y={e.y}>
+              <clipPath id={`argos-opening-${e.i}`}><path data-lid d="M-28 0 Q0 -20 28 0 Q0 20 -28 0 Z" /></clipPath>
+              <path data-lid d="M-28 0 Q0 -20 28 0 Q0 20 -28 0 Z" fill="var(--color-surface-2)" />
+              <g clip-path={`url(#argos-opening-${e.i})`}>
+                <circle cx={e.look} cy="0" r="8" fill="var(--color-bp-400)" />
+                <circle cx={e.look} cy="0" r="3" fill="var(--color-surface-2)" />
+              </g>
+              <path data-lid d="M-28 0 Q0 -20 28 0 Q0 20 -28 0 Z" fill="var(--color-bp-500)" fill-opacity="0.18" stroke="var(--color-bp-400)" stroke-width="2.6" stroke-linejoin="round" />
+            </g>
+          </g>
+        </g>
+      ))}
+    </g>
+  )}
+
+  {beast === 'byakko' && (
+    <g data-banner-eye data-aim={aim} data-cx="900" data-cy="150" data-half="90" data-reach="58" data-travel="62" data-pitch="0.3">
+      <circle data-eye="back" data-depth="0.2" cx="900" cy="150" r="118" fill="none" stroke="var(--color-bp-400)" stroke-opacity="0.35" stroke-width="2" />
+      <circle data-eye="back" data-depth="0.1" cx="900" cy="150" r="84" fill="var(--color-bp-500)" fill-opacity="0.18" />
+      {stripes.map((p) => (
+        <polygon points={p} fill="var(--color-bp-400)" fill-opacity="0.22" />
+      ))}
+      <clipPath id="byakko-opening"><path data-eye="lid" d="M810 150 Q900 92 990 150 Q900 208 810 150 Z" /></clipPath>
+      <path data-eye="lid" d="M810 150 Q900 92 990 150 Q900 208 810 150 Z" fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-width="3" />
+      <g clip-path="url(#byakko-opening)">
+        <g data-eye="pupil" transform="translate(900 150)">
+          <ellipse rx="9" ry="44" fill="var(--color-bp-400)" />
+        </g>
+      </g>
+    </g>
+  )}
+
+  {beast === 'cerberos' && (
+    <g>
+      {links.map((l) =>
+        l.ring ? (
+          <ellipse cx={l.x} cy={l.y} rx="38" ry="17" transform={`rotate(${l.a} ${l.x} ${l.y})`} fill="none" stroke="var(--color-bp-400)" stroke-opacity="0.3" stroke-width="7" />
+        ) : (
+          <rect x={l.x - 34} y={l.y - 4} width="68" height="8" rx="4" transform={`rotate(${l.a} ${l.x} ${l.y})`} fill="var(--color-bp-400)" fill-opacity="0.3" />
+        )
+      )}
+      {heads.map((h) => (
+        <g transform={`translate(${h.x} ${h.y}) scale(${h.s})`}>
+          <circle r="118" fill="none" stroke="var(--color-bp-400)" stroke-opacity={0.35 * h.o} stroke-width="2" />
+          <circle r="84" fill="var(--color-bp-500)" fill-opacity="0.18" />
+          <path d="M-62 -14 L62 -14 A64 64 0 0 1 -62 -14 Z" fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-opacity={h.o} stroke-width="3" stroke-linejoin="round" />
+          <path d="M-30 -14 L30 -14 A32 32 0 0 1 -30 -14 Z" fill="none" stroke="var(--color-bp-400)" stroke-opacity={h.o} stroke-width="3" />
+          <path d="M-15 -14 L15 -14 A16 16 0 0 1 -15 -14 Z" fill="var(--color-bp-400)" fill-opacity={h.o} />
+          <path d="M-84 -14 L84 -14" stroke="var(--color-bp-400)" stroke-opacity={h.o} stroke-width="7" stroke-linecap="round" />
+        </g>
+      ))}
+    </g>
+  )}
+
+  {beast === 'fafnir' && (
+    <g>
+      {scales.map((s) => (
+        <path d={s.d} fill={s.fill ? 'var(--color-bp-400)' : 'none'} fill-opacity="0.18" stroke="var(--color-bp-400)" stroke-opacity={s.o} stroke-width="2" />
+      ))}
+      {spikes.map((s) => (
+        <path d={`M-11 0 L4 ${-s.h} L11 0 Z`} transform={`translate(${s.x} ${s.y}) rotate(${s.a})`} fill="var(--color-bp-400)" fill-opacity="0.3" />
+      ))}
+      <g transform="translate(900 150)">
+        <circle r="118" fill="none" stroke="var(--color-bp-400)" stroke-opacity="0.35" stroke-width="2" />
+        <circle r="84" fill="var(--color-bp-500)" fill-opacity="0.18" />
+        <path d="M-104 -52 L-30 -66 L96 -30" fill="none" stroke="var(--color-bp-400)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M-92 4 L-22 -36 L92 -6 L22 34 Z" fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-width="3" stroke-linejoin="round" />
+        <path d="M0 -30 L11 0 L0 30 L-11 0 Z" fill="var(--color-bp-400)" />
+      </g>
+    </g>
+  )}
+
+  {beast === 'dharmapala' && (
+    <g>
+      {fire.map((f) => (
+        <path d={f.d} transform={`translate(${f.x} ${H})`} fill="var(--color-bp-400)" fill-opacity={f.o} />
+      ))}
+      {spirits.map((p) => {
+        const third = (k: number, y: number) => (
+          <g transform={`translate(0 ${y}) scale(${k})`}>
+            <path d={THIRD} fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-width={3 / k} stroke-linejoin="round" />
+            <circle r="20" fill="none" stroke="var(--color-bp-400)" stroke-width={3 / k} />
+            <circle r="9" fill="var(--color-bp-400)" />
+          </g>
+        );
+        return (
+          <g transform={`translate(${p.x} ${p.y}) scale(${p.k})`}>
+            {Array.from({ length: 24 }, (_, i) => (
+              <path d={flame(13, i % 2 ? 22 : 36)} transform={`rotate(${i * 15}) translate(0 -112)`} fill="var(--color-bp-400)" fill-opacity="0.35" />
+            ))}
+            <circle r="112" fill="var(--color-surface-2)" />
+            <circle r="112" fill="none" stroke="var(--color-bp-400)" stroke-opacity="0.35" stroke-width="2" />
+            <circle r="84" fill="var(--color-bp-500)" fill-opacity="0.18" />
+            <g opacity={p.o}>
+              {p.face === 'upright' && third(1.1, 0)}
+              {p.face === 'narrow' && (
+                <>
+                  {[-1, 1].map((m) => (
+                    <>
+                      <path d={`M${m * 70} 6 Q${m * 40} -12 ${m * 12} 22 Q${m * 44} 40 ${m * 70} 6 Z`} fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-width="3" stroke-linejoin="round" />
+                      <circle cx={m * 40} cy="16" r="8" fill="var(--color-bp-400)" />
+                    </>
+                  ))}
+                  {third(0.62, -34)}
+                </>
+              )}
+              {p.face === 'glaring' && (
+                <>
+                  {[-1, 1].map((m) => (
+                    <>
+                      <circle cx={m * 36} cy="22" r="23" fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-width="3" />
+                      <circle cx={m * 36} cy="22" r="9" fill="var(--color-bp-400)" />
+                      <path d={`M${m * 74} -22 L${m * 10} 2`} stroke="var(--color-bp-400)" stroke-width="7" stroke-linecap="round" />
+                    </>
+                  ))}
+                  <path d="M0 -76 Q20 -48 0 -20 Q-20 -48 0 -76 Z" fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-width="3" stroke-linejoin="round" />
+                  <circle cy="-48" r="6" fill="var(--color-bp-400)" />
+                </>
+              )}
+              {p.face === 'fanged' && (
+                <>
+                  {[-1, 1].map((m) => (
+                    <>
+                      <circle cx={m * 36} cy="6" r="23" fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-width="3" />
+                      <circle cx={m * 36} cy="6" r="9" fill="var(--color-bp-400)" />
+                      <path d={`M${m * 74} -38 L${m * 10} -14`} stroke="var(--color-bp-400)" stroke-width="7" stroke-linecap="round" />
+                      <path d={`M${m * 30} 48 L${m * 18} 72 L${m * 8} 48 Z`} fill="var(--color-bp-400)" />
+                    </>
+                  ))}
+                  <path d="M-44 48 L44 48" stroke="var(--color-bp-400)" stroke-width="5" stroke-linecap="round" />
+                  {third(0.42, -56)}
+                </>
+              )}
+            </g>
+          </g>
+        );
+      })}
+    </g>
+  )}
+
+  {beast === 'erinyes' && (
+    <g>
+      {feathers.map((f) => (
+        <>
+          <path d={f.d} transform={f.t} fill="var(--color-surface-2)" />
+          <path d={f.d} transform={f.t} fill="var(--color-bp-400)" fill-opacity={f.o * 0.5} stroke="var(--color-bp-400)" stroke-opacity={f.o} stroke-width="1.5" />
+        </>
+      ))}
+      <path d={wingEdge} fill="none" stroke="var(--color-bp-400)" stroke-opacity="0.5" stroke-width="6" stroke-linecap="round" />
+      {snakes.map((d) => (
+        <path d={d} fill="none" stroke="var(--color-bp-400)" stroke-opacity="0.4" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+      ))}
+      <g transform="translate(900 150)">
+        <circle r="118" fill="none" stroke="var(--color-bp-400)" stroke-opacity="0.35" stroke-width="2" />
+        <circle r="84" fill="var(--color-bp-500)" fill-opacity="0.18" />
+        <path d="M0 -70 L74 52 L-74 52 Z" fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-width="3" stroke-linejoin="round" />
+        <circle cy="12" r="24" fill="none" stroke="var(--color-bp-400)" stroke-width="3" />
+        <circle cy="12" r="11" fill="var(--color-bp-400)" />
+        <circle cx="0" cy="-70" r="7" fill="var(--color-bp-400)" />
+        <circle cx="74" cy="52" r="7" fill="var(--color-bp-400)" />
+        <circle cx="-74" cy="52" r="7" fill="var(--color-bp-400)" />
+      </g>
+    </g>
+  )}
+
+  {beast === 'genbu' && (
+    <g>
+      {plates.map((p) => (
+        <polygon points={hex(SHELL.plate - 3)} transform={`translate(${p.x} ${p.y})`} fill={p.fill ? 'var(--color-bp-400)' : 'none'} fill-opacity="0.16" stroke="var(--color-bp-400)" stroke-opacity={p.o} stroke-width="2" />
+      ))}
+      <path d={`M${SHELL.cx - SHELL.rx - 8} ${H} A${SHELL.rx + 8} ${SHELL.ry + 8} 0 0 1 ${SHELL.cx + SHELL.rx + 8} ${H}`} fill="none" stroke="var(--color-bp-400)" stroke-opacity="0.4" stroke-width="5" />
+      <path d={snake} fill="none" stroke="var(--color-surface-2)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" />
+      <path d={snake} fill="none" stroke="var(--color-bp-400)" stroke-opacity="0.5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+      <g transform={snakeHead}>
+        <path d="M-4 -9 L16 -7 L26 0 L16 7 L-4 9 Z" fill="var(--color-bp-400)" stroke="var(--color-bp-400)" stroke-width="4" stroke-linejoin="round" />
+        <path d="M28 0 L40 0 M40 0 L46 -5 M40 0 L46 5" fill="none" stroke="var(--color-bp-400)" stroke-width="2.5" stroke-linecap="round" />
+      </g>
+      <g transform="translate(900 150)">
+        <circle r="84" fill="var(--color-bp-500)" fill-opacity="0.18" />
+        <polygon points={hex(62)} fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-width="3" stroke-linejoin="round" />
+        <polygon points={hex(34)} fill="none" stroke="var(--color-bp-400)" stroke-width="3" stroke-linejoin="round" />
+        <circle r="13" fill="var(--color-bp-400)" />
+      </g>
+    </g>
+  )}
+
+  {beast === 'haetae' && (
+    <g>
+      {mane.map((m) => (
+        <path d={m.d} transform={m.t} fill="none" stroke="var(--color-bp-400)" stroke-opacity={m.o.toFixed(2)} stroke-width={m.w.toFixed(1)} stroke-linecap="round" />
+      ))}
+      <g transform={`translate(${HAETAE_X} 150)`}>
+        <circle r="118" fill="var(--color-surface-2)" />
+        <circle r="118" fill="none" stroke="var(--color-bp-400)" stroke-opacity="0.35" stroke-width="2" />
+        <circle r="84" fill="var(--color-bp-500)" fill-opacity="0.18" />
+        <path d="M-15 -58 Q-8 -98 12 -114 Q10 -84 17 -58 Z" fill="var(--color-bp-400)" stroke="var(--color-bp-400)" stroke-width="3" stroke-linejoin="round" />
+        <path d="M-60 -34 Q0 -74 60 -34" fill="none" stroke="var(--color-bp-400)" stroke-width="7" stroke-linecap="round" />
+        {[-1, 1].map((m) => (
+          <path d={curl(17, 1.4, m)} transform={`translate(${m * 60} -17) rotate(-90)`} fill="none" stroke="var(--color-bp-400)" stroke-width="5" stroke-linecap="round" />
+        ))}
+        <circle cy="18" r="42" fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-width="3" />
+        <circle cy="18" r="24" fill="none" stroke="var(--color-bp-400)" stroke-width="3" />
+        <circle cy="18" r="11" fill="var(--color-bp-400)" />
+      </g>
+    </g>
+  )}
+
+  {beast === 'issitoq' && (
+    <g>
+      {aurora.map((a) => (
+        <path d={a.d} stroke="var(--color-bp-400)" stroke-opacity={a.o.toFixed(2)} stroke-width="3" stroke-linecap="round" />
+      ))}
+      {ice.map((r) => (
+        <path d={r.d} fill="var(--color-bp-400)" fill-opacity={r.o} />
+      ))}
+      {streaks.map((t) => (
+        <path d={t.d} stroke="var(--color-bp-400)" stroke-opacity={t.o.toFixed(2)} stroke-width="4" stroke-linecap="round" stroke-dasharray={t.dash} />
+      ))}
+      <g transform="translate(900 150)">
+        <circle r="118" fill="var(--color-surface-2)" />
+        <circle r="118" fill="none" stroke="var(--color-bp-400)" stroke-opacity="0.35" stroke-width="2" />
+        <circle r="100" fill="var(--color-bp-500)" fill-opacity="0.18" />
+        <circle r="80" fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-width="3" />
+        <circle r="46" fill="none" stroke="var(--color-bp-400)" stroke-width="3" />
+        <path d="M-24 -5 A24 24 0 0 1 24 -5 Z" fill="var(--color-bp-400)" />
+        <path d="M-24 5 A24 24 0 0 0 24 5 Z" fill="var(--color-bp-400)" />
+      </g>
+    </g>
+  )}
+
+  {beast === 'janus' && (
+    <g>
+      {strata.map((l) => (
+        <>
+          <path d={`M0 ${l.y} H${THRESHOLD - 164}`} stroke="var(--color-bp-400)" stroke-opacity={l.o.toFixed(2)} stroke-width="3" stroke-dasharray={l.dash} stroke-linecap="round" />
+          <path d={`M${THRESHOLD + 164} ${l.y + 12} H${W}`} stroke="var(--color-bp-400)" stroke-opacity={(l.o + 0.12).toFixed(2)} stroke-width="5" stroke-linecap="round" />
+        </>
+      ))}
+      <!-- the gate: two pillars and an arch in place of the usual ring -->
+      <path d={`M752 ${H} V132 A148 124 0 0 1 1048 132 V${H}`} fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-opacity="0.5" stroke-width="4" />
+      <path d={`M770 ${H} V134 A130 108 0 0 1 1030 134 V${H}`} fill="none" stroke="var(--color-bp-400)" stroke-opacity="0.3" stroke-width="2" />
+      <path d="M740 132 H782 M1018 132 H1060" stroke="var(--color-bp-400)" stroke-opacity="0.5" stroke-width="5" stroke-linecap="round" />
+      <circle cx={THRESHOLD} cy="158" r="92" fill="var(--color-bp-500)" fill-opacity="0.18" />
+      <path d={`M${THRESHOLD} 8 V${H}`} stroke="var(--color-bp-400)" stroke-opacity="0.5" stroke-width="3" />
+      <!-- one eye cut in two by the threshold: the half before it hollow, the half after it solid -->
+      {[
+        { m: -1, y: 149, fill: 'var(--color-surface-2)' },
+        { m: 1, y: 167, fill: 'var(--color-bp-400)' },
+      ].map((h) => (
+        <g transform={`translate(${THRESHOLD} ${h.y}) scale(${h.m} 1)`}>
+          <path d="M9 -44 Q64 -40 96 0 Q64 40 9 44 Z" fill="var(--color-surface-2)" stroke="var(--color-bp-400)" stroke-width="3" stroke-linejoin="round" />
+          <circle cx="58" cy="0" r="22" fill="none" stroke="var(--color-bp-400)" stroke-width="3" />
+          <circle cx="64" cy="0" r="10" fill={h.fill} stroke="var(--color-bp-400)" stroke-width="3" />
+        </g>
+      ))}
+    </g>
+  )}
+  </g>
+</svg>
+
+<script>
+  import '../lib/shy-eyes';
+
+  // Eyes marked data-banner-eye are set in motion: the pupil rides a globe
+  // behind the lids, follows the pointer while it moves, darts about in
+  // saccades whenever it is still, and blinks. Whatever is marked "back" shifts
+  // the other way, so the eye sits proud of it. Each eye declares its own
+  // geometry in banner units: centre, half width, how far the lid's control
+  // point reaches, and the radius of the globe. Without script, or under
+  // reduced motion, every eye rests as drawn.
+  const MAX_YAW = 1;
+  // In half-widths of the eye: within NEAR a window-aimed eye looks straight
+  // at the pointer, beyond FAR it only mirrors the pointer's place in the window.
+  const NEAR = 1.6;
+  const FAR = 4.5;
+  const REACTION = 220; // ms between the pointer moving and the eye following
+  const BLINK = 220; // ms a blink takes
+  const RESTING_AFTER = 350; // ms without movement before the pointer counts as still
+
+  const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for (const eye of reduced ? [] : document.querySelectorAll<SVGGElement>('[data-banner-eye]')) {
+    const num = (name: string) => Number(eye.dataset[name] ?? 0);
+    const cx = num('cx');
+    const cy = num('cy');
+    const half = num('half');
+    const reach = num('reach');
+    const travel = num('travel');
+    const maxPitch = num('pitch');
+    const lids = eye.querySelectorAll<SVGElement>('[data-eye="lid"]');
+    const pupil = eye.querySelector<SVGElement>('[data-eye="pupil"]')!;
+    const backs = [...eye.querySelectorAll<SVGElement>('[data-eye="back"]')].map(
+      (el) => [el, Number(el.dataset.depth)] as const,
+    );
+
+    let yaw = 0;
+    let pitch = 0;
+    let goalYaw = 0;
+    let goalPitch = 0;
+    let pointerAt = -Infinity;
+    let attending = false;
+    let nextSaccade = 600 + Math.random() * 1500;
+    let blinkAt = 2000 + Math.random() * 4000;
+    let last = 0;
+    let frame = 0;
+
+    // What the eye has seen but not yet reacted to.
+    const seen: { at: number; yaw: number; pitch: number }[] = [];
+
+    addEventListener(
+      'pointermove',
+      (e) => {
+        // Straight at the pointer: a point on a plane touching the front of
+        // the globe, so a pointer over the eye has the pupil directly under it.
+        // The last lid is a drawn one; the first sits in a clip path and has no box.
+        const box = lids[lids.length - 1].getBoundingClientRect();
+        if (!box.width) return;
+        const unit = box.width / (half * 2);
+        const u = (e.clientX - (box.left + box.width / 2)) / unit;
+        const v = (e.clientY - (box.top + box.height / 2)) / unit;
+        let yaw = clamp(Math.atan2(u, travel), -MAX_YAW, MAX_YAW);
+        let pitch = clamp(Math.asin(-v / Math.hypot(u, v, travel)), -maxPitch, maxPitch);
+
+        // Aimed by the window, a far pointer is mirrored instead: the eye is
+        // centred when the pointer is in the middle of the window and hard
+        // over at the edges. As the pointer comes close, the eye turns from
+        // that to looking straight at it.
+        if (eye.dataset.aim === 'window') {
+          const far = clamp((Math.hypot(u, v) / half - NEAR) / (FAR - NEAR), 0, 1);
+          const blend = far * far * (3 - 2 * far);
+          yaw = lerp(yaw, ((e.clientX / innerWidth) * 2 - 1) * MAX_YAW, blend);
+          pitch = lerp(pitch, (1 - (e.clientY / innerHeight) * 2) * maxPitch, blend);
+        }
+        seen.push({ at: performance.now(), yaw, pitch });
+      },
+      { passive: true },
+    );
+
+    const draw = (now: number) => {
+      frame = requestAnimationFrame(draw);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+
+      // The eye reacts a beat late: it turns to where the pointer was.
+      while (seen.length && now - seen[0].at >= REACTION) {
+        const { yaw: y, pitch: p } = seen.shift()!;
+        goalYaw = y;
+        goalPitch = p;
+        pointerAt = now;
+        attending = true;
+      }
+
+      // It watches the pointer only while the pointer moves. When the pointer
+      // rests it loses interest: it blinks, and behind the closed lid turns
+      // away to dart about on its own again.
+      const resting = now - pointerAt > RESTING_AFTER;
+      if (attending && resting) {
+        attending = false;
+        if (now < blinkAt) blinkAt = now;
+        nextSaccade = now + BLINK / 2;
+      }
+      if (resting && now > nextSaccade) {
+        goalYaw = (Math.random() * 2 - 1) * MAX_YAW * 0.85;
+        goalPitch = (Math.random() * 2 - 1) * maxPitch * 0.8;
+        nextSaccade = now + 250 + Math.random() * Math.random() * 2400;
+      }
+      const ease = 1 - Math.exp(-dt * 11);
+      yaw = lerp(yaw, goalYaw, ease);
+      pitch = lerp(pitch, goalPitch, ease);
+
+      let blink = 0;
+      if (now > blinkAt) {
+        const t = (now - blinkAt) / BLINK;
+        if (t >= 1) blinkAt = now + 3000 + Math.random() * 4500;
+        else blink = Math.sin(t * Math.PI);
+      }
+
+      // The pupil's centre is a point on the globe, and it thins as that
+      // point turns away from the viewer.
+      const dx = Math.sin(yaw) * Math.cos(pitch);
+      const dy = -Math.sin(pitch);
+      const dz = Math.cos(yaw) * Math.cos(pitch);
+      const x = dx * travel;
+      const y = dy * travel;
+      const turn = (Math.atan2(dy, dx) * 180) / Math.PI;
+      pupil.setAttribute(
+        'transform',
+        `translate(${(cx + x).toFixed(2)} ${(cy + y).toFixed(2)}) rotate(${turn.toFixed(2)}) scale(${dz.toFixed(4)} 1) rotate(${(-turn).toFixed(2)})`,
+      );
+      for (const [el, depth] of backs) {
+        el.setAttribute('transform', `translate(${(-x * depth).toFixed(2)} ${(-y * depth).toFixed(2)})`);
+      }
+
+      // Both lids close on the centre line.
+      const r = reach * (1 - blink);
+      const almond = `M${cx - half} ${cy} Q${cx} ${(cy - r).toFixed(2)} ${cx + half} ${cy} Q${cx} ${(cy + r).toFixed(2)} ${cx - half} ${cy} Z`;
+      for (const lid of lids) lid.setAttribute('d', almond);
+    };
+
+    // Only spend frames while the eye is on screen.
+    new IntersectionObserver(([entry]) => {
+      cancelAnimationFrame(frame);
+      if (entry.isIntersecting) {
+        last = performance.now();
+        frame = requestAnimationFrame(draw);
+      }
+    }).observe(eye);
+  }
+</script>

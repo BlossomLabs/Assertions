@@ -1,0 +1,79 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import ReleaseBanner from '../../components/ReleaseBanner.astro';
+import { isPublished } from '../../lib/releases';
+
+export async function getStaticPaths() {
+  const releases = await getCollection('releases', isPublished);
+  return releases.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { codename, version, status, date, summary, banner } = entry.data;
+const statusLabel = { released: 'Released', upcoming: 'Upcoming', 'in-progress': 'In progress', planned: 'Planned' };
+---
+
+<Layout title={`${codename} (v${version}) | assertions.eth`} description={summary}>
+  <Nav />
+  <main class="pt-24 pb-20">
+    <div class="h-48 sm:h-64 overflow-hidden border-b border-[var(--color-ink-3)]/20">
+      <ReleaseBanner beast={banner} />
+    </div>
+    <article class="max-w-3xl mx-auto px-6 pt-10">
+      <a href="/releases" class="font-mono text-sm text-[var(--color-bp-400)] hover:underline underline-offset-4">← All releases</a>
+      <header class="mt-6 mb-8">
+        <p class="font-mono text-xs mb-3">
+          <span class="text-[var(--color-bp-400)]">v{version}</span>
+          <span class={status === 'released' ? 'text-[var(--color-ok)] ml-3' : 'text-[var(--color-ink-2)] ml-3'}>
+            {statusLabel[status]}{date ? ` · ${date}` : ''}
+          </span>
+        </p>
+        <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight mb-3">{codename}</h1>
+        <p class="text-[var(--color-ink-2)] leading-relaxed">{summary}</p>
+      </header>
+      <div class="release-prose">
+        <Content />
+      </div>
+    </article>
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  .release-prose h2 {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin: 2rem 0 0.75rem;
+  }
+  .release-prose p,
+  .release-prose li {
+    color: var(--color-ink-2);
+    line-height: 1.7;
+  }
+  .release-prose p {
+    margin: 0 0 1rem;
+  }
+  .release-prose ul {
+    list-style: disc;
+    padding-left: 1.4rem;
+    margin: 0 0 1rem;
+  }
+  .release-prose li {
+    margin-bottom: 0.4rem;
+  }
+  .release-prose a {
+    color: var(--color-bp-400);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .release-prose code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--color-ink);
+  }
+</style>

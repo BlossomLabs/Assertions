@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import ReleaseBanner from '../../components/ReleaseBanner.astro';
+import { isPublished } from '../../lib/releases';
+
+const statusLabel = { released: 'Released', upcoming: 'Upcoming', 'in-progress': 'In progress', planned: 'Planned' };
+const releases = (await getCollection('releases', isPublished)).sort((a, b) => b.data.order - a.data.order);
+---
+
+<Layout
+  title="Releases | assertions.eth"
+  description="Release notes for Assertions. Each release is named after a protecting beast: Argos, Byakko."
+>
+  <Nav />
+  <main class="pt-28 pb-20 px-6">
+    <div class="max-w-4xl mx-auto">
+      <header class="mb-12 animate-fade-up">
+        <p class="font-mono text-sm text-[var(--color-bp-300)] mb-2">Releases</p>
+        <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight mb-3">One guardian per release</h1>
+        <p class="text-[var(--color-ink-2)] max-w-2xl leading-relaxed">
+          Each release takes the name of a protecting beast and ships at new addresses as an opt-in, so
+          anything that references an earlier release keeps working.
+        </p>
+      </header>
+
+      <div class="flex flex-col gap-8">
+        {releases.map((r) => (
+          <a
+            href={`/releases/${r.id}`}
+            class="release-card group block rounded-2xl overflow-hidden bg-[var(--color-surface-2)] border border-[var(--color-ink-3)]/20"
+          >
+            <div class="h-40 sm:h-52 overflow-hidden">
+              <ReleaseBanner beast={r.data.banner} />
+            </div>
+            <div class="p-6 sm:p-8">
+              <div class="flex items-center justify-between gap-3 mb-3 font-mono text-xs">
+                <span class="text-[var(--color-bp-400)]">v{r.data.version}</span>
+                <span class={r.data.status === 'released' ? 'text-[var(--color-ok)]' : 'text-[var(--color-ink-2)]'}>
+                  {statusLabel[r.data.status]}{r.data.date ? ` · ${r.data.date}` : ''}
+                </span>
+              </div>
+              <h2 class="font-mono font-semibold text-2xl mb-2">{r.data.codename}<span class="text-[var(--color-bp-400)] ml-2 text-lg" aria-hidden="true">→</span></h2>
+              <p class="text-[var(--color-ink-2)] leading-relaxed">{r.data.summary}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .release-card {
+    transition: border-color 180ms ease;
+  }
+  .release-card:hover {
+    border-color: var(--color-bp-400);
+  }
+</style>

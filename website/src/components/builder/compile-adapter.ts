@@ -6,7 +6,7 @@ import {
   isAssertionAction,
   resolveCall,
 } from "@evmcrispr/sdk/onchain";
-import type { PublicClient } from "viem";
+import type { Hex, PublicClient } from "viem";
 import { formatUnits } from "viem";
 
 import { buildExprText } from "./assertion-codegen";
@@ -272,6 +272,63 @@ function resolvedText(value: ResolvedValue, scale: number): string {
   }
 }
 
+/** The runtime code of each canonical contract, worked out once. */
+const runtimeCode = new Map<Hex, Promise<Hex>>();
+
+/**
+ * The canonical contracts that have no code on the client's chain, each
+ * with the code it would have: a state override that lets a single
+ * `eth_call` read through them before they are deployed there. The
+ * contracts have no constructor arguments, storage or immutables, so the
+ * code a creation call returns is exactly what a deployment would leave.
+ */
+async function missingContractCode(
+  client: PublicClient,
+): Promise<{ address: Hex; code: Hex }[]> {
+  const [core, operations, collections, expressions] = await Promise.all([
+    import("../../lib/assertions-deployment"),
+    import("../../lib/operations-deployment"),
+    import("../../lib/collections-deployment"),
+    import("../../lib/expressions-deployment"),
+  ]);
+  const contracts: [address: Hex, creation: Hex][] = [
+    [core.ASSERTIONS_ADDRESS as Hex, core.ASSERTIONS_CREATION_BYTECODE as Hex],
+    [
+      operations.OPERATIONS_ADDRESS as Hex,
+      operations.OPERATIONS_CREATION_BYTECODE as Hex,
+    ],
+    [
+      collections.COLLECTIONS_ADDRESS as Hex,
+      collections.COLLECTIONS_CREATION_BYTECODE as Hex,
+    ],
+    [
+      expressions.EXPRESSIONS_ADDRESS as Hex,
+      expressions.EXPRESSIONS_CREATION_BYTECODE as Hex,
+    ],
+  ];
+  const found = await Promise.all(
+    contracts.map(async ([address, creation]) => {
+      const deployed = await client.getCode({ address });
+      if (deployed && deployed !== "0x") return null;
+      let code = runtimeCode.get(address);
+      if (!code) {
+        // A call with no recipient runs the creation code and returns what
+        // it would deploy.
+        code = client
+          .call({ data: creation })
+          .then(({ data }) => (data ?? "0x") as Hex);
+        runtimeCode.set(address, code);
+        code.catch(() => runtimeCode.delete(address));
+      }
+      return { address, code: await code };
+    }),
+  );
+  return found.filter(
+    (entry): entry is { address: Hex; code: Hex } =>
+      entry !== null && entry.code !== "0x",
+  );
+}
+
 /**
  * The current value of a subject expression, read the way the assertion
  * will read it: the expression is compiled inside a probe assertion
@@ -331,11 +388,21 @@ export async function previewSubjectValue(
   const call = resolveCall(operand);
   if (!call) return { kind: "const", text: "" };
   try {
-    const { data } = await client.call({
-      to: call.to,
-      data: call.data,
-      ...(tag.config.account ? { account: tag.config.account } : {}),
-    });
+    const read = (stateOverride?: { address: Hex; code: Hex }[]) =>
+      client.call({
+        to: call.to,
+        data: call.data,
+        ...(tag.config.account ? { account: tag.config.account } : {}),
+        ...(stateOverride?.length ? { stateOverride } : {}),
+      });
+    let { data } = await read();
+    if (!data || data === "0x") {
+      // Nothing came back: the contracts the value is read through may not
+      // be deployed on this chain yet. Read it anyway, with their code put
+      // in place for this one call.
+      const missing = await missingContractCode(client);
+      if (missing.length > 0) ({ data } = await read(missing));
+    }
     const scale = operand.scale ?? 0;
     const value = decodeResolved((data ?? "0x") as `0x${string}`, operand.cat, 0);
     return { kind: "value", text: resolvedText(value, scale) };

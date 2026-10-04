@@ -15,6 +15,7 @@ export function Composer({
   chainId,
   safeContext = false,
   onDroppedChainId,
+  onSkipActions,
 }: {
   scriptState: ReturnType<typeof useScriptState>;
   chainId: number;
@@ -22,6 +23,8 @@ export function Composer({
    *  JSON import tab. */
   safeContext?: boolean;
   onDroppedChainId?: (chainId: number) => void;
+  /** Passed on to the contract form: go on to assertions with no actions. */
+  onSkipActions?: () => void;
 }) {
   const { script, setScript } = scriptState;
   const [rawMode, setRawMode] = useState<Mode>("form");
@@ -92,7 +95,11 @@ export function Composer({
 
       {mode === "form" && (
         <div className="space-y-5">
-          <AbiForm chainId={chainId} onAdd={scriptState.appendWithSets} />
+          <AbiForm
+            chainId={chainId}
+            onAdd={scriptState.appendWithSets}
+            onSkip={onSkipActions}
+          />
           {script.trim() !== "" && (
             <div>
               <p className="text-xs text-[var(--color-ink-3)] mb-1.5">

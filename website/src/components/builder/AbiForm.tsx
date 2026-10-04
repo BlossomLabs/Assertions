@@ -12,6 +12,7 @@ import {
   useContractFunctions,
 } from "./useContractFunctions";
 import { Select } from "../ui/Select";
+import { ButtonIcon } from "./ButtonIcon";
 
 /** Sentinel value for the dropdown option that reveals the manual signature input. */
 const CUSTOM_SIG = "__custom__";
@@ -19,9 +20,12 @@ const CUSTOM_SIG = "__custom__";
 export function AbiForm({
   chainId,
   onAdd,
+  onSkip,
 }: {
   chainId: number;
   onAdd: (line: string, sets: string[]) => void;
+  /** Shown beside the button as "Skip actions" when given. */
+  onSkip?: () => void;
 }) {
   const publicClient = usePublicClient({ chainId: 1 });
   const [addressInput, setAddressInput] = useState("");
@@ -166,6 +170,7 @@ export function AbiForm({
           <Select
             value={selectedSig}
             placeholder="Select a function…"
+            searchable
             options={[
               ...functions.map((fn) => ({
                 value: fn.signature,
@@ -231,14 +236,26 @@ export function AbiForm({
         </div>
       )}
 
-      <button
-        type="button"
-        disabled={!canAdd || adding}
-        onClick={add}
-        className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-      >
-        Add to batch
-      </button>
+      <div className="flex items-center gap-4">
+        <button
+          type="button"
+          disabled={!canAdd || adding}
+          onClick={add}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          <ButtonIcon name="add" />
+          Add to batch
+        </button>
+        {onSkip && (
+          <button
+            type="button"
+            onClick={onSkip}
+            className="text-sm text-[var(--color-bp-300)] hover:underline"
+          >
+            Skip actions <span aria-hidden="true">→</span>
+          </button>
+        )}
+      </div>
     </div>
   );
 }

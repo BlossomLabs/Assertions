@@ -67,7 +67,10 @@ export function buildFinalScript(
   chainId = 1,
 ): string {
   const { loads, body } = hoistLoads(block);
-  const target = addressRef(context.address);
+  // A wallet's address only picks who simulates; the script never names it.
+  const target = addressRef(
+    context.kind === "eoa" ? undefined : context.address,
+  );
   const chainSwitch = switchLine(chainId);
   const prelude = (extra: string[]) =>
     [

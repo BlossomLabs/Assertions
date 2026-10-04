@@ -11,6 +11,7 @@ export function BatchList({
   script,
   onRemove,
   canRemove,
+  highlight,
 }: {
   script: string;
   /** Remove the command starting at this 1-based line. */
@@ -19,6 +20,8 @@ export function BatchList({
    *  `set`/`load` lines are always excluded). Non-removable rows render
    *  dimmed. Defaults to all commands. */
   canRemove?: (span: CommandSpan) => boolean;
+  /** 1-based first line of a command to point out. */
+  highlight?: number | null;
 }) {
   const spans = commandSpans(script);
   return (
@@ -33,7 +36,11 @@ export function BatchList({
         return (
           <div
             key={`${span.start}-${t}`}
-            className="group flex items-start gap-2 px-3 py-1 first:pt-2.5 last:pb-2.5 hover:bg-[var(--color-ink-3)]/10"
+            className={`group flex items-start gap-2 px-3 py-1 first:pt-2.5 last:pb-2.5 ${
+              highlight === span.start
+                ? "bg-[var(--color-bp-500)]/15"
+                : "hover:bg-[var(--color-ink-3)]/10"
+            }`}
           >
             <pre
               className={`flex-1 whitespace-pre-wrap min-h-4 ${

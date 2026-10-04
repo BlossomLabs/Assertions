@@ -19,6 +19,8 @@ import {
   isStale,
 } from "./simulation";
 import { btnPrimaryCls } from "./ui";
+import { ButtonIcon } from "./ButtonIcon";
+import { SimRing } from "./SimRing";
 
 /** One simulation: runs a key (script, executor, chain, mode) on a fork
  *  through the configured tag and remembers which key the result belongs
@@ -47,6 +49,7 @@ export function useSimulation() {
           status: result.success ? "success" : "failure",
           result,
           simulated: key,
+          finishedAt: Date.now(),
         });
         return result;
       } catch (e) {
@@ -57,7 +60,12 @@ export function useSimulation() {
           actions: [],
           error: e instanceof Error ? e.message : String(e),
         };
-        setState({ status: "failure", result, simulated: key });
+        setState({
+          status: "failure",
+          result,
+          simulated: key,
+          finishedAt: Date.now(),
+        });
         return result;
       }
     },
@@ -145,8 +153,8 @@ const short = (address: Address | undefined) =>
 /**
  * The simulate button under a batch listing and the result of its last
  * run: passed/failed, which command failed, the interpreter's error and
- * logs, and a stale marker once the batch, executor, network or mode moves
- * on from what was simulated.
+ * logs. The result goes away once the batch, executor, network or mode
+ * moves on from what was simulated: it no longer describes what is there.
  */
 export function SimulationPanel({
   label,
@@ -182,8 +190,9 @@ export function SimulationPanel({
           type="button"
           disabled={running || !hasScript}
           onClick={() => void simulate(simKey)}
-          className={btnPrimaryCls}
+          className={`inline-flex items-center gap-2 ${btnPrimaryCls}`}
         >
+          <ButtonIcon name="simulate" />
           {running ? "Simulating…" : label}
         </button>
         <span className="text-xs font-mono text-[var(--color-ink-3)]">
@@ -200,32 +209,28 @@ export function SimulationPanel({
         </div>
       )}
 
-      {(state.status === "success" || state.status === "failure") && state.simulated && (
+      {(state.status === "success" || state.status === "failure") &&
+        state.simulated &&
+        !stale && (
         <div
           className={`rounded-lg border p-3 space-y-2 ${
             state.status === "success"
               ? "border-[var(--color-ok)]/40 bg-[var(--color-ok)]/5"
               : "border-[var(--color-err)]/40 bg-[var(--color-err)]/5"
-          } ${stale ? "opacity-60" : ""}`}
+          }`}
         >
-          {stale && (
-            <p className="text-xs text-amber-400">
-              The batch, executor or network changed since this run. Run it
-              again.
-            </p>
-          )}
           <p
-            className={`text-sm font-medium ${
+            className={`flex items-center gap-2 flex-wrap text-sm font-medium ${
               state.status === "success"
                 ? "text-[var(--color-ok)]"
                 : "text-[var(--color-err)]"
             }`}
           >
+            <SimRing state={state.status === "success" ? "pass" : "fail"} size={18} />
             {state.status === "success"
               ? passedSummary(result?.actions ?? [])
               : "Simulation failed"}
             <span className="font-normal text-xs text-[var(--color-ink-3)]">
-              {" "}
               · {MODE_LABEL[state.simulated.mode]} as {short(state.simulated.from)}
             </span>
           </p>

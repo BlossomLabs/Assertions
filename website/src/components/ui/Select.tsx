@@ -55,6 +55,12 @@ export interface SelectProps<V extends string = string> {
   onChange?: (value: V) => void;
   /** Shown when no option matches the value (e.g. an empty value). */
   placeholder?: string;
+  /** Adds a search field to the menu that filters the options as you
+   *  type: a combobox, for long lists such as a contract's functions. */
+  searchable?: boolean;
+  /** Replaces the trigger's label and chevron, for a menu opened from an
+   *  icon button. Give it an `aria-label` too. */
+  trigger?: ReactNode;
   /** form: full-width input look; chip: compact inline tag; pill: accent capsule. */
   variant?: SelectVariant;
   /** Which trigger edge the menu aligns to. */
@@ -101,6 +107,8 @@ export function Select<V extends string = string>({
   defaultValue,
   onChange,
   placeholder = "Select…",
+  searchable = false,
+  trigger,
   variant = "form",
   align = "left",
   name,
@@ -115,6 +123,7 @@ export function Select<V extends string = string>({
   const rootRef = useRef<HTMLSpanElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const [inner, setInner] = useState<V | undefined>(defaultValue);
   const current = value !== undefined ? value : inner;
@@ -124,16 +133,38 @@ export function Select<V extends string = string>({
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
   const typeahead = useRef({ text: "", at: 0 });
 
-  const flat = useMemo(
+  const [query, setQuery] = useState("");
+
+  const everyOption = useMemo(
     () => items.flatMap((item) => (isGroup(item) ? item.options : [item])),
     [items],
   );
-  const selected = flat.find((o) => o.value === current);
+  const selected = everyOption.find((o) => o.value === current);
+
+  // What the search leaves: options whose label contains what was typed,
+  // and the groups that still have any.
+  const shown = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!searchable || !q) return items;
+    const keep = (o: SelectOption<V>) => o.label.toLowerCase().includes(q);
+    return items.flatMap((item): SelectItem<V>[] => {
+      if (!isGroup(item)) return keep(item) ? [item] : [];
+      const options = item.options.filter(keep);
+      return options.length > 0 ? [{ ...item, options }] : [];
+    });
+  }, [items, query, searchable]);
+  const flat = useMemo(
+    () => shown.flatMap((item) => (isGroup(item) ? item.options : [item])),
+    [shown],
+  );
 
   const close = useCallback(() => {
     setOpen(false);
     setPos(null);
-  }, []);
+    setQuery("");
+    // The search field held the focus: hand it back.
+    if (searchable) triggerRef.current?.focus();
+  }, [searchable]);
 
   const openMenu = useCallback(() => {
     if (disabled) return;
@@ -198,6 +229,21 @@ export function Select<V extends string = string>({
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
   }, [open, close]);
+
+  // The menu is opened to search: once it is placed (it is hidden until
+  // then, and a hidden field cannot take the focus) typing goes to it.
+  const placed = pos !== null;
+  useEffect(() => {
+    if (open && placed && searchable) searchRef.current?.focus();
+  }, [open, placed, searchable]);
+
+  // Typing narrows the list: the first match becomes the active one.
+  useEffect(() => {
+    if (!open || !searchable) return;
+    setActive(flat.findIndex((o) => !o.disabled));
+    place();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
   useEffect(() => {
     if (!open || active < 0) return;
@@ -280,6 +326,33 @@ export function Select<V extends string = string>({
     }
   };
 
+  // The search field takes the keys that move through the list and leaves
+  // the rest to typing.
+  const onSearchKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setActive((a) => step(a, 1));
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setActive((a) => step(a, -1));
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (active >= 0 && flat[active] && !flat[active].disabled)
+          choose(flat[active].value);
+        break;
+      case "Escape":
+        e.preventDefault();
+        close();
+        break;
+      case "Tab":
+        close();
+        break;
+    }
+  };
+
   const chevron = CHEVRON_SIZE[variant];
   let index = -1;
   const renderOption = (o: SelectOption<V>) => {
@@ -331,7 +404,34 @@ export function Select<V extends string = string>({
         visibility: pos ? "visible" : "hidden",
       }}
     >
-      {items.map((item, gi) =>
+      {searchable && (
+        <div className="sticky top-0 z-10 -m-1 mb-0 p-1 bg-[var(--color-surface-2)] border-b border-[var(--color-ink-3)]/15">
+          <input
+            ref={searchRef}
+            type="text"
+            role="combobox"
+            aria-expanded="true"
+            aria-controls={listId}
+            aria-autocomplete="list"
+            aria-activedescendant={
+              active >= 0 ? `${listId}-${active}` : undefined
+            }
+            aria-label="Search"
+            placeholder="Search…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={onSearchKeyDown}
+            spellCheck={false}
+            className="w-full px-2 py-1.5 rounded-[7px] bg-[var(--color-surface)] border border-[var(--color-ink-3)]/25 font-mono outline-none placeholder:text-[var(--color-ink-3)] focus:border-[var(--color-bp-400)]"
+          />
+        </div>
+      )}
+      {searchable && flat.length === 0 && (
+        <p className="px-2.5 py-2 font-sans text-[var(--color-ink-3)]">
+          No matches
+        </p>
+      )}
+      {shown.map((item, gi) =>
         isGroup(item) ? (
           <div
             key={item.label ?? gi}
@@ -375,7 +475,8 @@ export function Select<V extends string = string>({
         onClick={() => (open ? close() : openMenu())}
         onKeyDown={onKeyDown}
       >
-        <span className="flex items-center gap-1.5 min-w-0">
+        {trigger}
+        <span className={trigger ? "hidden" : "flex items-center gap-1.5 min-w-0"}>
           {selected?.icon && (
             <span className="shrink-0 inline-flex opacity-80">
               {selected.icon}
@@ -390,7 +491,7 @@ export function Select<V extends string = string>({
           </span>
         </span>
         <svg
-          className="shrink-0 transition-transform group-aria-expanded:rotate-180"
+          className={`shrink-0 transition-transform group-aria-expanded:rotate-180 ${trigger ? "hidden" : ""}`}
           width={chevron}
           height={chevron}
           viewBox="0 0 24 24"

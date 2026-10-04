@@ -76,8 +76,9 @@ const familyAccepts =
 
 const stringCall: Accepts = (node, cat) =>
   node.kind === "call" && (cat === "string" || cat === "unknown");
+/** An address to read something of: one a call returns, or one typed in. */
 const addressCall: Accepts = (node, cat) =>
-  node.kind === "call" && cat === "address";
+  (node.kind === "call" || node.kind === "literal") && cat === "address";
 /** A bytes-like source: a call, or the deployed code of an address. */
 const bytesSource: Accepts = (node, cat) =>
   (node.kind === "call" || node.kind === "codeAt") &&

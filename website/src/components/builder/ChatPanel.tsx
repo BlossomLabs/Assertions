@@ -5,12 +5,14 @@ import {
 } from "@evmcrispr/ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import dappnode from "../../assets/dappnode.svg?url";
 import { Markdown } from "./Markdown";
 import {
   builderAuth,
   builderChatStorage,
   type useBuilderChatAgent,
 } from "./useBuilderChatAgent";
+import { ButtonIcon } from "./ButtonIcon";
 
 type Agent = ReturnType<typeof useBuilderChatAgent>;
 
@@ -188,6 +190,7 @@ export function ChatPanel({
 }) {
   const [input, setInput] = useState("");
   const [keyInput, setKeyInput] = useState("");
+  const [keyOpen, setKeyOpen] = useState(false);
   const [loggingIn, setLoggingIn] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -285,53 +288,81 @@ export function ChatPanel({
             Dappnode Nexus
           </a>
           , a privacy-preserving AI gateway. Log in to auto-provision an API
-          key, or paste one.
+          key.
         </p>
-        {BROKER_URL ? (
-          <BrokerLogin onKey={acceptKey} onError={setLoginError} />
-        ) : (
+        <div className="flex items-stretch gap-2">
+          <div className="flex-1 min-w-0">
+            {BROKER_URL ? (
+              <BrokerLogin onKey={acceptKey} onError={setLoginError} />
+            ) : (
+              <button
+                type="button"
+                disabled={loggingIn}
+                onClick={async () => {
+                  setLoggingIn(true);
+                  setLoginError(null);
+                  try {
+                    acceptKey(await builderAuth.loginWithNexus());
+                  } catch (e) {
+                    setLoginError(e instanceof Error ? e.message : String(e));
+                  } finally {
+                    setLoggingIn(false);
+                  }
+                }}
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 transition-colors"
+              >
+                <img src={dappnode} alt="" className="shrink-0 size-4" />
+                {loggingIn ? "Waiting for login…" : "Login with Dappnode Nexus"}
+              </button>
+            )}
+          </div>
           <button
             type="button"
-            disabled={loggingIn}
-            onClick={async () => {
-              setLoggingIn(true);
-              setLoginError(null);
-              try {
-                acceptKey(await builderAuth.loginWithNexus());
-              } catch (e) {
-                setLoginError(e instanceof Error ? e.message : String(e));
-              } finally {
-                setLoggingIn(false);
-              }
-            }}
-            className="w-full px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 transition-colors"
+            onClick={() => setKeyOpen((open) => !open)}
+            aria-expanded={keyOpen}
+            aria-controls="nexus-key-panel"
+            aria-label="Use your own API key"
+            title="Use your own API key"
+            className={`shrink-0 inline-flex items-center justify-center w-10 rounded-lg border transition-colors ${
+              keyOpen
+                ? "border-[var(--color-bp-400)] text-[var(--color-bp-300)]"
+                : "border-[var(--color-ink-3)]/30 text-[var(--color-ink-2)] hover:border-[var(--color-bp-400)]"
+            }`}
           >
-            {loggingIn ? "Waiting for login…" : "Login with Dappnode Nexus"}
+            <ButtonIcon name="settings" />
           </button>
-        )}
+        </div>
         {loginError && (
           <p className="text-xs text-[var(--color-err)]">{loginError}</p>
         )}
-        <div className="flex gap-2">
-          <input
-            type="password"
-            className="flex-1 px-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/30 focus:border-[var(--color-bp-400)] focus:outline-none font-mono text-xs"
-            placeholder="sk-…"
-            value={keyInput}
-            onChange={(e) => setKeyInput(e.target.value)}
-          />
-          <button
-            type="button"
-            disabled={!keyInput.trim()}
-            onClick={() => {
-              acceptKey(keyInput.trim());
-              setKeyInput("");
-            }}
-            className="px-3 py-2 rounded-lg text-sm border border-[var(--color-ink-3)]/30 hover:border-[var(--color-bp-400)] disabled:opacity-40 transition-colors"
-          >
-            Save key
-          </button>
-        </div>
+        {keyOpen && (
+          <div id="nexus-key-panel" className="space-y-2">
+            <p className="text-xs text-[var(--color-ink-3)] leading-relaxed">
+              Already have a Nexus API key? Paste it here instead of logging in.
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="password"
+                className="flex-1 px-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/30 focus:border-[var(--color-bp-400)] focus:outline-none font-mono text-xs"
+                placeholder="sk-…"
+                value={keyInput}
+                onChange={(e) => setKeyInput(e.target.value)}
+              />
+              <button
+                type="button"
+                disabled={!keyInput.trim()}
+                onClick={() => {
+                  acceptKey(keyInput.trim());
+                  setKeyInput("");
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-[var(--color-ink-3)]/30 hover:border-[var(--color-bp-400)] disabled:opacity-40 transition-colors"
+              >
+                <ButtonIcon name="key" size={14} />
+                Save key
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -401,16 +432,18 @@ export function ChatPanel({
           <button
             type="button"
             onClick={agent.stop}
-            className="px-3 py-2 rounded-lg text-sm border border-[var(--color-err)]/50 text-[var(--color-err)] hover:bg-[var(--color-err)]/10 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-[var(--color-err)]/50 text-[var(--color-err)] hover:bg-[var(--color-err)]/10 transition-colors"
           >
+            <ButtonIcon name="stop" size={14} />
             Stop
           </button>
         ) : (
           <button
             type="submit"
             disabled={!input.trim()}
-            className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 transition-colors"
           >
+            <ButtonIcon name="send" size={14} />
             Send
           </button>
         )}

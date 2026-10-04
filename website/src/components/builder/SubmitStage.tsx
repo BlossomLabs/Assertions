@@ -1,12 +1,50 @@
 import { useEvmlTag } from "@evmcrispr/editor";
 import { useState } from "react";
 import type { Address } from "viem";
-import { useWalletClient } from "wagmi";
+import { useAccount, useWalletClient } from "wagmi";
 
 import { Callout } from "./Callout";
-import { CONTEXT_LABELS, type ExecutionContext } from "./context";
+import {
+  CONTEXT_LABELS,
+  type ExecutionContext,
+  senderMismatch,
+} from "./context";
+import { SimRing } from "./SimRing";
+import { attributeFailure, type SimulationState } from "./simulation";
 import { actionsToTxBuilderBatch } from "./safe-tx-builder";
+import type { EyeState } from "./timeline";
+import { WalletConnect } from "./WalletConnect";
 import { buildFinalScript } from "./wrap";
+import { ButtonIcon } from "./ButtonIcon";
+
+/** What the gate ring's state means for submitting. */
+const GATE_TEXT: Record<EyeState, { lead: string; rest: string; cls: string }> = {
+  asleep: {
+    lead: "Nothing to submit.",
+    rest: "Add actions to the batch in step 1.",
+    cls: "text-[var(--color-ink-2)]",
+  },
+  stale: {
+    lead: "Out of date.",
+    rest: "The protected batch has not passed a simulation in its current form. Simulate it in step 2 before submitting.",
+    cls: "text-amber-700 dark:text-amber-300",
+  },
+  running: {
+    lead: "Simulating…",
+    rest: "Running the protected batch on a fork.",
+    cls: "text-[var(--color-bp-400)]",
+  },
+  pass: {
+    lead: "Passed.",
+    rest: "The protected batch passes a simulation in its current form.",
+    cls: "text-[var(--color-ok)]",
+  },
+  fail: {
+    lead: "Failed.",
+    rest: "The protected batch fails its simulation. See step 2.",
+    cls: "text-[var(--color-err)]",
+  },
+};
 
 const ACTION_LABELS: Record<ExecutionContext["kind"], string> = {
   eoa: "Execute batch",
@@ -27,23 +65,59 @@ function downloadJson(value: unknown, filename: string) {
   URL.revokeObjectURL(url);
 }
 
+const short = (address: Address | undefined) =>
+  address ? `${address.slice(0, 6)}…${address.slice(-4)}` : "the default account";
+
+/**
+ * The gate's sentence. A finished run of the batch as it is now gets a
+ * receipt: when it ran, as which account, and on a failure whether an
+ * action or an assertion stopped it.
+ */
+function gateText(
+  gate: EyeState,
+  simulation: SimulationState | undefined,
+): { lead: string; rest: string } {
+  const base = GATE_TEXT[gate];
+  const ran = simulation?.simulated;
+  if ((gate !== "pass" && gate !== "fail") || !simulation || !ran) return base;
+  const at = simulation.finishedAt
+    ? ` at ${new Date(simulation.finishedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+    : "";
+  const receipt = `Simulated on a fork${at}, as ${short(ran.from)}.`;
+  if (gate === "pass") return { lead: base.lead, rest: receipt };
+  const error = simulation.result?.error;
+  const where = error ? attributeFailure(error, ran.script) : null;
+  return {
+    lead: where ? `Failed at an ${where.kind}.` : base.lead,
+    rest: `${receipt} Nothing would have been executed. See step 2.`,
+  };
+}
+
 export function SubmitStage({
   block,
   context,
   contextAddress,
   chainId,
-  verified,
+  gate,
+  simulation,
 }: {
   block: string;
   context: ExecutionContext;
   /** Context address after ENS resolution. */
   contextAddress: Address | null;
   chainId: number;
-  /** The protected batch passed a simulation in its current form. */
-  verified: boolean;
+  /** The state of the protected batch's simulation: `pass` once the
+   *  batch passed a simulation in its current form. */
+  gate: EyeState;
+  /** That simulation, for the receipt the gate shows. */
+  simulation?: SimulationState;
 }) {
+  const text = gateText(gate, simulation);
   const tag = useEvmlTag();
+  const { address: connected, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
+  // Built for an impersonated account, another wallet connected.
+  const wrongSender = senderMismatch(context, connected, contextAddress);
   const [status, setStatus] = useState<
     | { phase: "idle" }
     | { phase: "running" }
@@ -92,14 +166,15 @@ export function SubmitStage({
 
   return (
     <div className="space-y-4">
-      {!verified && (
-        <Callout tone="warn">
-          <p>
-            The protected batch has not passed a simulation in its current
-            form. Simulate it in step 2 before submitting.
-          </p>
-        </Callout>
-      )}
+      <div className="flex items-center gap-4">
+        <SimRing state={gate} size={40} />
+        <p className="text-sm text-[var(--color-ink-2)]">
+          <span className={`font-semibold ${GATE_TEXT[gate].cls}`}>
+            {text.lead}
+          </span>{" "}
+          {text.rest}
+        </p>
+      </div>
 
       <div>
         <p className="text-xs text-[var(--color-ink-3)] mb-1.5">
@@ -110,25 +185,45 @@ export function SubmitStage({
         </pre>
       </div>
 
+      {wrongSender && contextAddress && (
+        <Callout tone="warn">
+          <p>
+            This batch was built to run as{" "}
+            <code className="font-mono">
+              {contextAddress.slice(0, 6)}…{contextAddress.slice(-4)}
+            </code>
+            , but another wallet is connected. Connect that account to send
+            it, or clear the account you are simulating as in step 1.
+          </p>
+        </Callout>
+      )}
+
       <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          disabled={!walletClient || busy}
-          onClick={execute}
-          className="px-5 py-2.5 rounded-lg text-sm font-semibold bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-        >
-          {status.phase === "running"
-            ? "Confirm in wallet…"
-            : ACTION_LABELS[context.kind]}
-        </button>
+        {/* Sending is the one thing that needs a wallet. */}
+        {isConnected ? (
+          <button
+            type="button"
+            disabled={!walletClient || busy || wrongSender}
+            onClick={execute}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            <ButtonIcon name="run" />
+            {status.phase === "running"
+              ? "Confirm in wallet…"
+              : ACTION_LABELS[context.kind]}
+          </button>
+        ) : (
+          <WalletConnect />
+        )}
 
         {context.kind === "safe" && (
           <button
             type="button"
             disabled={busy}
             onClick={downloadBatch}
-            className="px-5 py-2.5 rounded-lg text-sm font-semibold border border-[var(--color-bp-500)] text-[var(--color-bp-500)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold border border-[var(--color-bp-500)] text-[var(--color-bp-500)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
+            <ButtonIcon name="download" />
             {status.phase === "downloading"
               ? "Preparing JSON…"
               : "Download Transaction Builder JSON"}

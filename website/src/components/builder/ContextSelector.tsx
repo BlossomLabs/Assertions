@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Address } from "viem";
 import { isAddress } from "viem";
-import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 
 import { Callout } from "./Callout";
 import {
@@ -12,6 +12,9 @@ import {
 import { RELEASED_CONTRACTS } from "../deployments/shared";
 import { type ChainSupport, OFFICIAL_CHAIN_IDS } from "./useChainSupport";
 import type { AddressCheck } from "./useContextAddressCheck";
+import { ChainIcon } from "../ui/ChainIcon";
+import { ExecutorIcon } from "../ui/ExecutorIcon";
+import { WalletConnect } from "./WalletConnect";
 import { CHAINS } from "./wagmi";
 
 const inputCls =
@@ -25,7 +28,7 @@ function listNames(names: string[]): string {
 }
 
 const CONTEXT_HELP: Record<ContextKind, string> = {
-  eoa: "Execute the whole block as one atomic batch from your connected wallet (EIP-5792 wallet_sendCalls; uses your wallet's EIP-7702 delegation when available).",
+  eoa: "Execute the whole block as one atomic batch from a wallet (EIP-5792 wallet_sendCalls; uses the wallet's EIP-7702 delegation when available).",
   safe: "Queue the block as a single Safe transaction on the Safe Transaction Service, signed by you as owner or delegate.",
   governor: "Create an OpenZeppelin Governor proposal whose calls are the block's actions.",
   aragonosx: "Create a proposal on one of an Aragon OSx DAO's governance plugins.",
@@ -52,12 +55,14 @@ export function ContextSelector({
   /** Canonical-deployment status for custom chains. */
   chainSupport: ChainSupport;
 }) {
-  const { address, isConnected, chain, chainId: walletChainId } = useAccount();
-  const { connect, connectors, isPending } = useConnect();
-  const { disconnect } = useDisconnect();
+  const { isConnected, chain, chainId: walletChainId } = useAccount();
   const { switchChain, isPending: switching } = useSwitchChain();
+  // A wallet's other-account field stays behind a link until asked for.
+  const [asOtherOpen, setAsOtherOpen] = useState(false);
+  const showAddress =
+    context.kind !== "eoa" || asOtherOpen || !!context.address;
 
-  // "Other…" reveals a chain-id input for chains outside the official list.
+  // The last chip is a chain-id input for chains outside the official list.
   const [otherActive, setOtherActive] = useState(
     () => !OFFICIAL_CHAIN_IDS.has(chainId),
   );
@@ -65,7 +70,6 @@ export function ContextSelector({
     OFFICIAL_CHAIN_IDS.has(chainId) ? "" : String(chainId),
   );
 
-  const injected = connectors.find((c) => c.id === "injected") ?? connectors[0];
   const walletMismatch =
     isConnected && walletChainId !== undefined && walletChainId !== chainId;
   const walletChainName = chain?.name ?? `chain ${walletChainId}`;
@@ -74,39 +78,6 @@ export function ContextSelector({
 
   return (
     <div className="space-y-5">
-      {/* Wallet */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        {isConnected && address ? (
-          <div className="flex items-center gap-3">
-            <span className="size-2 rounded-full bg-[var(--color-ok)]" />
-            <span className="font-mono text-sm">
-              {address.slice(0, 6)}…{address.slice(-4)}
-            </span>
-            {chain && (
-              <span className="text-xs px-2 py-0.5 rounded-full border border-[var(--color-ink-3)]/30 text-[var(--color-ink-2)]">
-                {chain.name}
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={() => disconnect()}
-              className="text-xs text-[var(--color-ink-3)] hover:text-[var(--color-err)] transition-colors"
-            >
-              Disconnect
-            </button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            disabled={isPending || !injected}
-            onClick={() => injected && connect({ connector: injected })}
-            className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 transition-colors"
-          >
-            {isPending ? "Connecting…" : "Connect wallet"}
-          </button>
-        )}
-      </div>
-
       {/* Network the batch targets */}
       <div>
         <label className="block text-sm text-[var(--color-ink-2)] mb-1.5">
@@ -119,46 +90,42 @@ export function ContextSelector({
               type="button"
               onClick={() => {
                 setOtherActive(false);
+                setOtherInput("");
                 onChainChange(c.id);
               }}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                 !customSelected && chainId === c.id
                   ? "border-[var(--color-bp-400)] bg-[var(--color-bp-500)]/10 text-[var(--color-bp-300)]"
                   : "border-[var(--color-ink-3)]/25 text-[var(--color-ink-2)] hover:border-[var(--color-bp-400)]/50"
               }`}
             >
+              <ChainIcon chainId={c.id} name={c.name} size={14} />
               {c.name}
             </button>
           ))}
-          <button
-            type="button"
-            onClick={() => setOtherActive(true)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+          {/* Any other chain, by id: a chip you type into. */}
+          <input
+            aria-label="Another network, by chain ID"
+            className={`w-24 px-3 py-1.5 rounded-full text-xs font-medium border bg-transparent transition-all focus:outline-none focus:border-[var(--color-bp-400)] placeholder:text-[var(--color-ink-2)] ${
               customSelected
                 ? "border-[var(--color-bp-400)] bg-[var(--color-bp-500)]/10 text-[var(--color-bp-300)]"
                 : "border-[var(--color-ink-3)]/25 text-[var(--color-ink-2)] hover:border-[var(--color-bp-400)]/50"
             }`}
-          >
-            Other…
-          </button>
+            placeholder="Chain ID"
+            inputMode="numeric"
+            value={otherInput}
+            onChange={(e) => {
+              const v = e.target.value.trim();
+              setOtherInput(v);
+              const valid = /^\d+$/.test(v);
+              setOtherActive(valid);
+              if (valid) onChainChange(Number(v));
+            }}
+            spellCheck={false}
+          />
         </div>
         {customSelected && (
           <div className="mt-3 space-y-1.5">
-            <label className="block text-sm text-[var(--color-ink-2)] mb-1.5">
-              Chain ID
-            </label>
-            <input
-              className="w-40 px-3 py-1.5 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/30 focus:border-[var(--color-bp-400)] focus:outline-none font-mono text-xs placeholder:text-[var(--color-ink-3)]"
-              placeholder="e.g. 42220"
-              inputMode="numeric"
-              value={otherInput}
-              onChange={(e) => {
-                const v = e.target.value.trim();
-                setOtherInput(v);
-                if (/^\d+$/.test(v)) onChainChange(Number(v));
-              }}
-              spellCheck={false}
-            />
             {chainSupport.state === "checking" && (
               <p className="text-xs text-[var(--color-ink-3)]">
                 Checking the canonical deployments on {chainSupport.chainName}…
@@ -177,7 +144,7 @@ export function ContextSelector({
                   {chainSupport.missing.length === 1 ? "is" : "are"} not
                   deployed on <strong>{chainSupport.chainName}</strong>.{" "}
                   <a
-                    href="/deployments"
+                    href="/docs/contracts/deployments"
                     className="font-medium underline hover:text-red-900 dark:hover:text-red-200"
                   >
                     Deploy the canonical contracts
@@ -240,12 +207,13 @@ export function ContextSelector({
             key={kind}
             type="button"
             onClick={() => onChange({ kind })}
-            className={`px-3 py-2.5 rounded-lg text-sm font-medium border transition-all ${
+            className={`inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium border transition-all ${
               context.kind === kind
                 ? "border-[var(--color-bp-400)] bg-[var(--color-bp-500)]/10 text-[var(--color-bp-300)]"
                 : "border-[var(--color-ink-3)]/25 text-[var(--color-ink-2)] hover:border-[var(--color-bp-400)]/50"
             }`}
           >
+              <ExecutorIcon kind={kind} />
               {CONTEXT_LABELS[kind]}
             </button>
           ))}
@@ -255,100 +223,140 @@ export function ContextSelector({
         </p>
       </div>
 
-      {/* Per-context inputs */}
-      {context.kind !== "eoa" && (
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm text-[var(--color-ink-2)] mb-1.5">
-              {context.kind === "safe"
+      {/* Per-context inputs; a wallet gets its connection and, on request,
+          another account to simulate as */}
+      <div className="space-y-3">
+        <div>
+          <label className="block text-sm text-[var(--color-ink-2)] mb-1.5">
+            {context.kind === "eoa"
+              ? "Wallet"
+              : context.kind === "safe"
                 ? "Safe address"
                 : context.kind === "governor"
                   ? "Governor address"
                   : "DAO address"}
+          </label>
+          {/* A wallet: connect one, or simulate as any other account. */}
+          <div className="flex items-center gap-3 flex-wrap">
+            {context.kind === "eoa" && (
+              <>
+                <WalletConnect />
+                <span className="text-xs text-[var(--color-ink-3)]">or</span>
+              </>
+            )}
+            {showAddress ? (
+              <input
+                className={`${inputCls} flex-1 min-w-48 w-auto`}
+                placeholder={
+                  context.kind === "eoa"
+                    ? "Simulate as 0x… or name.eth"
+                    : "0x… or name.eth"
+                }
+                aria-label={
+                  context.kind === "eoa" ? "Account to simulate as" : undefined
+                }
+                value={context.address ?? ""}
+                onChange={(e) =>
+                  onChange({ ...context, address: e.target.value.trim() })
+                }
+                // Opened from the link: take the cursor, and fold back into
+                // the link if left empty.
+                autoFocus={context.kind === "eoa" && asOtherOpen}
+                onBlur={() => {
+                  if (!context.address) setAsOtherOpen(false);
+                }}
+                spellCheck={false}
+              />
+            ) : (
+              <button
+                type="button"
+                onClick={() => setAsOtherOpen(true)}
+                className="text-sm text-[var(--color-bp-300)] hover:underline"
+              >
+                simulate as another account
+              </button>
+            )}
+          </div>
+          {context.address &&
+            !isAddress(context.address) &&
+            !context.address.includes(".") && (
+              <Callout tone="error">
+                <p>Not a valid address or ENS name.</p>
+              </Callout>
+            )}
+          {check.state !== "ok" &&
+            resolved &&
+            context.address &&
+            !isAddress(context.address) && (
+              <p className="mt-1 text-xs font-mono text-[var(--color-ink-3)]">
+                {resolved}
+              </p>
+            )}
+          {check.state === "resolving" && (
+            <p className="mt-1 text-xs text-[var(--color-ink-3)]">
+              Resolving ENS name…
+            </p>
+          )}
+          {check.state === "checking" && (
+            <p className="mt-1 text-xs text-[var(--color-ink-3)]">
+              Checking the contract…
+            </p>
+          )}
+          {check.state === "ok" && (
+            <p className="mt-1 text-xs">
+              <span className="text-[var(--color-ok)]">{check.message}</span>
+              {resolved && context.address && !isAddress(context.address) && (
+                <span className="font-mono text-[var(--color-ink-3)]">
+                  {" · "}
+                  {resolved}
+                </span>
+              )}
+            </p>
+          )}
+          {check.state === "error" && (
+            <Callout tone="error">
+              <p>{check.message}</p>
+            </Callout>
+          )}
+          {context.kind === "eoa" && (
+            <p className="mt-1.5 text-xs text-[var(--color-ink-3)] leading-relaxed">
+              {context.address
+                ? "Simulations run as this account. Only this account can send the batch."
+                : "Simulations run as the connected wallet, or as another account you choose. Connecting is only needed to send the batch."}
+            </p>
+          )}
+        </div>
+        {context.kind === "aragonosx" && (
+          <div>
+            <label className="block text-sm text-[var(--color-ink-2)] mb-1.5">
+              Governance plugin
             </label>
             <input
               className={inputCls}
-              placeholder="0x… or name.eth"
-              value={context.address ?? ""}
-              onChange={(e) =>
-                onChange({ ...context, address: e.target.value.trim() })
-              }
+              placeholder="token-voting, multisig, or plugin address"
+              value={context.plugin ?? ""}
+              onChange={(e) => onChange({ ...context, plugin: e.target.value.trim() })}
               spellCheck={false}
             />
-            {context.address &&
-              !isAddress(context.address) &&
-              !context.address.includes(".") && (
-                <Callout tone="error">
-                  <p>Not a valid address or ENS name.</p>
-                </Callout>
-              )}
-            {check.state !== "ok" &&
-              resolved &&
-              context.address &&
-              !isAddress(context.address) && (
-                <p className="mt-1 text-xs font-mono text-[var(--color-ink-3)]">
-                  {resolved}
-                </p>
-              )}
-            {check.state === "resolving" && (
-              <p className="mt-1 text-xs text-[var(--color-ink-3)]">
-                Resolving ENS name…
-              </p>
-            )}
-            {check.state === "checking" && (
-              <p className="mt-1 text-xs text-[var(--color-ink-3)]">
-                Checking the contract…
-              </p>
-            )}
-            {check.state === "ok" && (
-              <p className="mt-1 text-xs">
-                <span className="text-[var(--color-ok)]">{check.message}</span>
-                {resolved && context.address && !isAddress(context.address) && (
-                  <span className="font-mono text-[var(--color-ink-3)]">
-                    {" · "}
-                    {resolved}
-                  </span>
-                )}
-              </p>
-            )}
-            {check.state === "error" && (
-              <Callout tone="error">
-                <p>{check.message}</p>
-              </Callout>
-            )}
           </div>
-          {context.kind === "aragonosx" && (
-            <div>
-              <label className="block text-sm text-[var(--color-ink-2)] mb-1.5">
-                Governance plugin
-              </label>
-              <input
-                className={inputCls}
-                placeholder="token-voting, multisig, or plugin address"
-                value={context.plugin ?? ""}
-                onChange={(e) => onChange({ ...context, plugin: e.target.value.trim() })}
-                spellCheck={false}
-              />
-            </div>
-          )}
-          {(context.kind === "governor" || context.kind === "aragonosx") && (
-            <div>
-              <label className="block text-sm text-[var(--color-ink-2)] mb-1.5">
-                Proposal description{" "}
-                <span className="text-[var(--color-ink-3)]">(optional)</span>
-              </label>
-              <input
-                className={inputCls}
-                placeholder="What does this proposal do?"
-                value={context.description ?? ""}
-                onChange={(e) =>
-                  onChange({ ...context, description: e.target.value })
-                }
-              />
-            </div>
-          )}
-        </div>
-      )}
+        )}
+        {(context.kind === "governor" || context.kind === "aragonosx") && (
+          <div>
+            <label className="block text-sm text-[var(--color-ink-2)] mb-1.5">
+              Proposal description{" "}
+              <span className="text-[var(--color-ink-3)]">(optional)</span>
+            </label>
+            <input
+              className={inputCls}
+              placeholder="What does this proposal do?"
+              value={context.description ?? ""}
+              onChange={(e) =>
+                onChange({ ...context, description: e.target.value })
+              }
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

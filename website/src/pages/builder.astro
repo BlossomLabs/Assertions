@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import AssertionBuilder from '../components/builder/AssertionBuilder';
+import ContractIcon from '../components/ContractIcon.astro';
 ---
 
 <Layout
@@ -13,7 +14,8 @@ import AssertionBuilder from '../components/builder/AssertionBuilder';
   <main class="pt-28 pb-20 px-6">
     <div class="max-w-6xl mx-auto">
       <header class="mb-10 animate-fade-up">
-        <p class="font-mono text-sm text-[var(--color-bp-300)] mb-2">
+        <p class="flex items-center gap-2 font-mono text-sm text-[var(--color-bp-300)] mb-2">
+          <ContractIcon name="builder" class="size-4" weight={1.6} />
           Assertion Builder
         </p>
         <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight mb-3">

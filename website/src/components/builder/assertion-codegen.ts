@@ -5,7 +5,10 @@ import {
   type ValueExpr,
   callwrapHelperName,
   inferCategory,
+  argFits,
+  argText,
   resolveLens,
+  settledHops,
 } from "./assertion-model";
 import { ensVarName, evmlArg } from "./useContractFunctions";
 
@@ -71,21 +74,31 @@ async function renderCall(
   const target = renderTarget(expr.target, expr.resolved, ctx);
   if (!target || expr.hops.length === 0) return null;
   let out = target;
-  for (const hop of expr.hops) {
+  for (const hop of settledHops(expr.hops)) {
     if (!hop.fnName) return null;
     if (hop.args.length !== hop.argTypes.length) return null;
     const argVals: string[] = [];
     for (let i = 0; i < hop.args.length; i++) {
       const arg = hop.args[i];
-      if (typeof arg !== "string") {
-        // A nested live call: renders as its own (possibly inline-ABI)
-        // call expression, resolved and spliced in at assertion time.
-        const rendered = await renderCall(arg, ctx);
+      const text = argText(arg);
+      if (text === null) {
+        // A value of the wrong type is not written out: the line stays
+        // incomplete, and the form says which argument is wrong.
+        if (!argFits(arg as ValueExpr, hop.argTypes[i])) return null;
+        // A live value: renders as its own on-chain expression (a call
+        // with its inline ABI, a helper, wrapped arithmetic), resolved and
+        // spliced in at assertion time. It starts a fresh context, so
+        // arithmetic and logic wrap themselves.
+        const rendered = await renderExpr(arg as ValueExpr, {
+          ...ctx,
+          num: false,
+          bool: false,
+        });
         if (!rendered) return null;
         argVals.push(rendered);
       } else {
-        if (!arg.trim()) return null;
-        argVals.push(await evmlArg(hop.argTypes[i], arg, ctx.ensToVar));
+        if (!text.trim()) return null;
+        argVals.push(await evmlArg(hop.argTypes[i], text, ctx.ensToVar));
       }
     }
     // Every hop of an on-chain expression is a `::!` read, which always

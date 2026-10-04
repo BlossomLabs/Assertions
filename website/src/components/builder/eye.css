@@ -1,0 +1,57 @@
+/* The builder's status eye: one of Argos's eyes, cut down from the
+   homepage's ClosingEye. The lids, iris and pupil ease between poses where
+   the browser can animate SVG geometry, and snap where it cannot. */
+.builder-eye {
+  display: inline-block;
+  flex: none;
+  --eye-iris: var(--color-bp-400);
+  --eye-iris-edge: var(--color-bp-600);
+  --eye-rim: var(--color-bp-400);
+  --eye-fold: var(--color-bp-300);
+}
+.builder-eye[data-state='asleep'],
+.builder-eye[data-state='stale'] {
+  --eye-rim: var(--color-ink-3);
+  --eye-fold: var(--color-ink-3);
+}
+.builder-eye[data-state='pass'] {
+  --eye-rim: var(--color-ok);
+}
+.builder-eye[data-state='fail'] {
+  --eye-iris: #f87171;
+  --eye-iris-edge: #991b1b;
+  --eye-rim: var(--color-err);
+}
+.builder-eye svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.builder-eye path {
+  transition: d 0.25s ease, stroke 0.25s ease, opacity 0.25s ease;
+}
+.builder-eye circle {
+  transition: r 0.25s ease;
+}
+.builder-eye[data-state='running'] .builder-eye-iris {
+  animation: builder-eye-scan 1.6s ease-in-out infinite;
+}
+@keyframes builder-eye-scan {
+  0%,
+  100% {
+    transform: translateX(-55px);
+  }
+  50% {
+    transform: translateX(55px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .builder-eye path,
+  .builder-eye circle {
+    transition: none;
+  }
+  .builder-eye[data-state='running'] .builder-eye-iris {
+    animation: none;
+  }
+}

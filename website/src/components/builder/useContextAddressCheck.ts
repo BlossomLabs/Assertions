@@ -133,7 +133,8 @@ async function probe(
  * Resolve the context address input (plain address or ENS name) and verify
  * that it holds the kind of contract the execution path expects — a Safe,
  * a Governor or an Aragon OSx DAO — on the current chain, by calling the
- * view functions that path relies on. RPC hiccups never block input.
+ * view functions that path relies on. An impersonated wallet is only
+ * resolved. RPC hiccups never block input.
  */
 export function useContextAddress(
   chainId: number,
@@ -149,14 +150,20 @@ export function useContextAddress(
     const input = (addressInput ?? "").trim();
     setResolved(null);
     setCheck({ state: "idle" });
-    if (kind === "eoa" || !input) return;
+    if (!input) return;
 
     const isPlain = isAddress(input);
     const isEns = !isPlain && input.includes(".");
     if (!isPlain && !isEns) return; // inline "not a valid address" handles it
 
     let cancelled = false;
-    setCheck({ state: isEns ? "resolving" : "checking" });
+    setCheck(
+      isEns
+        ? { state: "resolving" }
+        : kind === "eoa"
+          ? { state: "idle" }
+          : { state: "checking" },
+    );
     const timer = setTimeout(async () => {
       let address: Address | null = isPlain ? input : null;
       if (isEns) {
@@ -169,6 +176,11 @@ export function useContextAddress(
         setResolved(address);
       } else {
         setResolved(address);
+      }
+      // An impersonated wallet is any account: nothing to probe.
+      if (kind === "eoa") {
+        setCheck({ state: "idle" });
+        return;
       }
       if (!address || !chainClient) return;
       setCheck({ state: "checking" });
@@ -196,4 +208,44 @@ export function useContextAddress(
   }, [chainId, kind, addressInput, mainnetClient, chainClient]);
 
   return { resolved, check };
+}
+
+const GOVERNOR_TIMELOCK_ABI = parseAbi([
+  "function timelock() view returns (address)",
+]);
+
+/** The Governor's timelock, read with the same `timelock()` getter
+ *  governor:propose uses to pick the proposal's executor. Null when the
+ *  context is not a Governor, the getter is absent or fails, or it
+ *  returns the zero address. */
+export function useGovernorTimelock(
+  chainId: number,
+  kind: ContextKind,
+  governor: Address | null,
+): Address | null {
+  const chainClient = useChainClient(chainId);
+  const [timelock, setTimelock] = useState<Address | null>(null);
+
+  useEffect(() => {
+    setTimelock(null);
+    if (kind !== "governor" || !governor || !chainClient) return;
+    let cancelled = false;
+    chainClient
+      .readContract({
+        address: governor,
+        abi: GOVERNOR_TIMELOCK_ABI,
+        functionName: "timelock",
+      })
+      .then((value) => {
+        if (!cancelled) setTimelock(value);
+      })
+      .catch(() => {
+        if (!cancelled) setTimelock(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [chainId, kind, governor, chainClient]);
+
+  return timelock;
 }

@@ -49,6 +49,7 @@ export function ComposeStage({
   executor,
   scriptState,
   simulation,
+  onSkipActions,
 }: {
   context: ExecutionContext;
   onContextChange: (next: ExecutionContext) => void;
@@ -63,6 +64,8 @@ export function ComposeStage({
   scriptState: ReturnType<typeof useScriptState>;
   /** The actions-only simulation. */
   simulation: ReturnType<typeof useSimulation>;
+  /** Opens step 2 with no actions; offered while the batch is empty. */
+  onSkipActions?: () => void;
 }) {
   const { script } = scriptState;
   const hasScript = script.trim().length > 0;
@@ -86,6 +89,7 @@ export function ComposeStage({
           scriptState={scriptState}
           chainId={chainId}
           safeContext={context.kind === "safe"}
+          onSkipActions={onSkipActions}
         />
         {hasScript && (
           <SimulationPanel

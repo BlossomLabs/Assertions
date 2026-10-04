@@ -24,6 +24,8 @@ export interface SimulationState {
   result: SimulationResult | null;
   /** The key of the run the result (or the run in flight) belongs to. */
   simulated: SimKey | null;
+  /** When the result arrived, in epoch milliseconds. */
+  finishedAt?: number;
 }
 
 export const idleSimulation = (): SimulationState => ({

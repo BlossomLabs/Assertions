@@ -40,12 +40,23 @@ export type Category =
  *  nested live argument of another call. */
 export type CallNode = Extract<ValueExpr, { kind: "call" }>;
 
-/** One positional argument of a hop: raw form text, or a nested live call
- *  whose result splices into the calldata at assertion time. */
-export type CallArg = string | CallNode;
+/** One positional argument of a hop: raw form text, or a live value (a
+ *  contract call, a balance, anything the editor composes) read when the
+ *  assertion runs and spliced into the calldata. */
+export type CallArg = string | ValueExpr;
 
-export function isCallArgNode(arg: CallArg | undefined): arg is CallNode {
-  return arg !== undefined && typeof arg !== "string";
+/** The argument as plain text, or null when it is a live value. A literal
+ *  node counts as its text: it is what a live value turns into when it is
+ *  unwrapped down to a typed value. */
+export function argText(arg: CallArg | undefined): string | null {
+  if (arg === undefined) return "";
+  if (typeof arg === "string") return arg;
+  return arg.kind === "literal" ? arg.value : null;
+}
+
+/** The argument is a live value, not plain text. */
+export function isCallArgNode(arg: CallArg | undefined): arg is ValueExpr {
+  return argText(arg) === null;
 }
 
 /** One segment of a `::!` call chain. */
@@ -272,6 +283,54 @@ export function lensLevelOf(type: string): LensLevel | null {
   return null;
 }
 
+/**
+ * Whether a return of these types can end up as a value of the wanted
+ * category: directly, by picking an element or a struct value out of it,
+ * or because it reaches an address, which can always be called again to
+ * get something else.
+ */
+export function canYield(outputs: string[], wanted: Category): boolean {
+  const reaches = (type: string): boolean => {
+    const level = lensLevelOf(type);
+    if (level === null) {
+      const cat = categoryFromAbiType(type);
+      return cat === wanted || cat === "address";
+    }
+    return level.kind === "array"
+      ? reaches(level.base)
+      : level.components.some(reaches);
+  };
+  return outputs.some(reaches);
+}
+
+/**
+ * The ABI type a value ends up as, for telling the user what it is: a
+ * call's picked return, or the value's category. Null while a call has no
+ * function yet or returns several values with none picked.
+ */
+export function producedType(expr: ValueExpr): string | null {
+  if (expr.kind !== "call") {
+    const cat = inferCategory(expr);
+    return cat === "unknown" ? null : cat === "uint" ? "uint256" : cat;
+  }
+  const hops = settledHops(expr.hops);
+  const last = hops[hops.length - 1];
+  if (!last?.fnName) return null;
+  return resolveLens(last)?.terminal ?? null;
+}
+
+/**
+ * Whether a live value can fill an argument of this ABI type. The compiler
+ * splices the value in as it is, so the categories have to agree: an
+ * address where a number is expected is refused here, before it reaches a
+ * script. A value still being filled in (no category yet) is not judged.
+ */
+export function argFits(arg: ValueExpr, type: string): boolean {
+  const wanted = categoryFromAbiType(type);
+  const got = inferCategory(arg);
+  return wanted === "unknown" || got === "unknown" || got === wanted;
+}
+
 export interface LensSelection {
   /** Type reached after applying every parsed entry. */
   terminal: string;
@@ -339,12 +398,24 @@ export function literalCategory(value: string): Category {
 }
 
 /** The comparison category an expression produces. */
+/**
+ * The calls of a chain that count: a chained call added but not chosen yet
+ * (no function) is not part of the value, so the chain reads, compiles and
+ * previews as it did before it was added.
+ */
+export function settledHops(hops: CallHop[]): CallHop[] {
+  let count = hops.length;
+  while (count > 1 && !hops[count - 1].fnName) count--;
+  return hops.slice(0, count);
+}
+
 export function inferCategory(expr: ValueExpr): Category {
   switch (expr.kind) {
     case "literal":
       return literalCategory(expr.value);
     case "call": {
-      const last = expr.hops[expr.hops.length - 1];
+      const hops = settledHops(expr.hops);
+      const last = hops[hops.length - 1];
       if (!last || last.returnTypes.length === 0) return "unknown";
       const lens = resolveLens(last);
       if (lens === null) return "tuple";

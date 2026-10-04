@@ -11,8 +11,7 @@ import {
   type CompileOutcome,
   compileAssertionLine,
 } from "./compile-adapter";
-import { LineIcon } from "./expr/icons";
-import { PRESETS, type PresetKey, seedAssertion } from "./presets";
+import { seedAssertion } from "./presets";
 import type { AssertionPlacement } from "./script-ops";
 import { inputCls, resolveEnsAddress } from "./useContractFunctions";
 import type { useScriptState } from "./useScriptState";
@@ -21,19 +20,8 @@ import {
   focusRingCls,
   labelCls,
   segBtnCls,
-  tileBtnCls,
 } from "./ui";
-
-const PRESET_ICONS: Record<PresetKey, "call" | "balance" | "code" | "block" | "timestamp" | "chainId"> = {
-  call: "call",
-  balance: "balance",
-  codeHash: "code",
-  hasCode: "code",
-  noCode: "code",
-  blockNumber: "block",
-  timestamp: "timestamp",
-  chainId: "chainId",
-};
+import { ButtonIcon } from "./ButtonIcon";
 
 const PLACEMENTS: {
   value: AssertionPlacement;
@@ -94,10 +82,16 @@ function MarkedLine({
 export function AssertionForm({
   scriptState,
   chainId,
+  placement,
+  onPlacementChange,
   suggest,
 }: {
   scriptState: ReturnType<typeof useScriptState>;
   chainId: number;
+  /** Where the check being built will be inserted; the stage owns it so
+   *  the timeline can show the spot. */
+  placement: AssertionPlacement;
+  onPlacementChange: (placement: AssertionPlacement) => void;
   /** Wiring for "Suggest assertions": whether the batch simulated
    *  successfully, whether the assistant is busy, whether the user is
    *  logged in to the chat, and the action that hands the prompt to the
@@ -113,8 +107,7 @@ export function AssertionForm({
   const tag = useEvmlTag();
   const mainnetClient = usePublicClient({ chainId: 1 });
 
-  const [placement, setPlacement] = useState<AssertionPlacement>("post");
-  const [preset, setPreset] = useState<PresetKey>("call");
+  // A new assertion starts as a contract call compared with a value.
   const [assertion, setAssertion] = useState<Assertion>(() =>
     seedAssertion("call", chainId),
   );
@@ -122,9 +115,8 @@ export function AssertionForm({
   const [adding, setAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
 
-  const pick = (key: PresetKey) => {
-    setPreset(key);
-    setAssertion(seedAssertion(key, chainId));
+  const reset = () => {
+    setAssertion(seedAssertion("call", chainId));
     setMessage("");
   };
 
@@ -209,7 +201,7 @@ export function AssertionForm({
       );
       if (!built) return;
       insertAssertion(built.line, placement, built.sets);
-      pick(preset);
+      reset();
       setJustAdded(true);
     } finally {
       setAdding(false);
@@ -241,29 +233,7 @@ export function AssertionForm({
         <span className="min-w-0 text-xs text-[var(--color-ink-3)]">{suggestHint}</span>
       </div>
 
-      {/* Presets */}
-      <div role="group" aria-label="Start from">
-        <span className={labelCls}>Start from</span>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {PRESETS.map((p) => (
-            <button
-              key={p.key}
-              type="button"
-              aria-pressed={preset === p.key}
-              onClick={() => pick(p.key)}
-              title={p.hint}
-              className={`px-3 py-2 text-sm font-medium ${tileBtnCls(preset === p.key)}`}
-            >
-              <span className="flex items-center gap-2">
-                <LineIcon name={PRESET_ICONS[p.key]} />
-                {p.label}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* The expression editor, seeded by the preset */}
+      {/* The expression editor */}
       <div>
         <span className={labelCls}>Build the expression</span>
         <ExpressionAssertionEditor
@@ -271,6 +241,7 @@ export function AssertionForm({
           setAssertion={setAssertion}
           chainId={chainId}
           script={script}
+          placement={placement}
         />
       </div>
 
@@ -298,7 +269,7 @@ export function AssertionForm({
               key={p.value}
               type="button"
               aria-pressed={placement === p.value}
-              onClick={() => setPlacement(p.value)}
+              onClick={() => onPlacementChange(p.value)}
               className={segBtnCls(placement === p.value)}
             >
               {p.label}
@@ -365,8 +336,9 @@ export function AssertionForm({
           type="button"
           disabled={!canAdd}
           onClick={() => void add()}
-          className={btnPrimaryCls}
+          className={`inline-flex items-center gap-2 ${btnPrimaryCls}`}
         >
+          <ButtonIcon name="add" />
           {adding ? "Adding…" : "Add assertion"}
         </button>
         {justAdded && (

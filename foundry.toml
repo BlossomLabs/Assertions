@@ -26,3 +26,22 @@ extra_output = ["storageLayout", "metadata"]
 [lint]
 # The repo formats with `forge fmt`; forge-lint notes are not a gate here.
 lint_on_build = false
+
+# Executor-behaviour tests (`forge test --profile executors`): how real
+# executors (OpenZeppelin Governor, Safe MultiSend) treat a failing
+# assertion. Kept out of the default profile so `forge test` and the
+# proof baselines never see them. Same compiler settings as the default.
+[profile.executors]
+src = "contracts"
+test = "test/executors"
+out = "out"
+cache_path = "cache_forge"
+libs = ["node_modules"]
+remappings = ["forge-std/=node_modules/forge-std/src/", "@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/"]
+solc_version = "0.8.36"
+optimizer = true
+optimizer_runs = 200
+evm_version = "cancun"
+ast = true
+extra_output = ["storageLayout", "metadata"]
+skip = ["contracts/tests/**"]

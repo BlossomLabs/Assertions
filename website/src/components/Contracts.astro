@@ -1,79 +1,87 @@
 ---
 import deployments from '../lib/deployments.json';
+import ContractIcon, { type ContractIconName } from './ContractIcon.astro';
 
 const descriptions: Record<string, { role: string; title: string; description: string; docs: string }> = {
   core: {
-    role: 'Read & enforce',
+    role: 'Main contract',
     title: 'Make every condition count.',
     description: 'Read live state, follow nested data, and build calls from resolved arguments. The core checks ERC-8211 constraints and reverts when they fail.',
-    docs: '/docs/reference/core/',
+    docs: '/docs/contracts/assertions',
   },
   operators: {
-    role: 'Compute',
+    role: 'Expansion pack',
     title: 'Put numbers to your rules.',
-    description: 'Turn live values into precise checks with arithmetic, comparisons, fixed-point math, bytes, strings, and ABI encoding.',
-    docs: '/docs/operators/',
+    description: 'The most used expansion pack. Turn live values into precise checks with arithmetic, comparisons, fixed-point math, bytes, strings, and ABI encoding.',
+    docs: '/docs/contracts/operations',
   },
   collections: {
-    role: 'Iterate',
+    role: 'Expansion pack',
     title: 'Check the whole set.',
-    description: 'Map, filter, sort, and fold arrays. Work with packed words or typed ABI values, and stop early when an any/all check is decided.',
-    docs: '/docs/operators/collections/',
+    description: 'Array management: check every or any element, find, filter, sort, deduplicate, and total the lists that contracts return, in one call instead of one read per element.',
+    docs: '/docs/contracts/collections',
   },
   expressions: {
-    role: 'Compose & reuse',
+    role: 'Expansion pack',
     title: 'Compute once. Reuse it.',
-    description: 'Build typed expression graphs that share results across checks. Each node runs at most once per evaluation, with lazy branches and guarded fallbacks.',
-    docs: '/docs/operators/expressions/',
+    description: 'Define a read or a calculation once and reuse the result across a claim, so repeated work is paid for once. Adds lazy branches and guarded fallbacks.',
+    docs: '/docs/contracts/expressions',
   },
 };
+
+// The main contract takes a full row; the expansion packs share the row below.
+const packs = deployments.contracts.length - 1;
 ---
 
-<section class="px-6 pt-8 pb-16 scroll-mt-24" id="contracts" aria-labelledby="contracts-heading">
+<section class="py-24 px-6 scroll-mt-24" id="contracts" aria-labelledby="contracts-heading">
   <div class="max-w-6xl mx-auto">
-    <div class="border-t border-[var(--color-ink-3)]/20 pt-12 mb-10 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
-      <div>
-        <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-bp-400)] mb-3">The toolkit</p>
-        <h2 id="contracts-heading" class="font-mono font-bold text-2xl sm:text-3xl">Four contracts. Your rules.</h2>
-      </div>
-    </div>
+    <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-bp-400)] mb-3 text-center">The toolkit</p>
+    <h2 id="contracts-heading" class="font-mono font-bold text-3xl sm:text-4xl text-center mb-16">One main contract. Three expansion packs.</h2>
 
-    <div class="grid md:grid-cols-2 gap-4">
+    <div class={`grid gap-4 ${packs === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-3'}`}>
       {deployments.contracts.map((contract, index) => {
         const copy = descriptions[contract.key];
+        const main = contract.key === 'core';
         return (
-          <article class="contract-card min-w-0 flex flex-col p-5 sm:p-7 rounded-2xl bg-[var(--color-surface-2)] border border-[var(--color-ink-3)]/20">
-            <div class="flex items-center justify-between gap-3 mb-6">
-              <span class="font-mono text-xs text-[var(--color-bp-400)]">0{index + 1} / {copy.role}</span>
-              <span class="font-mono text-xs text-[var(--color-ink-2)]">v{contract.version}</span>
+          <article class={`contract-card min-w-0 flex flex-col overflow-hidden rounded-2xl bg-[var(--color-surface-2)] border border-[var(--color-ink-3)]/20 ${main ? 'contract-card-main col-span-full md:flex-row' : ''}`}>
+            <div class={`contract-plate relative shrink-0 flex items-center text-[var(--color-bp-400)] border-[var(--color-ink-3)]/15 h-28 justify-between px-5 sm:px-7 border-b ${main ? 'md:h-auto md:w-64 md:order-last md:justify-center md:px-0 md:border-b-0 md:border-l' : ''}`}>
+              <ContractIcon name={contract.key as ContractIconName} class={`contract-glyph relative size-[4.5rem] ${main ? 'md:hidden' : ''}`} weight={1.75} />
+              {main && <ContractIcon name="core" class="contract-glyph relative hidden md:block size-36" weight={2.5} />}
+              <span class={`contract-index font-mono font-bold leading-none relative text-5xl ${main ? 'md:absolute md:top-5 md:right-7 md:text-3xl' : ''}`} aria-hidden="true">0{index + 1}</span>
             </div>
-            <h3 class="font-mono font-semibold text-2xl mb-2">
-              <a class="contract-link" href={copy.docs}>{contract.name}<span class="text-[var(--color-bp-400)] ml-2 text-lg" aria-hidden="true">↗</span></a>
-            </h3>
-            <p class="font-medium text-lg mb-2">{copy.title}</p>
-            <p class="text-[var(--color-ink-2)] leading-relaxed mb-6">{copy.description}</p>
-            <div class="mt-auto pt-4 border-t border-[var(--color-ink-3)]/15">
-              <div class="flex items-center justify-between gap-3 mb-2">
-                <span class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-ink-2)]">Canonical address</span>
-                <button
-                  type="button"
-                  data-copy-address={contract.address}
-                  aria-label={`Copy ${contract.name} address`}
-                  class="contract-link inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs text-[var(--color-bp-400)] cursor-pointer"
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4"/></svg>
-                  <span data-copy-label>Copy</span>
-                </button>
+            <div class="min-w-0 flex flex-1 flex-col p-5 sm:p-7">
+              <div class="flex items-center justify-between gap-3 mb-3">
+                <span class="font-mono text-xs uppercase tracking-widest text-[var(--color-bp-400)]">{copy.role}</span>
+                <span class="font-mono text-xs text-[var(--color-ink-2)]">v{contract.version}</span>
               </div>
-              <a
-                href={`https://etherscan.io/address/${contract.address}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${contract.name} address on Etherscan: ${contract.address}`}
-                class="contract-link block rounded text-[var(--color-ink-2)]"
-              >
-                <code class="font-mono text-xs break-all select-all">{contract.address}</code>
-              </a>
+              <h3 class={`font-mono font-semibold mb-2 text-2xl ${main ? 'md:text-4xl' : ''}`}>
+                <a class="contract-link" href={copy.docs}>{contract.name}<span class="text-[var(--color-bp-400)] ml-2 text-lg" aria-hidden="true">↗</span></a>
+              </h3>
+              <p class="font-medium text-lg mb-2">{copy.title}</p>
+              <p class={`text-[var(--color-ink-2)] leading-relaxed mb-6 ${main ? 'max-w-xl' : ''}`}>{copy.description}</p>
+              <div class="mt-auto pt-4 border-t border-[var(--color-ink-3)]/15">
+                <div class="flex items-center justify-between gap-3 mb-2">
+                  <span class="font-mono text-[10px] uppercase tracking-widest text-[var(--color-ink-2)]">Canonical address</span>
+                  <button
+                    type="button"
+                    data-copy-address={contract.address}
+                    aria-label={`Copy ${contract.name} address`}
+                    class="contract-link inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs text-[var(--color-bp-400)] cursor-pointer"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4"/></svg>
+                    <span data-copy-label>Copy</span>
+                  </button>
+                </div>
+                <a
+                  href={`https://etherscan.io/address/${contract.address}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${contract.name} address on Etherscan: ${contract.address}`}
+                  class="contract-link block rounded text-[var(--color-ink-2)]"
+                >
+                  <code class="font-mono text-xs break-all select-all">{contract.address}</code>
+                </a>
+              </div>
             </div>
           </article>
         );
@@ -81,18 +89,55 @@ const descriptions: Record<string, { role: string; title: string; description: s
     </div>
 
     <div class="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 text-sm">
-      <a class="contract-link shrink-0 text-[var(--color-bp-400)] font-medium" href="/deployments">Check deployments <span aria-hidden="true">→</span></a>
+      <a class="contract-link shrink-0 text-[var(--color-bp-400)] font-medium" href="/releases/byakko">Byakko release notes <span aria-hidden="true">→</span></a>
     </div>
     <p id="address-copy-status" class="sr-only" role="status" aria-live="polite"></p>
   </div>
 </section>
 
 <style>
+  /* The main contract's card wears the logo's blue in both themes, with white
+     ink; secondary text is a little dimmer. */
+  .contract-card-main {
+    --contract-blue: #1e40af;
+    --color-surface-2: var(--contract-blue);
+    --color-bp-400: #ffffff;
+    --color-ink: #ffffff;
+    --color-ink-2: color-mix(in srgb, #ffffff 82%, var(--contract-blue));
+    --color-ink-3: color-mix(in srgb, #ffffff 55%, var(--contract-blue));
+    color: var(--color-ink);
+  }
   .contract-card {
     transition: border-color 180ms ease;
   }
   .contract-card:hover {
     border-color: var(--color-bp-400);
+  }
+  /* A drafting plate: the icon drawn on dotted grid paper that fades out. */
+  .contract-plate {
+    background: color-mix(in srgb, var(--color-bp-400) 5%, transparent);
+  }
+  .contract-plate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(color-mix(in srgb, var(--color-bp-400) 45%, transparent) 1px, transparent 1.5px) 0 0 / 14px 14px;
+    mask-image: linear-gradient(105deg, #000, transparent 85%);
+  }
+  .contract-index {
+    color: transparent;
+    -webkit-text-stroke: 1px color-mix(in srgb, var(--color-bp-400) 40%, transparent);
+  }
+  .contract-glyph {
+    transition: transform 300ms ease;
+  }
+  .contract-card:hover .contract-glyph {
+    transform: scale(1.04);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .contract-glyph {
+      transition: none;
+    }
   }
   .contract-link:hover {
     color: var(--color-bp-400);

@@ -1,18 +1,22 @@
 ---
-import { Select } from './ui/Select';
+import ArgosFigure from './ArgosFigure.astro';
 
 // The Jan 29, 2026 transaction in which TheDAO's curator multisig moved
 // 71,202 ETH (~$220M) and its remaining DAO tokens in one Safe batch,
 // sealed by nine calls to Assertions v1.0 (assertions.eth). Decoded from
-// calldata; every line below is verbatim from the multisend.
+// calldata; every line below is taken from the multisend.
 const TX =
   '0x462475a38cd8a3b75b2732db28ea21a7addfce059af03ea4f638f461c707bf10';
 
-// The ten state-changing calls of the batch.
+// The ten state-changing calls of the batch. Each is OldMultisig.execute
+// (target, value, data), shown as the call it forwards. The clawback pulls
+// 70,483.24 ETH out of ExtraBalance into OldMultisig, which is what funds
+// the staking transfer and the 1,300 ETH refill; the 719.09 ETH was
+// OldMultisig's own. Every assertion value equals the amount sent, to the wei.
 const moves = [
   { target: 'OldMultisig', fn: 'setDailyLimit', args: 'type(uint256).max' },
   { target: 'OldMultisig', fn: 'send', args: 'SecurityFundSafe, 719.09 ETH' },
-  { target: 'ExtraBalance', fn: 'clawback', args: '' },
+  { target: 'ExtraBalance', fn: 'clawback', args: '', note: '70,483.24 ETH back to OldMultisig' },
   { target: 'OldMultisig', fn: 'send', args: 'StakingWithdrawSafe, 69,183.24 ETH' },
   { target: 'OldMultisig', fn: 'send', args: 'ExtraBalance, 1,300 ETH' },
   { target: 'TheDAO', fn: 'transferFrom', args: 'TheDAO, SecurityFundSafe, 2,960.35 DAO' },
@@ -24,38 +28,53 @@ const moves = [
 
 // The nine assertion calls that seal it, all on assertions.eth (v1.0).
 const asserts = [
-  { fn: 'assertEqBalance', args: 'ExtraBalance, 1300 ether' },
-  { fn: 'assertGeBalance', args: 'StakingWithdrawSafe, 69183.23 ether' },
-  { fn: 'assertEqBalance', args: 'SecurityFundSafe, 719.08 ether' },
-  { fn: 'assertEqBalance', args: 'OldCuratorsSafe, 0' },
-  { fn: 'assertEqCallUint', args: 'TheDAO.balanceOf(SecurityFundSafe), 390,644.97 DAO' },
+  { fn: 'assertEqBalance', args: 'ExtraBalance, 1,300 ETH' },
+  { fn: 'assertGeBalance', args: 'StakingWithdrawSafe, 69,183.24 ETH' },
+  { fn: 'assertEqBalance', args: 'SecurityFundSafe, 719.09 ETH' },
+  { fn: 'assertEqBalance', args: 'CuratorsSafe, 0' },
+  { fn: 'assertEqCallUint', args: 'TheDAO.balanceOf(SecurityFundSafe), 390,644.98 DAO' },
   { fn: 'assertEqCallUint', args: 'TheDAO.balanceOf(TheDAO), 0' },
   { fn: 'assertEqCallUint', args: 'TheDAO.balanceOf(OldMultisig), 0' },
   { fn: 'assertTrue', args: 'TheDAO.allowedRecipients(DGD)' },
   { fn: 'assertTrue', args: 'TheDAO.allowedRecipients(SAI)' },
 ];
 
-// The same nine guards as a single ERC-8211 batch on Assertions v2.0:
-// BALANCE fetchers (token zero = native, else balanceOf) and STATIC_CALL
-// fetchers judged by inline EQ/GTE constraints.
-const assertsV2 = [
-  { fn: 'balance', args: 'ExtraBalance', op: 'EQ', val: '1300 ether' },
-  { fn: 'balance', args: 'StakingWithdrawSafe', op: 'GTE', val: '69,183.23 ether' },
-  { fn: 'balance', args: 'SecurityFundSafe', op: 'EQ', val: '719.08 ether' },
-  { fn: 'balance', args: 'OldCuratorsSafe', op: 'EQ', val: '0' },
-  { fn: 'balance', args: 'TheDAO, SecurityFundSafe', op: 'EQ', val: '390,644.97 DAO' },
-  { fn: 'balance', args: 'TheDAO, TheDAO', op: 'EQ', val: '0' },
-  { fn: 'balance', args: 'TheDAO, OldMultisig', op: 'EQ', val: '0' },
-  { fn: 'call', args: 'TheDAO.allowedRecipients(DGD)', op: 'EQ', val: 'true' },
-  { fn: 'call', args: 'TheDAO.allowedRecipients(SAI)', op: 'EQ', val: 'true' },
-].map((a) => {
-  const label = `${a.fn}(${a.args})`;
-  return {
-    ...a,
-    pad: ' '.repeat(Math.max(1, 38 - label.length)),
-    opPad: ' '.repeat(4 - a.op.length),
-  };
-});
+// The diagram. `at` is the call index (1..19) after which a mark is shown;
+// 20 is the sealed frame. Flow labels are rounded; the captions and the
+// decoded trace carry the figures as executed.
+const flows = [
+  { at: 2, kind: 'eth', d: 'M170,156 C260,156 300,126 386,126', label: '719 ETH', x: 268, y: 131 },
+  { at: 3, kind: 'eth', d: 'M45,262 V212', label: '70,483 ETH', x: 97, y: 238, wide: true },
+  { at: 4, kind: 'eth', d: 'M170,186 C260,186 300,224 386,224', label: '69,183 ETH', x: 300, y: 236, wide: true },
+  { at: 5, kind: 'eth', d: 'M150,206 V256', label: '1,300 ETH', x: 190, y: 238 },
+  { at: 6, kind: 'dao', d: 'M355,58 C420,58 465,70 465,100', label: '2,960 DAO', x: 404, y: 46 },
+  { at: 7, kind: 'dao', d: 'M170,170 C260,170 300,152 386,152', label: '387,685 DAO', x: 300, y: 180 },
+];
+
+const nodes = [
+  { name: 'CuratorsSafe', x: 20, y: 16, h: 46 },
+  { name: 'OldMultisig', x: 20, y: 140, h: 66 },
+  { name: 'TheDAO', x: 205, y: 16, h: 84 },
+  { name: 'SecurityFundSafe', x: 390, y: 104, h: 66 },
+  { name: 'StakingWithdrawSafe', x: 390, y: 200, h: 48 },
+  { name: 'ExtraBalance', x: 20, y: 262, h: 48 },
+];
+
+// One badge per assertion, in the order the batch runs them.
+const badges = [
+  { at: 11, x: 32, y: 299, text: '= 1,300 ETH' },
+  { at: 12, x: 402, y: 237, text: '\u2265 69,183.24 ETH' },
+  { at: 13, x: 402, y: 142, text: '= 719.09 ETH' },
+  { at: 14, x: 32, y: 52, text: '= 0 ETH' },
+  { at: 15, x: 402, y: 159, text: '= 390,644.98 DAO' },
+  { at: 16, x: 217, y: 88, text: '= 0 DAO' },
+  { at: 17, x: 32, y: 195, text: '= 0 DAO' },
+];
+
+const chips = [
+  { name: 'DGD', x: 217, at: 8, checked: 18 },
+  { name: 'SAI', x: 279, at: 9, checked: 19 },
+];
 
 const stats = [
   { value: '71,202 ETH', label: 'moved in one batch' },
@@ -63,26 +82,32 @@ const stats = [
   { value: '9', label: 'assertions sealing it' },
   { value: '0', label: 'partial outcomes possible' },
 ];
+
+const CHIP =
+  'items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-bp-500)]/30 dark:border-[var(--color-bp-400)]/40 bg-[var(--color-bp-500)]/10 dark:bg-[var(--color-bp-400)]/10 hover:border-[var(--color-bp-400)] text-[var(--color-bp-400)] text-sm font-mono transition-colors';
 ---
 
-<section class="py-24 px-6" id="featured">
-  <div class="max-w-6xl mx-auto">
+<section class="featured relative overflow-x-clip py-24 px-6" id="featured">
+  <div class="relative isolate max-w-6xl mx-auto">
     <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-bp-400)] mb-3 text-center">
-      Proposal #42 was a story. This one is not.
+      Case study
     </p>
     <h2 class="font-mono font-bold text-3xl sm:text-4xl text-center mb-4">
       Proven at $220M
     </h2>
-    <p class="text-center text-[var(--color-ink-2)] text-lg mb-16 max-w-2xl mx-auto">
+    <p class="text-center text-[var(--color-ink-2)] text-lg mb-6 lg:mb-16 max-w-2xl mx-auto">
       On Jan 29, 2026, TheDAO&rsquo;s curator multisig moved 71,202 ETH in a
       single transaction, and nine assertions decided whether it landed.
+    </p>
+    <!-- In one column the diagram sits between the heading and the text, so the chip is
+         repeated here to stay with the heading; the copy in the text column shows in two columns. -->
+    <p class="text-center mb-16 lg:hidden">
+      <a href="/releases/argos" class:list={[CHIP, 'inline-flex']}>Assertions 1.0 - Codename: Argos</a>
     </p>
 
     <div class="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
       <div>
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-bp-500)]/30 dark:border-[var(--color-bp-400)]/40 bg-[var(--color-bp-500)]/10 dark:bg-[var(--color-bp-400)]/10 text-[var(--color-bp-400)] text-sm font-mono mb-6">
-          Assertions v1.0 &middot; assertions.eth
-        </div>
+        <a href="/releases/argos" class:list={[CHIP, 'hidden lg:inline-flex mb-6']}>Assertions 1.0 - Codename: Argos</a>
 
         <p class="text-[var(--color-ink-2)] leading-relaxed mb-4">
           The same multisig that curated TheDAO in 2016 batched ten calls
@@ -97,14 +122,12 @@ const stats = [
           exact balances at every destination, drained sources, whitelist flags
           set. Had any single check failed, all nineteen calls would have
           reverted together: no partial transfer, nothing to clean up,
-          try again tomorrow. On v2.0 the same nine guards fit in a single
-          <span class="font-mono text-sm">assertBatch</span> call; flip
-          the trace to compare.
+          try again tomorrow.
         </p>
 
         <div class="grid grid-cols-2 gap-4 mb-8">
           {stats.map((s) => (
-            <div class="p-4 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-ink-3)]/15">
+            <div class="p-4 rounded-xl bg-[var(--color-surface-2)]/55 border border-[var(--color-ink-3)]/15">
               <div class="font-mono font-bold text-2xl text-[var(--color-bp-400)] mb-1">{s.value}</div>
               <div class="text-sm text-[var(--color-ink-2)]">{s.label}</div>
             </div>
@@ -122,6 +145,12 @@ const stats = [
         </a>
       </div>
 
+      <div class="relative order-first lg:order-none">
+      <!-- In one column the diagram comes first, straight under the heading, so the figure above it
+           is only ever behind the heading and never behind the body text.
+           Argos stands on the diagram: the figure's flat base rests on the card's top edge, inside its
+           width. It takes no room of its own, so it is the backdrop of whatever sits above the card. -->
+      <div class="featured-art" aria-hidden="true"><ArgosFigure /></div>
       <div class="rounded-2xl bg-[var(--color-surface-2)] border border-[var(--color-ink-3)]/15 overflow-hidden shadow-lg shadow-[var(--color-bp-900)]/5">
         <div class="flex items-center gap-2 px-4 py-3 border-b border-[var(--color-ink-3)]/15">
           <span class="size-2.5 rounded-full bg-[var(--color-ink-3)]/30"></span>
@@ -130,53 +159,410 @@ const stats = [
           <span class="ml-2 font-mono text-xs text-[var(--color-ink-3)] truncate">
             Tx {TX.slice(0, 10)}&hellip;{TX.slice(-4)} &middot; decoded
           </span>
-          <Select
-            client:load
-            variant="pill"
-            align="right"
-            name="ftx-encoding"
-            defaultValue="v1"
-            aria-label="Assertion encoding"
-            className="ml-auto shrink-0"
-            options={[
-              { value: 'v1', label: 'v1.0 · as executed' },
-              { value: 'v2', label: 'v2.0 · as written today' },
-            ]}
-          />
         </div>
-        <div class="p-4 sm:p-5 overflow-x-auto font-mono text-[13px] leading-[1.7]">
-          <div class="whitespace-nowrap text-[var(--color-ink-3)]">// OldCuratorsSafe (0x47b7&hellip;377D) &rarr; MultiSend, 19 calls</div>
-          {moves.map((m) => (
-            <div class="whitespace-nowrap"><span class="text-[var(--color-ink-3)]">{m.target}.</span><span class="text-[var(--color-bp-400)]">{m.fn}</span><span class="text-[var(--color-ink-2)]">({m.args})</span></div>
-          ))}
-          <div data-ftx-panel="v1" class="mt-3">
-            <div class="whitespace-nowrap text-[var(--color-ink-3)]">// post-conditions: any failure reverts it all</div>
-            {asserts.map((a) => (
-              <div class="whitespace-nowrap"><span class="text-[var(--color-ok)]">&#10003;&nbsp;</span><span class="text-[var(--color-bp-400)]">{a.fn}</span><span class="text-[var(--color-ink-2)]">({a.args})</span></div>
-            ))}
+        <div class="ftx font-mono" data-ftx>
+          <div class="flex items-center gap-3 px-4 sm:px-5 pt-4">
+            <div class="ftx-ticks flex flex-1 items-center gap-[3px]">
+              {Array.from({ length: 19 }, (_, i) => (
+                <button type="button" class:list={['ftx-tick', i >= 10 && 'ftx-tick-check']} data-tick={i + 1} aria-label={`Call ${i + 1} of 19`}><span></span></button>
+              ))}
+            </div>
+            <span class="ftx-count shrink-0 text-xs text-[var(--color-ink-3)] tabular-nums" data-ftx-count>19 / 19</span>
           </div>
-          <div data-ftx-panel="v2" class="mt-3" hidden>
-            <div class="whitespace-nowrap text-[var(--color-ink-3)]">// post-conditions: one ERC-8211 batch, one call</div>
-            <div class="whitespace-nowrap"><span class="text-[var(--color-bp-400)]">assertBatch</span><span class="text-[var(--color-ink-2)]">([</span></div>
-            {assertsV2.map((a) => (
-              <div class="whitespace-pre"><span class="text-[var(--color-ok)]">&nbsp;&nbsp;&#10003; </span><span class="text-[var(--color-bp-400)]">{a.fn}</span><span class="text-[var(--color-ink-2)]">({a.args}){a.pad}</span><span class="text-[var(--color-ok)]">{a.op}</span><span class="text-[var(--color-ink-2)]">{a.opPad}{a.val}</span></div>
+
+          <svg viewBox="0 0 560 404" class="block w-full h-auto" role="img" aria-label="TheDAO's curator multisig claws 70,483 ETH back from ExtraBalance, sends ETH and DAO tokens to three destinations, then nine assertions check every balance and flag.">
+            <defs>
+              <marker id="ftx-head-eth" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" class="ftx-head-eth" /></marker>
+              <marker id="ftx-head-dao" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" class="ftx-head-dao" /></marker>
+            </defs>
+
+            <rect x="6" y="6" width="548" height="392" rx="12" class="ftx-frame ftx-at" data-at="20" />
+
+            <path d="M95,62 V140" class="ftx-exec" />
+            <text x="103" y="98" class="ftx-dim">MultiSend</text>
+            <text x="103" y="111" class="ftx-dim">19 calls</text>
+
+            {flows.map((f) => (
+              <path d={f.d} pathLength="1" data-at={f.at} class:list={['ftx-flow', `ftx-${f.kind}`, f.wide && 'ftx-wide']} marker-end={`url(#ftx-head-${f.kind})`} />
             ))}
-            <div class="whitespace-nowrap text-[var(--color-ink-2)]">])</div>
+            {flows.map((f) => (
+              <text x={f.x} y={f.y} text-anchor="middle" data-at={f.at} class:list={['ftx-at', 'ftx-label', `ftx-${f.kind}-text`]}>{f.label}</text>
+            ))}
+
+            {nodes.map((n) => (
+              <g>
+                <rect x={n.x} y={n.y} width="150" height={n.h} rx="8" class="ftx-node" />
+                <text x={n.x + 12} y={n.y + 20} class="ftx-name">{n.name}</text>
+              </g>
+            ))}
+
+            <g class="ftx-lock">
+              <rect x="148" y="151" width="11" height="9" rx="2" />
+              <path d="M150.5,151 v-3 a3,3 0 0 1 6,0 v3" class="ftx-shackle" />
+            </g>
+            <text x="32" y="177" class="ftx-dim ftx-limit-closed">daily limit 0</text>
+            <text x="32" y="177" class="ftx-limit-open">daily limit max</text>
+
+            {chips.map((c) => (
+              <g>
+                <rect x={c.x} y="46" width="56" height="20" rx="10" class="ftx-chip" />
+                <rect x={c.x} y="46" width="56" height="20" rx="10" class="ftx-chip-on ftx-at" data-at={c.at} />
+                <text x={c.x + 23} y="60" class="ftx-dim">{c.name}</text>
+                <text x={c.x + 23} y="60" class="ftx-chip-text ftx-at" data-at={c.at}>{c.name}</text>
+                <text x={c.x + 9} y="60" class="ftx-badge ftx-at" data-at={c.checked}>&#10003;</text>
+              </g>
+            ))}
+
+            {badges.map((b) => (
+              <text x={b.x} y={b.y} data-at={b.at} class="ftx-badge ftx-at">&#10003; {b.text}</text>
+            ))}
+
+            <rect x="20" y="346" width="520" height="44" rx="8" class="ftx-node ftx-guard" />
+            <text x="34" y="372" class="ftx-name">assertions.eth</text>
+            <text x="318" y="372" text-anchor="end" class="ftx-dim">9 calls</text>
+            {Array.from({ length: 9 }, (_, i) => (
+              <g>
+                <rect x={330 + i * 18} y="362" width="12" height="12" rx="3" class="ftx-pip" />
+                <rect x={330 + i * 18} y="362" width="12" height="12" rx="3" class="ftx-pip-on ftx-at" data-at={11 + i} />
+              </g>
+            ))}
+          </svg>
+
+          <div class="ftx-caps px-4 sm:px-5 text-[12px] leading-[1.6] min-h-[2.4rem]" aria-live="polite">
+            <div class="ftx-cap text-[var(--color-ink-3)]" data-cap="0">CuratorsSafe (0x47b7&hellip;377D) &rarr; MultiSend, 19 calls</div>
+            {moves.map((m, i) => (
+              <div class="ftx-cap" data-cap={i + 1}><span class="text-[var(--color-ink-3)]">{m.target}.</span><span class="text-[var(--color-bp-400)]">{m.fn}</span><span class="text-[var(--color-ink-2)]">({m.args})</span>{m.note && <span class="text-[var(--color-ink-3)]"> // {m.note}</span>}</div>
+            ))}
+            {asserts.map((a, i) => (
+              <div class="ftx-cap" data-cap={i + 11}><span class="text-[var(--color-ok)]">&#10003;&nbsp;</span><span class="text-[var(--color-bp-400)]">{a.fn}</span><span class="text-[var(--color-ink-2)]">({a.args})</span></div>
+            ))}
+            <div class="ftx-cap is-current text-[var(--color-ink-2)]" data-cap="20"><span class="text-[var(--color-ok)]">Sealed.</span> Every call landed, because every check held.</div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 sm:px-5 py-4 text-xs">
+            <button type="button" class="ftx-btn" data-ftx-toggle>Restart</button>
+            <button type="button" class="ftx-btn" data-ftx-prev aria-label="Previous call">&lt;</button>
+            <button type="button" class="ftx-btn" data-ftx-next aria-label="Next call">&gt;</button>
+            <span class="ml-auto flex items-center gap-3 text-[var(--color-ink-3)]">
+              <span class="flex items-center gap-1.5"><i class="ftx-key ftx-key-eth"></i>ETH</span>
+              <span class="flex items-center gap-1.5"><i class="ftx-key ftx-key-dao"></i>DAO</span>
+            </span>
           </div>
         </div>
+
+      </div>
       </div>
     </div>
   </div>
 </section>
 
+<style>
+  /* Argos stays clear of the copy. On wide screens he looks in from the right
+     of the heading, his shoulders going down behind the trace; where the
+     columns stack he is only a faint mark behind the heading. */
+  .ftx {
+    --ftx-eth: var(--color-bp-400);
+    --ftx-dao: #d97706;
+  }
+  :global(.dark) .ftx {
+    --ftx-dao: #fbbf24;
+  }
+  .ftx svg text {
+    font-size: 10.5px;
+  }
+  .ftx-node {
+    fill: var(--color-surface);
+    stroke: color-mix(in srgb, var(--color-ink-3) 35%, transparent);
+  }
+  .ftx-guard {
+    stroke: color-mix(in srgb, var(--color-ok) 55%, transparent);
+  }
+  .ftx svg .ftx-name {
+    font-size: 11.5px;
+    font-weight: 600;
+    fill: var(--color-ink);
+  }
+  .ftx-dim {
+    fill: var(--color-ink-3);
+  }
+  .ftx-exec {
+    fill: none;
+    stroke: var(--color-ink-3);
+    stroke-dasharray: 3 4;
+  }
+  .ftx-flow {
+    fill: none;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.6s ease, opacity 0.2s;
+  }
+  .ftx-wide {
+    stroke-width: 5;
+  }
+  .ftx-eth {
+    stroke: var(--ftx-eth);
+  }
+  .ftx-dao {
+    stroke: var(--ftx-dao);
+  }
+  .ftx-head-eth,
+  .ftx-eth-text {
+    fill: var(--ftx-eth);
+  }
+  .ftx-head-dao,
+  .ftx-dao-text {
+    fill: var(--ftx-dao);
+  }
+  .ftx-label {
+    paint-order: stroke;
+    stroke: var(--color-surface-2);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
+  .ftx-at {
+    transition: opacity 0.3s;
+  }
+  .ftx-badge,
+  .ftx-pip-on {
+    fill: var(--color-ok);
+  }
+  .ftx-frame {
+    fill: none;
+    stroke: var(--color-ok);
+    stroke-width: 1.5;
+  }
+  .ftx-chip {
+    fill: none;
+    stroke: var(--color-ink-3);
+    stroke-dasharray: 2 3;
+  }
+  .ftx-chip-on {
+    fill: var(--color-surface-2);
+    stroke: var(--ftx-eth);
+  }
+  .ftx-chip-text {
+    fill: var(--ftx-eth);
+  }
+  .ftx-pip {
+    fill: color-mix(in srgb, var(--color-ink-3) 25%, transparent);
+  }
+  .ftx-lock rect {
+    fill: var(--color-ink-3);
+  }
+  .ftx-shackle {
+    fill: none;
+    stroke: var(--color-ink-3);
+    stroke-width: 1.5;
+    transform-box: fill-box;
+    transform-origin: 100% 100%;
+    transition: transform 0.3s;
+  }
+  .ftx-limit-open {
+    fill: var(--ftx-eth);
+    opacity: 0;
+  }
+  .ftx[data-unlocked] .ftx-shackle {
+    transform: rotate(40deg);
+  }
+  .ftx[data-unlocked] .ftx-limit-open {
+    opacity: 1;
+  }
+  .ftx[data-unlocked] .ftx-limit-closed {
+    opacity: 0;
+  }
+
+  /* Without the script every mark is shown: the page reads as the sealed
+     frame. The script marks the root ready and then hides what the current
+     call has not reached. */
+  .ftx[data-ready] .ftx-at:not(.on) {
+    opacity: 0;
+  }
+  .ftx[data-ready] .ftx-flow:not(.on) {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+
+  .ftx-tick {
+    flex: 1;
+    padding: 0.5rem 0;
+    cursor: pointer;
+  }
+  .ftx-tick span {
+    display: block;
+    height: 0.25rem;
+    border-radius: 9999px;
+    background: var(--ftx-eth);
+    transition: opacity 0.2s;
+  }
+  .ftx-tick-check span {
+    background: var(--color-ok);
+  }
+  .ftx-tick[data-tick='11'] {
+    margin-left: 0.5rem;
+  }
+  .ftx[data-ready] .ftx-tick:not(.on) span {
+    opacity: 0.2;
+  }
+  .ftx-cap {
+    display: none;
+  }
+  .ftx-cap.is-current {
+    display: block;
+  }
+  .ftx-btn {
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in srgb, var(--color-ink-3) 30%, transparent);
+    color: var(--color-ink-2);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .ftx-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .ftx-btn:hover:not(:disabled) {
+    border-color: var(--color-bp-400);
+    color: var(--color-bp-400);
+  }
+  .ftx-key {
+    width: 0.875rem;
+    height: 0.1875rem;
+    border-radius: 9999px;
+    background: var(--ftx-eth);
+  }
+  .ftx-key-dao {
+    background: var(--ftx-dao);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ftx * {
+      transition: none !important;
+    }
+  }
+
+  /* The figure is drawn in an 800 by 450 box with a flat base, and the body
+     itself spans only the middle of that box (from about 14.75% to 86.25% of
+     its width). The box hangs upward from the card's top edge, sized and
+     shifted so the body's base covers the card's top edge exactly and no
+     part of it stands outside the card: 139% of the card wide, pushed 19.5%
+     past its right side. The empty margins of the box are what overhang.
+     It paints behind the section's text and its see-through stat cards.
+
+     The figure is taller than the heading above the grid, so the section's
+     top padding grows with it and the head stays inside this section. The
+     card is the content width in one column, and half of it less the grid
+     gap in two; the 11rem is less than the heading block is tall, which
+     leaves a margin. */
+  .featured {
+    --card-w: min(100vw - 3rem, 72rem);
+    padding-top: max(6rem, calc(var(--card-w) * 1.39 * 450 / 800 - 11rem));
+  }
+  .featured-art {
+    position: absolute;
+    bottom: 100%;
+    right: -19.5%;
+    z-index: -1;
+    width: 139%;
+    aspect-ratio: 800 / 450;
+    /* The same strength as the hero's backdrop, in both themes. */
+    opacity: 0.22;
+    pointer-events: none;
+  }
+  @media (min-width: 64rem) {
+    .featured {
+      --card-w: calc((min(100vw - 3rem, 72rem) - 3.5rem) / 2);
+    }
+  }
+</style>
+
 <script>
-  // The encoding pill is a React island; it reports picks through the DOM
-  // event the shared Select dispatches, and the panels follow.
-  const section = document.getElementById('featured');
-  section?.addEventListener('ui-select-change', (e) => {
-    const key = (e as CustomEvent<{ value: string }>).detail.value;
-    section.querySelectorAll<HTMLElement>('[data-ftx-panel]').forEach((p) => {
-      p.hidden = p.dataset.ftxPanel !== key;
+  const root = document.querySelector<HTMLElement>('#featured [data-ftx]');
+  if (root) {
+    const MOVES = 10;
+    const CALLS = 19;
+    const SEALED = 20;
+    const marks = [...root.querySelectorAll<HTMLElement | SVGElement>('[data-at]')];
+    const ticks = [...root.querySelectorAll<HTMLElement>('[data-tick]')];
+    const caps = [...root.querySelectorAll<HTMLElement>('[data-cap]')];
+    const count = root.querySelector<HTMLElement>('[data-ftx-count]');
+    const toggle = root.querySelector<HTMLButtonElement>('[data-ftx-toggle]');
+    const prev = root.querySelector<HTMLButtonElement>('[data-ftx-prev]');
+    const next = root.querySelector<HTMLButtonElement>('[data-ftx-next]');
+    let step = SEALED;
+    let playing = false;
+    let timer = 0;
+    let seen: IntersectionObserver | undefined;
+
+    const render = () => {
+      const done = Math.min(step, CALLS);
+      marks.forEach((el) => el.classList.toggle('on', step >= Number(el.dataset.at)));
+      ticks.forEach((el) => el.classList.toggle('on', Number(el.dataset.tick) <= done));
+      root.toggleAttribute('data-unlocked', step >= 1 && step < MOVES);
+      caps.forEach((el) => el.classList.toggle('is-current', el.dataset.cap === String(step)));
+      if (count) count.textContent = `${done} / ${CALLS}`;
+      if (toggle) toggle.textContent = playing ? 'Pause' : step >= SEALED ? 'Restart' : 'Continue';
+      if (prev) {
+        prev.hidden = playing;
+        prev.disabled = step <= 0;
+      }
+      if (next) {
+        next.hidden = playing;
+        next.disabled = step >= SEALED;
+      }
+    };
+    // Any interaction also cancels the autoplay still waiting for the scroll.
+    const pause = () => {
+      seen?.disconnect();
+      window.clearTimeout(timer);
+      playing = false;
+    };
+    const advance = () => {
+      step += 1;
+      playing = step < SEALED;
+      render();
+      if (playing) timer = window.setTimeout(advance, step > MOVES && step < CALLS ? 380 : 850);
+    };
+    // From the sealed frame the button reads Restart, and playing starts over.
+    const play = () => {
+      pause();
+      if (step >= SEALED) step = 0;
+      playing = true;
+      render();
+      timer = window.setTimeout(advance, 700);
+    };
+    const show = (to: number) => {
+      pause();
+      step = Math.max(0, Math.min(SEALED, to));
+      render();
+    };
+
+    ticks.forEach((el) => el.addEventListener('click', () => show(Number(el.dataset.tick))));
+    prev?.addEventListener('click', () => show(step - 1));
+    next?.addEventListener('click', () => show(step + 1));
+    toggle?.addEventListener('click', () => {
+      if (playing) {
+        pause();
+        render();
+      } else play();
     });
-  });
+
+    // Autoplay runs once per page load. The flag lives on the element, so a
+    // second run of this script on the same page (a dev hot reload) cannot
+    // start the animation again by itself.
+    const autoplayed = 'ready' in root.dataset;
+    root.dataset.ready = '';
+    if (!autoplayed && matchMedia('(prefers-reduced-motion: no-preference)').matches && 'IntersectionObserver' in window) {
+      step = 0;
+      seen = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) play();
+        },
+        { threshold: 0.5 },
+      );
+      seen.observe(root);
+    }
+    render();
+  }
 </script>

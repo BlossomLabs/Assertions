@@ -1,6 +1,14 @@
+---
+import ReleaseBanner from './ReleaseBanner.astro';
+import ContractIcon from './ContractIcon.astro';
+---
+
 <section class="relative pt-32 pb-16 sm:pb-20 px-6 overflow-hidden">
   <div class="absolute inset-0 pointer-events-none">
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[var(--color-bp-500)]/5 blur-[120px]"></div>
+    <div class="hero-art opacity-[0.22]" aria-hidden="true">
+      <ReleaseBanner beast="byakko" bare aim="window" />
+    </div>
   </div>
 
   <div class="relative max-w-4xl mx-auto text-center">
@@ -12,7 +20,7 @@
 
     <h1 class="animate-fade-up delay-1 font-mono font-bold text-3xl sm:text-4xl md:text-5xl tracking-tight leading-[1.1] mb-6">
       Between signing and execution,<br />
-      <span class="text-[var(--color-bp-400)]">many things may change.</span>
+      <span class="text-[var(--color-bp-400)]">the chain is not the same.</span>
     </h1>
 
     <p class="animate-fade-up delay-2 text-lg sm:text-xl text-[var(--color-ink-2)] max-w-2xl mx-auto mb-4 leading-relaxed">
@@ -29,17 +37,27 @@
         href="/builder"
         class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] transition-colors shadow-lg shadow-[var(--color-primary)]/20"
       >
+        <ContractIcon name="builder" class="size-5" weight={2} />
         Build an assertion
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
-      </a>
-      <a
-        href="#story"
-        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold border border-[var(--color-ink-3)]/30 hover:border-[var(--color-bp-400)] hover:bg-[var(--color-bp-500)]/5 transition-all"
-      >
-        Read the story
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
       </a>
     </div>
 
   </div>
 </section>
+
+<style>
+  /* The whole banner, scaled with the viewport and hung an eighth of its own
+     width off the right edge: the eye stays in the top right corner and the
+     stripes always reach the left edge, at any width. */
+  .hero-art {
+    position: absolute;
+    top: 2rem;
+    right: 0;
+    width: max(900px, 125vw);
+    aspect-ratio: 4 / 1;
+    transform: translateX(12.5%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 25%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 25%, transparent 100%);
+  }
+</style>

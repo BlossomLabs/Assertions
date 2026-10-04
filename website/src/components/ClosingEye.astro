@@ -1,0 +1,194 @@
+---
+// One of Argos's eyes, lifted off the vase and given a globe behind the lids.
+// The iris is a disc on that globe: as the gaze turns it slides across the
+// opening and foreshortens, the lids ride with it, and the whole plaque tilts
+// in perspective. It follows the pointer, wanders in saccades when left alone,
+// and blinks. The markup below is the resting pose, so it stands still without
+// script or under reduced motion.
+const striae = Array.from({ length: 28 }, (_, i) => {
+  const a = (i / 28) * Math.PI * 2;
+  const r0 = i % 2 ? 19 : 17;
+  return `M${(Math.cos(a) * r0).toFixed(1)} ${(Math.sin(a) * r0).toFixed(1)} L${(Math.cos(a) * 32).toFixed(1)} ${(Math.sin(a) * 32).toFixed(1)}`;
+}).join(' ');
+---
+
+<div class="closing-eye" aria-hidden="true" data-closing-eye>
+  <svg viewBox="-160 -112 320 200" class="closing-eye-plaque">
+    <defs>
+      <clipPath id="closing-eye-opening"><path data-eye="opening" d="M-125 0 Q0 -95 125 0 Q0 65 -125 0 Z" /></clipPath>
+      <radialGradient id="closing-eye-globe" cx="42%" cy="34%" r="75%">
+        <stop offset="0" stop-color="#ffffff" />
+        <stop offset="0.55" stop-color="var(--color-bp-50)" />
+        <stop offset="1" stop-color="var(--color-bp-300)" />
+      </radialGradient>
+      <radialGradient id="closing-eye-iris">
+        <stop offset="0.35" stop-color="var(--color-bp-400)" />
+        <stop offset="1" stop-color="var(--color-bp-600)" />
+      </radialGradient>
+    </defs>
+
+    <!-- lid folds echoing the eye, as incised on the vase -->
+    <g fill="none" stroke="var(--color-bp-300)" stroke-linecap="round">
+      <path data-eye="fold-outer" d="M-150 -4 Q0 -146 150 -4" stroke-width="2.2" stroke-opacity="0.45" />
+      <path data-eye="fold-inner" d="M-138 -4 Q0 -121 138 -4" stroke-width="2.8" />
+      <path data-eye="fold-lower" d="M-130 20 Q0 104 130 20" stroke-width="2.2" stroke-opacity="0.6" />
+    </g>
+
+    <g clip-path="url(#closing-eye-opening)">
+      <rect x="-160" y="-112" width="320" height="200" fill="url(#closing-eye-globe)" />
+      <g data-eye="iris">
+        <circle r="34" fill="url(#closing-eye-iris)" />
+        <path d={striae} stroke="var(--color-bp-950)" stroke-opacity="0.35" stroke-width="1.2" stroke-linecap="round" />
+        <circle r="34" fill="none" stroke="var(--color-bp-950)" stroke-width="3" />
+        <circle r="15" fill="var(--color-bp-950)" />
+        <circle r="22" fill="none" stroke="var(--color-bp-200)" stroke-width="1.8" />
+      </g>
+      <!-- the light does not turn with the eye -->
+      <g data-eye="glint" fill="#ffffff">
+        <ellipse cx="-11" cy="-13" rx="7" ry="5" opacity="0.85" transform="rotate(-30 -11 -13)" />
+        <circle cx="10" cy="11" r="2.5" opacity="0.45" />
+      </g>
+      <!-- shadow cast by the upper lid -->
+      <path data-eye="shade" d="M-125 0 Q0 -95 125 0" fill="none" stroke="var(--color-bp-950)" stroke-opacity="0.22" stroke-width="22" />
+    </g>
+
+    <path data-eye="rim" d="M-125 0 Q0 -95 125 0 Q0 65 -125 0 Z" fill="none" stroke="var(--color-bp-400)" stroke-width="2" stroke-linejoin="round" />
+    <path data-eye="lash" d="M-125 0 Q0 -95 125 0" fill="none" stroke="var(--color-bp-950)" stroke-width="7" stroke-linecap="round" />
+  </svg>
+</div>
+
+<style>
+  .closing-eye {
+    width: min(16rem, 62vw);
+    margin: 0 auto 2.5rem;
+    perspective: 520px;
+  }
+  .closing-eye-plaque {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    will-change: transform;
+  }
+  :global(:root[data-theme='light']) .closing-eye-plaque {
+    filter: drop-shadow(0 6px 14px rgb(8 13 24 / 0.18));
+  }
+</style>
+
+<script>
+  const TRAVEL = 96; // radius of the globe the iris rides on
+  const MAX_YAW = 0.85;
+  const MAX_PITCH = 0.4;
+
+  const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-closing-eye]')) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) break;
+
+    const svg = root.querySelector('svg')!;
+    const part = (name: string) => svg.querySelector<SVGElement>(`[data-eye="${name}"]`)!;
+    const opening = part('opening');
+    const rim = part('rim');
+    const lash = part('lash');
+    const shade = part('shade');
+    const foldOuter = part('fold-outer');
+    const foldInner = part('fold-inner');
+    const foldLower = part('fold-lower');
+    const iris = part('iris');
+    const glint = part('glint');
+
+    let yaw = 0;
+    let pitch = 0;
+    let goalYaw = 0;
+    let goalPitch = 0;
+    let pointerAt = -Infinity;
+    let nextSaccade = 0;
+    let blinkAt = 2200;
+    let last = 0;
+    let frame = 0;
+
+    addEventListener(
+      'pointermove',
+      (e) => {
+        const box = svg.getBoundingClientRect();
+        const dx = e.clientX - (box.left + box.width / 2);
+        const dy = e.clientY - (box.top + box.height / 2);
+        // Aim at the pointer as a point on a plane touching the front of the
+        // globe, so a pointer over the eye has the pupil directly under it.
+        const unit = box.width / 320;
+        const u = dx / unit;
+        const v = dy / unit;
+        goalYaw = clamp(Math.atan2(u, TRAVEL), -MAX_YAW, MAX_YAW);
+        goalPitch = clamp(Math.asin(-v / Math.hypot(u, v, TRAVEL)), -MAX_PITCH, MAX_PITCH);
+        pointerAt = performance.now();
+      },
+      { passive: true },
+    );
+
+    const draw = (now: number) => {
+      frame = requestAnimationFrame(draw);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+
+      // Left alone, it looks around: a jump to a new spot, then a hold.
+      if (now - pointerAt > 2500 && now > nextSaccade) {
+        goalYaw = (Math.random() * 2 - 1) * MAX_YAW * 0.85;
+        goalPitch = (Math.random() * 2 - 1) * MAX_PITCH * 0.8;
+        nextSaccade = now + 900 + Math.random() * 2200;
+      }
+      const ease = 1 - Math.exp(-dt * 11);
+      yaw = lerp(yaw, goalYaw, ease);
+      pitch = lerp(pitch, goalPitch, ease);
+
+      let blink = 0;
+      if (now > blinkAt) {
+        const t = (now - blinkAt) / 190;
+        if (t >= 1) blinkAt = now + 2600 + Math.random() * 3800;
+        else blink = Math.sin(t * Math.PI);
+      }
+
+      // The iris centre is a point on the globe; the disc around it is seen
+      // edge-on by as much as that point has turned away from the viewer.
+      const dx = Math.sin(yaw) * Math.cos(pitch);
+      const dy = -Math.sin(pitch);
+      const dz = Math.cos(yaw) * Math.cos(pitch);
+      const x = dx * TRAVEL;
+      const y = dy * TRAVEL - 8;
+      const turn = (Math.atan2(dy, dx) * 180) / Math.PI;
+      iris.setAttribute(
+        'transform',
+        `translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${turn.toFixed(2)}) scale(${dz.toFixed(4)} 1) rotate(${(-turn).toFixed(2)})`,
+      );
+      glint.setAttribute('transform', `translate(${(x * 0.82).toFixed(2)} ${(y * 0.82).toFixed(2)})`);
+
+      // Lids ride with the gaze, and the upper one comes down to blink.
+      const up = pitch / MAX_PITCH;
+      const lower = 65 - up * 10;
+      const upper = lerp(-95 - up * 20, lower, blink);
+      const lid = `M-125 0 Q0 ${upper.toFixed(2)} 125 0`;
+      const almond = `${lid} Q0 ${lower.toFixed(2)} -125 0 Z`;
+      opening.setAttribute('d', almond);
+      rim.setAttribute('d', almond);
+      lash.setAttribute('d', lid);
+      shade.setAttribute('d', lid);
+      const lift = up * 12 - blink * 26;
+      foldOuter.setAttribute('d', `M-150 -4 Q0 ${(-146 - lift * 0.6).toFixed(2)} 150 -4`);
+      foldInner.setAttribute('d', `M-138 -4 Q0 ${(-121 - lift).toFixed(2)} 138 -4`);
+      foldLower.setAttribute('d', `M-130 20 Q0 ${(104 - up * 8).toFixed(2)} 130 20`);
+
+      svg.style.setProperty('--tilt-y', `${(yaw * 26).toFixed(2)}deg`);
+      svg.style.setProperty('--tilt-x', `${(pitch * 30).toFixed(2)}deg`);
+    };
+
+    // Only spend frames while the eye is on screen.
+    new IntersectionObserver(([entry]) => {
+      cancelAnimationFrame(frame);
+      if (entry.isIntersecting) {
+        last = performance.now();
+        frame = requestAnimationFrame(draw);
+      }
+    }).observe(root);
+  }
+</script>

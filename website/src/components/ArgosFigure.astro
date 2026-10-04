@@ -1,0 +1,132 @@
+---
+// Argos Panoptes, the all-seeing guardian, after a black-figure vase: a bald
+// head in profile on a hunched back, the whole body covered in lidded eyes and
+// the incised lines that flow around them. Drawn in the site's blues with no
+// ground of its own, so it sits behind the homepage's featured transaction as
+// a backdrop.
+const W = 800;
+const H = 450;
+
+const rand = (seed: number) => {
+  const x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+  return x - Math.floor(x);
+};
+
+const BODY =
+  'M245 14 C300 10 350 50 358 110 C362 150 352 185 345 215 C380 230 440 232 500 236 C580 242 650 300 690 450 L270 450 C275 400 262 360 240 330 C220 318 190 312 172 300 C160 292 158 282 162 274 C150 268 150 258 156 252 C146 246 146 238 152 232 C138 228 122 226 118 218 C122 200 136 180 138 160 C128 150 126 138 130 128 C128 80 170 20 245 14 Z';
+
+// x, y, scale, rotation (deg), pupil offset
+const placed: [number, number, number, number, number][] = [
+  // skull
+  [196, 52, 0.95, -32, -3], [252, 40, 0.9, -4, 0], [306, 62, 0.95, 28, 3], [334, 112, 0.9, 62, 2],
+  [228, 92, 1.05, -14, -3], [286, 108, 1.0, 16, 2], [160, 96, 0.7, -50, -2], [326, 168, 0.8, 78, 0],
+  // cheek, jaw and neck
+  [222, 212, 0.85, -12, -3], [200, 268, 0.7, 10, -2], [262, 262, 0.9, 30, 0], [310, 228, 0.8, 50, 2],
+  [288, 318, 0.95, 36, 0], [316, 374, 0.9, 20, 2], [296, 428, 0.85, 8, 0],
+  // shoulder and back
+  [372, 262, 1.0, -8, -3], [436, 266, 1.0, 4, 0], [500, 272, 1.05, 12, 3], [560, 296, 1.0, 28, 2],
+  [606, 338, 0.95, 44, 2], [640, 392, 0.9, 58, 0], [366, 322, 0.9, -14, -2], [426, 326, 1.05, 0, 0],
+  [490, 334, 1.0, 10, 3], [546, 358, 1.0, 24, 0], [590, 404, 0.95, 38, 2], [382, 384, 1.0, -8, -3],
+  [446, 388, 1.05, 2, 0], [510, 398, 1.0, 12, 2], [412, 438, 0.9, -4, 0], [476, 442, 0.9, 6, 2],
+  [548, 440, 0.9, 20, 0], [640, 440, 0.8, 50, 0],
+];
+// Hand-placed, then unsettled a little so the rows do not read as a grid.
+const eyes = placed.map(([x, y, s, r, l], i): [number, number, number, number, number] => [
+  x + (rand(i + 401) - 0.5) * 14,
+  y + (rand(i + 501) - 0.5) * 14,
+  s * (0.85 + rand(i + 601) * 0.3),
+  r + (rand(i + 701) - 0.5) * 44,
+  l,
+]);
+
+// Argos never sleeps with every eye at once: about two in five close for a
+// while and open again, each on its own clock.
+const drowsy = (i: number) => rand(i + 1001) < 0.4;
+
+const specks = Array.from({ length: 70 }, (_, i) => ({
+  x: rand(i + 1) * W,
+  y: rand(i + 101) * H,
+  r: 0.8 + rand(i + 201) * 3.2,
+  o: 0.08 + rand(i + 301) * 0.22,
+}));
+---
+
+<svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMin meet" class="block w-full h-full" aria-hidden="true">
+  <defs>
+    <clipPath id="argos-body"><path d={BODY} /></clipPath>
+    <!-- lid folds echoing the eye, as incised on the vase -->
+    <g id="argos-folds" fill="none" stroke="var(--color-bp-300)" stroke-linecap="round">
+      <path d="M-33 -1 Q0 -31 33 -1" stroke-width="1.3" stroke-opacity="0.55" />
+      <path d="M-29 -1 Q0 -25 29 -1" stroke-width="1.6" />
+      <path d="M-27 5 Q0 22 27 5" stroke-width="1.3" stroke-opacity="0.7" />
+    </g>
+  </defs>
+
+  {specks.map((s) => <circle cx={s.x} cy={s.y} r={s.r} fill="var(--color-bp-400)" opacity={s.o} />)}
+
+  <path d={BODY} fill="var(--color-bp-950)" stroke="var(--color-bp-400)" stroke-width="2" stroke-linejoin="round" />
+
+  <g clip-path="url(#argos-body)" data-shy-field data-shy-radius="75" data-shy-half="25" data-shy-upper="-19" data-shy-lower="13">
+    <!-- long incised lines following the skull, the neck and the back -->
+    <g fill="none" stroke="var(--color-bp-300)" stroke-opacity="0.5" stroke-width="1.4" stroke-linecap="round">
+      <path d="M150 74 C190 22 290 14 340 84" />
+      <path d="M176 78 C214 60 262 66 300 86 C322 100 334 132 330 150" />
+      <path d="M196 124 C236 132 280 140 312 136" />
+      <path d="M246 196 C276 204 300 196 318 190" />
+      <path d="M234 240 C250 290 262 330 268 450" />
+      <path d="M262 300 C290 350 290 400 284 450" />
+      <path d="M338 224 C336 290 346 350 340 450" />
+      <path d="M346 240 C420 228 520 236 580 268 C630 296 662 360 676 450" />
+      <path d="M344 292 C420 286 500 296 556 326 C596 348 620 400 628 450" />
+      <path d="M350 352 C420 346 500 360 560 396 C580 410 592 430 598 450" />
+      <path d="M350 412 C420 408 480 416 530 450" />
+    </g>
+
+    <!-- Each eye is the white, the pupil behind its opening, and the dark upper lid. The white carries a
+         thin outline of its own colour, so a shut eye is still a line. -->
+    {eyes.map(([x, y, s, r, look], i) => (
+      <g transform={`translate(${x} ${y}) rotate(${r}) scale(${s})`}>
+        <g data-shy-eye data-x={x} data-y={y} data-doze={drowsy(i) ? '1.5' : undefined}>
+          <use href="#argos-folds" />
+          <clipPath id={`argos-figure-opening-${i}`}><path data-lid d="M-25 0 Q0 -19 25 0 Q0 13 -25 0 Z" /></clipPath>
+          <path data-lid d="M-25 0 Q0 -19 25 0 Q0 13 -25 0 Z" fill="var(--color-bp-50)" stroke="var(--color-bp-50)" stroke-width="1.4" stroke-linejoin="round" />
+          <g clip-path={`url(#argos-figure-opening-${i})`}>
+            <circle cx={look} cy="-2" r="9" fill="var(--color-bp-950)" />
+            <circle cx={look} cy="-2" r="5.2" fill="none" stroke="var(--color-bp-200)" stroke-width="1.6" />
+          </g>
+          <path data-lash d="M-25 0 Q0 -19 25 0" fill="none" stroke="var(--color-bp-950)" stroke-width="3.2" stroke-linecap="round" />
+        </g>
+      </g>
+    ))}
+
+    <!-- the face: furrowed brow, its own eye, nostril, mouth, beard and ear -->
+    <g fill="none" stroke="var(--color-bp-300)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M136 112 C150 104 166 104 180 110" stroke-opacity="0.6" />
+      <path d="M134 124 C150 116 170 116 186 124" stroke-opacity="0.6" />
+      <path d="M132 140 C150 130 176 130 200 142" stroke-width="2.4" />
+      <path d="M128 216 C134 220 142 218 144 210" />
+      <path d="M150 200 C158 214 162 228 158 240" stroke-opacity="0.6" />
+      <path d="M152 243 C164 246 176 244 186 238" stroke-width="2" />
+      <path d="M160 262 C168 264 174 262 180 258" stroke-opacity="0.6" />
+      <path d="M176 284 C186 290 198 294 210 294 M186 276 C196 282 206 284 216 284 M170 294 C182 302 196 306 212 306" stroke-opacity="0.55" />
+      <path d="M272 150 C296 140 308 164 298 184 C292 198 280 204 270 198 C278 190 282 176 274 168 C270 164 268 156 272 150 Z" />
+      <path d="M280 160 C288 164 290 176 284 186" stroke-opacity="0.6" />
+    </g>
+    <g transform="translate(166 158) rotate(-6) scale(0.85)">
+      <g data-shy-eye data-x="166" data-y="158">
+        <use href="#argos-folds" />
+        <clipPath id="argos-figure-opening-face"><path data-lid d="M-25 0 Q0 -19 25 0 Q0 13 -25 0 Z" /></clipPath>
+        <path data-lid d="M-25 0 Q0 -19 25 0 Q0 13 -25 0 Z" fill="var(--color-bp-50)" stroke="var(--color-bp-50)" stroke-width="1.4" stroke-linejoin="round" />
+        <g clip-path="url(#argos-figure-opening-face)">
+          <circle cx="-5" cy="-2" r="9" fill="var(--color-bp-950)" />
+          <circle cx="-5" cy="-2" r="5.2" fill="none" stroke="var(--color-bp-200)" stroke-width="1.6" />
+        </g>
+        <path data-lash d="M-25 0 Q0 -19 25 0" fill="none" stroke="var(--color-bp-950)" stroke-width="3.2" stroke-linecap="round" />
+      </g>
+    </g>
+  </g>
+</svg>
+
+<script>
+  import '../lib/shy-eyes';
+</script>

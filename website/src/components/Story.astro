@@ -12,8 +12,6 @@ type Beat = {
 // the avatar is their ENS avatar, copied locally from the ENS metadata service.
 const speaker = { name: 'sem-the-bee.eth', avatar: '/avatars/sem-the-bee.jpg' };
 
-const header = ['load contracts', 'load lang', 'load safe'];
-
 const beats: Beat[] = [
   {
     ask: 'We’re voting to upgrade the vault and hand admin to the council Safe. It executes in seven days. How do I know it lands the way we voted?',
@@ -27,7 +25,7 @@ const beats: Beat[] = [
     answer: 'The implementation behind the proxy, read at execution time, matches the audited build.',
     detail: 'One call’s answer feeds the next: read the address, then hash its code.',
     contract: 'Operations',
-    lines: ['assert @codeHash!($vault::!{implementation()(address)}) == 0xf517…7dc5 "unaudited code"'],
+    lines: ['assert @codeHash!($vault::!{implementation()(address)}) == 0xdfff…9ca9 "unaudited code"'],
   },
   {
     ask: 'We’re handing the keys to a Safe. Who holds its keys?',
@@ -65,18 +63,14 @@ function tokenize(line: string): Tok[] {
   return out;
 }
 
-let n = header.length;
-const rows = beats.map((b) => ({
-  ...b,
-  numbered: b.lines.map((l) => ({ n: ++n, toks: tokenize(l) })),
-}));
+const rows = beats.map((b) => ({ ...b, code: b.lines.map(tokenize) }));
 const assertCount = beats.flatMap((b) => b.lines).filter((l) => l.startsWith('assert')).length;
 ---
 
 <section class="py-24 px-6 scroll-mt-16" id="story" aria-labelledby="story-heading" data-story>
   <div class="max-w-6xl mx-auto">
     <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-bp-400)] mb-3 text-center">
-      Proposal #42
+      Example
     </p>
     <h2 id="story-heading" class="font-mono font-bold text-3xl sm:text-4xl text-center mb-4">
       Upgrade the vault. Hand over the keys.
@@ -87,98 +81,64 @@ const assertCount = beats.flatMap((b) => b.lines).filter((l) => l.startsWith('as
       same transaction. If any assertion fails, the entire transaction reverts.
     </p>
 
-    <div class="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-x-12">
-      <div aria-hidden="true" class="hidden lg:block"></div>
-      <div class="hidden lg:block story-panel rounded-t-2xl border-t">
-        <div class="flex items-center gap-2 px-4 py-3 border-b border-[var(--color-ink-3)]/15">
-          <span class="size-2.5 rounded-full bg-[var(--color-ink-3)]/30"></span>
-          <span class="size-2.5 rounded-full bg-[var(--color-ink-3)]/30"></span>
-          <span class="size-2.5 rounded-full bg-[var(--color-ink-3)]/30"></span>
-          <span class="ml-2 font-mono text-xs text-[var(--color-ink-3)]">proposal-42.evml</span>
-        </div>
-        <div class="px-4 pt-4 font-mono text-[13px] leading-[1.7]">
-          {header.map((l, i) => (
-            <div class="flex gap-4"><span class="story-ln">{i + 1}</span><code>{tokenize(l).map((t) => <span class={t.c}>{t.t}</span>)}</code></div>
-          ))}
-        </div>
-      </div>
-
-      {rows.map((r, i) => (
-        <>
-          <div class="story-reveal pt-10 lg:pt-6" data-reveal>
-            <div class="flex items-center justify-end gap-3 mb-2">
-              <a href={`https://app.ens.domains/${speaker.name}`} target="_blank" rel="noopener noreferrer" class="font-mono text-xs text-[var(--color-ink-3)] hover:text-[var(--color-bp-400)] transition-colors">{speaker.name}</a>
-              <img class="story-avatar" src={speaker.avatar} alt="" width="36" height="36" loading="lazy" decoding="async" />
-            </div>
-            <p class="story-bubble ml-8 sm:ml-16 mr-12 rounded-2xl rounded-tr-sm px-5 py-3.5 leading-relaxed">{r.ask}</p>
-            <div class="story-reply mt-5">
-              <div class="flex items-center gap-3 mb-2">
-                <svg class="story-avatar story-logo" viewBox="36.54 19.17 38.4 38.87" aria-hidden="true">
-                  <rect fill="#1e40af" x="36.54" y="19.17" width="38.4" height="38.87" rx="19.2" ry="19.2"/>
-                  <g fill="#f7f5f1">
-                    <polygon points="41.71,32.1 54.82,39.67 54.82,45.11 41.71,37.54"/>
-                    <polygon points="41.71,37.54 54.82,29.97 54.82,24.53 41.71,32.1"/>
-                    <polygon points="69.77,45.11 56.66,37.54 56.66,32.1 69.77,39.67"/>
-                    <polygon points="69.77,39.67 56.66,47.24 56.66,52.68 69.77,45.11"/>
-                    <polygon points="41.71,39.67 54.82,47.24 54.82,52.68 41.71,45.11"/>
+    <div class="max-w-2xl mx-auto">
+      {rows.map((r) => (
+        <div class="story-reveal pt-10 first:pt-0" data-reveal>
+          <div class="flex items-center justify-end gap-3 mb-2">
+            <a href={`https://app.ens.domains/${speaker.name}`} target="_blank" rel="noopener noreferrer" class="font-mono text-xs text-[var(--color-ink-3)] hover:text-[var(--color-bp-400)] transition-colors">{speaker.name}</a>
+            <img class="story-avatar" src={speaker.avatar} alt="" width="36" height="36" loading="lazy" decoding="async" />
+          </div>
+          <p class="story-bubble ml-8 sm:ml-16 mr-12 rounded-2xl rounded-tr-sm px-5 py-3.5 leading-relaxed">{r.ask}</p>
+          <div class="story-reply mt-5">
+            <div class="flex items-center gap-3 mb-2">
+              <svg class="story-avatar story-logo" viewBox="36.54 19.17 38.87 38.87" aria-hidden="true">
+                <svg x="36.54" y="19.17" width="38.87" height="38.87" viewBox="0 0 40 40">
+                  <clipPath id="story-eye-clip"><rect width="40" height="40" rx="9"/></clipPath>
+                  <rect width="40" height="40" rx="9" fill="#1e40af"/>
+                  <g clip-path="url(#story-eye-clip)">
+                    <g transform="translate(23.5 26.5) scale(1.3)">
+                      <path d="M-28 -3 Q0 -29 28 -3" fill="none" stroke="#f7f5f1" stroke-width="2.6" stroke-linecap="round"/>
+                      <path d="M-25 0 Q0 -19 25 0 Q0 13 -25 0 Z" fill="#f7f5f1"/>
+                      <circle cx="-3" cy="-2" r="9" fill="#1e40af"/>
+                      <circle cx="-3" cy="-2" r="4.4" fill="none" stroke="#f7f5f1" stroke-width="2"/>
+                    </g>
                   </g>
                 </svg>
-                <span class="font-mono text-xs text-[var(--color-ink-3)]">assertions.eth</span>
-                <span class="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border border-[var(--color-ink-3)]/30 text-[var(--color-ink-3)]">assistant</span>
+              </svg>
+              <span class="font-mono text-xs text-[var(--color-ink-3)]">assertions.eth</span>
+              <span class="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border border-[var(--color-ink-3)]/30 text-[var(--color-ink-3)]">assistant</span>
+            </div>
+            <div class="story-answer ml-12 mr-6 sm:mr-12 rounded-2xl rounded-tl-sm px-5 py-4">
+              <p class="flex items-start gap-2.5 font-medium leading-snug">
+                <span class="text-[var(--color-ok)] shrink-0" aria-hidden="true">&#10003;</span>
+                <span>{r.answer}</span>
+              </p>
+              <p class="mt-1.5 pl-6 text-sm text-[var(--color-ink-2)] leading-relaxed">{r.detail}</p>
+              <div class="story-code mt-3 rounded-lg px-3.5 py-2.5 font-mono text-[12.5px] leading-[1.7]">
+                {r.code.map((toks) => (
+                  <div class="story-line"><code class="story-src block">{toks.map((t) => <span class={t.c}>{t.t}</span>)}</code></div>
+                ))}
               </div>
-              <div class="story-answer ml-12 mr-6 sm:mr-12 rounded-2xl rounded-tl-sm px-5 py-4">
-                <p class="flex items-start gap-2.5 font-medium leading-snug">
-                  <span class="text-[var(--color-ok)] shrink-0" aria-hidden="true">&#10003;</span>
-                  <span>{r.answer}</span>
-                </p>
-                <p class="mt-1.5 pl-6 text-sm text-[var(--color-ink-2)] leading-relaxed">{r.detail}</p>
-                <p class="mt-3 pl-6">
-                  <a href="#contracts" class="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-[var(--color-bp-400)] hover:underline underline-offset-4">
-                    <span class="size-1.5 rounded-full bg-[var(--color-bp-400)]" aria-hidden="true"></span>
-                    Answered with {r.contract}
-                  </a>
-                </p>
-              </div>
+              <p class="mt-3 pl-6">
+                <a href="#contracts" class="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-[var(--color-bp-400)] hover:underline underline-offset-4">
+                  <span class="size-1.5 rounded-full bg-[var(--color-bp-400)]" aria-hidden="true"></span>
+                  Answered with {r.contract}
+                </a>
+              </p>
             </div>
           </div>
-          <div class={`story-panel story-reveal story-code mt-3 lg:mt-0 rounded-xl lg:rounded-none px-4 py-3 lg:py-0 lg:pt-6 lg:flex lg:items-end border lg:border-t-0 lg:border-b-0 ${i === rows.length - 1 ? 'lg:pb-4' : ''}`} data-reveal>
-            <div class="w-full font-mono text-[13px] leading-[1.7] lg:pb-4">
-              {r.numbered.map((l) => (
-                <div class="story-line flex gap-4">
-                  <span class="story-ln hidden lg:inline">{l.n}</span>
-                  <code class="story-src min-w-0">{l.toks.map((t) => <span class={t.c}>{t.t}</span>)}</code>
-                </div>
-              ))}
-            </div>
-          </div>
-        </>
+        </div>
       ))}
 
-      <div aria-hidden="true" class="hidden lg:block"></div>
-      <div class="hidden lg:flex story-panel rounded-b-2xl border-b items-center gap-2 px-4 py-3 border-t-0">
-        <span class="text-[var(--color-ok)] font-mono text-xs">&#9679;</span>
-        <span class="font-mono text-xs text-[var(--color-ink-3)]">{assertCount} assertions &middot; appended to the proposal&rsquo;s batch</span>
-      </div>
+      <p class="mt-10 flex items-center justify-center gap-2 font-mono text-xs text-[var(--color-ink-3)]">
+        <span class="text-[var(--color-ok)]">&#9679;</span>
+        {assertCount} assertions &middot; appended to the proposal&rsquo;s batch
+      </p>
     </div>
   </div>
 </section>
 
 <style>
-  .story-panel {
-    position: relative;
-    background: var(--color-surface-2);
-    border-color: color-mix(in srgb, var(--color-ink-3) 15%, transparent);
-    border-left-width: 1px;
-    border-right-width: 1px;
-  }
-  .story-ln {
-    width: 2ch;
-    flex-shrink: 0;
-    text-align: right;
-    color: var(--color-ink-3);
-    opacity: 0.6;
-    user-select: none;
-  }
   /* Long lines wrap with a hanging indent instead of scrolling each cell. */
   .story-src {
     white-space: pre-wrap;
@@ -206,6 +166,10 @@ const assertCount = beats.flatMap((b) => b.lines).filter((l) => l.startsWith('as
     border: 1px solid color-mix(in srgb, var(--color-ok) 30%, transparent);
     box-shadow: 0 1px 0 color-mix(in srgb, var(--color-ok) 12%, transparent);
   }
+  .story-code {
+    background: var(--color-surface);
+    border: 1px solid color-mix(in srgb, var(--color-ink-3) 15%, transparent);
+  }
   .story-code .story-line + .story-line {
     margin-top: 0.15rem;
   }
@@ -228,9 +192,6 @@ const assertCount = beats.flatMap((b) => b.lines).filter((l) => l.startsWith('as
     }
     [data-story].is-armed .story-reveal.is-in .story-reply {
       opacity: 1;
-    }
-    [data-story].is-armed .story-code.is-in {
-      transition-delay: 0.55s;
     }
   }
 </style>

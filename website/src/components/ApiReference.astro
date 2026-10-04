@@ -127,7 +127,7 @@ const sections: Section[] = [
     ],
   },
   {
-    title: 'Collections (iteration and arrays)',
+    title: 'Collections (array management)',
     groups: [
       {
         group: 'Folds',
@@ -163,7 +163,7 @@ const sections: Section[] = [
     ],
   },
   {
-    title: 'Expressions (typed expression graphs)',
+    title: 'Expressions (reusing calculations)',
     groups: [
       {
         group: 'Evaluate',
@@ -209,10 +209,11 @@ const hasGroups = (section: Section) => section.groups.some((g) => g.group);
       API Reference
     </h1>
     <p class="text-center text-[var(--color-ink-2)] text-lg mb-16 max-w-2xl mx-auto">
-      Four contracts, one composable vocabulary. Assertions reads live values and
-      enforces <a href="https://www.erc8211.com/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-bp-400)] hover:underline underline-offset-4">ERC-8211</a> constraints;
-      Operations computes, Collections iterates, and Expressions shares results
-      across typed graphs. The judge consumes the unmodified ERC-8211 wire
+      Assertions is the main contract: it reads live values and enforces
+      <a href="https://www.erc8211.com/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-bp-400)] hover:underline underline-offset-4">ERC-8211</a> constraints.
+      Three expansion packs add functions: Operations for calculations,
+      Collections for arrays, and Expressions for reusing a calculation inside
+      a claim. The judge consumes the unmodified ERC-8211 wire
       format, so a predicate batch built by any ERC-8211 SDK judges here without
       a translation step. Explore the functions below, or
       <a href="/docs" class="text-[var(--color-bp-400)] hover:underline underline-offset-4">start with the docs</a>.

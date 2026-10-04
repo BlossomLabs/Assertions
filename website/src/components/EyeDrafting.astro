@@ -1,0 +1,36 @@
+---
+// The Argos eye as a drafting: the same lids and lid folds as the closing eye,
+// in line, over its construction marks. An illustration, not an icon: it wants
+// room (about 250px wide or more). Not placed anywhere yet.
+interface Props {
+  class?: string;
+}
+const { class: className = 'w-64' } = Astro.props;
+
+const striae = Array.from({ length: 28 }, (_, i) => {
+  const a = (i / 28) * Math.PI * 2;
+  const r0 = i % 2 ? 21 : 18;
+  return `M${(Math.cos(a) * r0).toFixed(1)} ${(Math.sin(a) * r0).toFixed(1)} L${(Math.cos(a) * 31).toFixed(1)} ${(Math.sin(a) * 31).toFixed(1)}`;
+}).join(' ');
+---
+
+<svg viewBox="-164 -116 328 212" class={className} fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <defs>
+    <clipPath id="eye-drafting-opening"><path d="M-125 0 Q0 -95 125 0 Q0 65 -125 0 Z" /></clipPath>
+  </defs>
+  <g stroke-width="1" stroke-opacity="0.4" stroke-dasharray="2 6">
+    <path d="M-160 0H160" />
+    <path d="M0 -112V92" />
+    <circle r="58" />
+  </g>
+  <path d="M-150 -4 Q0 -146 150 -4" stroke-width="1.6" stroke-opacity="0.35" />
+  <path d="M-138 -4 Q0 -121 138 -4" stroke-width="2" stroke-opacity="0.7" />
+  <path d="M-130 20 Q0 104 130 20" stroke-width="1.6" stroke-opacity="0.45" />
+  <g clip-path="url(#eye-drafting-opening)">
+    <circle r="34" stroke-width="2.4" />
+    <path d={striae} stroke-width="1.2" stroke-opacity="0.55" />
+    <circle r="13" fill="currentColor" stroke="none" />
+    <ellipse cx="-5" cy="-5" rx="3.6" ry="2.6" fill="var(--color-surface-2)" stroke="none" transform="rotate(-30 -5 -5)" />
+  </g>
+  <path d="M-125 0 Q0 -95 125 0 Q0 65 -125 0 Z" stroke-width="2.6" />
+</svg>

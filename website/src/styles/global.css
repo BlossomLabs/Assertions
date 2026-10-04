@@ -43,7 +43,10 @@
   --color-ink: #0c1a2e;
   --color-ink-2: #3a5068;
   --color-ink-3: #6b8299;
+  --grid-rgb: 0, 91, 166;
   --grid-opacity: 0.06;
+  --grid-major-opacity: 0;
+  --grid-size: 32px;
 }
 
 :root.dark {
@@ -52,20 +55,26 @@
   --color-bp-200: #bfdbfe;
   --color-bp-300: #93c5fd;
   --color-bp-400: #60a5fa;
-  --color-primary: #93c5fd;
-  --color-primary-hover: #bfdbfe;
-  --color-primary-fg: #0c1a2e;
-  --color-surface: #080d18;
-  --color-surface-2: #0f1729;
-  --color-surface-3: #162035;
+  --color-primary: #2563eb;
+  --color-primary-hover: #3b82f6;
+  --color-primary-fg: #ffffff;
+  --color-surface: #0a1d40;
+  --color-surface-2: #0f2750;
+  --color-surface-3: #173463;
   --color-ink: #e2eaf2;
   --color-ink-2: #8da4b8;
   --color-ink-3: #4a6478;
-  --grid-opacity: 0.08;
+  /* Blueprint sheet: blue lines, a heavier one every fifth cell. */
+  --grid-rgb: 59, 130, 246;
+  --grid-opacity: 0.09;
+  --grid-major-opacity: 0.15;
+  --grid-size: 32px;
 }
 
-/* Code shows the characters as typed: JetBrains Mono would otherwise join
-   operators such as ->, >= and == into single ligature glyphs. */
+/* No ligatures anywhere: code shows the characters as typed (JetBrains Mono
+   would join ->, >= and == into single glyphs), and prose keeps fi/fl apart. */
+html,
+body,
 .font-mono,
 code,
 pre,
@@ -84,9 +93,15 @@ samp {
 body {
   background-color: var(--color-surface);
   background-image:
-    linear-gradient(rgba(0, 91, 166, var(--grid-opacity)) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 91, 166, var(--grid-opacity)) 1px, transparent 1px);
-  background-size: 32px 32px;
+    linear-gradient(rgba(var(--grid-rgb), var(--grid-major-opacity)) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--grid-rgb), var(--grid-major-opacity)) 1px, transparent 1px),
+    linear-gradient(rgba(var(--grid-rgb), var(--grid-opacity)) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--grid-rgb), var(--grid-opacity)) 1px, transparent 1px);
+  background-size:
+    calc(var(--grid-size) * 5) calc(var(--grid-size) * 5),
+    calc(var(--grid-size) * 5) calc(var(--grid-size) * 5),
+    var(--grid-size) var(--grid-size),
+    var(--grid-size) var(--grid-size);
   color: var(--color-ink);
   transition: background-color 0.3s, color 0.3s;
 }

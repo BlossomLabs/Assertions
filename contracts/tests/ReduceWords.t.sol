@@ -31,6 +31,17 @@ contract ReduceLambdas {
     function wide(uint256 x) external pure returns (uint256, uint256) {
         return (x, x);
     }
+
+    /**
+     * @dev One word back, except two for the element 7
+     */
+    function wideAtSeven(uint256 x) external pure returns (uint256) {
+        assembly ("memory-safe") {
+            mstore(0, x)
+            mstore(32, x)
+            return(0, add(32, mul(32, eq(x, 7))))
+        }
+    }
 }
 
 /**
@@ -253,6 +264,33 @@ contract ReduceWordsTest is Test {
             Collections.Cmp.EQ,
             0
         );
+    }
+
+    /**
+     * @dev A malformed result names the element that produced it, in every mode
+     */
+    function test_malformedResultNamesItsElement() public {
+        uint256[] memory x = new uint256[](3);
+        x[0] = 1;
+        x[1] = 2;
+        x[2] = 7;
+        bytes memory tpl = abi.encodeWithSelector(ReduceLambdas.wideAtSeven.selector, uint256(0));
+        for (uint8 mode; mode < 4; mode++) {
+            vm.expectRevert(
+                abi.encodeWithSelector(
+                    AbiCodec.InvalidCallbackResult.selector,
+                    Collections.reduceWords.selector,
+                    uint256(2),
+                    uint256(0),
+                    address(lambdas)
+                )
+            );
+            // Any must miss on the first two elements to reach the third; All must pass on them.
+            bytes32 bound = bytes32(uint256(mode == 1 ? 100 : 0));
+            collections.reduceWords(
+                pack(x), address(lambdas), tpl, offs(4), Collections.Reduce(mode), Collections.Cmp.GE, bound
+            );
+        }
     }
 
     function test_sumOverflowPanics() public {

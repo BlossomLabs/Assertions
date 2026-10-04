@@ -139,6 +139,7 @@ const sections: Section[] = [
         group: 'Word arrays',
         fns: [
           { name: 'applyWords', desc: 'Transform or select the words of a payload through a template lambda' },
+          { name: 'reduceWords', desc: 'One lambda call per word, then all, any, count or sum of the results against a bound, with unsigned and signed comparisons' },
           { name: 'iotaWords, wordIndexOf, reverseWords, sumWords', desc: 'The index generator, membership (word-count sentinel), reversal, and a checked native sum' },
           { name: 'zipWords, unzipWords', desc: 'Interleave two payloads into pairs and pull one lane back out' },
           { name: 'sortWords, uniqueWords', desc: 'Stable bottom-up merge sort on unsigned words, and stable deduplication (ordered or full)' },

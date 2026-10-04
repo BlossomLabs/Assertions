@@ -44,7 +44,7 @@ The failure error changed too. Argos (v1) reverted with a typed error per value 
 | `assertTrue`, `assertFalse` | `assert <call>` (requires true), or `== false` |
 | `assertNeCall…` | `!=` |
 | `assertEqCallUintN(target, data, index, n)` | a lens that picks the value: `<call>[_ $ _] == n` |
-| `assertEqCallStringN`, `assertEqCallBytes` | `==` on a string, or `@hash!(call)` for `bytes` |
+| `assertEqCallStringN`, `assertEqCallBytes` | `==` on a string, or `@hash!(call bytes)` for `bytes` |
 | `assertEqCallArrayLength`, `assertGtCallArrayLength`, `assertGeCallArrayLength` | `@len!(call)` with a comparison (needs `load lang`) |
 | `assertApproxEqCallUint`, `assertApproxEqBalance` | `~=` with `--delta` |
 | `assertEqBalance` and the other balance checks | `@balance!(ETH account)` or `@balance!(token account)` |

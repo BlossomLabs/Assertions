@@ -19,7 +19,7 @@ EVML spellings are helpers of the `assert` command (see the [EVML guide](/docs/e
 | [Comparisons](#signed-comparisons-and-logic) | `eq`, `ne` (bit-level); `lt`, `gt`, `le`, `ge` (u/s); all return `bool` | `==` `!=` `<` `>` `<=` `>=` in `assert` and `@bool!` |
 | [Bitwise](#bitmasks) | `bitAnd`, `bitOr`, `bitXor`, `shl`, `shr` (u/s), `bitSet(mask, index)` | `@bytes!(a "&" b)`, `@bool!` |
 | [Environment](#environment-reads) | `balance`, `codeHash`, `timestamp`, `blockNumber`, `chainId`, `baseFee`, `prevRandao`, `coinbase`, `gasLimit`, `blobBaseFee`, `blockHash(n)`, `origin`, `gasPrice`, `blobHash(i)` | `@balance!`, `@codeHash!`, the `@block.*!`, `@tx.*!` and `@chainId!` helpers |
-| [Raw calls and code](#calls-rawcall-and-code) | `rawCall(address, bytes)` (raw staticcall, the precompile reach-through); `code(address)` | `@hash!(call "sha256")` (through `rawCall`), `@codeAt!` |
+| [Raw calls and code](#calls-rawcall-and-code) | `rawCall(address, bytes)` (raw staticcall, the precompile reach-through); `code(address)` | `@hash!(call sha256)` (through `rawCall`), `@codeAt!` |
 | [Hashing](#hashing-the-payload-semantic) | `hash(bytes)`; `hashPairSorted(bytes32, bytes32)` (the sorted Merkle node combiner) | `@hash!`, `@crypto:merkle.verify!` |
 | [Length, slice, concat](#byte-length) | `byteLen`; `slice(bytes, start, len)`; `sliceRange(bytes, int256, int256)` (clamped); `byteAt(bytes, int256)` (strict); `concat(bytes[], delimiter)` | `@bytes.len!`, `@bytes.slice!`, `@bytes.at!`, `@bytes.concat!`, `@str.concat!`, `@str.join!` |
 | [Search](#search-indexof-and-contains) | `indexOf(bytes, bytes, int256 occurrence)`; `contains(bytes, bytes)`; `split(bytes, bytes)` | `@str.includes!`, `@str.split!` |
@@ -468,7 +468,7 @@ function encodeBytes(string types, bytes[] values) external pure returns (bytes)
 - **Failure.** Gas exhaustion and an exact `SubcallOutOfGas()` signal propagate unchanged (a near-exhausting ordinary revert can also be refused as exhaustion). Other reverts wrap as `RawCallFailed(target, data)`, carrying the calldata; the target's own reason is lost. The core's `revertData` and Expressions' `ProbeCall` are the reason-carrying probes.
 - **Envelope wrapper.** Because the returndata comes back as a bytes value, `rawCall` bridges any call's raw return, whatever its shape or runtime length, into every bytes-consuming operation. The [whole-returndata recipe](#whole-returndata-hash-over-rawcall) builds on this.
 
-In EVML there is no direct `rawCall` helper; `@hash!(call "sha256")` routes its digest through a `rawCall` to the SHA-256 precompile.
+In EVML there is no direct `rawCall` helper; `@hash!(call sha256)` routes its digest through a `rawCall` to the SHA-256 precompile.
 
 `code(account)` returns the full runtime code of an account as a bytes value: `codeHash`'s sibling for prefix, suffix and segment assertions (slice out the ERC-1167 target of a minimal proxy, pin a code segment). A code-less account yields empty bytes. EVML's `@codeAt!` compiles to it, and sees code a batch deployed in an earlier step.
 
@@ -675,7 +675,7 @@ That is four segments: three literal words and the operand. Hand-writing this is
 `encode` returns its output via a raw assembly return with no bytes envelope, deliberately the one raw-returning function in the contract: its output is a calldata segment for the core's `read` to splice, not a value to decode. That is its role in composition: resolve pieces live (a `nav` selection here, a `pick` word there), `encode` them into one multi-value span, and splice that span into a constructed call's arguments. `encodeBytes(types, values)` returns the same tuple payload inside a normal bytes envelope, for consumers that want a value rather than a segment (`hash`, `byteLen`, a Collections values array). EVML's `@abi.encode!` builds its bytes value through `encodeBytes`.
 
 ```evml
-assert @hash!(@abi.encode!("uint256,uint256" $pool::!{reserve0()(uint256)} $pool::!{reserve1()(uint256)})) == $expectedDigest
+assert @hash!(@abi.encode!("uint256,uint256" $pool::!{reserve0()(uint256)} $pool::!{reserve1()(uint256)}) bytes) == $expectedDigest
 ```
 
 Both functions use the shared `AbiCodec` to validate complete canonical encodings: nested offsets, lengths, bounds, zero padding and the absence of trailing data. Every static word is range-checked for its type the way solc's decoder does (narrow integers, address upper bits, `intN` sign extension, `bytesN` padding). What stays the caller's claim is which type the data really has.

@@ -84,6 +84,12 @@ const bytesSource: Accepts = (node, cat) =>
   (node.kind === "call" || node.kind === "codeAt") &&
   (cat === "string" || cat === "bytes" || cat === "unknown");
 
+/** What `@hash!` digests: a bytes-like source, or the bytes of an address or
+ *  a bytes32 word. */
+const hashSource: Accepts = (node, cat) =>
+  bytesSource(node, cat) ||
+  (node.kind === "call" && (cat === "address" || cat === "bytes32"));
+
 interface InfixEntry {
   key: NodeKey;
   label: string;
@@ -293,7 +299,7 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     role: "wrap",
     key: "hash",
     label: "hash of…",
-    accepts: bytesSource,
+    accepts: hashSource,
     topLevelOnly: true,
   },
   "str.split!": {

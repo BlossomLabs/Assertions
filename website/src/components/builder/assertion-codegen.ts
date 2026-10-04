@@ -4,6 +4,7 @@ import {
   type Assertion,
   type ValueExpr,
   callwrapHelperName,
+  producedType,
   inferCategory,
   argFits,
   argText,
@@ -131,6 +132,13 @@ async function renderCall(
   return out;
 }
 
+/** Whether `@hash!` has to read this operand as bytes rather than text. */
+function hashesBytes(operand: ValueExpr): boolean {
+  if (operand.kind === "codeAt") return true;
+  const type = producedType(operand);
+  return !!type && (type === "address" || /^bytes\d*$/.test(type));
+}
+
 /** Wrap a rendered boolean operand in parens when it is itself a
  *  cmp/logic/not node, corpus style: `($a::!{q()(uint256)} > 0) or (not $a::!{paused()(bool)})`. */
 function boolOperand(rendered: string, node: ValueExpr): string {
@@ -253,7 +261,12 @@ export async function renderExpr(
       if (!call) return null;
       // The node keys predate the helper unification; `bytelen` renders as
       // the lang module's @bytes.len! (decoded byte length of the return).
-      return `@${callwrapHelperName(expr.helper)}!(${call})`;
+      // @hash! reads text unless told otherwise: anything that is not a
+      // string (bytes, deployed code, an address, a bytesN word) is hashed
+      // as its bytes.
+      const mode =
+        expr.helper === "hash" && hashesBytes(expr.call) ? " bytes" : "";
+      return `@${callwrapHelperName(expr.helper)}!(${call}${mode})`;
     }
     case "split": {
       const call = await renderExpr(expr.call, ctx);

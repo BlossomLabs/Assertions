@@ -228,7 +228,23 @@ describe("buildAssertionLine", () => {
       expected: literal(`0x${"ab".repeat(32)}`),
     });
     expect((await buildAssertionLine(code, noEns))?.line).toBe(
-      `assert @hash!(@codeAt!(${T})) == 0x${"ab".repeat(32)}`,
+      `assert @hash!(@codeAt!(${T}) bytes) == 0x${"ab".repeat(32)}`,
+    );
+    // Text is hashed as it is; an address is hashed as its 20 bytes.
+    const hashOf = (returnType: string) =>
+      assertion({
+        subject: {
+          kind: "callwrap",
+          helper: "hash",
+          call: call(T, [hop({ fnName: "f", returnTypes: [returnType] })]),
+        },
+        expected: literal(`0x${"ab".repeat(32)}`),
+      });
+    expect((await buildAssertionLine(hashOf("string"), noEns))?.line).toBe(
+      `assert @hash!(${T}::!{f()(string)}) == 0x${"ab".repeat(32)}`,
+    );
+    expect((await buildAssertionLine(hashOf("address"), noEns))?.line).toBe(
+      `assert @hash!(${T}::!{f()(address)} bytes) == 0x${"ab".repeat(32)}`,
     );
     const approx = assertion({
       subject: call(T, [hop({ fnName: "price" })]),

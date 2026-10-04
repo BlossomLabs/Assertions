@@ -143,7 +143,9 @@ contract CoreTargetLambdaTest is Test {
         // element offset — the convention the SDK's foldParam uses.
         assertEq(
             uint256(
-                cols.foldWords(
+                cols.fold(
+                    Collections.FoldDomain.Words,
+                    0,
                     payload,
                     address(assertions),
                     template,
@@ -158,7 +160,9 @@ contract CoreTargetLambdaTest is Test {
         );
         assertEq(
             uint256(
-                cols.foldWords(
+                cols.fold(
+                    Collections.FoldDomain.Words,
+                    0,
                     payload,
                     address(assertions),
                     template,
@@ -188,7 +192,9 @@ contract CoreTargetLambdaTest is Test {
         bytes memory payload = abi.encodePacked(uint256(10), uint256(20), uint256(30));
         assertEq(
             uint256(
-                cols.foldWords(
+                cols.fold(
+                    Collections.FoldDomain.Words,
+                    0,
                     payload,
                     address(assertions),
                     template,
@@ -220,7 +226,7 @@ contract CoreTargetLambdaTest is Test {
 
         bytes memory payload = abi.encodePacked(uint256(1), uint256(2), uint256(3));
         assertEq(
-            cols.mapWords(payload, address(assertions), template, _offs(elemOffset)),
+            cols.applyWords(payload, address(assertions), template, _offs(elemOffset), false),
             abi.encodePacked(uint256(3), uint256(5), uint256(7)),
             "add(mul(elem, 2), 1) mapped through nested core reads"
         );
@@ -241,7 +247,7 @@ contract CoreTargetLambdaTest is Test {
 
         bytes memory payload = abi.encodePacked(uint256(1), uint256(2), uint256(3));
         assertEq(
-            cols.mapWords(payload, address(assertions), template, offs),
+            cols.applyWords(payload, address(assertions), template, offs, false),
             abi.encodePacked(uint256(1), uint256(4), uint256(9)),
             "mul(elem, elem) squares through a core-target multi-window template"
         );
@@ -258,7 +264,7 @@ contract CoreTargetLambdaTest is Test {
 
         bytes memory payload = abi.encodePacked(uint256(10), uint256(200), uint256(30), uint256(400));
         assertEq(
-            cols.filterWords(payload, address(assertions), template, _offs(elemOffset)),
+            cols.applyWords(payload, address(assertions), template, _offs(elemOffset), true),
             abi.encodePacked(uint256(200), uint256(400)),
             "elements above the live floor survive"
         );
@@ -275,7 +281,7 @@ contract CoreTargetLambdaTest is Test {
 
         bytes memory payload = abi.encodePacked(uint256(1), uint256(3), uint256(5));
         assertEq(
-            cols.mapWords(payload, address(assertions), template, _offs(elemOffset)),
+            cols.applyWords(payload, address(assertions), template, _offs(elemOffset), false),
             abi.encodePacked(uint256(3), uint256(9), uint256(15)),
             "mul(elem, 3) through the core's pick"
         );
@@ -318,7 +324,9 @@ contract CoreTargetLambdaTest is Test {
         bytes memory payload = abi.encodePacked(uint256(10), uint256(200), uint256(30));
         assertEq(
             uint256(
-                cols.foldWords(
+                cols.fold(
+                    Collections.FoldDomain.Words,
+                    0,
                     payload,
                     core_,
                     SDK_TEMPLATE,
@@ -333,7 +341,9 @@ contract CoreTargetLambdaTest is Test {
         );
         assertEq(
             uint256(
-                cols.foldWords(
+                cols.fold(
+                    Collections.FoldDomain.Words,
+                    0,
                     payload,
                     core_,
                     SDK_TEMPLATE,

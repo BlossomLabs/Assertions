@@ -3,21 +3,22 @@ title: "Folds & word arrays: bounded iteration"
 description: The fold family's template-lambda mechanics, early-exit modes, the word-array shape operations, the charset recipe and the on-chain record representation.
 ---
 
-The folds are the one loop primitive in the system: apply a lambda over a bounded domain, threading a 32-byte accumulator. They live on `Collections`, the iteration contract, and the lambda they call is typically an `Operations` function. Three functions share one engine, differing only in what the element is:
+The folds are the one loop primitive in the system: apply a lambda over a bounded domain, threading a 32-byte accumulator. They live on `Collections`, the iteration contract, and the lambda they call is typically an `Operations` function. One function, `fold`, runs over three domains that differ only in what the element is:
 
 ```solidity
-enum FoldExit { Full, Any, All }
+enum FoldExit   { Full, Any, All }
+enum FoldDomain { Range, Bytes, Words }
 
-function foldRange(uint256 n,      address target, bytes template,
-                   uint256 accOffset, uint256[] elemOffsets, bytes32 init, FoldExit exit)
+function fold(FoldDomain domain, uint256 n, bytes s, address target, bytes template,
+              uint256 accOffset, uint256[] elemOffsets, bytes32 init, FoldExit exit)
     external view returns (bytes32);
-function foldBytes(bytes s,        address target, bytes template, ...) // same tail
-function foldWords(bytes s,        address target, bytes template, ...) // same tail
 ```
 
-- **`foldRange`** iterates the index range `0 .. n-1`; the element is the index itself.
-- **`foldBytes`** iterates the bytes of `s`; the element is the byte VALUE as a word.
-- **`foldWords`** iterates the 32-byte words of `s`; the element is the word. Feed it an array PAYLOAD (elements without the envelope), e.g. sliced out of a returned array; a length that is not a multiple of 32 reverts with `UnalignedWords` (silent truncation of a partial trailing word would be a wrong-answer machine).
+- **`Range`** iterates the index range `0 .. n-1`; the element is the index itself. `s` must be empty.
+- **`Bytes`** iterates the bytes of `s`; the element is the byte VALUE as a word. `n` must be zero.
+- **`Words`** iterates the 32-byte words of `s`; the element is the word. `n` must be zero. Feed it an array PAYLOAD (elements without the envelope), e.g. sliced out of a returned array; a length that is not a multiple of 32 reverts with `UnalignedWords` (silent truncation of a partial trailing word would be a wrong-answer machine).
+
+Each domain takes its count from one argument and refuses the other with `UnusedFoldArgument(domain)`: a subject handed to a `Range` fold, or a count handed to a `Bytes` or `Words` fold, would otherwise be ignored and run a different fold than the one written.
 
 ## Template-lambda mechanics
 
@@ -30,7 +31,7 @@ Any single-word-returning view or pure function is a lambda; there is no closure
 bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(0));
 uint256[] memory elemOffsets = new uint256[](1);
 elemOffsets[0] = 36;
-collections.foldRange(5, address(operations), template, 4, elemOffsets, bytes32(0), Collections.FoldExit.Full);
+collections.fold(Collections.FoldDomain.Range, 5, "", address(operations), template, 4, elemOffsets, bytes32(0), Collections.FoldExit.Full);
 // = 10
 ```
 
@@ -51,28 +52,26 @@ An empty domain returns `init` after validating the template length and window b
 operations.charset(bytes(symbol), mask); // true iff every byte is a-z
 ```
 
-The fold form is what `charset` collapses, and it stays the general pattern for any OTHER per-byte predicate: `foldBytes` with a lambda over the byte value, the `All` exit and `init = 1`. With `bitSet(mask, elem)` from Operations as the lambda it reproduces `charset` (both windows share the element offset, since `bitSet` ignores its accumulator):
+The fold form is what `charset` collapses, and it stays the general pattern for any OTHER per-byte predicate: a `Bytes` fold with a lambda over the byte value, the `All` exit and `init = 1`. With `bitSet(mask, elem)` from Operations as the lambda it reproduces `charset` (both windows share the element offset, since `bitSet` ignores its accumulator):
 
 ```solidity
 // the template for a custom per-byte test, shown with bitSet as the predicate
 bytes memory template = abi.encodeWithSelector(Operations.bitSet.selector, mask, uint256(0));
 uint256[] memory elemOffsets = new uint256[](1);
 elemOffsets[0] = 36;
-collections.foldBytes(bytes(symbol), address(operations), template, 36, elemOffsets, bytes32(uint256(1)), Collections.FoldExit.All);
+collections.fold(Collections.FoldDomain.Bytes, 0, bytes(symbol), address(operations), template, 36, elemOffsets, bytes32(uint256(1)), Collections.FoldExit.All);
 ```
 
 The check is byte-level, so multi-byte UTF-8 characters (every byte >= 0x80) fail any ASCII-only mask, and the empty string is vacuously in every set.
 
-**Includes and split segments** need no fold: they are `indexOf`/`byteLen`/`slice` compositions, documented once on [the bytes page](/docs/operators/data#search-indexof). Array membership is either an `Any`-exit `foldWords` with an `eq(item, elem)` lambda, or `wordIndexOf`'s sentinel composition below.
+**Includes and split segments** need no fold: they are `indexOf`/`byteLen`/`slice` compositions, documented once on [the bytes page](/docs/operators/data#search-indexof). Array membership is either an `Any`-exit `Words` fold with an `eq(item, elem)` lambda, or `wordIndexOf`'s sentinel composition below.
 
 ## Word arrays
 
-The word-array family operates on the same payloads `foldWords` consumes: aligned 32-byte words without the ABI envelope (an array's elements, sliced out of a returned array or produced by another word op). Every function validates alignment first (`UnalignedWords`) and returns a plain bytes payload, so they nest into each other, into the folds, and into `read` splicing.
+The word-array family operates on the same payloads a `Words` fold consumes: aligned 32-byte words without the ABI envelope (an array's elements, sliced out of a returned array or produced by another word op). Every function validates alignment first (`UnalignedWords`) and returns a plain bytes payload, so they nest into each other, into the folds, and into `read` splicing.
 
 ```solidity
-function mapWords    (bytes s, address target, bytes template, uint256[] elemOffsets)
-    external view returns (bytes);
-function filterWords (bytes s, address target, bytes template, uint256[] elemOffsets)
+function applyWords  (bytes s, address target, bytes template, uint256[] elemOffsets, bool filter)
     external view returns (bytes);
 function iotaWords   (uint256 n) external pure returns (bytes);
 function wordIndexOf (bytes s, bytes32 w) external pure returns (uint256);
@@ -84,9 +83,9 @@ function uniqueWords (bytes s, bool ordered) external pure returns (bytes);
 function sumWords    (bytes s) external pure returns (uint256);
 ```
 
-**`mapWords`** applies a single-staticcall lambda to every word and returns the transformed payload: the bytes-producing map the scalar folds cannot express. Lambda conventions match the folds (`template` is complete calldata for `target` whose 32-byte windows at `elemOffsets` are rewritten per element; the lambda's single return word is the mapped element), and so do the failure modes below. An empty payload returns empty after validating the template length and window bounds, without inspecting or calling the target. In [EVMcrispr](/docs/evml) it is `@map!` applied to a named definition, e.g. `def @dbl! "$x: number -> number" @calc!($x * 2)` then `@map!($t::!{values()(uint256[])} @dbl!)`.
+**`applyWords`** with `filter` false is the map: it applies a single-staticcall lambda to every word and returns the transformed payload: the bytes-producing map the scalar folds cannot express. Lambda conventions match the folds (`template` is complete calldata for `target` whose 32-byte windows at `elemOffsets` are rewritten per element; the lambda's single return word is the mapped element), and so do the failure modes below. An empty payload returns empty after validating the template length and window bounds, without inspecting or calling the target. In [EVMcrispr](/docs/evml) it is `@map!` applied to a named definition, e.g. `def @dbl! "$x: number -> number" @calc!($x * 2)` then `@map!($t::!{values()(uint256[])} @dbl!)`.
 
-**`filterWords`** is `mapWords`' variable-length sibling, byte-identical in signature and lambda conventions: it keeps the ELEMENTS whose lambda application returns canonical ABI true, in order, so the output length is the kept count and the result nests into `len`, the folds and the other word ops. EVMcrispr compiles `@filter!` to it, and `@find!` is a core `pick` of the first kept word (no match leaves the pick out of bounds, so it reverts).
+With `filter` true it is the variable-length sibling, same lambda conventions: it keeps the ELEMENTS whose lambda application returns canonical ABI true, in order, so the output length is the kept count and the result nests into `len`, the folds and the other word ops. EVMcrispr compiles `@filter!` to it, and `@find!` is a core `pick` of the first kept word (no match leaves the pick out of bounds, so it reverts).
 
 **`iotaWords(n)`** is the index generator: the payload `0, 1, ..., n-1`. Its canonical pairing is `zipWords(iotaWords(n), payload)`, the enumeration that EVMcrispr's `@enumerate!` compiles with a live `n`.
 
@@ -94,9 +93,9 @@ function sumWords    (bytes s) external pure returns (uint256);
 
 **`reverseWords`** reverses the word order (`@reverse!`). **`zipWords(a, b)`** interleaves two payloads as `a0, b0, a1, b1, ...` for a fold or for `unzipWords` to split back; different word counts revert with `WordCountMismatch` (silent truncation would be a wrong-answer machine). **`unzipWords(s, which)`** is its inverse: every second word, lane 0 (words 0, 2, 4, ...) or lane 1 (words 1, 3, 5, ...); a lane past 1 reverts with `InvalidLane`, and an odd word count leaves the extra word in lane 0. EVMcrispr's `@zip!` and `@unzip!` compile to the pair.
 
-**`sortWords`** sorts ascending as UNSIGNED words (`@sort!`). Stable bottom-up merge sort uses O(n log n) comparisons and O(n) scratch memory. Signed sorting is a three-node recipe instead of an overload: flip the sign bit (`mapWords` with `bitXor(2^255, elem)`), sort, flip back. **`uniqueWords(s, ordered)`** removes duplicates while retaining first-occurrence order. With `ordered = true`, equal values must already be grouped: it compares adjacent words in O(n). With `false`, it checks all retained words in O(n squared). Ordering is trusted, not validated. Sorted deduplication is `uniqueWords(sortWords(s), true)`; EVMcrispr's `@unique!` passes `true`, so it removes adjacent duplicates only and `@unique!(@sort!(...))` is the set-uniqueness spelling.
+**`sortWords`** sorts ascending as UNSIGNED words (`@sort!`). Stable bottom-up merge sort uses O(n log n) comparisons and O(n) scratch memory. Signed sorting is a three-node recipe instead of an overload: flip the sign bit (`applyWords` with `bitXor(2^255, elem)`), sort, flip back. **`uniqueWords(s, ordered)`** removes duplicates while retaining first-occurrence order. With `ordered = true`, equal values must already be grouped: it compares adjacent words in O(n). With `false`, it checks all retained words in O(n squared). Ordering is trusted, not validated. Sorted deduplication is `uniqueWords(sortWords(s), true)`; EVMcrispr's `@unique!` passes `true`, so it removes adjacent duplicates only and `@unique!(@sort!(...))` is the set-uniqueness spelling.
 
-**`sumWords`** is the checked sum of the payload's words (overflow past 2^256 - 1 reverts with `Panic(0x11)`): the native, fixed-operation form of the `foldWords(add)` recipe, one on-chain loop instead of a call per element. EVMcrispr compiles `@sum!` to it; use `@reduce!(call add 0)` (or `foldWords` directly) for any other reduction (min, max, bitOr, bitAnd) or a nonzero initial accumulator.
+**`sumWords`** is the checked sum of the payload's words (overflow past 2^256 - 1 reverts with `Panic(0x11)`): the native, fixed-operation form of the `Words` fold with `add`, one on-chain loop instead of a call per element. EVMcrispr compiles `@sum!` to it; use `@reduce!(call add 0)` (or a `Words` fold directly) for any other reduction (min, max, bitOr, bitAnd) or a nonzero initial accumulator.
 
 ### On-chain records
 

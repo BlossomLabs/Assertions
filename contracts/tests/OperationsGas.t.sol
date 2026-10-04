@@ -93,8 +93,18 @@ contract OperationsGasTest is Test {
         uint256 fold = _cost(
             address(cols),
             abi.encodeCall(
-                Collections.foldBytes,
-                (s, address(ops), template, 36, _offs(36), bytes32(uint256(1)), Collections.FoldExit.All)
+                Collections.fold,
+                (
+                    Collections.FoldDomain.Bytes,
+                    0,
+                    s,
+                    address(ops),
+                    template,
+                    36,
+                    _offs(36),
+                    bytes32(uint256(1)),
+                    Collections.FoldExit.All
+                )
             )
         );
 
@@ -131,8 +141,18 @@ contract OperationsGasTest is Test {
         uint256 fold = _cost(
             address(cols),
             abi.encodeCall(
-                Collections.foldWords,
-                (payload, address(ops), template, 4, _offs(36), bytes32(0), Collections.FoldExit.Full)
+                Collections.fold,
+                (
+                    Collections.FoldDomain.Words,
+                    0,
+                    payload,
+                    address(ops),
+                    template,
+                    4,
+                    _offs(36),
+                    bytes32(0),
+                    Collections.FoldExit.Full
+                )
             )
         );
 
@@ -245,8 +265,10 @@ contract OperationsGasTest is Test {
         uint256 composed = _cost(
             address(cols),
             abi.encodeCall(
-                Collections.foldWords,
+                Collections.fold,
                 (
+                    Collections.FoldDomain.Words,
+                    0,
                     payload,
                     core_,
                     SDK_TEMPLATE,
@@ -264,7 +286,18 @@ contract OperationsGasTest is Test {
         uint256 direct = _cost(
             address(cols),
             abi.encodeCall(
-                Collections.foldWords, (payload, address(ops), tiny, 4, _offs(4), bytes32(0), Collections.FoldExit.Any)
+                Collections.fold,
+                (
+                    Collections.FoldDomain.Words,
+                    0,
+                    payload,
+                    address(ops),
+                    tiny,
+                    4,
+                    _offs(4),
+                    bytes32(0),
+                    Collections.FoldExit.Any
+                )
             )
         );
 
@@ -275,4 +308,161 @@ contract OperationsGasTest is Test {
         // composed form must stay a clear multiple of the tiny fold.
         assertGt(composed, direct, "a ~1KB core-target fold must cost more than a tiny Operations fold");
     }
+
+    // ============ Per-unit ceilings for the optimized loops ============
+
+    // The marginal cost of one more element, byte or digit, taken between a
+    // small and a large input so fixed costs cancel. The ceilings sit about
+    // half again above the figures measured when the loops were optimized
+    // (2026-10-03): they catch a loop that falls back to checked slices,
+    // per-element descriptor parsing or a per-position search, not a few
+    // percent of drift.
+    uint256 constant SMALL = 10;
+    uint256 constant LARGE = 50;
+
+    function _perUnit(address target, bytes memory small, bytes memory large) internal view returns (uint256) {
+        (bool warm,) = target.staticcall(small);
+        require(warm, "measured call reverted");
+        return (_cost(target, large) - _cost(target, small)) / (LARGE - SMALL);
+    }
+
+    function _wordsOf(uint256 n) internal pure returns (bytes memory p) {
+        for (uint256 i; i < n; i++) {
+            p = bytes.concat(p, abi.encode(1000 + i));
+        }
+    }
+
+    function _valuesOf(uint256 n) internal pure returns (bytes[] memory v) {
+        v = new bytes[](n);
+        for (uint256 i; i < n; i++) {
+            v[i] = abi.encode(1000 + i);
+        }
+    }
+
+    function _text(uint256 n, bytes1 c) internal pure returns (bytes memory t) {
+        t = new bytes(n);
+        for (uint256 i; i < n; i++) {
+            t[i] = c;
+        }
+    }
+
+    function _addCallback() internal view returns (Collections.Callback memory x) {
+        x.target = address(ops);
+        x.selector = ADD_U;
+        x.arguments = "(uint256,uint256)";
+        x.constants = new bytes[](2);
+        x.constants[1] = abi.encode(uint256(7));
+        x.second = 1;
+    }
+
+    function _ceiling(string memory name, uint256 measured, uint256 ceiling) internal {
+        emit log_named_uint(name, measured);
+        assertLt(measured, ceiling, name);
+    }
+
+    function test_gas_perUnitCeilings() public {
+        bytes memory tpl = abi.encodeWithSelector(ADD_U, uint256(0), uint256(0));
+        _ceiling(
+            "sumWords, per word",
+            _perUnit(
+                address(cols),
+                abi.encodeCall(Collections.sumWords, (_wordsOf(SMALL))),
+                abi.encodeCall(Collections.sumWords, (_wordsOf(LARGE)))
+            ),
+            CEIL_SUM_WORDS
+        );
+        _ceiling(
+            "zipWords, per pair",
+            _perUnit(
+                address(cols),
+                abi.encodeCall(Collections.zipWords, (_wordsOf(SMALL), _wordsOf(SMALL))),
+                abi.encodeCall(Collections.zipWords, (_wordsOf(LARGE), _wordsOf(LARGE)))
+            ),
+            CEIL_ZIP_WORDS
+        );
+        _ceiling(
+            "mapWords with an Operations lambda, per element",
+            _perUnit(
+                address(cols),
+                abi.encodeCall(Collections.applyWords, (_wordsOf(SMALL), address(ops), tpl, _offs(4), false)),
+                abi.encodeCall(Collections.applyWords, (_wordsOf(LARGE), address(ops), tpl, _offs(4), false))
+            ),
+            CEIL_MAP_WORDS
+        );
+        _ceiling(
+            "reverseValues over addresses, per element",
+            _perUnit(
+                address(cols),
+                abi.encodeCall(Collections.reverseValues, ("address", _valuesOf(SMALL))),
+                abi.encodeCall(Collections.reverseValues, ("address", _valuesOf(LARGE)))
+            ),
+            CEIL_REVERSE_VALUES
+        );
+        _ceiling(
+            "mapValues with an Operations callback, per element",
+            _perUnit(
+                address(cols),
+                abi.encodeCall(Collections.mapValues, ("uint256", "uint256", _valuesOf(SMALL), _addCallback())),
+                abi.encodeCall(Collections.mapValues, ("uint256", "uint256", _valuesOf(LARGE), _addCallback()))
+            ),
+            CEIL_MAP_VALUES
+        );
+        _ceiling(
+            "packArray over addresses, per element",
+            _perUnit(
+                address(cols),
+                abi.encodeCall(Collections.packArray, ("address", _valuesOf(SMALL))),
+                abi.encodeCall(Collections.packArray, ("address", _valuesOf(LARGE)))
+            ),
+            CEIL_PACK_ARRAY
+        );
+        // Text loops are measured over ten times the length, so the unit is ten bytes.
+        _ceiling(
+            "contains with an absent needle, per ten bytes",
+            _perUnit(
+                address(ops),
+                abi.encodeCall(Operations.contains, (_text(SMALL * 10, "a"), "b")),
+                abi.encodeCall(Operations.contains, (_text(LARGE * 10, "a"), "b"))
+            ),
+            CEIL_CONTAINS
+        );
+        _ceiling(
+            "stringSlice over ASCII, per ten bytes",
+            _perUnit(
+                address(ops),
+                abi.encodeCall(Operations.stringSlice, (_text(SMALL * 10, "a"), 0, 1)),
+                abi.encodeCall(Operations.stringSlice, (_text(LARGE * 10, "a"), 0, 1))
+            ),
+            CEIL_STRING_SLICE
+        );
+        _ceiling(
+            "toLower, per ten bytes",
+            _perUnit(
+                address(ops),
+                abi.encodeCall(Operations.toLower, (_text(SMALL * 10, "A"))),
+                abi.encodeCall(Operations.toLower, (_text(LARGE * 10, "A")))
+            ),
+            CEIL_TO_LOWER
+        );
+        _ceiling(
+            "parseUint, per digit",
+            _perUnit(
+                address(ops),
+                abi.encodeCall(Operations.parseUint, (_text(SMALL, "1"))),
+                abi.encodeCall(Operations.parseUint, (_text(LARGE, "1")))
+            ),
+            CEIL_PARSE_UINT
+        );
+    }
+
+    uint256 constant CEIL_SUM_WORDS = 230;
+    uint256 constant CEIL_ZIP_WORDS = 345;
+    uint256 constant CEIL_MAP_WORDS = 1700;
+    uint256 constant CEIL_REVERSE_VALUES = 3700;
+    uint256 constant CEIL_MAP_VALUES = 9500;
+    uint256 constant CEIL_PACK_ARRAY = 3700;
+    uint256 constant CEIL_CONTAINS = 1300;
+    uint256 constant CEIL_STRING_SLICE = 200;
+    uint256 constant CEIL_TO_LOWER = 1600;
+    uint256 constant CEIL_PARSE_UINT = 250;
 }

@@ -40,6 +40,43 @@ contract AbiWordBoundariesTest is Test {
         }
     }
 
+    /**
+     * @dev A descriptor one byte short of a name the parser recognises as a
+     *      word ("bool", "bytes", "string", "uint256", "address"), followed
+     *      by every possible padding byte, including the one that would
+     *      complete the name. The name ends where the descriptor ends, so the
+     *      type stays the unknown one-word type it is and the value comes
+     *      back unchanged.
+     */
+    function testNamesOneByteShortOfAFastPathIgnoreDescriptorPadding() public view {
+        string[5] memory names = ["boo", "byte", "strin", "uint25", "addres"];
+        uint256 word = uint256(keccak256("any word"));
+        bytes[] memory values = new bytes[](1);
+        values[0] = abi.encode(word);
+        bytes memory expected = abi.encode(values);
+        for (uint256 k; k < names.length; ++k) {
+            bytes memory name = bytes(names[k]);
+            bytes memory data =
+                abi.encodeCall(Collections.unpackArray, (names[k], abi.encode(uint256(32), uint256(1), word)));
+            // Locate the descriptor independently of the encoder's offsets.
+            uint256 padding;
+            for (uint256 i = 4; i + name.length < data.length && padding == 0; ++i) {
+                bool found = true;
+                for (uint256 j; j < name.length; ++j) {
+                    if (data[i + j] != name[j]) found = false;
+                }
+                if (found) padding = i + name.length;
+            }
+            assertTrue(padding != 0, "descriptor not found");
+            for (uint256 i; i < 256; ++i) {
+                data[padding] = bytes1(uint8(i));
+                (bool ok, bytes memory result) = address(collections).staticcall(data);
+                assertTrue(ok, string.concat(names[k], ": padding byte changed the outcome"));
+                assertEq(result, expected, string.concat(names[k], ": padding byte changed the value"));
+            }
+        }
+    }
+
     function testBytes3AcceptsCanonicalWordWithEveryDescriptorPaddingByte() public view {
         uint256 word = uint256(0x123456) << 232;
         (bytes memory data, uint256 padding) = request(word);

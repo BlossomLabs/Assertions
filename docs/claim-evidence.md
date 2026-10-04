@@ -452,7 +452,7 @@ The evidence records are preserved in [claim-evidence.json](claim-evidence.json)
 
 **Test/property definitions:** [check_dynamicArray](../contracts/tests/NavSymbolic.t.sol), [test_navNegativeTupleIndexCountsComponents](../contracts/tests/MutationGaps.t.sol), [test_nav_indexOutOfBounds](../contracts/tests/CoreReads.t.sol).
 
-**Scope and limitations:** Source proofs preserve tuple counting, negative-array normalization and exact error arguments/order. The full-width helper can panic for negative index with count 2^255; actual callers establish smaller counts. The all-input model also includes accepted tuple-root array descriptors.
+**Scope and limitations:** Source proofs preserve tuple counting, negative-array normalization and exact error arguments/order. The full-width helper can panic for negative index with count 2^255; actual callers establish smaller counts. The all-input model also includes accepted tuple-root array descriptors. Since rc1 the descriptor is parsed step by step, so the order is per step: a data error in one step can precede a descriptor error in text a later step would have parsed.
 
 ## C36
 
@@ -478,21 +478,21 @@ The evidence records are preserved in [claim-evidence.json](claim-evidence.json)
 
 **Test/property definitions:** [check_bytesValue](../contracts/tests/NavSymbolic.t.sol), [check_dynamicArray](../contracts/tests/NavSymbolic.t.sol), [testNavNeverPanics](../contracts/tests/NoPanic.t.sol), [test_C37_SelectedTupleArrayValuesAndSkippedSiblingPolicy](../contracts/tests/ClaimCoverageModerate.t.sol), [test_navArrayCountNamesItsWord](../contracts/tests/MutationGaps.t.sol), [test_navPayloadBounded](../contracts/tests/MutationGaps.t.sol).
 
-**Scope and limitations:** Canonical selected dynamic tuple/array values, selected invalid narrow words, skipped invalid siblings and dirty byte padding are checked. These concrete cases complement retained corruption grids and conditional source correspondence; arithmetic/resource exceptions and weaker parent/sentinel policy remain.
+**Scope and limitations:** Canonical selected dynamic tuple/array values, selected invalid narrow words, skipped invalid siblings and dirty byte padding are checked. These concrete cases complement retained corruption grids and conditional source correspondence; arithmetic/resource exceptions and weaker parent/sentinel policy remain. Since rc1 descriptor text after the selected component is unread as well (C38).
 
 ## C38
 
 **Recorded evidence:** UNIT / SUITE PASSED.
 
-**References:** [contracts/tests/ClaimCoverageModerate.t.sol](../contracts/tests/ClaimCoverageModerate.t.sol) `test_C38_DescriptorErrorsPrecedeInvalidData`; retained supporting evidence: `stays typed under descriptor mutation` [test/nav-encode-fuzz.test.ts](../test/nav-encode-fuzz.test.ts); `test_nav_invalidSteps` [contracts/tests/CoreReads.t.sol](../contracts/tests/CoreReads.t.sol); `test_navRefusesTrailingDescriptorText` [contracts/tests/MutationGaps.t.sol](../contracts/tests/MutationGaps.t.sol)
+**References:** [contracts/tests/ClaimCoverageModerate.t.sol](../contracts/tests/ClaimCoverageModerate.t.sol) `test_C38_DescriptorParsedAlongThePath`, `testFuzz_C38_UnreadDescriptorTextCannotChangeTheResult`; retained supporting evidence: `stays typed under descriptor mutation` [test/nav-encode-fuzz.test.ts](../test/nav-encode-fuzz.test.ts); `test_nav_invalidSteps` [contracts/tests/CoreReads.t.sol](../contracts/tests/CoreReads.t.sol); `test_navRefusesTrailingDescriptorText` [contracts/tests/MutationGaps.t.sol](../contracts/tests/MutationGaps.t.sol)
 
 **Recorded test run:** [results, commands and source hashes](claim-coverage-checks.json).
 
-**Supporting sources:** [contracts/Assertions.sol](../contracts/Assertions.sol); [website/src/content/docs/docs/core/reads.md](../website/src/content/docs/docs/core/reads.md)
+**Supporting sources:** [contracts/Assertions.sol](../contracts/Assertions.sol) (`_navigate`, `_navTupleStep`, `_closesTuple`, `_navArrayStep`); [website/src/content/docs/docs/core/reads.md](../website/src/content/docs/docs/core/reads.md)
 
-**Test/property definitions:** [test_C38_DescriptorErrorsPrecedeInvalidData](../contracts/tests/ClaimCoverageModerate.t.sol), [test_navRefusesTrailingDescriptorText](../contracts/tests/MutationGaps.t.sol), [test_nav_invalidSteps](../contracts/tests/CoreReads.t.sol).
+**Test/property definitions:** [testFuzz_C38_UnreadDescriptorTextCannotChangeTheResult](../contracts/tests/ClaimCoverageModerate.t.sol), [test_C38_DescriptorParsedAlongThePath](../contracts/tests/ClaimCoverageModerate.t.sol), [test_navRefusesTrailingDescriptorText](../contracts/tests/MutationGaps.t.sol), [test_nav_invalidSteps](../contracts/tests/CoreReads.t.sol).
 
-**Scope and limitations:** Complete malformed descriptor rejection and exact error positions precede both valid and invalid data. Arithmetic and resource premises remain explicit.
+**Scope and limitations:** Changed since rc1, which parsed the complete descriptor before reading data. A malformed component the path enters or passes is refused at its exact position before that step reads valid or invalid data; the same malformed text after the selected component is accepted, and the fuzz test shows arbitrary bytes there leave the result unchanged. The selected component is validated through its delimiter. Before the walk, the parentheses of a tuple descriptor are counted so the one opened at byte 0 closes at the last byte (`(a,b)junk)` and a descriptor with its first parenthesis dropped are refused, never read as the tuple `(a,b)`), and an array of tuples is parsed whole (stray text, a zero length and an oversized length are refused). The fuzz test keeps parentheses out of the unread text for that reason. Arithmetic and resource premises remain explicit.
 
 ## C39
 
@@ -2494,7 +2494,7 @@ The evidence records are preserved in [claim-evidence.json](claim-evidence.json)
 
 **Test/property definitions:** [test_O51_OpenZeppelinCombinerAndFoldProof](../contracts/tests/ClaimCoverageEasy.t.sol), [test_merkleVerify_viaFoldWords](../contracts/tests/Operations.t.sol).
 
-**Scope and limitations:** OpenZeppelin MerkleProof.processProof is the independent combiner oracle; both child orders and a multi-step fold match its result.
+**Scope and limitations:** OpenZeppelin MerkleProof.processProof is the independent combiner oracle; both child orders and a multi-step fold match its result. Since rc1 the fold is `fold(Words, ...)`; the behaviour is unchanged.
 
 ## O52
 
@@ -2818,21 +2818,21 @@ The evidence records are preserved in [claim-evidence.json](claim-evidence.json)
 
 **Test/property definitions:** [check_foldWordsIsLeftFold](../contracts/tests/WordLambdasSymbolic.t.sol), [test_foldWords_sum](../contracts/tests/Operations.t.sol).
 
-**Scope and limitations:** Halmos n<=3 words with a non-commutative lambda; JS differential covers n<=12 words over 11 Operations lambdas
+**Scope and limitations:** Halmos n<=3 words with a non-commutative lambda; JS differential covers n<=12 words over 11 Operations lambdas Since rc1 the three folds are one `fold(domain, ...)` entry point over the same engine; the property calls it with the Words domain.
 
 ## L2
 
 **Recorded evidence:** SYMBOLIC / PROVED.
 
-**References:** check_foldRangeAndBytes [contracts/tests/WordLambdasSymbolic.t.sol](../contracts/tests/WordLambdasSymbolic.t.sol); compose-fuzz foldRange/foldBytes cases [test/compose-fuzz.test.ts](../test/compose-fuzz.test.ts)
+**References:** check_foldRangeAndBytes [contracts/tests/WordLambdasSymbolic.t.sol](../contracts/tests/WordLambdasSymbolic.t.sol); compose-fuzz foldRange/foldBytes cases [test/compose-fuzz.test.ts](../test/compose-fuzz.test.ts); `test_foldRefusesTheArgumentItsDomainDoesNotUse` [contracts/tests/MutationGaps.t.sol](../contracts/tests/MutationGaps.t.sol)
 
 **Recorded test run:** [results, commands and source hashes](assertions-2.0-release-checks.json).
 
 **Supporting sources:** [contracts/Collections.sol](../contracts/Collections.sol), 260-263; [website/src/content/docs/docs/operators/fold.md](../website/src/content/docs/docs/operators/fold.md)
 
-**Test/property definitions:** [check_foldRangeAndBytes](../contracts/tests/WordLambdasSymbolic.t.sol).
+**Test/property definitions:** [check_foldRangeAndBytes](../contracts/tests/WordLambdasSymbolic.t.sol), [test_foldRefusesTheArgumentItsDomainDoesNotUse](../contracts/tests/MutationGaps.t.sol).
 
-**Scope and limitations:** Halmos n<=3; JS differential n<=30 (range) and n<=40 (bytes)
+**Scope and limitations:** Halmos n<=3; JS differential n<=30 (range) and n<=40 (bytes) Since rc1 the three folds are one `fold(domain, ...)` entry point, and the argument a domain does not use is refused: `test_foldRefusesTheArgumentItsDomainDoesNotUse` [contracts/tests/MutationGaps.t.sol](../contracts/tests/MutationGaps.t.sol) pins the exact error for each domain, and the no-panic fuzz repeats it with fuzzed inputs.
 
 ## L3
 
@@ -2968,7 +2968,7 @@ The evidence records are preserved in [claim-evidence.json](claim-evidence.json)
 
 **Test/property definitions:** [check_filterWordsNeedsCanonicalBool](../contracts/tests/WordLambdasSymbolic.t.sol), [test_filterWords](../contracts/tests/Operations.t.sol).
 
-**Scope and limitations:** Halmos n<=3
+**Scope and limitations:** Halmos n<=3 Since rc1 the filter is `applyWords(..., true)`; the engine is unchanged.
 
 ## L13
 
@@ -2982,7 +2982,7 @@ The evidence records are preserved in [claim-evidence.json](claim-evidence.json)
 
 **Test/property definitions:** [check_mapWordsKeepsTemplatePristine](../contracts/tests/WordLambdasSymbolic.t.sol), [test_mapWords_emptyPayload](../contracts/tests/Operations.t.sol).
 
-**Scope and limitations:** Halmos n<=3; JS differential n<=12
+**Scope and limitations:** Halmos n<=3; JS differential n<=12 Since rc1 the map is `applyWords(..., false)`; the engine is unchanged.
 
 ## L14
 
@@ -3136,7 +3136,7 @@ The evidence records are preserved in [claim-evidence.json](claim-evidence.json)
 
 **Test/property definitions:** [check_signedSortRecipe](../contracts/tests/RecipesOffsetsSymbolic.t.sol), [test_sortWords_signedRecipe](../contracts/tests/Operations.t.sol).
 
-**Scope and limitations:** Proved over three symbolic int256 words against a sorting network; a descending-sort mutant fails it
+**Scope and limitations:** Proved over three symbolic int256 words against a sorting network; a descending-sort mutant fails it Since rc1 the map is `applyWords(..., false)`.
 
 ## L25
 
@@ -3164,7 +3164,7 @@ The evidence records are preserved in [claim-evidence.json](claim-evidence.json)
 
 **Test/property definitions:** [check_sumWordsMatchesTheFoldRecipe](../contracts/tests/RecipesOffsetsSymbolic.t.sol), [test_sumWords](../contracts/tests/Operations.t.sol).
 
-**Scope and limitations:** Proved over three words: equal checked sums, and both refuse an overflow (Panic(0x11) from sumWords, CallbackFailed from the fold); an unchecked sum fails it
+**Scope and limitations:** Proved over three words: equal checked sums, and both refuse an overflow (Panic(0x11) from sumWords, CallbackFailed from the fold); an unchecked sum fails it Since rc1 the fold is `fold(Words, ...)`.
 
 ## L27
 
@@ -3612,13 +3612,13 @@ The evidence records are preserved in [claim-evidence.json](claim-evidence.json)
 
 **Recorded evidence:** SYMBOLIC / PROVED.
 
-**References:** `check_referencesMustPointBackwards` [contracts/tests/ExpressionsSymbolic.t.sol](../contracts/tests/ExpressionsSymbolic.t.sol) (refs 0, 1 = self, 2, max); `testGraphRejectsForwardReferenceAndInvalidTarget` [contracts/tests/Expressions.t.sol](../contracts/tests/Expressions.t.sol)
+**References:** `check_referencesMustPointBackwards` [contracts/tests/ExpressionsSymbolic.t.sol](../contracts/tests/ExpressionsSymbolic.t.sol) (refs 0, 1 = self, 2, max); `testGraphRejectsForwardReferenceAndInvalidTarget` [contracts/tests/Expressions.t.sol](../contracts/tests/Expressions.t.sol); `test_E1_BadReferencePrecedesInvalidKind` [contracts/tests/ClaimCoverageEasy.t.sol](../contracts/tests/ClaimCoverageEasy.t.sol) (a bad reference is reported before an out-of-range kind on the same node)
 
 **Recorded test run:** [results, commands and source hashes](assertions-2.0-release-checks.json).
 
 **Supporting sources:** [contracts/Expressions.sol](../contracts/Expressions.sol), :89, :139-145, :211; [website/src/content/docs/docs/operators/expressions.md](../website/src/content/docs/docs/operators/expressions.md), :38, :96; [website/src/content/docs/docs/reference/errors.md](../website/src/content/docs/docs/reference/errors.md)
 
-**Test/property definitions:** [check_referencesMustPointBackwards](../contracts/tests/ExpressionsSymbolic.t.sol), [testGraphRejectsForwardReferenceAndInvalidTarget](../contracts/tests/Expressions.t.sol).
+**Test/property definitions:** [check_referencesMustPointBackwards](../contracts/tests/ExpressionsSymbolic.t.sol), [testGraphRejectsForwardReferenceAndInvalidTarget](../contracts/tests/Expressions.t.sol), [test_E1_BadReferencePrecedesInvalidKind](../contracts/tests/ClaimCoverageEasy.t.sol).
 
 **Scope and limitations:** Shown on a Wrap node only, ref case-split {0,1,2,max}. The file header [contracts/tests/ExpressionsSymbolic.t.sol](../contracts/tests/ExpressionsSymbolic.t.sol) says a self-reference is out of Halmos' reach, but case 1 IS a self-reference and is proved (the up-front check rejects it before any recursion)
 
@@ -3690,7 +3690,7 @@ The evidence records are preserved in [claim-evidence.json](claim-evidence.json)
 
 **Test/property definitions:** [check_referenceCountsPerKind](../contracts/tests/ExpressionsStructureSymbolic.t.sol), [testProbeCallRequiresBytesCalldata](../contracts/tests/Expressions.t.sol).
 
-**Scope and limitations:** Structure proved with a bytes-typed operand (see E5); the untyped case is pinned by `testProbeCallRequiresBytesCalldata`
+**Scope and limitations:** Structure proved with a bytes-typed operand (see E5); the untyped case is pinned by `testProbeCallRequiresBytesCalldata`. Since rc1 the `evaluateEncoded` clause defers to E38: that payload is no longer decoded up front.
 
 ## E7
 
@@ -4048,43 +4048,43 @@ The evidence records are preserved in [claim-evidence.json](claim-evidence.json)
 
 **Recorded evidence:** SYMBOLIC / PROVED.
 
-**References:** `testComposedDynamicCallbackRepeatsParameter` [contracts/tests/Expressions.t.sol](../contracts/tests/Expressions.t.sol); `test_stringParameterLambda` [contracts/tests/ExpressionsGas.t.sol](../contracts/tests/ExpressionsGas.t.sol); `check_evaluateEncodedMatchesEvaluate` [contracts/tests/ExpressionsStructureSymbolic.t.sol](../contracts/tests/ExpressionsStructureSymbolic.t.sol)
+**References:** `testComposedDynamicCallbackRepeatsParameter` [contracts/tests/Expressions.t.sol](../contracts/tests/Expressions.t.sol); `test_stringParameterLambda` [contracts/tests/ExpressionsGas.t.sol](../contracts/tests/ExpressionsGas.t.sol); `test_E36_PayloadCannotReadItsGraphFromTheParameters` [contracts/tests/ClaimCoverageEasy.t.sol](../contracts/tests/ClaimCoverageEasy.t.sol); `check_evaluateEncodedMatchesEvaluate` [contracts/tests/ExpressionsStructureSymbolic.t.sol](../contracts/tests/ExpressionsStructureSymbolic.t.sol)
 
 **Recorded test run:** [results, commands and source hashes](assertions-2.0-release-checks.json).
 
-**Supporting sources:** [contracts/Expressions.sol](../contracts/Expressions.sol), :305-309; [website/src/content/docs/docs/operators/expressions.md](../website/src/content/docs/docs/operators/expressions.md); [website/src/content/docs/docs/operators/collections.md](../website/src/content/docs/docs/operators/collections.md); README.md:10
+**Supporting sources:** [contracts/Expressions.sol](../contracts/Expressions.sol) (`evaluateEncoded`); [website/src/content/docs/docs/operators/expressions.md](../website/src/content/docs/docs/operators/expressions.md); [website/src/content/docs/docs/operators/collections.md](../website/src/content/docs/docs/operators/collections.md); README.md
 
-**Test/property definitions:** [check_evaluateEncodedMatchesEvaluate](../contracts/tests/ExpressionsStructureSymbolic.t.sol), [testComposedDynamicCallbackRepeatsParameter](../contracts/tests/Expressions.t.sol), [test_stringParameterLambda](../contracts/tests/ExpressionsGas.t.sol).
+**Test/property definitions:** [check_evaluateEncodedMatchesEvaluate](../contracts/tests/ExpressionsStructureSymbolic.t.sol), [testComposedDynamicCallbackRepeatsParameter](../contracts/tests/Expressions.t.sol), [test_E36_PayloadCannotReadItsGraphFromTheParameters](../contracts/tests/ClaimCoverageEasy.t.sol), [test_stringParameterLambda](../contracts/tests/ExpressionsGas.t.sol).
 
-**Scope and limitations:** Proved: the same value as `evaluate` for a valid graph
+**Scope and limitations:** Proved: the same value as `evaluate` for a valid graph. Changed since rc1, which decoded the payload and re-encoded it: the bytes are now forwarded, placed after the encoded parameters. ABI offsets only point forward, so a payload whose node list offset runs past its own end fails instead of reading nodes planted in the parameters; the unit test tries every such offset. The property was updated to expect the forwarded call and rerun on the changed source; the retained rc1 result predates the change.
 
 ## E37
 
 **Recorded evidence:** SYMBOLIC / PROVED.
 
-**References:** `check_evaluateEncodedMatchesEvaluate` [contracts/tests/ExpressionsStructureSymbolic.t.sol](../contracts/tests/ExpressionsStructureSymbolic.t.sol)
+**References:** `check_evaluateEncodedMatchesEvaluate` [contracts/tests/ExpressionsStructureSymbolic.t.sol](../contracts/tests/ExpressionsStructureSymbolic.t.sol); `test_E38_EncodedPayloadFailsWhereItIsRead` [contracts/tests/ClaimCoverageEasy.t.sol](../contracts/tests/ClaimCoverageEasy.t.sol)
 
 **Recorded test run:** [results, commands and source hashes](assertions-2.0-release-checks.json).
 
-**Supporting sources:** [contracts/Expressions.sol](../contracts/Expressions.sol); [website/src/content/docs/docs/operators/expressions.md](../website/src/content/docs/docs/operators/expressions.md)
+**Supporting sources:** [contracts/Expressions.sol](../contracts/Expressions.sol) (`evaluateEncoded`, `_call`); [website/src/content/docs/docs/operators/expressions.md](../website/src/content/docs/docs/operators/expressions.md)
 
-**Test/property definitions:** [check_evaluateEncodedMatchesEvaluate](../contracts/tests/ExpressionsStructureSymbolic.t.sol).
+**Test/property definitions:** [check_evaluateEncodedMatchesEvaluate](../contracts/tests/ExpressionsStructureSymbolic.t.sol), [test_E38_EncodedPayloadFailsWhereItIsRead](../contracts/tests/ClaimCoverageEasy.t.sol).
 
-**Scope and limitations:** Proved: `NodeCallFailed(0, expressions, evaluate calldata, evaluate's own revert)` byte for byte; a planted node index fails it
+**Scope and limitations:** Proved: `NodeCallFailed(0, expressions, the forwarded evaluate call, evaluate's own revert)` byte for byte; a planted node index fails it. Changed since rc1: the reported calldata is the forwarded call (head, parameters, then the payload), a valid encoding of the same `evaluate` call but not the canonical one rc1 reported. The property now builds that expected calldata and was rerun on the changed source; the retained rc1 result predates the change.
 
 ## E38
 
 **Recorded evidence:** UNIT / SUITE PASSED.
 
-**References:** `testEvaluateEncodedRejectsImpossibleDecoderAllocation` [contracts/tests/ExpressionsNoPanic.t.sol](../contracts/tests/ExpressionsNoPanic.t.sol); [contracts/tests/ClaimCoverageEasy.t.sol](../contracts/tests/ClaimCoverageEasy.t.sol) `test_E38_EncodedDecoderBareRevert`; retained supporting evidence: `testFuzzGraphsDocumentedFailures` [contracts/tests/ExpressionsNoPanic.t.sol](../contracts/tests/ExpressionsNoPanic.t.sol) (random payload, bare revert tolerated)
+**References:** [contracts/tests/ClaimCoverageEasy.t.sol](../contracts/tests/ClaimCoverageEasy.t.sol) `test_E38_EncodedPayloadFailsWhereItIsRead`, `testFuzz_E38_UnreadNodeDataCannotChangeTheResult`; `testEvaluateEncodedRefusesImpossibleNodeCountInsideTheSelfCall` [contracts/tests/ExpressionsNoPanic.t.sol](../contracts/tests/ExpressionsNoPanic.t.sol); retained supporting evidence: `testFuzzGraphsDocumentedFailures` [contracts/tests/ExpressionsNoPanic.t.sol](../contracts/tests/ExpressionsNoPanic.t.sol) (random payload)
 
 **Recorded test run:** [results, commands and source hashes](assertions-2.0-release-checks.json).
 
-**Supporting sources:** [contracts/Expressions.sol](../contracts/Expressions.sol); [website/src/content/docs/docs/reference/errors.md](../website/src/content/docs/docs/reference/errors.md); AGENTS.md:324-329
+**Supporting sources:** [contracts/Expressions.sol](../contracts/Expressions.sol) (`evaluateEncoded`); [website/src/content/docs/docs/reference/errors.md](../website/src/content/docs/docs/reference/errors.md); AGENTS.md
 
-**Test/property definitions:** [testEvaluateEncodedRejectsImpossibleDecoderAllocation](../contracts/tests/ExpressionsNoPanic.t.sol), [testFuzzGraphsDocumentedFailures](../contracts/tests/ExpressionsNoPanic.t.sol), [test_E38_EncodedDecoderBareRevert](../contracts/tests/ClaimCoverageEasy.t.sol).
+**Test/property definitions:** [testEvaluateEncodedRefusesImpossibleNodeCountInsideTheSelfCall](../contracts/tests/ExpressionsNoPanic.t.sol), [testFuzzGraphsDocumentedFailures](../contracts/tests/ExpressionsNoPanic.t.sol), [testFuzz_E38_UnreadNodeDataCannotChangeTheResult](../contracts/tests/ClaimCoverageEasy.t.sol), [test_E38_EncodedPayloadFailsWhereItIsRead](../contracts/tests/ClaimCoverageEasy.t.sol).
 
-**Scope and limitations:** Exact retained bare-revert cases remain covered. The current allocation regression asserts Panic(0x41) before the core/self-call; decoder errors are not universally bare or wrapped in NodeCallFailed. The bounded graph sweep tolerates only empty data or exact allocation Panic(0x41) for injected malformed payloads, and rejects other panics.
+**Scope and limitations:** Changed since rc1, which decoded the payload before the self-call and could fail there with a bare revert or Panic(0x41). A payload shorter than one word, or with a leading offset below 32 or past its own end, reverts without data. A payload whose node list offset points nowhere, or whose node count is impossible, fails inside the self-call and returns NodeCallFailed carrying the forwarded calldata and an empty reason; no allocation panic arises because nothing is decoded into memory. A node nothing reaches may carry any data length word and the result is unchanged (fuzzed over the whole word).
 
 ## E39
 
@@ -4104,13 +4104,13 @@ The evidence records are preserved in [claim-evidence.json](claim-evidence.json)
 
 **Recorded evidence:** UNIT / SUITE PASSED.
 
-**References:** [contracts/tests/ClaimCoverageEasy.t.sol](../contracts/tests/ClaimCoverageEasy.t.sol) `test_E7_UnreachableDescriptorFailsBeforeCalls`; [contracts/tests/ClaimCoverageEasy.t.sol](../contracts/tests/ClaimCoverageEasy.t.sol) `test_E25_ResolveDecoderBareRevert`; [contracts/tests/ClaimCoverageEasy.t.sol](../contracts/tests/ClaimCoverageEasy.t.sol) `test_E38_EncodedDecoderBareRevert`; [contracts/tests/ClaimCoverageEasy.t.sol](../contracts/tests/ClaimCoverageEasy.t.sol) `test_E39_InvalidKindBareRevert`; retained supporting evidence: `testFuzzGraphsDocumentedFailures` [contracts/tests/ExpressionsNoPanic.t.sol](../contracts/tests/ExpressionsNoPanic.t.sol) (up to 6 nodes, all kinds, 8 HostileTarget modes, 10M gas per call); `testResolveRejectsImpossibleDecoderAllocation`, `testEvaluateEncodedRejectsImpossibleDecoderAllocation` [contracts/tests/ExpressionsNoPanic.t.sol](../contracts/tests/ExpressionsNoPanic.t.sol)
+**References:** [contracts/tests/ClaimCoverageEasy.t.sol](../contracts/tests/ClaimCoverageEasy.t.sol) `test_E7_UnreachableDescriptorFailsBeforeCalls`; [contracts/tests/ClaimCoverageEasy.t.sol](../contracts/tests/ClaimCoverageEasy.t.sol) `test_E25_ResolveDecoderBareRevert`; [contracts/tests/ClaimCoverageEasy.t.sol](../contracts/tests/ClaimCoverageEasy.t.sol) `test_E38_EncodedPayloadFailsWhereItIsRead`; [contracts/tests/ClaimCoverageEasy.t.sol](../contracts/tests/ClaimCoverageEasy.t.sol) `test_E39_InvalidKindBareRevert`; retained supporting evidence: `testFuzzGraphsDocumentedFailures` [contracts/tests/ExpressionsNoPanic.t.sol](../contracts/tests/ExpressionsNoPanic.t.sol) (up to 6 nodes, all kinds, 8 HostileTarget modes, 10M gas per call); `testResolveRejectsImpossibleDecoderAllocation`, `testEvaluateEncodedRefusesImpossibleNodeCountInsideTheSelfCall` [contracts/tests/ExpressionsNoPanic.t.sol](../contracts/tests/ExpressionsNoPanic.t.sol)
 
 **Recorded test run:** [results, commands and source hashes](assertions-2.0-release-checks.json).
 
 **Supporting sources:** [contracts/tests/ExpressionsNoPanic.t.sol](../contracts/tests/ExpressionsNoPanic.t.sol); AGENTS.md:323-334
 
-**Test/property definitions:** [testEvaluateEncodedRejectsImpossibleDecoderAllocation](../contracts/tests/ExpressionsNoPanic.t.sol), [testFuzzGraphsDocumentedFailures](../contracts/tests/ExpressionsNoPanic.t.sol), [testResolveRejectsImpossibleDecoderAllocation](../contracts/tests/ExpressionsNoPanic.t.sol), [test_E25_ResolveDecoderBareRevert](../contracts/tests/ClaimCoverageEasy.t.sol), [test_E38_EncodedDecoderBareRevert](../contracts/tests/ClaimCoverageEasy.t.sol), [test_E39_InvalidKindBareRevert](../contracts/tests/ClaimCoverageEasy.t.sol), [test_E7_UnreachableDescriptorFailsBeforeCalls](../contracts/tests/ClaimCoverageEasy.t.sol).
+**Test/property definitions:** [testEvaluateEncodedRefusesImpossibleNodeCountInsideTheSelfCall](../contracts/tests/ExpressionsNoPanic.t.sol), [testFuzzGraphsDocumentedFailures](../contracts/tests/ExpressionsNoPanic.t.sol), [testResolveRejectsImpossibleDecoderAllocation](../contracts/tests/ExpressionsNoPanic.t.sol), [test_E25_ResolveDecoderBareRevert](../contracts/tests/ClaimCoverageEasy.t.sol), [test_E38_EncodedPayloadFailsWhereItIsRead](../contracts/tests/ClaimCoverageEasy.t.sol), [test_E39_InvalidKindBareRevert](../contracts/tests/ClaimCoverageEasy.t.sol), [test_E7_UnreachableDescriptorFailsBeforeCalls](../contracts/tests/ClaimCoverageEasy.t.sol).
 
 **Scope and limitations:** Focused admission, invalid-kind and malformed payload checks distinguish declared errors from exact bare ABI-decoder reverts. The retained hostile-graph grid remains bounded; arithmetic/resource failures are still permitted.
 

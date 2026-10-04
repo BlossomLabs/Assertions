@@ -256,8 +256,26 @@ contract ExpressionsStructureSymbolicTest is Test {
     }
 
     /**
+     * @dev The `evaluate` call `evaluateEncoded` makes: the two-word head, the
+     *      encoded parameters, then the payload after its leading offset word
+     */
+    function forwardedCall(bytes memory payload, bytes[] memory parameters) internal pure returns (bytes memory) {
+        bytes memory body = new bytes(payload.length - 32);
+        for (uint256 i; i < body.length; i++) {
+            body[i] = payload[i + 32];
+        }
+        bytes memory tail = abi.encode(parameters);
+        bytes memory list = new bytes(tail.length - 32);
+        for (uint256 i; i < list.length; i++) {
+            list[i] = tail[i + 32];
+        }
+        return bytes.concat(Expressions.evaluate.selector, bytes32(tail.length + 32), bytes32(uint256(64)), list, body);
+    }
+
+    /**
      * @dev evaluateEncoded returns what evaluate returns, and wraps evaluate's
-     *      failure as NodeCallFailed(0, expressions, the evaluate call, reason)
+     *      failure as NodeCallFailed(0, expressions, the forwarded evaluate
+     *      call, reason)
      */
     function check_evaluateEncodedMatchesEvaluate(bytes32 w, bool narrow) public view {
         Expressions.Node[] memory nodes = new Expressions.Node[](1);
@@ -278,7 +296,7 @@ contract ExpressionsStructureSymbolicTest is Test {
                     Expressions.NodeCallFailed.selector,
                     uint256(0),
                     address(expressions),
-                    abi.encodeCall(Expressions.evaluate, (e, params)),
+                    forwardedCall(abi.encode(e), params),
                     out
                 )
             );

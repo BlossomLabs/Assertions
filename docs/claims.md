@@ -10,6 +10,8 @@ Unless a claim specifies an error or resource limit, execution assumes valid ABI
 
 Verification labels refer to the linked run's source snapshot and stated scope. **Formally verified** means the linked symbolic properties passed within their documented assumptions and bounds; **Partially verified** covers only part of the claim. **Prior snapshot** marks formal evidence not revalidated against the current sources. **Tested** identifies unit, fuzz or differential evidence; **Partially tested** covers only part of the claim. **Scope limitation** records a boundary of the guarantees; **Environment assumption** records a condition required for execution. **Unverified** means no retained passing evidence. Current formal labels reflect the bounded Halmos baseline; separate source and bytecode proof campaigns are excluded. Detailed scope, references and run limitations are in [per-claim evidence](claim-evidence.md).
 
+A claim whose text begins with \* changed after the rc1 snapshot: its statement, and the tests behind it, differ from what rc1 recorded.
+
 ## Assertions
 
 | ID | Claim | Verification | Evidence |
@@ -48,10 +50,10 @@ Verification labels refer to the linked run's source snapshot and stated scope. 
 | C32 | A string/bytes terminal returns `[0x20][len][payload]`; nonzero padding reverts `InvalidValue` at the first dirty byte | Formally verified | [Proof & scope](claim-evidence.md#c32) |
 | C33 | Dynamic array/tuple terminals return canonical single-value ABI encoding; malformed selected nested values raise codec errors. | Tested (differential) | [Tests & scope](claim-evidence.md#c33) |
 | C34 | Arrays of static elements return `[0x20][len][elements]`, bounds- and range-checked in place | Formally verified | [Proof & scope](claim-evidence.md#c34) |
-| C35 | `nav` indexes tuple components nonnegatively and array elements with signed indices; index errors follow descriptor/data validation order. | Tested (differential) | [Tests & scope](claim-evidence.md#c35) |
+| C35 | \* `nav` indexes tuple components nonnegatively and array elements with signed indices; within a step, index errors follow that step's descriptor and data validation. | Tested (differential) | [Tests & scope](claim-evidence.md#c35) |
 | C36 | A step into a non-composite reverts `InvalidNavigation(descriptor position)` | Tested (differential) | [Tests & scope](claim-evidence.md#c36) |
-| C37 | Ordinary nonempty `nav` selection returns canonical encoding of the declared terminal; parent offsets, skipped siblings and sentinels have weaker validation. | Tested (differential) | [Tests & scope](claim-evidence.md#c37) |
-| C38 | Nonempty navigation parses the complete descriptor before reading data; malformed syntax raises `InvalidTypeDescriptor`, subject to arithmetic/resource limits. | Tested (unit) | [Tests & scope](claim-evidence.md#c38) |
+| C37 | \* Ordinary nonempty `nav` selection returns canonical encoding of the declared terminal; parent offsets, skipped siblings, sentinels and descriptor text after the selected component have weaker validation. | Tested (differential) | [Tests & scope](claim-evidence.md#c37) |
+| C38 | \* Nonempty navigation parses the descriptor along the path: each step validates the components it passes and the one it enters, through that component's delimiter, before reading that step's data, and malformed syntax there raises `InvalidTypeDescriptor`; text after the selected component is not read and cannot change the result. Up front, an array-of-tuples descriptor is parsed whole and a tuple descriptor's opening parenthesis must close at its last byte. Subject to arithmetic/resource limits. | Tested (unit) | [Tests & scope](claim-evidence.md#c38) |
 | C39 | Navigation supports finite recursive tuples and arrays when intermediate arithmetic, gas, stack and memory suffice. | Partially tested (unit) | [Tests & scope](claim-evidence.md#c39) |
 | C40 | `LEN` (`int256.min`) as last entry returns the decoded length: element count, or byte length for string/bytes | Formally verified | [Proof & scope](claim-evidence.md#c40) |
 | C41 | `LEN` rejects static values and empty prefixes. For unsupported dynamic tuples/fixed arrays, a truncated selected word can fail before `InvalidNavigation`. | Tested (differential) | [Tests & scope](claim-evidence.md#c41) |
@@ -220,7 +222,7 @@ Verification labels refer to the linked run's source snapshot and stated scope. 
 | O48 | `stringAt`: returns an ASCII byte; `InvalidByteIndex` out of range; `InvalidUtf8` for any byte of a multi-byte code point; validates the whole string | Formally verified | [Proof & scope](claim-evidence.md#o48) |
 | O49 | UTF-8 validation follows the Unicode well-formed table: leads C2-F4, overlong/surrogate/past-U+10FFFF refused at the second byte, bad continuation at itself, truncated at the lead; error at the first offending byte | Partially verified | [Proof & scope](claim-evidence.md#o49) |
 | O50 | `byteLen` is the raw byte length; `hash` is keccak256 of the argument | Tested (differential) | [Tests & scope](claim-evidence.md#o50) |
-| O51 | `hashPairSorted` is keccak256 of the ascending pair, byte-identical to OpenZeppelin MerkleProof's combiner; `foldWords` over a proof reproduces the root | Tested (unit) | [Tests & scope](claim-evidence.md#o51) |
+| O51 | \* `hashPairSorted` is keccak256 of the ascending pair, byte-identical to OpenZeppelin MerkleProof's combiner; a `Words` fold over a proof reproduces the root | Tested (unit) | [Tests & scope](claim-evidence.md#o51) |
 | O52 | `indexOf` enumerates nonoverlapping matches left-to-right, supports signed occurrence ordinals and returns s.length when absent; empty needles match 0..s.length. | Tested (differential) | [Tests & scope](claim-evidence.md#o52) |
 | O53 | For nonempty delimiters, segment j starts after match j-1 (or zero) and ends at match j (or input length); normalize negative j against matchCount+1. | Formally verified | [Proof & scope](claim-evidence.md#o53) |
 | O54 | `contains`: true iff the needle occurs; an empty needle always matches, even in empty `s`; total | Tested (differential) | [Tests & scope](claim-evidence.md#o54) |
@@ -254,8 +256,8 @@ Verification labels refer to the linked run's source snapshot and stated scope. 
 
 | ID | Claim | Verification | Evidence |
 |---|---|---|---|
-| L1 | foldWords is a left fold: accumulator window rewritten with the running accumulator, element window with each word, final accumulator returned | Formally verified | [Proof & scope](claim-evidence.md#l1) |
-| L2 | foldRange substitutes the index 0..n-1; foldBytes substitutes the byte VALUE as a word | Formally verified | [Proof & scope](claim-evidence.md#l2) |
+| L1 | \* A `Words` fold is a left fold: accumulator window rewritten with the running accumulator, element window with each word, final accumulator returned | Formally verified | [Proof & scope](claim-evidence.md#l1) |
+| L2 | \* A `Range` fold substitutes the index 0..n-1; a `Bytes` fold substitutes the byte VALUE as a word; a fold handed the argument its domain does not use (a subject for `Range`, a count for `Bytes` or `Words`) reverts `UnusedFoldArgument(domain)` | Formally verified | [Proof & scope](claim-evidence.md#l2) |
 | L3 | FoldExit: Full scans all, Any stops at first nonzero accumulator, All at first zero; final accumulator returned either way | Formally verified | [Proof & scope](claim-evidence.md#l3) |
 | L4 | Early exit never touches later elements, so a would-revert application past the exit point never happens | Tested (differential) | [Tests & scope](claim-evidence.md#l4) |
 | L5 | Window stamping: accumulator first, then element windows in supplied order; element wins over accumulator on overlap, later element windows win on mutual overlap; bytes outside windows stay pristine template | Tested (differential) | [Tests & scope](claim-evidence.md#l5) |
@@ -265,8 +267,8 @@ Verification labels refer to the linked run's source snapshot and stated scope. 
 | L9 | Target code is checked lazily: an empty input never touches the target | Partially verified | [Proof & scope](claim-evidence.md#l9) |
 | L10 | A lambda revert reverts with CallbackFailed(operation, index, other, target, callData, reason), reason preserved; exhaustion and the exact reserved signal propagate instead (C69) | Partially verified | [Proof & scope](claim-evidence.md#l10) |
 | L11 | A word lambda returning other than exactly 32 bytes reverts InvalidCallbackResult(op, index, 0, target) | Partially verified | [Proof & scope](claim-evidence.md#l11) |
-| L12 | filterWords keeps the ELEMENTS whose lambda returns canonical 1, in order; any result other than 0/1 reverts InvalidCallbackResult | Formally verified | [Proof & scope](claim-evidence.md#l12) |
-| L13 | mapWords returns the lambda's word per element, same word count; empty payload returns empty without touching the target | Formally verified | [Proof & scope](claim-evidence.md#l13) |
+| L12 | \* `applyWords` as a filter keeps the ELEMENTS whose lambda returns canonical 1, in order; any result other than 0/1 reverts InvalidCallbackResult | Formally verified | [Proof & scope](claim-evidence.md#l12) |
+| L13 | \* `applyWords` as a map returns the lambda's word per element, same word count; empty payload returns empty without touching the target | Formally verified | [Proof & scope](claim-evidence.md#l13) |
 | L14 | Every word operation (folds, map/filter, wordIndexOf, reverse, zip, unzip, sort, unique, sum) rejects a non-multiple-of-32 payload with UnalignedWords(length) | Partially verified | [Proof & scope](claim-evidence.md#l14) |
 | L15 | iotaWords(n) returns 0, 1, ..., n-1 | Formally verified | [Proof & scope](claim-evidence.md#l15) |
 | L16 | `iotaWords` allocates n*32 bytes; multiplication overflow, allocator limits and exhaustion can fail for sufficiently large n. | Tested (unit) | [Tests & scope](claim-evidence.md#l16) |
@@ -277,9 +279,9 @@ Verification labels refer to the linked run's source snapshot and stated scope. 
 | L21 | sortWords returns the payload sorted ascending as UNSIGNED words (a permutation) | Formally verified | [Proof & scope](claim-evidence.md#l21) |
 | L22 | Word sorting is stable. Callback sorting has stable ties and global order only for comparisons coherent with a total preorder. | Partially verified | [Proof & scope](claim-evidence.md#l22) |
 | L23 | Merge sort uses O(n log n) algorithmic comparisons/moves and O(n) scratch space; callback cost and EVM gas are separate. | Partially tested (unit) | [Tests & scope](claim-evidence.md#l23) |
-| L24 | Signed sort is the three-node recipe: flip sign bit via mapWords(bitXor), sortWords, flip back | Formally verified | [Proof & scope](claim-evidence.md#l24) |
+| L24 | \* Signed sort is the three-node recipe: flip sign bit via applyWords(bitXor), sortWords, flip back | Formally verified | [Proof & scope](claim-evidence.md#l24) |
 | L25 | sumWords is the checked sum; overflow reverts Panic(0x11) | Formally verified | [Proof & scope](claim-evidence.md#l25) |
-| L26 | sumWords equals the foldWords(add) recipe | Formally verified | [Proof & scope](claim-evidence.md#l26) |
+| L26 | \* sumWords equals the `Words` fold with `add` | Formally verified | [Proof & scope](claim-evidence.md#l26) |
 | L27 | uniqueWords keeps the first occurrence of each word in original order (ordered=false, O(n^2)) and only drops adjacent duplicates when ordered=true (grouping trusted, not validated) | Formally verified | [Proof & scope](claim-evidence.md#l27) |
 | L31 | An out-of-range FoldExit is refused by the ABI decoder with an empty revert | Tested (fuzz) | [Tests & scope](claim-evidence.md#l31) |
 | L32 | Collection operations can fail through validation, callback errors, checked arithmetic, allocation or exhaustion; no universal resource-safety guarantee applies. | Tested (fuzz) | [Tests & scope](claim-evidence.md#l32) |
@@ -323,7 +325,7 @@ Verification labels refer to the linked run's source snapshot and stated scope. 
 | E3 | A Parameter whose `data` is not exactly one word reverts `InvalidNode(node)` | Formally verified | [Proof & scope](claim-evidence.md#e3) |
 | E4 | A `result` index past the last node reverts `InvalidNode(result)` | Formally verified | [Proof & scope](claim-evidence.md#e4) |
 | E5 | Each kind carries an exact reference count (Call >= 1, Select 3, TryOrElse/ProbeCall 2, Wrap/IsValid 1, Literal/Parameter/Resolve 0, Array/Tuple any), else `InvalidNode(node)` | Formally verified | [Proof & scope](claim-evidence.md#e5) |
-| E6 | ProbeCall calldata must reference a bytes-typed node and validate canonically; malformed Resolve/evaluateEncoded payloads can still revert without data. | Formally verified | [Proof & scope](claim-evidence.md#e6) |
+| E6 | \* ProbeCall calldata must reference a bytes-typed node and validate canonically; malformed Resolve payloads can still revert without data, and `evaluateEncoded` payloads fail as E38 states. | Formally verified | [Proof & scope](claim-evidence.md#e6) |
 | E7 | Every node's `valueType` is parsed up front (unreachable nodes included), `InvalidTypeDescriptor` otherwise | Tested (unit) | [Tests & scope](claim-evidence.md#e7) |
 | E8 | Every cold evaluated node is validated against valueType before caching; cached values originated from successful validation. | Partially verified | [Proof & scope](claim-evidence.md#e8) |
 | E10 | Evaluation is on demand from `result`: only reachable nodes execute | Partially verified | [Proof & scope](claim-evidence.md#e10) |
@@ -351,9 +353,9 @@ Verification labels refer to the linked run's source snapshot and stated scope. 
 | E33 | A Call or Tuple node whose value count differs from its descriptor reverts `ComponentCountMismatch` | Formally verified | [Proof & scope](claim-evidence.md#e33) |
 | E34 | Empty argument tuples are special-cased for call construction; `()` is not a valid node valueType. | Formally verified | [Proof & scope](claim-evidence.md#e34) |
 | E35 | `evaluate` returns the result node's value raw, so an evaluation nests as an operand like the value it computes | Formally verified | [Proof & scope](claim-evidence.md#e35) |
-| E36 | `evaluateEncoded` decodes an Expression and evaluates it through a self-call, returning the raw result under that call context. | Formally verified | [Proof & scope](claim-evidence.md#e36) |
-| E37 | A failure inside `evaluateEncoded` surfaces as `NodeCallFailed(0, expressions, callData, reason)` wrapping the inner error, which Collections reports through `CallbackFailed`; exhaustion and the exact reserved signal propagate instead (C69) | Formally verified | [Proof & scope](claim-evidence.md#e37) |
-| E38 | Malformed `evaluateEncoded` payloads can produce ABI-decoder bare reverts, allocation panics or resource failures before graph evaluation. | Tested (unit) | [Tests & scope](claim-evidence.md#e38) |
+| E36 | \* `evaluateEncoded` forwards an encoded Expression to `evaluate` through a self-call without decoding it, returning the raw result under that call context; the payload is placed after the parameters in the forwarded call, so its offsets cannot reach them and the payload alone determines the graph. | Formally verified | [Proof & scope](claim-evidence.md#e36) |
+| E37 | \* A failure inside `evaluateEncoded` surfaces as `NodeCallFailed(0, expressions, callData, reason)` wrapping the inner error, `callData` being the forwarded `evaluate` call, which Collections reports through `CallbackFailed`; exhaustion and the exact reserved signal propagate instead (C69) | Formally verified | [Proof & scope](claim-evidence.md#e37) |
+| E38 | \* `evaluateEncoded` validates a payload only where evaluation reads it: one shorter than a word, or whose leading offset is below 32 or past its end, reverts without data; a field evaluation reads and cannot decode fails inside the self-call as `NodeCallFailed` with the decoder's reason (usually empty); and fields evaluation never reads cannot change the result. | Tested (unit) | [Tests & scope](claim-evidence.md#e38) |
 | E39 | An out-of-range `Kind` never reaches the code: solc's decoder reverts without data | Tested (unit) | [Tests & scope](claim-evidence.md#e39) |
 | E40 | Malformed graphs/payloads can produce declared errors or decoder bare reverts; checked arithmetic and execution-resource failures remain possible. | Tested (unit) | [Tests & scope](claim-evidence.md#e40) |
 | E41 | Every evaluate/evaluateEncoded call initializes a fresh cache; traversal callbacks evaluate independently. | Tested (unit) | [Tests & scope](claim-evidence.md#e41) |

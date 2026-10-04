@@ -656,7 +656,20 @@ contract OperationsTest is Test {
         // add(acc, i) over 0..4 = 10
         bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(0));
         assertEq(
-            uint256(cols.foldRange(5, address(ops), template, 4, _offs(36), bytes32(0), Collections.FoldExit.Full)), 10
+            uint256(
+                cols.fold(
+                    Collections.FoldDomain.Range,
+                    5,
+                    "",
+                    address(ops),
+                    template,
+                    4,
+                    _offs(36),
+                    bytes32(0),
+                    Collections.FoldExit.Full
+                )
+            ),
+            10
         );
     }
 
@@ -665,7 +678,17 @@ contract OperationsTest is Test {
         bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(0));
         assertEq(
             uint256(
-                cols.foldWords(payload, address(ops), template, 4, _offs(36), bytes32(0), Collections.FoldExit.Full)
+                cols.fold(
+                    Collections.FoldDomain.Words,
+                    0,
+                    payload,
+                    address(ops),
+                    template,
+                    4,
+                    _offs(36),
+                    bytes32(0),
+                    Collections.FoldExit.Full
+                )
             ),
             150
         );
@@ -682,8 +705,16 @@ contract OperationsTest is Test {
         bytes memory template = abi.encodeWithSelector(Operations.bitSet.selector, mask, uint256(0));
         assertEq(
             uint256(
-                cols.foldBytes(
-                    "hello", address(ops), template, 36, _offs(36), bytes32(uint256(1)), Collections.FoldExit.All
+                cols.fold(
+                    Collections.FoldDomain.Bytes,
+                    0,
+                    "hello",
+                    address(ops),
+                    template,
+                    36,
+                    _offs(36),
+                    bytes32(uint256(1)),
+                    Collections.FoldExit.All
                 )
             ),
             1
@@ -691,7 +722,9 @@ contract OperationsTest is Test {
         // "Curve LP Token" has uppercase and spaces: fails the a-z mask
         assertEq(
             uint256(
-                cols.foldBytes(
+                cols.fold(
+                    Collections.FoldDomain.Bytes,
+                    0,
                     "Curve LP Token",
                     address(ops),
                     template,
@@ -731,7 +764,17 @@ contract OperationsTest is Test {
         bytes memory template = abi.encodeWithSelector(DIV_U, uint256(6), uint256(0));
         assertEq(
             uint256(
-                cols.foldWords(payload, address(ops), template, 36, _offs(36), bytes32(0), Collections.FoldExit.Any)
+                cols.fold(
+                    Collections.FoldDomain.Words,
+                    0,
+                    payload,
+                    address(ops),
+                    template,
+                    36,
+                    _offs(36),
+                    bytes32(0),
+                    Collections.FoldExit.Any
+                )
             ),
             2
         );
@@ -739,7 +782,7 @@ contract OperationsTest is Test {
         vm.expectRevert(
             abi.encodeWithSelector(
                 Collections.CallbackFailed.selector,
-                Collections.foldWords.selector,
+                Collections.fold.selector,
                 2,
                 0,
                 address(ops),
@@ -747,7 +790,17 @@ contract OperationsTest is Test {
                 abi.encodeWithSignature("Panic(uint256)", uint256(0x12))
             )
         );
-        cols.foldWords(payload, address(ops), template, 36, _offs(36), bytes32(0), Collections.FoldExit.Full);
+        cols.fold(
+            Collections.FoldDomain.Words,
+            0,
+            payload,
+            address(ops),
+            template,
+            36,
+            _offs(36),
+            bytes32(0),
+            Collections.FoldExit.Full
+        );
     }
 
     function test_fold_allShortCircuits() public {
@@ -757,7 +810,17 @@ contract OperationsTest is Test {
         bytes memory template = abi.encodeWithSelector(MOD_U, uint256(6), uint256(0));
         assertEq(
             uint256(
-                cols.foldWords(payload, address(ops), template, 36, _offs(36), bytes32(0), Collections.FoldExit.All)
+                cols.fold(
+                    Collections.FoldDomain.Words,
+                    0,
+                    payload,
+                    address(ops),
+                    template,
+                    36,
+                    _offs(36),
+                    bytes32(0),
+                    Collections.FoldExit.All
+                )
             ),
             0
         );
@@ -765,7 +828,7 @@ contract OperationsTest is Test {
         vm.expectRevert(
             abi.encodeWithSelector(
                 Collections.CallbackFailed.selector,
-                Collections.foldWords.selector,
+                Collections.fold.selector,
                 1,
                 0,
                 address(ops),
@@ -773,7 +836,17 @@ contract OperationsTest is Test {
                 abi.encodeWithSignature("Panic(uint256)", uint256(0x12))
             )
         );
-        cols.foldWords(payload, address(ops), template, 36, _offs(36), bytes32(0), Collections.FoldExit.Full);
+        cols.fold(
+            Collections.FoldDomain.Words,
+            0,
+            payload,
+            address(ops),
+            template,
+            36,
+            _offs(36),
+            bytes32(0),
+            Collections.FoldExit.Full
+        );
     }
 
     function test_fold_emptyDomainReturnsInit() public view {
@@ -781,8 +854,16 @@ contract OperationsTest is Test {
         // the lambda target is never inspected on an empty domain
         assertEq(
             uint256(
-                cols.foldRange(
-                    0, address(0xdead), template, 4, _offs(36), bytes32(uint256(77)), Collections.FoldExit.Full
+                cols.fold(
+                    Collections.FoldDomain.Range,
+                    0,
+                    "",
+                    address(0xdead),
+                    template,
+                    4,
+                    _offs(36),
+                    bytes32(uint256(77)),
+                    Collections.FoldExit.Full
                 )
             ),
             77
@@ -791,17 +872,31 @@ contract OperationsTest is Test {
 
     function test_fold_offsetOutOfBounds() public {
         vm.expectRevert(abi.encodeWithSelector(Collections.LambdaOffsetOutOfBounds.selector, 0, 0));
-        cols.foldRange(1, address(ops), "", 0, _offs(0), bytes32(0), Collections.FoldExit.Full);
+        cols.fold(
+            Collections.FoldDomain.Range, 1, "", address(ops), "", 0, _offs(0), bytes32(0), Collections.FoldExit.Full
+        );
 
         bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(0));
         vm.expectRevert(abi.encodeWithSelector(Collections.LambdaOffsetOutOfBounds.selector, 37, 68));
-        cols.foldRange(1, address(ops), template, 4, _offs(37), bytes32(0), Collections.FoldExit.Full);
+        cols.fold(
+            Collections.FoldDomain.Range,
+            1,
+            "",
+            address(ops),
+            template,
+            4,
+            _offs(37),
+            bytes32(0),
+            Collections.FoldExit.Full
+        );
     }
 
     function test_fold_codelessTarget() public {
         bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(0));
         vm.expectRevert(abi.encodeWithSelector(Collections.InvalidCallbackTarget.selector, TEST_EOA));
-        cols.foldRange(1, TEST_EOA, template, 4, _offs(36), bytes32(0), Collections.FoldExit.Full);
+        cols.fold(
+            Collections.FoldDomain.Range, 1, "", TEST_EOA, template, 4, _offs(36), bytes32(0), Collections.FoldExit.Full
+        );
     }
 
     function test_fold_lambdaReturnTooShort() public {
@@ -810,16 +905,36 @@ contract OperationsTest is Test {
         bytes memory template = abi.encodeCall(MockTarget.checkValue, (0));
         vm.expectRevert(
             abi.encodeWithSelector(
-                AbiCodec.InvalidCallbackResult.selector, Collections.foldBytes.selector, 0, 0, address(target)
+                AbiCodec.InvalidCallbackResult.selector, Collections.fold.selector, 0, 0, address(target)
             )
         );
-        cols.foldBytes(hex"2a", address(target), template, 4, _offs(4), bytes32(0), Collections.FoldExit.Full);
+        cols.fold(
+            Collections.FoldDomain.Bytes,
+            0,
+            hex"2a",
+            address(target),
+            template,
+            4,
+            _offs(4),
+            bytes32(0),
+            Collections.FoldExit.Full
+        );
     }
 
     function test_foldWords_unaligned() public {
         bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(0));
         vm.expectRevert(abi.encodeWithSelector(Collections.UnalignedWords.selector, 33));
-        cols.foldWords(new bytes(33), address(ops), template, 4, _offs(36), bytes32(0), Collections.FoldExit.Full);
+        cols.fold(
+            Collections.FoldDomain.Words,
+            0,
+            new bytes(33),
+            address(ops),
+            template,
+            4,
+            _offs(36),
+            bytes32(0),
+            Collections.FoldExit.Full
+        );
     }
 
     // ============ Judged through the core ============
@@ -858,8 +973,18 @@ contract OperationsTest is Test {
         }
         bytes memory template = abi.encodeWithSelector(Operations.bitSet.selector, upper, uint256(0));
         bytes memory foldCalldata = abi.encodeCall(
-            Collections.foldBytes,
-            (bytes("WETH"), address(ops), template, 36, _offs(36), bytes32(uint256(1)), Collections.FoldExit.All)
+            Collections.fold,
+            (
+                Collections.FoldDomain.Bytes,
+                0,
+                bytes("WETH"),
+                address(ops),
+                template,
+                36,
+                _offs(36),
+                bytes32(uint256(1)),
+                Collections.FoldExit.All
+            )
         );
         InputParam memory judged = InputParam(
             InputParamType.CALL_DATA,
@@ -871,8 +996,18 @@ contract OperationsTest is Test {
 
         bytes memory lowerTemplate = abi.encodeWithSelector(Operations.bitSet.selector, lower, uint256(0));
         bytes memory failingFold = abi.encodeCall(
-            Collections.foldBytes,
-            (bytes("WETH"), address(ops), lowerTemplate, 36, _offs(36), bytes32(uint256(1)), Collections.FoldExit.All)
+            Collections.fold,
+            (
+                Collections.FoldDomain.Bytes,
+                0,
+                bytes("WETH"),
+                address(ops),
+                lowerTemplate,
+                36,
+                _offs(36),
+                bytes32(uint256(1)),
+                Collections.FoldExit.All
+            )
         );
         InputParam memory failing = InputParam(
             InputParamType.CALL_DATA,
@@ -1000,7 +1135,20 @@ contract OperationsTest is Test {
             proof = abi.encodePacked(l1, n23);
         }
         bytes memory template = abi.encodeWithSelector(Operations.hashPairSorted.selector, bytes32(0), bytes32(0));
-        assertEq(cols.foldWords(proof, address(ops), template, 4, _offs(36), l0, Collections.FoldExit.Full), root);
+        assertEq(
+            cols.fold(
+                Collections.FoldDomain.Words,
+                0,
+                proof,
+                address(ops),
+                template,
+                4,
+                _offs(36),
+                l0,
+                Collections.FoldExit.Full
+            ),
+            root
+        );
     }
 
     // ============ EncodePacked ============
@@ -1011,7 +1159,7 @@ contract OperationsTest is Test {
         bytes memory payload = abi.encodePacked(uint256(1), uint256(2), uint256(3));
         bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(1));
         assertEq(
-            cols.mapWords(payload, address(ops), template, _offs(4)),
+            cols.applyWords(payload, address(ops), template, _offs(4), false),
             abi.encodePacked(uint256(2), uint256(3), uint256(4))
         );
     }
@@ -1027,24 +1175,25 @@ contract OperationsTest is Test {
         offs[0] = 4;
         offs[1] = 36;
         assertEq(
-            cols.mapWords(payload, address(ops), template, offs), abi.encodePacked(uint256(1), uint256(4), uint256(9))
+            cols.applyWords(payload, address(ops), template, offs, false),
+            abi.encodePacked(uint256(1), uint256(4), uint256(9))
         );
     }
 
     function test_mapWords_emptyPayload() public view {
         bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(1));
         // the lambda target is never inspected on an empty payload
-        assertEq(cols.mapWords("", address(0xdead), template, _offs(4)).length, 0);
+        assertEq(cols.applyWords("", address(0xdead), template, _offs(4), false).length, 0);
     }
 
     function test_mapWords_errors() public {
         bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(1));
         vm.expectRevert(abi.encodeWithSelector(Collections.UnalignedWords.selector, 33));
-        cols.mapWords(new bytes(33), address(ops), template, _offs(4));
+        cols.applyWords(new bytes(33), address(ops), template, _offs(4), false);
         vm.expectRevert(abi.encodeWithSelector(Collections.LambdaOffsetOutOfBounds.selector, 37, 68));
-        cols.mapWords(abi.encodePacked(uint256(1)), address(ops), template, _offs(37));
+        cols.applyWords(abi.encodePacked(uint256(1)), address(ops), template, _offs(37), false);
         vm.expectRevert(abi.encodeWithSelector(Collections.InvalidCallbackTarget.selector, TEST_EOA));
-        cols.mapWords(abi.encodePacked(uint256(1)), TEST_EOA, template, _offs(4));
+        cols.applyWords(abi.encodePacked(uint256(1)), TEST_EOA, template, _offs(4), false);
     }
 
     function test_mapWords_lambdaRevertNamesElement() public {
@@ -1054,7 +1203,7 @@ contract OperationsTest is Test {
         vm.expectRevert(
             abi.encodeWithSelector(
                 Collections.CallbackFailed.selector,
-                Collections.mapWords.selector,
+                Collections.applyWords.selector,
                 1,
                 0,
                 address(ops),
@@ -1062,17 +1211,17 @@ contract OperationsTest is Test {
                 abi.encodeWithSignature("Panic(uint256)", uint256(0x12))
             )
         );
-        cols.mapWords(payload, address(ops), template, _offs(36));
+        cols.applyWords(payload, address(ops), template, _offs(36), false);
     }
 
     function test_mapWords_shortReturn() public {
         bytes memory template = abi.encodeCall(MockTarget.checkValue, (0));
         vm.expectRevert(
             abi.encodeWithSelector(
-                AbiCodec.InvalidCallbackResult.selector, Collections.mapWords.selector, 0, 0, address(target)
+                AbiCodec.InvalidCallbackResult.selector, Collections.applyWords.selector, 0, 0, address(target)
             )
         );
-        cols.mapWords(abi.encodePacked(uint256(42)), address(target), template, _offs(4));
+        cols.applyWords(abi.encodePacked(uint256(42)), address(target), template, _offs(4), false);
     }
 
     function test_filterWords() public view {
@@ -1080,24 +1229,26 @@ contract OperationsTest is Test {
         bytes4 GT_U = bytes4(keccak256("gt(uint256,uint256)"));
         bytes memory payload = abi.encodePacked(uint256(1), uint256(3), uint256(2), uint256(4));
         bytes memory template = abi.encodeWithSelector(GT_U, uint256(0), uint256(2));
-        assertEq(cols.filterWords(payload, address(ops), template, _offs(4)), abi.encodePacked(uint256(3), uint256(4)));
+        assertEq(
+            cols.applyWords(payload, address(ops), template, _offs(4), true), abi.encodePacked(uint256(3), uint256(4))
+        );
         // nothing kept and everything kept
         bytes memory none = abi.encodeWithSelector(GT_U, uint256(0), uint256(100));
-        assertEq(cols.filterWords(payload, address(ops), none, _offs(4)).length, 0);
+        assertEq(cols.applyWords(payload, address(ops), none, _offs(4), true).length, 0);
         bytes memory all_ = abi.encodeWithSelector(GT_U, uint256(0), uint256(0));
-        assertEq(cols.filterWords(payload, address(ops), all_, _offs(4)), payload);
+        assertEq(cols.applyWords(payload, address(ops), all_, _offs(4), true), payload);
         // empty payload never inspects the lambda
-        assertEq(cols.filterWords("", address(0xdead), template, _offs(4)).length, 0);
+        assertEq(cols.applyWords("", address(0xdead), template, _offs(4), true).length, 0);
     }
 
     function test_filterWords_errors() public {
         bytes memory template = abi.encodeWithSelector(ADD_U, uint256(0), uint256(1));
         vm.expectRevert(abi.encodeWithSelector(Collections.UnalignedWords.selector, 33));
-        cols.filterWords(new bytes(33), address(ops), template, _offs(4));
+        cols.applyWords(new bytes(33), address(ops), template, _offs(4), true);
         vm.expectRevert(abi.encodeWithSelector(Collections.LambdaOffsetOutOfBounds.selector, 37, 68));
-        cols.filterWords(abi.encodePacked(uint256(1)), address(ops), template, _offs(37));
+        cols.applyWords(abi.encodePacked(uint256(1)), address(ops), template, _offs(37), true);
         vm.expectRevert(abi.encodeWithSelector(Collections.InvalidCallbackTarget.selector, TEST_EOA));
-        cols.filterWords(abi.encodePacked(uint256(1)), TEST_EOA, template, _offs(4));
+        cols.applyWords(abi.encodePacked(uint256(1)), TEST_EOA, template, _offs(4), true);
     }
 
     function test_iotaWords() public view {
@@ -1184,8 +1335,8 @@ contract OperationsTest is Test {
         bytes4 BITXOR = bytes4(keccak256("bitXor(uint256,uint256)"));
         bytes memory payload = abi.encodePacked(int256(-2), int256(1), int256(-5));
         bytes memory flip = abi.encodeWithSelector(BITXOR, uint256(0), uint256(1) << 255);
-        bytes memory flipped = cols.mapWords(payload, address(ops), flip, _offs(4));
-        bytes memory back = cols.mapWords(cols.sortWords(flipped), address(ops), flip, _offs(4));
+        bytes memory flipped = cols.applyWords(payload, address(ops), flip, _offs(4), false);
+        bytes memory back = cols.applyWords(cols.sortWords(flipped), address(ops), flip, _offs(4), false);
         assertEq(back, abi.encodePacked(int256(-5), int256(-2), int256(1)));
     }
 
@@ -1268,8 +1419,16 @@ contract OperationsTest is Test {
         bytes memory template = abi.encodeWithSelector(Operations.bitSet.selector, az, uint256(0));
         assertEq(
             ops.charset("GOVERNOR", az),
-            cols.foldBytes(
-                "GOVERNOR", address(ops), template, 36, _offs(36), bytes32(uint256(1)), Collections.FoldExit.All
+            cols.fold(
+                Collections.FoldDomain.Bytes,
+                0,
+                "GOVERNOR",
+                address(ops),
+                template,
+                36,
+                _offs(36),
+                bytes32(uint256(1)),
+                Collections.FoldExit.All
             ) != 0
         );
     }
@@ -1284,7 +1443,17 @@ contract OperationsTest is Test {
         assertEq(
             cols.sumWords(payload),
             uint256(
-                cols.foldWords(payload, address(ops), template, 4, _offs(36), bytes32(0), Collections.FoldExit.Full)
+                cols.fold(
+                    Collections.FoldDomain.Words,
+                    0,
+                    payload,
+                    address(ops),
+                    template,
+                    4,
+                    _offs(36),
+                    bytes32(0),
+                    Collections.FoldExit.Full
+                )
             )
         );
         // checked: overflow reverts like add

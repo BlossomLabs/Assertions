@@ -313,6 +313,11 @@ contract Assertions {
      *      value is usable as an index (any real index bound catches them
      *      first), so both are unambiguous
      */
+    uint256 private constant FAILS = 0;
+    uint256 private constant PASSES = 1;
+    uint256 private constant BAD_DATA = 2;
+    uint256 private constant BAD_RANGE = 3;
+
     int256 public constant LEN = type(int256).min;
 
     /**
@@ -384,9 +389,18 @@ contract Assertions {
      *        InvalidNavigation: only string/bytes carry a byte-counted
      *        payload (a plain path returns their canonical value).
      *
+     *      The descriptor is validated where the path reads it. Each step
+     *      parses the components it passes and the one it enters, through
+     *      that component's delimiter, so a malformed component on the path
+     *      reverts with InvalidTypeDescriptor before that step reads data,
+     *      while text after the selected component is never read and cannot
+     *      change the result. Two things are settled before the walk: the
+     *      parenthesis opened at byte 0 must close at the last byte, and a
+     *      descriptor that is an array of tuples is parsed whole.
+     *
      *      Operand failures revert with CallFailed / ConstraintFailed
-     *      identifying them; a malformed descriptor reverts with
-     *      InvalidTypeDescriptor, a step into a non-composite with
+     *      identifying them; a descriptor malformed where it is read reverts
+     *      with InvalidTypeDescriptor, a step into a non-composite with
      *      InvalidNavigation, a path index
      *      outside its tuple or array with ElementIndexOutOfBounds, and
      *      data that does not match the declared shape (truncated
@@ -429,7 +443,7 @@ contract Assertions {
             // or truncated data cannot overflow or return a partial value.
             uint256 pos = c.base;
             if (pos > result.length || c.words > (result.length - pos) / 32) {
-                revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+                _oob(result, pos);
             }
             _checkWords(result, t, c.ts, c.te, 1, pos);
             uint256 size = c.words * 32;
@@ -821,18 +835,20 @@ contract Assertions {
         view
         returns (bytes memory value)
     {
-        if (param.fetcherType == InputParamFetcherType.RAW_BYTES) {
-            value = param.paramData;
-        } else if (param.fetcherType == InputParamFetcherType.STATIC_CALL) {
-            (address callTarget, bytes memory callData) = abi.decode(param.paramData, (address, bytes));
+        InputParamFetcherType kind = param.fetcherType;
+        bytes calldata data = param.paramData;
+        if (kind == InputParamFetcherType.RAW_BYTES) {
+            value = data;
+        } else if (kind == InputParamFetcherType.STATIC_CALL) {
+            (address callTarget, bytes memory callData) = abi.decode(data, (address, bytes));
             value = _staticCall(callTarget, callData);
         } else {
             // BALANCE
-            if (param.paramData.length != 40) {
-                revert InvalidBalanceData(entryIndex, paramIndex, param.paramData.length);
+            if (data.length != 40) {
+                revert InvalidBalanceData(entryIndex, paramIndex, data.length);
             }
-            address token = address(bytes20(param.paramData[0:20]));
-            address account = address(bytes20(param.paramData[20:40]));
+            address token = address(bytes20(data[0:20]));
+            address account = address(bytes20(data[20:40]));
             if (token == address(0)) {
                 value = abi.encode(account.balance);
             } else {
@@ -850,12 +866,12 @@ contract Assertions {
      *      and would otherwise surface as a silent wrong value.
      */
     function _staticCall(address target, bytes memory callData) internal view returns (bytes memory) {
-        if (target.code.length == 0) revert CallFailed(target, callData);
+        if (target.code.length == 0) _callFailed(target, callData);
         uint256 gasBefore = gasleft();
         (bool success, bytes memory result) = target.staticcall(callData);
         if (!success) {
             _rejectOutOfGas(gasBefore, result);
-            revert CallFailed(target, callData);
+            _callFailed(target, callData);
         }
         return result;
     }
@@ -938,18 +954,18 @@ contract Assertions {
             assembly ("memory-safe") {
                 actual := mload(add(add(value, 32), mul(i, 32)))
             }
-            Constraint memory c = constraints[i];
+            Constraint calldata c = constraints[i];
             bool ok_;
             if (c.constraintType == ConstraintType.OR) {
                 Constraint[] memory alternatives = abi.decode(c.referenceData, (Constraint[]));
-                if (alternatives.length == 0) revert InvalidOrConstraint(entryIndex, paramIndex, i);
+                if (alternatives.length == 0) _badOr(entryIndex, paramIndex, i);
                 for (uint256 j = 0; j < alternatives.length; j++) {
                     if (alternatives[j].constraintType == ConstraintType.OR) {
-                        revert InvalidOrConstraint(entryIndex, paramIndex, i);
+                        _badOr(entryIndex, paramIndex, i);
                     }
                 }
                 for (uint256 j = 0; j < alternatives.length; j++) {
-                    if (_checkConstraint(actual, alternatives[j], entryIndex, paramIndex, i)) {
+                    if (_checkLeaf(actual, alternatives[j], entryIndex, paramIndex, i)) {
                         ok_ = true;
                         break;
                     }
@@ -972,38 +988,89 @@ contract Assertions {
      */
     function _checkConstraint(
         bytes32 actual,
-        Constraint memory c,
+        Constraint calldata c,
         uint256 entryIndex,
         uint256 paramIndex,
         uint256 index
     ) private pure returns (bool) {
-        ConstraintType kind = c.constraintType;
-        uint256 length = c.referenceData.length;
-        if (kind == ConstraintType.SKIP) {
-            if (length != 0) revert InvalidConstraintData(entryIndex, paramIndex, index, length);
-            return true;
+        bytes calldata data = c.referenceData;
+        bytes32 lower;
+        bytes32 upper;
+        assembly ("memory-safe") {
+            lower := calldataload(data.offset)
+            upper := calldataload(add(data.offset, 32))
         }
+        return _settle(
+            _verdict(actual, c.constraintType, data.length, lower, upper), entryIndex, paramIndex, index, data.length
+        );
+    }
+
+    /**
+     * @dev `_checkConstraint` for an OR leaf, which the ABI decoder has
+     *      already placed in memory
+     */
+    function _checkLeaf(bytes32 actual, Constraint memory c, uint256 entryIndex, uint256 paramIndex, uint256 index)
+        private
+        pure
+        returns (bool)
+    {
+        bytes memory data = c.referenceData;
+        bytes32 lower;
+        bytes32 upper;
+        assembly ("memory-safe") {
+            lower := mload(add(data, 32))
+            upper := mload(add(data, 64))
+        }
+        return _settle(
+            _verdict(actual, c.constraintType, data.length, lower, upper), entryIndex, paramIndex, index, data.length
+        );
+    }
+
+    /**
+     * @dev Turns a verdict into the constraint's outcome: the two malformed
+     *      verdicts revert with their error for constraint `index`
+     */
+    function _settle(uint256 verdict, uint256 entryIndex, uint256 paramIndex, uint256 index, uint256 length)
+        private
+        pure
+        returns (bool)
+    {
+        if (verdict == BAD_DATA) revert InvalidConstraintData(entryIndex, paramIndex, index, length);
+        if (verdict == BAD_RANGE) revert InvalidConstraintRange(entryIndex, paramIndex, index);
+        return verdict == PASSES;
+    }
+
+    /**
+     * @dev The verdict of one non-OR constraint on one word. `lower` and
+     *      `upper` are the first two words at the reference data, which
+     *      mean something only once `length` has been checked: every
+     *      branch tests the length before reading them.
+     */
+    function _verdict(bytes32 actual, ConstraintType kind, uint256 length, bytes32 lower, bytes32 upper)
+        private
+        pure
+        returns (uint256)
+    {
+        if (kind == ConstraintType.SKIP) return length != 0 ? BAD_DATA : PASSES;
         if (kind == ConstraintType.IN || kind == ConstraintType.IN_SIGNED) {
-            if (length != 64) revert InvalidConstraintData(entryIndex, paramIndex, index, length);
-            (bytes32 lower, bytes32 upper) = abi.decode(c.referenceData, (bytes32, bytes32));
+            if (length != 64) return BAD_DATA;
             if (kind == ConstraintType.IN_SIGNED) {
-                if (int256(uint256(lower)) > int256(uint256(upper))) {
-                    revert InvalidConstraintRange(entryIndex, paramIndex, index);
-                }
+                if (int256(uint256(lower)) > int256(uint256(upper))) return BAD_RANGE;
                 int256 signed = int256(uint256(actual));
-                return int256(uint256(lower)) <= signed && signed <= int256(uint256(upper));
+                return int256(uint256(lower)) <= signed && signed <= int256(uint256(upper)) ? PASSES : FAILS;
             }
-            if (lower > upper) revert InvalidConstraintRange(entryIndex, paramIndex, index);
-            return lower <= actual && actual <= upper;
+            if (lower > upper) return BAD_RANGE;
+            return lower <= actual && actual <= upper ? PASSES : FAILS;
         }
-        if (length != 32) revert InvalidConstraintData(entryIndex, paramIndex, index, length);
-        bytes32 bound = bytes32(c.referenceData);
-        if (kind == ConstraintType.EQ) return actual == bound;
-        if (kind == ConstraintType.GTE) return actual >= bound;
-        if (kind == ConstraintType.LTE) return actual <= bound;
-        if (kind == ConstraintType.GTE_SIGNED) return int256(uint256(actual)) >= int256(uint256(bound));
+        if (length != 32) return BAD_DATA;
+        bool ok_;
+        if (kind == ConstraintType.EQ) ok_ = actual == lower;
+        else if (kind == ConstraintType.GTE) ok_ = actual >= lower;
+        else if (kind == ConstraintType.LTE) ok_ = actual <= lower;
+        else if (kind == ConstraintType.GTE_SIGNED) ok_ = int256(uint256(actual)) >= int256(uint256(lower));
         // LTE_SIGNED is the only kind left: OR never reaches here.
-        return int256(uint256(actual)) <= int256(uint256(bound));
+        else ok_ = int256(uint256(actual)) <= int256(uint256(lower));
+        return ok_ ? PASSES : FAILS;
     }
 
     // ============ Internal Read Helpers ============
@@ -1041,9 +1108,9 @@ contract Assertions {
      *      in the resolved data; dynamic element tails are not traversed.
      */
     function _navLength(bytes memory result, bytes calldata t, int256[] calldata path) internal pure returns (uint256) {
-        if (path.length == 0) revert InvalidNavigation(0);
+        if (path.length == 0) _badNav(0);
         NavCursor memory c = _navigate(result, t, path);
-        if (!c.dyn) revert InvalidNavigation(c.ts);
+        if (!c.dyn) _badNav(c.ts);
         (uint256 pos, uint256 ts, uint256 te) = (c.base, c.ts, c.te);
         uint256 length = _navWord(result, pos);
         uint256 available = result.length - pos - 32;
@@ -1054,20 +1121,20 @@ contract Assertions {
         // to read either).
         if (t[te - 1] == "]") {
             uint256 suffix = AbiCodec.suffixStart(t, ts, te);
-            if (suffix + 1 != te - 1) revert InvalidNavigation(ts);
+            if (suffix + 1 != te - 1) _badNav(ts);
             (,, uint256 elemWords) = AbiCodec.typeShape(t, ts, suffix);
             // Divide before multiplying: hostile counts/descriptor sizes
             // must not overflow before the bounds check. Dynamic elements
             // occupy one offset word; static elements may span many words.
             if (length > available / 32 / elemWords) {
-                revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+                _oob(result, pos);
             }
         } else if (t[ts] == "(") {
-            revert InvalidNavigation(ts);
+            _badNav(ts);
         } else if (length > available - available % 32) {
             // Bytes/string require the payload rounded up to full words,
             // matching _returnDynamic, without rounding a hostile length.
-            revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+            _oob(result, pos);
         }
         return length;
     }
@@ -1087,18 +1154,18 @@ contract Assertions {
         pure
         returns (uint256 start, uint256 length)
     {
-        if (path.length == 0) revert InvalidNavigation(0);
+        if (path.length == 0) _badNav(0);
         NavCursor memory c = _navigate(result, t, path);
-        if (!c.dyn) revert InvalidNavigation(c.ts);
+        if (!c.dyn) _badNav(c.ts);
         (uint256 pos, uint256 ts, uint256 te) = (c.base, c.ts, c.te);
         // Only bytes/string base terminals carry a byte-counted payload
         // behind their length word.
-        if (t[te - 1] == "]" || t[ts] == "(") revert InvalidNavigation(ts);
+        if (t[te - 1] == "]" || t[ts] == "(") _badNav(ts);
         length = _navWord(result, pos);
         // _navWord guarantees pos + 32 <= result.length, so the
         // subtraction cannot underflow.
         if (length > result.length - pos - 32) {
-            revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+            _oob(result, pos);
         }
         start = pos + 32;
     }
@@ -1128,7 +1195,7 @@ contract Assertions {
             } else {
                 uint256 len = _navWord(result, pos);
                 if (len > (result.length - pos - 32) / (elemWords * 32)) {
-                    revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+                    _oob(result, pos);
                 }
                 _checkWords(result, t, ts, suffix, len, pos + 32);
                 size = 32 + len * elemWords * 32;
@@ -1142,11 +1209,11 @@ contract Assertions {
             // into a Panic.
             uint256 len = _navWord(result, pos);
             if (len > result.length - pos - 32) {
-                revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+                _oob(result, pos);
             }
             uint256 payloadBytes = ((len + 31) / 32) * 32;
             if (payloadBytes > result.length - pos - 32) {
-                revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+                _oob(result, pos);
             }
             // The value is returned canonical: its padding must be zero, as
             // AbiCodec.body requires of the same value nested in an array.
@@ -1204,7 +1271,7 @@ contract Assertions {
      */
     function _navWord(bytes memory result, uint256 pos) internal pure returns (uint256 word) {
         if (pos > result.length || result.length - pos < 32) {
-            revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+            _oob(result, pos);
         }
         assembly ("memory-safe") {
             word := mload(add(add(result, 32), pos))
@@ -1234,6 +1301,9 @@ contract Assertions {
      *      bounds of the selected value. Offsets are followed relative to
      *      their enclosing frame per ABI encoding rules. The caller bounds
      *      the selected span before returning it or reading its length.
+     *      Descriptor syntax is checked lazily, step by step: a malformed
+     *      component the path passes or enters reverts with
+     *      InvalidTypeDescriptor, one the path never reaches is not read.
      */
     function _navigate(bytes memory result, bytes calldata t, int256[] calldata path)
         internal
@@ -1241,10 +1311,22 @@ contract Assertions {
         returns (NavCursor memory c)
     {
         if (t.length == 0 || t[0] != "(") revert InvalidTypeDescriptor(0);
-        if (path.length == 0) revert InvalidNavigation(0);
-        {
+        if (path.length == 0) _badNav(0);
+        // A tuple descriptor is parsed as the path walks it: each step
+        // validates the components it passes and the one it enters, through
+        // that component's own delimiter, and text after the selected
+        // component is never read. What is settled up front is which text
+        // belongs to the tuple at all. An array of tuples is parsed whole,
+        // because its first step needs the complete element type and its
+        // length suffix. A plain tuple only has its parentheses counted: the
+        // one opened at byte 0 must close at the last byte, or `(a,b)junk)`
+        // would be read as the tuple `(a,b)`.
+        if (t[t.length - 1] == "]") {
             (uint256 topEnd,,) = AbiCodec.typeShape(t, 0, t.length);
             if (topEnd != t.length) revert InvalidTypeDescriptor(topEnd);
+        } else {
+            uint256 closed = _tupleEnd(t);
+            if (closed != t.length) revert InvalidTypeDescriptor(closed > t.length ? t.length : closed);
         }
 
         c = NavCursor(0, t.length, 0, true, 1);
@@ -1255,7 +1337,7 @@ contract Assertions {
                 _navTupleStep(result, t, c, path[i]);
             } else {
                 // base type (word, bytes or string): nothing to index into
-                revert InvalidNavigation(c.ts);
+                _badNav(c.ts);
             }
         }
     }
@@ -1273,7 +1355,7 @@ contract Assertions {
             // dynamic T[]: base is the length word, elements follow it
             count = _navWord(result, c.base);
             if (count > result.length / 32) {
-                revert ReturnDataOutOfBounds(int256(c.base / 32), result.length);
+                _oob(result, c.base);
             }
             dataStart = c.base + 32;
         } else {
@@ -1287,7 +1369,7 @@ contract Assertions {
         if (elemDyn) {
             uint256 off = _navWord(result, dataStart + wanted * 32);
             if (off > result.length) {
-                revert ReturnDataOutOfBounds(int256((dataStart + wanted * 32) / 32), result.length);
+                _oob(result, (dataStart + wanted * 32));
             }
             c.base = dataStart + off;
         } else {
@@ -1301,7 +1383,9 @@ contract Assertions {
     /**
      * @dev One tuple step: accumulates head footprints of the preceding
      *      components (derived from the descriptor) and advances the cursor
-     *      to component `idx`
+     *      to component `idx`. Components up to and including `idx` are
+     *      parsed and their delimiters checked; later ones are not read
+     *      unless the index runs past them or counts from the end.
      */
     function _navTupleStep(bytes memory result, bytes calldata t, NavCursor memory c, int256 idx) private pure {
         uint256 q = c.ts + 1;
@@ -1311,18 +1395,19 @@ contract Assertions {
             while (true) {
                 (uint256 e,,) = AbiCodec.typeShape(t, q, c.te);
                 j++;
-                if (t[e] == ")") break;
+                if (_closesTuple(t, e, c.te)) break;
                 q = e + 1;
             }
-            revert ElementIndexOutOfBounds(idx, j);
+            _badIndex(idx, j);
         }
         while (true) {
             (uint256 e, bool d, uint256 w) = AbiCodec.typeShape(t, q, c.te);
+            bool last = _closesTuple(t, e, c.te);
             if (j == uint256(idx)) {
                 if (d) {
                     uint256 off = _navWord(result, c.base + acc * 32);
                     if (off > result.length) {
-                        revert ReturnDataOutOfBounds(int256((c.base + acc * 32) / 32), result.length);
+                        _oob(result, (c.base + acc * 32));
                     }
                     c.base = c.base + off;
                 } else {
@@ -1336,9 +1421,78 @@ contract Assertions {
             }
             acc += w;
             j++;
-            if (t[e] == ")") revert ElementIndexOutOfBounds(idx, j);
+            if (last) _badIndex(idx, j);
             q = e + 1;
         }
+    }
+
+    /**
+     * @dev The position just past the parenthesis that closes the one at
+     *      byte 0 of `t`, found by counting parentheses alone: `t.length`
+     *      when the tuple spans the whole descriptor, an earlier position
+     *      when text follows it, and `t.length + 1` when it never closes.
+     *      `t` starts with "(".
+     */
+    function _tupleEnd(bytes calldata t) private pure returns (uint256 end) {
+        assembly ("memory-safe") {
+            let n := t.length
+            end := n
+            // Count the parentheses a word at a time. A flat tuple, the common
+            // case, has exactly two: the one at byte 0 and, when the last byte
+            // is ")", that one. Nothing in between can close it early.
+            let count := 0
+            for { let i := 0 } lt(i, n) { i := add(i, 32) } {
+                let w := calldataload(add(t.offset, i))
+                let left := sub(n, i)
+                if lt(left, 32) { w := and(w, not(shr(shl(3, left), not(0)))) }
+                // v has a zero byte exactly where w holds "(" (0x28) or ")" (0x29).
+                let v :=
+                    xor(
+                        and(w, 0xfefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefe),
+                        0x2828282828282828282828282828282828282828282828282828282828282828
+                    )
+                let low := 0x7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f
+                let zero := not(or(or(add(and(v, low), low), v), low))
+                count := add(
+                    count,
+                    shr(248, mul(shr(7, zero), 0x0101010101010101010101010101010101010101010101010101010101010101))
+                )
+            }
+            let last := byte(0, calldataload(add(t.offset, sub(n, 1))))
+            if iszero(and(eq(count, 2), eq(last, 0x29))) {
+                // Nested or unbalanced: follow the depth byte by byte.
+                end := add(n, 1)
+                let depth := 0
+                for { let i := 0 } lt(i, n) { i := add(i, 1) } {
+                    let c := byte(0, calldataload(add(t.offset, i)))
+                    // Only "(" and ")" matter, and both sit below "*".
+                    if lt(c, 0x2a) {
+                        if eq(c, 0x28) { depth := add(depth, 1) }
+                        if eq(c, 0x29) {
+                            depth := sub(depth, 1)
+                            if iszero(depth) {
+                                end := add(i, 1)
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @dev Reads the delimiter that follows a tuple component ending at `e`:
+     *      true for the closing parenthesis, false for a comma, and
+     *      InvalidTypeDescriptor(e) for anything else or for running past
+     *      `limit`, as the whole-descriptor parser reports it
+     */
+    function _closesTuple(bytes calldata t, uint256 e, uint256 limit) private pure returns (bool) {
+        if (e < limit) {
+            if (t[e] == ")") return true;
+            if (t[e] == ",") return false;
+        }
+        revert InvalidTypeDescriptor(e);
     }
 
     /**
@@ -1349,10 +1503,46 @@ contract Assertions {
     function _normalizeIndex(int256 index, uint256 count) internal pure returns (uint256) {
         if (index < 0) {
             // index == type(int256).min is caught here before -index could overflow.
-            if (index < -int256(count)) revert ElementIndexOutOfBounds(index, count);
+            if (index < -int256(count)) _badIndex(index, count);
             return count - uint256(-index);
         }
-        if (uint256(index) >= count) revert ElementIndexOutOfBounds(index, count);
+        if (uint256(index) >= count) _badIndex(index, count);
         return uint256(index);
+    }
+
+    /**
+     * @dev Reverts with ReturnDataOutOfBounds for byte position `pos` of the
+     *      resolved data, reported as a word index like every other site
+     */
+    function _oob(bytes memory result, uint256 pos) private pure {
+        revert ReturnDataOutOfBounds(int256(pos / 32), result.length);
+    }
+
+    /**
+     * @dev Reverts with InvalidNavigation at `position`
+     */
+    function _badNav(uint256 position) private pure {
+        revert InvalidNavigation(position);
+    }
+
+    /**
+     * @dev Reverts with ElementIndexOutOfBounds
+     */
+    function _badIndex(int256 index, uint256 count) private pure {
+        revert ElementIndexOutOfBounds(index, count);
+    }
+
+    /**
+     * @dev Reverts with InvalidOrConstraint for constraint `index`
+     */
+    function _badOr(uint256 entryIndex, uint256 paramIndex, uint256 index) private pure {
+        revert InvalidOrConstraint(entryIndex, paramIndex, index);
+    }
+
+    /**
+     * @dev Reverts with CallFailed
+     */
+    function _callFailed(address target, bytes memory callData) private pure {
+        revert CallFailed(target, callData);
     }
 }

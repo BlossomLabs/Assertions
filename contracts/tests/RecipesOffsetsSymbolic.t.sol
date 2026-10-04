@@ -62,7 +62,7 @@ contract RecipesOffsetsSymbolicTest is Test {
         returns (bytes memory)
     {
         (bool ok, bytes memory out) = address(collections)
-            .staticcall(abi.encodeCall(Collections.mapWords, (words, address(ops), template, offsets)));
+            .staticcall(abi.encodeCall(Collections.applyWords, (words, address(ops), template, offsets, false)));
         vm.assume(!outOfGasArtifact(ok, out));
         assertTrue(ok, "mapWords refused the recipe");
         return abi.decode(out, (bytes));
@@ -82,8 +82,10 @@ contract RecipesOffsetsSymbolicTest is Test {
         (bool foldOk, bytes memory foldOut) = address(collections)
             .staticcall(
                 abi.encodeCall(
-                    Collections.foldWords,
+                    Collections.fold,
                     (
+                        Collections.FoldDomain.Words,
+                        0,
                         words,
                         address(ops),
                         abi.encodeWithSignature("add(uint256,uint256)", 0, 0),

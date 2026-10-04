@@ -52,8 +52,18 @@ contract CallbackContextSymbolicTest is Test {
         (bool ok, bytes memory out) = address(collections)
             .staticcall(
                 abi.encodeCall(
-                    Collections.foldWords,
-                    (bytes(""), address(0), template, offset, new uint256[](0), init, Collections.FoldExit.Full)
+                    Collections.fold,
+                    (
+                        Collections.FoldDomain.Words,
+                        0,
+                        bytes(""),
+                        address(0),
+                        template,
+                        offset,
+                        new uint256[](0),
+                        init,
+                        Collections.FoldExit.Full
+                    )
                 )
             );
         bool valid = !shortTemplate && offset <= 36;

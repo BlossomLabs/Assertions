@@ -1187,7 +1187,10 @@ function simFold(
   return { ok: word(acc) };
 }
 
-const FOLD_FNS: Record<Domain, string> = { range: "foldRange", bytes: "foldBytes", words: "foldWords" };
+// One `fold` entry point; the domain is its first argument. The labels keep the
+// three families' names in the test titles.
+const FOLD_FNS: Record<Domain, string> = { range: "fold (Range)", bytes: "fold (Bytes)", words: "fold (Words)" };
+const FOLD_DOMAIN: Record<Domain, number> = { range: 0, bytes: 1, words: 2 };
 
 function foldCalldata(
   domain: Domain,
@@ -1202,10 +1205,12 @@ function foldCalldata(
   const abi = [
     {
       type: "function",
-      name: FOLD_FNS[domain],
+      name: "fold",
       stateMutability: "view",
       inputs: [
-        { type: domain === "range" ? "uint256" : "bytes" },
+        { type: "uint8" },
+        { type: "uint256" },
+        { type: "bytes" },
         { type: "address" },
         { type: "bytes" },
         { type: "uint256" },
@@ -1218,9 +1223,13 @@ function foldCalldata(
   ] as const;
   return encodeFunctionData({
     abi,
-    functionName: FOLD_FNS[domain],
+    functionName: "fold",
     args: [
-      domain === "range" ? BigInt(c.count) : c.sHex,
+      FOLD_DOMAIN[domain],
+      // Range counts with `n` and takes no subject; Bytes and Words take the
+      // subject and a zero count.
+      domain === "range" ? BigInt(c.count) : 0n,
+      domain === "range" ? "0x" : c.sHex,
       target,
       template,
       BigInt(accOffset),
@@ -1235,13 +1244,18 @@ function applyWordsCalldata(fn: string, s: Hex, target: Hex, template: Hex, elem
   const abi = [
     {
       type: "function",
-      name: fn,
+      name: "applyWords",
       stateMutability: "view",
-      inputs: [{ type: "bytes" }, { type: "address" }, { type: "bytes" }, { type: "uint256[]" }],
+      inputs: [{ type: "bytes" }, { type: "address" }, { type: "bytes" }, { type: "uint256[]" }, { type: "bool" }],
       outputs: [{ type: "bytes" }],
     },
   ] as const;
-  return encodeFunctionData({ abi, functionName: fn, args: [s, target, template, elemOffsets.map(BigInt)] });
+  // `fn` names the mode: one `applyWords` entry point maps or filters.
+  return encodeFunctionData({
+    abi,
+    functionName: "applyWords",
+    args: [s, target, template, elemOffsets.map(BigInt), fn === "filterWords"],
+  });
 }
 
 describe("fold differential fuzz (deployed lambda targets)", () => {

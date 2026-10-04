@@ -14,10 +14,10 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 ## Canonical addresses (same on every chain)
 
 ```
-Assertions  v2.0   0xa55e47A8F0701e231a9c0ac916776074e5c561d5   (judge + primitives)
-Operations  v2.0   0x09e4A7EA7868aEC605bE16FE64Bd5b56A8B9601A   (scalar vocabulary)
-Collections v2.0   0xc011eC7071DA62522F0DCD03606e5A299a8e6323   (folds, word arrays, generic traversals)
-Expressions v2.0   0xE5594e5577165b73F3f3CFcc4F3983345c5F0F48   (typed expression graphs)
+Assertions  v2.0   0xA55e4722883831c97d20E4Cb26E9a3C8569D9F6e   (judge + primitives)
+Operations  v2.0   0x09e4A7eb757a41c78e2c1E810a2B162683AD903e   (scalar vocabulary)
+Collections v2.0   0xc011Ec76C3f40945184b93F79377Bca9662165d5   (folds, word arrays, generic traversals)
+Expressions v2.0   0xe5594e5554FaF731C4ce9DE8b4Ea078CB52B62F2   (typed expression graphs)
 ```
 
 These are the CREATE2 addresses of the current artifact set, and they change whenever the bytecode does. `website/src/lib/deployments.json` is the source of truth that the SDK, the builder and the docs all read; prefer it to this snapshot. An address listed here says where the code goes, not that it is already there: check the website's Deployments page for per-chain availability before you rely on one. The SDK compiles against all four. Only prior public releases are retained in the release history; the release with public-chain history is Assertions v1.0, reachable as `assertions.eth`.

@@ -111,8 +111,8 @@ contract CollectionsNoPanicTest is Test {
         (uint256 acc, uint256[] memory offsets) =
             windows(f.template, f.accOffset, f.elemOffsets, f.targetCase & 0x80 != 0);
         folds(f, target, acc, offsets);
-        call(abi.encodeCall(Collections.mapWords, (f.s, target, f.template, offsets)), false);
-        call(abi.encodeCall(Collections.filterWords, (f.s, target, f.template, offsets)), false);
+        call(abi.encodeCall(Collections.applyWords, (f.s, target, f.template, offsets, false)), false);
+        call(abi.encodeCall(Collections.applyWords, (f.s, target, f.template, offsets, true)), false);
     }
 
     /**
@@ -141,40 +141,46 @@ contract CollectionsNoPanicTest is Test {
     }
 
     /**
-     * @dev The three folds with a raw uint8 FoldExit, each encoded whole: a
-     *      head spliced onto a separately encoded tail shifts every offset
+     * @dev The three fold domains with a raw uint8 FoldExit, each encoded
+     *      whole: a head spliced onto a separately encoded tail shifts every
+     *      offset. Then the same fold handed the argument its domain does
+     *      not use, and an out-of-range domain.
      */
     function folds(FoldInput calldata f, address target, uint256 acc, uint256[] memory offsets) internal view {
         bool badExit = f.exit > 2;
         uint256 count = f.n % 300;
-        call(
-            abi.encodeWithSelector(
-                Collections.foldRange.selector, count, target, f.template, acc, offsets, f.init, f.exit
-            ),
-            false,
-            badExit
-        );
-        call(
-            abi.encodeWithSelector(
-                Collections.foldBytes.selector, f.s, target, f.template, acc, offsets, f.init, f.exit
-            ),
-            false,
-            badExit
-        );
-        call(
-            abi.encodeWithSelector(
-                Collections.foldWords.selector, f.s, target, f.template, acc, offsets, f.init, f.exit
-            ),
-            false,
-            badExit
+        call(foldData(0, count, "", f, target, acc, offsets), false, badExit);
+        call(foldData(1, 0, f.s, f, target, acc, offsets), false, badExit);
+        call(foldData(2, 0, f.s, f, target, acc, offsets), false, badExit);
+        if (badExit) return;
+        // A subject for Range, a count for Bytes and Words: refused by name, whatever else is passed.
+        for (uint8 domain; domain < 3; domain++) {
+            (bool ok, bytes memory out) = address(collections).staticcall{gas: CALL_GAS}(
+                domain == 0
+                    ? foldData(0, count, "x", f, target, acc, offsets)
+                    : foldData(domain, count + 1, f.s, f, target, acc, offsets)
+            );
+            assertFalse(ok, "an unused fold argument was accepted");
+            assertEq(out, abi.encodeWithSelector(Collections.UnusedFoldArgument.selector, domain));
+        }
+        // A domain past Words never reaches the code: the ABI decoder refuses it without data.
+        call(foldData(3, count, f.s, f, target, acc, offsets), false, true);
+    }
+
+    function foldData(
+        uint8 domain,
+        uint256 n,
+        bytes memory s,
+        FoldInput calldata f,
+        address target,
+        uint256 acc,
+        uint256[] memory offsets
+    ) internal pure returns (bytes memory) {
+        return abi.encodeWithSelector(
+            Collections.fold.selector, domain, n, s, target, f.template, acc, offsets, f.init, f.exit
         );
     }
 
-    /**
-     * @dev Every target through a fold and a predicate traversal with valid
-     *      windows and callback, so each misbehaviour reaches the call:
-     *      each fails with its declared error or succeeds
-     */
     function testHostileTargetsFailDeclared() public {
         uint256[] memory elem = new uint256[](1);
         elem[0] = 32;
@@ -185,7 +191,7 @@ contract CollectionsNoPanicTest is Test {
         }
         for (uint256 t; t < targets.length; t++) {
             bytes memory fold = abi.encodeWithSelector(
-                Collections.foldRange.selector, 3, targets[t], template, 4, elem, bytes32(0), uint8(0)
+                Collections.fold.selector, uint8(0), 3, bytes(""), targets[t], template, 4, elem, bytes32(0), uint8(0)
             );
             emit log_named_bytes(string.concat("fold via target ", vm.toString(t)), outcome(fold));
             call(fold, false);

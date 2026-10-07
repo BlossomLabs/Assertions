@@ -1,7 +1,7 @@
 ---
 // One abstract banner per release beast, drawn in the site's own palette.
 // Argos: a field of watching eyes. Byakko: a white tiger's stripes behind a
-// slit-pupil eye. Cerberos: three half-lidded eyes on a chain.
+// slit-pupil eye. Cerberus: three half-lidded eyes on a chain.
 // Dharmapala: four flame-haloed protectors, each with its own face, rising out of a wall of fire.
 // Erinyes: a wing, an eye in a triangle (one corner per Fury), and three
 // snakes. Fafnir: a scaled, spiked body leading to a ridged eye. Genbu: a
@@ -12,7 +12,7 @@
 // Janus: a gate on a threshold, and one eye cut in two by it, each half
 // looking its own way; the lines that cross the threshold change as they do.
 interface Props {
-  beast: 'argos' | 'byakko' | 'cerberos' | 'dharmapala' | 'erinyes' | 'fafnir' | 'genbu' | 'haetae' | 'issitoq' | 'janus';
+  beast: 'argos' | 'byakko' | 'cerberus' | 'dharmapala' | 'erinyes' | 'fafnir' | 'genbu' | 'haetae' | 'issitoq' | 'janus';
   class?: string;
   /** Omit the filled background so the art can sit over the page. */
   bare?: boolean;
@@ -25,12 +25,12 @@ const W = 1200;
 const H = 300;
 
 // Every banner is drawn with its eye on the right. These are mirrored so the
-// eye alternates sides from one release to the next: Byakko right, Cerberos
+// eye alternates sides from one release to the next: Byakko right, Cerberus
 // left, Dharmapala right, Genbu left, Haetae in the centre, Issitoq left,
 // Janus right. Erinyes and Fafnir both keep the eye on the right: Erinyes
 // reads better unmirrored. Janus is never mirrored: its left side is
 // "before" and its right side "after".
-const MIRRORED = ['cerberos', 'genbu', 'issitoq'];
+const MIRRORED = ['cerberus', 'genbu', 'issitoq'];
 const mirror = MIRRORED.includes(beast) ? `translate(${W} 0) scale(-1 1)` : undefined;
 
 // Deterministic pseudo-random so the banner is stable between builds.
@@ -74,7 +74,7 @@ if (beast === 'byakko') {
 
 // A chain sagging in from the left: alternate links face on (rings) and edge on (bars).
 const links: { x: number; y: number; a: number; ring: boolean }[] = [];
-if (beast === 'cerberos') {
+if (beast === 'cerberus') {
   const at = (i: number) => {
     const x = -20 + i * 58;
     const t = x / 720;
@@ -296,7 +296,7 @@ if (beast === 'janus') {
 const labels = {
   argos: 'Argos: a field of watching eyes',
   byakko: 'Byakko: tiger stripes and a slit-pupil eye',
-  cerberos: 'Cerberos: three half-lidded eyes held by a chain',
+  cerberus: 'Cerberus: three half-lidded eyes held by a chain',
   dharmapala: 'Dharmapala: four flame-haloed protectors rising out of a wall of fire',
   erinyes: 'Erinyes: a wing, an eye in a triangle and three snakes',
   fafnir: 'Fafnir: a scaled, spiked body and a ridged eye',
@@ -371,7 +371,7 @@ const labels = {
     </g>
   )}
 
-  {beast === 'cerberos' && (
+  {beast === 'cerberus' && (
     <g>
       {links.map((l) =>
         l.ring ? (

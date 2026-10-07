@@ -2,12 +2,12 @@
 codename: Dharmapala
 version: "3.0"
 status: planned
-summary: The release planned after Cerberos. Work on it has not started; its contents and date are not settled.
+summary: The release planned after Cerberus. Work on it has not started; its contents and date are not settled.
 banner: dharmapala
 order: 4
 ---
 
-Dharmapala is the release planned after [Cerberos](/releases/cerberos). The Dharmapalas are the wrathful "protectors of the law" of Buddhist tradition: fierce, three-eyed figures wreathed in flames who defend a teaching against whatever would corrupt it.
+Dharmapala is the release planned after [Cerberus](/releases/cerberus). The Dharmapalas are the wrathful "protectors of the law" of Buddhist tradition: fierce, three-eyed figures wreathed in flames who defend a teaching against whatever would corrupt it.
 
 ## Status
 

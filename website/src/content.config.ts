@@ -19,7 +19,7 @@ export const collections = {
       status: z.enum(["released", "upcoming", "in-progress", "planned"]),
       date: z.string().optional(),
       summary: z.string(),
-      banner: z.enum(["argos", "byakko", "cerberos", "dharmapala", "erinyes", "fafnir", "genbu", "haetae", "issitoq", "janus"]),
+      banner: z.enum(["argos", "byakko", "cerberus", "dharmapala", "erinyes", "fafnir", "genbu", "haetae", "issitoq", "janus"]),
       order: z.number(),
     }),
   }),

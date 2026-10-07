@@ -1,6 +1,6 @@
-/* The builder's status eye: one of Argos's eyes, cut down from the
-   homepage's ClosingEye. The lids, iris and pupil ease between poses where
-   the browser can animate SVG geometry, and snap where it cannot. */
+/* The builder's status eye: one of Argos's eyes. The lids, iris and pupil
+   ease between poses where the browser can animate SVG geometry, and snap
+   where it cannot. */
 .builder-eye {
   display: inline-block;
   flex: none;

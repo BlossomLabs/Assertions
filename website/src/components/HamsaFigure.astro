@@ -1,0 +1,318 @@
+---
+// The hamsa, the open hand that turns the evil eye away, hung fingers down
+// from a peg as the charm is hung. It is line alone, with no ground of its
+// own, so the page shows through it: three round fingers between two pointed
+// side fingers, one lidded eye in the palm under a lotus, scallops overlapping
+// around it, and eye beads and drops on chains below. It swings from the peg
+// as a pendulum, and the pendants swing from it. It heads the closing section
+// of the homepage.
+---
+
+<!-- The view box is wider than the hand by 40 a side: that is the room the swing and the side pendants need. -->
+<svg viewBox="-40 0 480 650" class="block w-full h-full overflow-visible" aria-hidden="true">
+  <defs>
+    <clipPath id="hamsa-hand"><path d="M320 598 C262 598 222 566 200 520 C180 478 168 430 160 380 C156 350 150 324 140 306 C134 294 124 284 116 278 C128 262 146 246 166 241 C180 238 194 240 203 246 L203 100 A39 39 0 0 1 281 100 L281 82 A39 39 0 0 1 359 82 L359 100 A39 39 0 0 1 437 100 L437 246 C446 240 460 238 474 241 C494 246 512 262 524 278 C516 284 506 294 500 306 C490 324 484 350 480 380 C472 430 460 478 440 520 C418 566 378 598 320 598 Z" /></clipPath>
+    <!-- The hand has no ground of its own, so nothing can be hidden behind a fill. The ornament is drawn as
+         a mask instead: white shows the line colour, black the page, and a black shape
+         over a white one hides it the way a fill would. It is drawn fingers up and turned over here. -->
+    <mask id="hamsa-lines" maskUnits="userSpaceOnUse" x="0" y="0" width="400" height="650">
+      <g transform="translate(200 64) scale(0.9 -0.9) translate(-320 -598)">
+        <g clip-path="url(#hamsa-hand)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+          <!-- scallops around the eye, and the side fingers -->
+          <circle cx="437.9" cy="460.3" r="42" fill="#000" stroke-width="3" /><circle cx="437.9" cy="460.3" r="36" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="437.9" cy="460.3" r="30" stroke-width="2.4" /><circle cx="437.9" cy="460.3" r="21" stroke="#fff" stroke-width="2" /><circle cx="392.9" cy="522.3" r="42" fill="#000" stroke-width="3" /><circle cx="392.9" cy="522.3" r="36" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="392.9" cy="522.3" r="30" stroke-width="2.4" /><circle cx="392.9" cy="522.3" r="21" stroke="#fff" stroke-width="2" /><circle cx="320.0" cy="546.0" r="42" fill="#000" stroke-width="3" /><circle cx="320.0" cy="546.0" r="36" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="320.0" cy="546.0" r="30" stroke-width="2.4" /><circle cx="320.0" cy="546.0" r="21" stroke="#fff" stroke-width="2" /><circle cx="247.1" cy="522.3" r="42" fill="#000" stroke-width="3" /><circle cx="247.1" cy="522.3" r="36" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="247.1" cy="522.3" r="30" stroke-width="2.4" /><circle cx="247.1" cy="522.3" r="21" stroke="#fff" stroke-width="2" /><circle cx="202.1" cy="460.3" r="42" fill="#000" stroke-width="3" /><circle cx="202.1" cy="460.3" r="36" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="202.1" cy="460.3" r="30" stroke-width="2.4" /><circle cx="202.1" cy="460.3" r="21" stroke="#fff" stroke-width="2" /><circle cx="202.1" cy="383.7" r="42" fill="#000" stroke-width="3" /><circle cx="202.1" cy="383.7" r="36" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="202.1" cy="383.7" r="30" stroke-width="2.4" /><circle cx="202.1" cy="383.7" r="21" stroke="#fff" stroke-width="2" /><circle cx="247.1" cy="321.7" r="42" fill="#000" stroke-width="3" /><circle cx="247.1" cy="321.7" r="36" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="247.1" cy="321.7" r="30" stroke-width="2.4" /><circle cx="247.1" cy="321.7" r="21" stroke="#fff" stroke-width="2" /><circle cx="320.0" cy="298.0" r="42" fill="#000" stroke-width="3" /><circle cx="320.0" cy="298.0" r="36" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="320.0" cy="298.0" r="30" stroke-width="2.4" /><circle cx="320.0" cy="298.0" r="21" stroke="#fff" stroke-width="2" /><circle cx="392.9" cy="321.7" r="42" fill="#000" stroke-width="3" /><circle cx="392.9" cy="321.7" r="36" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="392.9" cy="321.7" r="30" stroke-width="2.4" /><circle cx="392.9" cy="321.7" r="21" stroke="#fff" stroke-width="2" /><circle cx="437.9" cy="383.7" r="42" fill="#000" stroke-width="3" /><circle cx="437.9" cy="383.7" r="36" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="437.9" cy="383.7" r="30" stroke-width="2.4" /><circle cx="437.9" cy="383.7" r="21" stroke="#fff" stroke-width="2" /><circle cx="408.0" cy="422.0" r="34" fill="#000" stroke-width="3" /><circle cx="408.0" cy="422.0" r="28" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="408.0" cy="422.0" r="22" stroke-width="2.4" /><circle cx="408.0" cy="422.0" r="13" stroke="#fff" stroke-width="2" /><circle cx="391.2" cy="473.7" r="34" fill="#000" stroke-width="3" /><circle cx="391.2" cy="473.7" r="28" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="391.2" cy="473.7" r="22" stroke-width="2.4" /><circle cx="391.2" cy="473.7" r="13" stroke="#fff" stroke-width="2" /><circle cx="347.2" cy="505.7" r="34" fill="#000" stroke-width="3" /><circle cx="347.2" cy="505.7" r="28" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="347.2" cy="505.7" r="22" stroke-width="2.4" /><circle cx="347.2" cy="505.7" r="13" stroke="#fff" stroke-width="2" /><circle cx="292.8" cy="505.7" r="34" fill="#000" stroke-width="3" /><circle cx="292.8" cy="505.7" r="28" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="292.8" cy="505.7" r="22" stroke-width="2.4" /><circle cx="292.8" cy="505.7" r="13" stroke="#fff" stroke-width="2" /><circle cx="248.8" cy="473.7" r="34" fill="#000" stroke-width="3" /><circle cx="248.8" cy="473.7" r="28" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="248.8" cy="473.7" r="22" stroke-width="2.4" /><circle cx="248.8" cy="473.7" r="13" stroke="#fff" stroke-width="2" /><circle cx="232.0" cy="422.0" r="34" fill="#000" stroke-width="3" /><circle cx="232.0" cy="422.0" r="28" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="232.0" cy="422.0" r="22" stroke-width="2.4" /><circle cx="232.0" cy="422.0" r="13" stroke="#fff" stroke-width="2" /><circle cx="248.8" cy="370.3" r="34" fill="#000" stroke-width="3" /><circle cx="248.8" cy="370.3" r="28" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="248.8" cy="370.3" r="22" stroke-width="2.4" /><circle cx="248.8" cy="370.3" r="13" stroke="#fff" stroke-width="2" /><circle cx="292.8" cy="338.3" r="34" fill="#000" stroke-width="3" /><circle cx="292.8" cy="338.3" r="28" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="292.8" cy="338.3" r="22" stroke-width="2.4" /><circle cx="292.8" cy="338.3" r="13" stroke="#fff" stroke-width="2" /><circle cx="347.2" cy="338.3" r="34" fill="#000" stroke-width="3" /><circle cx="347.2" cy="338.3" r="28" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="347.2" cy="338.3" r="22" stroke-width="2.4" /><circle cx="347.2" cy="338.3" r="13" stroke="#fff" stroke-width="2" /><circle cx="391.2" cy="370.3" r="34" fill="#000" stroke-width="3" /><circle cx="391.2" cy="370.3" r="28" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5.6" stroke-linecap="butt" /><circle cx="391.2" cy="370.3" r="22" stroke-width="2.4" /><circle cx="391.2" cy="370.3" r="13" stroke="#fff" stroke-width="2" /><circle cx="320" cy="422" r="62" fill="#000" stroke-width="3" />
+          <path d="M166 304 C154 280 166 258 192 254 C196 278 186 298 166 304 Z" fill="#000" stroke-width="2.6" /><path d="M170 298 C174 282 182 268 190 258" stroke="#fff" stroke-width="2" /><circle cx="141" cy="270" r="5.5" fill="#fff" stroke="none" /><circle cx="183" cy="486" r="4.5" fill="#fff" stroke="none" /><path d="M183 474 C170 474 166 492 178 498 C192 502 200 486 194 476" stroke-width="2.4" />
+          <g transform="translate(640 0) scale(-1 1)"><path d="M166 304 C154 280 166 258 192 254 C196 278 186 298 166 304 Z" fill="#000" stroke-width="2.6" /><path d="M170 298 C174 282 182 268 190 258" stroke="#fff" stroke-width="2" /><circle cx="141" cy="270" r="5.5" fill="#fff" stroke="none" /><circle cx="183" cy="486" r="4.5" fill="#fff" stroke="none" /><path d="M183 474 C170 474 166 492 178 498 C192 502 200 486 194 476" stroke-width="2.4" /></g>
+          <!-- the fingers -->
+          <path d="M281 100 V330 M359 100 V330" stroke-width="3" />
+          <g stroke="#fff" stroke-width="2"><circle cx="288.1" cy="73.5" r="5.5" /><circle cx="294.7" cy="60.8" r="5.5" /><circle cx="306.1" cy="52.1" r="5.5" /><circle cx="320.0" cy="49.0" r="5.5" /><circle cx="333.9" cy="52.1" r="5.5" /><circle cx="345.3" cy="60.8" r="5.5" /><circle cx="351.9" cy="73.5" r="5.5" /></g><path d="M320 141 L336.5 113 L320 103 L303.5 113 Z M303.5 107.5 L320 85 L336.5 107.5 L320 97.5 Z" fill="#fff" stroke="none" /><path d="M304 152 C308 174 317 188 320 204 C323 188 332 174 336 152" stroke-width="2.6" /><circle cx="293.0" cy="150" r="1.8" fill="#fff" stroke="none" /><circle cx="347.0" cy="150" r="1.8" fill="#fff" stroke="none" /><circle cx="291.6" cy="161" r="1.8" fill="#fff" stroke="none" /><circle cx="348.4" cy="161" r="1.8" fill="#fff" stroke="none" /><circle cx="290.3" cy="172" r="1.8" fill="#fff" stroke="none" /><circle cx="349.7" cy="172" r="1.8" fill="#fff" stroke="none" /><circle cx="289.4" cy="183" r="1.8" fill="#fff" stroke="none" /><circle cx="350.6" cy="183" r="1.8" fill="#fff" stroke="none" /><circle cx="289.0" cy="194" r="1.8" fill="#fff" stroke="none" /><circle cx="351.0" cy="194" r="1.8" fill="#fff" stroke="none" /><circle cx="289.1" cy="205" r="1.8" fill="#fff" stroke="none" /><circle cx="350.9" cy="205" r="1.8" fill="#fff" stroke="none" /><circle cx="289.8" cy="216" r="1.8" fill="#fff" stroke="none" /><circle cx="350.2" cy="216" r="1.8" fill="#fff" stroke="none" /><circle cx="290.8" cy="227" r="1.8" fill="#fff" stroke="none" /><circle cx="349.2" cy="227" r="1.8" fill="#fff" stroke="none" /><circle cx="292.2" cy="238" r="1.8" fill="#fff" stroke="none" /><circle cx="347.8" cy="238" r="1.8" fill="#fff" stroke="none" />
+          <path d="M214 104 A28 28 0 0 1 270 104" stroke-width="2.6" /><circle cx="242" cy="80" r="4.5" fill="#fff" stroke="none" /><path d="M236 94 L242 120 L248 94 Z" fill="#fff" stroke="none" /><path d="M214 104 C216 132 234 142 242 158 C250 142 268 132 270 104" stroke="#fff" stroke-width="2" /><path d="M213 196 V150 M222 196 V160 M231 196 V170 M253 196 V170 M262 196 V160 M271 196 V150" stroke-width="5" /><path d="M213 196 V152 M222 196 V162 M231 196 V172 M253 196 V172 M262 196 V162 M271 196 V152" stroke="#000" stroke-width="1.6" /><path d="M246 336 C230 286 234 236 246 196 C258 236 262 286 252 336 Z" fill="#000" stroke-width="2.6" /><path d="M247 320 V226" stroke="#fff" stroke-width="2" /><path d="M272 326 C256 266 262 212 276 176 C290 214 292 268 282 326 Z" fill="#000" stroke-width="2.6" />
+          <g transform="translate(640 0) scale(-1 1)"><path d="M214 104 A28 28 0 0 1 270 104" stroke-width="2.6" /><circle cx="242" cy="80" r="4.5" fill="#fff" stroke="none" /><path d="M236 94 L242 120 L248 94 Z" fill="#fff" stroke="none" /><path d="M214 104 C216 132 234 142 242 158 C250 142 268 132 270 104" stroke="#fff" stroke-width="2" /><path d="M213 196 V150 M222 196 V160 M231 196 V170 M253 196 V170 M262 196 V160 M271 196 V150" stroke-width="5" /><path d="M213 196 V152 M222 196 V162 M231 196 V172 M253 196 V172 M262 196 V162 M271 196 V152" stroke="#000" stroke-width="1.6" /><path d="M246 336 C230 286 234 236 246 196 C258 236 262 286 252 336 Z" fill="#000" stroke-width="2.6" /><path d="M247 320 V226" stroke="#fff" stroke-width="2" /><path d="M272 326 C256 266 262 212 276 176 C290 214 292 268 282 326 Z" fill="#000" stroke-width="2.6" /></g>
+          <!-- the lotus, and what lies under the eye -->
+          <path d="M180 372 L242 364 C264 372 280 388 288 406 L238 420 C214 410 194 394 180 372 Z" fill="#000" stroke-width="3" /><path d="M198 378 L240 374 C254 380 264 390 270 400 L240 408 C224 402 210 392 198 378 Z" stroke="#fff" stroke-width="2" /><path d="M210 310 L252 322 C270 342 282 366 288 396 L248 382 C230 362 218 338 210 310 Z" fill="#000" stroke-width="3" /><path d="M224 324 L248 332 C260 346 268 362 272 380 L254 372 C240 358 230 342 224 324 Z" stroke="#fff" stroke-width="2" /><path d="M250 258 C262 270 276 278 286 282 C296 300 290 324 296 346 C300 364 304 380 304 396 L272 376 C258 340 252 300 250 258 Z" fill="#000" stroke-width="3" /><path d="M262 284 C270 290 276 294 280 296 C284 312 280 330 284 348 L286 366 L278 362 C268 336 264 310 262 284 Z" stroke="#fff" stroke-width="2" />
+          <g transform="translate(640 0) scale(-1 1)"><path d="M180 372 L242 364 C264 372 280 388 288 406 L238 420 C214 410 194 394 180 372 Z" fill="#000" stroke-width="3" /><path d="M198 378 L240 374 C254 380 264 390 270 400 L240 408 C224 402 210 392 198 378 Z" stroke="#fff" stroke-width="2" /><path d="M210 310 L252 322 C270 342 282 366 288 396 L248 382 C230 362 218 338 210 310 Z" fill="#000" stroke-width="3" /><path d="M224 324 L248 332 C260 346 268 362 272 380 L254 372 C240 358 230 342 224 324 Z" stroke="#fff" stroke-width="2" /><path d="M250 258 C262 270 276 278 286 282 C296 300 290 324 296 346 C300 364 304 380 304 396 L272 376 C258 340 252 300 250 258 Z" fill="#000" stroke-width="3" /><path d="M262 284 C270 290 276 294 280 296 C284 312 280 330 284 348 L286 366 L278 362 C268 336 264 310 262 284 Z" stroke="#fff" stroke-width="2" /></g>
+          <path d="M320 210 C330 242 356 272 358 304 C360 334 340 352 336 396 L304 396 C300 352 280 334 282 304 C284 272 310 242 320 210 Z" fill="#000" stroke-width="3" /><path d="M320 236 C327 258 344 280 345 304 C346 328 332 344 328 380 L312 380 C308 344 294 328 295 304 C296 280 313 258 320 236 Z" stroke="#fff" stroke-width="2" /><g fill="#fff" stroke="none"><circle cx="320" cy="274" r="2.2" /><circle cx="320" cy="289" r="3.2" /><circle cx="320" cy="306" r="4.2" /><circle cx="320" cy="323" r="3.2" /><circle cx="320" cy="337" r="2.4" /><circle cx="320" cy="348" r="1.8" /></g>
+          <path d="M320 474 C344 490 350 514 320 536 C290 514 296 490 320 474 Z" fill="#000" stroke-width="3" /><path d="M320 490 C332 500 334 512 320 524 C306 512 308 500 320 490 Z" stroke="#fff" stroke-width="2" /><g fill="#fff" stroke="none"><circle cx="320" cy="485" r="1.8" /><circle cx="320" cy="503" r="2.6" /></g><path d="M262 602 C288 580 310 556 320 528 C330 556 352 580 378 602 Z" fill="#000" stroke-width="3" /><path d="M284 602 C300 586 314 568 320 550 C326 568 340 586 356 602" stroke="#fff" stroke-width="7" stroke-dasharray="1.8 5" stroke-linecap="butt" /><path d="M320 562 C330 574 332 588 320 594 C308 588 310 574 320 562 Z" fill="#fff" stroke="none" />
+          <!-- the frame of the eye -->
+          <path d="M222 420 Q320 318 418 420 Q320 508 222 420 Z" fill="#000" stroke-width="3" />
+          <path d="M320 598 C262 598 222 566 200 520 C180 478 168 430 160 380 C156 350 150 324 140 306 C134 294 124 284 116 278 C128 262 146 246 166 241 C180 238 194 240 203 246 L203 100 A39 39 0 0 1 281 100 L281 82 A39 39 0 0 1 359 82 L359 100 A39 39 0 0 1 437 100 L437 246 C446 240 460 238 474 241 C494 246 512 262 524 278 C516 284 506 294 500 306 C490 324 484 350 480 380 C472 430 460 478 440 520 C418 566 378 598 320 598 Z" stroke-width="7" />
+        </g>
+      </g>
+    </mask>
+  </defs>
+
+  <circle cx="201.5" cy="493.5" r="2.5" fill="var(--color-bp-400)" opacity="0.10" />
+  <circle cx="209.4" cy="43.9" r="3.2" fill="var(--color-bp-400)" opacity="0.29" />
+  <circle cx="208.7" cy="438.7" r="1.0" fill="var(--color-bp-400)" opacity="0.28" />
+  <circle cx="8.0" cy="611.1" r="1.1" fill="var(--color-bp-400)" opacity="0.22" />
+  <circle cx="236.9" cy="374.8" r="1.0" fill="var(--color-bp-400)" opacity="0.11" />
+  <circle cx="244.4" cy="351.9" r="0.9" fill="var(--color-bp-400)" opacity="0.12" />
+  <circle cx="160.5" cy="411.6" r="1.5" fill="var(--color-bp-400)" opacity="0.11" />
+  <circle cx="339.6" cy="403.0" r="2.2" fill="var(--color-bp-400)" opacity="0.24" />
+  <circle cx="136.3" cy="625.5" r="2.2" fill="var(--color-bp-400)" opacity="0.28" />
+  <circle cx="169.0" cy="594.5" r="1.9" fill="var(--color-bp-400)" opacity="0.29" />
+  <circle cx="95.1" cy="19.6" r="1.9" fill="var(--color-bp-400)" opacity="0.16" />
+  <circle cx="394.9" cy="532.3" r="3.2" fill="var(--color-bp-400)" opacity="0.25" />
+  <circle cx="284.0" cy="586.7" r="1.1" fill="var(--color-bp-400)" opacity="0.29" />
+  <circle cx="346.2" cy="206.3" r="2.9" fill="var(--color-bp-400)" opacity="0.11" />
+  <circle cx="340.8" cy="96.4" r="2.8" fill="var(--color-bp-400)" opacity="0.19" />
+  <circle cx="17.4" cy="648.8" r="3.4" fill="var(--color-bp-400)" opacity="0.18" />
+  <circle cx="251.2" cy="385.3" r="2.8" fill="var(--color-bp-400)" opacity="0.10" />
+  <circle cx="373.4" cy="476.5" r="3.0" fill="var(--color-bp-400)" opacity="0.15" />
+  <circle cx="91.3" cy="392.2" r="2.3" fill="var(--color-bp-400)" opacity="0.16" />
+  <circle cx="306.3" cy="491.8" r="1.8" fill="var(--color-bp-400)" opacity="0.13" />
+  <circle cx="61.9" cy="384.8" r="2.1" fill="var(--color-bp-400)" opacity="0.29" />
+  <circle cx="364.8" cy="198.9" r="2.1" fill="var(--color-bp-400)" opacity="0.25" />
+  <circle cx="71.2" cy="125.1" r="2.7" fill="var(--color-bp-400)" opacity="0.29" />
+  <circle cx="137.5" cy="57.0" r="1.4" fill="var(--color-bp-400)" opacity="0.14" />
+  <circle cx="225.5" cy="249.6" r="2.3" fill="var(--color-bp-400)" opacity="0.23" />
+  <circle cx="147.1" cy="578.9" r="1.8" fill="var(--color-bp-400)" opacity="0.18" />
+  <circle cx="161.7" cy="267.6" r="1.4" fill="var(--color-bp-400)" opacity="0.12" />
+  <circle cx="228.1" cy="186.3" r="2.9" fill="var(--color-bp-400)" opacity="0.26" />
+  <circle cx="45.8" cy="7.8" r="2.2" fill="var(--color-bp-400)" opacity="0.22" />
+  <circle cx="255.9" cy="11.4" r="2.8" fill="var(--color-bp-400)" opacity="0.10" />
+  <circle cx="384.3" cy="355.5" r="1.5" fill="var(--color-bp-400)" opacity="0.11" />
+  <circle cx="99.5" cy="337.4" r="1.5" fill="var(--color-bp-400)" opacity="0.18" />
+  <circle cx="104.9" cy="232.1" r="2.3" fill="var(--color-bp-400)" opacity="0.10" />
+  <circle cx="312.9" cy="219.4" r="3.3" fill="var(--color-bp-400)" opacity="0.23" />
+  <circle cx="341.6" cy="42.6" r="3.2" fill="var(--color-bp-400)" opacity="0.26" />
+  <circle cx="255.9" cy="57.9" r="2.7" fill="var(--color-bp-400)" opacity="0.15" />
+
+  <!-- the peg it hangs from stays put; everything below swings from it -->
+  <path d="M184 5 H216" fill="none" stroke="var(--color-bp-400)" stroke-width="4" stroke-linecap="round" />
+  <g data-hamsa-hang>
+    <g fill="none" stroke="var(--color-bp-400)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M200 5 V44" />
+      <circle cx="200" cy="54" r="10" stroke-width="2" />
+      <g data-hamsa-pendant data-x="17.3" data-y="351.1" data-length="90">
+        <circle cx="17.3" cy="355.1" r="4" /><path d="M17.3 359.1 v50" /><circle cx="17.3" cy="418.1" r="9" /><path d="M17.3 427.1 v6 M17.3 433.1 c9 12 7 24 0 26 c-7 -2 -9 -14 0 -26 Z" />
+        <circle cx="17.3" cy="418.1" r="5" fill="var(--color-bp-50)" stroke="none" /><circle cx="17.3" cy="418.1" r="2.2" fill="var(--color-bp-400)" stroke="none" />
+      </g>
+      <g data-hamsa-pendant data-x="382.7" data-y="351.1" data-length="90">
+        <circle cx="382.7" cy="355.1" r="4" /><path d="M382.7 359.1 v50" /><circle cx="382.7" cy="418.1" r="9" /><path d="M382.7 427.1 v6 M382.7 433.1 c9 12 7 24 0 26 c-7 -2 -9 -14 0 -26 Z" />
+        <circle cx="382.7" cy="418.1" r="5" fill="var(--color-bp-50)" stroke="none" /><circle cx="382.7" cy="418.1" r="2.2" fill="var(--color-bp-400)" stroke="none" />
+      </g>
+      <g data-hamsa-pendant data-x="129.8" data-y="547.3" data-length="56">
+        <circle cx="129.8" cy="551.3" r="4" /><path d="M129.8 555.3 v16" /><circle cx="129.8" cy="580.3" r="9" /><path d="M129.8 589.3 v6 M129.8 595.3 c9 12 7 24 0 26 c-7 -2 -9 -14 0 -26 Z" />
+        <circle cx="129.8" cy="580.3" r="5" fill="var(--color-bp-50)" stroke="none" /><circle cx="129.8" cy="580.3" r="2.2" fill="var(--color-bp-400)" stroke="none" />
+      </g>
+      <g data-hamsa-pendant data-x="200.0" data-y="563.5" data-length="48">
+        <circle cx="200.0" cy="567.5" r="4" /><path d="M200.0 571.5 v8" /><circle cx="200.0" cy="588.5" r="9" /><path d="M200.0 597.5 v6 M200.0 603.5 c9 12 7 24 0 26 c-7 -2 -9 -14 0 -26 Z" />
+        <circle cx="200.0" cy="588.5" r="5" fill="var(--color-bp-50)" stroke="none" /><circle cx="200.0" cy="588.5" r="2.2" fill="var(--color-bp-400)" stroke="none" />
+      </g>
+      <g data-hamsa-pendant data-x="270.2" data-y="547.3" data-length="56">
+        <circle cx="270.2" cy="551.3" r="4" /><path d="M270.2 555.3 v16" /><circle cx="270.2" cy="580.3" r="9" /><path d="M270.2 589.3 v6 M270.2 595.3 c9 12 7 24 0 26 c-7 -2 -9 -14 0 -26 Z" />
+        <circle cx="270.2" cy="580.3" r="5" fill="var(--color-bp-50)" stroke="none" /><circle cx="270.2" cy="580.3" r="2.2" fill="var(--color-bp-400)" stroke="none" />
+      </g>
+    </g>
+
+    <rect width="400" height="650" fill="var(--color-bp-400)" mask="url(#hamsa-lines)" />
+
+    <!-- the eye in the palm is the logo's, without its lid fold: the white, and a pupil in the line colour
+         with a pale ring. The white takes a thin outline so it holds on a light page. This is the resting
+         pose; the script below turns the pupil toward the pointer and blinks. -->
+    <g transform="translate(200.0 226.4) scale(2.1)" data-hamsa-eye>
+      <clipPath id="hamsa-figure-opening"><path data-eye="opening" d="M-25 0 Q0 -19 25 0 Q0 13 -25 0 Z" /></clipPath>
+      <path data-eye="rim" d="M-25 0 Q0 -19 25 0 Q0 13 -25 0 Z" fill="var(--color-bp-50)" stroke="var(--color-bp-400)" stroke-width="0.9" stroke-linejoin="round" />
+      <g clip-path="url(#hamsa-figure-opening)">
+        <g data-eye="iris" transform="translate(0 -2)">
+          <circle r="9" fill="var(--color-bp-400)" />
+          <circle r="4.4" fill="none" stroke="var(--color-bp-50)" stroke-width="2" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
+<script>
+  // The eye follows the pointer the way the logo's eye would: the pupil rides
+  // a globe behind the lids and is seen a little edge-on as it turns away, the
+  // lids ride with the gaze, and the upper one comes down to blink. Left
+  // alone, it looks around. Without script, or under reduced motion, it rests
+  // as drawn.
+  const TRAVEL = 19; // radius of the globe the pupil rides on, in the eye's own units
+  const MAX_YAW = 0.42;
+  const MAX_PITCH = 0.22;
+  const FOLLOW = 5; // how fast the gaze closes on its target, per second
+
+  const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+  // The charm is a pendulum on its peg, and each pendant a pendulum on the
+  // charm: a pendant feels gravity and whatever its pivot does as the hand
+  // swings, so the long ones lag and the short ones chatter. A faint, wandering
+  // breeze is all that moves the hand.
+  // Lengths are in the drawing's own units; GRAVITY is chosen so the hand
+  // takes about three and a half seconds to swing over and back.
+  const GRAVITY = 1300;
+  const HAND_LENGTH = 380; // from the peg to where the hand's weight sits
+  const HAND_DRAG = 0.07;
+  // The pendants are heavy for their size: their weight sits low, in the drop, so they swing slowly, and
+  // the air hardly slows them.
+  const PENDANT_HEFT = 1.7;
+  const PENDANT_DRAG = 0.22;
+  const BREEZE = 0.032;
+  const BREEZE_MEMORY = 1.6; // seconds a gust lasts
+  const MAX_SWING = 0.1;
+  const PEG = { x: 200, y: 5 };
+  const STEP = 1 / 120;
+
+  const gauss = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random());
+
+  for (const hang of document.querySelectorAll<SVGGElement>('[data-hamsa-hang]')) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) break;
+
+    const pendants = [...hang.querySelectorAll<SVGGElement>('[data-hamsa-pendant]')].map((el) => ({
+      el,
+      x: Number(el.dataset.x),
+      y: Number(el.dataset.y),
+      length: Number(el.dataset.length) * PENDANT_HEFT,
+      angle: 0, // from straight down, in the page's frame
+      speed: 0,
+      px: 0,
+      py: 0,
+      vx: 0,
+      vy: 0,
+    }));
+    // Angles turn the way SVG's rotate does, so a positive one carries the bottom of the charm to the left.
+    let angle = 0.04;
+    let speed = 0;
+    let wind = 0;
+    let owed = 0;
+    let last = 0;
+    let frame = 0;
+
+    const pivot = (p: { x: number; y: number }) => {
+      const c = Math.cos(angle);
+      const s = Math.sin(angle);
+      const x = p.x - PEG.x;
+      const y = p.y - PEG.y;
+      return [PEG.x + x * c - y * s, PEG.y + x * s + y * c];
+    };
+    for (const p of pendants) [p.px, p.py] = pivot(p);
+
+    const step = () => {
+      wind += (-wind / BREEZE_MEMORY) * STEP + BREEZE * Math.sqrt(STEP) * gauss();
+      speed += (-(GRAVITY / HAND_LENGTH) * Math.sin(angle) - HAND_DRAG * speed + wind) * STEP;
+      speed = Math.min(1.2, Math.max(-1.2, speed));
+      angle += speed * STEP;
+      if (Math.abs(angle) > MAX_SWING) {
+        angle = Math.sign(angle) * MAX_SWING;
+        speed *= -0.3;
+      }
+      for (const p of pendants) {
+        // how the pivot is accelerating, from where the swing has just carried it
+        const [x, y] = pivot(p);
+        const vx = (x - p.px) / STEP;
+        const vy = (y - p.py) / STEP;
+        const ax = (vx - p.vx) / STEP;
+        const ay = (vy - p.vy) / STEP;
+        p.px = x;
+        p.py = y;
+        p.vx = vx;
+        p.vy = vy;
+        p.speed +=
+          ((ax * Math.cos(p.angle) - (GRAVITY - ay) * Math.sin(p.angle)) / p.length - PENDANT_DRAG * p.speed) * STEP;
+        p.angle += p.speed * STEP;
+      }
+    };
+
+    const draw = (now: number) => {
+      frame = requestAnimationFrame(draw);
+      owed = Math.min(0.1, owed + (now - last) / 1000);
+      last = now;
+      for (; owed >= STEP; owed -= STEP) step();
+      const deg = (a: number) => ((a * 180) / Math.PI).toFixed(3);
+      hang.setAttribute('transform', `rotate(${deg(angle)} ${PEG.x} ${PEG.y})`);
+      // a pendant is drawn inside the hand, so it turns by what it has over the hand's own swing
+      for (const p of pendants) p.el.setAttribute('transform', `rotate(${deg(p.angle - angle)} ${p.x} ${p.y})`);
+    };
+
+    new IntersectionObserver(([entry]) => {
+      cancelAnimationFrame(frame);
+      if (entry.isIntersecting) {
+        last = performance.now();
+        frame = requestAnimationFrame(draw);
+      }
+    }).observe(hang);
+  }
+
+  for (const eye of document.querySelectorAll<SVGGElement>('[data-hamsa-eye]')) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) break;
+
+    const part = (name: string) => eye.querySelector<SVGElement>(`[data-eye="${name}"]`)!;
+    const opening = part('opening');
+    const rim = part('rim');
+    const iris = part('iris');
+
+    let yaw = 0;
+    let pitch = 0;
+    let goalYaw = 0;
+    let goalPitch = 0;
+    let pointerAt = -Infinity;
+    let nextSaccade = 0;
+    let blinkAt = 2200;
+    let last = 0;
+    let frame = 0;
+
+    addEventListener(
+      'pointermove',
+      (e) => {
+        // The hand swings, so the eye is measured where it is now. Its lids are 50 units wide.
+        const box = rim.getBoundingClientRect();
+        const unit = box.width / 50 || 1;
+        const u = (e.clientX - (box.left + box.width / 2)) / unit;
+        const v = (e.clientY - (box.top + box.height / 2)) / unit;
+        goalYaw = clamp(Math.atan2(u, TRAVEL), -MAX_YAW, MAX_YAW);
+        goalPitch = clamp(Math.asin(-v / Math.hypot(u, v, TRAVEL)), -MAX_PITCH, MAX_PITCH);
+        pointerAt = performance.now();
+      },
+      { passive: true },
+    );
+
+    const draw = (now: number) => {
+      frame = requestAnimationFrame(draw);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+
+      if (now - pointerAt > 2500 && now > nextSaccade) {
+        goalYaw = (Math.random() * 2 - 1) * MAX_YAW * 0.85;
+        goalPitch = (Math.random() * 2 - 1) * MAX_PITCH * 0.8;
+        nextSaccade = now + 900 + Math.random() * 2200;
+      }
+      const ease = 1 - Math.exp(-dt * FOLLOW);
+      yaw = lerp(yaw, goalYaw, ease);
+      pitch = lerp(pitch, goalPitch, ease);
+
+      let blink = 0;
+      if (now > blinkAt) {
+        const t = (now - blinkAt) / 190;
+        if (t >= 1) blinkAt = now + 2600 + Math.random() * 3800;
+        else blink = Math.sin(t * Math.PI);
+      }
+
+      const dx = Math.sin(yaw) * Math.cos(pitch);
+      const dy = -Math.sin(pitch);
+      const dz = Math.cos(yaw) * Math.cos(pitch);
+      const turn = (Math.atan2(dy, dx) * 180) / Math.PI;
+      iris.setAttribute(
+        'transform',
+        `translate(${(dx * TRAVEL).toFixed(2)} ${(dy * TRAVEL - 2).toFixed(2)}) rotate(${turn.toFixed(2)}) scale(${dz.toFixed(4)} 1) rotate(${(-turn).toFixed(2)})`,
+      );
+
+      const up = (pitch / MAX_PITCH) * 0.5;
+      const lower = 13 - up * 2;
+      const upper = lerp(-19 - up * 4, lower, blink);
+      const almond = `M-25 0 Q0 ${upper.toFixed(2)} 25 0 Q0 ${lower.toFixed(2)} -25 0 Z`;
+      opening.setAttribute('d', almond);
+      rim.setAttribute('d', almond);
+    };
+
+    // Only spend frames while the eye is on screen.
+    new IntersectionObserver(([entry]) => {
+      cancelAnimationFrame(frame);
+      if (entry.isIntersecting) {
+        last = performance.now();
+        frame = requestAnimationFrame(draw);
+      }
+    }).observe(eye);
+  }
+</script>

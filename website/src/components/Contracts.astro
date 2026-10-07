@@ -36,7 +36,11 @@ const packs = deployments.contracts.length - 1;
 <section class="py-24 px-6 scroll-mt-24" id="contracts" aria-labelledby="contracts-heading">
   <div class="max-w-6xl mx-auto">
     <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-bp-400)] mb-3 text-center">The toolkit</p>
-    <h2 id="contracts-heading" class="font-mono font-bold text-3xl sm:text-4xl text-center mb-16">One main contract. Three expansion packs.</h2>
+    <h2 id="contracts-heading" class="font-mono font-bold text-3xl sm:text-4xl text-center mb-4">One main contract. Three expansion packs.</h2>
+    <p class="text-center text-[var(--color-ink-2)] text-lg mb-16 max-w-2xl mx-auto">
+      We use the main contract to check your conditions. We add a pack when a
+      condition needs math, lists, or a value used more than once.
+    </p>
 
     <div class={`grid gap-4 ${packs === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-3'}`}>
       {deployments.contracts.map((contract, index) => {
@@ -47,7 +51,7 @@ const packs = deployments.contracts.length - 1;
             <div class={`contract-plate relative shrink-0 flex items-center text-[var(--color-bp-400)] border-[var(--color-ink-3)]/15 h-28 justify-between px-5 sm:px-7 border-b ${main ? 'md:h-auto md:w-64 md:order-last md:justify-center md:px-0 md:border-b-0 md:border-l' : ''}`}>
               <ContractIcon name={contract.key as ContractIconName} class={`contract-glyph relative size-[4.5rem] ${main ? 'md:hidden' : ''}`} weight={1.75} />
               {main && <ContractIcon name="core" class="contract-glyph relative hidden md:block size-36" weight={2.5} />}
-              <span class={`contract-index font-mono font-bold leading-none relative text-5xl ${main ? 'md:absolute md:top-5 md:right-7 md:text-3xl' : ''}`} aria-hidden="true">0{index + 1}</span>
+              <span class={`contract-index font-mono font-bold leading-none relative text-5xl ${main ? 'md:absolute md:top-5 md:right-7' : ''}`} aria-hidden="true">0{index + 1}</span>
             </div>
             <div class="min-w-0 flex flex-1 flex-col p-5 sm:p-7">
               <div class="flex items-center justify-between gap-3 mb-3">

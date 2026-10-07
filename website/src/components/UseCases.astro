@@ -1,4 +1,6 @@
 ---
+import SphinxFigure from './SphinxFigure.astro';
+
 const cases = [
   {
     title: 'Treasury floor',
@@ -35,6 +37,10 @@ const cases = [
 
 <section class="py-24 px-6" id="use-cases">
   <div class="max-w-6xl mx-auto">
+    <div class="w-[min(34rem,100%)] aspect-[760/400] mx-auto mb-8" aria-hidden="true"><SphinxFigure /></div>
+    <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-bp-400)] mb-3 text-center">
+      Use cases
+    </p>
     <h2 class="font-mono font-bold text-3xl sm:text-4xl text-center mb-4">
       What else has to be true?
     </h2>

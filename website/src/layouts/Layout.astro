@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import SupportWidget from '../components/support/SupportWidget';
 
 interface Props {
   title?: string;
@@ -37,6 +38,7 @@ const {
   </head>
   <body class="font-sans antialiased min-h-screen">
     <slot />
+    <SupportWidget client:idle />
     <script is:inline>
       const theme = localStorage.getItem('theme');
       if (theme === 'light') {

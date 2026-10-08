@@ -1,0 +1,385 @@
+/* The support widget carries its own plain CSS and colour tokens: it is
+   mounted on the site pages (global.css) and on the docs (Starlight's CSS),
+   and neither stylesheet reaches the other. Both set `.dark` on <html>. */
+
+.support-widget {
+  --sw-panel: #0f2750;
+  --sw-field: #0a1d40;
+  --sw-raised: #173463;
+  --sw-edge: color-mix(in srgb, #93c5fd 35%, transparent);
+  --sw-edge-soft: color-mix(in srgb, #93c5fd 18%, transparent);
+  --sw-ink: #e2eaf2;
+  --sw-muted: #8da4b8;
+  --sw-accent: #60a5fa;
+  --sw-primary: #2563eb;
+  --sw-primary-hover: #3b82f6;
+  --sw-amber: #fbbf24;
+  --sw-ok: #22c55e;
+  --sw-err: #f87171;
+  --sw-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--sw-ink);
+}
+
+:root:not(.dark) .support-widget {
+  --sw-panel: #ffffff;
+  --sw-field: #f0f4f8;
+  --sw-raised: #e2eaf2;
+  --sw-edge: #b9c9d9;
+  --sw-edge-soft: #d5e0ea;
+  --sw-ink: #0c1a2e;
+  --sw-muted: #3a5068;
+  --sw-accent: #1a7fd4;
+  --sw-primary: #1e40af;
+  --sw-primary-hover: #1d4ed8;
+  --sw-amber: #b45309;
+  --sw-ok: #15803d;
+  --sw-err: #dc2626;
+  --sw-shadow: 0 12px 32px rgba(12, 26, 46, 0.18);
+}
+
+.support-widget *,
+.support-widget *::before,
+.support-widget *::after {
+  box-sizing: border-box;
+}
+
+.support-widget button {
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.support-widget button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.support-widget :focus-visible {
+  outline: 2px solid var(--sw-accent);
+  outline-offset: 2px;
+}
+
+.support-trigger {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.25rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--sw-edge);
+  border-radius: 0.5rem;
+  background: var(--sw-panel);
+  box-shadow: var(--sw-shadow);
+  font-weight: 500;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
+}
+
+.support-trigger:hover {
+  border-color: var(--sw-accent);
+  background: var(--sw-raised);
+}
+
+.support-panel {
+  position: fixed;
+  right: 1rem;
+  bottom: 66px;
+  z-index: 100;
+  width: 22rem;
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100dvh - 82px);
+  overflow-y: auto;
+  border: 1px solid var(--sw-edge);
+  border-radius: 0.875rem;
+  background: var(--sw-panel);
+  box-shadow: var(--sw-shadow);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .support-panel {
+    animation: support-rise 0.16s ease-out both;
+  }
+}
+
+@keyframes support-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.support-head {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid var(--sw-edge-soft);
+}
+
+.support-head h2 {
+  flex: 1;
+  margin: 0;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--sw-ink);
+}
+
+.support-icon-gap,
+.support-icon-btn {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.support-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--sw-muted) !important;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.support-icon-btn:hover {
+  background: var(--sw-raised);
+  color: var(--sw-ink) !important;
+}
+
+.support-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin: 0;
+  padding: 0.75rem;
+}
+
+.support-category {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--sw-edge-soft);
+  border-radius: 0.75rem;
+  background: var(--sw-field);
+  text-align: left;
+  transition: border-color 0.15s;
+}
+
+.support-category:hover {
+  border-color: var(--sw-accent);
+}
+
+.support-category-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.625rem;
+  background: var(--sw-raised);
+  color: var(--sw-muted);
+}
+
+.support-category[data-category='problem'] .support-category-icon {
+  color: var(--sw-amber);
+}
+
+.support-category[data-category='idea'] .support-category-icon {
+  color: var(--sw-accent);
+}
+
+.support-field {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--sw-edge-soft);
+  border-radius: 0.625rem;
+  background: var(--sw-field);
+  font: inherit;
+  color: var(--sw-ink);
+  resize: none;
+}
+
+.support-field::placeholder {
+  color: var(--sw-muted);
+  opacity: 0.8;
+}
+
+.support-field:focus {
+  border-color: var(--sw-accent);
+  outline: none;
+}
+
+.support-field[aria-invalid='true'] {
+  border-color: var(--sw-err);
+}
+
+.support-error {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--sw-err);
+}
+
+.support-shot {
+  position: relative;
+  padding: 0.375rem;
+  border: 1px solid var(--sw-edge-soft);
+  border-radius: 0.75rem;
+  background: var(--sw-field);
+}
+
+.support-shot-scroll {
+  max-height: 10rem;
+  overflow-y: auto;
+  border-radius: 0.5rem;
+}
+
+.support-shot img {
+  display: block;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border-radius: 0.5rem;
+}
+
+.support-shot-remove {
+  position: absolute;
+  top: 0.625rem;
+  right: 0.625rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 1px solid var(--sw-edge-soft);
+  border-radius: 999px;
+  background: var(--sw-panel);
+  color: var(--sw-muted) !important;
+}
+
+.support-shot-remove:hover {
+  color: var(--sw-err) !important;
+}
+
+.support-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.support-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.375rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--sw-edge);
+  border-radius: 0.5rem;
+  background: transparent;
+  font-weight: 500;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
+}
+
+.support-btn:hover:not(:disabled) {
+  border-color: var(--sw-accent);
+  background: var(--sw-raised);
+}
+
+.support-btn-square {
+  flex-shrink: 0;
+  width: 2.375rem;
+  padding: 0;
+}
+
+.support-btn-square[data-busy] svg {
+  animation: support-pulse 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes support-pulse {
+  to {
+    opacity: 0.3;
+  }
+}
+
+.support-btn-primary {
+  flex: 1;
+  border-color: var(--sw-primary);
+  background: var(--sw-primary);
+  color: #ffffff !important;
+}
+
+.support-btn-primary:hover:not(:disabled) {
+  border-color: var(--sw-primary-hover);
+  background: var(--sw-primary-hover);
+}
+
+.support-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 1rem;
+  text-align: center;
+}
+
+.support-result p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--sw-muted);
+}
+
+.support-result .support-btn {
+  width: 100%;
+}
+
+.support-result-ok {
+  color: var(--sw-ok);
+}
+
+.support-result-err {
+  color: var(--sw-err);
+}
+
+/* Narrow screens: a round icon button, so it covers less of the page. */
+@media (max-width: 760px) {
+  .support-trigger {
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    justify-content: center;
+    border-radius: 999px;
+  }
+
+  .support-trigger span {
+    display: none;
+  }
+
+  .support-panel {
+    bottom: 72px;
+    max-height: calc(100dvh - 88px);
+  }
+}

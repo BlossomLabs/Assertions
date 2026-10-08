@@ -1,0 +1,11 @@
+---
+/**
+ * Starlight Footer override: the default footer, plus the support button the
+ * main site mounts from Layout.astro, so it is on every docs page too.
+ */
+import Default from '@astrojs/starlight/components/Footer.astro';
+import SupportWidget from '../support/SupportWidget';
+---
+
+<Default><slot /></Default>
+<SupportWidget client:idle />

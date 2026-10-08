@@ -148,6 +148,7 @@ export default defineConfig({
       components: {
         ThemeProvider: './src/components/docs/ThemeProvider.astro',
         ThemeSelect: './src/components/docs/ThemeSelect.astro',
+        Footer: './src/components/docs/Footer.astro',
       },
       expressiveCode: {
         shiki: {

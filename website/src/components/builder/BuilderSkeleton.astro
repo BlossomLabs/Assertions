@@ -1,0 +1,57 @@
+---
+// The builder's outline, shown while its scripts load: the same two columns
+// and panels, so nothing moves when the real thing takes its place.
+const bar = 'rounded bg-[var(--color-ink-3)]/15';
+const panel =
+  'rounded-2xl border border-[var(--color-ink-3)]/20 bg-[var(--color-surface-2)] p-6';
+---
+
+<div
+  class="grid lg:grid-cols-[1fr_minmax(20rem,24rem)] gap-6 items-start animate-pulse motion-reduce:animate-none"
+  role="status"
+  aria-label="Loading the builder"
+>
+  <div class="space-y-6 min-w-0">
+    <section class={panel}>
+      <div class="flex items-center gap-3">
+        <span class="size-7 shrink-0 rounded-full bg-[var(--color-bp-500)]/15"></span>
+        <span class={`${bar} h-4 w-28`}></span>
+      </div>
+      <div class="pt-5 space-y-5">
+        <span class={`${bar} block h-3 w-40`}></span>
+        <div class="flex flex-wrap gap-1.5">
+          {[20, 16, 14, 24, 28, 20, 18].map((w) => (
+            <span class={`${bar} h-7 rounded-full`} style={`width:${w * 0.25}rem`}></span>
+          ))}
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2">
+          {[0, 1, 2, 3].map(() => <span class={`${bar} h-10 rounded-lg`}></span>)}
+        </div>
+        <div class="flex items-center gap-3">
+          <span class={`${bar} h-9 w-36 rounded-lg`}></span>
+          <span class={`${bar} h-3 w-44`}></span>
+        </div>
+        <span class={`${bar} block h-3 w-20`}></span>
+        <span class={`${bar} block h-10 w-full rounded-lg`}></span>
+        <span class={`${bar} block h-9 w-32 rounded-lg`}></span>
+      </div>
+    </section>
+    {[0, 1].map(() => (
+      <section class={panel}>
+        <div class="flex items-center gap-3">
+          <span class="size-7 shrink-0 rounded-full bg-[var(--color-bp-500)]/15"></span>
+          <span class={`${bar} h-4 w-32`}></span>
+        </div>
+      </section>
+    ))}
+  </div>
+  <aside class={panel}>
+    <span class={`${bar} block h-4 w-44 mb-4`}></span>
+    <div class="space-y-2 mb-4">
+      <span class={`${bar} block h-3 w-full`}></span>
+      <span class={`${bar} block h-3 w-5/6`}></span>
+      <span class={`${bar} block h-3 w-1/2`}></span>
+    </div>
+    <span class={`${bar} block h-9 w-full rounded-lg`}></span>
+  </aside>
+</div>

@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import AssertionBuilder from '../components/builder/AssertionBuilder';
+import BuilderSkeleton from '../components/builder/BuilderSkeleton.astro';
 import ContractIcon from '../components/ContractIcon.astro';
 ---
 
@@ -50,8 +51,12 @@ import ContractIcon from '../components/ContractIcon.astro';
           wallet, a Safe, a Governor or an Aragon OSx DAO.
         </p>
       </header>
-      <div class="animate-fade-up delay-1">
-        <AssertionBuilder client:only="react" />
+      {/* The builder arrives with its scripts: hold its place meanwhile, so
+          the footer does not sit under the heading and then jump away. */}
+      <div class="animate-fade-up delay-1 min-h-[70vh]">
+        <AssertionBuilder client:only="react">
+          <BuilderSkeleton slot="fallback" />
+        </AssertionBuilder>
       </div>
     </div>
   </main>

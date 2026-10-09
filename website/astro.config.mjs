@@ -13,6 +13,11 @@ import { evmcrisprSrc, local, vendoredDepIds } from './scripts/evmcrispr-sources
 
 // https://astro.build/config
 export default defineConfig({
+  // Styles travel inside each page. Served from IPFS through public
+  // gateways, a stylesheet can arrive late or not at all, and the page was
+  // then painted unstyled, the logo filling the screen. With the styles in
+  // the document there is no such moment.
+  build: { inlineStylesheets: "always" },
   // localhost:3000 is the redirect origin allowlisted on the Dappnode Nexus
   // OAuth client; on any other port "Login with Dappnode Nexus" is rejected
   // with "redirect URI is not allowed".
@@ -153,6 +158,8 @@ export default defineConfig({
         Footer: './src/components/docs/Footer.astro',
       },
       expressiveCode: {
+        // Code-block styles ride in the page too, like every other style.
+        emitExternalStylesheet: false,
         shiki: {
           // EVML snippets highlight with the same TextMate grammar the
           // builder's Monaco/Shiki editor uses, loaded from the vendored

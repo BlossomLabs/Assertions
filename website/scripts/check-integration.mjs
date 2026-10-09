@@ -98,10 +98,13 @@ try {
   assert.deepEqual(RELEASED_CONTRACTS.map((contract) => contract.name), released.map((contract) => contract.name));
   assert.deepEqual(RELEASED_CONTRACTS.map((contract) => contract.address), released.map((contract) => sdk[contract.sdkAddressExport]));
 
-  // Every address the docs print must be one the manifest knows (current,
-  // history, or the proxy and its deployer), and only the pages that document
-  // history may carry a retired one. README.md must list every current
-  // address. The docs/*.md records and the vendored checkout are not scanned.
+  // Every address the docs print for one of this project's contracts must be
+  // one the manifest knows (current or history), and only the pages that
+  // document history may carry a retired one. README.md must list every
+  // current address. A project address is told by its vanity prefix, which
+  // every canonical salt is mined for: the examples also print tokens, vaults
+  // and placeholder accounts, which are not this check's business. The
+  // docs/*.md records and the vendored checkout are not scanned.
   const current = new Set(manifest.contracts.map((contract) => contract.address.toLowerCase()));
   const known = new Set([
     ...current,
@@ -114,7 +117,9 @@ try {
     "hardhat.config.ts",
     "website/src/content/docs/docs/index.md",
     "website/src/content/docs/docs/contracts/deployments.mdx",
+    "website/src/content/docs/docs/migration.md",
   ]);
+  const vanity = ["0xa55e47", "0x09e4a7e", "0xc011ec7", "0xe5594e55"];
   const scanned = ["../README.md", "../hardhat.config.ts", ...walk("src/content/docs/docs")];
   const violations = [];
   for (const file of scanned) {
@@ -122,6 +127,7 @@ try {
     const text = readFileSync(file, "utf8");
     for (const [address] of text.matchAll(/\b0x[0-9a-fA-F]{40}\b/g)) {
       const lower = address.toLowerCase();
+      if (!vanity.some((prefix) => lower.startsWith(prefix))) continue;
       if (!known.has(lower)) violations.push(`${label}: ${address} is neither a current address nor in the manifest's history`);
       else if (!current.has(lower) && !historyAllowed.has(label)) violations.push(`${label}: ${address} is retired; only current addresses belong here`);
     }
@@ -131,7 +137,7 @@ try {
     if (!readme.includes(contract.address)) violations.push(`README.md: missing the current ${contract.name} address ${contract.address}`);
   }
   assert.equal(violations.length, 0, `docs address scan:\n${violations.join("\n")}`);
-  console.log(`Docs: ${scanned.length} files carry only manifest addresses; README lists every current one`);
+  console.log(`Docs: ${scanned.length} files print no unknown or retired project address; README lists every current one`);
 
   const target = "0x0000000000000000000000000000000000000001";
   const tag = evml.with({ chainId: 1, account: target });

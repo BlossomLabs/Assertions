@@ -66,7 +66,7 @@ assert $pool::!{getReserves()(uint112,uint112,uint32)}[_ $ _] >= 1000 "low reser
 
 ## How to move
 
-1. **Use the new addresses.** Assertions is at `0xa55e47A8F0701e231a9c0ac916776074e5c561d5`, and the expansion packs have their own addresses. Copy them from [Deployments](/docs/contracts/deployments). The contracts must exist on the chain you execute on.
+1. **Use the new addresses.** Assertions is at `0xa55e47C835ACD377da79D57162117D9B5Ecf3496`, and the expansion packs have their own addresses. Copy them from [Deployments](/docs/contracts/deployments). The contracts must exist on the chain you execute on.
 2. **Rewrite each Argos (v1) call as an `assert` line**, using the table. Do it in the [builder](/builder), which writes the EVML and the calldata, rather than encoding calls by hand.
 3. **Keep placement.** An Argos (v1) call placed before or after an action meant a precondition or a postcondition. Keep each check on the same side of the action it guarded.
 4. **Simulate.** The builder simulates the batch on a fork with the assertions in place. Change a threshold so it must fail and confirm that it reverts with your message.

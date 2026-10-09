@@ -14,10 +14,10 @@ On-chain assertion contracts for verifying blockchain state in Solidity, built a
 ## Canonical addresses (same on every chain)
 
 ```
-Assertions  v2.0   0xa55e47A8F0701e231a9c0ac916776074e5c561d5   (judge + primitives)
-Operations  v2.0   0x09e4A7EA7868aEC605bE16FE64Bd5b56A8B9601A   (scalar vocabulary)
-Collections v2.0   0xc011eC7071DA62522F0DCD03606e5A299a8e6323   (folds, word arrays, generic traversals)
-Expressions v2.0   0xE5594e5577165b73F3f3CFcc4F3983345c5F0F48   (typed expression graphs)
+Assertions  v2.0   0xa55e47C835ACD377da79D57162117D9B5Ecf3496   (judge + primitives)
+Operations  v2.0   0x09e4a7eF82674BaDD27a02E19f3D3e5a1903eA1f   (scalar vocabulary)
+Collections v2.0   0xc011ec7f6fAAaa37DE5923D2c6206C9597D16bc7   (folds, word arrays, generic traversals)
+Expressions v2.0   0xe5594e55aCa44ac271209612FA57866130edC9e5   (typed expression graphs)
 ```
 
 These are the CREATE2 addresses of the current artifact set, and they change whenever the bytecode does. `website/src/lib/deployments.json` is the source of truth that the SDK, the builder and the docs all read; prefer it to this snapshot. An address listed here says where the code goes, not that it is already there: check the website's Deployments page for per-chain availability before you rely on one. The SDK compiles against all four. Only prior public releases are retained in the release history; the release with public-chain history is Assertions v1.0, reachable as `assertions.eth`.
@@ -56,7 +56,7 @@ The full documentation lives on the website under `/docs`:
 - **EVMcrispr integration**: the `assert` command, lenses and on-chain `@helper!`s
 - **Reference**: every judge function, every custom error, and deployment to new chains
 
-Run it locally with `pnpm --dir website dev` and open `http://localhost:3000/docs`, or use the hosted site. The website also ships an interactive **Assertion Builder** (`/builder`) and a **Deployments** page (`/deployments`) for deploying every exported contract to new chains at its canonical CREATE2 address.
+Run it locally with `pnpm --dir website dev` and open `http://localhost:3000/docs`, or use the hosted site. The website also ships an interactive **Assertion Builder** (`/builder`) and a **Deployments** page (`/docs/contracts/deployments`) for deploying every exported contract to new chains at its canonical CREATE2 address.
 
 ## Development
 
@@ -70,16 +70,7 @@ The contracts require a Cancun-compatible EVM (including MCOPY and blob-context 
 
 The website vendors an EVMcrispr checkout at `website/.evmcrispr`, pinned by `evmcrispr.commit` in `website/package.json`. The pinned revision's SDK compiles against all four addresses above. `pnpm --dir website check:integration` verifies that the pin, the compiled artifacts and the deployment manifest agree.
 
-The gas guard propagates `SubcallOutOfGas()` through supported core, Operations `rawCall`, Collections callbacks and Expressions paths. Ordinary errors retain their wrappers. External targets that hide failures or deliberately change behavior with available gas are outside this guarantee. Empty batches and unconstrained values are accepted; a constructed call must succeed, but its return value is discarded, even when it encodes `false`. See [the claims ledger](docs/claims.md) and [retained verification evidence](docs/assertions-2.0-release-checks.json) for bounds and execution status.
-
-
-
-
-
-
-
-
-
+The gas guard propagates `SubcallOutOfGas()` through supported core, Operations `rawCall`, Collections callbacks and Expressions paths. Ordinary errors retain their wrappers. External targets that hide failures or deliberately change behavior with available gas are outside this guarantee. Empty batches and unconstrained values are accepted; a constructed call must succeed, but its return value is discarded, even when it encodes `false`. See [the claims ledger](docs/claims.md) and [retained verification evidence](docs/verification/halmos-coverage/README.md) for bounds and execution status.
 
 ## License
 

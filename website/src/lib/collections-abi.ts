@@ -1000,6 +1000,55 @@ export const COLLECTIONS_ABI = [
   {
     "inputs": [
       {
+        "internalType": "bytes",
+        "name": "s",
+        "type": "bytes"
+      },
+      {
+        "internalType": "address",
+        "name": "target",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "template",
+        "type": "bytes"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "elemOffsets",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "enum Collections.Reduce",
+        "name": "mode",
+        "type": "uint8"
+      },
+      {
+        "internalType": "enum Collections.Cmp",
+        "name": "cmp",
+        "type": "uint8"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "bound",
+        "type": "bytes32"
+      }
+    ],
+    "name": "reduceWords",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string",
         "name": "inputType",
         "type": "string"

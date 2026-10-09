@@ -27,7 +27,8 @@
       "deploymentModule": "src/lib/assertions-deployment.ts",
       "abiModule": "src/lib/assertions-abi.ts",
       "description": "Assertions core contract",
-      "ens": "byakko.assertions.eth"
+      "ens": "byakko.assertions.eth",
+      "ensLatest": "assertions.eth"
     },
     {
       "name": "Operations",
@@ -45,7 +46,8 @@
       "deploymentModule": "src/lib/operations-deployment.ts",
       "abiModule": "src/lib/operations-abi.ts",
       "description": "Operations plain-value vocabulary contract",
-      "ens": "operations.byakko.assertions.eth"
+      "ens": "operations.byakko.assertions.eth",
+      "ensLatest": "operations.assertions.eth"
     },
     {
       "name": "Collections",
@@ -63,7 +65,8 @@
       "deploymentModule": "src/lib/collections-deployment.ts",
       "abiModule": "src/lib/collections-abi.ts",
       "description": "generic ABI collection vocabulary contract",
-      "ens": "collections.byakko.assertions.eth"
+      "ens": "collections.byakko.assertions.eth",
+      "ensLatest": "collections.assertions.eth"
     },
     {
       "name": "Expressions",
@@ -81,7 +84,8 @@
       "deploymentModule": "src/lib/expressions-deployment.ts",
       "abiModule": "src/lib/expressions-abi.ts",
       "description": "typed expression graphs contract",
-      "ens": "expressions.byakko.assertions.eth"
+      "ens": "expressions.byakko.assertions.eth",
+      "ensLatest": "expressions.assertions.eth"
     }
   ],
   "history": [

@@ -72,6 +72,8 @@ const CONTRACTS = [
     description: "Assertions core contract",
     // The release name: permanent, and always this release's contract.
     ens: "byakko.assertions.eth",
+    // The bare name: moves to each new release of this contract.
+    ensLatest: "assertions.eth",
     includeProxyConstants: true,
   },
   {
@@ -89,6 +91,8 @@ const CONTRACTS = [
     description: "Operations plain-value vocabulary contract",
     // The release name: permanent, and always this release's contract.
     ens: "operations.byakko.assertions.eth",
+    // The bare name: moves to each new release of this contract.
+    ensLatest: "operations.assertions.eth",
     includeProxyConstants: false,
   },
   {
@@ -107,6 +111,8 @@ const CONTRACTS = [
     description: "generic ABI collection vocabulary contract",
     // The release name: permanent, and always this release's contract.
     ens: "collections.byakko.assertions.eth",
+    // The bare name: moves to each new release of this contract.
+    ensLatest: "collections.assertions.eth",
     includeProxyConstants: false,
   },
   {
@@ -125,6 +131,8 @@ const CONTRACTS = [
     description: "typed expression graphs contract",
     // The release name: permanent, and always this release's contract.
     ens: "expressions.byakko.assertions.eth",
+    // The bare name: moves to each new release of this contract.
+    ensLatest: "expressions.assertions.eth",
     includeProxyConstants: false,
   },
 ];
@@ -383,6 +391,7 @@ export const ${c.prefix}_CREATION_BYTECODE =
     abiModule: c.output.replace("-deployment.ts", "-abi.ts"),
     description: c.description,
     ens: c.ens,
+    ensLatest: c.ensLatest,
   });
 }
 

@@ -20,7 +20,7 @@ The addresses are the same on every chain.
 
 <table>
   <thead>
-    <tr><th>Contract</th><th>Version</th><th>Address</th><th>ENS name</th><th>Released in</th></tr>
+    <tr><th>Contract</th><th>Version</th><th>Address</th><th>Released in</th></tr>
   </thead>
   <tbody>
     {manifest.contracts.map((c) => (
@@ -28,7 +28,6 @@ The addresses are the same on every chain.
         <td>{c.name}</td>
         <td>{c.version}</td>
         <td><code>{c.address}</code></td>
-        <td><code>{c.ens}</code></td>
         <td>{releaseFor(c.version) ? <a href={`/releases/${releaseFor(c.version).id}`}>{releaseFor(c.version).data.codename}</a> : null}{releaseFor(c.version)?.data.date ? ` · ${releaseFor(c.version).data.date}` : ''}{releaseFor(c.version)?.data.status === 'upcoming' ? ' (upcoming)' : ''}</td>
       </tr>
     ))}
@@ -36,8 +35,6 @@ The addresses are the same on every chain.
 </table>
 
 The builder uses them for you. If you build calls by hand, copy them from here.
-
-Each ENS name belongs to its release: it is permanent and keeps resolving to that release's contract after a later one ships.
 
 ## Networks
 
@@ -53,7 +50,7 @@ Earlier versions keep working at their own addresses.
 
 <table>
   <thead>
-    <tr><th>Contract</th><th>Version</th><th>Address</th><th>ENS name</th><th>Released in</th></tr>
+    <tr><th>Contract</th><th>Version</th><th>Address</th><th>Released in</th></tr>
   </thead>
   <tbody>
     {manifest.history.map((row) => (
@@ -61,9 +58,30 @@ Earlier versions keep working at their own addresses.
         <td>{row.name}</td>
         <td>{row.version}</td>
         <td><code>{row.address}</code></td>
-        <td><code>{row.ens}</code></td>
         <td>{releaseFor(row.version) ? <a href={`/releases/${releaseFor(row.version).id}`}>{releaseFor(row.version).data.codename}</a> : null}{releaseFor(row.version)?.data.date ? ` · ${releaseFor(row.version).data.date}` : ''}{releaseFor(row.version)?.data.status === 'upcoming' ? ' (upcoming)' : ''}</td>
       </tr>
     ))}
   </tbody>
 </table>
+
+## ENS names
+
+Every contract has two ENS names. The release name is permanent: it keeps resolving to that release's contract after a later one ships. The bare name always resolves to the newest release, so it moves when one ships.
+
+<table>
+  <thead>
+    <tr><th>Contract</th><th>Version</th><th>Release name</th><th>Bare name</th></tr>
+  </thead>
+  <tbody>
+    {[...manifest.contracts, ...manifest.history].filter((c) => c.ens).map((c) => (
+      <tr key={c.ens}>
+        <td>{c.name}</td>
+        <td>{c.version}{releaseFor(c.version) ? <> (<a href={`/releases/${releaseFor(c.version).id}`}>{releaseFor(c.version).data.codename}</a>)</> : null}</td>
+        <td><code>{c.ens}</code></td>
+        <td>{c.ensLatest ? <code>{c.ensLatest}</code> : 'Moved to a later release'}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+Use a release name wherever the contract must never change under you.

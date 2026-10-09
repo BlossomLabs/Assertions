@@ -20,7 +20,7 @@ Collections v2.0   0xc011ec7f6fAAaa37DE5923D2c6206C9597D16bc7   (folds, word arr
 Expressions v2.0   0xe5594e55aCa44ac271209612FA57866130edC9e5   (typed expression graphs)
 ```
 
-These are the CREATE2 addresses of the current artifact set, and they change whenever the bytecode does. `website/src/lib/deployments.json` is the source of truth that the SDK, the builder and the docs all read; prefer it to this snapshot. An address listed here says where the code goes, not that it is already there: check the website's Deployments page for per-chain availability before you rely on one. The SDK compiles against all four. Only prior public releases are retained in the release history; the release with public-chain history is Assertions v1.0, reachable as `assertions.eth`.
+These are the CREATE2 addresses of the current artifact set, and they change whenever the bytecode does. `website/src/lib/deployments.json` is the source of truth that the SDK, the builder and the docs all read; prefer it to this snapshot. An address listed here says where the code goes, not that it is already there: check the website's Deployments page for per-chain availability before you rely on one. The SDK compiles against all four. Only prior public releases are retained in the release history; the release with public-chain history is Assertions v1.0, reachable as `argos.assertions.eth`. `assertions.eth` resolves to the current core.
 
 ## Quick example
 

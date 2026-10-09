@@ -70,6 +70,8 @@ const CONTRACTS = [
     expectedAddress: "0xa55e47C835ACD377da79D57162117D9B5Ecf3496",
     prefix: "ASSERTIONS",
     description: "Assertions core contract",
+    // The release name: permanent, and always this release's contract.
+    ens: "byakko.assertions.eth",
     includeProxyConstants: true,
   },
   {
@@ -85,6 +87,8 @@ const CONTRACTS = [
     expectedAddress: "0x09e4a7eF82674BaDD27a02E19f3D3e5a1903eA1f",
     prefix: "OPERATIONS",
     description: "Operations plain-value vocabulary contract",
+    // The release name: permanent, and always this release's contract.
+    ens: "operations.byakko.assertions.eth",
     includeProxyConstants: false,
   },
   {
@@ -101,6 +105,8 @@ const CONTRACTS = [
     expectedAddress: "0xc011ec7f6fAAaa37DE5923D2c6206C9597D16bc7",
     prefix: "COLLECTIONS",
     description: "generic ABI collection vocabulary contract",
+    // The release name: permanent, and always this release's contract.
+    ens: "collections.byakko.assertions.eth",
     includeProxyConstants: false,
   },
   {
@@ -117,6 +123,8 @@ const CONTRACTS = [
     expectedAddress: "0xe5594e55aCa44ac271209612FA57866130edC9e5",
     prefix: "EXPRESSIONS",
     description: "typed expression graphs contract",
+    // The release name: permanent, and always this release's contract.
+    ens: "expressions.byakko.assertions.eth",
     includeProxyConstants: false,
   },
 ];
@@ -134,7 +142,8 @@ const HISTORY = [
     version: "1.0",
     address: "0xA55e4707A94Ce4Aa647517ed9aD4084e4E5D1f3F",
     salt: "0xea760d182a298325dc178401b3f5298c30f1bf94f8d5f42ec27c43b2b826e7cb",
-    note: "original v1.0 core, live on mainnet and reachable as assertions.eth",
+    ens: "argos.assertions.eth",
+    note: "original v1.0 core, live on mainnet and reachable as argos.assertions.eth",
   },
 ];
 
@@ -373,6 +382,7 @@ export const ${c.prefix}_CREATION_BYTECODE =
     deploymentModule: c.output,
     abiModule: c.output.replace("-deployment.ts", "-abi.ts"),
     description: c.description,
+    ens: c.ens,
   });
 }
 

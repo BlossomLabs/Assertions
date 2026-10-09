@@ -20,7 +20,7 @@ The addresses are the same on every chain.
 
 <table>
   <thead>
-    <tr><th>Contract</th><th>Version</th><th>Address</th><th>Released in</th></tr>
+    <tr><th>Contract</th><th>Version</th><th>Address</th><th>ENS name</th><th>Released in</th></tr>
   </thead>
   <tbody>
     {manifest.contracts.map((c) => (
@@ -28,6 +28,7 @@ The addresses are the same on every chain.
         <td>{c.name}</td>
         <td>{c.version}</td>
         <td><code>{c.address}</code></td>
+        <td><code>{c.ens}</code></td>
         <td>{releaseFor(c.version) ? <a href={`/releases/${releaseFor(c.version).id}`}>{releaseFor(c.version).data.codename}</a> : null}{releaseFor(c.version)?.data.date ? ` · ${releaseFor(c.version).data.date}` : ''}{releaseFor(c.version)?.data.status === 'upcoming' ? ' (upcoming)' : ''}</td>
       </tr>
     ))}
@@ -35,6 +36,8 @@ The addresses are the same on every chain.
 </table>
 
 The builder uses them for you. If you build calls by hand, copy them from here.
+
+Each ENS name belongs to its release: it is permanent and keeps resolving to that release's contract after a later one ships.
 
 ## Networks
 
@@ -50,7 +53,7 @@ Earlier versions keep working at their own addresses.
 
 <table>
   <thead>
-    <tr><th>Contract</th><th>Version</th><th>Address</th><th>Released in</th></tr>
+    <tr><th>Contract</th><th>Version</th><th>Address</th><th>ENS name</th><th>Released in</th></tr>
   </thead>
   <tbody>
     {manifest.history.map((row) => (
@@ -58,6 +61,7 @@ Earlier versions keep working at their own addresses.
         <td>{row.name}</td>
         <td>{row.version}</td>
         <td><code>{row.address}</code></td>
+        <td><code>{row.ens}</code></td>
         <td>{releaseFor(row.version) ? <a href={`/releases/${releaseFor(row.version).id}`}>{releaseFor(row.version).data.codename}</a> : null}{releaseFor(row.version)?.data.date ? ` · ${releaseFor(row.version).data.date}` : ''}{releaseFor(row.version)?.data.status === 'upcoming' ? ' (upcoming)' : ''}</td>
       </tr>
     ))}

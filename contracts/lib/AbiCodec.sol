@@ -287,9 +287,33 @@ library AbiCodec {
     /**
      * @dev The shape of a whole descriptor: `typeShape` over all of `t`,
      *      reverting with InvalidTypeDescriptor when anything follows the
-     *      parsed type
+     *      parsed type. The commonest bare names are answered from one
+     *      word compare of the whole descriptor, without the parse.
      */
     function shape(bytes calldata t) internal pure returns (bool dynamic, uint256 words) {
+        // 1 for a static one-word name, 2 for a dynamic one. The length decides
+        // which names can match, so padding past the descriptor is never read as one.
+        uint256 hit;
+        assembly ("memory-safe") {
+            let w := calldataload(t.offset)
+            switch t.length
+            // "uint256", "address", "bytes32"
+            case 7 {
+                let n := shr(200, w)
+                hit := or(eq(n, 0x75696e74323536), or(eq(n, 0x61646472657373), eq(n, 0x62797465733332)))
+            }
+            // "int256", "string"
+            case 6 {
+                let n := shr(208, w)
+                hit := eq(n, 0x696e74323536)
+                if eq(n, 0x737472696e67) { hit := 2 }
+            }
+            // "bytes"
+            case 5 { if eq(shr(216, w), 0x6279746573) { hit := 2 } }
+            // "bool"
+            case 4 { hit := eq(shr(224, w), 0x626f6f6c) }
+        }
+        if (hit != 0) return (hit == 2, 1);
         uint256 end;
         (end, dynamic, words) = typeShape(t, 0, t.length);
         if (end != t.length) revert InvalidTypeDescriptor(end);
@@ -476,17 +500,18 @@ library AbiCodec {
                 }
             }
         }
-        requireValue(bad == n, p + bad * 32, context);
+        if (!(bad == n)) fail(p + bad * 32, context);
     }
 
     // ============ Values ============
 
     /**
-     * @dev Reverts with the error `context` selects when `valid` is false
-     *      (see Context); `offset` is reported by the value-shaped errors
+     * @dev Reverts with the error `context` selects (see Context);
+     *      `offset` is reported by the value-shaped errors. Callers test
+     *      their condition inline and call this only on failure, so a
+     *      passing check costs no call.
      */
-    function requireValue(bool valid, uint256 offset, Context memory context) private pure {
-        if (valid) return;
+    function fail(uint256 offset, Context memory context) private pure {
         if (context.kind == ContextKind.CallbackResult) {
             revert InvalidCallbackResult(context.operation, context.index, context.other, context.target);
         }
@@ -507,7 +532,7 @@ library AbiCodec {
      * @dev `word` reporting through `context` instead of InvalidValue
      */
     function word(bytes memory data, uint256 p, Context memory context) private pure returns (uint256 v) {
-        requireValue(p <= data.length && data.length - p >= 32, p, context);
+        if (!(p <= data.length && data.length - p >= 32)) fail(p, context);
         assembly ("memory-safe") { v := mload(add(add(data, 32), p)) }
     }
 
@@ -517,14 +542,6 @@ library AbiCodec {
      */
     function copy(bytes memory out, uint256 dest, bytes memory data, uint256 start, uint256 n) private pure {
         assembly ("memory-safe") { mcopy(add(add(out, 32), dest), add(add(data, 32), start), n) }
-    }
-
-    /**
-     * @dev Writes the word `v` at byte offset `p` of `out` (caller sizes
-     *      `out`)
-     */
-    function store(bytes memory out, uint256 p, uint256 v) private pure {
-        assembly ("memory-safe") { mstore(add(add(out, 32), p), v) }
     }
 
     /**
@@ -563,11 +580,39 @@ library AbiCodec {
     }
 
     /**
+     * @dev Whether `t` is one of the commonest one-word names and the
+     *      first word of `v` is canonical for it, decided without a loop.
+     *      False means "not decided here", for another type or a word out
+     *      of range: the caller falls through to the general walk, which
+     *      reports the error. The caller has established that `v` is
+     *      exactly one word.
+     */
+    function wordOk(bytes calldata t, bytes memory v) private pure returns (bool ok) {
+        assembly ("memory-safe") {
+            let w := calldataload(t.offset)
+            let x := mload(add(v, 32))
+            switch t.length
+            // "uint256" and "bytes32" admit every word, "address" 160 low bits
+            case 7 {
+                let n := shr(200, w)
+                ok := or(
+                    or(eq(n, 0x75696e74323536), eq(n, 0x62797465733332)),
+                    and(eq(n, 0x61646472657373), iszero(shr(160, x)))
+                )
+            }
+            // "bool"
+            case 4 { ok := and(eq(shr(224, w), 0x626f6f6c), lt(x, 2)) }
+        }
+    }
+
+    /**
      * @dev `validate` for a caller that already parsed `t` into
      *      (dynamic, words) and keeps that shape across values instead of
      *      re-parsing per value
      */
     function validate(bytes calldata t, bytes memory v, bool dynamic, uint256 words) internal pure {
+        // Decided before a context is allocated: the commonest values need none.
+        if (!dynamic && words == 1 && v.length == 32 && wordOk(t, v)) return;
         Context memory context;
         validate(t, v, dynamic, words, context);
     }
@@ -588,7 +633,8 @@ library AbiCodec {
      *      word canonical for its base name
      */
     function validateStatic(bytes calldata t, bytes memory v, uint256 words, Context memory context) private pure {
-        requireValue(v.length % 32 == 0 && words == v.length / 32, 0, context);
+        if (!(v.length % 32 == 0 && words == v.length / 32)) fail(0, context);
+        if (words == 1 && wordOk(t, v)) return;
         checkWords(t, 0, t.length, 1, v, 0, context);
     }
 
@@ -597,9 +643,9 @@ library AbiCodec {
      *      and the body walk must consume the value exactly
      */
     function validateDynamic(bytes calldata t, bytes memory v, Context memory context) private pure {
-        requireValue(word(v, 0, context) == 32, 0, context);
+        if (!(word(v, 0, context) == 32)) fail(0, context);
         uint256 end = 32 + body(t, 0, t.length, v, 32, context);
-        requireValue(end == v.length, end, context);
+        if (!(end == v.length)) fail(end, context);
     }
 
     /**
@@ -634,7 +680,7 @@ library AbiCodec {
         pure
         returns (uint256)
     {
-        requireValue(p <= v.length, p, context);
+        if (!(p <= v.length)) fail(p, context);
         if (t[e - 1] == "]") {
             ArrayState memory x;
             x.j = suffixStart(t, s, e);
@@ -649,7 +695,7 @@ library AbiCodec {
             }
             (, x.dynamic, x.words) = typeShape(t, s, x.j);
             // Bound multiplication and traversal before trusting an encoded length.
-            requireValue(x.count <= (v.length - x.base) / 32 / x.words, x.base, context);
+            if (!(x.count <= (v.length - x.base) / 32 / x.words)) fail(x.base, context);
             x.tail = x.count * x.words * 32;
             // Static bodies contain no offsets or byte padding: the bounded head is the complete body.
             if (!x.dynamic) {
@@ -658,7 +704,7 @@ library AbiCodec {
             }
             for (uint256 i; i < x.count; i++) {
                 uint256 position = x.base + i * x.words * 32;
-                requireValue(word(v, position, context) == x.tail, position, context);
+                if (!(word(v, position, context) == x.tail)) fail(position, context);
                 x.tail += body(t, s, x.j, v, x.base + x.tail, context);
             }
             return x.base - p + x.tail;
@@ -668,7 +714,7 @@ library AbiCodec {
             x.j = s + 1;
             while (x.j < e - 1) {
                 (uint256 next,, uint256 w) = typeShape(t, x.j, e - 1);
-                requireValue(w <= (v.length - p - x.tail) / 32, p, context);
+                if (!(w <= (v.length - p - x.tail) / 32)) fail(p, context);
                 x.tail += w * 32;
                 x.j = next + 1;
             }
@@ -676,7 +722,7 @@ library AbiCodec {
             while (x.j < e - 1) {
                 (uint256 next, bool dynamic, uint256 w) = typeShape(t, x.j, e - 1);
                 if (dynamic) {
-                    requireValue(word(v, p + x.base, context) == x.tail, p + x.base, context);
+                    if (!(word(v, p + x.base, context) == x.tail)) fail(p + x.base, context);
                     x.tail += body(t, x.j, next, v, p + x.tail, context);
                 } else {
                     checkWords(t, x.j, next, 1, v, p + x.base, context);
@@ -688,14 +734,14 @@ library AbiCodec {
         }
         // Only dynamic children reach this function; a base type here is bytes/string.
         uint256 n = word(v, p, context);
-        requireValue(n <= v.length - p - 32, p, context);
+        if (!(n <= v.length - p - 32)) fail(p, context);
         uint256 padded = (n + 31) / 32 * 32;
-        requireValue(padded <= v.length - p - 32, p, context);
+        if (!(padded <= v.length - p - 32)) fail(p, context);
         uint256 padding = padded - n;
         if (padding != 0 && word(v, p + padded, context) & (type(uint256).max >> ((32 - padding) * 8)) != 0) {
             // The common canonical case checks one word; scan only to locate an error.
             for (uint256 i = n; i < padded; i++) {
-                requireValue(v[p + 32 + i] == 0, p + 32 + i, context);
+                if (!(v[p + 32 + i] == 0)) fail(p + 32 + i, context);
             }
         }
         return 32 + padded;
@@ -705,13 +751,20 @@ library AbiCodec {
 
     /**
      * @dev Parses a parenthesized tuple descriptor into a TupleLayout in a
-     *      single pass: one byte scan counts the depth-0 components (and
-     *      catches a stray `)`), then `typeShape` runs once per component.
-     *      Reverts with InvalidTypeDescriptor when `t` is not a
-     *      parenthesized tuple (a well-formed non-tuple at position 0, a
-     *      malformed one at its own byte) or when a component is malformed.
+     *      single pass: `typeShape` runs once per component, each followed
+     *      by a comma or by the tuple's closing parenthesis. Reverts with
+     *      InvalidTypeDescriptor when `t` is not a parenthesized tuple (a
+     *      well-formed non-tuple at position 0, a malformed one at its own
+     *      byte) or at the first byte the parse cannot accept: a malformed
+     *      component, or a stray `)` where a comma or the end belongs.
      *      "()" reverts with InvalidTypeDescriptor(1); call constructors
      *      handle their empty argument lists before calling this helper.
+     *      The component count is not known before the parse, so the four
+     *      arrays are allocated for the most the descriptor could hold and
+     *      their lengths set afterwards: k components take at least 2k - 1
+     *      bytes (a byte each and the commas) of the t.length - 2 between
+     *      the parentheses, so k is at most (t.length - 1) / 2, rounded
+     *      down.
      */
     function tupleLayout(bytes calldata t) internal pure returns (TupleLayout memory plan) {
         if (t.length < 2 || byteAt(t, 0) != LPAREN || byteAt(t, t.length - 1) != RPAREN) {
@@ -721,52 +774,42 @@ library AbiCodec {
             revert InvalidTypeDescriptor(0);
         }
         uint256 limit = t.length - 1;
-        // Components are the depth-0 comma-separated spans; count them with one
-        // byte scan (a stray ")" surfaces here, everything else in the parse below).
-        uint256 count = 1;
-        uint256 stray;
+        uint256 cap = limit / 2;
+        // One allocation for the four arrays, each `cap` elements after its length word.
         assembly ("memory-safe") {
-            let depth := 0
-            for { let i := 1 } lt(i, limit) { i := add(i, 1) } {
-                let c := byte(0, calldataload(add(t.offset, i)))
-                // "(", ")" and "," all sit below "-"; names, digits and brackets do not.
-                if lt(c, 0x2d) {
-                    switch c
-                    case 0x28 { depth := add(depth, 1) }
-                    case 0x29 {
-                        if iszero(depth) {
-                            stray := i
-                            i := limit
-                        }
-                        depth := sub(depth, 1)
-                    }
-                    case 0x2c { if iszero(depth) { count := add(count, 1) } }
-                }
+            let size := shl(5, add(cap, 1))
+            let a := mload(0x40)
+            for { let k := 0 } lt(k, 4) { k := add(k, 1) } {
+                mstore(add(plan, shl(5, k)), add(a, mul(k, size)))
             }
+            mstore(0x40, add(a, shl(2, size)))
         }
-        if (stray != 0) revert InvalidTypeDescriptor(stray);
-        plan.starts = new uint256[](count);
-        plan.ends = new uint256[](count);
-        plan.dynamic = new bool[](count);
-        plan.words = new uint256[](count);
         uint256 p = 1;
-        for (uint256 i; i < count; i++) {
+        uint256 count;
+        uint256 head;
+        while (true) {
             (uint256 end, bool dynamic, uint256 words) = typeShape(t, p, limit);
-            // `i` is below `count`, the length all four arrays were allocated with.
+            count++;
+            // `count` is at most `cap`, the capacity of all four arrays.
             assembly ("memory-safe") {
-                let slot := shl(5, add(i, 1))
+                let slot := shl(5, count)
                 mstore(add(mload(plan), slot), p)
                 mstore(add(mload(add(plan, 0x20)), slot), end)
                 mstore(add(mload(add(plan, 0x40)), slot), dynamic)
                 mstore(add(mload(add(plan, 0x60)), slot), words)
             }
-            plan.headSize += words * 32;
-            if (i + 1 == count) {
-                if (end != limit) revert InvalidTypeDescriptor(end);
-            } else {
-                if (end >= limit || byteAt(t, end) != COMMA) revert InvalidTypeDescriptor(end);
-                p = end + 1;
-            }
+            head += words * 32;
+            if (end == limit) break;
+            if (byteAt(t, end) != COMMA) revert InvalidTypeDescriptor(end);
+            p = end + 1;
+        }
+        plan.headSize = head;
+        // The lengths, now that the count is known.
+        assembly ("memory-safe") {
+            mstore(mload(plan), count)
+            mstore(mload(add(plan, 0x20)), count)
+            mstore(mload(add(plan, 0x40)), count)
+            mstore(mload(add(plan, 0x60)), count)
         }
     }
 
@@ -794,24 +837,12 @@ library AbiCodec {
             // A parsed descriptor cannot express enough words to overflow this byte size.
             revert InvalidComponentLength(index, words * 32, value.length);
         }
+        if (!dynamic && words == 1 && wordOk(t, value)) return;
         Context memory context = Context(ContextKind.TupleComponent, bytes4(0), index, 0, address(0));
         if (dynamic) validateDynamic(t, value, context);
         else checkWords(t, 0, t.length, 1, value, 0, context);
     }
 
-    /**
-     * @dev The canonical ABI encoding of the tuple `t` over one canonical
-     *      single-value encoding per component: static components are
-     *      copied into the head verbatim, dynamic ones have their 0x20
-     *      envelope word stripped, the true offset written into the head
-     *      and the tail appended. Because ABI offsets are frame-relative,
-     *      verbatim tail splicing is correct at any nesting depth. Reverts
-     *      with ComponentCountMismatch when args.length differs from the
-     *      component count, and with validateComponent's errors when a
-     *      value does not fit its declared type. The result has no
-     *      envelope of its own: it is a calldata segment, or a tuple body
-     *      the caller wraps.
-     */
     /**
      * @dev The descriptor of component `index` of the tuple `plan` was
      *      parsed from: `tupleLayout` set its span inside `t`, so the slice
@@ -831,6 +862,19 @@ library AbiCodec {
         }
     }
 
+    /**
+     * @dev The canonical ABI encoding of the tuple `t` over one canonical
+     *      single-value encoding per component: static components are
+     *      copied into the head verbatim, dynamic ones have their 0x20
+     *      envelope word stripped, the true offset written into the head
+     *      and the tail appended. Because ABI offsets are frame-relative,
+     *      verbatim tail splicing is correct at any nesting depth. Reverts
+     *      with ComponentCountMismatch when args.length differs from the
+     *      component count, and with validateComponent's errors when a
+     *      value does not fit its declared type. The result has no
+     *      envelope of its own: it is a calldata segment, or a tuple body
+     *      the caller wraps.
+     */
     function tuple(bytes calldata t, bytes[] memory args) internal pure returns (bytes memory) {
         return tuple(tupleLayout(t), t, args);
     }
@@ -880,43 +924,59 @@ library AbiCodec {
         pure
         returns (bytes memory out)
     {
-        uint256 prefix = array ? 64 : 0;
-        uint256 size = headSize;
-        uint256 count = values.length;
-        // `dynamic` holds one flag per value, or a single flag for an array;
-        // both arrays are read without a second bounds check.
-        for (uint256 i; i < count; i++) {
-            bool d;
-            bytes memory v;
-            assembly ("memory-safe") {
-                d := mload(add(add(dynamic, 32), shl(5, mul(i, iszero(array)))))
-                v := mload(add(add(values, 32), shl(5, i)))
+        return assemble(dynamic, headSize, values, array, 0);
+    }
+
+    /**
+     * @dev `assemble` with `lead` zeroed bytes before the frame (at most
+     *      32), where a caller copies a selector without copying the
+     *      frame again. One pass: the head size is known, so each value is
+     *      copied straight to its place and the length written last. Every
+     *      value is whole words (the caller validated them), so the frame
+     *      has no gaps; the word after it is zeroed so no stale memory
+     *      follows a length that `lead` leaves unaligned.
+     */
+    function assemble(bool[] memory dynamic, uint256 headSize, bytes[] memory values, bool array, uint256 lead)
+        internal
+        pure
+        returns (bytes memory out)
+    {
+        assembly ("memory-safe") {
+            out := mload(0x40)
+            let count := mload(values)
+            let start := add(add(out, 32), lead)
+            // Zeroes the lead; the frame overwrites the rest of this word.
+            mstore(add(out, 32), 0)
+            if array {
+                mstore(start, 32)
+                mstore(add(start, 32), count)
+                start := add(start, 64)
             }
-            if (d) size += v.length - 32;
-        }
-        out = new bytes(prefix + size);
-        if (array) {
-            store(out, 0, 32);
-            store(out, 32, count);
-        }
-        uint256 head;
-        uint256 tail = headSize;
-        for (uint256 i; i < count; i++) {
-            bool d;
-            bytes memory v;
-            assembly ("memory-safe") {
-                d := mload(add(add(dynamic, 32), shl(5, mul(i, iszero(array)))))
-                v := mload(add(add(values, 32), shl(5, i)))
+            let head := start
+            let tail := add(start, headSize)
+            // `dynamic` holds one flag per value, or a single flag for an array.
+            let single := iszero(array)
+            for { let i := 0 } lt(i, count) { i := add(i, 1) } {
+                let v := mload(add(add(values, 32), shl(5, i)))
+                let n := mload(v)
+                switch mload(add(add(dynamic, 32), shl(5, mul(i, single))))
+                case 0 {
+                    mcopy(head, add(v, 32), n)
+                    head := add(head, n)
+                }
+                default {
+                    mstore(head, sub(tail, start))
+                    n := sub(n, 32)
+                    mcopy(tail, add(v, 64), n)
+                    head := add(head, 32)
+                    tail := add(tail, n)
+                }
             }
-            if (d) {
-                store(out, prefix + head, tail);
-                copy(out, prefix + tail, v, 32, v.length - 32);
-                head += 32;
-                tail += v.length - 32;
-            } else {
-                copy(out, prefix + head, v, 0, v.length);
-                head += v.length;
-            }
+            mstore(tail, 0)
+            let size := sub(tail, add(out, 32))
+            mstore(out, size)
+            // The free pointer stays word-aligned whatever `lead` is.
+            mstore(0x40, add(add(out, 32), and(add(size, 31), not(31))))
         }
     }
 

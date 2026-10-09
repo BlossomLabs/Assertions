@@ -405,7 +405,7 @@ contract Expressions {
                 result = AbiCodec.pack(bytes(node.arguments), values);
             } else {
                 bool dynamic;
-                (result, dynamic) = _arguments(node.arguments, values);
+                (result, dynamic) = _arguments(node.arguments, values, true);
                 if (dynamic) result = bytes.concat(abi.encode(uint256(32)), result);
             }
         } else {
@@ -414,7 +414,7 @@ contract Expressions {
             for (uint256 i; i < args.length; i++) {
                 args[i] = _ref(p, parameters, cache, node, i + 1);
             }
-            (bytes memory encoded,) = _arguments(node.arguments, args);
+            (bytes memory encoded,) = _arguments(node.arguments, args, false);
             result = _call(target, bytes.concat(node.selector, encoded), index);
         }
         AbiCodec.validate(bytes(node.valueType), result, cache.dynamic[index], cache.words[index]);
@@ -457,8 +457,11 @@ contract Expressions {
      *      the 0x20 word). "()" with no values is the empty tuple; the
      *      grammar has no empty-tuple production, so it is special-cased
      *      here exactly as the core does. The descriptor is parsed once.
+     *      `dynamic` is reported only when `tuple` is set, and is false
+     *      otherwise: a Tuple node asks, a Call's arguments are calldata
+     *      either way.
      */
-    function _arguments(string calldata types, bytes[] memory values)
+    function _arguments(string calldata types, bytes[] memory values, bool tuple)
         private
         pure
         returns (bytes memory encoded, bool dynamic)
@@ -468,7 +471,7 @@ contract Expressions {
         }
         AbiCodec.TupleLayout memory plan = AbiCodec.tupleLayout(bytes(types));
         encoded = AbiCodec.tuple(plan, bytes(types), values);
-        dynamic = AbiCodec.isDynamic(plan);
+        dynamic = tuple && AbiCodec.isDynamic(plan);
     }
 
     /**
@@ -505,8 +508,12 @@ contract Expressions {
      *      upper bytes, or InvalidNode(index)
      */
     function _address(bytes memory value, uint256 index) private pure returns (address) {
-        if (value.length != 32 || AbiCodec.word(value, 0) > type(uint160).max) _bad(index);
-        return address(uint160(AbiCodec.word(value, 0)));
+        // Read before the length is known: a value of any other length is
+        // refused on the next line, whatever this word was.
+        uint256 w;
+        assembly ("memory-safe") { w := mload(add(value, 32)) }
+        if (value.length != 32 || w > type(uint160).max) _bad(index);
+        return address(uint160(w));
     }
 
     /**

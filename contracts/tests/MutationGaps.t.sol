@@ -109,8 +109,8 @@ contract MutationGapsTest is Test {
         // The last byte is read as the tuple's own ")", so the first one, at 8, closes nothing.
         vm.expectRevert(abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(8)));
         ops.encodeBytes("(uint256))", args);
-        // Only the stray scan names the stray itself here; the component parse would blame the empty "()" at 2.
-        vm.expectRevert(abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(3)));
+        // Two faults: the parse reports the first it reaches, the empty "()" at 2, not the stray at 3.
+        vm.expectRevert(abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(2)));
         ops.encodeBytes("(()))", args);
     }
 
@@ -1046,5 +1046,134 @@ contract MutationGapsTest is Test {
         cb.constants[0] = abi.encode(uint256(0));
         vm.expectRevert(abi.encodeWithSelector(InvalidTypeDescriptor.selector, uint256(2)));
         collections.mapValues("uint256", "((", new bytes[](0), cb);
+    }
+
+    // ============ reduceWords and the unchecked word-engine reads, 2026-10-08 ============
+
+    /**
+     * @dev Hand-written mutant of `_checkElementWindows` (inline assembly,
+     *      which Gambit does not mutate): reading the first offset for every
+     *      window. Each window is bounded on its own, and the error names
+     *      the offending one.
+     */
+    function test_everyElementWindowIsBounded() public {
+        bytes memory tpl = abi.encodeWithSelector(GapLambdas.id.selector, uint256(0));
+        uint256[] memory offsets = new uint256[](3);
+        offsets[0] = 4;
+        offsets[1] = 4;
+        offsets[2] = 5;
+        bytes memory refused =
+            abi.encodeWithSelector(Collections.LambdaOffsetOutOfBounds.selector, uint256(5), uint256(36));
+        vm.expectRevert(refused);
+        collections.mapWords(abi.encode(uint256(1)), address(lambdas), tpl, offsets);
+        vm.expectRevert(refused);
+        collections.foldWords(abi.encode(uint256(1)), address(lambdas), tpl, 4, offsets, 0, Collections.FoldExit.Full);
+        vm.expectRevert(refused);
+        collections.reduceWords(
+            abi.encode(uint256(1)), address(lambdas), tpl, offsets, Collections.Reduce.Sum, Collections.Cmp.EQ, 0
+        );
+    }
+
+    /**
+     * @dev Hand-written mutant of `_domainElem`: reading byte 0 for every
+     *      index. A Bytes fold hands the lambda each byte of the subject in
+     *      turn, so a sum over distinct bytes tells them apart.
+     */
+    function test_foldBytesVisitsEveryByte() public view {
+        bytes memory tpl = abi.encodeWithSelector(GapLambdas.add.selector, uint256(0), uint256(0));
+        uint256[] memory offsets = new uint256[](1);
+        offsets[0] = 36;
+        assertEq(
+            collections.foldBytes(hex"0a0305", address(lambdas), tpl, 4, offsets, 0, Collections.FoldExit.Full),
+            bytes32(uint256(0x0a + 0x03 + 0x05))
+        );
+    }
+
+    // ============ The gas pass, 2026-10-08 ============
+
+    /**
+     * @dev Hand-written mutants of `_foldCase` (inline assembly): stepping
+     *      two words, stopping after the first word, and leaving a byte's
+     *      top bit in the range sum, where it carries into the byte before
+     *      it. Every word is folded, and a non-ASCII byte changes neither
+     *      itself nor its neighbour: 0x40 and 0x60 sit one below the letters.
+     */
+    function test_caseFoldCoversEveryWordAndSparesNonAscii() public view {
+        bytes memory s = new bytes(70);
+        bytes memory lower = new bytes(70);
+        for (uint256 i; i < 70; i++) {
+            s[i] = bytes1(uint8(0x41 + (i % 26)));
+            lower[i] = bytes1(uint8(0x61 + (i % 26)));
+        }
+        assertEq(ops.toLower(s), lower);
+        assertEq(ops.toUpper(lower), s);
+        assertEq(ops.toLower(hex"40c3415bc3"), hex"40c3615bc3");
+        assertEq(ops.toUpper(hex"60c3617bc3"), hex"60c3417bc3");
+    }
+
+    /**
+     * @dev Operations #24 and #28 and a hand-written mutant of
+     *      `_parseDigits`. Inputs of up to 77 digits take the loop without
+     *      the overflow check, so the checked loop only sees longer ones:
+     *      both refuse a non-digit, by position, and ":" follows "9".
+     */
+    function test_parseUintRefusesNonDigitsOnBothPaths() public {
+        vm.expectRevert(abi.encodeWithSelector(Operations.InvalidDecimalDigit.selector, uint256(1), bytes1(":")));
+        ops.parseUint("1:");
+        bytes memory long = new bytes(78);
+        for (uint256 i; i < 78; i++) {
+            long[i] = "0";
+        }
+        long[0] = "1";
+        assertEq(ops.parseUint(long), 10 ** 77);
+        long[40] = "a";
+        vm.expectRevert(abi.encodeWithSelector(Operations.InvalidDecimalDigit.selector, uint256(40), bytes1("a")));
+        ops.parseUint(long);
+        long[40] = ":";
+        vm.expectRevert(abi.encodeWithSelector(Operations.InvalidDecimalDigit.selector, uint256(40), bytes1(":")));
+        ops.parseUint(long);
+    }
+
+    /**
+     * @dev AbiCodec #24 and #27, `word`'s bounds check: an array encoding
+     *      that ends after its envelope word has no count to read
+     */
+    function test_unpackRefusesAMissingCount() public {
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidValue.selector, uint256(32)));
+        collections.unpackArray("uint256", abi.encode(uint256(32)));
+    }
+
+    /**
+     * @dev Collections #42 and #44, the second slot of a binary callback
+     *      declared with other text than the input type: the value is
+     *      still bound, and still validated against the slot's own type
+     */
+    function test_secondSlotOfAnotherTypeIsBoundAndValidated() public {
+        bytes[] memory values = new bytes[](2);
+        values[0] = abi.encode(uint256(5));
+        values[1] = abi.encode(uint256(7));
+        Collections.Callback memory cb = Collections.Callback(
+            address(lambdas), GapLambdas.same.selector, "(uint256,uint)", new bytes[](2), 0, 1, ""
+        );
+        assertEq(collections.indexOfValues("uint256", values, abi.encode(uint256(7)), cb), 1);
+        cb.arguments = "(uint256,uint8)";
+        vm.expectRevert(abi.encodeWithSelector(AbiCodec.InvalidComponentValue.selector, uint256(1), uint256(0)));
+        collections.indexOfValues("uint256", values, abi.encode(uint256(300)), cb);
+    }
+
+    /**
+     * @dev Hand-written mutants of `tupleLayout`'s allocation (inline
+     *      assembly): a smaller capacity, and arrays without their length
+     *      word. One-byte names make a descriptor hold as many components
+     *      as its length allows, which is the capacity the arrays get.
+     */
+    function test_tupleLayoutHoldsTheDensestDescriptor() public view {
+        bytes[] memory args = new bytes[](8);
+        bytes memory expected;
+        for (uint256 i; i < 8; i++) {
+            args[i] = abi.encode(uint256(0x1111 * (i + 1)));
+            expected = bytes.concat(expected, args[i]);
+        }
+        assertEq(ops.encodeBytes("(a,a,a,a,a,a,a,a)", args), expected);
     }
 }

@@ -1552,7 +1552,12 @@ contract Operations {
 
     /**
      * @dev Flips the ASCII case bit of every byte in the letter range
-     *      `low` .. `high`, leaving the rest untouched
+     *      `low` .. `high`, leaving the rest untouched. A word at a time:
+     *      per byte, the low seven bits plus (0x80 - low) carry into the
+     *      top bit when the byte is at least `low`, and plus (0x7f - high)
+     *      when it is above `high`; neither sum leaves its byte. A byte
+     *      with its own top bit set is not ASCII and never matches. The
+     *      last word reads the copy's zero padding, which is no letter.
      */
     function _foldCase(bytes calldata s, bytes1 low, bytes1 high) private pure returns (bytes memory out) {
         out = s;
@@ -1560,9 +1565,15 @@ contract Operations {
             let lo := byte(0, low)
             let hi := byte(0, high)
             let end := add(add(out, 32), mload(out))
-            for { let q := add(out, 32) } lt(q, end) { q := add(q, 1) } {
-                let c := byte(0, mload(q))
-                if iszero(or(lt(c, lo), gt(c, hi))) { mstore8(q, xor(c, 0x20)) }
+            let ones := 0x0101010101010101010101010101010101010101010101010101010101010101
+            let tops := mul(ones, 0x80)
+            let addLo := mul(ones, sub(0x80, lo))
+            let addHi := mul(ones, sub(0x7f, hi))
+            for { let q := add(out, 32) } lt(q, end) { q := add(q, 32) } {
+                let w := mload(q)
+                let x := and(w, not(tops))
+                let m := and(and(add(x, addLo), not(add(x, addHi))), and(not(w), tops))
+                mstore(q, xor(w, shr(2, m)))
             }
         }
     }
@@ -1584,9 +1595,27 @@ contract Operations {
      * @dev The digits s[start ..] as a checked uint256: at least one digit
      *      (EmptyNumber), all in 0-9 (InvalidDecimalDigit at the offending
      *      position). The signed entry point consumes the sign first.
+     *      Up to 77 digits cannot pass 2^256 - 1 (10^77 is below it), so
+     *      that length skips the per-digit overflow check.
      */
     function _parseDigits(bytes calldata s, uint256 start) private pure returns (uint256 result) {
         if (start == s.length) _emptyNumber();
+        if (s.length - start <= 77) {
+            uint256 bad = type(uint256).max;
+            assembly ("memory-safe") {
+                let end := add(s.offset, s.length)
+                for { let q := add(s.offset, start) } lt(q, end) { q := add(q, 1) } {
+                    let d := sub(byte(0, calldataload(q)), 48)
+                    if gt(d, 9) {
+                        bad := sub(q, s.offset)
+                        break
+                    }
+                    result := add(mul(result, 10), d)
+                }
+            }
+            if (bad != type(uint256).max) revert InvalidDecimalDigit(bad, bytes1(_byte(s, bad)));
+            return result;
+        }
         for (uint256 i = start; i < s.length; i++) {
             uint256 c = _byte(s, i);
             unchecked {

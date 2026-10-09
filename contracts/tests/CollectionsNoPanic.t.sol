@@ -113,6 +113,17 @@ contract CollectionsNoPanicTest is Test {
         folds(f, target, acc, offsets);
         call(abi.encodeCall(Collections.mapWords, (f.s, target, f.template, offsets)), false);
         call(abi.encodeCall(Collections.filterWords, (f.s, target, f.template, offsets)), false);
+        // reduceWords in every mode, a comparison picked by the input. Only Sum may overflow.
+        bytes4 reduce = Collections.reduceWords.selector;
+        for (uint8 mode; mode < 4; mode++) {
+            call(
+                abi.encodeWithSelector(reduce, f.s, target, f.template, offsets, mode, uint8(f.n % 10), f.init),
+                mode == 3
+            );
+        }
+        // A mode or comparison past the enum never reaches the code.
+        call(abi.encodeWithSelector(reduce, f.s, target, f.template, offsets, uint8(4), uint8(0), f.init), false, true);
+        call(abi.encodeWithSelector(reduce, f.s, target, f.template, offsets, uint8(0), uint8(10), f.init), false, true);
     }
 
     /**

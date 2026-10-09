@@ -159,6 +159,53 @@ contract Collections {
     }
 
     /**
+     * @notice What reduceWords returns
+     * @dev ABI-encoded as uint8 (see reduceWords)
+     */
+    enum Reduce {
+        All,
+        Any,
+        Count,
+        Sum
+    }
+
+    /**
+     * @notice How reduceWords compares a result with the bound
+     * @dev ABI-encoded as uint8. The S-prefixed orderings read both words
+     *      as two's-complement int256.
+     */
+    enum Cmp {
+        EQ,
+        NE,
+        LT,
+        LE,
+        GT,
+        GE,
+        SLT,
+        SLE,
+        SGT,
+        SGE
+    }
+
+    /**
+     * @dev A reduction's fixed inputs, kept in memory so the loop stays
+     *      under the stack limit. `mask` says which outcomes of comparing a
+     *      result with `bound` count as a hit: bit 2 for less, bit 1 for
+     *      equal, bit 0 for greater, and zero selects Sum. A signed ordering
+     *      is the unsigned one after `flip` (the sign bit) is applied to
+     *      both sides. `stop` ends the loop at the first hit and `invert`
+     *      flips the returned word, so All runs as "no result misses".
+     */
+    struct ReduceRun {
+        address target;
+        uint256 mask;
+        uint256 flip;
+        uint256 bound;
+        uint256 stop;
+        uint256 invert;
+    }
+
+    /**
      * @dev Stack-friendly bundle for the fold loop: a memory struct is one
      *      slot, where the same fields as free parameters blew the frame
      *      once `elemOffsets` became a dynamic array
@@ -376,6 +423,63 @@ contract Collections {
         returns (bytes memory)
     {
         return _applyWords(s, target, template, elemOffsets, true);
+    }
+
+    /**
+     * @notice Applies a single-staticcall lambda to every word of `s` and
+     *         reduces the returned words without a second call per element:
+     *         with `balanceOf(<element>)` as the template and
+     *         (All, GE, min) this is "every holder has at least min"
+     * @dev Lambda conventions and errors match mapWords: one call per
+     *      word, exactly one word back. All returns 1 when every result
+     *      passes the comparison with `bound`, else 0, stopping at the first
+     *      miss (1 on an empty payload). Any returns 1 when some result
+     *      passes, else 0, stopping at the first match. Count returns how
+     *      many pass. Sum returns the unsigned sum of the results and
+     *      ignores `cmp` and `bound` (Panic 0x11 past 2^256 - 1): sumWords
+     *      over mapWords without the second pass. The S-prefixed
+     *      comparisons read both words as two's-complement int256. Results
+     *      are compared as raw words: no range check for a narrower type is
+     *      applied. An empty payload validates the template windows, then
+     *      returns without inspecting the target.
+     *      An out-of-range `mode` or `cmp` is refused by the ABI decoder,
+     *      without data.
+     * @param s The word payload: the elements, 32 bytes each
+     * @param target The lambda contract
+     * @param template Complete calldata for `target` with the element windows
+     * @param elemOffsets Byte offsets of the element windows
+     * @param mode The reduction (see Reduce)
+     * @param cmp The comparison applied to each result (ignored by Sum)
+     * @param bound The right-hand side of the comparison (ignored by Sum)
+     * @return The reduction's result word
+     */
+    function reduceWords(
+        bytes calldata s,
+        address target,
+        bytes calldata template,
+        uint256[] calldata elemOffsets,
+        Reduce mode,
+        Cmp cmp,
+        bytes32 bound
+    ) external view returns (uint256) {
+        _aligned(s);
+        _checkElementWindows(template, elemOffsets);
+        if (s.length == 0) return mode == Reduce.All ? 1 : 0;
+        _checkTarget(target);
+        ReduceRun memory run;
+        run.target = target;
+        if (mode != Reduce.Sum) {
+            // EQ, NE, LT, LE, GT, GE, then the signed LT, LE, GT, GE.
+            run.mask = uint8(bytes10(0x02050406010304060103)[uint256(cmp)]);
+            if (cmp > Cmp.GE) run.flip = 1 << 255;
+            run.bound = uint256(bound) ^ run.flip;
+            if (mode != Reduce.Count) run.stop = 1;
+            if (mode == Reduce.All) {
+                run.mask ^= 7;
+                run.invert = 1;
+            }
+        }
+        return _reduce(run, s, template, elemOffsets);
     }
 
     // ============ Word Payloads ============
@@ -614,7 +718,7 @@ contract Collections {
                 i,
                 0
             );
-            _validateResult(outputType, out[i], cb, i, prepared);
+            _validateResult(outputType, out[i], i, prepared);
         }
     }
 
@@ -671,7 +775,7 @@ contract Collections {
         for (uint256 i; i < values.length; i++) {
             AbiCodec.validate(bytes(inputType), values[i], prepared.dynamic, prepared.words, prepared.plain);
             result = _callValue(cb, prepared, result, values[i], true, i, 0);
-            _validateResult(accumulatorType, result, cb, i, prepared);
+            _validateResult(accumulatorType, result, i, prepared);
         }
     }
 
@@ -1065,21 +1169,25 @@ contract Collections {
      */
     function _checkElementWindows(bytes calldata template, uint256[] calldata elemOffsets) private pure {
         if (template.length < 32) revert LambdaOffsetOutOfBounds(0, template.length);
+        uint256 last = template.length - 32;
         for (uint256 j = 0; j < elemOffsets.length; j++) {
-            if (elemOffsets[j] > template.length - 32) {
-                revert LambdaOffsetOutOfBounds(elemOffsets[j], template.length);
-            }
+            uint256 elemOffset;
+            assembly ("memory-safe") { elemOffset := calldataload(add(elemOffsets.offset, shl(5, j))) }
+            if (elemOffset > last) revert LambdaOffsetOutOfBounds(elemOffset, template.length);
         }
     }
 
     /**
      * @dev The i-th domain element: the index itself (Range), the byte
-     *      value (Bytes), or the 32-byte word (Words)
+     *      value (Bytes), or the 32-byte word (Words). The caller must have
+     *      `i` below the domain's count.
      */
     function _domainElem(FoldDomain domain, uint256 i, bytes calldata s) private pure returns (bytes32) {
         if (domain == FoldDomain.Range) return bytes32(i);
-        if (domain == FoldDomain.Bytes) return bytes32(uint256(uint8(s[i])));
-        return _cdWord(s, i);
+        if (domain == FoldDomain.Words) return _cdWord(s, i);
+        bytes32 b;
+        assembly ("memory-safe") { b := byte(0, calldataload(add(s.offset, i))) }
+        return b;
     }
 
     /**
@@ -1101,13 +1209,15 @@ contract Collections {
     }
 
     /**
-     * @dev Writes `elem` into every element window, in `elemOffsets` order
+     * @dev Writes `elem` into every element window, in `elemOffsets` order.
+     *      The caller has checked that every window fits inside `callData`.
      */
     function _stampElements(bytes memory callData, uint256[] calldata elemOffsets, bytes32 elem) private pure {
-        for (uint256 j = 0; j < elemOffsets.length; j++) {
-            uint256 elemOffset = elemOffsets[j];
-            assembly ("memory-safe") {
-                mstore(add(add(callData, 32), elemOffset), elem)
+        assembly ("memory-safe") {
+            let base := add(callData, 32)
+            let end := add(elemOffsets.offset, shl(5, elemOffsets.length))
+            for { let p := elemOffsets.offset } lt(p, end) { p := add(p, 32) } {
+                mstore(add(base, calldataload(p)), elem)
             }
         }
     }
@@ -1164,6 +1274,40 @@ contract Collections {
             _failed(index, 0, target, callData, ret);
         }
         if (size != 32) _badResult(index, 0, target);
+    }
+
+    /**
+     * @dev The reduction loop: stamp, call, then add the result (Sum) or
+     *      count it when the comparison hits, stopping at the first hit
+     *      for Any and All
+     */
+    function _reduce(ReduceRun memory run, bytes calldata s, bytes calldata template, uint256[] calldata elemOffsets)
+        private
+        view
+        returns (uint256 acc)
+    {
+        bytes memory callData = template;
+        uint256 count = s.length / 32;
+        for (uint256 i = 0; i < count; i++) {
+            _stampElements(callData, elemOffsets, _cdWord(s, i));
+            uint256 word = uint256(_callWord(run.target, callData, i));
+            uint256 mask = run.mask;
+            if (mask == 0) {
+                acc += word;
+                continue;
+            }
+            word ^= run.flip;
+            uint256 bound = run.bound;
+            uint256 hit;
+            assembly ("memory-safe") {
+                hit := iszero(
+                    iszero(and(mask, or(or(shl(2, lt(word, bound)), shl(1, eq(word, bound))), gt(word, bound))))
+                )
+                acc := add(acc, hit)
+            }
+            if (hit & run.stop != 0) break;
+        }
+        return acc ^ run.invert;
     }
 
     /**
@@ -1284,21 +1428,16 @@ contract Collections {
 
     /**
      * @dev Validates a callback result as a canonical `valueType`,
-     *      reporting a mismatch as InvalidCallbackResult for element `i`
+     *      reporting a mismatch as InvalidCallbackResult for element `i`.
+     *      `prepared.result` already names the operation and the target:
+     *      `_prepareCallback` set them once for the whole traversal.
      */
-    function _validateResult(
-        string calldata valueType,
-        bytes memory value,
-        Callback calldata cb,
-        uint256 i,
-        PreparedCallback memory prepared
-    ) private pure {
-        AbiCodec.Context memory context = prepared.result;
-        context.kind = AbiCodec.ContextKind.CallbackResult;
-        context.operation = msg.sig;
-        context.index = i;
-        context.target = cb.target;
-        AbiCodec.validate(bytes(valueType), value, prepared.outDynamic, prepared.outWords, context);
+    function _validateResult(string calldata valueType, bytes memory value, uint256 i, PreparedCallback memory prepared)
+        private
+        pure
+    {
+        prepared.result.index = i;
+        AbiCodec.validate(bytes(valueType), value, prepared.outDynamic, prepared.outWords, prepared.result);
     }
 
     /**
@@ -1322,6 +1461,10 @@ contract Collections {
             revert InvalidCallback();
         }
         prepared.plan = AbiCodec.tupleLayout(descriptor);
+        // The result context is the same for every element but its index.
+        prepared.result.kind = AbiCodec.ContextKind.CallbackResult;
+        prepared.result.operation = msg.sig;
+        prepared.result.target = cb.target;
         if (prepared.plan.starts.length != cb.constants.length) revert InvalidCallback();
         prepared.args = cb.constants;
         for (uint256 i; i < cb.constants.length; i++) {
@@ -1388,9 +1531,15 @@ contract Collections {
         }
         bytes memory data;
         if (cb.expression.length == 0) {
-            data = bytes.concat(
-                cb.selector, AbiCodec.assemble(prepared.plan.dynamic, prepared.plan.headSize, prepared.args, false)
-            );
+            data = AbiCodec.assemble(prepared.plan.dynamic, prepared.plan.headSize, prepared.args, false, 4);
+            // The frame was laid out after four zeroed bytes. The selector is copied
+            // into exactly those, not merged into the frame's first word, so a
+            // constant selector stays constant for the symbolic checks.
+            bytes4 selector = cb.selector;
+            assembly ("memory-safe") {
+                mstore(0, selector)
+                mcopy(add(data, 32), 0, 4)
+            }
         } else {
             data = abi.encodeCall(IExpressions.evaluateEncoded, (cb.expression, prepared.args));
         }

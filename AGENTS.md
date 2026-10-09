@@ -111,6 +111,27 @@ fix it in the same change that falsified it.
   A full-word name match must fit inside the descriptor before selecting its
   rule: Solidity accepts nonzero calldata padding, and `bytes3` followed by an
   out-of-span ASCII `2` once matched `bytes32` and lost its narrow-word check.
+  The 2026-10-08 pass (`forge test --match-contract Gas -vv` before and after
+  each change) added the loop-free answers: `shape` and one-word validation
+  decide `uint256`/`bytes32`/`address`/`bool` (and `string`/`bytes`/`int256` for
+  shape) from the descriptor's length and one word compare, at about 135 to 175
+  gas more for every other descriptor; `tupleLayout` parses in one pass into
+  arrays sized for the most components the descriptor could hold (the counting
+  scan was 1,413 gas on `(uint256,uint256)`), so a descriptor with two faults
+  reports the first one the parse reaches, not a later stray `)`; `assemble`
+  writes each value straight to its place and takes a `lead` so the caller's
+  selector needs no second copy (about 900 gas per frame); and a validation
+  failure is an inline test plus `fail`, since a function taking the condition
+  cost 42 gas per check. Together a three-node Call graph went from 38,475 to
+  29,931 and `mapValues` from 6,881 to 4,757 per element. Two things lost and
+  stay out: caching the word rule in `Context` (three more words to allocate
+  per context, +684 on that graph), and building the core `read`'s calldata in
+  one copy after resolving every argument (+279 with two arguments; the
+  running `bytes.concat` is cheaper at realistic counts). A selector goes into
+  its four bytes by an exact copy (`mcopy` of 4), never by OR-ing it into the
+  frame's first word: the merged word made the callee's dispatch symbolic, and
+  `check_foldIsLeftFold` went from 0.8s to a solver timeout while every
+  concrete test still passed.
 - **No contract is frozen.** A release flag records SDK adoption; it does not
   prohibit source changes, and all four contracts version the same way. Any source
   edit, comments included, moves the CREATE2 address: regenerate addresses and
@@ -199,6 +220,35 @@ fix it in the same change that falsified it.
   Collections `*Values` traversals have SDK consumers through `modules/lang`;
   eligible word-sized workloads retain the word fast path. When Collections needs more
   bytecode space, split `*Values` into a fourth computation contract.
+- **`reduceWords` reduces a lambda's results in the loop that calls it**
+  (all/any/count/sum, ten comparisons). It exists because a comparison around
+  the call otherwise forces the lambda through a core `read`: 1,223 gas per
+  element against 8,845 for the composed fold (measured 2026-10-08, `forge test
+  --match-test test_gas_reduceWordsAgainstComposedFold -vv`). The comparison is
+  a three-bit mask over less/equal/greater, All runs as "no result misses" with
+  the mask inverted, and a signed ordering flips the sign bit of both sides:
+  per-mode and per-operator branches in the loop, with a checked read of each
+  element offset, cost 276 gas per element and 105 bytes more. Its SDK consumers are `@all!`, `@any!`,
+  `@count!` and an unsigned `@sum!(@map!(...))`: the SDK lifts the outer
+  comparison off a compiled predicate (`splitComparison`) when one side is a
+  staticcall over the element and the other does not name it, and a literal
+  `read` on any contract flattens to that contract's own calldata, so the
+  lambda's `msg.sender` is Collections, not the core. A live bound is a head
+  argument, resolved once. Before this a predicate holding a call fell to
+  `filterValues` (12,902,081 gas for `@count!` over 16 holders against
+  160,274 through `reduceWords`, `estimateGas` on the resolve call, measured
+  2026-10-08 with a scratch test over `compileExpression`), and `@all!` did
+  not compile it at all. A signed sum keeps the signed fold: Sum is unsigned.
+  `@filter!` and `@map!` take the same two rules through
+  `wordCallbackTemplate`: a word filter accepts any single-call predicate,
+  because `filterWords` itself refuses a result above 1, while a mapped bool
+  or address is still trusted only from Operations, since nothing checks a
+  mapped word (same measurement, 16 holders: filter 13,124,937 to 361,853,
+  map over `balanceOf` 231,245 to 158,438). solc 0.8.22 and later already
+  drop the overflow check on a `for` loop's `i++`, so `unchecked` increments
+  buy nothing here; checked calldata indexing inside a loop still costs
+  (`foldBytes` read `s[i]` and `_stampElements` read `elemOffsets[j]`, 6% of
+  the charset fold together).
 - **Signedness is a dimension in every word-level design.** Unsigned order and
   signed order disagree about which value absorbs, which element is minimal, and
   how a two's-complement word reads. One SDK path returning `elemType: "uint256"`

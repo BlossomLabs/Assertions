@@ -52,8 +52,9 @@ contract WordLambdas {
 
 /**
  * @notice Halmos properties for the word-lambda operations: foldRange,
- *         foldBytes, foldWords, mapWords and filterWords, their exits, their
- *         window rules and their error surface. Run with `pnpm halmos`.
+ *         foldBytes, foldWords, mapWords, filterWords and reduceWords, their
+ *         exits, their window rules and their error surface. Run with
+ *         `pnpm halmos`.
  * @dev Up to three symbolic words or bytes; counts and offsets are
  *      case-split. Every call expected to succeed checks its success
  *      explicitly: Halmos discards reverting paths.
@@ -229,6 +230,220 @@ contract WordLambdasSymbolicTest is Test {
         assertEq(kept.length, k * 32, "an even word was kept");
     }
 
+    // ============ Reductions ============
+
+    /**
+     * @dev All and Any agree with the comparison written in plain Solidity,
+     *      for every comparison, over results that are not the elements (the
+     *      tag outside the window reaches every call)
+     */
+    function check_reduceWordsMatchesReference(
+        uint8 countCase,
+        bytes32[3] memory w,
+        uint256 tag,
+        uint8 cmpCase,
+        bytes32 bound
+    ) public view {
+        (bytes memory s, uint256 n) = payload(countCase, w);
+        Collections.Cmp cmp = cmpOf(cmpCase);
+        uint256 hits;
+        for (uint256 i; i < n; i++) {
+            if (passes(uint256(w[i]) ^ tag, cmp, uint256(bound))) hits++;
+        }
+        bytes memory template = abi.encodeCall(WordLambdas.mix, (0, tag));
+        assertEq(reduce(s, template, Collections.Reduce.All, cmp, bound), hits == n ? 1 : 0, "all");
+        assertEq(reduce(s, template, Collections.Reduce.Any, cmp, bound), hits != 0 ? 1 : 0, "any");
+    }
+
+    /**
+     * @dev Count of one element is the comparison written in plain
+     *      Solidity, and Count of a payload is the sum of its elements'
+     *      counts. Stated in two steps because the solver does not decide
+     *      a sum of three comparisons against the reference directly
+     *      (yices, over 200s per query).
+     */
+    function check_reduceWordsCount(uint8 countCase, bytes32[3] memory w, uint256 tag, uint8 cmpCase, bytes32 bound)
+        public
+        view
+    {
+        (bytes memory s, uint256 n) = payload(countCase, w);
+        Collections.Cmp cmp = cmpOf(cmpCase);
+        bytes memory template = abi.encodeCall(WordLambdas.mix, (0, tag));
+        uint256 total;
+        for (uint256 i; i < n; i++) {
+            uint256 one = reduce(abi.encodePacked(w[i]), template, Collections.Reduce.Count, cmp, bound);
+            assertEq(one, passes(uint256(w[i]) ^ tag, cmp, uint256(bound)) ? 1 : 0, "one element");
+            total += one;
+        }
+        assertEq(reduce(s, template, Collections.Reduce.Count, cmp, bound), total, "count");
+    }
+
+    /**
+     * @dev All stops at the first miss and Any at the first match, Count
+     *      never stops: the lambda reverts on 7, so a 7 fails the call
+     *      exactly when the reduction reaches it, naming its element
+     */
+    function check_reduceWordsStopsAtFirstHit(uint8 countCase, bytes32[3] memory w, uint8 modeCase, bytes32 bound)
+        public
+        view
+    {
+        vm.assume(modeCase < 3);
+        (bytes memory s, uint256 n) = payload(countCase, w);
+        Collections.Reduce mode =
+            modeCase == 0 ? Collections.Reduce.All : modeCase == 1 ? Collections.Reduce.Any : Collections.Reduce.Count;
+        uint256 expected = modeCase == 0 ? 1 : 0;
+        uint256 seven = type(uint256).max;
+        for (uint256 i; i < n; i++) {
+            if (uint256(w[i]) == 7) {
+                seven = i;
+                break;
+            }
+            bool hit = uint256(w[i]) > uint256(bound);
+            if (modeCase == 0 && !hit) {
+                expected = 0;
+                break;
+            }
+            if (modeCase == 1 && hit) {
+                expected = 1;
+                break;
+            }
+            if (modeCase == 2 && hit) expected++;
+        }
+        (bool ok, bytes memory out) = address(collections)
+            .staticcall(
+                abi.encodeCall(
+                    Collections.reduceWords,
+                    (
+                        s,
+                        address(lambdas),
+                        abi.encodeCall(WordLambdas.boom, (0)),
+                        offsets(4),
+                        mode,
+                        Collections.Cmp.GT,
+                        bound
+                    )
+                )
+            );
+        // Halmos has no gas model: exclude the symbolic exhaustion artifact.
+        vm.assume(ok || keccak256(out) != keccak256(abi.encodeWithSelector(Collections.SubcallOutOfGas.selector)));
+        if (seven != type(uint256).max) {
+            assertFalse(ok, "a reverting element was skipped");
+            assertEq(
+                out,
+                abi.encodeWithSelector(
+                    Collections.CallbackFailed.selector,
+                    Collections.reduceWords.selector,
+                    seven,
+                    uint256(0),
+                    address(lambdas),
+                    abi.encodeCall(WordLambdas.boom, (uint256(7))),
+                    abi.encodeWithSignature("Error(string)", "seven")
+                )
+            );
+            return;
+        }
+        assertTrue(ok, "reduceWords reverted past its exit");
+        assertEq(abi.decode(out, (uint256)), expected);
+    }
+
+    /**
+     * @dev Sum is the unsigned sum of the results, Panic 0x11 past
+     *      2^256 - 1, whatever the comparison and the bound
+     */
+    function check_reduceWordsSum(uint8 countCase, bytes32[3] memory w, uint256 tag, uint8 cmp, bytes32 bound)
+        public
+        view
+    {
+        vm.assume(cmp < 10);
+        (bytes memory s, uint256 n) = payload(countCase, w);
+        uint256 total;
+        bool overflow;
+        for (uint256 i; i < n; i++) {
+            unchecked {
+                uint256 next = total + (uint256(w[i]) ^ tag);
+                if (next < total) overflow = true;
+                total = next;
+            }
+        }
+        (bool ok, bytes memory out) = address(collections)
+            .staticcall(
+                abi.encodeWithSelector(
+                    Collections.reduceWords.selector,
+                    s,
+                    address(lambdas),
+                    abi.encodeCall(WordLambdas.mix, (0, tag)),
+                    offsets(4),
+                    uint8(3),
+                    cmp,
+                    bound
+                )
+            );
+        if (overflow) {
+            assertFalse(ok, "an overflowing sum wrapped");
+            assertEq(out, abi.encodeWithSignature("Panic(uint256)", uint256(0x11)));
+            return;
+        }
+        assertTrue(ok, "reduceWords reverted on a sum in range");
+        assertEq(abi.decode(out, (uint256)), total);
+    }
+
+    /**
+     * @dev In every mode: an unaligned payload and a window past the
+     *      template are refused even with nothing to reduce; an empty
+     *      payload is 1 for All and 0 otherwise without a look at the
+     *      target; a code-less target or a two-word result is refused at
+     *      the first element
+     */
+    function check_reduceWordsErrors(uint8 caseId, bytes32[3] memory w, uint8 countCase, uint8 modeCase) public view {
+        vm.assume(caseId < 4);
+        vm.assume(modeCase < 4);
+        (bytes memory s, uint256 n) = payload(countCase, w);
+        Collections.Reduce mode = modeCase == 0
+            ? Collections.Reduce.All
+            : modeCase == 1 ? Collections.Reduce.Any : modeCase == 2 ? Collections.Reduce.Count : Collections.Reduce.Sum;
+        address target = address(lambdas);
+        bytes memory template = abi.encodeCall(WordLambdas.boom, (0));
+        uint256[] memory windows = offsets(4);
+        bytes memory want;
+        bool shouldFail;
+        if (caseId == 0) {
+            s = abi.encodePacked(w[0], bytes1(0));
+            want = abi.encodeWithSelector(Collections.UnalignedWords.selector, uint256(33));
+            shouldFail = true;
+        } else if (caseId == 1) {
+            windows = offsets(5);
+            want = abi.encodeWithSelector(Collections.LambdaOffsetOutOfBounds.selector, uint256(5), uint256(36));
+            shouldFail = true;
+        } else if (caseId == 2) {
+            target = address(0xE0A);
+            want = abi.encodeWithSelector(Collections.InvalidCallbackTarget.selector, address(0xE0A));
+            shouldFail = n != 0;
+        } else {
+            template = abi.encodeCall(WordLambdas.wide, (0));
+            want = abi.encodeWithSelector(
+                AbiCodec.InvalidCallbackResult.selector,
+                Collections.reduceWords.selector,
+                uint256(0),
+                uint256(0),
+                address(lambdas)
+            );
+            shouldFail = n != 0;
+        }
+        (bool ok, bytes memory out) = address(collections)
+            .staticcall(
+                abi.encodeCall(
+                    Collections.reduceWords, (s, target, template, windows, mode, Collections.Cmp.EQ, bytes32(0))
+                )
+            );
+        if (shouldFail) {
+            assertFalse(ok, "an invalid reduction passes");
+            assertEq(out, want);
+        } else {
+            assertTrue(ok, "an empty reduction reverts");
+            assertEq(abi.decode(out, (uint256)), modeCase == 0 ? 1 : 0);
+        }
+    }
+
     // ============ Errors ============
 
     /**
@@ -319,6 +534,49 @@ contract WordLambdasSymbolicTest is Test {
 
     function fold(bytes memory data) internal view returns (bytes32) {
         return abi.decode(call(data), (bytes32));
+    }
+
+    function reduce(bytes memory s, bytes memory template, Collections.Reduce mode, Collections.Cmp cmp, bytes32 bound)
+        internal
+        view
+        returns (uint256)
+    {
+        return abi.decode(
+            call(
+                abi.encodeCall(Collections.reduceWords, (s, address(lambdas), template, offsets(4), mode, cmp, bound))
+            ),
+            (uint256)
+        );
+    }
+
+    /**
+     * @dev A literal comparison per case: reduceWords indexes a table by it
+     */
+    function cmpOf(uint8 cmpCase) internal pure returns (Collections.Cmp) {
+        vm.assume(cmpCase < 10);
+        if (cmpCase == 0) return Collections.Cmp.EQ;
+        if (cmpCase == 1) return Collections.Cmp.NE;
+        if (cmpCase == 2) return Collections.Cmp.LT;
+        if (cmpCase == 3) return Collections.Cmp.LE;
+        if (cmpCase == 4) return Collections.Cmp.GT;
+        if (cmpCase == 5) return Collections.Cmp.GE;
+        if (cmpCase == 6) return Collections.Cmp.SLT;
+        if (cmpCase == 7) return Collections.Cmp.SLE;
+        if (cmpCase == 8) return Collections.Cmp.SGT;
+        return Collections.Cmp.SGE;
+    }
+
+    function passes(uint256 a, Collections.Cmp cmp, uint256 b) internal pure returns (bool) {
+        if (cmp == Collections.Cmp.EQ) return a == b;
+        if (cmp == Collections.Cmp.NE) return a != b;
+        if (cmp == Collections.Cmp.LT) return a < b;
+        if (cmp == Collections.Cmp.LE) return a <= b;
+        if (cmp == Collections.Cmp.GT) return a > b;
+        if (cmp == Collections.Cmp.GE) return a >= b;
+        if (cmp == Collections.Cmp.SLT) return int256(a) < int256(b);
+        if (cmp == Collections.Cmp.SLE) return int256(a) <= int256(b);
+        if (cmp == Collections.Cmp.SGT) return int256(a) > int256(b);
+        return int256(a) >= int256(b);
     }
 
     function payload(uint8 countCase, bytes32[3] memory w) internal pure returns (bytes memory s, uint256 n) {

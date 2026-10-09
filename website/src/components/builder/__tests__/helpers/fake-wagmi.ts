@@ -12,6 +12,9 @@ export const wallet: {
   chain?: { id: number; name: string };
   /** What `useWalletClient` returns; any truthy value enables sending. */
   client?: unknown;
+  /** What the wallet says of atomic batches: a status, or "error" for a
+   *  wallet that cannot answer. Unset while nothing has come back. */
+  atomic?: "supported" | "ready" | "unsupported" | "error";
   connect: ReturnType<typeof vi.fn>;
   disconnect: ReturnType<typeof vi.fn>;
   switchChain: ReturnType<typeof vi.fn>;
@@ -25,6 +28,7 @@ export function resetWallet() {
   wallet.address = undefined;
   wallet.chain = undefined;
   wallet.client = undefined;
+  wallet.atomic = undefined;
   wallet.connect = vi.fn();
   wallet.disconnect = vi.fn();
   wallet.switchChain = vi.fn();
@@ -50,5 +54,14 @@ export function fakeWagmiModule(real: typeof Real) {
     useSwitchChain: () => ({ switchChain: wallet.switchChain, isPending: false }),
     useWalletClient: () => ({ data: wallet.client }),
     usePublicClient: () => undefined,
+    useCapabilities: ({ query }: { query?: { enabled?: boolean } } = {}) => {
+      const asked = query?.enabled !== false && wallet.atomic !== undefined;
+      const failed = asked && wallet.atomic === "error";
+      return {
+        data: asked && !failed ? { atomic: { status: wallet.atomic } } : undefined,
+        isError: failed,
+        isSuccess: asked && !failed,
+      };
+    },
   };
 }

@@ -10,6 +10,7 @@ import {
   type ExecutionContext,
 } from "./context";
 import { RELEASED_CONTRACTS } from "../deployments/shared";
+import { useAtomicBatch } from "./useAtomicBatch";
 import { type ChainSupport, OFFICIAL_CHAIN_IDS } from "./useChainSupport";
 import type { AddressCheck } from "./useContextAddressCheck";
 import { ChainIcon } from "../ui/ChainIcon";
@@ -27,8 +28,9 @@ function listNames(names: string[]): string {
   return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
 }
 
-const CONTEXT_HELP: Record<ContextKind, string> = {
-  eoa: "Execute the whole block as one atomic batch from a wallet (EIP-5792 wallet_sendCalls; uses the wallet's EIP-7702 delegation when available).",
+/** A wallet has no description: it only speaks up when the connected one
+ *  cannot send the batch atomically. */
+const CONTEXT_HELP: Partial<Record<ContextKind, string>> = {
   safe: "Queue the block as a single Safe transaction on the Safe Transaction Service, signed by you as owner or delegate.",
   governor: "Create an OpenZeppelin Governor proposal whose calls are the block's actions.",
   aragonosx: "Create a proposal on one of an Aragon OSx DAO's governance plugins.",
@@ -56,6 +58,11 @@ export function ContextSelector({
   chainSupport: ChainSupport;
 }) {
   const { isConnected, chain, chainId: walletChainId } = useAccount();
+  // Asked of the connected wallet for the target network, unless another
+  // account is being simulated.
+  const noAtomicBatch =
+    useAtomicBatch(chainId, context.kind === "eoa" && !context.address) ===
+    "no";
   const { switchChain, isPending: switching } = useSwitchChain();
   // A wallet's other-account field stays behind a link until asked for.
   const [asOtherOpen, setAsOtherOpen] = useState(false);
@@ -218,9 +225,21 @@ export function ContextSelector({
             </button>
           ))}
         </div>
-        <p className="mt-1.5 text-xs text-[var(--color-ink-3)] leading-relaxed">
-          {CONTEXT_HELP[context.kind]}
-        </p>
+        {CONTEXT_HELP[context.kind] && (
+          <p className="mt-1.5 text-xs text-[var(--color-ink-3)] leading-relaxed">
+            {CONTEXT_HELP[context.kind]}
+          </p>
+        )}
+        {noAtomicBatch && (
+          <Callout tone="error">
+            <p>
+              This wallet cannot send an atomic batch on{" "}
+              <strong>{targetChain?.name ?? `chain ${chainId}`}</strong>, so
+              the assertions could not protect the calls. Use a wallet that
+              supports batched calls (EIP-5792), or execute from a Safe.
+            </p>
+          </Callout>
+        )}
       </div>
 
       {/* Per-context inputs; a wallet gets its connection and, on request,

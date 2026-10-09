@@ -261,8 +261,9 @@ function dropSpans(script: string, spans: CommandSpan[]): string {
 /**
  * Drop scaffolding nothing uses any more, to a fixpoint: `set $v` lines
  * whose variable no other command references (config variables, `$m:k`,
- * are settings, not scaffolding) and `load m` lines of modules nothing
- * needs (see `requiredLoads`).
+ * are settings, not scaffolding), `load m` lines of modules nothing
+ * needs (see `requiredLoads`), and the `def @each…!` tests the builder
+ * wrote for a quantifier no assertion uses any more.
  */
 export function gcScaffolding(script: string): string {
   let current = script;
@@ -285,11 +286,29 @@ export function gcScaffolding(script: string): string {
         const module = loadModule(span.node);
         return module !== undefined && !required.includes(module);
       }
+      // A test the builder wrote for a quantifier, once nothing runs it.
+      const generated = generatedTestName(current, span);
+      if (generated)
+        return !spans.some(
+          (other) =>
+            other !== span &&
+            other.node !== undefined &&
+            helperRefs(other.node).some((ref) => ref.name === generated),
+        );
       return false;
     });
     if (garbage.length === 0) return current;
     current = dropSpans(current, garbage);
   }
+}
+
+/** The helper a builder-written `def @each…!` line defines (the name the
+ *  codegen gives a quantifier's test), or undefined for any other line:
+ *  a helper the user defined is never scaffolding. */
+function generatedTestName(script: string, span: CommandSpan): string | undefined {
+  if (!isDefSpan(span)) return undefined;
+  const line = script.split("\n")[span.start - 1] ?? "";
+  return line.trim().match(/^def @(each[0-9a-z]+!)\s/)?.[1];
 }
 
 /** The script without its assertions and the scaffolding only they used:
@@ -331,7 +350,8 @@ export function insertAssertionLines(
       .filter((s) => isLoadSpan(s) && s.node)
       .map((s) => loadModule(s.node as CommandExpressionNode)),
   );
-  for (const module of requiredLoads(line)) {
+  // A hoisted test can use a helper the line itself does not.
+  for (const module of requiredLoads([...sets, line].join("\n"))) {
     if (present.has(module)) continue;
     let loadEnd = 0;
     for (const span of spans()) {

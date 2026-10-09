@@ -163,6 +163,51 @@ describe("ContextSelector: simulating as another account", () => {
   });
 });
 
+describe("ContextSelector: a wallet that cannot batch", () => {
+  const ERROR = /cannot send an atomic batch/;
+  const connect = (atomic: typeof wallet.atomic) => {
+    wallet.address = ACCOUNT;
+    wallet.chain = { id: 1, name: "Ethereum" };
+    wallet.atomic = atomic;
+  };
+
+  it("says nothing of a wallet before one is connected", () => {
+    setup();
+    expect(screen.queryByText(/atomic batch/)).toBeNull();
+    expect(screen.queryByText(/wallet_sendCalls/)).toBeNull();
+  });
+
+  it.each(["supported", "ready"] as const)(
+    "says nothing when the wallet reports atomic batches as %s",
+    (status) => {
+      connect(status);
+      setup();
+      expect(screen.queryByText(ERROR)).toBeNull();
+    },
+  );
+
+  it.each([
+    ["reports no atomic batches", "unsupported"],
+    ["cannot answer", "error"],
+  ] as const)("warns when the wallet %s", (_name, status) => {
+    connect(status);
+    setup();
+    expect(screen.getByText(ERROR)).toBeTruthy();
+  });
+
+  it("stays quiet while the wallet has not answered", () => {
+    connect(undefined);
+    setup();
+    expect(screen.queryByText(ERROR)).toBeNull();
+  });
+
+  it("does not judge the wallet when another executor is chosen", () => {
+    connect("unsupported");
+    setup({ kind: "safe" });
+    expect(screen.queryByText(ERROR)).toBeNull();
+  });
+});
+
 describe("ContextSelector: the executor", () => {
   it.each([
     ["Safe", "safe", "Safe address"],

@@ -14,6 +14,7 @@ import { attributeFailure, type SimulationState } from "./simulation";
 import { actionsToTxBuilderBatch } from "./safe-tx-builder";
 import type { EyeState } from "./timeline";
 import { WalletConnect } from "./WalletConnect";
+import { useAtomicBatch } from "./useAtomicBatch";
 import { buildFinalScript } from "./wrap";
 import { ButtonIcon } from "./ButtonIcon";
 
@@ -118,6 +119,9 @@ export function SubmitStage({
   const { data: walletClient } = useWalletClient();
   // Built for an impersonated account, another wallet connected.
   const wrongSender = senderMismatch(context, connected, contextAddress);
+  // A wallet sends the block as one atomic batch or not at all.
+  const noAtomicBatch =
+    useAtomicBatch(chainId, context.kind === "eoa") === "no";
   const [status, setStatus] = useState<
     | { phase: "idle" }
     | { phase: "running" }
@@ -131,7 +135,7 @@ export function SubmitStage({
   const busy = status.phase === "running" || status.phase === "downloading";
 
   const execute = async () => {
-    if (!walletClient) return;
+    if (!walletClient || noAtomicBatch) return;
     setStatus({ phase: "running" });
     try {
       await tag.script(finalScript).execute(walletClient);
@@ -198,12 +202,22 @@ export function SubmitStage({
         </Callout>
       )}
 
+      {noAtomicBatch && (
+        <Callout tone="error">
+          <p>
+            This wallet cannot send an atomic batch on this network, so the
+            assertions could not protect the calls. Connect a wallet that
+            supports batched calls (EIP-5792), or execute from a Safe.
+          </p>
+        </Callout>
+      )}
+
       <div className="flex flex-wrap items-center gap-3">
         {/* Sending is the one thing that needs a wallet. */}
         {isConnected ? (
           <button
             type="button"
-            disabled={!walletClient || busy || wrongSender}
+            disabled={!walletClient || busy || wrongSender || noAtomicBatch}
             onClick={execute}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold bg-[var(--color-primary)] text-[var(--color-primary-fg)] hover:bg-[var(--color-primary-hover)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >

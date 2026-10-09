@@ -173,39 +173,8 @@ describe("buildAssertionLine", () => {
     );
   });
 
-  it("renders the decimal format and parse helpers with their options", async () => {
+  it("renders a bare logic expression", async () => {
     const supply = call(T, [hop({ fnName: "totalSupply" })]);
-    const format = assertion({
-      subject: { kind: "numformat", value: supply, decimals: "18" },
-      operator: "==",
-      expected: literal("1.5"),
-    });
-    expect((await buildAssertionLine(format, noEns))?.line).toBe(
-      `assert @num.format!(${T}::!{totalSupply()(uint256)} 18) == "1.5"`,
-    );
-    const name = call(T, [hop({ fnName: "name", returnTypes: ["string"] })]);
-    const parse = (rounding: "trunc" | "floor" | "ceil", signedness: "signed" | "unsigned") =>
-      assertion({
-        subject: { kind: "numparse", value: name, decimals: "6", rounding, signedness },
-        operator: ">",
-        expected: literal("0"),
-      });
-    expect((await buildAssertionLine(parse("trunc", "signed"), noEns))?.line).toBe(
-      `assert @num.parse!(${T}::!{name()(string)} 6) > 0`,
-    );
-    expect((await buildAssertionLine(parse("floor", "signed"), noEns))?.line).toBe(
-      `assert @num.parse!(${T}::!{name()(string)} 6 floor) > 0`,
-    );
-    expect((await buildAssertionLine(parse("trunc", "unsigned"), noEns))?.line).toBe(
-      `assert @num.parse!(${T}::!{name()(string)} 6 trunc unsigned) > 0`,
-    );
-    // An out-of-range precision leaves the line incomplete.
-    const bad = assertion({
-      subject: { kind: "numformat", value: supply, decimals: "78" },
-      operator: "==",
-      expected: literal("1"),
-    });
-    expect(await buildAssertionLine(bad, noEns)).toBeNull();
     const bare = assertion({
       subject: {
         kind: "logic",

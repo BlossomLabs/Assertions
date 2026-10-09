@@ -2,8 +2,11 @@ import { isAddress } from "viem";
 
 import {
   type Assertion,
+  type Category,
   type ValueExpr,
   callwrapHelperName,
+  categoryFromAbiType,
+  elementTypeOf,
   producedType,
   inferCategory,
   argFits,
@@ -43,6 +46,25 @@ interface RenderCtx {
   /** Inside a @calc!/@bool! wrapper already. */
   num?: boolean;
   bool?: boolean;
+  /** Inside a quantifier's test: the variable that stands for the item. */
+  element?: string;
+}
+
+/** How a `def` signature spells an item's type. */
+const DEF_TYPE: Partial<Record<Category, string>> = {
+  uint: "number",
+  int: "number",
+  address: "address",
+  bool: "bool",
+  bytes32: "bytes32",
+};
+
+/** A short, stable name for a generated helper: the same test gets the
+ *  same name, so the same `def` line is written once per script. */
+function testName(text: string): string {
+  let h = 5381;
+  for (let i = 0; i < text.length; i++) h = ((h * 33) ^ text.charCodeAt(i)) >>> 0;
+  return `each${h.toString(36)}`;
 }
 
 /** The hoisted binding for an ENS name: live on mainnet, frozen elsewhere. */
@@ -247,15 +269,6 @@ export async function renderExpr(
           : `not ${operand}`;
       return ctx.bool ? body : `@bool!(${body})`;
     }
-    case "bytes": {
-      // Helper arguments are self-delimiting: children render with a fresh
-      // context so arithmetic/logic re-wrap themselves in @calc!/@bool!.
-      const clean = { ...ctx, num: false, bool: false };
-      const left = await renderExpr(expr.left, clean);
-      const right = await renderExpr(expr.right, clean);
-      if (!left || !right) return null;
-      return `@bytes!(${left} "${expr.op}" ${right})`;
-    }
     case "callwrap": {
       const call = await renderExpr(expr.call, ctx);
       if (!call) return null;
@@ -268,6 +281,77 @@ export async function renderExpr(
         expr.helper === "hash" && hashesBytes(expr.call) ? " bytes" : "";
       return `@${callwrapHelperName(expr.helper)}!(${call}${mode})`;
     }
+    case "reverts": {
+      // Helper arguments are self-delimiting: the read renders with a
+      // fresh context.
+      const call = await renderExpr(expr.call, { ...ctx, num: false, bool: false });
+      if (!call) return null;
+      return `@reverts!(${call})`;
+    }
+    case "orElse": {
+      const clean = { ...ctx, num: false, bool: false };
+      const primary = await renderExpr(expr.primary, clean);
+      const fallback = await renderExpr(expr.fallback, clean);
+      if (!primary || !fallback) return null;
+      return `@orElse!(${primary} ${fallback})`;
+    }
+    case "arrIncludes": {
+      const clean = { ...ctx, num: false, bool: false };
+      const call = await renderExpr(expr.call, clean);
+      const item = await renderExpr(expr.item, clean);
+      if (!call || !item) return null;
+      return `@includes!(${call} ${item})`;
+    }
+    case "safe": {
+      const clean = { ...ctx, num: false, bool: false };
+      const safe = await renderExpr(expr.safe, clean);
+      if (!safe) return null;
+      if (expr.read !== "isOwner") return `@safe:${expr.read}!(${safe})`;
+      const owner = await renderExpr(expr.owner, clean);
+      if (!owner) return null;
+      return `@safe:isOwner!(${owner} ${safe})`;
+    }
+    case "quant": {
+      const clean = { ...ctx, num: false, bool: false };
+      const list = await renderExpr(expr.call, clean);
+      const type = elementTypeOf(expr.call);
+      const param = type ? DEF_TYPE[categoryFromAbiType(type)] : undefined;
+      if (!list || !param) return null;
+      // The test becomes a helper of its own, over one item; an outer
+      // test's item is out of reach inside it.
+      const item = "$item";
+      const test = await renderExpr(expr.predicate, { ...clean, element: item });
+      if (!test || inferCategory(expr.predicate) !== "bool") return null;
+      const signature = `"${item}: ${param} -> bool" ${test}`;
+      const name = testName(signature);
+      ctx.registerSet(`def @${name}! ${signature}`);
+      return `@${expr.op}!(${list} @${name}!)`;
+    }
+    case "element":
+      return ctx.element ?? null;
+    case "tokenAmount": {
+      const clean = { ...ctx, num: false, bool: false };
+      const token = await renderExpr(expr.token, clean);
+      // A typed amount is a decimal number of tokens; a live one is read
+      // when the assertion runs.
+      const amount =
+        expr.amount.kind === "literal"
+          ? /^\d+(\.\d+)?$/.test(expr.amount.value.trim())
+            ? expr.amount.value.trim()
+            : null
+          : await renderExpr(expr.amount, clean);
+      if (!token || !amount) return null;
+      return `@token:amount!(${token} ${amount})`;
+    }
+    case "tokenDecimals": {
+      const token = await renderExpr(expr.token, {
+        ...ctx,
+        num: false,
+        bool: false,
+      });
+      if (!token) return null;
+      return `@token:decimals!(${token})`;
+    }
     case "split": {
       const call = await renderExpr(expr.call, ctx);
       if (!call || !expr.delimiter || !/^-?\d+$/.test(expr.index.trim()))
@@ -278,26 +362,6 @@ export async function renderExpr(
       const call = await renderExpr(expr.call, ctx);
       if (!call || !expr.arg) return null;
       return `@str.${expr.helper}!(${call} ${JSON.stringify(expr.arg)})`;
-    }
-    case "numformat": {
-      const clean = { ...ctx, num: false, bool: false };
-      const value = await renderExpr(expr.value, clean);
-      if (!value || !isDecimals(expr.decimals)) return null;
-      return `@num.format!(${value} ${expr.decimals.trim()})`;
-    }
-    case "numparse": {
-      const clean = { ...ctx, num: false, bool: false };
-      const value = await renderExpr(expr.value, clean);
-      if (!value || !isDecimals(expr.decimals)) return null;
-      // Rounding and signedness are positional: an unsigned parse needs
-      // its rounding spelled out, a default parse needs neither.
-      const opts =
-        expr.signedness === "unsigned"
-          ? ` ${expr.rounding} unsigned`
-          : expr.rounding === "trunc"
-            ? ""
-            : ` ${expr.rounding}`;
-      return `@num.parse!(${value} ${expr.decimals.trim()}${opts})`;
     }
     case "clock":
       return expr.which === "timestamp" ? "@block.timestamp!" : "@block.number!";
@@ -314,12 +378,6 @@ export async function renderExpr(
       return `@codeAt!(${addr})`;
     }
   }
-}
-
-/** A decimal precision the helpers accept: an integer from 0 to 77. */
-function isDecimals(text: string): boolean {
-  const t = text.trim();
-  return /^\d{1,2}$/.test(t) && Number(t) <= 77;
 }
 
 export interface BuiltLine {

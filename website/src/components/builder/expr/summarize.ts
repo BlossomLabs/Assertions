@@ -77,20 +77,30 @@ export function summarize(node: ValueExpr): string {
       return `comparison (${node.op})`;
     case "logic":
       return `logic (${node.op})`;
-    case "bytes":
-      return `bitwise (${node.op})`;
     case "not":
       return "not …";
     case "callwrap":
       return `@${callwrapHelperName(node.helper)}!(…)`;
+    case "reverts":
+      return "@reverts!(…)";
+    case "orElse":
+      return "@orElse!(… …)";
+    case "arrIncludes":
+      return "@includes!(… …)";
+    case "safe":
+      return `@safe:${node.read}!(…)`;
+    case "quant":
+      return `@${node.op}!(… each …)`;
+    case "element":
+      return "the item";
+    case "tokenAmount":
+      return "@token:amount!(… …)";
+    case "tokenDecimals":
+      return "@token:decimals!(…)";
     case "split":
       return `@str.split!(… ${node.index})`;
     case "strtest":
       return `@str.${node.helper}!(… ${node.arg ? JSON.stringify(node.arg) : "…"})`;
-    case "numformat":
-      return `@num.format!(… ${node.decimals})`;
-    case "numparse":
-      return `@num.parse!(… ${node.decimals})`;
     case "clock":
       return `@${node.which}!`;
     case "chainId":

@@ -124,17 +124,34 @@ export type ValueExpr =
       left: ValueExpr;
       right: ValueExpr;
     }
-  /** Bitwise word ops, rendered through `@bytes!(a "&" b)`. */
-  | {
-      kind: "bytes";
-      op: "&" | "|" | "^" | "<<" | ">>";
-      left: ValueExpr;
-      right: ValueExpr;
-    }
   | { kind: "not"; operand: ValueExpr }
-  | { kind: "callwrap"; helper: "len" | "bytelen" | "hash"; call: ValueExpr }
+  | { kind: "callwrap"; helper: CallwrapHelper; call: ValueExpr }
   // (the `bytelen` node key predates the helper unification; it renders as
   // the lang module's @bytes.len!, see callwrapHelperName)
+  /** `@reverts!(call)`: whether the read reverts when the assertion runs. */
+  | { kind: "reverts"; call: ValueExpr }
+  /** `@orElse!(primary fallback)`: the read, or the fallback when it
+   *  reverts. */
+  | { kind: "orElse"; primary: ValueExpr; fallback: ValueExpr }
+  /** `@includes!(array item)`: whether a list holds the item. */
+  | { kind: "arrIncludes"; call: ValueExpr; item: ValueExpr }
+  /** A read of a Safe (`@safe:threshold!(safe)`, ...). `owner` is the
+   *  address `isOwner` asks about; the other reads ignore it. */
+  | { kind: "safe"; read: SafeRead; safe: ValueExpr; owner: ValueExpr }
+  /** `@all!`/`@any!`/`@count!` over a list: whether every item, or some
+   *  item, passes the test, or how many do. `predicate` is the test, a
+   *  boolean value in which `element` nodes stand for the item. */
+  | { kind: "quant"; op: QuantOp; call: ValueExpr; predicate: ValueExpr }
+  /** The item a quantifier's test is run on; `type` is its ABI type.
+   *  Only meaningful inside a `quant` predicate. */
+  | { kind: "element"; type: string }
+  /** `@token:amount!(token amount)`: a number of tokens in the token's base
+   *  units, scaled by its decimals when the assertion runs. The amount is
+   *  the value it wraps; the token is a symbol, an address or a call
+   *  returning one. */
+  | { kind: "tokenAmount"; amount: ValueExpr; token: ValueExpr }
+  /** `@token:decimals!(token)`, around the token's address. */
+  | { kind: "tokenDecimals"; token: ValueExpr }
   | { kind: "split"; call: ValueExpr; delimiter: string; index: string }
   | { kind: "clock"; which: "timestamp" | "blocknumber" }
   | { kind: "chainId" }
@@ -143,35 +160,110 @@ export type ValueExpr =
   /** The deployed code of an address (literal or address-returning call),
    *  a bytes value: the source `@bytes.len!` and `@hash!` wrap. */
   | { kind: "codeAt"; address: ValueExpr }
-  /** String predicates over a call's string return (@str.includes!/@str.charset!). */
+  /** Whether a call's string return contains a substring
+   *  (@str.includes!). */
   | {
       kind: "strtest";
-      helper: "includes" | "charset";
+      helper: "includes";
       call: ValueExpr;
       arg: string;
-    }
-  /** `@num.format!(value decimals)`: a raw integer as a decimal string. */
-  | { kind: "numformat"; value: ValueExpr; decimals: string }
-  /** `@num.parse!(value decimals rounding signedness)`: a decimal string
-   *  as a raw integer in base units. */
-  | {
-      kind: "numparse";
-      value: ValueExpr;
-      decimals: string;
-      rounding: ParseRounding;
-      signedness: Signedness;
     };
 
+export type CallwrapHelper = "len" | "bytelen" | "hash" | "sum";
+export type QuantOp = "all" | "any" | "count";
+export type SafeRead =
+  | "owners"
+  | "threshold"
+  | "nonce"
+  | "guard"
+  | "modules"
+  | "isOwner";
+
+/** A value that is a list: a call returning an array, or a Safe's owners
+ *  or modules. What `@len!` and `@includes!` wrap. */
+export function isListSource(node: ValueExpr): boolean {
+  return (
+    node.kind === "call" ||
+    (node.kind === "safe" && (node.read === "owners" || node.read === "modules"))
+  );
+}
+
+/** The categories a quantifier's item can be: one word each. */
+const ITEM_CATEGORIES = new Set<Category>([
+  "uint",
+  "int",
+  "address",
+  "bool",
+  "bytes32",
+]);
+
+/**
+ * The ABI type of one item of a list, when a test can be run on each: the
+ * element type of an array a call returns, or `address` for a Safe's
+ * owners and modules. Null while the list is not known, and for items
+ * that are not a single word (strings, structs, nested arrays).
+ */
+export function elementTypeOf(list: ValueExpr): string | null {
+  if (list.kind === "safe")
+    return list.read === "owners" || list.read === "modules" ? "address" : null;
+  if (list.kind !== "call") return null;
+  const type = producedType(list);
+  const level = type ? lensLevelOf(type) : null;
+  if (level?.kind !== "array") return null;
+  return ITEM_CATEGORIES.has(categoryFromAbiType(level.base)) ? level.base : null;
+}
+
+/** The predicate with every item placeholder set to the list's current
+ *  item type (the same object when nothing changes). A nested quantifier
+ *  keeps its own items. */
+export function retypeElements(node: ValueExpr, type: string): ValueExpr {
+  if (node.kind === "element")
+    return node.type === type ? node : { ...node, type };
+  if (node.kind === "quant") {
+    const call = retypeElements(node.call, type);
+    return call === node.call ? node : { ...node, call };
+  }
+  let next: Record<string, unknown> | null = null;
+  const set = (key: string, value: unknown) => {
+    next ??= { ...node };
+    next[key] = value;
+  };
+  for (const [key, value] of Object.entries(node)) {
+    if (Array.isArray(value)) {
+      const mapped = value.map((item) =>
+        isValueExpr(item)
+          ? retypeElements(item, type)
+          : isHop(item)
+            ? retypeHop(item, type)
+            : item,
+      );
+      if (mapped.some((item, i) => item !== value[i])) set(key, mapped);
+    } else if (isValueExpr(value)) {
+      const child = retypeElements(value, type);
+      if (child !== value) set(key, child);
+    }
+  }
+  return (next ?? node) as ValueExpr;
+}
+
+const isValueExpr = (value: unknown): value is ValueExpr =>
+  !!value && typeof value === "object" && "kind" in value;
+const isHop = (value: unknown): value is CallHop =>
+  !!value && typeof value === "object" && "args" in value && "fnName" in value;
+
+function retypeHop(hop: CallHop, type: string): CallHop {
+  const args = hop.args.map((arg) =>
+    typeof arg === "string" ? arg : retypeElements(arg, type),
+  );
+  return args.some((arg, i) => arg !== hop.args[i]) ? { ...hop, args } : hop;
+}
+
 export type Rounding = "floor" | "ceil";
-export type ParseRounding = "trunc" | "floor" | "ceil";
-export type Signedness = "signed" | "unsigned";
 
 /** EVML/display name of a callwrap helper node: the internal `bytelen`
  *  key predates the helper unification and renders as lang's @bytes.len!
  *  (decoded byte length of a string/bytes return). */
-export function callwrapHelperName(
-  helper: "len" | "bytelen" | "hash",
-): string {
+export function callwrapHelperName(helper: CallwrapHelper): string {
   return helper === "bytelen" ? "bytes.len" : helper;
 }
 
@@ -208,6 +300,9 @@ export function isBuildTimeConst(expr: ValueExpr): boolean {
 }
 
 const ENS_RE = /^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/;
+
+/** Text shaped like an ENS name (`mysafe.eth`), as opposed to an address. */
+export const isEnsName = (text: string): boolean => ENS_RE.test(text.trim());
 
 const CAT_FROM_MOD: Record<ModCategory, Category> = {
   Uint: "uint",
@@ -432,7 +527,33 @@ export function inferCategory(expr: ValueExpr): Category {
     case "codeAt":
       return "bytes";
     case "strtest":
+    case "reverts":
+    case "arrIncludes":
       return "bool";
+    case "orElse": {
+      // Both branches are the same kind of value; the read says which.
+      const primary = inferCategory(expr.primary);
+      return primary === "unknown" ? inferCategory(expr.fallback) : primary;
+    }
+    case "safe":
+      switch (expr.read) {
+        case "owners":
+        case "modules":
+          return "array";
+        case "guard":
+          return "address";
+        case "isOwner":
+          return "bool";
+        default:
+          return "uint";
+      }
+    case "tokenAmount":
+    case "tokenDecimals":
+      return "uint";
+    case "quant":
+      return expr.op === "count" ? "uint" : "bool";
+    case "element":
+      return categoryFromAbiType(expr.type);
     case "minmax":
       return expr.items.some((i) => inferCategory(i) === "int") ? "int" : "uint";
     case "absDiff":
@@ -446,16 +567,10 @@ export function inferCategory(expr: ValueExpr): Category {
     case "logic":
     case "not":
       return "bool";
-    case "bytes":
-      // Raw 32-byte word result, exposed as a number.
-      return "uint";
     case "callwrap":
       return expr.helper === "hash" ? "bytes32" : "uint";
     case "split":
-    case "numformat":
       return "string";
-    case "numparse":
-      return expr.signedness === "unsigned" ? "uint" : "int";
   }
 }
 
@@ -567,17 +682,24 @@ export function unwrapNode(node: ValueExpr): ValueExpr | null {
     case "arith":
     case "cmp":
     case "logic":
-    case "bytes":
       return node.left;
     case "not":
       return node.operand;
     case "callwrap":
     case "split":
     case "strtest":
+    case "reverts":
+    case "arrIncludes":
+    case "quant":
       return node.call;
-    case "numformat":
-    case "numparse":
-      return node.value;
+    case "orElse":
+      return node.primary;
+    case "safe":
+      return node.safe;
+    case "tokenAmount":
+      return node.amount;
+    case "tokenDecimals":
+      return node.token;
     default:
       return null;
   }

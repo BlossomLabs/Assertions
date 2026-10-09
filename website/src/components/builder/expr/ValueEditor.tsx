@@ -6,8 +6,10 @@ import {
   type Path,
   type ValueExpr,
   callwrapHelperName,
+  elementTypeOf,
   familyOpsFor,
   inferCategory,
+  retypeElements,
   emptyCall,
   argFits,
   argText,
@@ -15,12 +17,19 @@ import {
   unwrapNode,
 } from "../assertion-model";
 import { inputCls } from "../useContractFunctions";
+import { useIsSafe } from "../useIsSafe";
 import { smallLabelCls } from "../ui";
 import { Select } from "../../ui/Select";
 import { ArgMismatch, CallEditor } from "./CallEditor";
 import { callTail, lensText, summarize } from "./summarize";
 import { PLACEHOLDERS, unixToDatetimeLocal } from "./LiteralEditor";
-import { SourceLabel, SourcePicker, WrapMenu, isSourceNode } from "./NodePicker";
+import {
+  ElementScope,
+  SourceLabel,
+  SourcePicker,
+  WrapMenu,
+  isSourceNode,
+} from "./NodePicker";
 
 /** The operators the composition table allows for this node's operand
  *  categories. An op invalidated by an edit stays listed (the compiler's
@@ -53,8 +62,6 @@ function kindLabel(node: ValueExpr): string {
       return "comparison";
     case "logic":
       return "logic";
-    case "bytes":
-      return "bitwise";
     case "not":
       return "not";
     case "callwrap":
@@ -63,10 +70,20 @@ function kindLabel(node: ValueExpr): string {
       return "@str.split!";
     case "strtest":
       return `@str.${node.helper}!`;
-    case "numformat":
-      return "@num.format!";
-    case "numparse":
-      return "@num.parse!";
+    case "reverts":
+      return "@reverts!";
+    case "orElse":
+      return "@orElse!";
+    case "arrIncludes":
+      return "@includes!";
+    case "safe":
+      return `@safe:${node.read}!`;
+    case "quant":
+      return `@${node.op}!`;
+    case "tokenAmount":
+      return "@token:amount!";
+    case "tokenDecimals":
+      return "@token:decimals!";
     default:
       return "";
   }
@@ -128,6 +145,20 @@ function OpSelect<T extends string>({
   );
 }
 
+/**
+ * The item type in scope at a path: that of the nearest quantifier whose
+ * test the path goes through. Undefined outside any test.
+ */
+export function elementScopeAt(root: unknown, path: Path): string | undefined {
+  let scope: string | undefined;
+  for (let i = 0; i < path.length; i++) {
+    if (path[i] !== "predicate") continue;
+    const owner = nodeAt(root, path.slice(0, i));
+    if (owner?.kind === "quant") scope = elementTypeOf(owner.call) ?? "";
+  }
+  return scope;
+}
+
 /** The node a path points at, or undefined when the tree no longer has it. */
 export function nodeAt(root: unknown, path: Path): ValueExpr | undefined {
   const found = path.reduce<any>((n, key) => (n == null ? n : n[key]), root);
@@ -152,19 +183,25 @@ const KIND_HELP: Partial<Record<ValueExpr["kind"], string>> = {
     "EXTCODEHASH at assertion time: bytes32(0) for a nonexistent account, keccak256 of the code otherwise.",
   codeAt:
     "The deployed code at assertion time, as bytes: empty when the address holds no code. Compare its byte length or hash.",
-  numformat:
-    "The integer in base units as a decimal string (0 to 77 decimals), trailing fractional zeros trimmed.",
-  numparse:
-    "The decimal string as an integer in base units (0 to 77 decimals).",
+  reverts:
+    "True when the call reverts at assertion time, or the address holds no code.",
+  orElse:
+    "The call's value, or the fallback when the call reverts. Both must be the same kind of value.",
+  arrIncludes: "True when the list holds the item, read at assertion time.",
+  safe: "Read from the Safe at assertion time. When the Safe is a call, it is whatever address that call returns then.",
+  tokenAmount:
+    "A human amount in the token's base units, scaled by the token's decimals read at assertion time.",
+  tokenDecimals: "The token's decimals, read at assertion time.",
+  quant:
+    "Runs the test on each item of the list at assertion time. In the test, pick 'the item' wherever the item goes: as a value to compare, or as an argument of a call.",
+  element: "Stands for each item of the list in turn while the test runs.",
 };
 
 /** Kinds whose settings live in the tray, behind a chip in the slot. */
 const hasSettings = (node: ValueExpr) =>
   node.kind === "call" ||
   node.kind === "split" ||
-  node.kind === "strtest" ||
-  node.kind === "numformat" ||
-  node.kind === "numparse";
+  node.kind === "strtest";
 
 const CALL_PLACEHOLDER = "0x… or mydao.eth";
 
@@ -238,6 +275,17 @@ export function ValueSlot({
   noLiteral?: boolean;
 }) {
   const replace = (next: ValueExpr) => update(path, () => next);
+  const isSafe = useIsSafe(node, chainId);
+  // A quantifier's test follows its list: when the list changes what an
+  // item is, the placeholders in the test change with it.
+  const itemType = node.kind === "quant" ? elementTypeOf(node.call) : null;
+  const predicate = node.kind === "quant" ? node.predicate : null;
+  useEffect(() => {
+    if (!itemType || !predicate) return;
+    const retyped = retypeElements(predicate, itemType);
+    if (retyped !== predicate) update([...path, "predicate"], () => retyped);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemType, predicate]);
   const unwrapped = unwrapNode(node);
   const active = samePath(openPath, path);
 
@@ -248,18 +296,32 @@ export function ValueSlot({
       ...(typeof key === "number" ? ["items", key] : [key]),
     ];
     const shown = samePath(openPath, childPath);
-    // Every operand is its own small field with, at its end, the menu
+    // Every operand is its own small field with, at its start, the menu
     // that says what it is: it stays there whatever the operand becomes.
     // Plain text is typed in the field; anything else is a pill that
     // opens the operand in the tray.
     return (
       <span
-        className={`flex-1 basis-24 min-w-0 flex items-center h-7 pl-2 rounded-md border focus-within:border-[var(--color-bp-400)]/60 ${
+        className={`flex-1 basis-24 min-w-0 flex items-center gap-1 h-7 pr-2 rounded-md border focus-within:border-[var(--color-bp-400)]/60 ${
           shown
             ? "border-[var(--color-bp-400)]"
             : "border-[var(--color-ink-3)]/25"
         }`}
       >
+        {isSourceNode(value) && (
+          <SourcePicker
+            node={value}
+            iconOnly
+            onConvert={(next) => {
+              update(childPath, () => next);
+              // Anything but plain text is filled in from the tray.
+              if (next.kind !== "literal") onOpen(childPath);
+              else if (shown) onOpen(null);
+            }}
+            title="Change what this value is"
+            className="shrink-0 [&>button]:border-0 [&>button]:gap-0.5 [&>button]:text-[var(--color-bp-300)]"
+          />
+        )}
         {value.kind === "literal" ? (
           <input
             className={`${bareInputCls} flex-1`}
@@ -279,20 +341,6 @@ export function ValueSlot({
           >
             {summarize(value)}
           </button>
-        )}
-        {isSourceNode(value) && (
-          <SourcePicker
-            node={value}
-            iconOnly
-            onConvert={(next) => {
-              update(childPath, () => next);
-              // Anything but plain text is filled in from the tray.
-              if (next.kind !== "literal") onOpen(childPath);
-              else if (shown) onOpen(null);
-            }}
-            title="Change what this value is"
-            className="shrink-0 [&>button]:border-0 [&>button]:gap-0.5 [&>button]:text-[var(--color-bp-300)]"
-          />
         )}
       </span>
     );
@@ -437,8 +485,7 @@ export function ValueSlot({
       break;
     case "arith":
     case "cmp":
-    case "logic":
-    case "bytes": {
+    case "logic": {
       const family: OpFamily = node.kind === "arith" ? "arith" : node.kind;
       body = (
         <>
@@ -466,7 +513,77 @@ export function ValueSlot({
       body = child("operand", node.operand);
       break;
     case "callwrap":
+    case "reverts":
       body = child("call", node.call);
+      break;
+    case "orElse":
+      body = (
+        <>
+          {child("primary", node.primary)}
+          <span className={wordCls}>or else</span>
+          {child("fallback", node.fallback)}
+        </>
+      );
+      break;
+    case "arrIncludes":
+      body = (
+        <>
+          {child("call", node.call)}
+          <span className={wordCls}>contains</span>
+          {child("item", node.item)}
+        </>
+      );
+      break;
+    case "quant":
+      body = (
+        <>
+          {child("call", node.call)}
+          <span className={wordCls}>
+            {node.op === "count" ? "items where" : "where"}
+          </span>
+          <ElementScope.Provider value={itemType ?? ""}>
+            {child("predicate", node.predicate)}
+          </ElementScope.Provider>
+        </>
+      );
+      break;
+    case "element":
+      body = (
+        <span className="text-xs text-[var(--color-ink-3)] truncate">
+          each item of the list, in turn
+        </span>
+      );
+      break;
+    case "safe":
+      body = (
+        <>
+          {node.read === "isOwner" && (
+            <>
+              {child("owner", node.owner, "0x… or name.eth")}
+              <span className={wordCls}>in</span>
+            </>
+          )}
+          <span className={wordCls}>of</span>
+          {child("safe", node.safe, "0x… Safe address")}
+        </>
+      );
+      break;
+    case "tokenAmount":
+      body = (
+        <>
+          {child("amount", node.amount, "100")}
+          <span className={wordCls}>of</span>
+          {child("token", node.token, "DAI or 0x…")}
+        </>
+      );
+      break;
+    case "tokenDecimals":
+      body = (
+        <>
+          <span className={wordCls}>of</span>
+          {child("token", node.token, "DAI or 0x…")}
+        </>
+      );
       break;
     case "split":
       body = (
@@ -481,15 +598,6 @@ export function ValueSlot({
         <>
           {child("call", node.call)}
           {settings(node.arg ? JSON.stringify(node.arg) : "set the text…")}
-        </>
-      );
-      break;
-    case "numformat":
-    case "numparse":
-      body = (
-        <>
-          {child("value", node.value)}
-          {settings(`${node.decimals || "…"} decimals`)}
         </>
       );
       break;
@@ -571,6 +679,7 @@ export function ValueSlot({
       <WrapMenu
         node={node}
         depth={depthOf(path)}
+        isSafe={isSafe}
         onConvert={(next) => {
           replace(next);
           // An argument stays open: it is handed back with OK or Cancel.
@@ -695,7 +804,6 @@ function Formula({
     case "arith":
     case "cmp":
     case "logic":
-    case "bytes":
       text = (
         <>
           {path.length > 1 && "("}
@@ -710,17 +818,56 @@ function Formula({
     case "callwrap":
       text = fn(callwrapHelperName(node.helper), part("call", node.call));
       break;
+    case "reverts":
+      text = fn("reverts", part("call", node.call));
+      break;
+    case "orElse":
+      text = fn("orElse", (
+        <>
+          {part("primary", node.primary)}, {part("fallback", node.fallback)}
+        </>
+      ));
+      break;
+    case "arrIncludes":
+      text = fn("includes", (
+        <>
+          {part("call", node.call)}, {part("item", node.item)}
+        </>
+      ));
+      break;
+    case "safe":
+      text = fn(node.read, (
+        <>
+          {node.read === "isOwner" && <>{part("owner", node.owner)}, </>}
+          {part("safe", node.safe)}
+        </>
+      ));
+      break;
+    case "quant":
+      text = fn(node.op, (
+        <>
+          {part("call", node.call)}, {part("predicate", node.predicate)}
+        </>
+      ));
+      break;
+    case "element":
+      text = "item";
+      break;
+    case "tokenAmount":
+      text = fn("amount", (
+        <>
+          {part("token", node.token)}, {part("amount", node.amount)}
+        </>
+      ));
+      break;
+    case "tokenDecimals":
+      text = fn("decimals", part("token", node.token));
+      break;
     case "split":
       text = fn("split", part("call", node.call));
       break;
     case "strtest":
       text = fn(node.helper, part("call", node.call));
-      break;
-    case "numformat":
-      text = fn("format", part("value", node.value));
-      break;
-    case "numparse":
-      text = fn("parse", part("value", node.value));
       break;
   }
 
@@ -836,45 +983,10 @@ function Settings({
     case "strtest":
       return (
         <div className="space-y-2">
-          {field(
-            node.helper === "includes" ? "substring" : "character class",
-            "arg",
-            node.arg,
-            node.helper === "includes" ? "text" : "a-z0-9-",
-          )}
+          {field("substring", "arg", node.arg, "text")}
           <p className="text-xs text-[var(--color-ink-3)]">
-            {node.helper === "includes"
-              ? "True when the call's string return contains the substring."
-              : "True when every character of the string return is in the class."}
+            True when the call's string return contains the substring.
           </p>
-        </div>
-      );
-    case "numformat":
-      return field("decimals", "decimals", node.decimals);
-    case "numparse":
-      return (
-        <div className="flex gap-2 flex-wrap items-end">
-          {field("decimals", "decimals", node.decimals)}
-          <div>
-            <label className={smallLabelCls}>rounding</label>
-            <OpSelect
-              value={node.rounding}
-              options={["trunc", "floor", "ceil"] as const}
-              onChange={(rounding) =>
-                update([...path, "rounding"], () => rounding)
-              }
-            />
-          </div>
-          <div>
-            <label className={smallLabelCls}>signedness</label>
-            <OpSelect
-              value={node.signedness}
-              options={["signed", "unsigned"] as const}
-              onChange={(signedness) =>
-                update([...path, "signedness"], () => signedness)
-              }
-            />
-          </div>
         </div>
       );
     default:
@@ -946,6 +1058,7 @@ export function ValueTray({
   const mismatch = !!wants && !argFits(node, wants);
 
   return (
+    <ElementScope.Provider value={elementScopeAt(root, openPath)}>
     <div className="rounded-lg border border-[var(--color-bp-400)]/40 bg-[var(--color-bp-500)]/5 p-3 space-y-3">
       {/* Where the tray is: the whole side, with the part being edited
           marked in it. */}
@@ -1048,5 +1161,6 @@ export function ValueTray({
         </div>
       )}
     </div>
+    </ElementScope.Provider>
   );
 }

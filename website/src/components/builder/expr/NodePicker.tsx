@@ -1,6 +1,8 @@
 import {
   type ReactNode,
+  createContext,
   useCallback,
+  useContext,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -12,10 +14,15 @@ import type { OpFamily } from "@evmcrispr/sdk/onchain";
 
 import {
   type Category,
+  type QuantOp,
+  type SafeRead,
   type ValueExpr,
+  categoryFromAbiType,
+  elementTypeOf,
   emptyCall,
   familyOpsFor,
   inferCategory,
+  isListSource,
   emptyLiteral,
   unwrapNode,
 } from "../assertion-model";
@@ -39,18 +46,43 @@ export type NodeKey =
   | "arith"
   | "cmp"
   | "logic"
-  | "bytes"
   | "not"
   | "len"
   | "bytelen"
   | "hash"
   | "split"
   | "includes"
-  | "charset"
   | "divFloor"
   | "divCeil"
-  | "numformat"
-  | "numparse";
+
+  | "sum"
+  | "arrIncludes"
+  | "reverts"
+  | "orElse"
+  | "safeOwners"
+  | "safeThreshold"
+  | "safeIsOwner"
+  | "safeGuard"
+  | "safeModules"
+  | "safeNonce"
+  | "tokenAmount"
+  | "tokenDecimals"
+  | "all"
+  | "any"
+  | "count"
+  | "element";
+
+const SAFE_KEYS: Record<SafeRead, NodeKey> = {
+  owners: "safeOwners",
+  threshold: "safeThreshold",
+  isOwner: "safeIsOwner",
+  guard: "safeGuard",
+  modules: "safeModules",
+  nonce: "safeNonce",
+};
+const SAFE_READS = Object.fromEntries(
+  Object.entries(SAFE_KEYS).map(([read, key]) => [key, read]),
+) as Partial<Record<NodeKey, SafeRead>>;
 
 export function nodeKey(node: ValueExpr): NodeKey {
   switch (node.kind) {
@@ -65,6 +97,10 @@ export function nodeKey(node: ValueExpr): NodeKey {
       return node.helper;
     case "strtest":
       return node.helper;
+    case "safe":
+      return SAFE_KEYS[node.read];
+    case "quant":
+      return node.op;
     default:
       return node.kind as NodeKey;
   }
@@ -79,6 +115,7 @@ const SOURCE_KINDS = new Set<ValueExpr["kind"]>([
   "chainId",
   "codeHash",
   "codeAt",
+  "element",
 ]);
 
 export const isSourceNode = (node: ValueExpr): boolean =>
@@ -89,6 +126,11 @@ function seedCall(node: ValueExpr): ValueExpr {
   if (node.kind === "call") return node;
   const primary = unwrapNode(node);
   return primary?.kind === "call" ? primary : emptyCall();
+}
+
+/** The list a transform keeps: a call, or a Safe's owners or modules. */
+function seedList(node: ValueExpr): ValueExpr {
+  return isListSource(node) ? node : seedCall(node);
 }
 
 /** The value-shaped seed a combinator keeps as its first operand. */
@@ -103,6 +145,44 @@ function seedAddress(node: ValueExpr): ValueExpr {
   return emptyLiteral();
 }
 
+/** A new, empty value of the picked source kind. Changing what a value is
+ *  replaces it, so nothing of the old value is kept: only combining (the
+ *  WrapMenu, through convertNode) carries a value over. The executor is the
+ *  default account of a balance, not something inherited. */
+export function freshSource(
+  node: ValueExpr,
+  key: NodeKey,
+  elementType?: string,
+): ValueExpr {
+  if (nodeKey(node) === key) return node;
+  switch (key) {
+    case "element":
+      // Only offered inside a quantifier's test, which says what an item is.
+      return elementType !== undefined
+        ? { kind: "element", type: elementType }
+        : emptyLiteral();
+    case "call":
+      return emptyCall();
+    case "balance":
+      return {
+        kind: "balance",
+        token: "ETH",
+        account: { kind: "literal", value: "@me" },
+      };
+    case "timestamp":
+    case "blocknumber":
+      return { kind: "clock", which: key };
+    case "chainId":
+      return { kind: "chainId" };
+    case "codeHash":
+      return { kind: "codeHash", address: emptyLiteral() };
+    case "codeAt":
+      return { kind: "codeAt", address: emptyLiteral() };
+    default:
+      return emptyLiteral();
+  }
+}
+
 /** Convert a node to the picked kind in place, preserving a compatible
  *  child where sensible (picking a combinator wraps the current node). */
 export function convertNode(node: ValueExpr, key: NodeKey): ValueExpr {
@@ -112,27 +192,16 @@ export function convertNode(node: ValueExpr, key: NodeKey): ValueExpr {
       return node.kind === "literal" ? node : emptyLiteral();
     case "call":
       return seedCall(node);
-    case "balance":
-      return {
-        kind: "balance",
-        token: "ETH",
-        // The balance of the address in hand (a call's, or one typed in),
-        // the executor's otherwise.
-        account:
-          node.kind === "call" ||
-          (node.kind === "literal" && inferCategory(node) === "address")
-            ? node
-            : { kind: "literal", value: "@me" },
-      };
     case "timestamp":
     case "blocknumber":
       return { kind: "clock", which: key };
     case "chainId":
       return { kind: "chainId" };
+    // Picked as a kind of value (freshSource), never wrapped around one.
+    case "balance":
     case "codeHash":
-      return { kind: "codeHash", address: seedAddress(node) };
     case "codeAt":
-      return { kind: "codeAt", address: seedAddress(node) };
+      return node;
     case "min":
     case "max":
       return node.kind === "minmax"
@@ -160,16 +229,6 @@ export function convertNode(node: ValueExpr, key: NodeKey): ValueExpr {
             right: emptyLiteral(),
           };
     }
-    case "numformat":
-      return { kind: "numformat", value: seedValue(node), decimals: "18" };
-    case "numparse":
-      return {
-        kind: "numparse",
-        value: seedValue(node),
-        decimals: "18",
-        rounding: "trunc",
-        signedness: "signed",
-      };
     case "cmp":
       return {
         kind: "cmp",
@@ -184,25 +243,66 @@ export function convertNode(node: ValueExpr, key: NodeKey): ValueExpr {
         left: seedValue(node),
         right: emptyLiteral(),
       };
-    case "bytes":
-      return {
-        kind: "bytes",
-        op: "&",
-        left: seedValue(node),
-        right: emptyLiteral(),
-      };
     case "not":
       return { kind: "not", operand: seedValue(node) };
     case "len":
+      return node.kind === "callwrap"
+        ? { ...node, helper: key }
+        : { kind: "callwrap", helper: key, call: seedList(node) };
     case "bytelen":
     case "hash":
+    case "sum":
       return node.kind === "callwrap"
         ? { ...node, helper: key }
         : { kind: "callwrap", helper: key, call: seedCall(node) };
+    case "arrIncludes":
+      return { kind: "arrIncludes", call: seedList(node), item: emptyLiteral() };
+    case "reverts":
+      return { kind: "reverts", call: seedCall(node) };
+    case "orElse":
+      return { kind: "orElse", primary: seedCall(node), fallback: emptyLiteral() };
+    case "safeOwners":
+    case "safeThreshold":
+    case "safeIsOwner":
+    case "safeGuard":
+    case "safeModules":
+    case "safeNonce":
+      return node.kind === "safe"
+        ? { ...node, read: SAFE_READS[key] as SafeRead }
+        : {
+            kind: "safe",
+            read: SAFE_READS[key] as SafeRead,
+            safe: seedAddress(node),
+            owner: emptyLiteral(),
+          };
+    case "tokenAmount":
+      // The number in hand is the amount; the token is filled in next.
+      return { kind: "tokenAmount", amount: seedValue(node), token: emptyLiteral() };
+    case "tokenDecimals":
+      return { kind: "tokenDecimals", token: seedAddress(node) };
+    case "all":
+    case "any":
+    case "count": {
+      if (node.kind === "quant") return { ...node, op: key as QuantOp };
+      const list = seedList(node);
+      // The test starts as a comparison of the item with a value.
+      return {
+        kind: "quant",
+        op: key as QuantOp,
+        call: list,
+        predicate: {
+          kind: "cmp",
+          op: "==",
+          left: { kind: "element", type: elementTypeOf(list) ?? "" },
+          right: emptyLiteral(),
+        },
+      };
+    }
+    case "element":
+      return node;
     case "split":
       return { kind: "split", call: seedCall(node), delimiter: " ", index: "0" };
     case "includes":
-    case "charset":
       return node.kind === "strtest"
         ? { ...node, helper: key }
         : { kind: "strtest", helper: key, call: seedCall(node), arg: "" };
@@ -232,7 +332,18 @@ const SOURCE_ICONS: Partial<Record<NodeKey, IconName>> = {
   chainId: "chainId",
   codeHash: "code",
   codeAt: "code",
+  element: "value",
 };
+
+/** The item of a quantifier's test, as a source: listed only inside one. */
+const ELEMENT_LABEL = "the item";
+
+/**
+ * The ABI type of the item being tested, for every value inside a
+ * quantifier's test, and undefined outside one. The pickers read it to
+ * offer the item as a value; whoever renders a test provides it.
+ */
+export const ElementScope = createContext<string | undefined>(undefined);
 
 /** What a source value is, as a fixed label: its icon and name. Shown
  *  where the kind is on display but changed elsewhere. */
@@ -243,7 +354,7 @@ export function SourceLabel({ node }: { node: ValueExpr }) {
   return (
     <span className="inline-flex items-center gap-1.5 px-1.5 text-xs font-mono text-[var(--color-ink-2)]">
       {icon && <LineIcon name={icon} className="size-3.5 opacity-80" />}
-      {entry?.label ?? key}
+      {key === "element" ? ELEMENT_LABEL : (entry?.label ?? key)}
     </span>
   );
 }
@@ -259,11 +370,15 @@ export function SourcePicker({
   iconOnly = false,
   noLiteral = false,
   accepts,
+  elementType,
   title = "Change what this value is",
   className,
 }: {
   node: ValueExpr;
   onConvert: (next: ValueExpr) => void;
+  /** Inside a quantifier's test: the ABI type of the item being tested,
+   *  which is then offered as a value. */
+  elementType?: string;
   /** Show the current kind as its icon alone, for tight places. */
   iconOnly?: boolean;
   /** Leave plain text out: the value being checked has to be read from
@@ -276,6 +391,8 @@ export function SourcePicker({
   title?: string;
   className?: string;
 }) {
+  const scope = useContext(ElementScope);
+  const itemType = elementType ?? scope;
   const current = nodeKey(node);
   const currentIcon = SOURCE_ICONS[current];
   const trigger = iconOnly ? (
@@ -311,12 +428,24 @@ export function SourcePicker({
       icon: icon ? <LineIcon name={icon} className="size-3.5" /> : undefined,
     };
   });
+  const itemFits =
+    !accepts ||
+    accepts === "unknown" ||
+    (!!itemType && categoryFromAbiType(itemType) === accepts);
+  if (itemType !== undefined && itemFits)
+    // First: inside a test, the item is what a value usually is.
+    options.unshift({
+      value: "element",
+      label: ELEMENT_LABEL,
+      description: "The item of the list the test is run on.",
+      icon: <LineIcon name="value" className="size-3.5" />,
+    });
   return (
     <Select
       variant="chip"
       value={current}
       options={options}
-      onChange={(key) => onConvert(convertNode(node, key))}
+      onChange={(key) => onConvert(freshSource(node, key, itemType))}
       trigger={trigger}
       title={title}
       aria-label={trigger ? title : undefined}
@@ -330,7 +459,6 @@ const OP_FAMILY: Partial<Record<NodeKey, OpFamily>> = {
   arith: "arith",
   cmp: "cmp",
   logic: "logic",
-  bytes: "bytes",
 };
 
 /** One choice in the palette: the kind it wraps the value in, and for an
@@ -349,6 +477,7 @@ const ARITH: PaletteItem[] = [
   { key: "arith", op: "-", label: "−", name: "subtract" },
   { key: "arith", op: "*", label: "×", name: "multiply" },
   { key: "divFloor", label: "÷", name: "divide, rounding down" },
+  { key: "sum", label: "Σ", name: "the total of a list of numbers" },
 ];
 const ARITH_MORE: PaletteItem[] = [
   { key: "arith", op: "//", label: "//", name: "integer division, truncating" },
@@ -371,22 +500,32 @@ const LOGIC: PaletteItem[] = [
   { key: "logic", op: "xor", label: "xor", name: "exactly one is true" },
   { key: "not", label: "not", name: "the opposite" },
 ];
-/** What can be read of an address: the sources, wrapped around it. */
-const OF_ADDRESS: PaletteItem[] = [
-  { key: "balance", label: "balance of", name: "the balance of this address" },
-  { key: "codeHash", label: "code hash of", name: "the hash of this address's code" },
-  { key: "codeAt", label: "code of", name: "the code deployed at this address" },
+/** What can be read of a Safe. Shown only on an address that is one. */
+const OF_SAFE: PaletteItem[] = [
+  { key: "safeThreshold", label: "threshold", name: "how many owners must sign" },
+  { key: "safeOwners", label: "owners", name: "the list of owners" },
+  { key: "safeIsOwner", label: "is owner", name: "whether an address is an owner" },
+  { key: "safeGuard", label: "guard", name: "the transaction guard, zero when none" },
+  { key: "safeModules", label: "modules", name: "the list of enabled modules" },
+  { key: "safeNonce", label: "nonce", name: "the next transaction nonce" },
+];
+/** What can be asked of what a list or a text holds. */
+const CONTENTS: PaletteItem[] = [
+  { key: "arrIncludes", label: "contains item", name: "whether a list holds an item" },
+  { key: "includes", label: "contains text", name: "whether a string contains a substring" },
+  { key: "all", label: "every item", name: "whether every item passes a test" },
+  { key: "any", label: "some item", name: "whether some item passes a test" },
+  { key: "count", label: "count items", name: "how many items pass a test" },
+  { key: "len", label: "length", name: "how many elements" },
 ];
 const OTHER: PaletteItem[] = [
-  { key: "numformat", label: "format as decimal", name: "a raw integer as a decimal string" },
-  { key: "numparse", label: "parse decimal", name: "a decimal string as a raw integer" },
-  { key: "bytes", op: "&", label: "bitwise", name: "bitwise and, or, xor and shifts" },
-  { key: "len", label: "length", name: "how many elements" },
   { key: "bytelen", label: "byte length", name: "how many bytes" },
   { key: "hash", label: "hash", name: "keccak256 of the value" },
   { key: "split", label: "split text", name: "one segment of a string" },
-  { key: "includes", label: "contains text", name: "whether a string contains a substring" },
-  { key: "charset", label: "characters in class", name: "whether every character is in a class" },
+  { key: "reverts", label: "reverts", name: "whether the call reverts" },
+  { key: "orElse", label: "fallback", name: "a fallback for when the call reverts" },
+  { key: "tokenAmount", label: "token amount", name: "a number of tokens, in the token's base units" },
+  { key: "tokenDecimals", label: "token decimals", name: "the decimals of this token" },
 ];
 
 /**
@@ -401,10 +540,14 @@ export function WrapMenu({
   node,
   depth,
   onConvert,
+  isSafe = false,
 }: {
   node: ValueExpr;
   depth: number;
   onConvert: (next: ValueExpr) => void;
+  /** The value is an address known to be a Safe (see useIsSafe): the Safe
+   *  reads are offered on it, and on nothing else. */
+  isSafe?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [more, setMore] = useState(false);
@@ -412,7 +555,7 @@ export function WrapMenu({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const entries: CatalogEntry[] = wrapEntriesFor(node, depth);
+  const entries: CatalogEntry[] = wrapEntriesFor(node, depth, { isSafe });
   const valid = new Set(entries.map((entry) => entry.key));
   const cat = inferCategory(node);
   // An operator is offered when its family takes this value AND the
@@ -552,7 +695,9 @@ export function WrapMenu({
       )}
       {row("Comparison", COMPARE.map((item) => button(item)))}
       {row("Logic", LOGIC.map((item) => button(item)))}
-      {row("Address", OF_ADDRESS.map((item) => button(item, true)))}
+      {/* Only an address that is a Safe has these: no row otherwise. */}
+      {isSafe && row("Safe", OF_SAFE.map((item) => button(item, true)))}
+      {row("Contains", CONTENTS.map((item) => button(item, true)))}
       {row("Other", OTHER.map((item) => button(item, true)))}
     </div>
   );

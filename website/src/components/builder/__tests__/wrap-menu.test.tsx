@@ -17,12 +17,12 @@ const call = (returnTypes: string[]): CallNode => ({
 
 const COMBINE = "Combine or transform this value";
 
-function setup(node: ValueExpr, depth = 0) {
+function setup(node: ValueExpr, depth = 0, isSafe = false) {
   const onConvert = vi.fn();
   const user = userEvent.setup();
   render(
     <div>
-      <WrapMenu node={node} depth={depth} onConvert={onConvert} />
+      <WrapMenu node={node} depth={depth} onConvert={onConvert} isSafe={isSafe} />
       <p>elsewhere</p>
     </div>,
   );
@@ -56,29 +56,36 @@ describe("WrapMenu", () => {
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
   });
 
-  it("lays the operations out in five rows", async () => {
+  it("lays the operations out in four rows", async () => {
     const { user } = setup(literal("5"));
     const palette = await openPalette(user);
-    for (const row of ["Arithmetic", "Comparison", "Logic", "Address", "Other"])
+    for (const row of ["Arithmetic", "Comparison", "Logic", "Other"])
       expect(within(palette).getByText(row)).toBeTruthy();
     const names = (label: string) =>
       within(within(palette).getByText(label).parentElement as HTMLElement)
         .getAllByRole("button")
         .map((b) => b.textContent);
-    expect(names("Arithmetic")).toEqual(["+", "−", "×", "÷", "more"]);
+    expect(names("Arithmetic")).toEqual(["+", "−", "×", "÷", "Σ", "more"]);
     expect(names("Comparison")).toEqual(["==", "!=", "<", "<=", ">", ">="]);
     expect(names("Logic")).toEqual(["and", "or", "xor", "not"]);
-    expect(names("Address")).toEqual(["balance of", "code hash of", "code of"]);
-    expect(names("Other")).toEqual([
-      "format as decimal",
-      "parse decimal",
-      "bitwise",
+    // What is read of an address is picked as a kind of value, not here.
+    expect(within(palette).queryByText("Address")).toBeNull();
+    expect(names("Contains")).toEqual([
+      "contains item",
+      "contains text",
+      "every item",
+      "some item",
+      "count items",
       "length",
+    ]);
+    expect(names("Other")).toEqual([
       "byte length",
       "hash",
       "split text",
-      "contains text",
-      "characters in class",
+      "reverts",
+      "fallback",
+      "token amount",
+      "token decimals",
     ]);
   });
 
@@ -146,24 +153,26 @@ describe("WrapMenu", () => {
         "compare with <=",
         "compare with >",
         "compare with >=",
-        "a raw integer as a decimal string",
-        "bitwise and, or, xor and shifts",
+        "whether the call reverts",
+        "a fallback for when the call reverts",
+        "a number of tokens, in the token's base units",
       ],
       disabled: [
+        "the total of a list of numbers",
         "both are true",
         "either is true",
         "exactly one is true",
         "the opposite",
-        "the balance of this address",
-        "the hash of this address's code",
-        "the code deployed at this address",
-        "a decimal string as a raw integer",
+        "whether a list holds an item",
+        "whether a string contains a substring",
+        "whether every item passes a test",
+        "whether some item passes a test",
+        "how many items pass a test",
         "how many elements",
         "how many bytes",
         "keccak256 of the value",
         "one segment of a string",
-        "whether a string contains a substring",
-        "whether every character is in a class",
+        "the decimals of this token",
       ],
     });
   });
@@ -186,19 +195,20 @@ describe("WrapMenu", () => {
       enabled: [
         "compare with ==",
         "compare with !=",
-        "a decimal string as a raw integer",
+        "whether a string contains a substring",
         "how many elements",
         "how many bytes",
         "keccak256 of the value",
         "one segment of a string",
-        "whether a string contains a substring",
-        "whether every character is in a class",
+        "whether the call reverts",
+        "a fallback for when the call reverts",
       ],
       disabled: [
         "add",
         "subtract",
         "multiply",
         "divide, rounding down",
+        "the total of a list of numbers",
         "compare with <",
         "compare with <=",
         "compare with >",
@@ -207,21 +217,17 @@ describe("WrapMenu", () => {
         "either is true",
         "exactly one is true",
         "the opposite",
-        "the balance of this address",
-        "the hash of this address's code",
-        "the code deployed at this address",
-        "a raw integer as a decimal string",
-        "bitwise and, or, xor and shifts",
+        "whether a list holds an item",
+        "whether every item passes a test",
+        "whether some item passes a test",
+        "how many items pass a test",
+        "a number of tokens, in the token's base units",
+        "the decimals of this token",
       ],
     });
   });
 
-  describe("the Address row", () => {
-    const ADDRESS_ROW = [
-      "the balance of this address",
-      "the hash of this address's code",
-      "the code deployed at this address",
-    ];
+  describe("comparisons by kind of value", () => {
     const COMPARISONS = ["==", "!=", "<", "<=", ">", ">="].map(
       (op) => `compare with ${op}`,
     );
@@ -231,25 +237,6 @@ describe("WrapMenu", () => {
       cleanup();
       return result;
     };
-
-    it.each([
-      ["a call returning an address", call(["address"])],
-      ["a typed 0x address", literal(T)],
-      ["@me", literal("@me")],
-    ])("is offered for %s", async (_name, node) => {
-      const { enabled } = await split(node);
-      for (const name of ADDRESS_ROW) expect(enabled).toContain(name);
-    });
-
-    it.each([
-      ["a number", call(["uint256"])],
-      ["a typed number", literal("5")],
-      ["a boolean", call(["bool"])],
-      ["a string", call(["string"])],
-    ])("is greyed out for %s", async (_name, node) => {
-      const { disabled } = await split(node);
-      for (const name of ADDRESS_ROW) expect(disabled).toContain(name);
-    });
 
     it("compares an address with == and != only", async () => {
       const { enabled, disabled } = await split(call(["address"]));
@@ -274,48 +261,74 @@ describe("WrapMenu", () => {
       const { enabled } = await split(literal(""));
       expect(enabled.filter((n) => COMPARISONS.includes(n))).toEqual(COMPARISONS);
     });
+  });
 
-    it.each([
-      ["a call returning an address", call(["address"])],
-      ["a typed address", literal(T)],
-    ])("wraps %s in 'balance of', keeping it as the account", async (_name, node) => {
-      const { user, onConvert } = setup(node);
-      const palette = await openPalette(user);
-      await user.click(
-        within(palette).getByRole("button", { name: "the balance of this address" }),
-      );
-      expect(onConvert).toHaveBeenCalledExactlyOnceWith({
-        kind: "balance",
-        token: "ETH",
-        account: node,
-      });
+  describe("the reads of a Safe", () => {
+    const SAFE_READS = [
+      "how many owners must sign",
+      "the list of owners",
+      "whether an address is an owner",
+      "the transaction guard, zero when none",
+      "the list of enabled modules",
+      "the next transaction nonce",
+    ];
+    const names = (palette: HTMLElement) => {
+      const { enabled, disabled } = choices(palette);
+      return [...enabled, ...disabled];
+    };
+
+    it("are not in the palette for an address that is not a Safe", async () => {
+      const { user } = setup(literal(T));
+      const all = names(await openPalette(user));
+      for (const read of SAFE_READS) expect(all).not.toContain(read);
     });
 
-    it("wraps an address in its code hash and its code", async () => {
-      const node = call(["address"]);
-      const pick = async (name: string) => {
-        const { user, onConvert } = setup(node);
-        const palette = await openPalette(user);
-        await user.click(within(palette).getByRole("button", { name }));
-        cleanup();
-        return onConvert.mock.calls[0][0];
-      };
-      expect(await pick("the hash of this address's code")).toEqual({
-        kind: "codeHash",
-        address: node,
-      });
-      expect(await pick("the code deployed at this address")).toEqual({
-        kind: "codeAt",
-        address: node,
+    it("appear for an address that is one", async () => {
+      const { user } = setup(literal(T), 0, true);
+      expect(choices(await openPalette(user)).enabled).toEqual(
+        expect.arrayContaining(SAFE_READS),
+      );
+    });
+
+    it("wrap the address in the read that is picked", async () => {
+      const { user, onConvert } = setup(literal(T), 0, true);
+      const palette = await openPalette(user);
+      await user.click(
+        within(palette).getByRole("button", { name: "how many owners must sign" }),
+      );
+      expect(onConvert).toHaveBeenCalledWith({
+        kind: "safe",
+        read: "threshold",
+        safe: literal(T),
+        owner: literal(""),
       });
     });
   });
 
-  it("offers only the length of a list", async () => {
+  it("offers a list its length, membership, the item tests and the revert probe", async () => {
     const { user } = setup(call(["address[]"]));
     expect(choices(await openPalette(user)).enabled).toEqual([
+      "whether a list holds an item",
+      "whether every item passes a test",
+      "whether some item passes a test",
+      "how many items pass a test",
       "how many elements",
+      "whether the call reverts",
     ]);
+  });
+
+  it("offers the sum of a list of numbers only", async () => {
+    const { user } = setup(call(["uint256[]"]));
+    expect(choices(await openPalette(user)).enabled).toContain(
+      "the total of a list of numbers",
+    );
+  });
+
+  it("offers no fallback for a list: it has no single value to fall back to", async () => {
+    const { user } = setup(call(["uint256[]"]));
+    expect(choices(await openPalette(user)).disabled).toContain(
+      "a fallback for when the call reverts",
+    );
   });
 
   it("leaves hash and split out for a nested value", async () => {
@@ -326,10 +339,13 @@ describe("WrapMenu", () => {
     expect(enabled).toContain("whether a string contains a substring");
   });
 
-  it("shows no button at all when nothing can wrap the value", () => {
-    // Several return values with none picked yet.
-    setup(call(["uint256", "address"]));
-    expect(screen.queryByRole("button", { name: COMBINE })).toBeNull();
+  it("offers only the revert probe while a call's return is not picked", async () => {
+    // Several return values with none picked yet: nothing to compute with,
+    // but whether the call reverts does not depend on what it returns.
+    const { user } = setup(call(["uint256", "address"]));
+    expect(choices(await openPalette(user)).enabled).toEqual([
+      "whether the call reverts",
+    ]);
   });
 
   it("does not pick a greyed out choice", async () => {
@@ -351,7 +367,6 @@ describe("WrapMenu", () => {
     ["compare with <=", { kind: "cmp", op: "<=" }],
     ["compare with >", { kind: "cmp", op: ">" }],
     ["compare with >=", { kind: "cmp", op: ">=" }],
-    ["bitwise and, or, xor and shifts", { kind: "bytes", op: "&" }],
   ])("picking '%s' wraps the value with that operator set", async (name, shape) => {
     const node = call(["uint256"]);
     const { user, onConvert } = setup(node);
@@ -434,10 +449,15 @@ describe("WrapMenu", () => {
       a: number,
       b: literal(""),
     });
-    expect(await pick(number, "a raw integer as a decimal string")).toEqual({
-      kind: "numformat",
-      value: number,
-      decimals: "18",
+    expect(await pick(number, "a number of tokens, in the token's base units")).toEqual({
+      kind: "tokenAmount",
+      amount: number,
+      token: literal(""),
+    });
+    const token = call(["address"]);
+    expect(await pick(token, "the decimals of this token")).toEqual({
+      kind: "tokenDecimals",
+      token,
     });
     expect(await pick(text, "how many elements")).toEqual({
       kind: "callwrap",

@@ -16,6 +16,7 @@ import {
   simulationSender,
   type ExecutionContext,
 } from "./context";
+import { ExecutorIsSafe } from "./useIsSafe";
 import { createLiveTag, evml } from "./evml";
 import { SimRing } from "./SimRing";
 import { isFresh } from "./simulation";
@@ -241,13 +242,19 @@ function BuilderBody({
           eye={protectedEye}
           eyeSubject="the protected batch"
         >
-          <AssertionsStage
-            chainId={chainId}
-            executor={executor}
-            scriptState={scriptState}
-            suggest={suggest}
-            simulation={protectedSim}
-          />
+          {/* `@me` is the executor: a Safe once "From" is one and its
+              address has checked out. */}
+          <ExecutorIsSafe.Provider
+            value={context.kind === "safe" && contextCheck.state === "ok"}
+          >
+            <AssertionsStage
+              chainId={chainId}
+              executor={executor}
+              scriptState={scriptState}
+              suggest={suggest}
+              simulation={protectedSim}
+            />
+          </ExecutorIsSafe.Provider>
         </Section>
 
         <Section

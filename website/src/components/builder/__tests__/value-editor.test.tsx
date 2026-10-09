@@ -7,6 +7,9 @@ import type { CallHop, CallNode, Path, ValueExpr } from "../assertion-model";
 import { ExpressionHarness, type Sides } from "./helpers/expression-harness";
 import { clearContracts, registerContract } from "./helpers/fake-contracts";
 
+vi.mock("../useIsSafe", async () =>
+  (await import("./helpers/fake-safe")).fakeIsSafeModule(),
+);
 vi.mock("../useContractFunctions", async (importOriginal) =>
   (await import("./helpers/fake-contracts")).fakeContractFunctionsModule(
     await importOriginal(),
@@ -437,17 +440,18 @@ describe("ValueSlot: nested operands", () => {
   });
 
   it("puts a value's extra settings behind a chip that opens the tray", async () => {
+    const name = call(T, [hop({ fnName: "name", returnTypes: ["string"] })]);
     const { user, subject, state, tray } = setup({
-      subject: { kind: "numformat", value: totalSupply(), decimals: "18" },
+      subject: { kind: "split", call: name, delimiter: " ", index: "0" },
       expected: literal(""),
     });
-    await user.click(subject.getByRole("button", { name: "18 decimals" }));
+    await user.click(subject.getByRole("button", { name: 'by " ", #0' }));
     expect(state().openPath).toEqual(["subject"]);
-    const decimals = tray.getByDisplayValue("18");
-    await user.clear(decimals);
-    await user.type(decimals, "6");
-    expect((state().root.subject as any).decimals).toBe("6");
-    expect(subject.getByRole("button", { name: "6 decimals" })).toBeTruthy();
+    const segment = tray.getByDisplayValue("0");
+    await user.clear(segment);
+    await user.type(segment, "2");
+    expect((state().root.subject as any).index).toBe("2");
+    expect(subject.getByRole("button", { name: 'by " ", #2' })).toBeTruthy();
   });
 });
 
@@ -512,7 +516,7 @@ describe("ValueSlot: combining and unwrapping", () => {
     ["min of values", { kind: "minmax", op: "min", items: [literal("1"), literal("2")] }, literal("1")],
     ["an absolute difference", { kind: "absDiff", a: literal("3"), b: literal("4") }, literal("3")],
     ["a negation", { kind: "not", operand: literal("true") }, literal("true")],
-    ["a formatted number", { kind: "numformat", value: literal("9"), decimals: "18" }, literal("9")],
+    ["a token amount", { kind: "tokenAmount", amount: literal("9"), token: literal("DAI") }, literal("9")],
   ] as [string, ValueExpr, ValueExpr][])(
     "unwraps %s to its first operand",
     async (_name, node, first) => {

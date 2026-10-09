@@ -8,6 +8,9 @@ import { clearContracts, registerContract } from "./helpers/fake-contracts";
 import { type FakeTag, useFreshTag } from "./helpers/fake-tag";
 import { resetWallet, wallet } from "./helpers/fake-wagmi";
 
+vi.mock("../useIsSafe", async () =>
+  (await import("./helpers/fake-safe")).fakeIsSafeModule(),
+);
 vi.mock("@evmcrispr/editor", async () =>
   (await import("./helpers/fake-tag")).fakeEditorModule(),
 );

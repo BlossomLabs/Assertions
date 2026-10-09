@@ -4,8 +4,11 @@ import type { OpFamily } from "@evmcrispr/sdk/onchain";
 import {
   type Category,
   type ValueExpr,
+  elementTypeOf,
   familyOpsFor,
   inferCategory,
+  isListSource,
+  producedType,
 } from "../assertion-model";
 import { REGISTRIES } from "../helper-owners";
 // Circular with NodePicker (it renders the entries this module computes);
@@ -18,7 +21,10 @@ import { type NodeKey, nodeKey } from "./NodePicker";
  * when its helper exists in a registry, descriptions come from the
  * registry, and any mismatch between the two is reported at dev time.
  *
- * The on-chain (`!`) helper surface spans five modules since the unified
+ * The on-chain (`!`) helper surface the catalog reads spans seven modules:
+ * safe owns the reads of a Safe (@safe:threshold!, @safe:owners!, ...),
+ * offered only on an address known to be one, and token owns the amount
+ * and decimals helpers. The other five date from the unified
  * helper rework: std owns the composition engines (@calc!/@bool!/@bytes!/
  * @hash!/@balance!) plus the revert probe @reverts! and the `assert` command
  * itself, lang owns the array/string faces (@len!, @str.split!,
@@ -52,6 +58,8 @@ const faces = (
 const onchainFaces = (module: string) => faces(module, (name) => name.endsWith("!"));
 
 const helpers: Record<string, HelperInfo> = {
+  ...onchainFaces("safe"),
+  ...onchainFaces("token"),
   ...onchainFaces("lang"),
   ...onchainFaces("std"),
   ...onchainFaces("contracts"),
@@ -59,7 +67,14 @@ const helpers: Record<string, HelperInfo> = {
   ...faces("math"),
 };
 
-type Accepts = (node: ValueExpr, cat: Category) => boolean;
+/** What is known about a value beyond its shape, looked up on the chain. */
+export interface NodeFacts {
+  /** The value is an address, and that address is a Safe (for a call,
+   *  the address it returns now). */
+  isSafe?: boolean;
+}
+
+type Accepts = (node: ValueExpr, cat: Category, facts?: NodeFacts) => boolean;
 
 /** Accepts when the composition table allows this family over the node's
  *  category (checked against itself, the other operand doesn't exist
@@ -84,6 +99,31 @@ const bytesSource: Accepts = (node, cat) =>
   (node.kind === "call" || node.kind === "codeAt") &&
   (cat === "string" || cat === "bytes" || cat === "unknown");
 
+/** A list to look into or measure: an array a call returns, or a Safe's
+ *  owners or modules. */
+const listSource: Accepts = (node, cat) =>
+  isListSource(node) && (cat === "array" || cat === "unknown");
+/** A list whose items a test can be run on: one word each. A list not
+ *  typed yet is not ruled out. */
+const testableList: Accepts = (node, cat) =>
+  isListSource(node) && (cat === "unknown" || elementTypeOf(node) !== null);
+/** A read that can fail: only a call can revert. */
+const liveCall: Accepts = (node) => node.kind === "call";
+/** A read whose value a fallback can stand in for: both are one value of
+ *  the same kind, so a list or several return values have none. */
+const fallbackable: Accepts = (node, cat) =>
+  node.kind === "call" && cat !== "array" && cat !== "tuple";
+/** A list of numbers a call returns (or one not typed yet). */
+const numberList: Accepts = (node, cat) => {
+  if (node.kind !== "call") return false;
+  if (cat === "unknown") return true;
+  return cat === "array" && /^u?int\d*\[\d*\]$/.test(producedType(node) ?? "");
+};
+/** An address known to be a Safe: one typed in, an ENS name, `@me`, or
+ *  the address a call returns now. */
+const safeAddress: Accepts = (node, _cat, facts) =>
+  (node.kind === "literal" || node.kind === "call") && !!facts?.isSafe;
+
 /** What `@hash!` digests: a bytes-like source, or the bytes of an address or
  *  a bytes32 word. */
 const hashSource: Accepts = (node, cat) =>
@@ -102,9 +142,6 @@ type HelperRole =
       role: "source";
       key: NodeKey;
       label: string;
-      /** Also offered as a wrap when a node matches (e.g. @codeHash! around
-       *  an address-returning call). */
-      wrapAccepts?: Accepts;
     }
   /** A combinator wrapped around the current node via the (+) menu. */
   | {
@@ -129,10 +166,18 @@ const COMPOSITION_TIME = [
   // contracts: slot derivations over live keys/indices, chat/EVML only
   "slot.mapping!",
   "slot.array!",
-  // std: the revert probe and the fallback it pairs with, reachable
-  // through chat/EVML only (no builder node)
-  "reverts!",
-  "orElse!",
+  // Left out of the builder on purpose: rarely the thing an assertion
+  // checks, and each cost a place in the combine menu. Chat and EVML reach
+  // them: the character-class test, decimal formatting and parsing, and the
+  // bitwise word operators.
+  "str.charset!",
+  "num.format!",
+  "num.parse!",
+  "bytes!",
+  // token: reads without a builder node
+  "allowance!",
+  "symbol!",
+  "totalSupply!",
   // std: the lazy ternary over the core's cond, chat/EVML only
   "ifElse!",
   // std: the abi codec faces and the signature check, chat/EVML only
@@ -192,8 +237,6 @@ const COMPOSITION_TIME = [
   "pow",
   "pow!",
   // lang: array/string on-chain faces without a builder node
-  "all!",
-  "any!",
   "at!",
   "bytes.at!",
   "bytes.concat!",
@@ -204,7 +247,6 @@ const COMPOSITION_TIME = [
   "filter!",
   "find!",
   "flat!",
-  "includes!", // array-includes; the string form is str.includes! below
   "keys!",
   "lookup!",
   "map!",
@@ -220,7 +262,6 @@ const COMPOSITION_TIME = [
   "str.replace!",
   "str.slice!",
   "str.upper!",
-  "sum!",
   "unique!",
   "unzip!",
   "values!",
@@ -239,7 +280,6 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     role: "source",
     key: "balance",
     label: "balance",
-    wrapAccepts: addressCall,
   },
   "block.timestamp!": { role: "source", key: "timestamp", label: "timestamp" },
   "block.number!": {
@@ -252,13 +292,11 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     role: "source",
     key: "codeHash",
     label: "code hash",
-    wrapAccepts: addressCall,
   },
   "codeAt!": {
     role: "source",
     key: "codeAt",
     label: "deployed code",
-    wrapAccepts: addressCall,
   },
   "min!": {
     role: "wrap",
@@ -283,11 +321,106 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     key: "len",
     label: "length of…",
     accepts: (node, cat) =>
-      node.kind === "call" &&
+      isListSource(node) &&
       (cat === "array" ||
         cat === "string" ||
         cat === "bytes" ||
         cat === "unknown"),
+  },
+  "sum!": {
+    role: "wrap",
+    key: "sum",
+    label: "sum of…",
+    accepts: numberList,
+  },
+  // The array form; the string form is str.includes! below.
+  "includes!": {
+    role: "wrap",
+    key: "arrIncludes",
+    label: "contains item…",
+    accepts: listSource,
+  },
+  "all!": {
+    role: "wrap",
+    key: "all",
+    label: "every item…",
+    accepts: testableList,
+  },
+  "any!": {
+    role: "wrap",
+    key: "any",
+    label: "some item…",
+    accepts: testableList,
+  },
+  "count!": {
+    role: "wrap",
+    key: "count",
+    label: "count items…",
+    accepts: testableList,
+  },
+  "reverts!": {
+    role: "wrap",
+    key: "reverts",
+    label: "reverts",
+    accepts: liveCall,
+  },
+  "orElse!": {
+    role: "wrap",
+    key: "orElse",
+    label: "fallback…",
+    accepts: fallbackable,
+  },
+  "owners!": {
+    role: "wrap",
+    key: "safeOwners",
+    label: "owners",
+    accepts: safeAddress,
+  },
+  "threshold!": {
+    role: "wrap",
+    key: "safeThreshold",
+    label: "threshold",
+    accepts: safeAddress,
+  },
+  "isOwner!": {
+    role: "wrap",
+    key: "safeIsOwner",
+    label: "is owner…",
+    accepts: safeAddress,
+  },
+  "guard!": {
+    role: "wrap",
+    key: "safeGuard",
+    label: "guard",
+    accepts: safeAddress,
+  },
+  "modules!": {
+    role: "wrap",
+    key: "safeModules",
+    label: "modules",
+    accepts: safeAddress,
+  },
+  "nonce!": {
+    role: "wrap",
+    key: "safeNonce",
+    label: "nonce",
+    accepts: safeAddress,
+  },
+  // A number becomes an amount of a token; an address is the token whose
+  // decimals are read.
+  "amount!": {
+    role: "wrap",
+    key: "tokenAmount",
+    label: "token amount…",
+    accepts: (node, cat) =>
+      (node.kind === "literal" || node.kind === "call") &&
+      (cat === "uint" || cat === "unknown"),
+  },
+  "decimals!": {
+    role: "wrap",
+    key: "tokenDecimals",
+    label: "token decimals",
+    accepts: addressCall,
   },
   "bytes.len!": {
     role: "wrap",
@@ -313,12 +446,6 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     role: "wrap",
     key: "includes",
     label: "contains substring…",
-    accepts: stringCall,
-  },
-  "str.charset!": {
-    role: "wrap",
-    key: "charset",
-    label: "characters in class…",
     accepts: stringCall,
   },
   "calc!": {
@@ -349,25 +476,11 @@ const HELPER_ROLES: Record<string, HelperRole> = {
       },
     ],
   },
-  "num.format!": {
-    role: "wrap",
-    key: "numformat",
-    label: "format as decimal…",
-    accepts: familyAccepts("arith"),
-  },
-  "num.parse!": {
-    role: "wrap",
-    key: "numparse",
-    label: "parse decimal…",
-    accepts: (node, cat) =>
-      (node.kind === "call" || node.kind === "literal") &&
-      (cat === "string" || cat === "unknown"),
-  },
   "bool!": {
     role: "infix",
     entries: [
       { key: "cmp", label: "comparison…", accepts: familyAccepts("cmp") },
-      // `and` keeps this bool-only: numeric xor lives in the bitwise node.
+      // `and` keeps this bool-only: numeric xor is a bitwise operator.
       {
         key: "logic",
         label: "logic (and/or/xor)…",
@@ -377,16 +490,6 @@ const HELPER_ROLES: Record<string, HelperRole> = {
       // codegen emits. The bitwise word complement is a different thing
       // (@lang:bytes.not!) and stays chat/EVML-level.
       { key: "not", label: "not…", accepts: familyAccepts("logic", "and") },
-    ],
-  },
-  "bytes!": {
-    role: "infix",
-    entries: [
-      {
-        key: "bytes",
-        label: "bitwise (& | ^ << >>)…",
-        accepts: familyAccepts("bytes"),
-      },
     ],
   },
   // The core's read primitive has no registry helper anymore: `@read!` was
@@ -403,18 +506,29 @@ const NODE_GROUP: Partial<Record<NodeKey, string>> = {
   min: "arithmetic",
   max: "arithmetic",
   absDiff: "arithmetic",
-  numformat: "decimals",
-  numparse: "decimals",
   cmp: "comparison & logic",
   logic: "comparison & logic",
   not: "comparison & logic",
-  bytes: "bitwise",
   len: "data",
+  sum: "data",
+  arrIncludes: "data",
+  all: "data",
+  any: "data",
+  count: "data",
+  reverts: "comparison & logic",
+  orElse: "data",
+  safeOwners: "safe",
+  safeThreshold: "safe",
+  safeIsOwner: "safe",
+  safeGuard: "safe",
+  safeModules: "safe",
+  safeNonce: "safe",
+  tokenAmount: "decimals",
+  tokenDecimals: "decimals",
   bytelen: "data",
   hash: "data",
   split: "strings",
   includes: "strings",
-  charset: "strings",
   balance: "environment",
   codeHash: "environment",
   codeAt: "environment",
@@ -437,14 +551,17 @@ if (import.meta.env.DEV) {
       .filter((r) => r.role === "infix")
       .flatMap((r) => r.entries.map((e) => e.key)),
   );
-  const FAMILY_NODE: Record<OpFamily, NodeKey> = {
+  // The bitwise family has no node on purpose (see COMPOSITION_TIME).
+  const FAMILY_NODE: Partial<Record<OpFamily, NodeKey>> = {
     arith: "arith",
     cmp: "cmp",
     logic: "logic",
-    bytes: "bytes",
   };
   const unreachable = [...new Set(INFIX_OPS.map((op) => op.family))].filter(
-    (family) => !reachable.has(FAMILY_NODE[family]),
+    (family) => {
+      const node = FAMILY_NODE[family];
+      return node !== undefined && !reachable.has(node);
+    },
   );
   if (unreachable.length)
     console.warn(
@@ -482,7 +599,11 @@ export function sourceEntries(): CatalogEntry[] {
 
 /** Wraps valid around `node` at `depth`, offered by the (+) menu, tagged
  *  with their option group. */
-export function wrapEntriesFor(node: ValueExpr, depth: number): CatalogEntry[] {
+export function wrapEntriesFor(
+  node: ValueExpr,
+  depth: number,
+  facts?: NodeFacts,
+): CatalogEntry[] {
   const cat = inferCategory(node);
   const entries: CatalogEntry[] = [];
   const push = (key: NodeKey, label: string, description?: string) =>
@@ -493,16 +614,13 @@ export function wrapEntriesFor(node: ValueExpr, depth: number): CatalogEntry[] {
     if (role.role === "wrap") {
       if (depth > 0 && role.topLevelOnly) continue;
       if (role.key === nodeKey(node)) continue;
-      if (role.accepts(node, cat)) push(role.key, role.label, description);
+      if (role.accepts(node, cat, facts)) push(role.key, role.label, description);
     } else if (role.role === "infix") {
       for (const entry of role.entries) {
         if (entry.key === nodeKey(node)) continue;
         if (entry.accepts(node, cat))
           push(entry.key, entry.label, description);
       }
-    } else if (role.role === "source" && role.wrapAccepts) {
-      if (role.key === nodeKey(node)) continue;
-      if (role.wrapAccepts(node, cat)) push(role.key, role.label, description);
     }
   }
   return entries;

@@ -141,23 +141,6 @@ function ArgInputs({
               )}
             </label>
             <div className={argBoxCls}>
-              {live ? (
-                <button
-                  type="button"
-                  className="flex-1 min-w-0 truncate text-left text-xs font-mono text-[var(--color-bp-300)] hover:underline"
-                  title="Edit this value"
-                  onClick={() => onOpenArg?.(hopIndex, i)}
-                >
-                  {summarize(live)}
-                </button>
-              ) : (
-                <input
-                  className="flex-1 min-w-0 bg-transparent font-mono text-sm outline-none placeholder:text-[var(--color-ink-3)]"
-                  value={text}
-                  onChange={(e) => setArg(i, e.target.value)}
-                  spellCheck={false}
-                />
-              )}
               {/* What the argument is. A combined value (arithmetic and
                   the like) has no kind to pick: it is changed in the tray. */}
               {allowCallArgs &&
@@ -180,6 +163,23 @@ function ArgInputs({
                     className="shrink-0 [&>button]:border-0 [&>button]:gap-0.5 [&>button]:text-[var(--color-bp-300)]"
                   />
                 )}
+              {live ? (
+                <button
+                  type="button"
+                  className="flex-1 min-w-0 truncate text-left text-xs font-mono text-[var(--color-bp-300)] hover:underline"
+                  title="Edit this value"
+                  onClick={() => onOpenArg?.(hopIndex, i)}
+                >
+                  {summarize(live)}
+                </button>
+              ) : (
+                <input
+                  className="flex-1 min-w-0 bg-transparent font-mono text-sm outline-none placeholder:text-[var(--color-ink-3)]"
+                  value={text}
+                  onChange={(e) => setArg(i, e.target.value)}
+                  spellCheck={false}
+                />
+              )}
             </div>
             {live && !argFits(live, input.type) && (
               <ArgMismatch value={live} type={input.type} />

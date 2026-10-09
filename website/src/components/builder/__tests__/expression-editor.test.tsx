@@ -10,6 +10,9 @@ import { ExpressionAssertionEditor } from "../ExpressionAssertionEditor";
 import { clearContracts, registerContract } from "./helpers/fake-contracts";
 import { type FakeTag, useFreshTag } from "./helpers/fake-tag";
 
+vi.mock("../useIsSafe", async () =>
+  (await import("./helpers/fake-safe")).fakeIsSafeModule(),
+);
 vi.mock("@evmcrispr/editor", async () =>
   (await import("./helpers/fake-tag")).fakeEditorModule(),
 );

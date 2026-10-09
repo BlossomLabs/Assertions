@@ -13,6 +13,7 @@ import {
 } from "./assertion-model";
 import { buildExprText } from "./assertion-codegen";
 import { previewSubjectValue } from "./compile-adapter";
+import { type AddressReader, CurrentAddress } from "./useIsSafe";
 import {
   CallAddressContext,
   type CallAddressResolver,
@@ -215,7 +216,19 @@ export function ExpressionAssertionEditor({
     assertion.subject.kind === "clock" &&
     assertion.subject.which === "timestamp";
 
+  // What an address-returning call returns now, read the way the
+  // assertion would read it: how a call is known to return a Safe.
+  const readAddress = useCallback<AddressReader>(
+    async (node) => {
+      if (!chainClient) return null;
+      const preview = await previewSubjectValue(tag, chainClient, script, node, chainId);
+      return preview.kind === "value" ? preview.text : null;
+    },
+    [tag, chainClient, script, chainId],
+  );
+
   return (
+    <CurrentAddress.Provider value={readAddress}>
     <div ref={rootRef} className="space-y-4">
       {/* The comparison reads top to bottom: the value on its own line,
           then the operator and what it is compared with. Every value is
@@ -335,5 +348,6 @@ export function ExpressionAssertionEditor({
         </div>
       )}
     </div>
+    </CurrentAddress.Provider>
   );
 }

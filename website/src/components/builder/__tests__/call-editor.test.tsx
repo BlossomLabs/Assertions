@@ -345,7 +345,12 @@ describe("CallEditor: arguments that must be of a type", () => {
 
   it("offers only the kinds that can produce the argument's type", async () => {
     const ALWAYS = ["value", "contract call"];
-    const NUMBER = ["balance", "timestamp", "block number", "chain id"];
+    const NUMBER = [
+      "balance",
+      "timestamp",
+      "block number",
+      "chain id",
+    ];
     expect(await offered("address")).toEqual(ALWAYS);
     expect(await offered("uint256")).toEqual([...ALWAYS, ...NUMBER]);
     expect(await offered("bool")).toEqual(ALWAYS);

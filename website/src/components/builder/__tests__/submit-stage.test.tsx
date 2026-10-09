@@ -240,6 +240,44 @@ describe("SubmitStage: the final script and sending", () => {
     expect(screen.getByText("0xabcd…0001")).toBeTruthy();
   });
 
+  it.each([
+    ["reports no atomic batches", "unsupported"],
+    ["cannot answer", "error"],
+  ] as const)("refuses to send from a wallet that %s", (_name, atomic) => {
+    wallet.address = FROM;
+    wallet.client = {};
+    wallet.atomic = atomic;
+    show("pass", sim({}));
+    expect(
+      (screen.getByRole("button", { name: "Execute batch" }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(true);
+    expect(screen.getByText(/cannot send an atomic batch/)).toBeTruthy();
+  });
+
+  it.each(["supported", "ready"] as const)(
+    "sends from a wallet whose atomic batches are %s",
+    (atomic) => {
+      wallet.address = FROM;
+      wallet.client = {};
+      wallet.atomic = atomic;
+      show("pass", sim({}));
+      expect(
+        (screen.getByRole("button", { name: "Execute batch" }) as HTMLButtonElement)
+          .disabled,
+      ).toBe(false);
+      expect(screen.queryByText(/cannot send an atomic batch/)).toBeNull();
+    },
+  );
+
+  it("does not hold a Safe proposal to the wallet's batching", () => {
+    wallet.address = FROM;
+    wallet.client = {};
+    wallet.atomic = "unsupported";
+    show("pass", sim({}), { kind: "safe", address: OTHER }, OTHER);
+    expect(screen.queryByText(/cannot send an atomic batch/)).toBeNull();
+  });
+
   it("sends a batch built for the connected account itself", () => {
     wallet.address = FROM;
     wallet.client = {};

@@ -94,7 +94,8 @@ function buildProbe(
 ): { probe: string; lineMap: number[] } {
   const sets = spans.filter((s) => isSetSpan(s) && s.node);
   const needed = new Set<CommandSpan>();
-  const queue = [target];
+  // Every def is kept, so what a def reads has to be kept with it.
+  const queue = [target, ...spans.filter((s) => isDefSpan(s) && s.node)];
   while (queue.length) {
     const span = queue.pop() as CommandSpan;
     if (needed.has(span)) continue;

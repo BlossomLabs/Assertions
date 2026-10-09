@@ -44,3 +44,7 @@
 /formal/**/physical-preflight.json
 # Local retained-evidence ledgers; tracked historical records remain tracked.
 /docs/verification/
+
+# Proof campaigns and their checkers are kept outside this repository.
+/formal/
+/scripts/check-*-evidence.py

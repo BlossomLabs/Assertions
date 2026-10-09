@@ -114,3 +114,96 @@ Ids are Gambit's, per contract, for this pass.
 - **Two routes to the same result:** the modexp precompile threshold and routing,
   Operations #1 to #4, #1249, #1250, #1251, #1253, and `mulmod` already
   reducing the base (#1246).
+
+## reduceWords and the word-engine reads, 2026-10-08
+
+A targeted pass over what changed in Collections after the pass above:
+`reduceWords`, `_reduce`, `_stampElements`, `_domainElem` and
+`_checkElementWindows`.
+
+- **Generator:** `gambit mutate --filename contracts/Collections.sol --functions
+  reduceWords _reduce _stampElements _domainElem _checkElementWindows`, same
+  compiler settings as above: 93 mutants. Gambit does not mutate inline
+  assembly, where the comparison mask, the window stamping and the byte read
+  live, so 17 more were written by hand: each term of the mask dropped, less
+  and greater swapped, the truth normalisation removed, the count overwritten
+  instead of added, five entries of the comparison table swapped, the stamp
+  loop stopping after one window or stepping two, and the offset, window and
+  byte reads fixed at index 0.
+- **Stage 1:** each mutant against `forge test --fail-fast` in four scratch
+  worktrees. 108 of 110 killed.
+- **Gap tests:** two, in `MutationGaps.t.sol`, each checked against its mutant.
+  - `_checkElementWindows` reading the first offset for every window survived
+    one of two runs: only a fuzz case caught it.
+    (`test_everyElementWindowIsBounded`)
+  - `_domainElem` reading byte 0 for every index survived: no Solidity test
+    folded over bytes that differ. (`test_foldBytesVisitsEveryByte`)
+- **Equivalent:** `_reduce` #81, `hit & run.stop` as `hit * run.stop`: both are
+  0 or 1.
+
+Stage 2 (Halmos and the Node fuzzers) was not run for this pass.
+
+## The gas pass, 2026-10-08
+
+A targeted pass over what the gas pass changed: `AbiCodec`'s `shape`, the
+one-word validation fast path, the single-pass `tupleLayout` and the one-pass
+`assemble`; Collections' `_callValue`, `_validateResult` and `_prepareCallback`;
+Expressions' `_address` and `_arguments`; Operations' `_foldCase` and
+`_parseDigits`.
+
+- **Generator:** `gambit mutate --functions` over those functions, same compiler
+  settings as above: 694 mutants, of which the 403 in `AbiCodec.body` were left
+  out (the pass changed it only mechanically, `requireValue(cond, ...)` to
+  `if (!cond) fail(...)`), leaving 291. Most of the new code is inline assembly,
+  which Gambit does not mutate, so 63 more were written by hand: each fast-path
+  name answered wrongly or matched without its length, each range check dropped
+  or off by one, the layout arrays under-allocated or mis-stored, every term of
+  `assemble`'s head, tail, prefix and free-pointer arithmetic, the selector copy
+  short or misplaced, each bound of the case fold, and each term of the digit
+  loop.
+- **Stage 1:** each mutant against `forge test --fail-fast` in six scratch
+  copies. 314 of 354 killed.
+- **Stage 2:** the eleven survivors that change behaviour against the Node
+  fuzzers, then the Halmos suites for their contract (every suite for an
+  `AbiCodec` mutant). The Node fuzzers killed five (the checked digit loop and
+  the three case-fold mutants); six passed everything.
+- **Gap tests:** five, in `MutationGaps.t.sol`, each checked against its
+  mutants in a sweep of every survivor.
+  - `_foldCase` stepping two words, stopping after the first, or letting a
+    non-ASCII byte carry into the byte before it: no Solidity test folded more
+    than one word or put a non-ASCII byte beside a boundary character.
+    (`test_caseFoldCoversEveryWordAndSparesNonAscii`)
+  - `_parseDigits`: the unchecked loop taking ":" as a digit survived every
+    stage. Operations #24 and #28 are older code the pass uncovered: inputs of
+    up to 77 digits no longer reach the checked loop, so its own non-digit
+    refusal was only pinned by the fuzzers.
+    (`test_parseUintRefusesNonDigitsOnBothPaths`)
+  - AbiCodec #24 and #27, `word`'s bounds check: an array encoding that ends
+    after its envelope word panicked instead of reverting `InvalidValue(32)`.
+    (`test_unpackRefusesAMissingCount`)
+  - Collections #42 and #44, the second slot of a binary callback declared
+    with other text than the input type: neither its binding nor its
+    validation was pinned, by any stage.
+    (`test_secondSlotOfAnotherTypeIsBoundAndValidated`)
+  - `tupleLayout` with a quarter of its capacity survived every stage: no
+    descriptor in the tests was dense enough to fill the arrays. The same test
+    showed the capacity's `+ 1` was never used, and it was removed, which also
+    lets the test kill the layout without its length words.
+    (`test_tupleLayoutHoldsTheDensestDescriptor`)
+- **Equivalent or unobservable**, 28:
+  - **A fast path switched off or narrowed**, falling through to the general
+    path with the same result: AbiCodec #2, #50, #72, #565, Operations #11, #13,
+    and the one-word check ignoring the descriptor's length (it then only ever
+    matches `bool`).
+  - **A larger allocation:** AbiCodec #509, #511, #513 and the doubled
+    capacity. AbiCodec #505, #506 and #508 are `limit / 2`, now the source.
+  - **Code no production caller reaches:** AbiCodec #47, the static branch of
+    the shape-parsing `validate` overload.
+  - **Work repeated, same result:** Collections #31, #34, #35 (the target
+    checked on every application) and #37, #43 (a same-typed slot validated
+    again).
+  - **Memory nothing reads:** `assemble` without the zero word after the
+    frame, without zeroing the lead (the frame and the selector overwrite all
+    of it) or with an unrounded free pointer.
+  - **Outside the pass:** Operations #1 to #5, the modexp threshold constant,
+    equivalent as recorded above.

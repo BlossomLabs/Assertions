@@ -3,12 +3,12 @@
 <!-- claim-coverage -->
 | | Formally verified | Partially verified | Tested | Partially tested | Scope limitation | Environment assumption | Unverified |
 |---|---|---|---|---|---|---|---|
-| Claims | 140 | 44 | 136 | 3 | 2 | 1 | 0 |
+| Claims | 145 | 44 | 136 | 3 | 2 | 1 | 0 |
 <!-- /claim-coverage -->
 
 Unless a claim specifies an error or resource limit, execution assumes valid ABI decoding, representable intermediate arithmetic, faithful EVM observations and enough gas, stack and memory. External call results may vary with caller, gas and history; consistency is required only where stated.
 
-Verification labels refer to the linked run's source snapshot and stated scope. **Formally verified** means the linked symbolic properties passed within their documented assumptions and bounds; **Partially verified** covers only part of the claim. **Prior snapshot** marks formal evidence not revalidated against the current sources. **Tested** identifies unit, fuzz or differential evidence; **Partially tested** covers only part of the claim. **Scope limitation** records a boundary of the guarantees; **Environment assumption** records a condition required for execution. **Unverified** means no retained passing evidence. Current formal labels reflect the bounded Halmos baseline; separate source and bytecode proof campaigns are excluded. Detailed scope, references and run limitations are in [per-claim evidence](claim-evidence.md).
+Verification labels refer to the linked run's source snapshot and stated scope. **Formally verified** means the linked symbolic properties passed within their documented assumptions and bounds; **Partially verified** covers only part of the claim. **Prior snapshot** marks formal evidence not revalidated against the current sources. **Tested** identifies unit, fuzz or differential evidence; **Partially tested** covers only part of the claim. **Scope limitation** records a boundary of the guarantees; **Environment assumption** records a condition required for execution. **Unverified** means no retained passing evidence. Current formal labels reflect the bounded Halmos baseline; supplemental Dafny evidence retains its own run provenance. Detailed scope, references and run limitations are in [per-claim evidence](claim-evidence.md).
 
 A claim whose text begins with \* changed after the rc1 snapshot: its statement, and the tests behind it, differ from what rc1 recorded.
 
@@ -315,6 +315,11 @@ A claim whose text begins with \* changed after the rc1 snapshot: its statement,
 | L61 | The locally declared IExpressions.evaluateEncoded selector matches Expressions' | Tested (unit) | [Tests & scope](claim-evidence.md#l61) |
 | L62 | Collections is stateless and view/pure only | Tested (unit) | [Tests & scope](claim-evidence.md#l62) |
 | L63 | Collections runtime fits under the EIP-170 limit (and Operations plus Collections together would not) | Tested (unit) | [Tests & scope](claim-evidence.md#l63) |
+| L65 | reduceWords All returns 1 when every lambda result passes the comparison with `bound` and Any when some result does, for EQ, NE, LT, LE, GT, GE and the signed SLT, SLE, SGT, SGE, which read both words as two's-complement int256 | Formally verified | [Proof & scope](claim-evidence.md#l65) |
+| L66 | reduceWords Count returns how many lambda results pass the comparison | Formally verified | [Proof & scope](claim-evidence.md#l66) |
+| L67 | reduceWords All stops at the first miss and Any at the first match, so later elements are never applied; Count applies every element. A reverting application reverts CallbackFailed naming its element | Formally verified | [Proof & scope](claim-evidence.md#l67) |
+| L68 | reduceWords Sum returns the unsigned sum of the lambda results and ignores `cmp` and `bound`; a sum past 2^256 - 1 reverts Panic(0x11) | Formally verified | [Proof & scope](claim-evidence.md#l68) |
+| L69 | reduceWords refuses an unaligned payload (UnalignedWords) and a window past the template (LambdaOffsetOutOfBounds) even on an empty payload; an empty payload returns 1 for All and 0 otherwise without inspecting the target; a code-less target reverts InvalidCallbackTarget and a result that is not one word InvalidCallbackResult naming its element; an out-of-range `mode` or `cmp` is refused by the ABI decoder without data | Formally verified | [Proof & scope](claim-evidence.md#l69) |
 
 ## Expressions
 

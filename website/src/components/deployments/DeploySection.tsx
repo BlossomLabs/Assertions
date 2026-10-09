@@ -486,11 +486,20 @@ export function DeploySection({
         const code = await client.getCode({ address: contract.address });
         return code !== undefined && code !== "0x";
       };
+      // A confirmed transaction is not yet visible everywhere: a public RPC
+      // spreads requests over nodes, and the one answering this read may be
+      // a block behind the one that returned the receipt. Ask again for a
+      // while before calling the deployment missing.
       const requireCode = async (contract: (typeof DEPLOYED_CONTRACTS)[number]) => {
-        if (await hasCode(contract)) return;
+        const deadline = Date.now() + 90_000;
+        for (;;) {
+          if (await hasCode(contract).catch(() => false)) return;
+          if (Date.now() >= deadline) break;
+          await new Promise((resolve) => setTimeout(resolve, 2_000));
+        }
         throw new Error(
           `The ${contract.name} transaction succeeded but no code was ` +
-            "found at the expected address.",
+            "found at the expected address after 90 seconds.",
         );
       };
       // Guard against a stale status check: never send a deployment that is

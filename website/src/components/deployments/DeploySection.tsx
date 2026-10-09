@@ -472,7 +472,10 @@ export function DeploySection({
     }
   }
 
-  async function deploy() {
+  /** Deploys every missing contract: in one batch when the wallet can and
+   *  `oneByOne` is not asked for, otherwise one transaction each. Together
+   *  the contracts can exceed what a chain allows a single transaction. */
+  async function deploy(oneByOne = false) {
     try {
       setDeployState({ step: "switching" });
       await ensureWalletOnChain();
@@ -495,7 +498,7 @@ export function DeploySection({
       const present = await Promise.all(DEPLOYED_CONTRACTS.map(hasCode));
       const missing = DEPLOYED_CONTRACTS.filter((_, i) => !present[i]);
 
-      if (canBatch && missing.length > 1) {
+      if (canBatch && missing.length > 1 && !oneByOne) {
         const contracts = missing.map((contract) => contract.name);
         setDeployState({ step: "sending", contracts });
         const { id } = await walletClient.sendCalls({
@@ -864,6 +867,20 @@ export function DeploySection({
                   : "One transaction per missing contract."}
                 {!isConnected && " Connect a wallet to deploy."}
               </p>
+              {batchDeploy && isConnected && (
+                <p className="dp-note">
+                  If the batch is too large for the network,{" "}
+                  <button
+                    type="button"
+                    disabled={deploying}
+                    onClick={() => void deploy(true)}
+                    className="dp-link-quiet underline hover:text-[var(--color-bp-300)] disabled:opacity-50"
+                  >
+                    deploy them one after the other
+                  </button>
+                  : one transaction per missing contract.
+                </p>
+              )}
             </>
           )}
 

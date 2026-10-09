@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1",
+  "scope": "Release checks for the committed revision that carries reduceWords, the 2026-10-08 gas pass, the re-mined addresses and the SDK pin. The contract sources are byte-identical to the ones the Halmos baseline and the concrete suites ran on, so those results are carried over by source hash, not rerun. The checks listed under `checks` were run at this revision.",
+  "recordedAt": "2026-10-09T01:16:03.552626+00:00",
+  "revision": "46ea5e19f337c88d88bc5eefca54d41cc95d8b18",
+  "previousRun": "docs/gas-pass-checks.json",
+  "baseline": "docs/verification/halmos-gas-pass-20261008",
+  "sourceHashesMatchBaseline": true,
+  "sourceSha256": {
+    "contracts/Assertions.sol": "93327139e5e91d3aaf8eb468d5a259685193da9e5406d64c8d1c342ad647149b",
+    "contracts/Collections.sol": "dfce1d7a1981cd9547e0c3b0f8a6918e4abe155f736344e2b059b46ad940debb",
+    "contracts/Expressions.sol": "f6c93d36c402f81a9a3ae029b40c60d182922fb1b9864b251b4832680c1fb523",
+    "contracts/Operations.sol": "855da3a9a140c204be1fcd947434d403f8d8a7a7f81570fe46a68cb7284e2728",
+    "contracts/lib/AbiCodec.sol": "47f1b165d26d17a619e676002c285d6053f2a998f819b3af2ca446cd9a5be814",
+    "contracts/lib/ERC8211.sol": "cc6cfb97bb1ca7e76b7c64b0c4ceff6c4b1d7c4d74ff453a30ccbecf98657705"
+  },
+  "carriedOverBySourceHash": {
+    "halmos": {
+      "passed": 177,
+      "failed": 0,
+      "incomplete": 0
+    },
+    "checks": [
+      {
+        "name": "full-forge-suite",
+        "command": "forge test",
+        "exitCode": 0,
+        "passed": 629,
+        "failed": 0,
+        "log": "forge.log"
+      },
+      {
+        "name": "canonical-hardhat-suite",
+        "command": "pnpm test",
+        "exitCode": 0,
+        "passed": 740,
+        "solidity": 638,
+        "nodejs": 102,
+        "skipped": 2,
+        "log": "hardhat.log"
+      },
+      {
+        "name": "format-solidity",
+        "command": "forge fmt --check contracts/Assertions.sol contracts/Collections.sol contracts/Expressions.sol contracts/Operations.sol contracts/lib/AbiCodec.sol contracts/lib/ERC8211.sol",
+        "exitCode": 0,
+        "log": "fmt.log"
+      }
+    ]
+  },
+  "sdk": {
+    "repo": "https://github.com/EVMcrispr/evmcrispr.git",
+    "branch": "reduce-words-sdk",
+    "commit": "91fa424d1794a425a94921817e0c72297d06a3cc",
+    "pushed": true
+  },
+  "checks": [
+    {
+      "name": "website-integration",
+      "command": "node scripts/check-integration.mjs (from website/)",
+      "exitCode": 0,
+      "note": "manifest, artifacts, deployment modules, ABIs, verification inputs, SDK addresses and bytecode fixture agree"
+    },
+    {
+      "name": "website-tests",
+      "command": "pnpm test (from website/)",
+      "exitCode": 0,
+      "passed": 549,
+      "failed": 0
+    },
+    {
+      "name": "website-type-check",
+      "command": "pnpm check (from website/)",
+      "exitCode": 0
+    },
+    {
+      "name": "website-docs",
+      "command": "pnpm check:docs (from website/)",
+      "exitCode": 0,
+      "note": "25 pages; 111 evml blocks validate, 105 compile"
+    },
+    {
+      "name": "website-build",
+      "command": "pnpm build (from website/)",
+      "exitCode": 0,
+      "note": "32 pages; run before the pin moved, on the same SDK tree"
+    },
+    {
+      "name": "sdk-unit",
+      "command": "bun test ./test/unit (from website/.evmcrispr/packages/sdk)",
+      "exitCode": 0,
+      "passed": 515,
+      "failed": 0
+    },
+    {
+      "name": "production-format",
+      "command": "forge fmt --check <six production sources>",
+      "exitCode": 0
+    }
+  ],
+  "notRun": [
+    "Separate proof campaigns are kept outside this repository and were not run",
+    "SDK module integration suites as one run at the pinned commit (each touched module's suite was run during development)",
+    "Deployment: no code exists at the listed addresses yet"
+  ]
+}

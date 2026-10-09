@@ -166,6 +166,15 @@ assert @sum!($vault::!{caps()(uint256[])}) <= 10000e18 "caps exceed the limit"
 
 The definition is inlined where it is used, so it must be fully typed. The length of the list is read when the batch executes, so the check covers however many elements there are at that moment.
 
+Count the elements that pass a test with `@count!`, which gives a number to compare:
+
+```evml
+load lang
+
+def @funded! "$who: address -> bool" @bool!($token::!{balanceOf(address)(uint256) $who} >= 1000)
+assert @count!($registry::!{holders()(address[])} @funded!) >= 3 "fewer than three funded holders"
+```
+
 `@filter!`, `@find!`, `@map!` and `@reduce!` work the same way. `@find!` reverts the assertion when no element matches.
 
 ## Check a string
@@ -230,6 +239,18 @@ def @onCouncil! "$o: address -> bool" @includes!($council $o)
 assert @safe:threshold!($councilSafe) >= 3 "threshold too low"
 assert @all!(@safe:owners!($councilSafe) @onCouncil!) == true "unknown signer"
 ```
+
+The contract these helpers read does not have to be an address you know in advance. It can be a call that returns the address, read when the batch executes. Use this when the batch itself changes which contract is the right one, for example after it migrates a vault or rotates a Safe:
+
+```evml
+load safe
+load token
+
+assert @safe:threshold!($registry::!{treasury()(address)}) >= 2 "treasury threshold too low"
+assert @token:decimals!($vault::!{asset()(address)}) == 18 "unexpected asset"
+```
+
+The helper trusts the call to return the kind of contract it expects. If it returns something else, the read reverts and the assertion fails.
 
 The `token`, `vault`, `acl`, `safe` and `governor` modules work the same way. Some of them are experimental, so their helpers may change between versions: the [reference](/docs/reference#helpers) says which, and lists every helper with its arguments.
 

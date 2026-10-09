@@ -17,7 +17,29 @@ import ContractIcon from '../components/ContractIcon.astro';
         <p class="flex items-center gap-2 font-mono text-sm text-[var(--color-bp-300)] mb-2">
           <ContractIcon name="builder" class="size-4" weight={1.6} />
           Assertion Builder
+          <button
+            type="button"
+            id="beta-chip"
+            popovertarget="beta-note"
+            aria-label="Beta: what that means"
+            class="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border border-[var(--color-bp-400)]/40 text-[var(--color-bp-300)] hover:border-[var(--color-bp-400)] hover:bg-[var(--color-bp-500)]/15 transition-colors cursor-pointer"
+          >
+            beta
+          </button>
         </p>
+        <div
+          id="beta-note"
+          popover
+          class="m-0 w-80 max-w-[calc(100vw-2rem)] p-4 rounded-[10px] border border-[var(--color-ink-3)]/25 bg-[var(--color-surface-2)] text-[var(--color-ink)] text-sm leading-relaxed shadow-[0_8px_24px_rgba(8,13,24,0.25)]"
+        >
+          <p class="font-semibold mb-1.5">The builder is in beta</p>
+          <p class="text-[var(--color-ink-2)]">
+            The v2.0 contracts are final. The Assertion Builder is still under
+            active development, so expect changes and fixes. If something does
+            not work as you expect, please report it with the Support button
+            at the bottom right of the page.
+          </p>
+        </div>
         <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight mb-3">
           Build an Assertion
         </h1>
@@ -33,5 +55,18 @@ import ContractIcon from '../components/ContractIcon.astro';
       </div>
     </div>
   </main>
+  <script>
+    // The note opens just under its chip, kept inside the viewport.
+    const chip = document.getElementById("beta-chip");
+    const note = document.getElementById("beta-note");
+    note?.addEventListener("beforetoggle", (event) => {
+      if (!chip || (event as ToggleEvent).newState !== "open") return;
+      const box = chip.getBoundingClientRect();
+      const width = Math.min(320, window.innerWidth - 32);
+      const left = Math.max(16, Math.min(box.left, window.innerWidth - width - 16));
+      note.style.top = `${box.bottom + 8}px`;
+      note.style.left = `${left}px`;
+    });
+  </script>
   <Footer />
 </Layout>

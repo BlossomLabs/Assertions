@@ -1,0 +1,72 @@
+---
+import TableOfContents from '@astrojs/starlight/components/TableOfContents.astro';
+---
+
+<!-- The native table of contents in a card. The script only adds a pointer
+     effect; the links, their semantics and the current-section tracking are
+     Starlight's own. -->
+<div class="docs-line-toc" data-line-toc>
+  <TableOfContents />
+</div>
+
+<script>
+  const initializeLineToc = () => {
+    for (const card of document.querySelectorAll<HTMLElement>('[data-line-toc]')) {
+      if (card.dataset.lineReady) continue;
+      card.dataset.lineReady = 'true';
+
+      const nav = card.querySelector('nav');
+      const links = [...card.querySelectorAll<HTMLAnchorElement>('nav a[href^="#"]')];
+      if (!nav || links.length === 0) continue;
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const current = links.map(() => 0);
+      const targets = links.map(() => 0);
+      let frame = 0;
+      let previousTime = 0;
+
+      const animate = (time: number) => {
+        const elapsed = Math.min((time - previousTime) / 1000, 0.05);
+        const ease = 1 - Math.exp(-elapsed / 0.1);
+        previousTime = time;
+        let moving = false;
+
+        links.forEach((link, index) => {
+          const next = current[index] + (targets[index] - current[index]) * ease;
+          current[index] = Math.abs(targets[index] - next) < 0.002 ? targets[index] : next;
+          link.style.setProperty('--line-intensity', `${(current[index] * 100).toFixed(1)}%`);
+          link.style.setProperty('--line-shift', `${(current[index] * 5).toFixed(2)}px`);
+          link.style.setProperty('--line-scale', (0.58 + current[index] * 0.42).toFixed(3));
+          if (current[index] !== targets[index]) moving = true;
+        });
+
+        frame = moving ? requestAnimationFrame(animate) : 0;
+      };
+
+      const startAnimation = () => {
+        if (frame) return;
+        previousTime = performance.now();
+        frame = requestAnimationFrame(animate);
+      };
+
+      nav.addEventListener('pointermove', (event) => {
+        if (reducedMotion.matches || event.pointerType === 'touch') return;
+        links.forEach((link, index) => {
+          const bounds = link.getBoundingClientRect();
+          const distance = Math.abs(event.clientY - (bounds.top + bounds.height / 2));
+          const proximity = Math.max(0, 1 - distance / 88);
+          targets[index] = proximity * proximity * (3 - 2 * proximity);
+        });
+        startAnimation();
+      });
+
+      nav.addEventListener('pointerleave', () => {
+        targets.fill(0);
+        startAnimation();
+      });
+    }
+  };
+
+  initializeLineToc();
+  document.addEventListener('astro:page-load', initializeLineToc);
+</script>

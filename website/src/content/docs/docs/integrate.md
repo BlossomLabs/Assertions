@@ -88,7 +88,7 @@ Add that calldata to the batch, targeted at the Assertions address, before or af
 - **Addresses:** the four contract addresses are on [Deployments](/docs/contracts/deployments) and are the same on every chain.
 - **ABI:** no ABI file is published yet. The function signatures are on the [contract pages](/docs/contracts), and compiling the Solidity sources gives you the full ABI.
 - **Check the chain:** confirm code exists at the address on your chain before relying on it. [Deployments](/docs/contracts/deployments) lists supported chains and explains how to deploy to a new one.
-- **Verification:** see [how the contracts are checked](/docs/contracts/verification), and "Verify the code on your chain" on [Deployments](/docs/contracts/deployments), to confirm the deployed code matches the source.
+- **Verification:** see [how the contracts are checked](/docs/contracts/verification), and [Verify the code on your chain](/docs/security#verify-the-code-on-your-chain), to confirm the deployed code matches the source.
 
 ## If you run the batch
 

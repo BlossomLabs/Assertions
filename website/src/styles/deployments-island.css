@@ -7,6 +7,16 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 @source "../components/deployments";
 
+/* This page has no right-hand contents column: its tables use the width
+   instead, while the prose keeps the usual line length. */
+:root:has(.deployments-island) {
+  --sl-content-width: 60rem;
+}
+
+.sl-markdown-content:has(.deployments-island) > :is(p, ul, ol) {
+  max-width: 45rem;
+}
+
 .deployments-island {
   --color-bp-50: #e8f4ff;
   --color-bp-100: #B8D2E8;
@@ -49,91 +59,47 @@
 }
 
 /* ---------------------------------------------------------------------
-   Deploy to a new network: a launch sequence drawn like a blueprint.
-   A numbered rail of stations (wallet, network, factory, contracts,
-   verify); each node lights up as its step completes.
+   Deploy to a new network: drawn like the chain tables above it, flat on
+   the page between hairlines, in the body font. A numbered rail of steps
+   (wallet, network, factory, contracts, verify); each number fills in as
+   its step completes.
    --------------------------------------------------------------------- */
 
 .deployments-island .dp-panel {
-  position: relative;
-  margin-top: 0.5rem;
-  padding: 1.5rem 1.5rem 0.25rem;
-  background-color: var(--color-surface-2);
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--color-bp-400) 7%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--color-bp-400) 7%, transparent) 1px, transparent 1px);
-  background-size: 24px 24px;
-  border: 1px solid color-mix(in srgb, var(--color-ink-3) 45%, transparent);
-  border-radius: 4px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-ink-3) 30%, transparent);
   color: var(--color-ink);
-}
-
-/* registration marks in two corners */
-.deployments-island .dp-panel::before,
-.deployments-island .dp-panel::after {
-  content: "";
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  border: 2px solid var(--color-bp-400);
-  pointer-events: none;
-}
-.deployments-island .dp-panel::before {
-  top: -2px;
-  left: -2px;
-  border-right: 0;
-  border-bottom: 0;
-}
-.deployments-island .dp-panel::after {
-  right: -2px;
-  bottom: -2px;
-  border-left: 0;
-  border-top: 0;
 }
 
 .deployments-island .dp-head {
   display: flex;
-  align-items: flex-end;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.5rem 1.5rem;
   flex-wrap: wrap;
-  padding-bottom: 1.1rem;
-  border-bottom: 1px dashed color-mix(in srgb, var(--color-ink-3) 55%, transparent);
-}
-.deployments-island .dp-kicker {
-  margin: 0 0 0.35rem;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.66rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--color-bp-400);
 }
 .deployments-island .dp-heading {
   margin: 0;
   border: 0;
   padding: 0;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
   color: var(--color-ink);
 }
 .deployments-island .dp-target {
   margin: 0;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-size: 0.875rem;
 }
 .deployments-island .dp-target-name {
-  font-size: 0.9rem;
-  color: var(--color-bp-300);
+  color: var(--color-ink);
 }
 .deployments-island .dp-target-id {
-  font-size: 0.66rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-ink-3);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.75rem;
+  color: var(--color-ink-2);
 }
 
 .deployments-island .dp-steps {
@@ -144,8 +110,8 @@
 
 .deployments-island .dp-station {
   display: grid;
-  grid-template-columns: 2.25rem minmax(0, 1fr);
-  column-gap: 1rem;
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+  column-gap: 0.9rem;
   margin: 0;
 }
 .deployments-island .dp-rail {
@@ -156,44 +122,35 @@
 .deployments-island .dp-node {
   display: grid;
   place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 1.75rem;
+  height: 1.75rem;
   flex: none;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.72rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--color-ink-3);
-  background: var(--color-surface);
-  border: 1px solid color-mix(in srgb, var(--color-ink-3) 70%, transparent);
-  border-radius: 3px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink-2);
+  border: 1px solid color-mix(in srgb, var(--color-ink-3) 60%, transparent);
+  border-radius: 50%;
   transition: color 200ms, border-color 200ms, background-color 200ms;
 }
 .deployments-island .dp-line {
   flex: 1;
   margin-top: 0.3rem;
-  border-left: 1px dashed color-mix(in srgb, var(--color-ink-3) 70%, transparent);
+  border-left: 1px solid color-mix(in srgb, var(--color-ink-3) 30%, transparent);
 }
 .deployments-island .dp-title {
   margin: 0;
   border: 0;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.7rem;
+  font-size: 1rem;
   font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--color-ink-2);
-  line-height: 2.25rem;
+  color: var(--color-ink);
+  line-height: 1.75rem;
 }
 
 /* station states */
 .deployments-island .dp-station[data-state="active"] .dp-node {
-  color: var(--color-bp-300);
+  color: var(--color-bp-400);
   border-color: var(--color-bp-400);
-  animation: dp-ring 2.4s ease-in-out infinite;
-}
-.deployments-island .dp-station[data-state="active"] .dp-title {
-  color: var(--color-ink);
 }
 .deployments-island .dp-station[data-state="done"] .dp-node {
   color: var(--color-surface);
@@ -201,7 +158,6 @@
   border-color: var(--color-bp-400);
 }
 .deployments-island .dp-station[data-state="done"] .dp-line {
-  border-left-style: solid;
   border-left-color: var(--color-bp-400);
 }
 .deployments-island .dp-station[data-state="error"] .dp-node {
@@ -213,14 +169,14 @@
   opacity: 0.6;
 }
 .deployments-island .dp-station[data-state="skipped"] .dp-title {
-  opacity: 0.6;
+  color: var(--color-ink-2);
 }
 
 .deployments-island .dp-note {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   line-height: 1.5;
-  color: var(--color-ink-3);
+  color: var(--color-ink-2);
 }
 .deployments-island .dp-link {
   display: inline;
@@ -228,32 +184,30 @@
   background: none;
   border: 0;
   cursor: pointer;
-  font-size: 0.78rem;
-  color: var(--color-bp-300);
-  text-decoration: underline dotted;
-  text-underline-offset: 3px;
+  font-size: 0.8125rem;
+  color: var(--color-bp-400);
+  text-decoration: underline;
+  text-underline-offset: 4px;
   word-break: break-all;
 }
 .deployments-island .dp-link:hover {
-  text-decoration-style: solid;
+  color: var(--color-ink);
 }
 .deployments-island .dp-link-quiet {
   padding: 0;
   background: none;
   border: 0;
   cursor: pointer;
-  font-size: 0.72rem;
-  color: var(--color-ink-3);
+  font-size: 0.8125rem;
+  color: var(--color-ink-2);
   transition: color 150ms;
 }
 .deployments-island .dp-chip {
   padding: 0.1rem 0.5rem;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.66rem;
-  letter-spacing: 0.06em;
+  font-size: 0.75rem;
   color: var(--color-ink-2);
-  border: 1px solid color-mix(in srgb, var(--color-ink-3) 55%, transparent);
-  border-radius: 3px;
+  border: 1px solid color-mix(in srgb, var(--color-ink-3) 40%, transparent);
+  border-radius: 0.25rem;
 }
 
 /* status LED */
@@ -279,9 +233,7 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  background: var(--color-surface);
-  border: 1px solid color-mix(in srgb, var(--color-ink-3) 40%, transparent);
-  border-radius: 3px;
+  border-block: 1px solid color-mix(in srgb, var(--color-ink-3) 30%, transparent);
 }
 .deployments-island .dp-bay-row {
   display: grid;
@@ -289,40 +241,37 @@
   align-items: center;
   column-gap: 0.75rem;
   margin: 0;
-  padding: 0.6rem 0.8rem;
+  padding: 0.7rem 0;
 }
 .deployments-island .dp-bay-row + .dp-bay-row {
-  border-top: 1px solid color-mix(in srgb, var(--color-ink-3) 25%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-ink-3) 15%, transparent);
 }
 .deployments-island .dp-bay-row[data-busy="true"] {
   background: color-mix(in srgb, var(--color-bp-400) 8%, transparent);
 }
 .deployments-island .dp-bay-name {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 500;
   color: var(--color-ink);
 }
 .deployments-island .dp-bay-ver {
   font-weight: 400;
-  font-size: 0.66rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-ink-3);
+  font-size: 0.75rem;
+  color: var(--color-ink-2);
 }
 .deployments-island .dp-bay-addr {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   color: var(--color-ink-2);
   word-break: break-all;
 }
 .deployments-island .dp-bay-addr .dp-link {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
 }
 .deployments-island .dp-bay-gas {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.66rem;
-  color: var(--color-ink-3);
+  font-size: 0.75rem;
+  color: var(--color-ink-2);
   white-space: nowrap;
 }
 @media (max-width: 40rem) {
@@ -344,7 +293,7 @@
   background: var(--color-surface);
   border: 1px solid color-mix(in srgb, var(--color-ink-3) 40%, transparent);
   border-left-width: 3px;
-  border-radius: 3px;
+  border-radius: 0.25rem;
 }
 .deployments-island .dp-alert p {
   margin: 0;
@@ -366,18 +315,9 @@
   color: var(--color-err);
 }
 .deployments-island .dp-alert[data-tone="err"] .dp-note {
-  color: var(--color-ink-3);
+  color: var(--color-ink-2);
 }
 
-@keyframes dp-ring {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-bp-400) 35%, transparent);
-  }
-  50% {
-    box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-bp-400) 0%, transparent);
-  }
-}
 @keyframes dp-blink {
   0%,
   100% {
@@ -388,7 +328,6 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .deployments-island .dp-station[data-state="active"] .dp-node,
   .deployments-island .dp-led[data-busy="true"] {
     animation: none;
   }

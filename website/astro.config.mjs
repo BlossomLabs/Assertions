@@ -148,6 +148,8 @@ export default defineConfig({
       components: {
         ThemeProvider: './src/components/docs/ThemeProvider.astro',
         ThemeSelect: './src/components/docs/ThemeSelect.astro',
+        PageTitle: './src/components/docs/PageTitle.astro',
+        TableOfContents: './src/components/docs/LineTableOfContents.astro',
         Footer: './src/components/docs/Footer.astro',
       },
       expressiveCode: {

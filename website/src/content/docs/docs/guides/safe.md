@@ -43,6 +43,8 @@ assert @includes!(@safe:owners!($safe) $signer1) == true "signer removed"
 
 `@safe:threshold!` and `@safe:owners!` read the Safe when the batch executes, not when you build it. `@len!` and `@includes!` come from the `lang` module.
 
+You do not have to write these lines by hand. In the builder's assertion form, enter the Safe's address as a value (or `@me`, which is the Safe when the batch runs from one) and open the combine menu next to it. For an address that is a Safe, the menu has a "Safe" row with the threshold, the owners, an owner test, the guard, the modules and the nonce. The row does not appear for an address that is not a Safe.
+
 Press "Simulate protected batch". A pass means every check holds on the fork. If it fails, simulate the batch from step 1 to tell a failing action from a failing assertion. Step 3 warns you if the protected batch has not passed a simulation in its current form.
 
 ## 3. Submit

@@ -15,7 +15,6 @@ import {
   DEPLOYED_CONTRACTS,
   explorerAddressUrl,
   makePublicClient,
-  shortAddress,
 } from "./shared";
 
 export const MAJOR_CHAINS: Chain[] = [
@@ -28,8 +27,18 @@ export const MAJOR_CHAINS: Chain[] = [
   sepolia,
 ];
 
-type RowStatus = "loading" | "deployed" | "partial" | "missing" | "error";
+type RowStatus = "loading" | "deployed" | "missing" | "error";
 
+// Starlight ships no reset, so a bare <button> keeps the browser's chrome.
+const STATUS_LINK =
+  "appearance-none border-0 bg-transparent p-0 cursor-pointer inline-flex items-center gap-1.5 text-sm text-[var(--color-bp-400)] underline-offset-4 hover:underline focus-visible:underline";
+
+/**
+ * One section per contract: its name and version, then the
+ * networks it was checked on. A deterministic address says where the code
+ * goes, not that it is there, so every status comes from a live read of the
+ * chain, and a chain that could not be read says so instead of "pending deployment".
+ */
 export function DeploymentsTable({
   onDeploy,
 }: {
@@ -55,140 +64,141 @@ export function DeploymentsTable({
   });
 
   return (
-    <div className="rounded-2xl border border-[var(--color-ink-3)]/20 bg-[var(--color-surface-2)] overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-[var(--color-ink-3)]/20 text-left text-xs text-[var(--color-ink-3)]">
-              <th className="px-5 py-3 font-medium">Network</th>
-              <th className="px-5 py-3 font-medium">Chain ID</th>
-              <th className="px-5 py-3 font-medium">Status</th>
-              <th className="px-5 py-3 font-medium">Contracts</th>
-            </tr>
-          </thead>
-          <tbody>
-            {MAJOR_CHAINS.map((chain, i) => {
-              const query = results[i];
-              const deployedFlags = query.data;
-              const status: RowStatus = query.isPending
-                ? "loading"
-                : query.isError
-                  ? "error"
-                  : deployedFlags!.every(Boolean)
-                    ? "deployed"
-                    : deployedFlags!.some(Boolean)
-                      ? "partial"
-                      : "missing";
-              return (
-                <tr
-                  key={chain.id}
-                  className="border-b border-[var(--color-ink-3)]/10 last:border-b-0"
-                >
-                  <td className="px-5 py-3 font-medium whitespace-nowrap">
-                    <ChainIcon
-                      chainId={chain.id}
-                      name={chain.name}
-                      size={18}
-                      className="inline-block align-[-0.2em] mr-2"
-                    />
-                    {chain.name}
-                    {chain.testnet && (
-                      <span className="ml-2 text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded border border-[var(--color-ink-3)]/30 text-[var(--color-ink-3)]">
-                        testnet
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-5 py-3 font-mono text-[var(--color-ink-2)]">
-                    {chain.id}
-                  </td>
-                  <td className="px-5 py-3 whitespace-nowrap">
-                    {status === "loading" && (
-                      <span className="text-[var(--color-ink-3)]">Checking…</span>
-                    )}
-                    {status === "deployed" && (
-                      <span className="inline-flex items-center gap-1.5 text-[var(--color-ok)]">
-                        <span className="size-1.5 rounded-full bg-[var(--color-ok)]" />
-                        Deployed
-                      </span>
-                    )}
-                    {status === "partial" && (
-                      <button
-                        type="button"
-                        onClick={() => onDeploy(chain)}
-                        className="inline-flex items-center gap-1.5 text-[var(--color-bp-300)] hover:text-[var(--color-bp-400)] font-medium transition-colors"
+    <div className="border-y border-[var(--color-ink-3)]/30">
+      {DEPLOYED_CONTRACTS.map((contract, contractIndex) => (
+        <section
+          key={contract.key}
+          aria-labelledby={`deployments-${contract.key}`}
+          className="border-b border-[var(--color-ink-3)]/30 py-7 last:border-b-0"
+        >
+          <header className="mb-4 flex items-baseline gap-3">
+            <h3
+              id={`deployments-${contract.key}`}
+              className="m-0 text-xl font-semibold text-[var(--color-ink)]"
+            >
+              {contract.name}
+            </h3>
+            <span className="font-mono text-xs text-[var(--color-ink-2)]">
+              v{contract.version}
+              {contract.released ? "" : " · unreleased"}
+            </span>
+          </header>
+
+          <div className="overflow-x-auto">
+            <table className="m-0 w-full min-w-[26rem] table-fixed border-collapse text-left text-sm">
+              <caption className="sr-only">
+                {contract.name}: status on each network
+              </caption>
+              <thead>
+                <tr className="border-b border-[var(--color-ink-3)]/30 text-xs text-[var(--color-ink-2)]">
+                  <th scope="col" className="w-[42%] py-2.5 pr-3 font-medium">
+                    Network
+                  </th>
+                  <th scope="col" className="w-[24%] py-2.5 pr-3 font-medium">
+                    Chain ID
+                  </th>
+                  <th scope="col" className="w-[34%] py-2.5 font-medium">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {MAJOR_CHAINS.map((chain, chainIndex) => {
+                  const query = results[chainIndex];
+                  const status: RowStatus = query.isPending
+                    ? "loading"
+                    : query.isError
+                      ? "error"
+                      : query.data![contractIndex]
+                        ? "deployed"
+                        : "missing";
+                  const explorer = explorerAddressUrl(chain, contract.address);
+                  return (
+                    <tr
+                      key={chain.id}
+                      className="border-b border-[var(--color-ink-3)]/15 last:border-b-0"
+                    >
+                      <th
+                        scope="row"
+                        className="py-3 pr-3 font-medium whitespace-nowrap text-[var(--color-ink)]"
                       >
-                        <span className="size-1.5 rounded-full border border-current bg-[var(--color-bp-300)]/40" />
-                        Partial — finish the deployment ↓
-                      </button>
-                    )}
-                    {status === "missing" && (
-                      <button
-                        type="button"
-                        onClick={() => onDeploy(chain)}
-                        className="inline-flex items-center gap-1.5 text-[var(--color-bp-300)] hover:text-[var(--color-bp-400)] font-medium transition-colors"
-                      >
-                        <span className="size-1.5 rounded-full border border-current" />
-                        Not deployed — deploy it ↓
-                      </button>
-                    )}
-                    {status === "error" && (
-                      <span
-                        className="text-[var(--color-ink-3)]"
-                        title="Could not reach the chain's public RPC"
-                      >
-                        RPC unreachable
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-5 py-3 font-mono whitespace-nowrap">
-                    <div className="space-y-0.5">
-                      {DEPLOYED_CONTRACTS.map((contract, j) => {
-                        const explorer = explorerAddressUrl(
-                          chain,
-                          contract.address,
-                        );
-                        const isDeployed = deployedFlags?.[j] === true;
-                        return (
-                          <div
-                            key={contract.key}
-                            className="flex items-baseline gap-2"
+                        <ChainIcon
+                          chainId={chain.id}
+                          name={chain.name}
+                          size={18}
+                          className="inline-block align-[-0.2em] mr-2"
+                        />
+                        {chain.name}
+                        {chain.testnet && (
+                          <span className="ml-2 text-[10px] font-normal uppercase tracking-wide px-1.5 py-0.5 rounded border border-[var(--color-ink-3)]/40 text-[var(--color-ink-2)]">
+                            testnet
+                          </span>
+                        )}
+                      </th>
+                      <td className="py-3 pr-3 font-mono text-xs tabular-nums text-[var(--color-ink-2)]">
+                        {chain.id}
+                      </td>
+                      <td className="py-3 whitespace-nowrap">
+                        {status === "loading" && (
+                          <span className="text-[var(--color-ink-2)]">
+                            Checking…
+                          </span>
+                        )}
+                        {status === "deployed" &&
+                          (explorer ? (
+                            <a
+                              href={explorer}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={`Deployed: view ${contract.name} on the ${chain.name} explorer`}
+                              className={STATUS_LINK}
+                            >
+                              <span
+                                aria-hidden="true"
+                                className="size-1.5 shrink-0 rounded-full bg-[var(--color-ok)]"
+                              />
+                              Deployed ↗
+                            </a>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 text-[var(--color-ink)]">
+                              <span
+                                aria-hidden="true"
+                                className="size-1.5 shrink-0 rounded-full bg-[var(--color-ok)]"
+                              />
+                              Deployed
+                            </span>
+                          ))}
+                        {status === "missing" && (
+                          <button
+                            type="button"
+                            onClick={() => onDeploy(chain)}
+                            aria-label={`Pending deployment: deploy to ${chain.name}`}
+                            className={STATUS_LINK}
                           >
                             <span
-                              className="text-[10px] uppercase tracking-wide text-[var(--color-ink-3)] w-16"
-                              title={
-                                contract.released
-                                  ? undefined
-                                  : `${contract.name}: unreleased artifact candidate`
-                              }
-                            >
-                              {contract.key}
-                              {contract.released ? "" : "*"}
-                            </span>
-                            {isDeployed && explorer ? (
-                              <a
-                                href={explorer}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-[var(--color-bp-300)] hover:underline"
-                              >
-                                {shortAddress(contract.address)} ↗
-                              </a>
-                            ) : (
-                              <span className="text-[var(--color-ink-3)]">
-                                {shortAddress(contract.address)}
-                              </span>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+                              aria-hidden="true"
+                              className="size-1.5 shrink-0 rounded-full border border-current"
+                            />
+                            Pending deployment ↓
+                          </button>
+                        )}
+                        {status === "error" && (
+                          <span
+                            className="text-[var(--color-ink-2)]"
+                            title="The chain's public RPC did not answer, so the status is unknown"
+                          >
+                            RPC unavailable
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ))}
     </div>
   );
 }

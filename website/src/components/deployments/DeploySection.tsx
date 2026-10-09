@@ -28,22 +28,22 @@ import { WalletIcon } from "../ui/ExecutorIcon";
 import { ALL_CHAINS, chainById } from "./wagmi";
 
 const inputCls =
-  "w-full px-3 py-2 rounded-[3px] bg-[var(--color-surface)] border border-[var(--color-ink-3)]/40 " +
-  "focus:border-[var(--color-bp-400)] focus:outline-none font-mono text-sm placeholder:text-[var(--color-ink-3)]";
+  "w-full px-3 py-2 rounded bg-[var(--color-surface)] border border-[var(--color-ink-3)]/40 " +
+  "focus:border-[var(--color-bp-400)] focus:outline-none text-sm placeholder:text-[var(--color-ink-3)]";
 
 const primaryBtnCls =
-  "px-4 py-2 rounded-[3px] font-mono text-xs uppercase tracking-[0.12em] font-semibold bg-[var(--color-primary)] text-[var(--color-primary-fg)] " +
+  "px-4 py-2 rounded text-sm font-semibold bg-[var(--color-primary)] text-[var(--color-primary-fg)] " +
   "hover:bg-[var(--color-primary-hover)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors";
 
 const ghostBtnCls =
-  "px-3 py-1.5 rounded-[3px] font-mono text-xs uppercase tracking-[0.12em] border border-[var(--color-bp-400)] " +
-  "text-[var(--color-bp-300)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors";
+  "px-3 py-1.5 rounded text-sm font-medium border border-[var(--color-bp-400)] " +
+  "text-[var(--color-bp-400)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors";
 
 type DeployState =
   | { step: "idle" }
   | { step: "switching" }
-  | { step: "sending"; contract: string }
-  | { step: "confirming"; contract: string; hash: `0x${string}` }
+  | { step: "sending"; contracts: string[] }
+  | { step: "confirming"; contracts: string[] }
   | { step: "success"; hashes: `0x${string}`[] }
   | { step: "error"; message: string };
 
@@ -67,6 +67,11 @@ const VERIFY_PROGRESS_LABELS: Record<VerifyProgress, string> = {
 };
 
 const API_KEY_STORAGE = "assertions:etherscan-api-key";
+
+/** How a button names the contracts a wallet request covers. */
+function contractsLabel(contracts: string[]): string {
+  return contracts.length === 1 ? contracts[0] : `${contracts.length} contracts`;
+}
 
 function errorMessage(error: unknown): string {
   if (error && typeof error === "object") {
@@ -120,7 +125,7 @@ function ChainPicker({
         spellCheck={false}
       />
       {open && (
-        <ul className="absolute z-20 mt-1 w-full max-h-72 overflow-y-auto rounded-[3px] border border-[var(--color-ink-3)]/30 bg-[var(--color-surface)] shadow-xl">
+        <ul className="absolute z-20 mt-1 w-full max-h-72 overflow-y-auto rounded border border-[var(--color-ink-3)]/30 bg-[var(--color-surface)] shadow-xl">
           {filtered.length === 0 && (
             <li className="px-3 py-2 text-sm text-[var(--color-ink-3)]">
               No known network matches — add it as a custom network below.
@@ -183,7 +188,7 @@ function CustomChainForm({ onSubmit }: { onSubmit: (chain: Chain) => void }) {
     /^https?:\/\/.+/.test(rpcUrl.trim());
 
   return (
-    <div className="space-y-3 rounded-[3px] border border-[var(--color-ink-3)]/30 p-4">
+    <div className="space-y-3 rounded border border-[var(--color-ink-3)]/30 p-4">
       <div className="grid sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs text-[var(--color-ink-2)] mb-1">
@@ -282,13 +287,13 @@ function Station({
     <li className="dp-station" data-state={state}>
       <div className="dp-rail">
         <span className="dp-node" aria-hidden="true">
-          {state === "done" ? "✓" : state === "error" ? "!" : String(index).padStart(2, "0")}
+          {state === "done" ? "✓" : state === "error" ? "!" : index}
         </span>
         {!last && <span className="dp-line" />}
       </div>
       <div className="min-w-0 pb-8">
-        <div className="flex items-baseline justify-between gap-3 flex-wrap min-h-9">
-          <h3 className="dp-title">{title}</h3>
+        <div className="flex items-baseline justify-between gap-3 flex-wrap">
+          <h4 className="dp-title">{title}</h4>
           {aside}
         </div>
         <div className="mt-3 space-y-3">{children}</div>
@@ -378,6 +383,29 @@ export function DeploySection({
     retry: 1,
   });
 
+  // A wallet that can run a batch atomically (an EIP-7702 account, or one the
+  // wallet will upgrade on approval) deploys every missing contract in one
+  // request. A wallet without wallet_getCapabilities throws: no batching.
+  const batching = useQuery({
+    queryKey: ["wallet-batching", address, connector?.uid, chain.id],
+    queryFn: async () => {
+      try {
+        const walletClient = await getWalletClient();
+        const { atomic } = await walletClient.getCapabilities({
+          account: address,
+          chainId: chain.id,
+        });
+        return atomic?.status === "supported" || atomic?.status === "ready";
+      } catch {
+        return false;
+      }
+    },
+    enabled: isConnected && Boolean(address) && Boolean(connector),
+    staleTime: 60_000,
+    retry: false,
+  });
+  const canBatch = batching.data === true;
+
   async function getWalletClient() {
     if (!connector || !address) throw new Error("Wallet not connected");
     const provider = (await connector.getProvider()) as EIP1193Provider;
@@ -451,38 +479,66 @@ export function DeploySection({
       const client = makePublicClient(chain);
       const walletClient = await getWalletClient();
       const hashes: `0x${string}`[] = [];
-      for (const contract of DEPLOYED_CONTRACTS) {
-        // Guard against a stale status check: never send a deployment that is
-        // guaranteed to be a no-op because the contract already exists.
-        const existing = await client.getCode({ address: contract.address });
-        if (existing !== undefined && existing !== "0x") continue;
-        setDeployState({ step: "sending", contract: contract.name });
-        const hash = await walletClient.sendTransaction({
-          to: CREATE2_PROXY,
-          data: concat([contract.salt, contract.bytecode]),
+      const hasCode = async (contract: (typeof DEPLOYED_CONTRACTS)[number]) => {
+        const code = await client.getCode({ address: contract.address });
+        return code !== undefined && code !== "0x";
+      };
+      const requireCode = async (contract: (typeof DEPLOYED_CONTRACTS)[number]) => {
+        if (await hasCode(contract)) return;
+        throw new Error(
+          `The ${contract.name} transaction succeeded but no code was ` +
+            "found at the expected address.",
+        );
+      };
+      // Guard against a stale status check: never send a deployment that is
+      // guaranteed to be a no-op because the contract already exists.
+      const present = await Promise.all(DEPLOYED_CONTRACTS.map(hasCode));
+      const missing = DEPLOYED_CONTRACTS.filter((_, i) => !present[i]);
+
+      if (canBatch && missing.length > 1) {
+        const contracts = missing.map((contract) => contract.name);
+        setDeployState({ step: "sending", contracts });
+        const { id } = await walletClient.sendCalls({
+          calls: missing.map((contract) => ({
+            to: CREATE2_PROXY,
+            data: concat([contract.salt, contract.bytecode]),
+          })),
+          forceAtomic: true,
         });
-        setDeployState({
-          step: "confirming",
-          contract: contract.name,
-          hash,
-        });
-        const receipt = await client.waitForTransactionReceipt({
-          hash,
+        setDeployState({ step: "confirming", contracts });
+        const result = await walletClient.waitForCallsStatus({
+          id,
           timeout: 300_000,
         });
-        if (receipt.status !== "success") {
-          throw new Error(
-            `The ${contract.name} deployment transaction reverted.`,
-          );
+        if (result.status !== "success") {
+          throw new Error("The deployment batch reverted.");
         }
-        const code = await client.getCode({ address: contract.address });
-        if (code === undefined || code === "0x") {
-          throw new Error(
-            `The ${contract.name} transaction succeeded but no code was ` +
-              "found at the expected address.",
-          );
+        for (const contract of missing) await requireCode(contract);
+        for (const receipt of result.receipts ?? []) {
+          if (!hashes.includes(receipt.transactionHash)) {
+            hashes.push(receipt.transactionHash);
+          }
         }
-        hashes.push(hash);
+      } else {
+        for (const contract of missing) {
+          setDeployState({ step: "sending", contracts: [contract.name] });
+          const hash = await walletClient.sendTransaction({
+            to: CREATE2_PROXY,
+            data: concat([contract.salt, contract.bytecode]),
+          });
+          setDeployState({ step: "confirming", contracts: [contract.name] });
+          const receipt = await client.waitForTransactionReceipt({
+            hash,
+            timeout: 300_000,
+          });
+          if (receipt.status !== "success") {
+            throw new Error(
+              `The ${contract.name} deployment transaction reverted.`,
+            );
+          }
+          await requireCode(contract);
+          hashes.push(hash);
+        }
       }
       setDeployState({ step: "success", hashes });
       void status.refetch();
@@ -535,10 +591,12 @@ export function DeploySection({
 
   const deployedNow = (i: number) =>
     status.data?.deployed[i] === true || deployState.step === "success";
-  const busyName =
+  const busyNames =
     deployState.step === "sending" || deployState.step === "confirming"
-      ? deployState.contract
-      : undefined;
+      ? deployState.contracts
+      : [];
+  const missingCount = status.data?.deployed.filter((d) => !d).length ?? 0;
+  const batchDeploy = canBatch && missingCount > 1;
   const needsFactory =
     status.data !== undefined && status.data.anyMissing && !status.data.proxyPresent;
   const readyToDeploy =
@@ -577,10 +635,7 @@ export function DeploySection({
   return (
     <section className="dp-panel" aria-label="Deploy to a new network">
       <header className="dp-head">
-        <div>
-          <p className="dp-kicker">Launch sequence</p>
-          <h2 className="dp-heading">Deploy to a new network</h2>
-        </div>
+        <h3 className="dp-heading">Deploy to a new network</h3>
         <p className="dp-target">
           <span className="dp-target-name inline-flex items-center gap-2">
             <ChainIcon chainId={chain.id} name={chain.name} />
@@ -761,7 +816,7 @@ export function DeploySection({
           <ul className="dp-bay">
             {DEPLOYED_CONTRACTS.map((contract, i) => {
               const live = status.data ? deployedNow(i) : false;
-              const busy = busyName === contract.name;
+              const busy = busyNames.includes(contract.name);
               const url = explorerAddressUrl(chain, contract.address);
               return (
                 <li key={contract.key} className="dp-bay-row" data-live={live} data-busy={busy}>
@@ -798,13 +853,15 @@ export function DeploySection({
                 {deployState.step === "switching"
                   ? "Switching network…"
                   : deployState.step === "sending"
-                    ? `Confirm ${deployState.contract} in your wallet…`
+                    ? `Confirm ${contractsLabel(deployState.contracts)} in your wallet…`
                     : deployState.step === "confirming"
-                      ? `Waiting for ${deployState.contract} confirmation…`
+                      ? `Waiting for ${contractsLabel(deployState.contracts)} confirmation…`
                       : `Deploy to ${chain.name}`}
               </button>
               <p className="dp-note">
-                One transaction per missing contract.
+                {batchDeploy
+                  ? `Your wallet batches calls (EIP-7702): one transaction deploys all ${missingCount} missing contracts.`
+                  : "One transaction per missing contract."}
                 {!isConnected && " Connect a wallet to deploy."}
               </p>
             </>

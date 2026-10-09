@@ -25,6 +25,7 @@ EVML spellings are helpers from the `lang` module ([helper table](/docs/evml)). 
 | | `foldWords(s, ...)` | Fold over the 32-byte words of `s` | `@reduce!`, `@all!`, `@any!`, `@includes!` |
 | Word map and filter | `mapWords(s, target, template, elemOffsets)` | Transform every word with a lambda | `@map!` |
 | | `filterWords(s, target, template, elemOffsets)` | Keep the words a lambda accepts | `@filter!`, `@find!` |
+| | `reduceWords(s, target, template, elemOffsets, mode, cmp, bound)` | Apply a lambda to every word and reduce the results in the same loop | `@all!`, `@any!`, `@count!`, `@sum!` over `@map!` |
 | Word shape | `iotaWords(n)` | The payload `0 .. n-1` | `@enumerate!` |
 | | `wordIndexOf(s, w)` | Index of the first equal word, or the word count | `@lookup!`, `@includes!` |
 | | `reverseWords(s)` | Reverse the word order | `@reverse!` |
@@ -145,6 +146,39 @@ def @ge100! "$x: number -> bool" @bool!($x >= 100)
 assert @sum!(@map!($vault::!{caps()(uint256[])} @dbl!)) >= 200 "doubled caps too small"
 assert @len!(@filter!($vault::!{caps()(uint256[])} @ge100!)) >= 1 "no cap at 100"
 assert @find!($vault::!{caps()(uint256[])} @ge100!) >= 100 "no cap at 100"
+```
+
+## Reducing a lambda's results
+
+`reduceWords` applies a lambda to every word, as `mapWords` does, and reduces the results as it goes. It answers "every holder has at least this balance", "some cap is above the limit", "how many accounts are funded" and "the total of what each element maps to" with one call per element, where a fold over a comparison would need a second call per element for the comparison.
+
+```solidity
+enum Reduce { All, Any, Count, Sum }
+enum Cmp { EQ, NE, LT, LE, GT, GE, SLT, SLE, SGT, SGE }
+
+function reduceWords(bytes s, address target, bytes template, uint256[] elemOffsets,
+                     Reduce mode, Cmp cmp, bytes32 bound)
+    external view returns (uint256);
+```
+
+Each result is compared with `bound` using `cmp`. The six plain comparisons read both words as unsigned; the four that start with `S` read both as signed `int256`.
+
+- **`All`** returns 1 when every result passes and 0 otherwise. It stops at the first result that does not pass, so later elements are never applied. An empty payload returns 1.
+- **`Any`** returns 1 when some result passes and 0 otherwise. It stops at the first result that passes. An empty payload returns 0.
+- **`Count`** returns how many results pass. It applies every element.
+- **`Sum`** returns the unsigned sum of the results and ignores `cmp` and `bound`. A sum past `2^256 - 1` reverts with `Panic(0x11)`.
+
+The lambda follows the `mapWords` conventions: one call per word, exactly one word back. Results are compared as raw words, so a lambda that returns a narrower type is not range-checked. An empty payload validates the template windows, then returns without inspecting or calling the target. A `mode` or `cmp` outside its enum is refused by the ABI decoder, without revert data.
+
+In EVML, `@all!`, `@any!` and `@count!` compile to `reduceWords` when the test compares one call over the element with a value. The value may be a call of its own: it is read once, not once per element.
+
+```evml
+load lang
+set $vault 0x44fA8E6f47987339850636F88629646662444217
+set $token 0x6B175474E89094C44Da98b954EedeAC495271d0F
+def @funded! "$who: address -> bool" @bool!($token::!{balanceOf(address)(uint256) $who} >= 1000)
+assert @all!($vault::!{holders()(address[])} @funded!) == true "a holder is underfunded"
+assert @count!($vault::!{holders()(address[])} @funded!) >= 3 "fewer than three funded holders"
 ```
 
 ## Word-array operations
@@ -318,7 +352,7 @@ assert @includes!($vault::!{caps()(uint256[])} 100) == true "100 is not a cap"
 | `InvalidCallbackResult(operation, index, other, target)` | A lambda result that is not one word, a predicate result that is not a canonical 0 or 1, or a callback result that is not a canonical value of its declared type. Declared in AbiCodec. |
 | `InvalidValue(offset)` | A value that is not a canonical encoding of its declared type, at the offending offset. Declared in AbiCodec. |
 | `InvalidTypeDescriptor(position)` | A malformed type or argument descriptor, at the offending byte. Declared in AbiCodec. |
-| `Panic(0x11)` | `sumWords` overflow. |
+| `Panic(0x11)` | `sumWords` overflow, or a `reduceWords` sum past `2^256 - 1`. |
 
 The errors shared by every contract are on the [Errors](/docs/contracts/errors) page.
 

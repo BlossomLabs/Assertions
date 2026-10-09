@@ -1,0 +1,51 @@
+---
+// The page header: title, the frontmatter description as a subtitle, and a
+// divider. The id is the one Starlight's "Overview" TOC entry links to.
+const { title, description } = Astro.locals.starlightRoute.entry.data;
+---
+
+<header class="docs-page-heading">
+  <h1 id="_top">{title}</h1>
+  {description && <p class="docs-page-subtitle">{description}</p>}
+</header>
+
+<style>
+  @layer starlight.core {
+    .docs-page-heading h1 {
+      margin-top: 1rem;
+      color: var(--sl-color-white);
+      font-size: var(--sl-text-h1);
+      font-weight: 600;
+      line-height: var(--sl-line-height-headings);
+      letter-spacing: -0.025em;
+      text-wrap: balance;
+    }
+
+    /* Understated but legible: off-white on dark, the primary ink on light. */
+    .docs-page-subtitle {
+      max-width: 62ch;
+      margin-top: 0.75rem;
+      color: var(--sl-color-gray-1);
+      font-size: 1rem;
+      line-height: 1.6;
+      text-wrap: pretty;
+    }
+
+    :global([data-theme='light']) .docs-page-subtitle {
+      color: var(--sl-color-white);
+    }
+
+    .docs-page-heading::after {
+      content: '';
+      display: block;
+      height: 1px;
+      margin-top: 2rem;
+      background: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--sl-color-accent) 55%, transparent),
+        color-mix(in srgb, var(--sl-color-accent) 22%, transparent) 72%,
+        transparent
+      );
+    }
+  }
+</style>

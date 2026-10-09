@@ -1,6 +1,7 @@
 ---
 title: Deployments
-description: The contract addresses to use, the chains where assertions work, and what to do if your chain is missing.
+description: The contract addresses, the chains they are deployed on, and how to deploy them to another chain.
+tableOfContents: false
 ---
 
 import { getCollection } from 'astro:content';
@@ -11,11 +12,11 @@ import '../../../../styles/deployments-island.css';
 export const releases = await getCollection('releases');
 export const releaseFor = (version) => releases.find((r) => r.data.version === version);
 
-To use assertions on a chain, the four contracts must be deployed there. Check your chain below. If it is missing, you can deploy the contracts yourself.
+Assertions work on a chain once the four contracts are deployed there.
 
 ## Addresses
 
-Your batch calls these addresses. They are the same on every chain.
+The addresses are the same on every chain.
 
 <table>
   <thead>
@@ -33,48 +34,19 @@ Your batch calls these addresses. They are the same on every chain.
   </tbody>
 </table>
 
-The builder fills these in for you. If you build calls by hand, copy the addresses from this page.
+The builder uses them for you. If you build calls by hand, copy them from here.
 
-## Check your chain
+## Networks
 
-Assertions work on any chain listed here as deployed. If your chain says it is not deployed, follow the steps under [Add your chain](#add-your-chain).
+Each status is read live from the chain. **Deployed** opens the contract on the chain's explorer. **Pending deployment** takes you to the steps below, where anyone can deploy the contracts.
 
 <div class="deployments-island not-content">
   <DeploymentsApp client:only="react" />
 </div>
 
-## Add your chain
-
-You can put assertions on any chain that meets the [requirements](#requirements). Anyone can do this, and the contracts end up at the same addresses as everywhere else.
-
-1. Pick your chain in the table above, or add a custom RPC.
-2. Connect your wallet.
-3. Send one transaction for each contract. Each contract is deployed through the [deterministic-deployment proxy](https://github.com/Arachnid/deterministic-deployment-proxy) at <code>{manifest.create2Proxy}</code>, and if your chain does not have the proxy yet, you are asked to install it first.
-4. Verify the contracts on your chain's explorer.
-
-Deploy only through the proxy. Another factory, such as CreateX, produces different addresses, and the builder will not find them.
-
-### Requirements
-
-The chain must support the Cancun upgrade (`MCOPY` and `PUSH0`). The blob reads in Operations also need the matching block context opcodes. Before relying on a chain, check that the code is there.
-
-## Verify the code on your chain
-
-To check that the code at an address is the published source, open the address on your chain's block explorer and look for verified source. If an explorer shows none, verify it yourself by submitting the Solidity source with these compiler settings, which reproduce the deployed bytecode:
-
-<ul>
-  <li>Compiler: <code>{manifest.compiler.solcLongVersion}</code></li>
-  <li>EVM version: <code>{manifest.compiler.evmVersion}</code></li>
-  <li>Optimizer: {manifest.compiler.optimizer.enabled ? 'enabled' : 'disabled'}, {manifest.compiler.optimizer.runs} runs</li>
-  <li>Metadata hash: <code>{manifest.compiler.bytecodeHash}</code></li>
-  <li>Constructor arguments: none</li>
-</ul>
-
-The deployment flow above submits the source for you on explorers supported by the Etherscan multichain API.
-
 ## Earlier versions
 
-A deployed version keeps working at its own address. Anything that already references it keeps working when a new version ships.
+Earlier versions keep working at their own addresses.
 
 <table>
   <thead>

@@ -42,7 +42,7 @@ The contracts have not been externally audited, and formal verification covers o
 The contracts are deployed through a deterministic-deployment proxy, so each has the same address on every chain. To check that the code at an address matches the published source:
 
 1. Open the address on your chain's block explorer and look for verified source. The builder's deployment flow can submit the source to explorers supported by the Etherscan multichain API, so on those chains it is verified automatically after you deploy.
-2. If the source is not verified, verify it with the compiler settings on the [Deployments](/docs/contracts/deployments#verify-the-code-on-your-chain) page.
+2. If the source is not verified, submit it from the [Deployments](/docs/contracts/deployments#networks) page: under the table, pick your chain and add an Etherscan API key.
 3. Compare the address you see in a batch with the address in the table there.
 
 The explorer's check compares compiled source with the deployed bytecode. It shows that the code is the published source, not that the source is correct. For that, see the verification page above.

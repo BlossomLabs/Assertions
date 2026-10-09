@@ -51,7 +51,7 @@ Some malformed inputs revert with no data at all. If you wrote the call by hand,
 - **A precondition placed after the action.** An assertion judges the state at the point where it runs. See [placement](/docs/guides/executors#placement).
 - **A captured value in a delayed proposal.** A value captured when the script is built is fixed at that moment. If the batch executes a week later, the number may be stale. Prefer an absolute limit or a live calculation. See [Assert that something changed](/docs/evml#assert-that-something-changed).
 - **A read on an address with no code on the target chain.** The same address can hold a contract on one chain and nothing on another. A read of it reverts with `CallFailed`. Check the address on the chain you execute on.
-- **A chain without the contracts.** Assertions only work where the four contracts are deployed. Check your chain and the requirements on [Deployments](/docs/contracts/deployments).
+- **A chain without the contracts.** Assertions only work where the four contracts are deployed. Check your chain on [Deployments](/docs/contracts/deployments).
 - **Not checking the executor's behavior.** An executor that tolerates failed calls can keep the earlier actions. See [Executors](/docs/guides/executors).
 
 ## Next

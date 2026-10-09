@@ -37,7 +37,7 @@ Not if your chain already has the four contracts. Your batch only calls them. If
 
 ## What if my chain is missing?
 
-Anyone can deploy the contracts there, from the [Deployments](/docs/contracts/deployments#add-your-chain) page. They go out through the deterministic-deployment proxy, so they end up at the same addresses as everywhere else. Deploying through any other factory produces different addresses that the builder will not find.
+Anyone can deploy the contracts there, from the [Deployments](/docs/contracts/deployments#networks) page. They go out through the deterministic-deployment proxy, so they end up at the same addresses as everywhere else. Deploying through any other factory produces different addresses that the builder will not find.
 
 ## Should my own contract call Assertions?
 

@@ -38,6 +38,11 @@ samp {
   --grid-opacity: 0.09;
   --grid-major-opacity: 0.15;
   --grid-size: 32px;
+  /* The heading band, the surface the article is read on, and the thin
+     light-blue edge of the sidebar, the contents card and the page links. */
+  --docs-heading-surface: #0a1d40;
+  --docs-reading-surface: #0f2750;
+  --docs-edge: color-mix(in srgb, #93c5fd 35%, transparent);
 }
 
 :root[data-theme='light'] {
@@ -61,20 +66,193 @@ samp {
   --grid-opacity: 0.06;
   --grid-major-opacity: 0;
   --grid-size: 32px;
+  --docs-heading-surface: #f0f4f8;
+  --docs-reading-surface: #ffffff;
+  --docs-edge: #c9d6e2;
 }
 
-/* The main site's signature blueprint grid behind the content. */
+/* The article is read on a solid surface. The main site's blueprint grid
+   stays behind the page heading only, across the full width of the frame
+   (content and right rail), and fades out before the prose begins. */
 body {
+  background-color: var(--docs-reading-surface);
+}
+
+.main-frame {
+  position: relative;
+  isolation: isolate;
+}
+
+.main-frame::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 auto;
+  height: calc(var(--sl-nav-height) + var(--sl-mobile-toc-height) + 15rem);
+  pointer-events: none;
+  background-color: var(--docs-heading-surface);
   background-image:
+    linear-gradient(to bottom, transparent 30%, var(--docs-reading-surface)),
     linear-gradient(rgba(var(--grid-rgb), var(--grid-major-opacity)) 1px, transparent 1px),
     linear-gradient(90deg, rgba(var(--grid-rgb), var(--grid-major-opacity)) 1px, transparent 1px),
     linear-gradient(rgba(var(--grid-rgb), var(--grid-opacity)) 1px, transparent 1px),
     linear-gradient(90deg, rgba(var(--grid-rgb), var(--grid-opacity)) 1px, transparent 1px);
   background-size:
+    auto,
     calc(var(--grid-size) * 5) calc(var(--grid-size) * 5),
     calc(var(--grid-size) * 5) calc(var(--grid-size) * 5),
     var(--grid-size) var(--grid-size),
     var(--grid-size) var(--grid-size);
+}
+
+/* The heading carries its own divider, so the panels need no rule between
+   them, and the space under the divider matches the space above it. */
+main > .content-panel:has(.docs-page-heading) {
+  padding-bottom: 0.5rem;
+}
+
+main > .content-panel:has(.docs-page-heading) + .content-panel {
+  border-top: 0;
+}
+
+/* Sidebars. The left one keeps Starlight's layout; on dark it gets a
+   light-blue edge so it reads against the navy. The right rail loses its
+   separator: the table of contents floats over the article as a card. */
+@media (min-width: 50rem) {
+  :root[data-theme='dark'] .sidebar-pane {
+    border-inline-end-color: var(--docs-edge);
+  }
+}
+
+@media (min-width: 72rem) {
+  .right-sidebar {
+    border-inline-start: 0;
+  }
+}
+
+.docs-line-toc {
+  padding: 1rem 0.85rem 1.05rem;
+  border: 1px solid var(--docs-edge);
+  border-radius: 0.85rem;
+  background: var(--docs-reading-surface);
+}
+
+.docs-line-toc:not(:has(nav)) {
+  display: none;
+}
+
+.right-sidebar-panel .docs-line-toc h2 {
+  margin: 0 0 0.6rem;
+  padding: 0 0.35rem 0.8rem;
+  border-bottom: 1px solid var(--docs-edge);
+}
+
+/* Each entry is preceded by a short rule. The pointer's nearness (set by the
+   component's script as --line-intensity, 0% to 100%) lengthens and tints
+   the rule and nudges the label; the current section and the focused link
+   show the full state. */
+.docs-line-toc starlight-toc a {
+  position: relative;
+  padding-block: 0.39rem;
+  padding-inline: calc(1.8rem + 0.45rem * var(--depth)) 0.15rem;
+  color: color-mix(in srgb, var(--sl-color-text-accent) var(--line-intensity, 0%), var(--sl-color-gray-2));
+  transform: translateX(var(--line-shift, 0px));
+}
+
+.docs-line-toc starlight-toc a::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0.15rem;
+  width: 1.25rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--sl-color-text-accent) var(--line-intensity, 0%), var(--sl-color-gray-4));
+  transform: translateY(-50%) scaleX(var(--line-scale, 0.58));
+  transform-origin: left center;
+}
+
+.docs-line-toc starlight-toc a[aria-current='true'],
+.docs-line-toc starlight-toc a:focus-visible {
+  color: var(--sl-color-text-accent);
+}
+
+.docs-line-toc starlight-toc a[aria-current='true'] {
+  font-weight: 600;
+}
+
+.docs-line-toc starlight-toc a[aria-current='true']::before,
+.docs-line-toc starlight-toc a:focus-visible::before {
+  height: 2px;
+  background: var(--sl-color-text-accent);
+  transform: translateY(-50%) scaleX(1);
+}
+
+.docs-line-toc starlight-toc a:focus-visible {
+  outline: 2px solid var(--sl-color-text-accent);
+  outline-offset: 2px;
+}
+
+/* Without the pointer effect (reduced motion, touch, no script) a plain
+   hover state does the same job. */
+@media (prefers-reduced-motion: reduce), (hover: none) {
+  .docs-line-toc starlight-toc a {
+    transform: none;
+  }
+
+  .docs-line-toc starlight-toc a:hover {
+    color: var(--sl-color-text-accent);
+  }
+
+  .docs-line-toc starlight-toc a:hover::before {
+    background: var(--sl-color-text-accent);
+    transform: translateY(-50%) scaleX(1);
+  }
+}
+
+/* Previous stays quiet on the reading surface; Next is the primary action. */
+.pagination-links a {
+  border-color: var(--docs-edge);
+  background-color: var(--docs-reading-surface);
+  box-shadow: none;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.pagination-links a:hover {
+  border-color: var(--sl-color-text-accent);
+}
+
+.pagination-links a:focus-visible {
+  outline: 2px solid var(--sl-color-text-accent);
+  outline-offset: 3px;
+}
+
+.pagination-links a[rel='next'] {
+  border-color: #005ba6;
+  background-color: #005ba6;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.pagination-links a[rel='next'] .link-title {
+  color: #ffffff;
+}
+
+.pagination-links a[rel='next']:hover {
+  border-color: #004b89;
+  background-color: #004b89;
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pagination-links a {
+    transition: none;
+  }
+
+  .pagination-links a[rel='next']:hover {
+    transform: none;
+  }
 }
 
 ::selection {

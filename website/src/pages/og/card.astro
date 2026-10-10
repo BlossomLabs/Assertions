@@ -1,0 +1,87 @@
+---
+// The default social card, as a page: the hamsa on the left and one
+// line on the right, in a 1200x630 frame. It is not linked from anywhere:
+// scripts/capture-og.mjs photographs it into public/og/default.png.
+import '../../styles/global.css';
+import HamsaFigure from '../../components/HamsaFigure.astro';
+---
+
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1200" />
+    <meta name="robots" content="noindex" />
+    <title>Assertions social card</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="font-sans antialiased">
+    <main class="card">
+      <div class="card-glow"></div>
+      <div class="card-hamsa"><HamsaFigure /></div>
+      <div class="card-text">
+        <h1>
+          Before you sign,
+          <span>keep an eye on what needs watching.</span>
+        </h1>
+      </div>
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+  /* The dev server's toolbar would otherwise be in the picture. */
+  astro-dev-toolbar {
+    display: none !important;
+  }
+  .card {
+    position: relative;
+    width: 1200px;
+    height: 630px;
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    padding: 0 4.5rem 0 3.5rem;
+    overflow: hidden;
+  }
+  .card-glow {
+    position: absolute;
+    left: -60px;
+    top: 50%;
+    width: 620px;
+    height: 620px;
+    transform: translateY(-50%);
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--color-bp-500) 14%, transparent);
+    filter: blur(110px);
+  }
+  /* The figure's own box is 480x650; it keeps that shape and nearly fills the height. */
+  .card-hamsa {
+    position: relative;
+    flex: none;
+    height: 580px;
+    aspect-ratio: 480 / 650;
+  }
+  .card-text {
+    position: relative;
+    min-width: 0;
+  }
+  .card h1 {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 3.75rem;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+  .card h1 span {
+    display: block;
+    color: var(--color-bp-400);
+  }
+</style>

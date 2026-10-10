@@ -17,7 +17,7 @@ const { codename, version, status, date, summary, banner } = entry.data;
 const statusLabel = { released: 'Released', upcoming: 'Upcoming', 'in-progress': 'In progress', planned: 'Planned' };
 ---
 
-<Layout title={`${codename} (v${version}) | assertions.eth`} description={summary}>
+<Layout title={`${codename} (v${version}) | assertions.eth`} description={summary} image={`/og/releases/${entry.id}.png`}>
   <Nav />
   <main class="pt-24 pb-20">
     <div class="h-48 sm:h-64 overflow-hidden border-b border-[var(--color-ink-3)]/20">
@@ -58,10 +58,41 @@ const statusLabel = { released: 'Released', upcoming: 'Upcoming', 'in-progress':
   .release-prose p {
     margin: 0 0 1rem;
   }
-  .release-prose ul {
+  .release-prose h3 {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 1.5rem 0 0.6rem;
+  }
+  .release-prose ul,
+  .release-prose ol {
     list-style: disc;
     padding-left: 1.4rem;
     margin: 0 0 1rem;
+  }
+  .release-prose ol {
+    list-style: decimal;
+  }
+  /* A wide table scrolls inside its own box, so the page never does. */
+  .release-prose table {
+    display: block;
+    overflow-x: auto;
+    border-collapse: collapse;
+    margin: 0 0 1rem;
+    font-size: 0.925rem;
+  }
+  .release-prose th,
+  .release-prose td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink-3) 25%, transparent);
+    color: var(--color-ink-2);
+    line-height: 1.5;
+  }
+  .release-prose th {
+    font-weight: 600;
+    color: var(--color-ink);
   }
   .release-prose li {
     margin-bottom: 0.4rem;

@@ -1,15 +1,19 @@
 ---
 import '../styles/global.css';
 import SupportWidget from '../components/support/SupportWidget';
+import { DEFAULT_CARD, SITE } from '../../scripts/site.mjs';
 
 interface Props {
   title?: string;
   description?: string;
+  /** Site path of a 1200x630 social card for this page. Without one, the page takes the default card. */
+  image?: string;
 }
 
 const {
   title = 'Assertions: on-chain assertions for safe governance',
   description = 'Verify view function return values and blockchain state atomically in your DAO proposals, Safe transactions, and protocol upgrades.',
+  image = DEFAULT_CARD,
 } = Astro.props;
 ---
 
@@ -35,6 +39,10 @@ const {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image" content={SITE + image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:image" content={SITE + image} />
   </head>
   <body class="font-sans antialiased min-h-screen">
     <slot />

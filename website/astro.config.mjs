@@ -10,6 +10,7 @@ import react from '@astrojs/react';
 import starlight from '@astrojs/starlight';
 
 import { evmcrisprSrc, local, vendoredDepIds } from './scripts/evmcrispr-sources.mjs';
+import { DEFAULT_CARD, SITE } from './scripts/site.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -65,8 +66,13 @@ export default defineConfig({
         replacesTitle: true,
       },
       favicon: '/favicon.svg',
-      // The main site's fonts, loaded the same way Layout.astro does.
+      // The main site's fonts, loaded the same way Layout.astro does, and
+      // the same default social card.
       head: [
+        { tag: 'meta', attrs: { property: 'og:image', content: SITE + DEFAULT_CARD } },
+        { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
+        { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
+        { tag: 'meta', attrs: { name: 'twitter:image', content: SITE + DEFAULT_CARD } },
         {
           tag: 'link',
           attrs: { rel: 'preconnect', href: 'https://fonts.googleapis.com' },

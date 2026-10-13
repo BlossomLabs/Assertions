@@ -29,6 +29,10 @@
 /out
 /cache_forge
 
+# Python bytecode caches
+__pycache__/
+*.pyc
+
 # Formal verification output (regenerated locally; not retained in Git)
 /TestResults/
 /formal/**/evidence/

@@ -3,7 +3,9 @@ import { createEvml, type EvmlTag, type ModuleLoader } from "@evmcrispr/core";
 /**
  * The builder's EVML tag: an isolated registry (not the global singleton)
  * with exactly the modules the Assertion Builder uses. `std` is always
- * available; the rest lazy-load on first `load <module>`. The chain,
+ * available; the rest lazy-load on first `load <module>`. A simulation
+ * that suggests checks asks every module registered here for the events
+ * it recognises, which is what `ens` and `proxies` are registered for. The chain,
  * executor and transports are applied by the EvmcrisprProvider around the
  * builder; components read the configured tag with `useEvmlTag()`.
  */
@@ -55,6 +57,16 @@ export const evml = createEvml().use(
     name: "acl",
     load: vendored(() => import("@evmcrispr/module-acl")),
     description: "Access-control reads (roles, owners)",
+  },
+  {
+    name: "proxies",
+    load: vendored(() => import("@evmcrispr/module-proxies")),
+    description: "ERC-1967 proxy and beacon reads (implementation, admin)",
+  },
+  {
+    name: "ens",
+    load: vendored(() => import("@evmcrispr/module-ens")),
+    description: "ENS registry and resolver reads",
   },
   {
     name: "safe",

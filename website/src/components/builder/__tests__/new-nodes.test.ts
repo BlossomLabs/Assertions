@@ -1,5 +1,5 @@
 import type { PublicClient } from "viem";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { buildAssertionLine } from "../assertion-codegen";
 import {
@@ -264,6 +264,30 @@ describe("the reads of a Safe", () => {
 });
 
 describe("token amounts", () => {
+  // `DAI` is a symbol: compiling the line resolves it against the chain's
+  // token list. That list is served from here, so the test reads no
+  // network; it answers once and counts, so a second fetch or another
+  // address would show.
+  const DAI = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
+  const listRequests: string[] = [];
+  beforeAll(() => {
+    const real = globalThis.fetch;
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input instanceof Request ? input.url : input);
+      if (!/\/tokenlist\//.test(url)) return real(input, init);
+      listRequests.push(url);
+      return new Response(
+        JSON.stringify({
+          tokens: [{ chainId: 1, symbol: "DAI", name: "Dai", decimals: 18, address: DAI }],
+        }),
+        { status: 200, headers: { "content-type": "application/json" } },
+      );
+    });
+  });
+  afterAll(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("writes an amount in a token's own units", async () => {
     const out = await built(
       assertion({
@@ -278,8 +302,12 @@ describe("token amounts", () => {
       }),
     );
     expect(out.line).toBe(`assert ${T}::!{balanceOf(address)(uint256) @me} >= @token:amount!(DAI 100)`);
+    expect(out.diagnostics).toEqual([]);
     expect(out.ok).toBe(true);
     expect(out.loads).toEqual(["load token"]);
+    // The symbol was resolved, and against the list served here.
+    expect(listRequests).toHaveLength(1);
+    expect(listRequests[0]).toMatch(/\/tokenlist\/1$/);
   });
 
   it("writes a token's decimals", async () => {

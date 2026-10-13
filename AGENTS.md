@@ -282,10 +282,53 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   at two-space indentation. `src/_generated.ts` is uncommitted output; rerun
   `bun run codegen` after any face change (a helper's `name!` key does not exist
   until you do), and note bare `bun test` inside a module does NOT rerun it.
+- **A pin move can change what `pnpm check` sees and vitest does not**: the
+  tests mock `@evmcrispr/editor` and `@evmcrispr/ai`, so a changed upstream
+  type passes them. `website`'s exact `monaco-editor` version must equal the
+  one in the checkout's `packages/editor/package.json` (the site serves its own
+  copy from `/vs` and types the editor ref with it); a mismatch is a type
+  error in `Composer.tsx`.
 - **SDK types resolve against `dist/`**: after SDK source changes, downstream
   `type-check` needs rebuilt declarations (`bun scripts/build.ts --types` with
   `node_modules/.bin` on PATH; plain `--bundle` builds delete stale `.d.ts`
   without regenerating them).
+
+## The builder's scripts
+
+- **`governor:propose` takes an optional leading variable** (the proposal id).
+  A Governor passed as a variable in first position is taken for it and the
+  command fails at run time with "<governor> must be a valid address", while
+  `validate()` passes. The wrapper always binds `$proposalId` first.
+- **Validating a final script is not running it.** `safe:propose` under
+  simulation stops at the wallet signature ("can't handle wallet action
+  eth_signTypedData_v4 inside a fork command"), and needs an owner or delegate
+  as the account; `governor:propose` really calls `propose` on the fork, so it
+  needs a proposer above the threshold. What the builder simulates is the
+  block, as the account that will execute it.
+- **A line may end with `  # base units of $token`** (EVMcrispr writes it for
+  dust and unknown decimals, `BASE_UNITS_COMMENT`). Compare lines with
+  `lineMeaning`/`withoutComment`, rename with `renameVariable` (it follows the
+  comment, not strings), and count uses on the AST, never by regex.
+- **Variable tokens are followed by `::` in read hops** (`$token::!{…}`): a
+  token regex must refuse a single `:` (a config variable) and accept two.
+- **Which names the builder may change lives outside the script**
+  (`useScriptState`'s managed map): a name not in it is the user's or the
+  token list's and is never replaced. Anything that writes a script the
+  builder composed must hand its names over (`loadComposed`).
+- **The executing account's names are the context's alone** (`ACCOUNT_NAMES`
+  in `script-ops.ts`, the one list: `safe`, `governor`, `timelock`, `dao`,
+  `wallet`, `executor`). An ABI parameter name, an imported file and a
+  suggestion are text someone else wrote; `bindVariables` refuses those names
+  for any address the context does not name, so a test that adds a suggestion
+  naming `$executor` must pass the context that says who that is.
+- **An imported file never reaches a script as text.** `safe-tx-builder.ts`
+  parses a Transaction Builder file into a checked structure
+  (`parseTxBuilderBatch`) and builds every line from that alone; one piece
+  that is not understood refuses the whole file. A new field is added to the
+  structure first, never interpolated from the file. EVML reads back what
+  `JSON.stringify` writes for a string, but has no `\uXXXX` escape.
+- **`[]` and `[$a $b]` parse as a `DestructurePattern`**, not an
+  `ArrayExpression`; `decomposeCall` reads both.
 
 ## Faces and parity
 

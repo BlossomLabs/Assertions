@@ -1,11 +1,17 @@
 import { Editor } from "@evmcrispr/editor";
 import type { editor } from "monaco-editor";
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 
-import { AbiForm } from "./AbiForm";
+import { type ActionEdit, AbiForm } from "./AbiForm";
 import { BatchList } from "./BatchList";
-import { isTxBuilderBatch, txBuilderToEvml } from "./safe-tx-builder";
+import { decomposeCall } from "./compose-call";
+import {
+  type TxBuilderBatch,
+  importTxBuilder,
+  parseTxBuilderBatch,
+} from "./safe-tx-builder";
 import { isAssertSpan } from "./script-ops";
+import { useComposeEnv } from "./useComposeEnv";
 import type { useScriptState } from "./useScriptState";
 
 type Mode = "form" | "editor" | "txbuilder";
@@ -29,6 +35,14 @@ export function Composer({
   const { script, setScript } = scriptState;
   const [rawMode, setRawMode] = useState<Mode>("form");
   const [importError, setImportError] = useState<string | null>(null);
+  const compose = useComposeEnv(chainId);
+  // The action loaded back into the contract form. Any change to the
+  // batch ends the edit: the line it was on may be another one now.
+  const [editing, setEditing] = useState<ActionEdit | null>(null);
+  const formRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    setEditing(null);
+  }, [script]);
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   // Content last pushed to/received from Monaco, to break update loops.
   const editorContent = useRef<string>(script);
@@ -45,22 +59,38 @@ export function Composer({
 
   const importTxBuilderFile = async (file: File) => {
     setImportError(null);
+    let parsed: unknown;
     try {
-      const parsed = JSON.parse(await file.text());
-      if (!isTxBuilderBatch(parsed)) {
-        setImportError(
-          "That JSON doesn't look like a Safe Transaction Builder batch.",
-        );
-        return;
-      }
-      const { script: converted, chainId: batchChain } =
-        txBuilderToEvml(parsed);
-      setScript(converted);
-      if (batchChain && onDroppedChainId) onDroppedChainId(batchChain);
-      setRawMode("editor");
+      parsed = JSON.parse(await file.text());
     } catch {
       setImportError(
         "Unrecognized file: expected a Safe Transaction Builder JSON export.",
+      );
+      return;
+    }
+    // The file is someone else's text: it is taken whole, every piece
+    // checked for what it claims to be, or not at all. A refusal says
+    // which transaction and which field, and the batch stays as it is.
+    const checkedFile = parseTxBuilderBatch(parsed);
+    if ("error" in checkedFile) {
+      setImportError(`Not imported. ${checkedFile.error}`);
+      return;
+    }
+    try {
+      // Through the contract form's own path: named addresses and, for
+      // the standard token calls, the token's units.
+      const { script: converted, managed, chainId: batchChain } =
+        await importTxBuilder(
+          parsed as TxBuilderBatch,
+          await compose.env(async () => null),
+          scriptState.getNaming(),
+        );
+      scriptState.loadComposed(converted, managed);
+      if (batchChain && onDroppedChainId) onDroppedChainId(batchChain);
+      setRawMode("editor");
+    } catch (e) {
+      setImportError(
+        `Not imported. ${e instanceof Error ? e.message : "The file could not be read."}`,
       );
     }
   };
@@ -95,11 +125,16 @@ export function Composer({
 
       {mode === "form" && (
         <div className="space-y-5">
-          <AbiForm
-            chainId={chainId}
-            onAdd={scriptState.appendWithSets}
-            onSkip={onSkipActions}
-          />
+          <div ref={formRef}>
+            <AbiForm
+              chainId={chainId}
+              onAdd={scriptState.appendWithSets}
+              onSkip={onSkipActions}
+              editing={editing}
+              onSave={scriptState.replaceLine}
+              onCancelEdit={() => setEditing(null)}
+            />
+          </div>
           {script.trim() !== "" && (
             <div>
               <p className="text-xs text-[var(--color-ink-3)] mb-1.5">
@@ -107,6 +142,27 @@ export function Composer({
               </p>
               <BatchList
                 script={script}
+                chainId={chainId}
+                highlight={editing?.line}
+                onRename={scriptState.renameVariable}
+                // An action goes back into the form when the form can
+                // hold it, and to the EVML editor otherwise.
+                editable={(span) =>
+                  isAssertSpan(span)
+                    ? null
+                    : decomposeCall(script, span.start)
+                      ? "form"
+                      : "editor"
+                }
+                onEdit={(line, where) => {
+                  const call = where === "form" ? decomposeCall(script, line) : null;
+                  if (!call) {
+                    setRawMode("editor");
+                    return;
+                  }
+                  setEditing({ line, call });
+                  formRef.current?.scrollIntoView?.({ block: "nearest" });
+                }}
                 onRemove={scriptState.removeCommand}
                 // Assertions are added and removed in step 2; here they
                 // render dimmed, without a delete button.

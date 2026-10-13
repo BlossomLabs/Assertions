@@ -11,7 +11,7 @@ Open the [builder](/builder). Step 1 is **Compose**.
 
 1. Pick the network.
 2. Under "Executor and network", choose **Safe** and enter the Safe address or ENS name. The builder reads the address and shows its version, threshold and owner count, or tells you it is not a Safe.
-3. Add the payment as an action: a transfer to the contributor of 5 ETH. You can use the contract form, the EVML editor, or the **Transaction Builder JSON** tab, which only appears when the executor is a Safe and imports a batch exported from the Safe app.
+3. Add the payment as an action: a transfer to the contributor of 5 ETH. You can use the contract form, the EVML editor, or the **Transaction Builder JSON** tab, which only appears when the executor is a Safe and imports a batch exported from the Safe app. Imported calls are written the way the contract form writes them: each address as a named variable, and the amount of a token `transfer`, `approve` or `transferFrom` in the token's own units. Arrays and tuples are read from the file and written as EVML lists. A transaction with no method (raw calldata, a plain transfer) becomes a `send` line, and a batch exported for another network than the one selected is written with plain addresses. The file is checked before anything is imported: every address, amount, type, value and piece of calldata must be exactly that, and when a transaction also carries its calldata, the method and values must encode to it. If one piece is not understood the whole file is refused, with the position of the transaction and the field, and your batch stays as it was.
 4. Press "Simulate batch". The simulation runs as the Safe, so you see the payment succeed or fail before anyone signs.
 
 ## 2. Add assertions
@@ -47,9 +47,11 @@ You do not have to write these lines by hand. In the builder's assertion form, e
 
 Press "Simulate protected batch". A pass means every check holds on the fork. If it fails, simulate the batch from step 1 to tell a failing action from a failing assertion. Step 3 warns you if the protected batch has not passed a simulation in its current form.
 
+After a pass the builder may list [suggested checks](/docs/test-an-assertion#suggested-checks). A suggested amount is the balance or the allowance the simulation saw, and either may change before the transaction executes, so prefer a threshold you chose yourself. The floor on the Safe's own ETH also leaves room for a gas fee the simulation assumed.
+
 ## 3. Submit
 
-Step 3 is **Submit**. It shows the final script, which wraps your calls in `safe:propose` for your Safe, and gives you two ways to continue.
+Step 3 is **Submit**. It shows the final script, which wraps your calls in `safe:propose $safe ( ... )`, and gives you two ways to continue. `$safe` is your Safe: a variable set to its address above the wrapper, and the name the actions and the checks use for it too (`assert @balance!($usdc $safe) >= ...`). See [how the addresses are named](/docs/test-an-assertion#how-the-addresses-are-named).
 
 **Propose to Safe** has your wallet sign and queue the batch on the Safe Transaction Service. Your signature counts as the first confirmation when you are an owner. When you are a delegate, the Safe app shows the proposal but the service does not count it as a confirmation. After proposing, the run follows the proposal and reports its confirmations, and whether it was executed or replaced by another transaction at the same nonce.
 

@@ -26,6 +26,14 @@ export interface SimulationState {
   simulated: SimKey | null;
   /** When the result arrived, in epoch milliseconds. */
   finishedAt?: number;
+  /** The block the run forked, when the builder chose it (the protected
+   *  batch: the latest block, read just before, or an earlier run's). */
+  block?: number;
+  /** When that block was the chain's latest, in epoch milliseconds. */
+  blockReadAt?: number;
+  /** The run forked the block of an earlier run, to confirm the checks
+   *  that run suggested (see `confirmationBlock`). */
+  pinned?: boolean;
 }
 
 export const idleSimulation = (): SimulationState => ({

@@ -41,6 +41,9 @@
       "@evmcrispr/module-math/registry": [
         "./.evmcrispr/modules/math/src/_generated.ts"
       ],
+      "@evmcrispr/module-proxies/registry": [
+        "./.evmcrispr/modules/proxies/src/_generated.ts"
+      ],
       "@evmcrispr/module-receipts/registry": [
         "./.evmcrispr/modules/receipts/src/_generated.ts"
       ],

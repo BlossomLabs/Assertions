@@ -10,9 +10,25 @@ This guide sends a protected batch from your own account, without a Safe or a DA
 Open the [builder](/builder). Step 1 is **Compose**.
 
 1. Pick the network. The batch must target a single chain.
-2. Under "Executor and network", choose **This wallet**.
+2. Under "Executor and network", choose **A wallet**.
 3. Add the payment as an action: a transfer of 1 ETH to the recipient. A contract deployment cannot go in a wallet batch.
 4. Press "Simulate batch" to see the payment succeed or fail on a fork.
+
+When you add a contract call with the contract form, the builder names each address once and uses that name in every line, checks included. A token on the network's token list is named by its symbol, an argument by what it is in the call (`$to`, `$spender`), and your own account, where a call names it, is `$executor` (`$wallet` when you typed the account to simulate as). [How the addresses are named](/docs/test-an-assertion#how-the-addresses-are-named) has the full rule, and how to rename one.
+
+For a standard token `transfer`, `approve` or `transferFrom`, the amount field is in the token's own units: type `1` for one USDC. The field's label names the token when the network's token list knows it and says "token units" otherwise, and the line under the field shows what you typed in base units. More decimals than the token has are refused. For `approve`, "max" fills in an unlimited allowance. "Type base units" switches the field for the cases where you need the raw number. The line written is exact either way:
+
+```evml
+load token
+set $usdc 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
+set $to 0x2222222222222222222222222222222222222222
+
+exec $usdc "transfer(address,uint256)" $to @token:amount($usdc 1)
+```
+
+An amount too small to read in the token's units is written in base units, with a comment that says so: `exec $weth "approve(address,uint256)" $spender 5  # base units of $weth`. Any other function takes its numbers as the contract defines them.
+
+To change an action, press the pencil on its row in "Batch so far". The form fills with its contract, function and arguments; "Save action" replaces it where it stands and "Cancel" leaves the batch untouched. An action the form cannot show (one typed in the EVML editor with a helper or a read, for example) has an "EVML editor" button there instead.
 
 ## 2. Add assertions
 
@@ -30,7 +46,7 @@ batch (
 
 `@me` is your connected account. The builder writes the `batch ( ... )` wrapping for you, so you only write the lines inside the parentheses. The assertions are ordinary calls in the group, in the order you wrote them.
 
-Press "Simulate protected batch". A failing assertion shows up here first, with the line that failed. You cannot continue until a simulation of the current script has passed.
+Press "Simulate protected batch". A failing assertion shows up here first, with the line that failed. You cannot continue until a simulation of the current script has passed. After a pass the builder may list [suggested checks](/docs/test-an-assertion#suggested-checks) you can add. One of them is a floor on your wallet's own ETH that leaves room for an assumed gas fee: a transaction dearer than that fails it.
 
 ## 3. Submit
 

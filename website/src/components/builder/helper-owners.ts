@@ -4,6 +4,7 @@ import { helpers as contracts } from "@evmcrispr/module-contracts/registry";
 import { helpers as governor } from "@evmcrispr/module-governor/registry";
 import { helpers as lang } from "@evmcrispr/module-lang/registry";
 import { helpers as math } from "@evmcrispr/module-math/registry";
+import { helpers as proxies } from "@evmcrispr/module-proxies/registry";
 import { helpers as receipts } from "@evmcrispr/module-receipts/registry";
 import { helpers as safe } from "@evmcrispr/module-safe/registry";
 import { helpers as sim } from "@evmcrispr/module-sim/registry";
@@ -14,9 +15,14 @@ import type { HelperImportMap } from "@evmcrispr/sdk";
 
 /**
  * Which module owns each on-chain (`!`) helper face, derived from the
- * generated registries of every module the builder's tag registers
+ * generated registries of the modules the builder's tag registers
  * (evml.ts). The script surgery derives `load` lines from this map, so a
  * helper the codegen or the chat emits can never miss its module.
+ *
+ * `ens` is registered with the tag (its events suggest checks) but is not
+ * listed here: its `@owner!` would be a second owner of acl's, and the
+ * checks it suggests are plain calls that use no helper. Written with its
+ * prefix (`@ens:owner!`) a face still derives `load ens`.
  */
 
 /** Every registered module's helper registry, keyed by module name. */
@@ -30,6 +36,7 @@ export const REGISTRIES: Record<string, HelperImportMap> = {
   token,
   vault,
   acl,
+  proxies,
   safe,
   governor,
   aragonosx,

@@ -2,16 +2,18 @@ import "../../styles/evmcrispr-editor.css";
 
 import { EvmcrisprProvider, useEvmlTag } from "@evmcrispr/editor";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Address } from "viem";
 import { useAccount, WagmiProvider } from "wagmi";
 
+import { addressKind } from "./address-kind";
 import { AssertionsStage } from "./AssertionsStage";
 import { AssistantAside } from "./AssistantAside";
 import { ChatPanel } from "./ChatPanel";
 import { ComposeStage } from "./ComposeStage";
 import {
   contextReady,
+  contextVariables,
   executorAddress,
   simulationSender,
   type ExecutionContext,
@@ -24,7 +26,11 @@ import { simKeyFor, useSimulation } from "./SimulationPanel";
 import { SubmitStage } from "./SubmitStage";
 import { type EyeState, eyeStateFor } from "./timeline";
 import { useBuilderChatAgent } from "./useBuilderChatAgent";
-import { type ChainSupport, useChainSupport } from "./useChainSupport";
+import {
+  type ChainSupport,
+  useChainClient,
+  useChainSupport,
+} from "./useChainSupport";
 import {
   type AddressCheck,
   useContextAddress,
@@ -144,7 +150,18 @@ function BuilderBody({
   // step 1 (a failure there is the batch's), the protected script in step
   // 2 (what Submit requires).
   const actionsSim = useSimulation();
-  const protectedSim = useSimulation();
+  // The protected batch runs at a block the builder knows, read from the
+  // same endpoint the simulation forks: the checks a run suggests can then
+  // be confirmed against the state they were drawn from.
+  const chainClient = useChainClient(chainId);
+  const latestBlock = useCallback(
+    async (id: number) =>
+      chainClient && id === chainId
+        ? Number(await chainClient.getBlockNumber({ cacheTime: 0 }))
+        : undefined,
+    [chainClient, chainId],
+  );
+  const protectedSim = useSimulation({ latestBlock });
   const [suggestPrompt, setSuggestPrompt] = useState<{
     text: string;
     nonce: number;
@@ -250,6 +267,7 @@ function BuilderBody({
             <AssertionsStage
               chainId={chainId}
               executor={executor}
+              context={context.kind}
               scriptState={scriptState}
               suggest={suggest}
               simulation={protectedSim}
@@ -300,7 +318,14 @@ function Builder() {
   const chainId = selectedChainId ?? chain?.id ?? 1;
 
   const [context, setContext] = useState<ExecutionContext>({ kind: "eoa" });
-  const scriptState = useScriptState();
+  // Whether an address has code on the chain the batch targets: what a
+  // variable is called when its address plays two roles.
+  const kindClient = useChainClient(chainId);
+  const kindOf = useCallback(
+    (address: string) => addressKind(kindClient, chainId, address),
+    [kindClient, chainId],
+  );
+  const scriptState = useScriptState("", { kindOf });
 
   const { resolved: contextAddress, check: contextCheck } = useContextAddress(
     chainId,
@@ -316,6 +341,18 @@ function Builder() {
   // A Governor's proposal runs from its timelock, so simulations do too.
   const timelock = useGovernorTimelock(chainId, context.kind, contextAddress);
   const simFrom = simulationSender(executor, timelock);
+  // The accounts the user named by choosing the context: their variables
+  // in the script have those names (`$safe`, `$governor`, `$dao`...).
+  const named = contextVariables(context, {
+    connected: address,
+    resolved: contextAddress,
+    timelock,
+  });
+  const namedKey = named.map((v) => `${v.name}=${v.address.toLowerCase()}`).join(",");
+  const { setContext: nameAccounts } = scriptState;
+  useEffect(() => {
+    void nameAccounts(named);
+  }, [namedKey, nameAccounts]);
 
   return (
     <EvmcrisprProvider

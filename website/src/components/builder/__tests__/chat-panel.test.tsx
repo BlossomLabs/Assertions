@@ -159,14 +159,14 @@ describe("ChatPanel: the chat", () => {
       items: [
         { role: "user", text: "protect my batch" },
         { role: "tool", text: "simulate", phase: "result", artifact: { kind: "simulation", success: true } },
-        { role: "tool", text: "edit script", phase: "result", artifact: { kind: "script-change", ok: true, undone: true } },
+        { role: "tool", text: "edit script", phase: "result", artifact: { kind: "script-change", ok: true } },
         { role: "assistant", text: "Added one assertion." },
       ],
     });
     render(<ChatPanel agent={agent} />);
     expect(screen.getByText("protect my batch")).toBeTruthy();
     expect(screen.getByText(/simulate/).textContent).toBe("simulate ✓ passed");
-    expect(screen.getByText(/edit script/).textContent).toBe("edit script (undone)");
+    expect(screen.getByText(/edit script/).textContent).toBe("edit script ✓");
     expect(screen.getByText("Added one assertion.")).toBeTruthy();
     expect(screen.queryByText(/Once your batch simulates successfully/)).toBeNull();
   });

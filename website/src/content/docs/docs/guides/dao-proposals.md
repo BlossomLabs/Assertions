@@ -73,11 +73,13 @@ In the builder, choose **Governor** or **Aragon OSx DAO** as the executor and en
 
 Submitting is blocked until the protected batch has passed a simulation in its current form. Change the script and you simulate again.
 
+After a pass the builder may list [suggested checks](/docs/test-an-assertion#suggested-checks). The ones about state (an owner, a role, the implementation behind a proxy, the owner or resolver of an ENS name) describe an end state and suit a proposal. The ones about amounts are today's balances and allowances, which is what the thresholds above must not be: treat them as a starting point and set the number yourself.
+
 The simulation runs the block as the account that will execute it. For a Governor that has a timelock, that is the timelock, and a check that depends on `@sender` is read against it. One limit remains: a fork passes if the claims hold now. It cannot tell you they will hold on execution day, which is why the thresholds above must describe the end state and not today's balances.
 
 ## Create the proposal
 
-On the last step the builder wraps your block and shows the final script. For a Governor it is `governor:propose <governor> "<description>" ( ... )`. For Aragon OSx it is `aragonosx:connect <dao> ( aragonosx:propose <plugin> ... ( ... ) )`, with your description passed as the proposal metadata. Pressing the button sends the proposal-creation transaction from your wallet. Nothing in the proposal runs at that point.
+On the last step the builder wraps your block and shows the final script. For a Governor it is `governor:propose $proposalId $governor "<description>" ( ... )`: `$governor` is a variable set to the Governor's address above the wrapper, and `$proposalId` receives the new proposal's id. For Aragon OSx it is `aragonosx:connect $dao ( aragonosx:propose <plugin> ... ( ... ) )`, with your description passed as the proposal metadata. Inside the block, the account the calls run from has the same kind of name: `$dao`, `$governor`, or `$timelock` for a Governor that executes through one (see [how the addresses are named](/docs/test-an-assertion#how-the-addresses-are-named)). Pressing the button sends the proposal-creation transaction from your wallet. Nothing in the proposal runs at that point.
 
 A few things to know:
 

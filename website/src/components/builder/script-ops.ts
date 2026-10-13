@@ -183,6 +183,376 @@ export function setTarget(node: CommandExpressionNode): string | undefined {
     : undefined;
 }
 
+/** The variables a script sets to a literal address, by name (no `$`):
+ *  the ones whose value is known without running anything. Config
+ *  variables (`$mod:key`) are settings, not addresses to refer to. */
+export function addressVariables(script: string): Map<string, string> {
+  const variables = new Map<string, string>();
+  for (const span of commandSpans(script)) {
+    const variable = addressVariable(span);
+    if (variable) variables.set(variable.name, variable.address);
+  }
+  return variables;
+}
+
+/** The variable a `set $name 0x…` command pins to a literal address. */
+export function addressVariable(
+  span: CommandSpan,
+): { name: string; address: string } | undefined {
+  if (!span.node || !isSetSpan(span) || span.node.args.length !== 2)
+    return undefined;
+  const target = setTarget(span.node);
+  const value = span.node.args[1];
+  if (!target || target.includes(":")) return undefined;
+  if (value.type !== NodeType.AddressLiteral) return undefined;
+  return { name: target.replace(/^\$/, ""), address: String(value.value) };
+}
+
+/** Every variable a script sets, to anything, by name (no `$`). */
+export function setVariables(script: string): Set<string> {
+  const names = new Set<string>();
+  for (const span of commandSpans(script)) {
+    if (!span.node || !isSetSpan(span)) continue;
+    const target = setTarget(span.node);
+    if (target) names.add(target.replace(/^\$/, ""));
+  }
+  return names;
+}
+
+/** Where a `#` comment starts in a line, or -1: a `#` inside quotes is
+ *  text. */
+function commentStart(line: string): number {
+  let quote: string | null = null;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (quote) {
+      if (ch === "\\") i++;
+      else if (ch === quote) quote = null;
+    } else if (ch === '"' || ch === "'") quote = ch;
+    else if (ch === "#") return i;
+  }
+  return -1;
+}
+
+/** A line (or a command of several) without its comments: what it says to
+ *  the interpreter. Lines are compared by this, so a line with a comment
+ *  that says its unit is the same line without it. */
+export function withoutComment(text: string): string {
+  return text
+    .split("\n")
+    .map((line) => {
+      const at = commentStart(line);
+      return at < 0 ? line : line.slice(0, at).trimEnd();
+    })
+    .join("\n");
+}
+
+const VARIABLE_TOKEN = /\$([A-Za-z_][A-Za-z0-9_]*)(?![A-Za-z0-9_]|:(?!:))/g;
+
+/** `text` with each `$name` token passed through `rename`, everywhere but
+ *  inside quotes: code and comments say which variable they mean, a
+ *  string is the user's text. */
+function mapVariables(text: string, rename: (name: string) => string | undefined): string {
+  return text
+    .split("\n")
+    .map((line) => {
+      let out = "";
+      let from = 0;
+      let quote: string | null = null;
+      const flush = (to: number) => {
+        out += line
+          .slice(from, to)
+          .replace(VARIABLE_TOKEN, (token, name: string) => {
+            const next = rename(name);
+            return next === undefined ? token : `$${next}`;
+          });
+        from = to;
+      };
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (quote) {
+          if (ch === "\\") i++;
+          else if (ch === quote) {
+            out += line.slice(from, i + 1);
+            from = i + 1;
+            quote = null;
+          }
+        } else if (ch === '"' || ch === "'") {
+          flush(i);
+          quote = ch;
+        } else if (ch === "#") break;
+      }
+      if (quote) out += line.slice(from);
+      else flush(line.length);
+      return out;
+    })
+    .join("\n");
+}
+
+/** The script with a variable under another name: its `set`, every use,
+ *  and every comment that mentions it. Names are given without the `$`. */
+export function renameVariable(script: string, from: string, to: string): string {
+  return mapVariables(script, (name) => (name === from ? to : undefined));
+}
+
+/** What a variable may be called when the user names it. */
+const USER_NAME = /^[A-Za-z][A-Za-z0-9]*$/;
+
+/** The user's own rename of a variable, or why not, in a few words. */
+export function userRename(
+  script: string,
+  from: string,
+  to: string,
+): { script: string } | { error: string } {
+  const taken = setVariables(script);
+  if (!taken.has(from)) return { error: "No such variable." };
+  const name = to.trim();
+  if (name === from) return { script };
+  if (name === "") return { error: "Type a name." };
+  if (!USER_NAME.test(name))
+    return { error: "Letters and digits only, starting with a letter." };
+  if (taken.has(name)) return { error: `$${name} is already used.` };
+  return { script: renameVariable(script, from, name) };
+}
+
+/** Where a variable's name came from, when the builder gave it:
+ *  - `role`: what the address is in one use (a parameter's name, a
+ *    suggestion's role): `to`, `spender`, `owner`.
+ *  - `neutral`: what could be read of it (`account`, `contract`), or
+ *    nothing (`address`).
+ *  - `context`: what the user said the executing account is (`safe`).
+ *  - `list`: the chain's token list (`usdc`). Never replaced, so never
+ *    kept track of. */
+export type NameOrigin = "role" | "neutral" | "context" | "list";
+
+/** A variable a line refers to as `$name`, and the address it stands for.
+ *  `wanted` is the name to give it in a script when `name` is only a
+ *  placeholder in the line, and `origin` where that name comes from. */
+export interface LineVariable {
+  name: string;
+  value: string;
+  wanted?: string;
+  origin?: NameOrigin;
+}
+
+/**
+ * The names a variable has only on the user's own say-so: the account
+ * that executes, as the context names it. THE one list. A script reads
+ * `$safe` as the user's Safe and `$executor` as the account that runs the
+ * batch, so nothing else may give these names: not an ABI's parameter
+ * names, not an imported file, not a suggestion (`bindVariables` refuses
+ * them for any address the context does not name that way). A new kind of
+ * context adds its name here, and the type of `ContextVariable` makes sure
+ * it cannot be given without being listed.
+ */
+export const ACCOUNT_NAMES = [
+  "safe",
+  "governor",
+  "timelock",
+  "dao",
+  "wallet",
+  "executor",
+] as const;
+export type AccountName = (typeof ACCOUNT_NAMES)[number];
+
+/** Whether a name would read as one of the executing account's: whatever
+ *  its case, the underscores around it or the number after it (`_Safe`,
+ *  `executor2`). */
+export function isAccountName(name: string): boolean {
+  const word = name.replace(/^_+|_+$/g, "").replace(/\d+$/, "").replace(/_+$/, "").toLowerCase();
+  return (ACCOUNT_NAMES as readonly string[]).includes(word);
+}
+
+/** An account the user told the builder about: the Safe, the Governor,
+ *  the DAO, the wallet the batch runs as. Its variable has that name. */
+export interface ContextVariable {
+  name: AccountName;
+  address: string;
+}
+
+export type AddressKind = "account" | "contract";
+
+/** What the builder knows of a script's variable names beyond the script. */
+export interface Naming {
+  /** The names the builder gave and may give again, with where each came
+   *  from. A name that is not here is the user's (typed in the editor,
+   *  renamed by hand) or the token list's, and is never replaced. */
+  managed?: ReadonlyMap<string, Exclude<NameOrigin, "list">>;
+  context?: readonly ContextVariable[];
+  /** Whether an address has code, by its lowercase address, where that
+   *  was read. */
+  kinds?: ReadonlyMap<string, AddressKind>;
+}
+
+const NEUTRAL_NAME = /^(account|contract|address)\d*$/;
+
+/** Two names for one role: numbers aside, the same word, or the two words
+ *  the form and a suggestion have for who receives. */
+function sameRole(a: string, b: string): boolean {
+  const word = (name: string) => {
+    const plain = name.replace(/\d+$/, "").toLowerCase();
+    return plain === "recipient" ? "to" : plain;
+  };
+  return word(a) === word(b);
+}
+
+/** The origin of a name nobody stated: a suggestion's variables carry
+ *  their role, or one of the neutral words, as their name. */
+const inferredOrigin = (name: string): Exclude<NameOrigin, "list"> =>
+  NEUTRAL_NAME.test(name) ? "neutral" : "role";
+
+/**
+ * A line made ready for a script: the line under the script's variable
+ * names, the `set` lines the script still needs for it, and the script
+ * itself, where a variable had to change its name. The one way anything
+ * that names addresses (a composed action, a suggested check) enters a
+ * script.
+ *
+ * - An address the script already sets a variable to is referred to by
+ *   that variable: no second variable for one address. When the builder
+ *   named it for one role (`$to`) and this line does not give it that
+ *   same role (it is a spender here, or nothing known), it is renamed
+ *   everywhere to what can be read of it:
+ *   `account` without code, `contract` with it, `address` when that is
+ *   not known (`naming.kinds`).
+ * - An account of the context (`naming.context`) has the context's name,
+ *   and no other address can have one of those names from here
+ *   (`ACCOUNT_NAMES`): a line that asks for one gets a neutral name.
+ * - A name the script gives to something else (another address, an ENS
+ *   lookup, a number) is left to it: the new variable takes the first
+ *   free `name2`, `name3`, ...
+ * - Anything else keeps its name and gets a `set`.
+ *
+ * Only names in `naming.managed` are ever replaced.
+ */
+export function bindVariables(
+  script: string,
+  { line, vars }: { line: string; vars: readonly LineVariable[] },
+  naming: Naming = {},
+): {
+  script: string;
+  line: string;
+  sets: string[];
+  managed: Map<string, Exclude<NameOrigin, "list">>;
+} {
+  let current = script;
+  const managed = new Map(naming.managed ?? []);
+  const contextOf = new Map(
+    (naming.context ?? []).map((c) => [c.address.toLowerCase(), c.name]),
+  );
+  const known = addressVariables(current);
+  const byAddress = new Map(
+    [...known].map(([name, address]) => [address.toLowerCase(), name]),
+  );
+  const taken = setVariables(current);
+  const free = (base: string): string => {
+    let name = base;
+    for (let n = 2; taken.has(name); n++) name = `${base}${n}`;
+    taken.add(name);
+    return name;
+  };
+  const names = new Map<string, string>();
+  const sets: string[] = [];
+  /** Gives a variable of the script, or of this line, another name. */
+  const renamed = (address: string, from: string, base: string, origin: Exclude<NameOrigin, "list">) => {
+    // Its own name is free again: `$contract` for a contract stays.
+    taken.delete(from);
+    const to = free(base);
+    if (to === from) {
+      managed.set(to, origin);
+      return to;
+    }
+    current = renameVariable(current, from, to);
+    const at = sets.indexOf(`set $${from} ${address}`);
+    if (at >= 0) sets[at] = `set $${to} ${address}`;
+    for (const [placeholder, name] of names) if (name === from) names.set(placeholder, to);
+    managed.delete(from);
+    managed.set(to, origin);
+    byAddress.set(address.toLowerCase(), to);
+    return to;
+  };
+  for (const { name, value, wanted, origin } of vars) {
+    const key = value.toLowerCase();
+    const context = contextOf.get(key);
+    // A name of the executing account is the context's to give, and only
+    // to the account it names: asked for by anything else (a parameter, an
+    // imported file, a suggestion), it is what can be read of the address.
+    const claimed = isAccountName(wanted ?? name);
+    const base = claimed ? (naming.kinds?.get(key) ?? "address") : (wanted ?? name);
+    const from = claimed ? "neutral" : (origin ?? inferredOrigin(base));
+    const existing = byAddress.get(key);
+    if (existing !== undefined) {
+      const was = managed.get(existing);
+      let now = existing;
+      if (context !== undefined) {
+        if (was !== undefined && existing !== context) now = renamed(value, existing, context, "context");
+      } else if (was === "role" && !sameRole(existing, base)) {
+        // Named for one role, and this use is not known to be that role
+        // (another one, or none that is known): the name would be read
+        // into this line too.
+        now = renamed(value, existing, naming.kinds?.get(key) ?? "address", "neutral");
+      }
+      names.set(name, now);
+      continue;
+    }
+    const given = free(context ?? base);
+    byAddress.set(key, given);
+    names.set(name, given);
+    if (context !== undefined) managed.set(given, "context");
+    else if (from !== "list") managed.set(given, from);
+    sets.push(`set $${given} ${value}`);
+  }
+  // One pass over the line, so that swapped names do not chase each other.
+  const bound = mapVariables(line, (name) => names.get(name));
+  return { script: current, line: bound, sets, managed };
+}
+
+/**
+ * The script with the accounts of the context under the context's names
+ * (`$safe`, `$governor`, `$dao`, `$timelock`, `$wallet`, `$executor`), and
+ * a variable that had such a name for an account the context no longer
+ * names under what can be read of it. Only names the builder gave
+ * (`naming.managed`) change; a script that names none of these accounts
+ * is left as it is.
+ */
+export function nameContext(
+  script: string,
+  naming: Naming,
+): { script: string; managed: Map<string, Exclude<NameOrigin, "list">> } {
+  const managed = new Map(naming.managed ?? []);
+  const contextOf = new Map(
+    (naming.context ?? []).map((c) => [c.address.toLowerCase(), c.name]),
+  );
+  const moves: { from: string; base: string; origin: Exclude<NameOrigin, "list"> }[] = [];
+  for (const [name, address] of addressVariables(script)) {
+    const origin = managed.get(name);
+    if (origin === undefined) continue;
+    const key = address.toLowerCase();
+    const context = contextOf.get(key);
+    if (context !== undefined) {
+      if (name.replace(/\d+$/, "") !== context) moves.push({ from: name, base: context, origin: "context" });
+    } else if (origin === "context") {
+      moves.push({ from: name, base: naming.kinds?.get(key) ?? "address", origin: "neutral" });
+    }
+  }
+  if (moves.length === 0) return { script, managed };
+  // Out of the way first, so that two accounts can swap names.
+  let current = script;
+  moves.forEach(({ from }, i) => {
+    current = renameVariable(current, from, `_moving${i}`);
+    managed.delete(from);
+  });
+  const taken = setVariables(current);
+  moves.forEach(({ base, origin }, i) => {
+    let name = base;
+    for (let n = 2; taken.has(name); n++) name = `${base}${n}`;
+    taken.add(name);
+    current = renameVariable(current, `_moving${i}`, name);
+    managed.set(name, origin);
+  });
+  return { script: current, managed };
+}
+
 /** The module a `load` command activates (`name>alias` binds the alias). */
 export function loadModule(node: CommandExpressionNode): string | undefined {
   const first = node.args[0];
@@ -311,12 +681,19 @@ function generatedTestName(script: string, span: CommandSpan): string | undefine
   return line.trim().match(/^def @(each[0-9a-z]+!)\s/)?.[1];
 }
 
+/** The script without the commands `matches` picks, and without the
+ *  scaffolding only they used. */
+export function withoutCommands(
+  script: string,
+  matches: (span: CommandSpan) => boolean,
+): string {
+  return gcScaffolding(dropSpans(script, commandSpans(script).filter(matches)));
+}
+
 /** The script without its assertions and the scaffolding only they used:
  *  what the actions-only simulation runs. */
 export function stripAssertions(script: string): string {
-  return gcScaffolding(
-    dropSpans(script, commandSpans(script).filter(isAssertSpan)),
-  );
+  return withoutCommands(script, isAssertSpan);
 }
 
 /** Remove the command covering a 1-based line, then the scaffolding it
@@ -325,6 +702,30 @@ export function removeCommand(script: string, line: number): string {
   const span = spanAtLine(commandSpans(script), line);
   if (!span) return script;
   return gcScaffolding(dropSpans(script, [span]));
+}
+
+/**
+ * Put `line` where the command covering a 1-based line is: same position,
+ * the `load` and `set` lines the new one needs added to the header, and
+ * the scaffolding only the old one used dropped. What saving an edited
+ * action does; an add followed by a remove would move it to the end.
+ */
+export function replaceCommand(
+  script: string,
+  at: number,
+  line: string,
+  sets: string[] = [],
+): string {
+  const span = spanAtLine(commandSpans(script), at);
+  if (!span) return script;
+  const lines = script.split("\n");
+  // A comment holds the place: nothing reads it, and it moves with the
+  // lines the header gains.
+  const marker = "# __replaced__";
+  lines.splice(span.start - 1, span.end - span.start + 1, marker);
+  const added = insertAssertionLines(lines.join("\n"), line, "post", sets).script.split("\n");
+  added.pop();
+  return gcScaffolding(added.map((l) => (l === marker ? line : l)).join("\n"));
 }
 
 /**
@@ -394,9 +795,24 @@ export function insertAssertionLines(
 }
 
 /** `load` must sit at the top level, so the wrapper pulls the block's
- *  load commands out and above itself. */
-export function hoistLoads(block: string): { loads: string[]; body: string } {
-  const loadSpans = commandSpans(block).filter(isLoadSpan);
-  const loads = [...new Set(loadSpans.map((s) => s.text.trim()))];
-  return { loads, body: dropSpans(block, loadSpans).trim() };
+ *  load commands out and above itself. The variables pinned to a literal
+ *  address go with them: they depend on nothing, and a reader of the
+ *  final script finds every address it names in one place. One whose
+ *  name is in `reserved` (the wrapper's own variables) stays in the
+ *  block, where it cannot change what the wrapper itself refers to. */
+export function hoistLoads(
+  block: string,
+  reserved: ReadonlySet<string> = new Set(),
+): { loads: string[]; sets: string[]; body: string } {
+  const spans = commandSpans(block);
+  const loadSpans = spans.filter(isLoadSpan);
+  const setSpans = spans.filter((span) => {
+    const variable = addressVariable(span);
+    return variable !== undefined && !reserved.has(variable.name);
+  });
+  return {
+    loads: [...new Set(loadSpans.map((s) => s.text.trim()))],
+    sets: [...new Set(setSpans.map((s) => s.text.trim()))],
+    body: dropSpans(block, [...loadSpans, ...setSpans]).trim(),
+  };
 }

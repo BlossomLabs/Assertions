@@ -86,6 +86,17 @@ describe("SubmitStage: the gate", () => {
     expect(ring).toBe("pass");
   });
 
+  it("keeps the account in one piece, and wraps the final script inside its box", () => {
+    const { container } = show("pass", sim({}));
+    const account = [...container.querySelectorAll("p span")].find(
+      (el) => el.textContent === "0x1234…7890",
+    );
+    expect(account?.className).toContain("whitespace-nowrap");
+    const script = container.querySelector("pre") as HTMLElement;
+    for (const cls of ["whitespace-pre-wrap", "wrap-anywhere"])
+      expect(script.className).toContain(cls);
+  });
+
   it("names the default account when the run had no executor", () => {
     const { text } = show("pass", sim({ simulated: { ...ran(), from: undefined } }));
     expect(text).toMatch(/, as the default account\.$/);
@@ -167,9 +178,10 @@ describe("SubmitStage: the final script and sending", () => {
   it("wraps a Safe's batch as a proposal and offers the Transaction Builder file", () => {
     const { container } = show("pass", sim({}), { kind: "safe", address: OTHER }, OTHER);
     expect(screen.getByText("Final script (Safe)")).toBeTruthy();
-    expect(container.querySelector("pre")?.textContent).toContain(
-      `safe:propose ${OTHER} (`,
-    );
+    const script = container.querySelector("pre")?.textContent ?? "";
+    // The Safe is a variable the wrapper names, set above it.
+    expect(script).toContain("safe:propose $safe (");
+    expect(script).toMatch(new RegExp(`^set \\$safe ${OTHER}$`, "im"));
     expect(
       screen.getByRole("button", { name: "Download Transaction Builder JSON" }),
     ).toBeTruthy();

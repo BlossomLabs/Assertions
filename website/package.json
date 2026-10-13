@@ -7,7 +7,7 @@
   },
   "evmcrispr": {
     "repo": "https://github.com/EVMcrispr/evmcrispr.git",
-    "commit": "f96ce09651ed651d0b3e39a4b281455eef906af3"
+    "commit": "a279d569eb97327c2404155138797bf3d30e75e2"
   },
   "scripts": {
     "prepare:evmcrispr": "node scripts/vendor-evmcrispr.mjs && node scripts/copy-monaco.mjs",
@@ -55,7 +55,7 @@
     "@testing-library/user-event": "^14.6.7",
     "dotenv": "^18.0.3",
     "jsdom": "^30.1.2",
-    "monaco-editor": "0.56.0",
+    "monaco-editor": "0.57.0",
     "pinata": "^2.5.6",
     "sharp": "0.35.4",
     "typescript": "^6.0.3",

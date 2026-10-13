@@ -173,7 +173,7 @@ function ToolChip({ item }: { item: ChatItem & { role: "tool" } }) {
         (item.artifact.success ? " ✓ passed" : " ✗ failed")}
       {item.artifact?.kind === "script-change" &&
         item.artifact.ok &&
-        (item.artifact.undone ? " (undone)" : " ✓")}
+        " ✓"}
       {item.error && <span className="text-[var(--color-err)]">{item.error}</span>}
     </div>
   );

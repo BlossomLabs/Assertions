@@ -11,6 +11,8 @@ import {
 } from "./context";
 import { SimRing } from "./SimRing";
 import { attributeFailure, type SimulationState } from "./simulation";
+import { descriptionParts } from "./suggested-checks";
+import { noBreakCls } from "./ui";
 import { actionsToTxBuilderBatch } from "./safe-tx-builder";
 import type { EyeState } from "./timeline";
 import { WalletConnect } from "./WalletConnect";
@@ -176,7 +178,15 @@ export function SubmitStage({
           <span className={`font-semibold ${GATE_TEXT[gate].cls}`}>
             {text.lead}
           </span>{" "}
-          {text.rest}
+          {descriptionParts(text.rest).map((part, i) =>
+            typeof part === "string" ? (
+              part
+            ) : (
+              <span key={i} className={noBreakCls}>
+                {part.address}
+              </span>
+            ),
+          )}
         </p>
       </div>
 
@@ -184,7 +194,7 @@ export function SubmitStage({
         <p className="text-xs text-[var(--color-ink-3)] mb-1.5">
           Final script ({CONTEXT_LABELS[context.kind]})
         </p>
-        <pre className="p-3 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/20 font-mono text-xs overflow-x-auto whitespace-pre-wrap max-h-64 overflow-y-auto">
+        <pre className="p-3 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/20 font-mono text-xs overflow-x-auto whitespace-pre-wrap wrap-anywhere max-h-64 overflow-y-auto">
           {finalScript}
         </pre>
       </div>

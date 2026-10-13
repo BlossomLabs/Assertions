@@ -18,16 +18,32 @@ import {
   idleSimulation,
   isStale,
 } from "./simulation";
-import { btnPrimaryCls } from "./ui";
+import { confirmationBlock, suggestOption } from "./suggested-checks";
+import { btnPrimaryCls, noBreakCls } from "./ui";
 import { ButtonIcon } from "./ButtonIcon";
 import { SimRing } from "./SimRing";
 
 /** One simulation: runs a key (script, executor, chain, mode) on a fork
  *  through the configured tag and remembers which key the result belongs
  *  to. The builder holds two, one per batch listing. */
-export function useSimulation() {
+export function useSimulation({
+  latestBlock,
+}: {
+  /** Reads a chain's latest block number. With it, the protected batch is
+   *  simulated at a block the builder knows: the latest, or the block of
+   *  the run whose suggested checks are being confirmed. */
+  latestBlock?: (chainId: number) => Promise<number | undefined>;
+} = {}) {
   const tag = useEvmlTag();
-  const [state, setState] = useState<SimulationState>(idleSimulation);
+  const [state, setStateOnly] = useState<SimulationState>(idleSimulation);
+  // The state as last set, for the run that starts before the next render.
+  const stateRef = useRef(state);
+  const setState = useCallback((next: SimulationState) => {
+    stateRef.current = next;
+    setStateOnly(next);
+  }, []);
+  const latestBlockRef = useRef(latestBlock);
+  latestBlockRef.current = latestBlock;
   const abortRef = useRef<AbortController | null>(null);
 
   const simulate = useCallback(
@@ -35,7 +51,21 @@ export function useSimulation() {
       abortRef.current?.abort();
       const abort = new AbortController();
       abortRef.current = abort;
+      // Checks added from the last run are confirmed at that run's block:
+      // on a later one the balances they pin may already have moved.
+      const previous = stateRef.current;
+      const pinnedBlock = confirmationBlock(previous, key, Date.now());
       setState({ status: "running", result: null, simulated: key });
+      let at: Pick<SimulationState, "block" | "blockReadAt" | "pinned"> = {};
+      if (pinnedBlock !== undefined) {
+        at = { block: pinnedBlock, blockReadAt: previous.blockReadAt, pinned: true };
+      } else if (key.mode === "protected" && latestBlockRef.current) {
+        const block = await latestBlockRef
+          .current(key.chainId)
+          .catch(() => undefined);
+        if (abort.signal.aborted) return undefined;
+        if (block !== undefined) at = { block, blockReadAt: Date.now() };
+      }
       try {
         const configured = tag.with({
           chainId: key.chainId,
@@ -43,13 +73,21 @@ export function useSimulation() {
         });
         const result = await configured
           .script(key.script)
-          .simulate({ from: key.from, signal: abort.signal });
+          .simulate({
+            from: key.from,
+            signal: abort.signal,
+            // The protected batch also asks which checks would pin down
+            // what the run did (see suggested-checks.ts).
+            suggest: suggestOption(key),
+            ...(at.block !== undefined ? { blockNumber: at.block } : {}),
+          });
         if (abort.signal.aborted) return undefined;
         setState({
           status: result.success ? "success" : "failure",
           result,
           simulated: key,
           finishedAt: Date.now(),
+          ...at,
         });
         return result;
       } catch (e) {
@@ -69,13 +107,13 @@ export function useSimulation() {
         return result;
       }
     },
-    [tag],
+    [tag, setState],
   );
 
   const reset = useCallback(() => {
     abortRef.current?.abort();
     setState(idleSimulation());
-  }, []);
+  }, [setState]);
 
   return { state, simulate, reset };
 }
@@ -195,7 +233,7 @@ export function SimulationPanel({
           <ButtonIcon name="simulate" />
           {running ? "Simulating…" : label}
         </button>
-        <span className="text-xs font-mono text-[var(--color-ink-3)]">
+        <span className={`text-xs font-mono text-[var(--color-ink-3)] ${noBreakCls}`}>
           as {short(simKey.from)}
         </span>
         {note && <span className="text-xs text-[var(--color-ink-3)]">{note}</span>}
@@ -231,7 +269,20 @@ export function SimulationPanel({
               ? passedSummary(result?.actions ?? [])
               : "Simulation failed"}
             <span className="font-normal text-xs text-[var(--color-ink-3)]">
-              · {MODE_LABEL[state.simulated.mode]} as {short(state.simulated.from)}
+              · {MODE_LABEL[state.simulated.mode]} as{" "}
+              <span className={noBreakCls}>{short(state.simulated.from)}</span>
+              {state.pinned && state.block !== undefined && (
+                <>
+                  {" "}
+                  <span
+                    title="The block the suggested checks were drawn from, so this run confirms them against the same state."
+                    className={`${noBreakCls} text-[var(--color-ink-2)]`}
+                  >
+                    · at block{" "}
+                    {state.block.toLocaleString("en-US").replace(/,/g, " ")}
+                  </span>
+                </>
+              )}
             </span>
           </p>
           {failure && (

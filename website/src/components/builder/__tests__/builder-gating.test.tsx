@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { getAddress } from "viem";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import AssertionBuilder from "../AssertionBuilder";
@@ -50,6 +51,8 @@ vi.mock("../useChainSupport", () => ({
   useChainClient: () => undefined,
   useChainSupport: () => ({ state: "official" }),
 }));
+// The chain's token list: none here, so no address is named after a token.
+vi.mock("../token-list", () => ({ tokenList: async () => [] }));
 vi.mock("../compile-adapter", () => ({
   previewSubjectValue: vi.fn(),
   compileAssertionLine: vi.fn(async (_tag: unknown, script: string) => ({
@@ -62,7 +65,10 @@ vi.mock("../compile-adapter", () => ({
 
 const ME = "0x1234567890123456789012345678901234567890" as const;
 const T = "0x00000000000000000000000000000000000000aa";
-const ACTION = `exec ${T} "pause()"`;
+// The composer names the contract once and calls it by that name.
+const SET = `set $contract ${getAddress(T)}`;
+const ACTION = `exec $contract "pause()"`;
+const SCRIPT = `${SET}\n${ACTION}`;
 
 const NO_EXECUTOR = "Choose the executor in step 1 first.";
 const NO_ACTION = "Add an action in step 1 first.";
@@ -165,7 +171,7 @@ describe("AssertionBuilder: which steps are open", () => {
     // Step 1's simulation passes: step 2 opens, step 3 waits for step 2's.
     await user.click(step(1).in.getByRole("button", { name: "Simulate batch" }));
     expect(await step(1).in.findByText(/Simulation passed/)).toBeTruthy();
-    expect(fake.simulate.mock.calls[0][0]).toBe(ACTION);
+    expect(fake.simulate.mock.calls[0][0]).toBe(SCRIPT);
     expect(step(1).ring).toBe("Simulation of the actions on their own: passed.");
     expect(step(2)).toMatchObject({ folded: false, hint: null });
     expect(step(3)).toMatchObject({ folded: true, hint: NOT_PROTECTED });

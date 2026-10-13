@@ -2,31 +2,123 @@ import type { ScriptEditResult } from "@evmcrispr/ai";
 import { useCallback, useRef, useState } from "react";
 
 import {
+  type AddressKind,
   type AssertionPlacement,
+  type ContextVariable,
+  type LineVariable,
+  type Naming,
+  addressVariables,
+  bindVariables,
   insertAssertionLines,
+  nameContext,
   removeCommand as removeCommandFrom,
+  replaceCommand,
+  setVariables,
+  userRename,
 } from "./script-ops";
+
+type Managed = NonNullable<Naming["managed"]>;
 
 /**
  * The composed action block, shared by every authoring surface (ABI form,
- * drag-and-drop, Monaco editor, AI chat). Edits from the chat's script tools
- * are recorded as revisions so tool cards can offer one-click undo. The
- * script surgery itself (spans, scaffolding, placement) lives in
- * script-ops.ts.
+ * drag-and-drop, Monaco editor, AI chat). The script surgery itself
+ * (spans, scaffolding, placement, names) lives in script-ops.ts; this
+ * holds the script and what the builder knows of its variable names that
+ * the text does not say: which names it gave (and may give again), the
+ * accounts the context names, and which addresses have code.
  */
-export function useScriptState(initial = "") {
+export function useScriptState(
+  initial = "",
+  {
+    kindOf,
+  }: {
+    /** Whether an address has code on the chain the batch targets, when
+     *  that can be read: what a variable is renamed to when its address
+     *  turns out to play two roles. */
+    kindOf?: (address: string) => Promise<AddressKind | undefined>;
+  } = {},
+) {
   const [script, setScriptState] = useState(initial);
   const scriptRef = useRef(script);
-  const revisions = useRef(
-    new Map<string, { before: string; after: string }>(),
-  );
-
   const setScript = useCallback((next: string) => {
     scriptRef.current = next;
     setScriptState(next);
   }, []);
 
   const getScript = useCallback(() => scriptRef.current, []);
+
+  const managedRef = useRef<Managed>(new Map());
+  const contextRef = useRef<readonly ContextVariable[]>([]);
+  const kindsRef = useRef(new Map<string, AddressKind>());
+  const kindOfRef = useRef(kindOf);
+  kindOfRef.current = kindOf;
+
+  /** What is known of the names of the script as it is now. A name the
+   *  script no longer sets is forgotten: typed again, it is the user's. */
+  const naming = useCallback((): Naming => {
+    const set = setVariables(scriptRef.current);
+    managedRef.current = new Map(
+      [...managedRef.current].filter(([name]) => set.has(name)),
+    );
+    return {
+      managed: managedRef.current,
+      context: contextRef.current,
+      kinds: kindsRef.current,
+    };
+  }, []);
+
+  // Edits that may need to read an address's code run one after another,
+  // each on the script the one before left. One that needs no read, with
+  // none waiting, applies at once.
+  const pending = useRef<Promise<void>>(Promise.resolve());
+  const waiting = useRef(0);
+  const edit = useCallback(
+    (addresses: readonly string[], apply: () => void): Promise<void> => {
+      const read = kindOfRef.current;
+      const unknown = read
+        ? addresses
+            .map((address) => address.toLowerCase())
+            .filter((address) => !kindsRef.current.has(address))
+        : [];
+      if (unknown.length === 0 && waiting.current === 0) {
+        apply();
+        return Promise.resolve();
+      }
+      waiting.current++;
+      const run = async () => {
+        try {
+          for (const address of new Set(unknown)) {
+            const kind = await read?.(address).catch(() => undefined);
+            if (kind) kindsRef.current.set(address, kind);
+          }
+          apply();
+        } finally {
+          waiting.current--;
+        }
+      };
+      pending.current = pending.current.then(run, run);
+      return pending.current;
+    },
+    [],
+  );
+
+  /** The addresses among `vars` the script already has a variable for,
+   *  under a name the builder gave: the ones a new role could rename. */
+  const renamable = (vars: readonly LineVariable[]): string[] => {
+    const { managed } = naming();
+    const byAddress = new Map(
+      [...addressVariables(scriptRef.current)].map(([name, address]) => [
+        address.toLowerCase(),
+        name,
+      ]),
+    );
+    return vars
+      .map((v) => v.value)
+      .filter((value) => {
+        const name = byAddress.get(value.toLowerCase());
+        return name !== undefined && managed?.has(name);
+      });
+  };
 
   const appendLines = useCallback(
     (lines: string) => {
@@ -37,26 +129,127 @@ export function useScriptState(initial = "") {
   );
 
   /**
-   * Append a line, first ensuring the given `set` lines exist in the leading
-   * set-block of the script (helpers like @ens can't run mid-batch, so
-   * address lookups are hoisted to `set` commands at the top).
+   * Add a line that names addresses: an action, a suggested check. The
+   * addresses (`vars`) take the script's variables, or get a `set` line of
+   * their own (`bindVariables`); `sets` are lines it needs as they are (an
+   * ENS lookup: helpers like @ens can't run mid-batch). The `set` lines
+   * land in the script's header, the modules its helpers need are loaded,
+   * and the line goes where `placement` says.
    */
+  const addLine = useCallback(
+    (
+      line: string,
+      placement: AssertionPlacement,
+      { sets = [], vars = [] }: { sets?: string[]; vars?: readonly LineVariable[] } = {},
+    ) =>
+      edit(renamable(vars), () => {
+        const bound = bindVariables(scriptRef.current, { line, vars }, naming());
+        managedRef.current = bound.managed;
+        setScript(
+          insertAssertionLines(bound.script, bound.line, placement, [
+            ...sets,
+            ...bound.sets,
+          ]).script,
+        );
+      }),
+    // `renamable` reads refs only.
+    [edit, naming, setScript],
+  );
+
+  /** Append an action (see `addLine`). */
   const appendWithSets = useCallback(
-    (line: string, sets: string[]) => {
-      const current = scriptRef.current.trimEnd();
-      const lines = current ? current.split("\n") : [];
-      const missing = sets.filter(
-        (s) => !lines.some((l) => l.trim() === s.trim()),
-      );
-      let insertAt = 0;
-      while (
-        insertAt < lines.length &&
-        lines[insertAt].trimStart().startsWith("set ")
-      )
-        insertAt++;
-      lines.splice(insertAt, 0, ...missing);
-      lines.push(line);
-      setScript(lines.join("\n"));
+    (line: string, sets: string[], vars: readonly LineVariable[] = []) =>
+      addLine(line, "post", { sets, vars }),
+    [addLine],
+  );
+
+  /** What `addLine` would write for a line, without writing it. Where
+   *  that depends on an address's code not read yet, it is read, and the
+   *  preview is drawn again with it. */
+  const [, redraw] = useState(0);
+  const learning = useRef(new Set<string>());
+  const previewLine = useCallback(
+    (line: string, vars: readonly LineVariable[], script = scriptRef.current) => {
+      const unread = kindOfRef.current
+        ? renamable(vars)
+            .map((address) => address.toLowerCase())
+            .filter(
+              (address) =>
+                !kindsRef.current.has(address) && !learning.current.has(address),
+            )
+        : [];
+      if (unread.length > 0) {
+        for (const address of unread) learning.current.add(address);
+        void edit(unread, () => redraw((n) => n + 1));
+      }
+      const { line: bound, sets } = bindVariables(script, { line, vars }, naming());
+      return { line: bound, sets };
+    },
+    // `renamable` reads refs only.
+    [edit, naming],
+  );
+
+  /** Put an action where the command covering a 1-based line is (see
+   *  `replaceCommand`): what saving an edited action does. */
+  const replaceLine = useCallback(
+    (at: number, line: string, sets: string[], vars: readonly LineVariable[] = []) =>
+      edit(renamable(vars), () => {
+        const bound = bindVariables(scriptRef.current, { line, vars }, naming());
+        managedRef.current = bound.managed;
+        setScript(
+          replaceCommand(bound.script, at, bound.line, [...sets, ...bound.sets]),
+        );
+      }),
+    // `renamable` reads refs only.
+    [edit, naming, setScript],
+  );
+
+  /** Tell the script which accounts the context names: their variables
+   *  take those names, and one that had such a name for another account
+   *  takes what can be read of it (`nameContext`). */
+  const setContext = useCallback(
+    (context: readonly ContextVariable[]) => {
+      contextRef.current = context;
+      const named = new Set(context.map((c) => c.address.toLowerCase()));
+      const { managed } = naming();
+      const stale = [...addressVariables(scriptRef.current)]
+        .filter(
+          ([name, address]) =>
+            managed?.get(name) === "context" && !named.has(address.toLowerCase()),
+        )
+        .map(([, address]) => address);
+      return edit(stale, () => {
+        const next = nameContext(scriptRef.current, naming());
+        managedRef.current = next.managed;
+        if (next.script !== scriptRef.current) setScript(next.script);
+      });
+    },
+    [edit, naming, setScript],
+  );
+
+  /** The user's own rename of a variable: every use follows, and the name
+   *  is the user's from then on. Returns why not, when it is refused. */
+  const renameVariable = useCallback(
+    (from: string, to: string): { error?: string } => {
+      const renamed = userRename(scriptRef.current, from, to);
+      if ("error" in renamed) return renamed;
+      if (renamed.script !== scriptRef.current) {
+        const managed = new Map(managedRef.current);
+        managed.delete(from);
+        managedRef.current = managed;
+        setScript(renamed.script);
+      }
+      return {};
+    },
+    [setScript],
+  );
+
+  /** Replace the script with one the builder composed (an import), with
+   *  the names it gave in it. */
+  const loadComposed = useCallback(
+    (next: string, managed: Managed) => {
+      managedRef.current = managed;
+      setScript(next);
     },
     [setScript],
   );
@@ -81,12 +274,6 @@ export function useScriptState(initial = "") {
     [setScript],
   );
 
-  const recordRevision = useCallback((before: string, after: string) => {
-    const id = crypto.randomUUID();
-    revisions.current.set(id, { before, after });
-    return id;
-  }, []);
-
   const applyStrReplace = useCallback(
     (oldString: string, newString: string): ScriptEditResult => {
       const current = scriptRef.current;
@@ -101,34 +288,15 @@ export function useScriptState(initial = "") {
         };
       const next =
         current.slice(0, first) + newString + current.slice(first + oldString.length);
-      const revisionId = recordRevision(current, next);
       setScript(next);
-      return { ok: true, revisionId };
+      return { ok: true };
     },
-    [recordRevision, setScript],
+    [setScript],
   );
 
   const applyWrite = useCallback(
     (content: string): ScriptEditResult => {
-      const current = scriptRef.current;
-      const revisionId = recordRevision(current, content);
       setScript(content);
-      return { ok: true, revisionId };
-    },
-    [recordRevision, setScript],
-  );
-
-  const undoRevision = useCallback(
-    (revisionId: string): ScriptEditResult => {
-      const revision = revisions.current.get(revisionId);
-      if (!revision) return { ok: false, error: "Unknown revision." };
-      if (scriptRef.current !== revision.after)
-        return {
-          ok: false,
-          error: "The script changed since this edit. Undo manually instead.",
-        };
-      revisions.current.delete(revisionId);
-      setScript(revision.before);
       return { ok: true };
     },
     [setScript],
@@ -138,12 +306,18 @@ export function useScriptState(initial = "") {
     script,
     setScript,
     getScript,
+    getNaming: naming,
     appendLines,
     appendWithSets,
+    addLine,
+    previewLine,
+    replaceLine,
+    setContext,
+    renameVariable,
+    loadComposed,
     removeCommand,
     insertAssertion,
     applyStrReplace,
     applyWrite,
-    undoRevision,
   };
 }

@@ -97,7 +97,8 @@ export function BatchTimeline({
   };
 
   return (
-    <div className="flex items-stretch gap-1.5 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/20 p-2.5 overflow-x-auto">
+    // On a narrow screen the lanes wrap onto further rows, each row filled.
+    <div className="flex flex-wrap items-stretch gap-1.5 rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/20 p-2.5">
       {LANES.map(({ lane, title }, l) => {
         const inLane = nodes
           .map((node, i) => ({ node, i }))
@@ -105,9 +106,22 @@ export function BatchTimeline({
         const checks = lane !== "actions";
         const landsHere = checks && placement === lane;
         return (
-          <div key={lane} className={`flex items-stretch gap-1.5 ${checks ? "" : "flex-1"}`}>
+          <div
+            key={lane}
+            // On a narrow screen the After lane takes a row of its own,
+            // under Before and Actions; the arrow that led to it would be
+            // left alone at the start of that row, so it goes.
+            className={`flex items-stretch gap-1.5 ${
+              checks ? "max-sm:flex-1" : "flex-1"
+            } ${lane === "post" ? "max-sm:basis-full" : ""}`}
+          >
             {l > 0 && (
-              <span aria-hidden className="self-center text-[var(--color-ink-3)]">
+              <span
+                aria-hidden
+                className={`self-center text-[var(--color-ink-3)] ${
+                  lane === "post" ? "max-sm:hidden" : ""
+                }`}
+              >
                 ›
               </span>
             )}

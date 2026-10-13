@@ -121,7 +121,6 @@ export function useBuilderChatAgent({ scriptState, tag }: BuilderChatHostOptions
   return useChatAgent({
     systemPrompt: () => withClock(SYSTEM_PROMPT),
     tools,
-    undoScriptRevision: scriptState.undoRevision,
     storage: builderChatStorage,
     chatStore: createChatStore("assertions"),
   });

@@ -1,7 +1,9 @@
 import type { Address } from "viem";
 
-/** Who ultimately executes the batch — decides simulation `--from` and the
- *  wrapper the final script gets. */
+import type { AccountName, ContextVariable } from "./script-ops";
+
+/** Who ultimately executes the batch: decides the account the simulation
+ *  runs as and the wrapper the final script gets. */
 export type ContextKind = "eoa" | "safe" | "governor" | "aragonosx";
 
 export interface ExecutionContext {
@@ -75,4 +77,48 @@ export function simulationSender(
 ): Address | undefined {
   if (!timelock || timelock.toLowerCase() === ZERO_ADDRESS) return executor;
   return timelock;
+}
+
+/** What the user said the context's account is, as a variable name. This
+ *  is the user's own statement, so it may name the variable where what a
+ *  contract says of itself may not. Every name given here is one of
+ *  `ACCOUNT_NAMES` (script-ops), which nothing else may give. */
+export const CONTEXT_NAMES: Record<Exclude<ContextKind, "eoa">, AccountName> = {
+  safe: "safe",
+  governor: "governor",
+  aragonosx: "dao",
+};
+
+/**
+ * The accounts the context names, with the variable each has in a script:
+ * `$safe`, `$governor` (and `$timelock`, the account a Governor's calls
+ * run from when it has one), `$dao`; for a wallet, `$wallet` when the user
+ * typed the account to run as and `$executor` for the connected one.
+ * Nothing until the address is known.
+ */
+export function contextVariables(
+  context: ExecutionContext,
+  {
+    connected,
+    resolved,
+    timelock,
+  }: {
+    connected: string | undefined;
+    /** The context address after ENS resolution. */
+    resolved: string | null;
+    timelock?: string | null;
+  },
+): ContextVariable[] {
+  if (context.kind === "eoa") {
+    if (!context.address)
+      return connected ? [{ name: "executor", address: connected }] : [];
+    return resolved ? [{ name: "wallet", address: resolved }] : [];
+  }
+  if (!resolved) return [];
+  const account = { name: CONTEXT_NAMES[context.kind], address: resolved };
+  const runsFrom =
+    context.kind === "governor" ? simulationSender(undefined, timelock as Address | null) : undefined;
+  return runsFrom && runsFrom.toLowerCase() !== resolved.toLowerCase()
+    ? [account, { name: "timelock", address: runsFrom }]
+    : [account];
 }

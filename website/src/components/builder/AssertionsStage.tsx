@@ -5,24 +5,29 @@ import { AssertionForm } from "./AssertionForm";
 import { BatchList } from "./BatchList";
 import { BatchTimeline } from "./BatchTimeline";
 import { Block } from "./ComposeStage";
+import type { ContextKind } from "./context";
 import { type AssertionPlacement, hasAssertions, isAssertSpan } from "./script-ops";
 import { SimulationPanel, simKeyFor, type useSimulation } from "./SimulationPanel";
+import { SuggestedChecks } from "./SuggestedChecks";
 import type { useScriptState } from "./useScriptState";
 
 /**
  * Assertions: the checks that protect the batch, the batch so far with
- * them in place (as a timeline and as a listing), and the simulation of the protected batch, which is what
- * Submit requires.
+ * them in place (as a timeline and as a listing), the simulation of the protected batch, which is what
+ * Submit requires, and the checks that simulation suggests.
  */
 export function AssertionsStage({
   chainId,
   executor,
+  context,
   scriptState,
   suggest,
   simulation,
 }: {
   chainId: number;
   executor: Address | undefined;
+  /** Who executes the batch: decides which suggested checks warn. */
+  context: ContextKind;
   scriptState: ReturnType<typeof useScriptState>;
   suggest: React.ComponentProps<typeof AssertionForm>["suggest"];
   /** The protected-batch simulation. */
@@ -63,7 +68,9 @@ export function AssertionsStage({
           />
           <BatchList
             script={script}
+            chainId={chainId}
             highlight={selected}
+            onRename={scriptState.renameVariable}
             onRemove={removeCommand}
             // Actions are managed in step 1; here only assertions can go.
             canRemove={isAssertSpan}
@@ -77,6 +84,13 @@ export function AssertionsStage({
                 ? "Simulate the batch in step 1 to tell a failing action from a failing assertion."
                 : undefined
             }
+          />
+          <SuggestedChecks
+            state={simulation.state}
+            simKey={simKey}
+            context={context}
+            chainId={chainId}
+            scriptState={scriptState}
           />
         </Block>
       )}

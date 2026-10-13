@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SimulationPanel, simKeyFor, useSimulation } from "../SimulationPanel";
 import type { SimKey, SimulationState } from "../simulation";
+import type { SuggestedCheck } from "../suggested-checks";
 import { useFreshTag } from "./helpers/fake-tag";
 
 vi.mock("@evmcrispr/editor", async () =>
@@ -26,12 +27,18 @@ const key = (partial: Partial<SimKey> = {}): SimKey => ({
   mode: "actions-only",
   ...partial,
 });
-const ok = (partial: Partial<SimulationResult> = {}): SimulationResult => ({
-  success: true,
-  logs: [],
-  actions: [],
-  ...partial,
-});
+/** A result as a test writes it: its suggestions may be of the older
+ *  shape, which the builder still takes. */
+type ResultLike = Omit<Partial<SimulationResult>, "suggestions"> & {
+  suggestions?: SuggestedCheck[];
+};
+const ok = (partial: ResultLike = {}): SimulationResult =>
+  ({
+    success: true,
+    logs: [],
+    actions: [],
+    ...partial,
+  }) as SimulationResult;
 const finished = (
   simulated: SimKey,
   result: SimulationResult,
@@ -60,6 +67,15 @@ function show(
   const view = render(panel(simKey));
   return { simulate, rerenderWith: (k: SimKey) => view.rerender(panel(k)) };
 }
+
+/** The element that reads exactly `text`, the shortened address inside it
+ *  being its own no-break element. */
+const reading =
+  (text: string) =>
+  (_content: string, element: Element | null): boolean =>
+    element?.tagName === "SPAN" &&
+    element.children.length > 0 &&
+    element.textContent === text;
 
 const idle: SimulationState = { status: "idle", result: null, simulated: null };
 const tx = { to: T, data: "0x" };
@@ -120,7 +136,7 @@ describe("SimulationPanel", () => {
   ])("counts what a passing run executed: %#", (actions, summary) => {
     show(finished(key(), ok({ actions: actions as any })), key());
     expect(screen.getByText(summary)).toBeTruthy();
-    expect(screen.getByText("· actions only as 0x1234…7890")).toBeTruthy();
+    expect(screen.getByText(reading("· actions only as 0x1234…7890"))).toBeTruthy();
   });
 
   it("shows a pass with the solid ring and a failure with the failed one", () => {
@@ -210,7 +226,7 @@ describe("SimulationPanel", () => {
       failureHint: "Simulate the batch in step 1.",
     });
     expect(screen.getByText("Simulation failed")).toBeTruthy();
-    expect(screen.getByText("· protected batch as 0x1234…7890")).toBeTruthy();
+    expect(screen.getByText(reading("· protected batch as 0x1234…7890"))).toBeTruthy();
     expect(screen.getByText(/Failing assertion:/).textContent).toBe(
       `Failing assertion: ${ASSERT}`,
     );
@@ -268,8 +284,14 @@ describe("simKeyFor", () => {
 });
 
 describe("useSimulation", () => {
-  function Live({ simKey }: { simKey: SimKey }) {
-    const simulation = useSimulation();
+  function Live({
+    simKey,
+    latestBlock,
+  }: {
+    simKey: SimKey;
+    latestBlock?: (chainId: number) => Promise<number | undefined>;
+  }) {
+    const simulation = useSimulation({ latestBlock });
     return (
       <>
         <SimulationPanel label="Simulate batch" simKey={simKey} simulation={simulation} />
@@ -297,6 +319,128 @@ describe("useSimulation", () => {
     expect(fake.simulate).toHaveBeenCalledTimes(1);
     expect(fake.simulate.mock.calls[0][0]).toBe(ACTION);
     expect(fake.simulate.mock.calls[0][1]).toMatchObject({ from: FROM });
+  });
+
+  it("asks for suggested checks for the protected batch, guarding its executor", async () => {
+    const user = userEvent.setup();
+    render(<Live simKey={key({ script: PROTECTED, mode: "protected" })} />);
+    await user.click(screen.getByRole("button", { name: "Simulate batch" }));
+    expect(await screen.findByText(/Simulation passed/)).toBeTruthy();
+    expect(fake.simulate.mock.calls[0][1]).toMatchObject({
+      from: FROM,
+      suggest: { executor: FROM },
+    });
+  });
+
+  it("does not ask for them when simulating the actions on their own", async () => {
+    const user = userEvent.setup();
+    render(<Live simKey={key()} />);
+    await user.click(screen.getByRole("button", { name: "Simulate batch" }));
+    expect(await screen.findByText(/Simulation passed/)).toBeTruthy();
+    expect(
+      (fake.simulate.mock.calls[0][1] as { suggest?: unknown }).suggest,
+    ).toBeUndefined();
+  });
+
+  describe("the block a protected batch is simulated at", () => {
+    const SUGGESTED = {
+      line: `assert ${T}::!{owner()(address)} == ${FROM}`,
+      description: "0x0000…00aa is owned by 0x1234…7890",
+      kind: "state" as const,
+      module: "acl",
+      event: "ownershipTransferred",
+      eventName: "OwnershipTransferred",
+      emitter: T as `0x${string}`,
+    };
+    const protectedKey = (script = ACTION) => key({ script, mode: "protected" });
+    const options = (call: number) =>
+      fake.simulate.mock.calls[call][1] as { blockNumber?: number };
+    const press = async (user: ReturnType<typeof userEvent.setup>) => {
+      await user.click(screen.getByRole("button", { name: "Simulate batch" }));
+      await screen.findByText(/Simulation (passed|failed)/);
+    };
+
+    it("reads the latest block once and simulates at it", async () => {
+      const user = userEvent.setup();
+      const latestBlock = vi.fn(async () => 21_234_567);
+      render(<Live simKey={protectedKey()} latestBlock={latestBlock} />);
+      await press(user);
+      expect(latestBlock).toHaveBeenCalledExactlyOnceWith(1);
+      expect(options(0).blockNumber).toBe(21_234_567);
+      // A fresh run: nothing to say about its block.
+      expect(screen.queryByText(/at block/)).toBeNull();
+    });
+
+    it("confirms added suggestions at that same block, and says so", async () => {
+      const user = userEvent.setup();
+      let latest = 21_234_567;
+      const latestBlock = vi.fn(async () => latest++);
+      fake.simulate.mockResolvedValue(ok({ suggestions: [SUGGESTED] }));
+      const view = render(<Live simKey={protectedKey()} latestBlock={latestBlock} />);
+      await press(user);
+
+      // The suggestion is added: the batch is the simulated one plus it.
+      const withCheck = `${ACTION}\n${SUGGESTED.line}`;
+      view.rerender(<Live simKey={protectedKey(withCheck)} latestBlock={latestBlock} />);
+      await press(user);
+      expect(latestBlock).toHaveBeenCalledTimes(1);
+      expect(fake.simulate.mock.calls[1][0]).toBe(withCheck);
+      expect(options(1).blockNumber).toBe(21_234_567);
+      const label = screen.getByText(/at block 21 234 567/);
+      // Readable, and never split across lines: this run is not a fresh one.
+      expect(label.className).toContain("text-[var(--color-ink-2)]");
+      expect(label.className).toContain("whitespace-nowrap");
+
+      // Simulated again as it is: nothing left to confirm, the latest block.
+      await press(user);
+      expect(latestBlock).toHaveBeenCalledTimes(2);
+      expect(options(2).blockNumber).toBe(21_234_568);
+      expect(screen.queryByText(/at block/)).toBeNull();
+    });
+
+    it.each([
+      ["another action", { script: `${ACTION}\n${SUGGESTED.line}\n${ACTION}` }],
+      [
+        "a check written by hand",
+        { script: `${ACTION}\n${SUGGESTED.line}\n${ASSERT}` },
+      ],
+      ["another executor", { script: `${ACTION}\n${SUGGESTED.line}`, from: OTHER }],
+      ["another chain", { script: `${ACTION}\n${SUGGESTED.line}`, chainId: 100 }],
+    ])("reads the latest block again after %s", async (_name, change) => {
+      const user = userEvent.setup();
+      let latest = 21_234_567;
+      const latestBlock = vi.fn(async () => latest++);
+      fake.simulate.mockResolvedValue(ok({ suggestions: [SUGGESTED] }));
+      const view = render(<Live simKey={protectedKey()} latestBlock={latestBlock} />);
+      await press(user);
+      view.rerender(
+        <Live simKey={{ ...protectedKey(), ...change }} latestBlock={latestBlock} />,
+      );
+      await press(user);
+      expect(latestBlock).toHaveBeenCalledTimes(2);
+      expect(options(1).blockNumber).toBe(21_234_568);
+      expect(screen.queryByText(/at block/)).toBeNull();
+    });
+
+    it("does not read a block for the actions on their own", async () => {
+      const user = userEvent.setup();
+      const latestBlock = vi.fn(async () => 21_234_567);
+      render(<Live simKey={key()} latestBlock={latestBlock} />);
+      await press(user);
+      expect(latestBlock).not.toHaveBeenCalled();
+      expect("blockNumber" in options(0)).toBe(false);
+    });
+
+    it("simulates at the latest block when it cannot be read", async () => {
+      const user = userEvent.setup();
+      const latestBlock = vi.fn(async () => {
+        throw new Error("rpc down");
+      });
+      render(<Live simKey={protectedKey()} latestBlock={latestBlock} />);
+      await press(user);
+      expect("blockNumber" in options(0)).toBe(false);
+      expect(screen.getByText(/Simulation passed/)).toBeTruthy();
+    });
   });
 
   it("shows a run that reports failure as failed", async () => {

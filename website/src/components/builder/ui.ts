@@ -24,6 +24,10 @@ export const btnPrimaryCls = `px-4 py-2 rounded-lg text-sm font-medium bg-[var(-
 
 export const btnSmallCls = `px-2.5 py-1.5 rounded-lg text-xs font-medium border border-[var(--color-bp-400)] text-[var(--color-bp-300)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap ${focusRingCls}`;
 
+/** A shortened address or a name in running text: it wraps as one piece,
+ *  never in its middle. */
+export const noBreakCls = "whitespace-nowrap";
+
 export const labelCls = "block text-sm text-[var(--color-ink-2)] mb-1.5";
 
 export const smallLabelCls =

@@ -166,6 +166,8 @@ export async function evmlArg(
   type: string,
   raw: string,
   ensToVar: (name: string) => Promise<string | null>,
+  /** How a literal address is written, when not as itself (a variable). */
+  addressRef: (address: string) => string = (address) => address,
 ): Promise<string> {
   const value = raw.trim();
 
@@ -174,7 +176,9 @@ export async function evmlArg(
     const inner =
       value.startsWith("[") && value.endsWith("]") ? value.slice(1, -1) : value;
     const elems = await Promise.all(
-      splitTopLevel(inner).map((elem) => evmlArg(arrayMatch[1], elem, ensToVar)),
+      splitTopLevel(inner).map((elem) =>
+        evmlArg(arrayMatch[1], elem, ensToVar, addressRef),
+      ),
     );
     return `[${elems.join(" ")}]`;
   }
@@ -188,13 +192,15 @@ export async function evmlArg(
         : value;
     const comps = await Promise.all(
       splitTopLevel(inner).map((comp, i) =>
-        evmlArg(compTypes[i] ?? "", comp, ensToVar),
+        evmlArg(compTypes[i] ?? "", comp, ensToVar, addressRef),
       ),
     );
     return `[${comps.join(" ")}]`;
   }
 
   if (type === "string") return JSON.stringify(value);
+
+  if (type === "address" && isAddress(value)) return addressRef(value);
 
   if (type === "address" && value && !isAddress(value) && value.includes(".")) {
     const varName = await ensToVar(value);

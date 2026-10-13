@@ -13,7 +13,8 @@ export type ButtonIconName =
   | "send"
   | "stop"
   | "key"
-  | "settings";
+  | "settings"
+  | "edit";
 
 const GLYPHS: Record<ButtonIconName, ReactNode> = {
   add: <path d="M12 5v14M5 12h14" />,
@@ -40,6 +41,13 @@ const GLYPHS: Record<ButtonIconName, ReactNode> = {
     </>
   ),
   stop: <rect x="6.5" y="6.5" width="11" height="11" rx="1.5" />,
+  // A pencil: change what is there.
+  edit: (
+    <>
+      <path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17z" />
+      <path d="m14.5 7.5 3 3" />
+    </>
+  ),
   key: (
     <>
       <circle cx="8" cy="15" r="4" />

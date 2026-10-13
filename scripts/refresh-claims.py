@@ -2,7 +2,7 @@
 """Refresh evidence mappings and concise verification labels for functional claims."""
 from pathlib import Path
 import re,json,collections,hashlib,argparse
-from claim_tables import coverage_table,evidence_cell,render_evidence,verification_label as record_label
+from claim_tables import coverage_table,evidence_cell,render_evidence,validate_claim_identities,verification_label as record_label
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--baseline', default='docs/verification/halmos-coverage')
 args=parser.parse_args()
@@ -20,6 +20,7 @@ assert len(props)==len(m['results'])
 rows={}
 evidence_path=root/'docs/claim-evidence.json'
 evidence_registry=json.loads(evidence_path.read_text()) if evidence_path.exists() else None
+if evidence_registry is not None:validate_claim_identities(s,evidence_registry)
 functional=False
 for l in s.splitlines():
  match=re.match(r'\| ([CAWOLER]\d+) \|',l)
@@ -49,7 +50,9 @@ def properties(id,stack=()):
  return sorted(names)
 new={};count=collections.defaultdict(collections.Counter)
 def verification_label(row):
- return record_label(dict(zip(['id','recordedClaim','sources','evidence','evidenceType','executionStatus','notes'],row)))
+ record=dict(zip(['id','recordedClaim','sources','evidence','evidenceType','executionStatus','notes'],row))
+ if evidence_registry:record={**evidence_registry['claims'][row[0]],**record}
+ return record_label(record)
 for id,row in rows.items():
  if len(row)==7:row=row[:5]+row[6:] # permit a deliberate refresh
  kind='SYMBOLIC' if row[4]=='PROVED' else row[4]

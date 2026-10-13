@@ -23,6 +23,8 @@ Everything the contracts are supposed to do is written down as a numbered claim:
 
 Each claim carries a label saying how strong its evidence is, and a link to that evidence: the test or property, the command that ran it, and the limits of what it shows.
 
+An ID names one statement. Changed, merged or split statements get new IDs; predecessor statements and their evidence remain in the history. Claims are grouped by behavior, and the new control and callback claims show their proof bounds explicitly. A property supplies credit only for the obligation and cases it covers.
+
 <table>
   <thead>
     <tr><th>Label</th><th>Claims</th></tr>
@@ -60,7 +62,7 @@ The methods stack. Each one catches what the one before it cannot.
 
 ### Tests on a real EVM
 
-Every behaviour has Solidity tests that execute the compiled contracts. They run under Hardhat, which produces the build that gets deployed, and again under Foundry. The run recorded on 2026-10-02 passed 602 Solidity tests and 102 Node tests.
+Every behaviour has Solidity tests that execute the compiled contracts. They run under Hardhat, which produces the build that gets deployed, and again under Foundry. The core/wire campaign recorded on 2026-10-13 passed 678 Foundry tests and 794 Hardhat tests (687 Solidity, 107 Node); two optional Safe fork checks were skipped because their RPC URL was unset. The accepted combined Hardhat run used Node 26.10.0, with its executable and hash retained in the report.
 
 Tests assert the exact revert data, not only that a call reverted. A test that accepts any failure does not show which error was raised or which operand it named.
 
@@ -75,7 +77,13 @@ Where an independent reference exists, the contracts are compared against it ins
 
 ### Symbolic properties
 
-[Halmos](https://github.com/a16z/halmos) runs a property over symbolic inputs: instead of trying a thousand values, it reasons about all of them at once, up to a bound. The baseline of 2026-10-02 ran 172 properties: 172 passed, none failed, none were left incomplete.
+[Halmos](https://github.com/a16z/halmos) runs a property over symbolic inputs: instead of trying a thousand values, it reasons about all of them at once, up to a bound. The [2026-10-13 core/wire campaign](https://github.com/blossomlabs/Assertions/blob/master/docs/halmos-core-wire-arithmetic-20261013.md) ran 307 properties: all passed, none failed or remained incomplete. Its 22 new properties add selected fetcher and nested-error checks, raw ABI positions, strict range lengths, skipped later callbacks, byte-window order and arithmetic boundaries. Fourteen unchanged claims gain partial coverage; no full claim label is added. The ledger now has 157 formally verified, 93 partially verified and 75 tested claims, plus three partially tested, two limitations and one assumption: 331 active statements and eight retained retired identities.
+
+The [preceding 285-property word/navigation campaign](https://github.com/blossomlabs/Assertions/blob/master/docs/halmos-word-navigation-20261013.md) adds full-word order, distance, comparisons, bit operations and shifts; decoder boundaries; selected navigation and encoding cases; and callback cache freshness. O6, O7, O29–O32, O34 and L31 retain full labels within their displayed word/decoder scope; nineteen other claims retain partial labels.
+
+The [preceding 251-property behavior campaign](https://github.com/blossomlabs/Assertions/blob/master/docs/halmos-behavior-20261013.md) supplies selected resolve-once construction, unread-field, exact-error, nested-type, executor rollback and batch-boundary evidence. C81, C82 and O11 retain their narrow empty-input or decoder scopes. All prior statements and receipts remain preserved.
+
+The [preceding 220-property cache campaign](https://github.com/blossomlabs/Assertions/blob/master/docs/halmos-cache-20261012.md) supplies selected cache reuse, guard adoption, failed-attempt rollback and separate invocation evidence; E50, E41 and L60 remain partially verified. Its receipts, the [209-property coverage extension](https://github.com/blossomlabs/Assertions/blob/master/docs/halmos-extensions-20261012.md), [189-property campaign](https://github.com/blossomlabs/Assertions/blob/master/docs/halmos-claims-20261012.md) and [earlier 177-property baseline](https://github.com/blossomlabs/Assertions/blob/master/docs/gas-pass-checks.json) remain retained.
 
 "Formally verified" in the ledger refers to this baseline. Its bounds are fixed and recorded with the run:
 
@@ -85,15 +93,21 @@ Where an independent reference exists, the contracts are compared against it ins
 
 Halmos discards any path that reverts, so a property that expects success is written to fail loudly when the call reverts. Otherwise a bug that makes valid input revert would pass unnoticed.
 
+The cache and construction properties count leaf calls with a test-only observer that survives reverted attempts, cross-checked by Foundry's exact call counts. Its assumptions are recorded with the evidence. The cache graphs have at most nine nodes and guard depth two; construction cases use at most three operands, while nested callback result cases traverse two elements. The latest freshness cases use four-node graphs, folds of zero through three elements and two-element filters, reductions and predicate scans. Together with prior mapValues evidence they cover selected cases through nine callback entrypoints. Unread-descriptor comparisons vary tails of 0, 1, 4 or 8 bytes while keeping locating structure fixed. General graph/cache invariants and arbitrary-length traversal still need induction. Property counts do not count fully proved claims, and deployment equivalence still requires separate artifact matching.
+
+The latest word properties cover unrestricted 256-bit operands and shift/index counts. Signed ordering and distance use sign-biased unsigned coordinates; bit projections specify the complete output words. The added add/sub properties cover full input pairs and overflow behavior. Div/mod values use selected unit and power-of-two divisors; manual panic equivalence covers the displayed failure paths. General multiplication/division and the other wide arithmetic listed below remain outside these new proofs.
+
+Ordinary failed-subcall properties exclude Halmos's symbolic gas artifact explicitly. The new core failure checks use Keccak digest-inequality assumptions to exclude reserved input reasons and artifact outputs, subject to Halmos's hash abstraction. Separate properties require the exact reserved exhaustion marker to propagate without excluding that path. They establish marker handling; concrete tests at real gas values retain responsibility for actual exhaustion behavior.
+
 ### No-panic fuzzing
 
-A separate set of fuzz suites feeds each contract malformed input under a fixed gas budget and requires a declared error every time: never a compiler panic, never a silent out-of-gas. The gas budget is what makes this a test of the algorithm. It found a string search that cost 170 gas per compared byte, which has since been rewritten.
+A separate set of fuzz suites feeds each contract bounded valid and malformed inputs under a fixed gas budget. Each suite checks its declared success and error cases; ABI-decoder failures, documented allocation or arithmetic panics, and resource exhaustion remain possible outside those cases. The gas budget makes this a test of the algorithm. It found a string search that cost 170 gas per compared byte, which has since been rewritten.
 
 ### Mutation testing
 
 Passing tests say little unless they would fail on broken code. [Gambit](https://github.com/Certora/gambit) generates small deliberate bugs (a `<` turned into `<=`, a deleted line) and each one is run against the whole stack above.
 
-The pass of 2026-09-26 produced 4,497 mutants. The tests, properties and fuzzers killed 98.7% of them. The remaining 59 were each examined and recorded as equivalent, meaning no input can tell them from the original, with the reason written down. [The full report](https://github.com/blossomlabs/Assertions/blob/master/docs/mutation-testing.md) lists them.
+The pass of 2026-09-26 produced 4,497 mutants. The tests, properties and fuzzers killed 98.7% of them. The remaining 59 were each examined and recorded as equivalent, meaning no input can tell them from the original, with the reason written down. [The full report](https://github.com/blossomlabs/Assertions/blob/master/docs/mutation-testing.md) lists them. The 2026-10-12 campaigns separately killed 14 and 18 targeted mutants for their new properties. The cache campaign killed eight production cache mutants and two observer fault controls. The 2026-10-13 behavior campaign killed 32 production mutants, one executor fault control and two observer controls. The subsequent word/navigation campaign killed 46 production mutants and two observer controls. The core/wire campaign then killed 45 production mutants and two observer controls, including an always-accepting byte-stream receiver. These targeted checks require valid counterexamples and do not replace an exhaustive mutation pass.
 
 ### Source and bytecode proofs
 
@@ -145,6 +159,6 @@ pnpm test:forge   # the same Solidity tests under Foundry
 pnpm halmos       # the symbolic properties
 ```
 
-Halmos installs with `uv tool install halmos`. The symbolic run takes about twenty minutes.
+The recorded Halmos version installs with `uv tool install halmos==0.3.3`. For a complete baseline with per-property receipts, run `python3 scripts/verify-claims.py --output docs/verification/fresh-halmos-claims` after the concrete gates and `forge build`.
 
-To check a result against the record, compare it with [the baseline run](https://github.com/blossomlabs/Assertions/blob/master/docs/assertions-2.0-release-checks.json), which stores the commands, tool versions, source hashes and per-property results. For the Dafny tracks, see [the reproduction notes](https://github.com/blossomlabs/Assertions/blob/master/formal/REPRODUCING.md).
+To check a result against the record, use [the current campaign's provenance and reproduction notes](https://github.com/blossomlabs/Assertions/blob/master/docs/halmos-core-wire-arithmetic-20261013.md). Generated receipts stay local or in CI artifacts; the report and ledger bind their hashes and scopes. For the Dafny tracks, see [the reproduction notes](https://github.com/blossomlabs/Assertions/blob/master/formal/REPRODUCING.md).

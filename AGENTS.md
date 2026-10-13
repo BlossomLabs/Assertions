@@ -431,6 +431,10 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   shifts every offset, and the decoder's bare revert then looks like a finding.
   `forge fmt` expands a one-line `/** @dev ... */` and drops the text before
   any ` * ` inside it (`n * 32`): write such comments multi-line.
+  Forge 1.5.1 also removed braces from one-line `if` blocks containing multiple
+  statements in the behavior harness, moving later statements outside the
+  condition. Write these blocks on multiple lines and review the formatted
+  source before compilation; the sentinel-count sample caught this change.
   The core and Expressions (`CoreNoPanic`, `ExpressionsNoPanic`) fuzz through
   uint8-enum mirror structs, which encode identically to the real ones. Wire
   bytes solc cannot decode (a STATIC_CALL paramData, an OR referenceData, a
@@ -462,6 +466,29 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   test only counts once the mutant it targets fails it. Run mutants in scratch
   worktrees, never in a shared tree.
 - Claims require run provenance: a check_* declaration alone is not a proof.
+  Halmos 0.3.3 does not implement exact `expectCall` counts. The cache harness
+  uses `vm.warp` as a test-only ghost event counter that survives reverted
+  subcalls; neither Expressions nor AbiCodec reads timestamps. Read the counter
+  through a separate external observer call to avoid compiler reuse of a block
+  field. Concrete samples cross-check it with Foundry's exact `expectCall` counts.
+  This instrumentation proves bounded execution counts, not gas or arbitrary
+  graph/cache invariants, and its assumptions belong in the evidence record.
+  To observe zero-TARGET skipping, install test-only observer code at address
+  zero: a wrong call to a code-less zero address succeeds silently and leaves
+  no count. Read its ghost counter through a separate external call. Distance
+  references must not overflow on a faulty result; use wrapping reconstruction
+  and explicit range checks so oracle reverts cannot discard the counterexample.
+  Reference range predicates should state ordered bounds explicitly: this avoids
+  a costly full-word bit-vector transitivity obligation. A visited reversed-range
+  leaf aborts OR with an ordinary error; it does not act as false and continue.
+  Claim IDs name exact statements, bound by `statementSha256` in
+  `docs/claim-evidence.json`. A changed, merged or split statement gets a
+  new ID; do not rebind an existing statement hash. `retiredClaims` preserves
+  predecessor IDs, replacement links and hashes of their unchanged evidence
+  records. `python3 scripts/render-claims.py --check` checks those identities
+  and displayed labels; without `--check` it renders already recorded
+  evidence, without verifying anything or rewriting run receipts. Keep
+  symbolic bounds visible and test-only obligations separate from proof credit.
   Keep property inventory, source hashes, tool versions, commands, exclusions
   and pass/fail/incomplete results with the ledger. Halmos has no gas model.
   The baseline (`scripts/verify-claims.py`, then `scripts/refresh-claims.py`)
@@ -522,5 +549,10 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
 - When running tests in a restricted sandbox, verify the nodejs test count: a
   sandboxed run has reported success with zero fuzz tests. Run outside that
   environment before treating the fuzz suites as passed.
+  In this environment Hardhat 3.17.0's combined run under Node 24.14.0 repeatedly
+  failed at the Node phase with "Unable to deserialize cloned data", while
+  its isolated Node suite passed. The combined run passed under Node 26.10.0.
+  Use an explicit Node executable in campaign commands and record its version
+  and hash; do not turn that runner failure into a zero-test success.
 
 - Format production Solidity consistently with `forge fmt contracts/Assertions.sol contracts/Collections.sol contracts/Expressions.sol contracts/Operations.sol contracts/lib/AbiCodec.sol contracts/lib/ERC8211.sol`; use `--check` to verify. Public NatSpec describes rounding and rejection behavior; implementation helpers document caller preconditions.

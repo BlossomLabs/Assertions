@@ -799,16 +799,32 @@ export function insertAssertionLines(
  *  address go with them: they depend on nothing, and a reader of the
  *  final script finds every address it names in one place. One whose
  *  name is in `reserved` (the wrapper's own variables) stays in the
- *  block, where it cannot change what the wrapper itself refers to. */
+ *  block, where it cannot change what the wrapper itself refers to; so
+ *  does every `set` of a variable the block sets more than once. */
 export function hoistLoads(
   block: string,
   reserved: ReadonlySet<string> = new Set(),
 ): { loads: string[]; sets: string[]; body: string } {
   const spans = commandSpans(block);
   const loadSpans = spans.filter(isLoadSpan);
+  // A variable set more than once takes its values in order: moved above
+  // the wrapper, the last would hold for every command, and the batch
+  // signed would not be the batch simulated. Those stay where they are.
+  const timesSet = new Map<string, number>();
+  for (const span of spans) {
+    const target = span.node && isSetSpan(span) ? setTarget(span.node) : undefined;
+    if (target) {
+      const name = target.replace(/^\$/, "");
+      timesSet.set(name, (timesSet.get(name) ?? 0) + 1);
+    }
+  }
   const setSpans = spans.filter((span) => {
     const variable = addressVariable(span);
-    return variable !== undefined && !reserved.has(variable.name);
+    return (
+      variable !== undefined &&
+      !reserved.has(variable.name) &&
+      timesSet.get(variable.name) === 1
+    );
   });
   return {
     loads: [...new Set(loadSpans.map((s) => s.text.trim()))],

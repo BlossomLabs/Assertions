@@ -233,6 +233,31 @@ describe("removeCommand and gcScaffolding", () => {
 });
 
 describe("hoistLoads", () => {
+  it("leaves in place every set of a variable the block sets twice: moved up, the last value would hold for every command", () => {
+    const A = "0x00000000000000000000000000000000000000aa";
+    const B = "0x00000000000000000000000000000000000000bb";
+    const C = "0x00000000000000000000000000000000000000cc";
+    const block = [
+      `set $x ${A}`,
+      `set $once ${C}`,
+      'exec $x "f()"',
+      `set $x ${B}`,
+      'exec $x "g()"',
+      'exec $once "h()"',
+    ].join("\n");
+    const { sets, body } = hoistLoads(block);
+    // Set once: still hoisted.
+    expect(sets).toEqual([`set $once ${C}`]);
+    // Set twice: both stay, in order, around the commands they apply to.
+    expect(body.split("\n")).toEqual([
+      `set $x ${A}`,
+      'exec $x "f()"',
+      `set $x ${B}`,
+      'exec $x "g()"',
+      'exec $once "h()"',
+    ]);
+  });
+
   it("pulls every load line out of the block, once", () => {
     const { loads, body } = hoistLoads(
       `load lang\n${EXEC}\nload math\nload lang\nassert @min!(1 $tok::!{totalSupply()(uint256)}) > 0`,

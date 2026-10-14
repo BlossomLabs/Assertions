@@ -5,7 +5,9 @@ type Beat = {
   answer: string;
   detail: string;
   contract: string;
-  lines: string[];
+  // A suggested group is what the builder offers after a passing simulation;
+  // the rest is what the proposer writes on top.
+  groups: { from: string; lines: string[] }[];
 };
 
 // One person writes the proposal and signs it: the questions are theirs, and
@@ -16,26 +18,36 @@ const beats: Beat[] = [
   {
     ask: 'We’re voting to upgrade the vault and hand admin to the council Safe. It executes in seven days. How do I know it lands the way we voted?',
     answer: 'Once the actions run, the council Safe owns the vault.',
-    detail: 'If it doesn’t, the whole proposal reverts.',
+    detail: 'The simulation saw the handover and suggested this check. If it fails, the whole proposal reverts.',
     contract: 'Assertions',
-    lines: ['assert $vault::!{owner()(address)} == $councilSafe "handover didn\'t land"'],
+    groups: [
+      { from: 'Suggested by the vault’s OwnershipTransferred event', lines: ['assert @acl:owner!($vault) == $councilSafe'] },
+    ],
   },
   {
     ask: 'The owner’s right. But the vault is a proxy. What code is it actually running?',
-    answer: 'The implementation behind the proxy, read at execution time, matches the audited build.',
-    detail: 'One call’s answer feeds the next: read the address, then hash its code.',
+    answer: 'The vault points at the new implementation, and that code matches the audited build.',
+    detail: 'The simulation suggests the address. Which code is acceptable there is yours to say.',
     contract: 'Operations',
-    lines: ['assert @codeHash!($vault::!{implementation()(address)}) == 0xdfff…9ca9 "unaudited code"'],
+    groups: [
+      { from: 'Suggested by the vault’s Upgraded event', lines: ['assert @proxies:implementation!($vault) == $implementation'] },
+      { from: 'Added by you', lines: ['assert @codeHash!(@proxies:implementation!($vault)) == 0xdfff…9ca9 "unaudited code"'] },
+    ],
   },
   {
     ask: 'We’re handing the keys to a Safe. Who holds its keys?',
     answer: 'Every signer on the council Safe is on the approved list, and at least three must sign.',
-    detail: 'The owner list is read live and checked one by one, however long it is.',
+    detail: 'The proposal never touches the Safe, so no simulation can suggest this one.',
     contract: 'Collections',
-    lines: [
-      'def @onCouncil! "$o: address -> bool" @includes!($council $o)',
-      'assert @all!(@safe:owners!($councilSafe) @onCouncil!) "unknown signer"',
-      'assert @safe:threshold!($councilSafe) >= 3 "threshold too low"',
+    groups: [
+      {
+        from: 'Added by you',
+        lines: [
+          'def @onCouncil! "$o: address -> bool" @includes!($council $o)',
+          'assert @all!(@safe:owners!($councilSafe) @onCouncil!) "unknown signer"',
+          'assert @safe:threshold!($councilSafe) >= 3 "threshold too low"',
+        ],
+      },
     ],
   },
 ];
@@ -63,20 +75,23 @@ function tokenize(line: string): Tok[] {
   return out;
 }
 
-const rows = beats.map((b) => ({ ...b, code: b.lines.map(tokenize) }));
-const assertCount = beats.flatMap((b) => b.lines).filter((l) => l.startsWith('assert')).length;
+const rows = beats.map((b) => ({
+  ...b,
+  groups: b.groups.map((g) => ({ ...g, suggested: g.from.startsWith('Suggested'), code: g.lines.map(tokenize) })),
+}));
+const assertCount = beats.flatMap((b) => b.groups.flatMap((g) => g.lines)).filter((l) => l.startsWith('assert')).length;
 ---
 
 <section class="py-24 px-6 scroll-mt-16" id="story" aria-labelledby="story-heading" data-story>
   <div class="max-w-6xl mx-auto">
     <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-bp-400)] mb-3 text-center">
-      Adding assertions to a vote
+      A DAO proposal upgrades a vault…
     </p>
-    <h2 id="story-heading" class="font-mono font-bold text-3xl sm:text-4xl text-center mb-4">
-      Upgrade the vault. Hand over the keys.
+    <h2 id="story-heading" class="font-mono font-bold text-3xl sm:text-4xl text-center text-balance max-w-2xl mx-auto mb-4">
+      What if the vote doesn't land the way it passed?
     </h2>
     <p class="text-center text-[var(--color-ink-2)] text-lg mb-16 max-w-2xl mx-auto">
-      A DAO proposal upgrades a vault and hands admin to a council Safe. Each
+      We want to upgrade a vault and hand admin to a council Safe. Each
       concern becomes an assertion that runs right after both actions, in the
       same transaction. If any assertion fails, the entire transaction reverts.
     </p>
@@ -114,11 +129,19 @@ const assertCount = beats.flatMap((b) => b.lines).filter((l) => l.startsWith('as
                 <span>{r.answer}</span>
               </p>
               <p class="mt-1.5 pl-6 text-sm text-[var(--color-ink-2)] leading-relaxed">{r.detail}</p>
-              <div class="story-code mt-3 rounded-lg px-3.5 py-2.5 font-mono text-[12.5px] leading-[1.7]">
-                {r.code.map((toks) => (
-                  <div class="story-line"><code class="story-src block">{toks.map((t) => <span class={t.c}>{t.t}</span>)}</code></div>
-                ))}
-              </div>
+              {r.groups.map((g) => (
+                <div class="mt-3">
+                  <p class={`flex items-center gap-1.5 mb-1.5 font-mono text-[10.5px] uppercase tracking-wider ${g.suggested ? 'text-[var(--color-bp-400)]' : 'text-[var(--color-ink-3)]'}`}>
+                    <span aria-hidden="true">{g.suggested ? '✦' : '✎'}</span>
+                    {g.from}
+                  </p>
+                  <div class={`story-code rounded-lg px-3.5 py-2.5 font-mono text-[12.5px] leading-[1.7] ${g.suggested ? 'story-suggested' : ''}`}>
+                    {g.code.map((toks) => (
+                      <div class="story-line"><code class="story-src block">{toks.map((t) => <span class={t.c}>{t.t}</span>)}</code></div>
+                    ))}
+                  </div>
+                </div>
+              ))}
               <p class="mt-3 pl-6">
                 <a href="#contracts" class="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-[var(--color-bp-400)] hover:underline underline-offset-4">
                   <span class="size-1.5 rounded-full bg-[var(--color-bp-400)]" aria-hidden="true"></span>
@@ -169,6 +192,10 @@ const assertCount = beats.flatMap((b) => b.lines).filter((l) => l.startsWith('as
   .story-code {
     background: var(--color-surface);
     border: 1px solid color-mix(in srgb, var(--color-ink-3) 15%, transparent);
+  }
+  .story-suggested {
+    border-style: dashed;
+    border-color: color-mix(in srgb, var(--color-bp-400) 45%, transparent);
   }
   .story-code .story-line + .story-line {
     margin-top: 0.15rem;

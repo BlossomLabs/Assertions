@@ -84,24 +84,12 @@ export function AssertionForm({
   chainId,
   placement,
   onPlacementChange,
-  suggest,
 }: {
   scriptState: ReturnType<typeof useScriptState>;
   chainId: number;
-  /** Where the check being built will be inserted; the stage owns it so
-   *  the timeline can show the spot. */
+  /** Where the check being built will be inserted. */
   placement: AssertionPlacement;
   onPlacementChange: (placement: AssertionPlacement) => void;
-  /** Wiring for "Suggest assertions": whether the batch simulated
-   *  successfully, whether the assistant is busy, whether the user is
-   *  logged in to the chat, and the action that hands the prompt to the
-   *  chat panel. */
-  suggest: {
-    ready: boolean;
-    running: boolean;
-    loggedIn: boolean;
-    onSuggest: () => void;
-  };
 }) {
   const { script, insertAssertion } = scriptState;
   const tag = useEvmlTag();
@@ -211,31 +199,11 @@ export function AssertionForm({
   const outcome = compile?.state === "done" ? compile.outcome : null;
   const canAdd = !!preview && outcome?.ok === true && !adding;
   const failure = outcome && !outcome.ok ? outcome.diagnostics[0] : null;
-  const suggestHint = !suggest.loggedIn
-    ? "Requires the assertion assistant: log in from the chat panel first."
-    : !suggest.ready
-      ? "Available after a passing simulation of the batch (step 1)."
-      : "The assistant reads your batch, inserts pre- and post-conditions, and simulates to confirm they hold.";
-
   return (
     <div className="space-y-4">
-      {/* The assistant: one row, description inline with the button */}
-      <div className="flex items-center gap-3 rounded-xl border border-[var(--color-bp-400)]/30 bg-[var(--color-bp-500)]/5 px-4 py-2.5">
-        <button
-          type="button"
-          disabled={!suggest.ready || !suggest.loggedIn || suggest.running}
-          onClick={suggest.onSuggest}
-          className={`shrink-0 px-4 py-2 rounded-lg text-sm font-medium border border-[var(--color-bp-400)] text-[var(--color-bp-300)] hover:bg-[var(--color-bp-500)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${focusRingCls}`}
-        >
-          <span aria-hidden>✦</span>{" "}
-          {suggest.running ? "Assistant is working…" : "Suggest assertions"}
-        </button>
-        <span className="min-w-0 text-xs text-[var(--color-ink-3)]">{suggestHint}</span>
-      </div>
-
       {/* The expression editor */}
       <div>
-        <span className={labelCls}>Build the expression</span>
+        <span className={labelCls}>Build an assertion</span>
         <ExpressionAssertionEditor
           assertion={assertion}
           setAssertion={setAssertion}

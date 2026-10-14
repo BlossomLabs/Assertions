@@ -18,6 +18,7 @@ import {
   idleSimulation,
   isStale,
 } from "./simulation";
+import type { ContextKind } from "./context";
 import { confirmationBlock, suggestOption } from "./suggested-checks";
 import { btnPrimaryCls, noBreakCls } from "./ui";
 import { ButtonIcon } from "./ButtonIcon";
@@ -28,11 +29,19 @@ import { SimRing } from "./SimRing";
  *  to. The builder holds two, one per batch listing. */
 export function useSimulation({
   latestBlock,
+  context,
+  suggestedBy,
 }: {
-  /** Reads a chain's latest block number. With it, the protected batch is
-   *  simulated at a block the builder knows: the latest, or the block of
-   *  the run whose suggested checks are being confirmed. */
+  /** The execution context: a wallet's checks are asked for exactly. */
+  context?: ContextKind;
+  /** Reads a chain's latest block number. With it, a batch is simulated at
+   *  a block the builder knows: the latest, or the block of the run whose
+   *  suggested checks are being confirmed. */
   latestBlock?: (chainId: number) => Promise<number | undefined>;
+  /** The simulation whose suggestions this one confirms (step 1's, for the
+   *  protected batch): its block is used again while the checks it
+   *  suggested are in the batch (`confirmationBlock`). */
+  suggestedBy?: () => SimulationState;
 } = {}) {
   const tag = useEvmlTag();
   const [state, setStateOnly] = useState<SimulationState>(idleSimulation);
@@ -44,6 +53,10 @@ export function useSimulation({
   }, []);
   const latestBlockRef = useRef(latestBlock);
   latestBlockRef.current = latestBlock;
+  const contextRef = useRef(context);
+  contextRef.current = context;
+  const suggestedByRef = useRef(suggestedBy);
+  suggestedByRef.current = suggestedBy;
   const abortRef = useRef<AbortController | null>(null);
 
   const simulate = useCallback(
@@ -51,15 +64,18 @@ export function useSimulation({
       abortRef.current?.abort();
       const abort = new AbortController();
       abortRef.current = abort;
-      // Checks added from the last run are confirmed at that run's block:
-      // on a later one the balances they pin may already have moved.
-      const previous = stateRef.current;
-      const pinnedBlock = confirmationBlock(previous, key, Date.now());
+      // Checks added from a run's suggestions are confirmed at that run's
+      // block: on a later one the balances they pin may already have moved.
+      const source = suggestedByRef.current?.();
+      const pinnedBlock =
+        source && key.mode === "protected"
+          ? confirmationBlock(source, key, Date.now())
+          : undefined;
       setState({ status: "running", result: null, simulated: key });
       let at: Pick<SimulationState, "block" | "blockReadAt" | "pinned"> = {};
       if (pinnedBlock !== undefined) {
-        at = { block: pinnedBlock, blockReadAt: previous.blockReadAt, pinned: true };
-      } else if (key.mode === "protected" && latestBlockRef.current) {
+        at = { block: pinnedBlock, blockReadAt: source?.blockReadAt, pinned: true };
+      } else if (latestBlockRef.current) {
         const block = await latestBlockRef
           .current(key.chainId)
           .catch(() => undefined);
@@ -78,7 +94,7 @@ export function useSimulation({
             signal: abort.signal,
             // The protected batch also asks which checks would pin down
             // what the run did (see suggested-checks.ts).
-            suggest: suggestOption(key),
+            suggest: suggestOption(key, contextRef.current),
             ...(at.block !== undefined ? { blockNumber: at.block } : {}),
           });
         if (abort.signal.aborted) return undefined;

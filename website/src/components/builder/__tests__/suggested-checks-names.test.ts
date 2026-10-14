@@ -2,7 +2,7 @@ import type { SimulationResult } from "@evmcrispr/core";
 import { BASE_UNITS_COMMENT } from "@evmcrispr/sdk";
 import { describe, expect, it } from "vitest";
 
-import { type Naming, insertAssertionLines, nameContext, userRename } from "../script-ops";
+import { type Naming, insertAssertionLines, nameContext, userRename, stripAssertions } from "../script-ops";
 import type { SimKey, SimulationState } from "../simulation";
 import {
   type SuggestedCheck,
@@ -75,7 +75,8 @@ const key = (script: string): SimKey => ({ script, from: SAFE, chainId: 1, mode:
 const ran = (script: string, suggestions: SuggestedCheck[]): SimulationState => ({
   status: "success",
   result: { success: true, logs: [], actions: [], suggestions } as unknown as SimulationResult,
-  simulated: key(script),
+  // Step 1's run: the actions alone.
+  simulated: { ...key(script), mode: "actions-only", script: stripAssertions(script) },
   block: 21_234_567,
   blockReadAt: 1_000,
 });
@@ -87,8 +88,11 @@ const added = (script: string, suggestion: SuggestedCheck, n: Naming = naming) =
     managed: bound.managed,
   };
 };
+/** The events of the suggestions still offered to add. */
 const offered = (state: SimulationState, script: string) =>
-  suggestedChecks(state, key(script))?.checks.map((c) => c.event) ?? null;
+  suggestedChecks(state, key(script))
+    ?.rows.filter((row) => !row.inBatch)
+    .map((row) => row.check.event) ?? null;
 
 describe("a line's meaning", () => {
   it("is the same with and without the comment that says its unit, and under any variable name", () => {
@@ -129,7 +133,6 @@ describe("suggestions through renames and comments", () => {
       `assert @token:allowance!($weth $safe $account) == 5${BASE_UNITS_COMMENT}$weth`,
     ]);
     expect(offered(state, one.script)).toEqual(["erc20Transfer", "native"]);
-    expect(suggestedChecks(state, key(one.script))?.added).toBe(true);
     // And is confirmed at the block it was drawn from.
     expect(confirmationBlock(state, key(one.script), 2_000)).toBe(21_234_567);
 
@@ -142,7 +145,6 @@ describe("suggestions through renames and comments", () => {
     const renamed = userRename(BATCH, "to", "burn");
     if ("error" in renamed) throw new Error(renamed.error);
     expect(offered(state, renamed.script)).toEqual(["erc20Approval", "erc20Transfer", "native"]);
-    expect(suggestedChecks(state, key(renamed.script))?.added).toBe(false);
     expect(confirmationBlock(state, key(renamed.script), 2_000)).toBeUndefined();
     // The same for the context giving the account its name.
     const withSafe = `set $executor ${SAFE}\n${BATCH}\nassert $executor::!{nonce()(uint256)} == 1`;
@@ -150,7 +152,7 @@ describe("suggestions through renames and comments", () => {
     const named = nameContext(withSafe, { ...naming, managed: new Map([["executor", "context"]]) }).script;
     expect(named).toContain("$safe::!{nonce()(uint256)}");
     expect(offered(simulated, named)).toEqual(["erc20Approval"]);
-    expect(suggestedChecks(simulated, key(named))?.added).toBe(false);
+    expect(suggestedChecks(simulated, key(named))?.stale).toBe(false);
   });
 
   it("does not offer a check the script already has, whatever its comment or its names", () => {
@@ -167,10 +169,16 @@ describe("suggestions through renames and comments", () => {
     expect(offered(ran(bare, [NATIVE, HELD]), bare)).toEqual(["erc20Transfer"]);
   });
 
-  it("any other edit still ends the list", () => {
-    expect(offered(state, `${BATCH}\nexec $weth "deposit()"`)).toBeNull();
-    expect(offered(state, BATCH.replace("5  #", "6  #"))).toBeNull();
+  it("marks the list as from before on any edit of the actions, and keeps it", () => {
+    const stale = (script: string) => suggestedChecks(state, key(script))?.stale;
+    expect(stale(`${BATCH}\nexec $weth "deposit()"`)).toBe(true);
+    expect(stale(BATCH.replace("5  #", "6  #"))).toBe(true);
     // A variable pointed at another address changes what the lines mean.
-    expect(offered(state, BATCH.replace(DEAD, SAFE))).toBeNull();
+    expect(stale(BATCH.replace(DEAD, SAFE))).toBe(true);
+    expect(offered(state, `${BATCH}\nexec $weth "deposit()"`)).toEqual([
+      "erc20Approval",
+      "erc20Transfer",
+      "native",
+    ]);
   });
 });

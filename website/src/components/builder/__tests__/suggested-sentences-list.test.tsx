@@ -17,6 +17,7 @@ import {
   type SuggestedCheck,
 } from "../suggested-checks";
 import { useScriptState } from "../useScriptState";
+import { markSuggested as marked } from "../script-ops";
 import {
   ACTION,
   ACTION_2,
@@ -33,11 +34,16 @@ import {
   WETH,
 } from "./helpers/suggestions";
 
+/** The assistant's button, ready and logged in. */
+const SUGGEST = { ready: true, running: false, loggedIn: true, onSuggest: () => {} };
+/** "Add assertions manually", closed. */
+const MANUAL = { open: false, controls: "manual", onToggle: () => {} };
+
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 const ran = (suggestions: SuggestedCheck[], script = BATCH): SimulationState => ({
   status: "success",
   result: { success: true, logs: [], actions: [], suggestions: suggestions as never },
-  simulated: simKeyFor("protected", script, EXECUTOR, 1),
+  simulated: simKeyFor("actions-only", script, EXECUTOR, 1),
 });
 
 /** The list over a live script, with the batch listing above it. */
@@ -66,6 +72,8 @@ function Harness({
         />
       </div>
       <SuggestedChecks
+        suggest={SUGGEST}
+        manual={MANUAL}
         state={state}
         simKey={simKeyFor("protected", scriptState.script, EXECUTOR, 1)}
         context={context}
@@ -151,7 +159,10 @@ describe("a suggestion row", () => {
     expect(within(rows()[0]).getByText(ALLOWANCE_WARNING)).toBeTruthy();
     expect(within(rows()[1]).getByText(BALANCE_WARNING)).toBeTruthy();
     expect(within(rows()[2]).getByText(NATIVE_FLOOR_WARNING)).toBeTruthy();
-    expect(within(rows()[2]).queryByText(/^Suggested by/)).toBeNull();
+    // No event: it says where it comes from all the same.
+    expect(within(rows()[2]).getByText(/^Suggested by/).textContent).toBe(
+      "Suggested by the simulation's balance changes",
+    );
   });
 
   it("keeps the code one click away: the sets it needs, then its line", async () => {
@@ -203,10 +214,11 @@ describe("adding a suggestion", () => {
       `set $executor ${EXECUTOR}`,
       ACTION,
       ACTION_2,
-      SPENT.line,
+      marked(SPENT.line),
     ]);
-    expect(rows()).toHaveLength(2);
-    expect(screen.queryByRole("button", { name: /keeps at least/ })).toBeNull();
+    // Still listed, now to take back.
+    expect(rows()).toHaveLength(3);
+    expect(screen.getByRole("button", { name: /^Remove check: .*keeps at least/ })).toBeTruthy();
   });
 
   it("loads token for a native floor added on its own, once", async () => {
@@ -223,7 +235,7 @@ describe("adding a suggestion", () => {
       `set $executor ${EXECUTOR}`,
       ACTION,
       ACTION_2,
-      NATIVE.line,
+      marked(NATIVE.line),
     ]);
   });
 
@@ -237,14 +249,14 @@ describe("adding a suggestion", () => {
       `set $executor ${EXECUTOR}`,
       ACTION,
       ACTION_2,
-      NATIVE.line,
+      marked(NATIVE.line),
     ]);
   });
 
-  it("adds all, each variable and each load once", async () => {
+  it("adds each, each variable and each load once", async () => {
     const user = userEvent.setup();
     render(<Harness state={ran([SPENT, RECEIVED, NATIVE])} />);
-    await user.click(screen.getByRole("button", { name: "Add all" }));
+    for (const check of [SPENT, RECEIVED, NATIVE]) await user.click(add(check));
     expect(script()).toEqual([
       "load token",
       `set $usdc ${USDC}`,
@@ -252,11 +264,11 @@ describe("adding a suggestion", () => {
       `set $recipient ${OTHER}`,
       ACTION,
       ACTION_2,
-      SPENT.line,
-      RECEIVED.line,
-      NATIVE.line,
+      marked(SPENT.line),
+      marked(RECEIVED.line),
+      marked(NATIVE.line),
     ]);
-    expect(screen.queryByRole("list")).toBeNull();
+    expect(screen.getAllByRole("button", { name: /^Remove check:/ })).toHaveLength(3);
   });
 
   it("renames a variable the script uses for something else, in the line it adds", async () => {
@@ -270,15 +282,15 @@ describe("adding a suggestion", () => {
       `set $executor2 ${EXECUTOR}`,
       ACTION,
       ACTION_2,
-      "assert @balance!(ETH $executor2) >= @token:amount(ETH 122.0843)",
+      marked("assert @balance!(ETH $executor2) >= @token:amount(ETH 122.0843)"),
     ]);
     // The next one finds that variable and uses it.
     await user.click(add(SPENT));
     expect(script()?.at(-1)).toBe(
-      "assert @balance!($usdc $executor2) >= @token:amount($usdc 51950.2982)",
+      marked("assert @balance!($usdc $executor2) >= @token:amount($usdc 51950.2982)"),
     );
     expect(script()?.filter((l) => l.startsWith("set $executor"))).toHaveLength(2);
-    expect(screen.queryByRole("list")).toBeNull();
+    expect(screen.getAllByRole("button", { name: /^Remove check:/ })).toHaveLength(2);
   });
 
   it("uses the variable the script already has for an address", async () => {
@@ -292,14 +304,14 @@ describe("adding a suggestion", () => {
       `set $executor ${EXECUTOR}`,
       ACTION,
       ACTION_2,
-      "assert @balance!($stable $executor) >= @token:amount($stable 51950.2982)",
+      marked("assert @balance!($stable $executor) >= @token:amount($stable 51950.2982)"),
     ]);
   });
 
   it("takes a variable away again with the last check that used it", async () => {
     const user = userEvent.setup();
     render(<Harness state={ran([SPENT, RECEIVED])} />);
-    await user.click(screen.getByRole("button", { name: "Add all" }));
+    for (const check of [SPENT, RECEIVED]) await user.click(add(check));
     await user.click(
       screen.getByRole("button", { name: `Remove command: ${RECEIVED.line}` }),
     );
@@ -309,10 +321,11 @@ describe("adding a suggestion", () => {
       `set $executor ${EXECUTOR}`,
       ACTION,
       ACTION_2,
-      SPENT.line,
+      marked(SPENT.line),
     ]);
     // And the removed one is offered again.
-    expect(rows()).toHaveLength(1);
+    expect(rows()).toHaveLength(2);
+    expect(screen.getAllByRole("button", { name: /^Add check:/ })).toHaveLength(1);
     await user.click(screen.getByRole("button", { name: `Remove command: ${SPENT.line}` }));
     expect(script()).toEqual([ACTION, ACTION_2]);
   });
@@ -350,5 +363,67 @@ describe("the batch listing with an added suggestion", () => {
     );
     expect(screen.queryByRole("group", { name: "Addresses" })).toBeNull();
     expect(screen.getByText("set $name @ens(vitalik.eth)")).toBeTruthy();
+  });
+});
+
+describe("checks of the chain's own currency, long amounts, and a run that could not vouch", () => {
+  const PAID: SuggestedCheck = {
+    line: "assert @balance!(ETH $recipient) == @token:amount(ETH 2)",
+    vars: [{ name: "recipient", value: OTHER }],
+    sentence: [
+      { type: "address", address: OTHER },
+      { type: "text", text: " holds exactly " },
+      { type: "amount", value: "2000000000000000000", bound: "exact", token: "native", symbol: "ETH", decimals: 18, text: "2 ETH" },
+    ],
+    description: "holds exactly 2 ETH",
+    kind: "amount",
+    module: "std",
+    event: "nativeBalance",
+    emitter: OTHER,
+  };
+
+  it("says an ETH check comes from the simulation's balance changes, as a token's says its event", () => {
+    render(<Harness state={ran([NATIVE, PAID])} />);
+    expect(
+      screen.getAllByText("Suggested by the simulation's balance changes"),
+    ).toHaveLength(2);
+  });
+
+  it("shortens an exact amount with many decimals, and keeps every digit on hover", () => {
+    const LONG: SuggestedCheck = {
+      ...PAID,
+      line: "assert @balance!(ETH $recipient) == @token:amount(ETH 19898.033836102187577703)",
+      sentence: [
+        { type: "address", address: OTHER },
+        { type: "text", text: " holds exactly " },
+        { type: "amount", value: "19898033836102187577703", bound: "exact", token: "native", symbol: "ETH", decimals: 18, text: "19,898.033836102187577703 ETH" },
+      ],
+    };
+    render(<Harness state={ran([LONG])} />);
+    const shown = screen.getByTitle("19,898.033836102187577703 ETH");
+    expect(shown.textContent).toBe("19,898.033836… ETH");
+  });
+
+  it("leaves a floor or a ceiling as it is said: it is already rounded", () => {
+    render(<Harness state={ran([NATIVE])} />);
+    expect(screen.queryByTitle(/ETH/)).toBeNull();
+    expect(screen.getByText(/0\.00002 ETH/)).toBeTruthy();
+  });
+
+  it("says why there are no checks when the run could not vouch for them", () => {
+    const state: SimulationState = {
+      ...ran([]),
+      result: {
+        success: true,
+        logs: [],
+        actions: [],
+        suggestions: [],
+        suggestionsError: "the node did not trace",
+      } as never,
+    };
+    render(<Harness state={state} />);
+    expect(
+      screen.getByText("No checks suggested: the node did not trace"),
+    ).toBeTruthy();
   });
 });

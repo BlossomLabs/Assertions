@@ -1,8 +1,27 @@
-import type { ReactNode } from "react";
+import {
+  ArrowUp,
+  Download,
+  Eye,
+  EyeOff,
+  Info,
+  Key,
+  type LucideIcon,
+  Minus,
+  Pencil,
+  Pin,
+  PinOff,
+  Play,
+  Plus,
+  Settings,
+  Square,
+  Trash2,
+} from "lucide-react";
 
 /**
  * The glyph in front of a button's label, in the button's text color.
- * Always decorative: the label says what the button does.
+ * Always decorative: the label says what the button does. The icons are
+ * Lucide's (lucide.dev), one set for the whole site; the simulate glyph is
+ * the site's own, drawn on the same grid.
  */
 
 export type ButtonIconName =
@@ -14,53 +33,38 @@ export type ButtonIconName =
   | "stop"
   | "key"
   | "settings"
-  | "edit";
+  | "edit"
+  | "remove"
+  | "delete"
+  | "keep"
+  | "unkeep"
+  | "show"
+  | "hide"
+  | "info";
 
-const GLYPHS: Record<ButtonIconName, ReactNode> = {
-  add: <path d="M12 5v14M5 12h14" />,
-  // A play button inside a dashed ring: run it, but not for real.
-  simulate: (
-    <>
-      <circle cx="12" cy="12" r="9" strokeDasharray="2.6 3.05" />
-      <path d="M10 8.5v7l5.5-3.5z" />
-    </>
-  ),
-  // The same play button with nothing around it: this one is for real.
-  run: <path d="M7.5 5v14l11-7z" />,
-  download: (
-    <>
-      <path d="M12 4v11" />
-      <path d="m7.5 11 4.5 4.5 4.5-4.5" />
-      <path d="M5 19.5h14" />
-    </>
-  ),
-  send: (
-    <>
-      <path d="M12 19V5.5" />
-      <path d="m6 11 6-6 6 6" />
-    </>
-  ),
-  stop: <rect x="6.5" y="6.5" width="11" height="11" rx="1.5" />,
+const LUCIDE: Record<Exclude<ButtonIconName, "simulate">, LucideIcon> = {
+  add: Plus,
+  // The play button on its own: this one is for real.
+  run: Play,
+  download: Download,
+  send: ArrowUp,
+  stop: Square,
   // A pencil: change what is there.
-  edit: (
-    <>
-      <path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17z" />
-      <path d="m14.5 7.5 3 3" />
-    </>
-  ),
-  key: (
-    <>
-      <circle cx="8" cy="15" r="4" />
-      <path d="m11 12 8.5-8.5" />
-      <path d="m16 7 2.5 2.5" />
-    </>
-  ),
-  settings: (
-    <>
-      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-      <circle cx="12" cy="12" r="3" />
-    </>
-  ),
+  edit: Pencil,
+  key: Key,
+  settings: Settings,
+  // A minus: take it out of a list it can come back to.
+  remove: Minus,
+  // A bin: delete it.
+  delete: Trash2,
+  // A pushpin: hold it where it is; struck through, let it go.
+  keep: Pin,
+  unkeep: PinOff,
+  // An eye: show what is folded away; struck through, fold it.
+  show: Eye,
+  hide: EyeOff,
+  // More about it.
+  info: Info,
 };
 
 export function ButtonIcon({
@@ -71,22 +75,35 @@ export function ButtonIcon({
   /** Rendered width and height in pixels. */
   size?: number;
 }) {
+  if (name === "simulate")
+    return (
+      // A play button inside a dashed ring: run it, but not for real.
+      <svg
+        className="shrink-0"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <circle cx="12" cy="12" r="9" strokeDasharray="2.6 3.05" />
+        <path d="M10 8.5v7l5.5-3.5z" />
+      </svg>
+    );
+  const Icon = LUCIDE[name];
   return (
-    <svg
+    <Icon
       className="shrink-0"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      size={size}
+      strokeWidth={2}
       aria-hidden="true"
       focusable="false"
-    >
-      {GLYPHS[name]}
-    </svg>
+    />
   );
 }
 

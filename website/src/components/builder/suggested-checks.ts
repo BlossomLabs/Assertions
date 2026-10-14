@@ -2,6 +2,7 @@ import type { SimulateOptions, SimulationResult } from "@evmcrispr/core";
 import { isAddress } from "viem";
 
 import { chainById } from "../deployments/wagmi";
+import type { AddressName } from "./address-names";
 import type { ContextKind } from "./context";
 import {
   type LineVariable,
@@ -9,7 +10,15 @@ import {
   addressVariable,
   addressVariables,
   bindVariables,
+  type CommandSpan,
   commandSpans,
+  insertAssertionLines,
+  isAssertSpan,
+  isSuggestedText,
+  markSuggested,
+  removeCommand,
+  rewriteCommand,
+  unmarkSuggested,
   isLoadSpan,
   isSetSpan,
   withoutComment,
@@ -31,24 +40,50 @@ export type SuggestedCheck = Omit<Suggestion, "vars" | "sentence"> &
   Partial<Pick<Suggestion, "vars" | "sentence">>;
 
 /** What a simulation of `key` asks EVMcrispr to suggest: checks for the
- *  protected batch, guarding the balances of the account it runs as.
- *  Nothing for the actions on their own. */
-export function suggestOption(key: SimKey): SimulateOptions["suggest"] {
-  if (key.mode !== "protected") return undefined;
-  return key.from ? { executor: key.from } : true;
+ *  actions of step 1, guarding the balances of the account they run as.
+ *  Nothing for the protected batch: its checks are the ones being added. A wallet batch executes as soon
+ *  as it is signed, from the state just simulated, so its amounts are
+ *  asked for exactly; anywhere else they are floors, since balances can
+ *  move before a Safe, a Governor or a DAO executes. */
+export function suggestOption(
+  key: SimKey,
+  context?: ContextKind,
+): SimulateOptions["suggest"] {
+  if (key.mode !== "actions-only") return undefined;
+  const exact = context === "eoa" ? { exact: true } : {};
+  if (key.from) return { executor: key.from, ...exact };
+  return context === "eoa" ? exact : true;
+}
+
+/** A suggestion as the list shows it: in the batch already or not. */
+export interface SuggestedRow {
+  check: SuggestedCheck;
+  /** A command of the script means the same: the row offers to remove it. */
+  inBatch: boolean;
+  /** That command still carries the `# suggested` mark: later runs manage
+   *  it, and the row's chip can make it the user's. */
+  marked: boolean;
 }
 
 export interface SuggestedChecks {
-  /** The suggestions not in the script yet, in the order they came. */
-  checks: SuggestedCheck[];
+  /** Every suggestion of the run, in the order they came. */
+  rows: SuggestedRow[];
   /** The run did more than was looked at: some may be missing. */
   truncated: boolean;
-  /** The script holds suggestions the simulation did not run with. */
-  added: boolean;
+  /** Why the run gave none: it could not vouch for them (a simulator that
+   *  does not report where a transaction's currency went). */
+  error?: string;
+  /** The actions changed since the run: its suggestions may no longer
+   *  fit them. They stay listed, and can still be added or removed. */
+  stale: boolean;
 }
 
 const isNativeFloor = (check: Pick<SuggestedCheck, "module" | "event">) =>
   check.module === "std" && check.event === "native";
+
+/** An amount asserted exactly (`==`): an account the run emptied, or any
+ *  amount of a wallet batch. Its line is not a floor. */
+const isExact = (check: { line?: string }) => / == /.test(check.line ?? "");
 
 /** A floor without its number: `assert <read> >=`. The number has been
  *  written three ways (`@token:amount(ETH 1.5)`, `1.5e18`, base units):
@@ -99,13 +134,24 @@ function scriptMeanings(script: string): Set<string> {
 const sameAccount = (a: string | undefined, b: string | undefined): boolean =>
   (a ?? "").toLowerCase() === (b ?? "").toLowerCase();
 
+/** The actions of a script by meaning, one per line: what step 1
+ *  simulates. Loads, variables pinned to an address and checks are left
+ *  out, so adding or removing a check does not change it. */
+function actionsMeaning(script: string): string {
+  const variables = addressVariables(script);
+  return commandSpans(script)
+    .filter((span) => !isLoadSpan(span) && !addressVariable(span) && !isAssertSpan(span))
+    .map((span) => lineMeaning(span.text, variables))
+    .join("\n");
+}
+
 /**
- * The suggestions to offer for the batch as it is now (`key`), from the
- * last simulation. Null unless that simulation passed, ran the protected
- * batch as the same executor on the same chain, and the script has not
- * changed since except by lines this very run suggested: adding one keeps
- * the others, any other edit ends them. A suggestion already in the script
- * is left out.
+ * The checks step 1's last simulation suggests (`state`), against the
+ * batch as it is now (`key`, the protected batch). Null until that
+ * simulation has passed for this executor and chain. Every suggestion is
+ * listed, each marked when the script already holds it, and they stay
+ * when the actions change after (`stale`): what was suggested is the
+ * user's to keep or take back.
  */
 export function suggestedChecks(
   state: SimulationState,
@@ -113,53 +159,149 @@ export function suggestedChecks(
 ): SuggestedChecks | null {
   const { simulated, result } = state;
   if (state.status !== "success" || !simulated || !result) return null;
-  if (!Array.isArray(result.suggestions)) return null;
   if (
-    key.mode !== "protected" ||
-    simulated.mode !== "protected" ||
+    simulated.mode !== "actions-only" ||
     simulated.chainId !== key.chainId ||
     !sameAccount(simulated.from, key.from)
   )
     return null;
 
   // Lines are compared by what they mean: a suggestion is added under the
-  // script's own variable names, which need not be the suggestion's, and
-  // adding one can rename a variable everywhere. So the two scripts are
-  // compared command by command, by meaning, the variables pinned to an
-  // address and the loads aside: those are scaffolding.
-  const suggested = new Set(result.suggestions.map(suggestionMeaning));
-  const rest = (script: string) => {
-    const variables = addressVariables(script);
-    return commandSpans(script)
-      .filter((span) => !isLoadSpan(span) && !addressVariable(span))
-      .map((span) => lineMeaning(span.text, variables))
-      .filter((meaning) => !suggested.has(meaning))
-      .join("\n");
-  };
-  if (rest(key.script) !== rest(simulated.script)) return null;
-
+  // script's own variable names, which need not be the suggestion's.
   const present = scriptMeanings(key.script);
-  const ran = scriptMeanings(simulated.script);
-  // A suggested line the simulation did not run with: a rename alone adds
-  // nothing.
-  const added = [...suggested].some((line) => present.has(line) && !ran.has(line));
   const floors = new Set([...present].map(withoutBound));
-  const checks: SuggestedCheck[] = [];
-  for (const suggestion of result.suggestions as SuggestedCheck[]) {
+  const seen = new Set<string>();
+  const rows: SuggestedRow[] = [];
+  // A result of the older shape, without the field, suggested nothing.
+  const suggestions = Array.isArray(result.suggestions)
+    ? (result.suggestions as SuggestedCheck[])
+    : [];
+  for (const suggestion of suggestions) {
     const line = suggestionMeaning(suggestion);
-    if (present.has(line)) continue;
-    // The native floor depends on the gas the run used, so a batch
-    // simulated with one in place gets it back with another number: the
-    // same check, not a second one.
-    if (isNativeFloor(suggestion) && floors.has(withoutBound(line))) continue;
-    present.add(line);
-    checks.push(suggestion);
+    if (seen.has(line)) continue;
+    seen.add(line);
+    // The native floor depends on the gas a run used, so a script holding
+    // one with another number holds the same check.
+    const inBatch =
+      present.has(line) ||
+      (isNativeFloor(suggestion) && floors.has(withoutBound(line)));
+    const span = inBatch ? suggestionSpan(key.script, suggestion) : undefined;
+    rows.push({
+      check: suggestion,
+      inBatch,
+      marked: !!span && isSuggestedText(span.text),
+    });
   }
   return {
-    checks,
+    rows,
     truncated: result.suggestionsTruncated === true,
-    added,
+    ...(result.suggestionsError ? { error: result.suggestionsError } : {}),
+    stale: actionsMeaning(key.script) !== actionsMeaning(simulated.script),
   };
+}
+
+/** The command of `script` a suggestion stands for, by meaning: what its
+ *  Remove takes out. */
+export function suggestionSpan(
+  script: string,
+  check: Pick<SuggestedCheck, "line" | "vars" | "module" | "event">,
+): CommandSpan | undefined {
+  const variables = addressVariables(script);
+  const line = suggestionMeaning(check);
+  const spans = commandSpans(script).filter(isAssertSpan);
+  return (
+    spans.find((span) => lineMeaning(span.text, variables) === line) ??
+    (isNativeFloor(check)
+      ? spans.find(
+          (span) => withoutBound(lineMeaning(span.text, variables)) === withoutBound(line),
+        )
+      : undefined)
+  );
+}
+
+/**
+ * The script after step 1's run suggested `suggestions`: the checks the
+ * builder manages (marked `# suggested`, see `markSuggested`) follow the
+ * run, the user's are never touched.
+ *
+ * - A marked check the run suggests again stays as it is.
+ * - A marked check it no longer suggests, or suggests with another number,
+ *   goes, with the variables only it used.
+ * - A marked check that is none of the last applied run's suggestions
+ *   (`previous`) was edited by hand: it is the user's now, and loses the
+ *   mark.
+ * - A suggestion the script has no check for is added, marked, unless the
+ *   user took it out after the last run (it was applied and is gone).
+ *
+ * `applied` is what the script holds of this run's suggestions, marked:
+ * the next run's `previous`. Without `previous` (a reload), the mark alone
+ * says what is managed and nothing counts as taken out.
+ */
+export function applySuggestions(
+  script: string,
+  suggestions: readonly SuggestedCheck[],
+  previous: ReadonlySet<string> | undefined,
+  naming: Naming = {},
+): { script: string; applied: Set<string>; managed: Naming["managed"] } {
+  const meaningOf = (text: string, s = script) => lineMeaning(text, addressVariables(s));
+  const wanted = new Map<string, SuggestedCheck>();
+  for (const check of suggestions) {
+    const m = suggestionMeaning(check);
+    if (!wanted.has(m)) wanted.set(m, check);
+  }
+  const before = scriptMeanings(script);
+  const dismissed = new Set(
+    previous ? [...previous].filter((m) => wanted.has(m) && !before.has(m)) : [],
+  );
+
+  // The marked checks, one at a time: each edit moves the lines after it.
+  let current = script;
+  const settled = new Set<number>();
+  for (;;) {
+    const span = commandSpans(current).find(
+      (sp) => isAssertSpan(sp) && isSuggestedText(sp.text) && !settled.has(sp.start),
+    );
+    if (!span) break;
+    const m = meaningOf(span.text, current);
+    if (wanted.has(m)) {
+      settled.add(span.start);
+    } else if (previous && !previous.has(m)) {
+      current = rewriteCommand(current, span.start, unmarkSuggested(span.text));
+      settled.add(span.start);
+    } else {
+      current = removeCommand(current, span.start);
+      // Lines moved up: what was settled is looked at again, and kept.
+      settled.clear();
+      for (const sp of commandSpans(current))
+        if (isAssertSpan(sp) && isSuggestedText(sp.text) && wanted.has(meaningOf(sp.text, current)))
+          settled.add(sp.start);
+    }
+  }
+
+  let managed = naming.managed;
+  for (const [m, check] of wanted) {
+    const present = scriptMeanings(current);
+    const floors = new Set([...present].map(withoutBound));
+    if (present.has(m) || dismissed.has(m)) continue;
+    // A native floor the script holds with another number is that check.
+    if (isNativeFloor(check) && floors.has(withoutBound(m))) continue;
+    const bound = bindVariables(
+      current,
+      { line: markSuggested(check.line), vars: suggestionVariables(check) },
+      { ...naming, managed },
+    );
+    managed = bound.managed;
+    current = insertAssertionLines(bound.script, bound.line, "post", bound.sets).script;
+  }
+
+  const applied = new Set<string>();
+  const variables = addressVariables(current);
+  for (const sp of commandSpans(current)) {
+    if (!isAssertSpan(sp) || !isSuggestedText(sp.text)) continue;
+    const m = lineMeaning(sp.text, variables);
+    if (wanted.has(m)) applied.add(m);
+  }
+  return { script: current, applied, managed };
 }
 
 /** How long a block may be simulated at again: past this it says too
@@ -167,11 +309,12 @@ export function suggestedChecks(
 export const PIN_MAX_AGE_MS = 5 * 60_000;
 
 /**
- * The block to simulate `key` at so that the run confirms what the last
- * one suggested: that run's own block, while the batch is the one it
- * simulated plus checks it suggested, and the block is recent. Undefined
- * otherwise (any other edit, another executor or chain, a failed run, an
- * unchanged batch, an old block): simulate at the latest block.
+ * The block to simulate the protected batch (`key`) at so that it
+ * confirms checks step 1's run suggested (`state`): that run's own block,
+ * while its actions are unchanged, the batch holds one of its suggestions,
+ * and the block is recent. Undefined otherwise (other actions, another
+ * executor or chain, a failed run, no suggestion added, an old block):
+ * simulate at the latest block.
  */
 export function confirmationBlock(
   state: SimulationState,
@@ -181,7 +324,10 @@ export function confirmationBlock(
   if (state.block === undefined || state.blockReadAt === undefined)
     return undefined;
   if (now - state.blockReadAt > PIN_MAX_AGE_MS) return undefined;
-  return suggestedChecks(state, key)?.added ? state.block : undefined;
+  const found = suggestedChecks(state, key);
+  return found && !found.stale && found.rows.some((row) => row.inBatch)
+    ? state.block
+    : undefined;
 }
 
 /** A description with its shortened addresses written as the builder
@@ -213,10 +359,41 @@ export interface SentenceLink {
   label: string;
   address: string;
   href?: string;
+  /** Where the name in the label comes from, when it was looked up. */
+  named?: AddressName["source"];
+}
+
+/** Part of a long number shortened for reading, with every digit kept
+ *  for a hover and for assistive technology. */
+export interface SentenceAbbreviation {
+  abbreviated: string;
+  full: string;
 }
 
 /** A sentence ready to draw: words, and what they mention. */
-export type SentenceView = (string | SentenceLink)[];
+export type SentenceView = (string | SentenceLink | SentenceAbbreviation)[];
+
+/** How many decimals an exact amount shows before it is shortened. Its
+ *  line keeps every digit (an equality is not rounded); the sentence only
+ *  has to be read. */
+const SHOWN_DECIMALS = 6;
+
+/** An amount's number cut to `SHOWN_DECIMALS` places with an ellipsis,
+ *  when it has more: "19,898.033836102187577703" reads "19,898.033836…".
+ *  The text as it is otherwise. */
+function readable(
+  text: string,
+  bound: string | undefined,
+): string | SentenceAbbreviation {
+  // A floor or a ceiling is already said at the precision it asserts.
+  if (bound !== "exact") return text;
+  const m = /^(\d[\d,]*)\.(\d+)(.*)$/s.exec(text);
+  if (!m || m[2].length <= SHOWN_DECIMALS) return text;
+  return {
+    abbreviated: `${m[1]}.${m[2].slice(0, SHOWN_DECIMALS)}…${m[3]}`,
+    full: text,
+  };
+}
 
 const shortened = (address: string): string =>
   `${address.slice(0, 6)}…${address.slice(-4)}`;
@@ -249,6 +426,45 @@ export function addressLink(
   };
 }
 
+/** Where `useAddressNames` keeps an address's name. */
+export const nameKey = (chainId: number, address: string): string =>
+  `${chainId}:${address.toLowerCase()}`;
+
+/** An address in a sentence, by the best name it has: the token list's,
+ *  which stands alone; an ENS name that resolves back; the name the
+ *  contract gives itself; a verified contract name. Each but the first
+ *  beside the shortened address. */
+function sentenceAddress(
+  chainId: number,
+  part: { address: string; name?: string; listed?: boolean },
+  names: ReadonlyMap<string, AddressName> | undefined,
+): SentenceLink {
+  const own = addressLink(chainId, part.address, part.name, part.listed);
+  if (part.listed === true && own.label !== shortened(part.address)) return own;
+  const looked = names?.get(nameKey(chainId, part.address));
+  if (looked?.source === "ens") return namedLink(chainId, part.address, looked)!;
+  if (own.label !== shortened(part.address)) return own;
+  return namedLink(chainId, part.address, looked) ?? own;
+}
+
+/** The link for an address under a name looked up for it (an ENS name
+ *  that resolves back, a verified contract name), beside its shortened
+ *  address: neither is a name the builder can vouch for alone. */
+function namedLink(
+  chainId: number,
+  address: string,
+  name: AddressName | undefined,
+): SentenceLink | undefined {
+  if (!name) return undefined;
+  const href = explorerPage(chainId, address);
+  return {
+    label: `${name.name} (${shortened(address)})`,
+    address,
+    ...(href ? { href } : {}),
+    named: name.source,
+  };
+}
+
 /**
  * A suggestion's sentence as the row draws it: text as it is, each address
  * a link, each token amount its text with the symbol inside it linked to
@@ -259,6 +475,7 @@ export function addressLink(
 export function sentenceView(
   check: Pick<SuggestedCheck, "sentence">,
   chainId: number,
+  names?: ReadonlyMap<string, AddressName>,
 ): SentenceView | null {
   const { sentence } = check;
   if (!Array.isArray(sentence) || sentence.length === 0) return null;
@@ -269,9 +486,9 @@ export function sentenceView(
     } else if (part.type === "address") {
       // Not an address: nothing to link, and nothing to trust as one.
       if (!isAddress(part.address)) view.push(String(part.address));
-      else view.push(addressLink(chainId, part.address, part.name, part.listed));
+      else view.push(sentenceAddress(chainId, part, names));
     } else if (part.token === "native" || !isAddress(part.token)) {
-      view.push(part.text);
+      view.push(readable(part.text, part.bound));
     } else {
       const symbol =
         part.symbol && PLAIN_NAME.test(part.symbol) ? part.symbol : undefined;
@@ -279,11 +496,11 @@ export function sentenceView(
       if (symbol && at >= 0) {
         const before = part.text.slice(0, at);
         const after = part.text.slice(at + symbol.length);
-        if (before) view.push(before);
+        if (before) view.push(readable(before, part.bound));
         view.push(addressLink(chainId, part.token, symbol, part.listed));
         if (after) view.push(after);
       } else {
-        view.push(part.text, " of ", addressLink(chainId, part.token));
+        view.push(readable(part.text, part.bound), " of ", addressLink(chainId, part.token));
       }
     }
   }
@@ -366,6 +583,19 @@ export function suggestionSource(
   };
 }
 
+/** The chain's own currency has no events: its checks come from the
+ *  balances the simulation changed (`std:native`, the executor's own, and
+ *  `std:nativeBalance`, any other account's). */
+export const BALANCE_SOURCE = "Suggested by the simulation's balance changes";
+export function fromBalances(
+  check: Pick<SuggestedCheck, "module" | "event">,
+): boolean {
+  return (
+    check.module === "std" &&
+    (check.event === "native" || check.event === "nativeBalance")
+  );
+}
+
 export const BALANCE_WARNING =
   "Balances may change before the proposal executes.";
 export const ALLOWANCE_WARNING =
@@ -385,7 +615,48 @@ const AMOUNT_WARNINGS: Record<string, string> = {
   "token:erc20Transfer": BALANCE_WARNING,
   "token:erc1155TransferSingle": BALANCE_WARNING,
   "token:erc1155TransferBatch": BALANCE_WARNING,
+  // The chain's own currency, from balances read before and after the run.
+  "std:nativeBalance": BALANCE_WARNING,
+  // The executor's own balance, asserted exactly (emptied).
+  "std:native": BALANCE_WARNING,
 };
+
+/** A recipient's floor: the account it guards can spend what it got. */
+export const RECIPIENT_NOTICE =
+  "This account can move these funds before the proposal executes.";
+/** An emptied account's zero: anyone can send it something. */
+export const EMPTIED_NOTICE =
+  "Anyone can send it some before the proposal executes.";
+
+/**
+ * What a row says about how its check can fail for reasons of its own,
+ * behind its (i): the amount's notice, made specific where the check is a
+ * recipient's floor (that account can spend it) or an emptied account's
+ * zero (anyone can send it some). A wallet batch executes right away: it
+ * has none but the native floor's. A state check has none.
+ */
+export function checkNotices(
+  check: Pick<SuggestedCheck, "kind" | "module" | "event" | "line" | "sentence">,
+  context: ContextKind,
+  executor: string | undefined,
+): string[] {
+  const notice = amountWarning(check, context);
+  if (!notice) return [];
+  if (context !== "eoa") {
+    if (/==\s*0$/.test(check.line)) return [EMPTIED_NOTICE];
+    const subject = (Array.isArray(check.sentence) ? check.sentence : []).find(
+      (part) => part.type === "address",
+    );
+    if (
+      / >= /.test(check.line) &&
+      subject?.type === "address" &&
+      executor &&
+      String(subject.address).toLowerCase() !== executor.toLowerCase()
+    )
+      return [RECIPIENT_NOTICE];
+  }
+  return [notice];
+}
 
 /** The one warning an amount carries. The native floor says what it
  *  depends on, in every context. Any other amount warns where execution
@@ -393,11 +664,11 @@ const AMOUNT_WARNINGS: Record<string, string> = {
  *  is the simulation's, and the sentence names what it is a number of. A
  *  wallet batch executes right away; a state check names no amount. */
 export function amountWarning(
-  check: Pick<SuggestedCheck, "kind" | "module" | "event">,
+  check: Pick<SuggestedCheck, "kind" | "module" | "event"> & { line?: string },
   context: ContextKind,
 ): string | null {
   if (check.kind !== "amount") return null;
-  if (isNativeFloor(check)) return NATIVE_FLOOR_WARNING;
+  if (isNativeFloor(check) && !isExact(check)) return NATIVE_FLOOR_WARNING;
   if (context === "eoa") return null;
   return AMOUNT_WARNINGS[`${check.module}:${check.event}`] ?? AMOUNT_WARNING;
 }

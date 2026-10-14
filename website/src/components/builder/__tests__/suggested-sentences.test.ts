@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  stripAssertions,
   addressVariables,
   gcScaffolding,
   insertAssertionLines,
@@ -15,7 +16,6 @@ import {
   sentenceView,
   suggestedChecks,
 } from "../suggested-checks";
-import { timelineNodes } from "../timeline";
 import {
   ACTION,
   ACTION_2,
@@ -40,10 +40,11 @@ const key = (partial: Partial<SimKey> = {}): SimKey => ({
   mode: "protected",
   ...partial,
 });
+/** Step 1's run of the batch `simulated` stands for: its actions alone. */
 const ran = (simulated: SimKey, suggestions: SuggestedCheck[]): SimulationState => ({
   status: "success",
   result: { success: true, logs: [], actions: [], suggestions: suggestions as never },
-  simulated,
+  simulated: { ...simulated, mode: "actions-only", script: stripAssertions(simulated.script) },
 });
 /** The batch runs as the connected wallet: the context that makes
  *  `$executor` that account's name, and nothing else's. */
@@ -53,8 +54,11 @@ const add = (script: string, check: SuggestedCheck): string => {
   const { line, sets } = prepareSuggestion(script, check, AS_EXECUTOR);
   return insertAssertionLines(script, line, "post", sets).script;
 };
+/** The lines still offered to add: those the batch does not hold. */
 const lines = (state: SimulationState, k: SimKey) =>
-  suggestedChecks(state, k)?.checks.map((c) => c.line) ?? null;
+  suggestedChecks(state, k)
+    ?.rows.filter((row) => !row.inBatch)
+    .map((row) => row.check.line) ?? null;
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 const link = (label: string, address: string) => ({
   label,
@@ -272,18 +276,6 @@ describe("removing an added suggestion", () => {
   });
 });
 
-describe("the timeline", () => {
-  it("counts neither the variables nor the loads of an added suggestion", () => {
-    const script = add(add(BATCH, SPENT), OWNER);
-    expect(timelineNodes(script).map((n) => [n.kind, n.lane, n.label])).toEqual([
-      ["action", "actions", 1],
-      ["action", "actions", 2],
-      ["check", "post", 1],
-      ["check", "post", 2],
-    ]);
-  });
-});
-
 describe("lineMeaning", () => {
   it("is the line with its variables as the addresses they stand for", () => {
     const meaning = lineMeaning(SPENT.line, new Map([["usdc", USDC], ["executor", EXECUTOR]]));
@@ -310,19 +302,20 @@ describe("lineMeaning", () => {
 describe("suggestedChecks, by what a line means", () => {
   const state = ran(key(), [...ALL, NATIVE]);
 
-  it("hides an added suggestion and keeps the others", () => {
+  it("knows an added suggestion as in the batch, and the others as not", () => {
     const one = add(BATCH, OWNER);
     expect(suggestedChecks(state, key({ script: one }))).toEqual({
-      checks: [SPENT, RECEIVED, NATIVE],
+      // Added as it is, without the mark: in the batch, not managed.
+      rows: [...ALL, NATIVE].map((check) => ({
+        check,
+        inBatch: check === OWNER,
+        marked: false,
+      })),
       truncated: false,
-      added: true,
+      stale: false,
     });
     const all = [SPENT, RECEIVED, NATIVE].reduce(add, one);
-    expect(suggestedChecks(state, key({ script: all }))).toEqual({
-      checks: [],
-      truncated: false,
-      added: true,
-    });
+    expect(lines(state, key({ script: all }))).toEqual([]);
   });
 
   it("knows an added suggestion under the name it was renamed to", () => {
@@ -349,13 +342,11 @@ describe("suggestedChecks, by what a line means", () => {
     ]);
   });
 
-  it("still ends on any other edit, with suggestions added or not", () => {
-    for (const script of [
-      `${add(BATCH, OWNER)}\n${ACTION}`,
-      `${add(BATCH, OWNER)}\nassert ${USDC}::!{paused()(bool)} == false`,
-      ACTION,
-    ])
-      expect(suggestedChecks(state, key({ script }))).toBeNull();
+  it("is from before once the actions change, with suggestions added or not; a check is not an action", () => {
+    for (const script of [`${add(BATCH, OWNER)}\n${ACTION}`, ACTION])
+      expect(suggestedChecks(state, key({ script }))?.stale).toBe(true);
+    const handWritten = `${add(BATCH, OWNER)}\nassert ${USDC}::!{paused()(bool)} == false`;
+    expect(suggestedChecks(state, key({ script: handWritten }))?.stale).toBe(false);
   });
 
   it("does not offer a second native floor, whatever number the next run gives it", () => {

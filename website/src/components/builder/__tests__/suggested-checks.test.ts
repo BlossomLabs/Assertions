@@ -2,6 +2,7 @@ import type { SimulationResult } from "@evmcrispr/core";
 import { describe, expect, it } from "vitest";
 
 import { insertAssertionLines } from "../script-ops";
+import { simKeyFor } from "../SimulationPanel";
 import type { SimKey, SimulationState } from "../simulation";
 import {
   type SuggestedCheck,
@@ -11,6 +12,9 @@ import {
   NATIVE_FLOOR_WARNING,
   PIN_MAX_AGE_MS,
   amountWarning,
+  checkNotices,
+  EMPTIED_NOTICE,
+  RECIPIENT_NOTICE,
   confirmationBlock,
   descriptionParts,
   displayDescription,
@@ -126,39 +130,63 @@ const key = (partial: Partial<SimKey> = {}): SimKey => ({
 type ResultLike = Omit<Partial<SimulationResult>, "suggestions"> & {
   suggestions?: SuggestedCheck[];
 };
+/** Step 1's run of the batch `simulated` stands for: its actions alone,
+ *  which is what suggests checks. */
 const ran = (simulated: SimKey, result: ResultLike = {}): SimulationState => {
   const full = { success: true, logs: [], actions: [], ...result } as SimulationResult;
   return {
     status: full.success ? "success" : "failure",
     result: full,
-    simulated,
+    simulated: simKeyFor("actions-only", simulated.script, simulated.from, simulated.chainId),
   };
 };
 const add = (script: string, check: SuggestedCheck) =>
   insertAssertionLines(script, check.line, "post").script;
+/** The lines still offered to add: those the batch does not hold. */
 const lines = (state: SimulationState, k: SimKey) =>
-  suggestedChecks(state, k)?.checks.map((c) => c.line) ?? null;
+  suggestedChecks(state, k)
+    ?.rows.filter((row) => !row.inBatch)
+    .map((row) => row.check.line) ?? null;
+/** Every row, as offered: to add, or to remove. */
+const offered = (state: SimulationState, k: SimKey) =>
+  suggestedChecks(state, k)?.rows.map((row) => [row.check.line, row.inBatch ? "remove" : "add"]);
 
 describe("suggestOption", () => {
-  it("asks for the protected batch, guarding the account it runs as", () => {
-    expect(suggestOption(key())).toEqual({ executor: SAFE });
+  const actions = (partial: Partial<SimKey> = {}) => key({ mode: "actions-only", ...partial });
+
+  it("asks step 1's run, guarding the account it runs as", () => {
+    expect(suggestOption(actions())).toEqual({ executor: SAFE });
   });
 
   it("asks without an executor when there is none", () => {
-    expect(suggestOption(key({ from: undefined }))).toBe(true);
+    expect(suggestOption(actions({ from: undefined }))).toBe(true);
   });
 
-  it("does not ask for the actions on their own", () => {
-    expect(suggestOption(key({ mode: "actions-only" }))).toBeUndefined();
+  it("does not ask the protected batch: its checks are the ones being added", () => {
+    expect(suggestOption(key())).toBeUndefined();
   });
+
+  it("asks a wallet batch for exact amounts: it executes from the state just simulated", () => {
+    expect(suggestOption(actions(), "eoa")).toEqual({ executor: SAFE, exact: true });
+    expect(suggestOption(actions({ from: undefined }), "eoa")).toEqual({
+      exact: true,
+    });
+  });
+
+  it.each(["safe", "governor", "aragonosx"] as const)(
+    "keeps floors where execution comes later, in a %s context",
+    (kind) => {
+      expect(suggestOption(actions(), kind)).toEqual({ executor: SAFE });
+    },
+  );
 });
 
 describe("suggestedChecks", () => {
   it("lists what a passing simulation of the current batch suggested", () => {
     expect(suggestedChecks(ran(key(), { suggestions: ALL }), key())).toEqual({
-      checks: ALL,
+      rows: ALL.map((check) => ({ check, inBatch: false, marked: false })),
       truncated: false,
-      added: false,
+      stale: false,
     });
   });
 
@@ -169,6 +197,15 @@ describe("suggestedChecks", () => {
         key(),
       )?.truncated,
     ).toBe(true);
+  });
+
+  it("says why a run that could not vouch for its suggestions gave none", () => {
+    const found = suggestedChecks(
+      ran(key(), { suggestions: [], suggestionsError: "the node did not trace" }),
+      key(),
+    );
+    expect(found?.rows).toEqual([]);
+    expect(found?.error).toBe("the node did not trace");
   });
 
   it("has nothing for a failed run, a run in flight or no run", () => {
@@ -183,18 +220,18 @@ describe("suggestedChecks", () => {
     ).toBeNull();
   });
 
-  it("has nothing for a result without suggestions (older shape)", () => {
-    expect(suggestedChecks(ran(key()), key())).toBeNull();
+  it("reads a result without suggestions (older shape) as one that suggested none", () => {
+    expect(suggestedChecks(ran(key()), key())?.rows).toEqual([]);
     expect(
-      suggestedChecks(ran(key(), { suggestions: "nope" as never }), key()),
-    ).toBeNull();
+      suggestedChecks(ran(key(), { suggestions: "nope" as never }), key())?.rows,
+    ).toEqual([]);
   });
 
   it("lists an empty run as empty", () => {
     expect(suggestedChecks(ran(key(), { suggestions: [] }), key())).toEqual({
-      checks: [],
+      rows: [],
       truncated: false,
-      added: false,
+      stale: false,
     });
   });
 
@@ -202,35 +239,41 @@ describe("suggestedChecks", () => {
     ["another executor", { from: OTHER as `0x${string}` }],
     ["no executor", { from: undefined }],
     ["another chain", { chainId: 100 }],
-    ["the actions on their own", { mode: "actions-only" as const }],
-    ["another action", { script: `${BATCH}\n${ACTION}` }],
-    ["one action fewer", { script: ACTION }],
-    [
-      "a check of the user's own",
-      { script: `${BATCH}\nassert ${TOKEN}::!{paused()(bool)} == false` },
-    ],
-  ])("has nothing once the batch is simulated for %s", (_name, change) => {
+  ])("has nothing for %s: they were suggested for this one", (_name, change) => {
     expect(suggestedChecks(ran(key(), { suggestions: ALL }), key(change))).toBeNull();
   });
 
-  it("keeps the rest after one is added, and hides the added one", () => {
+  it.each([
+    ["another action", { script: `${BATCH}\n${ACTION}` }],
+    ["one action fewer", { script: ACTION }],
+  ])("keeps them, marked as from before, after %s", (_name, change) => {
+    const found = suggestedChecks(ran(key(), { suggestions: ALL }), key(change));
+    expect(found?.rows).toHaveLength(3);
+    expect(found?.stale).toBe(true);
+  });
+
+  it("is not from before because of a check: only the actions count", () => {
+    const script = `${add(BATCH, OWNER)}\nassert ${TOKEN}::!{paused()(bool)} == false`;
+    expect(suggestedChecks(ran(key(), { suggestions: ALL }), key({ script }))?.stale).toBe(
+      false,
+    );
+  });
+
+  it("keeps every row after one is added, that one now to remove", () => {
     const state = ran(key(), { suggestions: ALL });
     const one = add(BATCH, OWNER);
     // The line brought its module's load with it.
     expect(one.split("\n")).toEqual(["load acl", ACTION, ACTION_2, OWNER.line]);
-    expect(suggestedChecks(state, key({ script: one }))).toEqual({
-      checks: [SPENT, RECEIVED],
-      truncated: false,
-      added: true,
-    });
+    expect(offered(state, key({ script: one }))).toEqual([
+      [OWNER.line, "remove"],
+      [SPENT.line, "add"],
+      [RECEIVED.line, "add"],
+    ]);
     const two = add(one, RECEIVED);
     expect(lines(state, key({ script: two }))).toEqual([SPENT.line]);
     const three = add(two, SPENT);
-    expect(suggestedChecks(state, key({ script: three }))).toEqual({
-      checks: [],
-      truncated: false,
-      added: true,
-    });
+    expect(lines(state, key({ script: three }))).toEqual([]);
+    expect(suggestedChecks(state, key({ script: three }))?.rows).toHaveLength(3);
   });
 
   it("brings a suggestion back when its line is removed again", () => {
@@ -253,10 +296,11 @@ describe("suggestedChecks", () => {
     );
   });
 
-  it("clears after an added suggestion once an action changes too", () => {
+  it("keeps an added suggestion to remove once an action changes too", () => {
     const state = ran(key(), { suggestions: ALL });
     const edited = `${add(BATCH, OWNER)}\n${ACTION}`;
-    expect(suggestedChecks(state, key({ script: edited }))).toBeNull();
+    expect(offered(state, key({ script: edited }))?.[0]).toEqual([OWNER.line, "remove"]);
+    expect(suggestedChecks(state, key({ script: edited }))?.stale).toBe(true);
   });
 
   it("ignores trailing blank lines and the executor's letter case", () => {
@@ -343,15 +387,15 @@ describe("confirmationBlock", () => {
     expect(confirmationBlock(state, key(), T0 + 1000)).toBeUndefined();
   });
 
+  it("keeps the block with a check written by hand beside them: the actions are the same", () => {
+    const script = `${add(BATCH, OWNER)}\nassert ${TOKEN}::!{paused()(bool)} == false`;
+    expect(confirmationBlock(state, key({ script }), T0 + 1000)).toBe(21_234_567);
+  });
+
   it.each([
     ["another action", { script: `${add(BATCH, OWNER)}\n${ACTION}` }],
-    [
-      "a check written by hand",
-      { script: `${add(BATCH, OWNER)}\nassert ${TOKEN}::!{paused()(bool)} == false` },
-    ],
     ["another executor", { script: add(BATCH, OWNER), from: OTHER as `0x${string}` }],
     ["another chain", { script: add(BATCH, OWNER), chainId: 100 }],
-    ["the actions on their own", { script: add(BATCH, OWNER), mode: "actions-only" as const }],
   ])("drops the block for %s", (_name, change) => {
     expect(confirmationBlock(state, key(change), T0 + 1000)).toBeUndefined();
   });
@@ -491,6 +535,29 @@ describe("amountWarning", () => {
     },
   );
 
+  it.each(LATER)(
+    "names balances for the native currency of other accounts, and for an executor emptied of it, in a %s context",
+    (kind) => {
+      const other = { kind: "amount" as const, module: "std", event: "nativeBalance" };
+      expect(amountWarning(other, kind)).toBe(BALANCE_WARNING);
+      // `== 0` is not a floor: the floor's warning would not be true of it.
+      const emptied = {
+        ...NATIVE,
+        line: "assert @balance!(ETH $executor) == 0",
+      };
+      expect(amountWarning(emptied, kind)).toBe(BALANCE_WARNING);
+    },
+  );
+
+  it("says nothing of an exact amount in a wallet batch, which executes right away", () => {
+    expect(
+      amountWarning({ ...NATIVE, line: "assert @balance!(ETH $executor) == 0" }, "eoa"),
+    ).toBeNull();
+    expect(
+      amountWarning({ kind: "amount", module: "std", event: "nativeBalance" }, "eoa"),
+    ).toBeNull();
+  });
+
   it.each(LATER)("names balances for transfers in a %s context", (kind) => {
     for (const check of [SPENT, RECEIVED, HELD_1155])
       expect(amountWarning(check, kind)).toBe(BALANCE_WARNING);
@@ -518,5 +585,39 @@ describe("amountWarning", () => {
   it("does not warn in a wallet context, which executes right away", () => {
     for (const check of [SPENT, ALLOWANCE, UNKNOWN_AMOUNT, OWNER])
       expect(amountWarning(check, "eoa")).toBeNull();
+  });
+});
+
+describe("checkNotices", () => {
+  const floor = (address: string): SuggestedCheck =>
+    ({
+      line: "assert @balance!($usdc $who) >= @token:amount($usdc 1485)",
+      description: "holds at least",
+      kind: "amount",
+      module: "token",
+      event: "erc20Transfer",
+      emitter: SAFE,
+      sentence: [
+        { type: "address", address },
+        { type: "text", text: " holds at least 1,485 USDC" },
+      ],
+    }) as SuggestedCheck;
+  const OTHER_ACCOUNT = "0x00000000000000000000000000000000000a0001";
+
+  it("says a recipient can move what it got, and anyone can refill an emptied account", () => {
+    expect(checkNotices(floor(OTHER_ACCOUNT), "safe", SAFE)).toEqual([RECIPIENT_NOTICE]);
+    expect(
+      checkNotices(
+        { ...floor(SAFE), line: "assert @balance!($dai $executor) == 0" },
+        "safe",
+        SAFE,
+      ),
+    ).toEqual([EMPTIED_NOTICE]);
+    // The executor's own floor keeps the general notice.
+    expect(checkNotices(floor(SAFE), "safe", SAFE)).toEqual([BALANCE_WARNING]);
+  });
+
+  it("has none in a wallet batch, which executes right away", () => {
+    expect(checkNotices(floor(OTHER_ACCOUNT), "eoa", SAFE)).toEqual([]);
   });
 });

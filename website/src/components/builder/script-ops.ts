@@ -816,3 +816,83 @@ export function hoistLoads(
     body: dropSpans(block, [...loadSpans, ...setSpans]).trim(),
   };
 }
+
+// ---------------------------------------------------------------------------
+// Suggested checks: marked in the script by a comment
+// ---------------------------------------------------------------------------
+
+/** The word a check's comment carries while the check is a suggestion the
+ *  builder manages. Without it the check is the user's. */
+export const SUGGESTED_MARK = "suggested";
+const MARK_IN_COMMENT = /\bsuggested\b/;
+
+/** The comment of a line (from its `#`), or "" when it has none. */
+function commentOf(line: string): string {
+  const at = commentStart(line);
+  return at < 0 ? "" : line.slice(at);
+}
+
+/** Whether a command is a managed suggestion: one of its lines has a
+ *  comment that says `suggested`. Removing the word, or the comment, makes
+ *  it the user's. */
+export function isSuggestedText(text: string): boolean {
+  return text.split("\n").some((line) => MARK_IN_COMMENT.test(commentOf(line)));
+}
+
+/** A line with the mark: a comment of its own, or the word added to the
+ *  comment it has (`# base units of $weth · suggested`). */
+export function markSuggested(line: string): string {
+  if (isSuggestedText(line)) return line;
+  return commentStart(line) < 0
+    ? `${line}  # ${SUGGESTED_MARK}`
+    : `${line} · ${SUGGESTED_MARK}`;
+}
+
+/** A command without the mark: the word taken out of its comment, and a
+ *  comment left with nothing else to say dropped. */
+export function unmarkSuggested(text: string): string {
+  return text
+    .split("\n")
+    .map((line) => {
+      const at = commentStart(line);
+      if (at < 0) return line;
+      const code = line.slice(0, at).trimEnd();
+      const comment = line
+        .slice(at + 1)
+        .replace(/\s*·\s*suggested\b/g, "")
+        .replace(/\bsuggested\s*·\s*/g, "")
+        .replace(/\bsuggested\b/g, "")
+        .trim();
+      return comment ? `${code}  # ${comment}` : code;
+    })
+    .join("\n");
+}
+
+/** The script with the command covering a 1-based line written as `text`
+ *  instead, in place. */
+export function rewriteCommand(script: string, at: number, text: string): string {
+  const span = spanAtLine(commandSpans(script), at);
+  if (!span) return script;
+  const lines = script.split("\n");
+  lines.splice(span.start - 1, span.end - span.start + 1, ...text.split("\n"));
+  return lines.join("\n");
+}
+
+/** The script without the checks still marked as suggestions, and the
+ *  scaffolding only they used: when the executor or the chain they were
+ *  suggested for changes. */
+export function withoutSuggested(script: string): string {
+  const marked = commandSpans(script).filter(
+    (span) => isAssertSpan(span) && isSuggestedText(span.text),
+  );
+  return marked.length ? gcScaffolding(dropSpans(script, marked)) : script;
+}
+
+/** A line as code and comment: the comment from its `#` (quotes aside),
+ *  "" when it has none. For drawing the two apart. */
+export function splitComment(line: string): { code: string; comment: string } {
+  const at = commentStart(line);
+  return at < 0
+    ? { code: line, comment: "" }
+    : { code: line.slice(0, at), comment: line.slice(at) };
+}

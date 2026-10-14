@@ -13,9 +13,20 @@ import {
   nameContext,
   removeCommand as removeCommandFrom,
   replaceCommand,
+  rewriteCommand,
   setVariables,
+  spanAtLine,
+  markSuggested,
+  unmarkSuggested,
   userRename,
+  withoutSuggested,
+  commandSpans,
 } from "./script-ops";
+import {
+  type SuggestedCheck,
+  applySuggestions,
+  suggestionVariables,
+} from "./suggested-checks";
 
 type Managed = NonNullable<Naming["managed"]>;
 
@@ -302,9 +313,66 @@ export function useScriptState(
     [setScript],
   );
 
+  /** Make the script follow step 1's run (`applySuggestions`): the checks
+   *  it manages are kept, replaced or removed, new suggestions added. What
+   *  it holds of them, for the next run. */
+  const applySuggestionRun = useCallback(
+    (
+      suggestions: readonly SuggestedCheck[],
+      previous: ReadonlySet<string> | undefined,
+    ): Promise<Set<string>> => {
+      let applied = new Set<string>();
+      return edit(
+        renamable(suggestions.flatMap((check) => suggestionVariables(check))),
+        () => {
+          const next = applySuggestions(scriptRef.current, suggestions, previous, naming());
+          if (next.managed) managedRef.current = new Map(next.managed);
+          applied = next.applied;
+          if (next.script !== scriptRef.current) setScript(next.script);
+        },
+      ).then(() => applied);
+    },
+    // `renamable` reads refs only.
+    [edit, naming, setScript],
+  );
+
+  /** Make the suggested check covering a 1-based line the user's: its
+   *  `suggested` mark taken out of its comment. */
+  const unmarkCommand = useCallback(
+    (line: number) => {
+      const span = spanAtLine(commandSpans(scriptRef.current), line);
+      if (!span) return;
+      setScript(rewriteCommand(scriptRef.current, line, unmarkSuggested(span.text)));
+    },
+    [setScript],
+  );
+
+  /** Hand the check covering a 1-based line back to the suggestions: the
+   *  `suggested` mark added to its comment (on its last line). */
+  const markCommand = useCallback(
+    (line: number) => {
+      const span = spanAtLine(commandSpans(scriptRef.current), line);
+      if (!span) return;
+      const lines = span.text.split("\n");
+      lines[lines.length - 1] = markSuggested(lines[lines.length - 1]);
+      setScript(rewriteCommand(scriptRef.current, line, lines.join("\n")));
+    },
+    [setScript],
+  );
+
+  /** Take out every check still marked as suggested. */
+  const dropSuggested = useCallback(() => {
+    const next = withoutSuggested(scriptRef.current);
+    if (next !== scriptRef.current) setScript(next);
+  }, [setScript]);
+
   return {
     script,
     setScript,
+    applySuggestionRun,
+    unmarkCommand,
+    markCommand,
+    dropSuggested,
     getScript,
     getNaming: naming,
     appendLines,

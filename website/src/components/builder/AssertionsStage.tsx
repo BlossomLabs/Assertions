@@ -3,18 +3,19 @@ import type { Address } from "viem";
 
 import { AssertionForm } from "./AssertionForm";
 import { BatchList } from "./BatchList";
-import { BatchTimeline } from "./BatchTimeline";
 import { Block } from "./ComposeStage";
 import type { ContextKind } from "./context";
 import { type AssertionPlacement, hasAssertions, isAssertSpan } from "./script-ops";
 import { SimulationPanel, simKeyFor, type useSimulation } from "./SimulationPanel";
-import { SuggestedChecks } from "./SuggestedChecks";
+import type { SimulationState } from "./simulation";
+import { type SuggestWiring, SuggestedChecks } from "./SuggestedChecks";
 import type { useScriptState } from "./useScriptState";
 
 /**
- * Assertions: the checks that protect the batch, the batch so far with
- * them in place (as a timeline and as a listing), the simulation of the protected batch, which is what
- * Submit requires, and the checks that simulation suggests.
+ * Assertions: the checks step 1's simulation suggests, the assistant that
+ * can add more, the form to build one by hand (on request), the batch so
+ * far with them in place, and the simulation of the protected batch,
+ * which is what Submit requires.
  */
 export function AssertionsStage({
   chainId,
@@ -23,23 +24,27 @@ export function AssertionsStage({
   scriptState,
   suggest,
   simulation,
+  suggestions,
 }: {
   chainId: number;
   executor: Address | undefined;
-  /** Who executes the batch: decides which suggested checks warn. */
+  /** Who executes the batch: decides each suggested check's notices. */
   context: ContextKind;
   scriptState: ReturnType<typeof useScriptState>;
-  suggest: React.ComponentProps<typeof AssertionForm>["suggest"];
+  /** The assistant's "Suggest more assertions". */
+  suggest: SuggestWiring;
   /** The protected-batch simulation. */
   simulation: ReturnType<typeof useSimulation>;
+  /** Step 1's simulation: the checks it suggested. */
+  suggestions: SimulationState;
 }) {
   const { script, removeCommand } = scriptState;
   const hasScript = script.trim().length > 0;
   const protectedScript = hasAssertions(script);
   const simKey = simKeyFor("protected", script, executor, chainId);
   const [placement, setPlacement] = useState<AssertionPlacement>("post");
-  // The command picked on the timeline, by its first line.
-  const [selected, setSelected] = useState<number | null>(null);
+  // The form that builds a check by hand: shown on request.
+  const [manual, setManual] = useState(false);
 
   return (
     <div className="space-y-8">
@@ -47,29 +52,37 @@ export function AssertionsStage({
         title="Checks"
         hint="Checks that make the whole batch revert unless the chain is in the state you expect."
       >
-        <AssertionForm
-          scriptState={scriptState}
-          chainId={chainId}
-          placement={placement}
-          onPlacementChange={setPlacement}
-          suggest={suggest}
-        />
+        <div className="space-y-4">
+          <SuggestedChecks
+            state={suggestions}
+            simKey={simKey}
+            context={context}
+            chainId={chainId}
+            scriptState={scriptState}
+            suggest={suggest}
+            manual={{
+              open: manual,
+              controls: "manual-assertion",
+              onToggle: () => setManual((was) => !was),
+            }}
+          />
+          {/* Hidden, not unmounted: closing it keeps a check half built. */}
+          <div id="manual-assertion" hidden={!manual}>
+            <AssertionForm
+              scriptState={scriptState}
+              chainId={chainId}
+              placement={placement}
+              onPlacementChange={setPlacement}
+            />
+          </div>
+        </div>
       </Block>
 
       {hasScript && (
         <Block title="Batch so far">
-          <BatchTimeline
-            script={script}
-            simKey={simKey}
-            state={simulation.state}
-            placement={placement}
-            selected={selected}
-            onSelect={setSelected}
-          />
           <BatchList
             script={script}
             chainId={chainId}
-            highlight={selected}
             onRename={scriptState.renameVariable}
             onRemove={removeCommand}
             // Actions are managed in step 1; here only assertions can go.
@@ -84,13 +97,6 @@ export function AssertionsStage({
                 ? "Simulate the batch in step 1 to tell a failing action from a failing assertion."
                 : undefined
             }
-          />
-          <SuggestedChecks
-            state={simulation.state}
-            simKey={simKey}
-            context={context}
-            chainId={chainId}
-            scriptState={scriptState}
           />
         </Block>
       )}

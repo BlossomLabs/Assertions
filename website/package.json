@@ -7,7 +7,7 @@
   },
   "evmcrispr": {
     "repo": "https://github.com/EVMcrispr/evmcrispr.git",
-    "commit": "a279d569eb97327c2404155138797bf3d30e75e2"
+    "commit": "5074d7c4c9ccd39db2fa2a23b8014c0b831cc986"
   },
   "scripts": {
     "prepare:evmcrispr": "node scripts/vendor-evmcrispr.mjs && node scripts/copy-monaco.mjs",
@@ -40,6 +40,7 @@
     "@types/react-dom": "^19.3.0",
     "astro": "^7.3.4",
     "html2canvas-pro": "2.5.1",
+    "lucide-react": "^1.57.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-markdown": "^10.1.0",

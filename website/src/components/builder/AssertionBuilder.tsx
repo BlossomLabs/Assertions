@@ -22,6 +22,7 @@ import { ExecutorIsSafe } from "./useIsSafe";
 import { createLiveTag, evml } from "./evml";
 import { SimRing } from "./SimRing";
 import { isFresh } from "./simulation";
+import type { SuggestedCheck } from "./suggested-checks";
 import { simKeyFor, useSimulation } from "./SimulationPanel";
 import { SubmitStage } from "./SubmitStage";
 import { type EyeState, eyeStateFor } from "./timeline";
@@ -149,7 +150,7 @@ function BuilderBody({
   // Two simulations, one per batch listing: the actions on their own in
   // step 1 (a failure there is the batch's), the protected script in step
   // 2 (what Submit requires).
-  const actionsSim = useSimulation();
+
   // The protected batch runs at a block the builder knows, read from the
   // same endpoint the simulation forks: the checks a run suggests can then
   // be confirmed against the state they were drawn from.
@@ -161,7 +162,50 @@ function BuilderBody({
         : undefined,
     [chainClient, chainId],
   );
-  const protectedSim = useSimulation({ latestBlock });
+  // Step 1's run is what suggests checks: it reads the block it forks, so
+  // the protected batch can be simulated again at that block to confirm
+  // the checks it suggested.
+  const actionsSim = useSimulation({ latestBlock, context: context.kind });
+  const actionsStateRef = useRef(actionsSim.state);
+  actionsStateRef.current = actionsSim.state;
+  const protectedSim = useSimulation({
+    latestBlock,
+    context: context.kind,
+    suggestedBy: () => actionsStateRef.current,
+  });
+  // Each passing run of step 1 brings its suggested checks into the batch
+  // (`applySuggestions`): the ones marked `# suggested` follow the run, the
+  // user's are left alone. What the last run left there tells the next
+  // one which the user took out since.
+  const appliedRef = useRef<Set<string> | undefined>(undefined);
+  const appliedRunRef = useRef<unknown>(null);
+  const { applySuggestionRun, dropSuggested, getScript } = scriptState;
+  useEffect(() => {
+    const run = actionsSim.state;
+    if (run.status !== "success" || !run.result || run.result === appliedRunRef.current)
+      return;
+    // A run of actions that have changed since says nothing of these.
+    if (!isFresh(run, simKeyFor("actions-only", getScript(), executor, chainId))) return;
+    appliedRunRef.current = run.result;
+    // A run that could not vouch for its suggestions changes nothing.
+    if (run.result.suggestionsError) return;
+    const suggestions = Array.isArray(run.result.suggestions)
+      ? (run.result.suggestions as SuggestedCheck[])
+      : [];
+    void applySuggestionRun(suggestions, appliedRef.current).then((applied) => {
+      appliedRef.current = applied;
+    });
+  }, [actionsSim.state, executor, chainId, applySuggestionRun, getScript]);
+  // Suggestions are about an account on a chain: another one, and the
+  // checks still marked as suggested go.
+  const whereRef = useRef(`${chainId}:${executor?.toLowerCase() ?? ""}`);
+  useEffect(() => {
+    const where = `${chainId}:${executor?.toLowerCase() ?? ""}`;
+    if (where === whereRef.current) return;
+    whereRef.current = where;
+    appliedRef.current = undefined;
+    dropSuggested();
+  }, [chainId, executor, dropSuggested]);
   const [suggestPrompt, setSuggestPrompt] = useState<{
     text: string;
     nonce: number;
@@ -271,6 +315,7 @@ function BuilderBody({
               scriptState={scriptState}
               suggest={suggest}
               simulation={protectedSim}
+              suggestions={actionsSim.state}
             />
           </ExecutorIsSafe.Provider>
         </Section>

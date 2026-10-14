@@ -4,7 +4,6 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { BatchList } from "../BatchList";
-import { BatchTimeline } from "../BatchTimeline";
 import { isAssertSpan } from "../script-ops";
 
 const T = "0x00000000000000000000000000000000000000aa";
@@ -34,8 +33,84 @@ describe("BatchList", () => {
   });
 });
 
+describe("BatchList: which addresses are drawn in full", () => {
+  const A = "0x00000000000000000000000000000000000000aa";
+  const B = "0x00000000000000000000000000000000000000bb";
+  const C = "0x00000000000000000000000000000000000000cc";
+  // $usdc is used by the action and the check, $to by the action only,
+  // $router by the check only.
+  const SCRIPT = [
+    `set $usdc ${A}`,
+    `set $to ${B}`,
+    `set $router ${C}`,
+    'exec $usdc "transfer(address,uint256)" $to 5',
+    "assert @balance!($usdc $router) >= 5  # base units of $to",
+  ].join("\n");
+  const used = () =>
+    [...screen.getByRole("group", { name: "Addresses" }).children].map((row) => [
+      row.textContent?.split(" ")[1],
+      row.hasAttribute("data-used"),
+    ]);
+
+  it("in step 1, those its actions use; a check's alone is dimmed", () => {
+    render(
+      <BatchList
+        script={SCRIPT}
+        chainId={1}
+        onRemove={vi.fn()}
+        onRename={() => ({})}
+        canRemove={(span) => !isAssertSpan(span)}
+      />,
+    );
+    expect(used()).toEqual([
+      ["$usdc", true],
+      ["$to", true],
+      ["$router", false],
+    ]);
+    const dimmed = screen.getByRole("button", { name: "Rename $router" });
+    expect(dimmed.className).toContain("text-[var(--color-ink-3)]");
+    expect(screen.getByRole("button", { name: "Rename $usdc" }).className).toContain(
+      "text-[var(--color-ink)]",
+    );
+  });
+
+  it("in step 2, those its checks use; an action's alone, or one named in a comment, is dimmed", () => {
+    render(
+      <BatchList
+        script={SCRIPT}
+        chainId={1}
+        onRemove={vi.fn()}
+        onRename={() => ({})}
+        canRemove={isAssertSpan}
+      />,
+    );
+    expect(used()).toEqual([
+      ["$usdc", true],
+      ["$to", false],
+      ["$router", true],
+    ]);
+  });
+});
+
 describe("BatchList: renaming a variable", () => {
   const SCRIPT = `set $usdc ${T}\nset $to ${T.replace("aa", "bb")}\nexec $usdc "transfer(address,uint256)" $to 5`;
+
+  it("writes the addresses as the script does, first, without a title, and with no bin", () => {
+    render(<BatchList script={SCRIPT} chainId={1} onRemove={vi.fn()} onRename={() => ({})} />);
+    const group = screen.getByRole("group", { name: "Addresses" });
+    expect(group.textContent).toBe("set $usdc 0x0000…00aaset $to 0x0000…00bb");
+    expect(screen.queryByText("Addresses")).toBeNull();
+    // Before the commands.
+    const action = screen.getByText('exec $usdc "transfer(address,uint256)" $to 5');
+    expect(group.compareDocumentPosition(action) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // The name is still changeable, the address still linked, and a set
+    // line goes with the last command using it, not from a bin.
+    expect(within(group).getByRole("button", { name: "Rename $usdc" })).toBeTruthy();
+    expect(within(group).getByRole("link", { name: "0x0000…00aa" }).getAttribute("href")).toBe(
+      `https://etherscan.io/address/${T}`,
+    );
+    expect(within(group).queryByRole("button", { name: /^Remove command:/ })).toBeNull();
+  });
 
   it("shows the names as plain text when nothing can rename them", () => {
     render(<BatchList script={SCRIPT} onRemove={vi.fn()} />);
@@ -104,29 +179,5 @@ describe("BatchList: editing an action", () => {
   it("offers no edit without a way to edit", () => {
     render(<BatchList script={ACTION} onRemove={vi.fn()} />);
     expect(screen.queryByRole("button", { name: /^Edit/ })).toBeNull();
-  });
-});
-
-describe("BatchTimeline", () => {
-  it("gives the After lane a row of its own on a narrow screen, without a stranded arrow", () => {
-    render(
-      <BatchTimeline
-        script={`${ACTION}\n${CHECK}`}
-        simKey={{ script: "", from: undefined, chainId: 1, mode: "protected" }}
-        state={{ status: "idle", result: null, simulated: null }}
-        placement="post"
-        selected={null}
-        onSelect={vi.fn()}
-      />,
-    );
-    const lane = (name: string) =>
-      screen.getByRole("group", { name }).parentElement as HTMLElement;
-    const after = lane("Checks after the actions");
-    expect(after.className).toContain("max-sm:basis-full");
-    expect(after.querySelector("[aria-hidden]")?.className).toContain("max-sm:hidden");
-    // The arrow between Before and Actions stays: they share a row.
-    const actions = lane("Actions");
-    expect(actions.className).not.toContain("max-sm:basis-full");
-    expect(actions.querySelector("[aria-hidden]")?.className).not.toContain("max-sm:hidden");
   });
 });

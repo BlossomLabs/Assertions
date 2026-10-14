@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import type { SimulationResult } from "@evmcrispr/core";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
@@ -15,6 +15,16 @@ import {
   type SuggestedCheck,
 } from "../suggested-checks";
 import { useScriptState } from "../useScriptState";
+import { markSuggested as marked } from "../script-ops";
+
+/** Opens a row's (i): where its check comes from, and its notices. */
+/** The assistant's button, ready and logged in. */
+const SUGGEST = { ready: true, running: false, loggedIn: true, onSuggest: () => {} };
+/** "Add assertions manually", closed. */
+const MANUAL = { open: false, controls: "manual", onToggle: () => {} };
+
+const about = (row: HTMLElement) =>
+  fireEvent.click(within(row).getByRole("button", { name: "About this check" }));
 
 const SAFE = "0x5Afe000000000000000000000000000000005afe" as const;
 const OTHER = "0xabcdefabcdefabcdefabcdefabcdefabcdef0001" as const;
@@ -100,19 +110,24 @@ const ENS_OWNER: SuggestedCheck = {
 
 /** The paragraph that reads exactly `text`, whatever elements it is split
  *  into (a shortened address is its own no-break element). */
+/** A row's sentence, by its text: the "suggested" chip a managed check
+ *  ends with aside. */
 const saying =
   (text: string) =>
   (_content: string, element: Element | null): boolean =>
-    element?.tagName === "P" && element.textContent === text;
+    element?.tagName === "P" &&
+    (element.textContent === text || element.textContent === `${text}suggested`);
 
 const INTRO =
-  "Drawn from what the simulation did: read each one before adding it.";
+  "Drawn from what the simulation of step 1 did: read each one before adding it.";
 const TRUNCATED =
   "The simulation did more than was looked at: this list may be incomplete.";
-const ADDED =
-  "Checks added. Simulate the protected batch again to confirm they hold.";
+const STALE =
+  "The actions changed since these were suggested: simulate the batch in step 1 again to update them.";
+const NONE = "This simulation suggested no checks.";
+const BEFORE = "Simulate the batch in step 1 to see the checks it suggests.";
 
-/** A protected simulation of BATCH as SAFE on mainnet that answered with
+/** A step 1 simulation of BATCH as SAFE on mainnet that answered with
  *  `result`. */
 /** A result as a test writes it: its suggestions may be of the older
  *  shape, which the builder still takes. */
@@ -124,7 +139,7 @@ const ran = (result: ResultLike): SimulationState => {
   return {
     status: full.success ? "success" : "failure",
     result: full,
-    simulated: simKeyFor("protected", BATCH, SAFE, 1),
+    simulated: simKeyFor("actions-only", BATCH, SAFE, 1),
   };
 };
 
@@ -147,6 +162,8 @@ function Harness({
   return (
     <>
       <SuggestedChecks
+        suggest={SUGGEST}
+        manual={MANUAL}
         state={state}
         simKey={simKeyFor("protected", scriptState.script, from, chainId)}
         context={context}
@@ -168,6 +185,8 @@ const script = () => screen.getByTestId("script").textContent?.split("\n");
 const rows = () => screen.queryAllByRole("listitem");
 const addButton = (check: SuggestedCheck) =>
   screen.getByRole("button", { name: `Add check: ${check.description}` });
+const removeButton = (check: SuggestedCheck) =>
+  screen.getByRole("button", { name: `Remove check: ${check.description}` });
 
 /** Reveal a row's code: the line it adds is one click away. */
 const showCode = async (row: HTMLElement) => {
@@ -192,13 +211,15 @@ describe("SuggestedChecks", () => {
       expect(row.getByRole("button", { name: `Add check: ${check.description}` }))
         .toBeTruthy();
     }
-    expect(screen.getByRole("button", { name: "Add all" })).toBeTruthy();
+    // Step 1's run adds them itself: there is no Add all.
+    expect(screen.queryByRole("button", { name: "Add all" })).toBeNull();
     expect(screen.queryByText(TRUNCATED)).toBeNull();
-    expect(screen.queryByText(ADDED)).toBeNull();
+    expect(screen.queryByText(STALE)).toBeNull();
   });
 
   it("says which contract's event a check comes from, linking the name to the explorer", () => {
     render(<Harness state={ran({ suggestions: [SPENT] })} />);
+    about(rows()[0]);
     const source = within(rows()[0]).getByText(/^Suggested by/);
     expect(source.textContent).toBe("Suggested by TKN's Transfer event");
     const link = within(source).getByRole("link", { name: "TKN" });
@@ -213,6 +234,7 @@ describe("SuggestedChecks", () => {
 
   it("links the shortened address of a contract without a name", () => {
     render(<Harness state={ran({ suggestions: [OWNER] })} />);
+    about(rows()[0]);
     const source = within(rows()[0]).getByText(/^Suggested by/);
     expect(source.textContent).toBe(
       "Suggested by 0x0000…00bb's OwnershipTransferred event",
@@ -224,8 +246,9 @@ describe("SuggestedChecks", () => {
 
   it("links to the explorer of the chain the batch targets", () => {
     const state = ran({ suggestions: [SPENT] });
-    state.simulated = simKeyFor("protected", BATCH, SAFE, 100);
+    state.simulated = simKeyFor("actions-only", BATCH, SAFE, 100);
     render(<Harness state={state} chainId={100} />);
+    about(rows()[0]);
     expect(screen.getByRole("link", { name: "TKN" }).getAttribute("href")).toBe(
       `https://gnosisscan.io/address/${TOKEN}`,
     );
@@ -241,9 +264,11 @@ describe("SuggestedChecks", () => {
     expect(within(source).getByText("TKN").getAttribute("title")).toBe(TOKEN);
   });
 
-  it("has no source line on the native floor", () => {
+  it("says the native floor comes from the balance changes, with no event to link", () => {
     render(<Harness state={ran({ suggestions: [NATIVE, SPENT] })} />);
-    expect(within(rows()[0]).queryByText(/Suggested by/)).toBeNull();
+    expect(within(rows()[0]).getByText(/Suggested by/).textContent).toBe(
+      "Suggested by the simulation's balance changes",
+    );
     expect(within(rows()[0]).queryByRole("link")).toBeNull();
     expect(within(rows()[1]).getByText(/^Suggested by/)).toBeTruthy();
   });
@@ -263,59 +288,49 @@ describe("SuggestedChecks", () => {
     expect(screen.queryByText(/Suggested by/)).toBeNull();
   });
 
-  it("adds one after the last action, with the load it needs, and keeps the others", async () => {
+  it("adds one after the last action, with the load it needs, and keeps it listed to remove", async () => {
     const user = userEvent.setup();
     render(<Harness state={ran({ suggestions: ALL })} />);
     await user.click(addButton(OWNER));
-    expect(script()).toEqual(["load acl", ACTION, ACTION_2, OWNER.line]);
-    expect(rows()).toHaveLength(2);
-    expect(screen.queryByText(saying(OWNER.description))).toBeNull();
-    expect(screen.getByText(saying(SPENT.description))).toBeTruthy();
-    expect(screen.getByText(saying(RECEIVED.description))).toBeTruthy();
-    expect(screen.getByText(ADDED)).toBeTruthy();
+    expect(script()).toEqual(["load acl", ACTION, ACTION_2, marked(OWNER.line)]);
+    // Still listed, now to take back.
+    expect(rows()).toHaveLength(3);
+    expect(screen.getByText(saying(OWNER.description))).toBeTruthy();
+    expect(removeButton(OWNER)).toBeTruthy();
+    expect(addButton(SPENT)).toBeTruthy();
 
     await user.click(addButton(RECEIVED));
     expect(script()).toEqual([
       "load acl",
       ACTION,
       ACTION_2,
-      OWNER.line,
-      RECEIVED.line,
+      marked(OWNER.line),
+      marked(RECEIVED.line),
     ]);
-    expect(rows()).toHaveLength(1);
+    expect(rows()).toHaveLength(3);
   });
 
-  it("adds all at once and leaves the list empty", async () => {
+  it("removes one again, with the load only it needed, and offers it again", async () => {
     const user = userEvent.setup();
     render(<Harness state={ran({ suggestions: ALL })} />);
-    await user.click(screen.getByRole("button", { name: "Add all" }));
-    expect(script()).toEqual([
-      "load acl",
-      ACTION,
-      ACTION_2,
-      OWNER.line,
-      SPENT.line,
-      RECEIVED.line,
-    ]);
-    expect(rows()).toHaveLength(0);
-    expect(screen.queryByRole("heading", { name: "Suggested checks" })).toBeNull();
-    expect(screen.queryByRole("button", { name: "Add all" })).toBeNull();
-    expect(screen.getByText(ADDED)).toBeTruthy();
+    await user.click(addButton(OWNER));
+    await user.click(addButton(SPENT));
+    await user.click(removeButton(OWNER));
+    expect(script()).toEqual([ACTION, ACTION_2, marked(SPENT.line)]);
+    expect(addButton(OWNER)).toBeTruthy();
+    expect(removeButton(SPENT)).toBeTruthy();
   });
 
-  it("does not offer Add all for a single suggestion", () => {
-    render(<Harness state={ran({ suggestions: [OWNER] })} />);
-    expect(rows()).toHaveLength(1);
-    expect(screen.queryByRole("button", { name: "Add all" })).toBeNull();
-  });
 
-  it("does not list a suggestion the script already has", () => {
+
+  it("offers to remove a suggestion the script already has", () => {
     const state = ran({ suggestions: ALL });
-    state.simulated = simKeyFor("protected", `${BATCH}\n${SPENT.line}`, SAFE, 1);
     function Preloaded() {
       const scriptState = useScriptState(`${BATCH}\n${SPENT.line}`);
       return (
         <SuggestedChecks
+          suggest={SUGGEST}
+        manual={MANUAL}
           state={state}
           simKey={simKeyFor("protected", scriptState.script, SAFE, 1)}
           context="safe"
@@ -325,9 +340,11 @@ describe("SuggestedChecks", () => {
       );
     }
     render(<Preloaded />);
-    expect(rows()).toHaveLength(2);
-    expect(screen.queryByText(saying(SPENT.description))).toBeNull();
+    expect(rows()).toHaveLength(3);
+    expect(removeButton(SPENT)).toBeTruthy();
+    expect(addButton(OWNER)).toBeTruthy();
   });
+
 
   it.each(["safe", "governor", "aragonosx"] as const)(
     "warns on amounts, not on state, in a %s context",
@@ -360,14 +377,14 @@ describe("SuggestedChecks", () => {
     expect(screen.getByText(saying(ENS_OWNER.description))).toBeTruthy();
     expect(screen.queryByText(/may change/)).toBeNull();
     await user.click(addButton(UPGRADED));
-    expect(script()).toEqual(["load proxies", ACTION, ACTION_2, UPGRADED.line]);
+    expect(script()).toEqual(["load proxies", ACTION, ACTION_2, marked(UPGRADED.line)]);
     await user.click(addButton(ENS_OWNER));
     expect(script()).toEqual([
       "load proxies",
       ACTION,
       ACTION_2,
-      UPGRADED.line,
-      ENS_OWNER.line,
+      marked(UPGRADED.line),
+      marked(ENS_OWNER.line),
     ]);
   });
 
@@ -402,9 +419,11 @@ describe("SuggestedChecks", () => {
     for (const piece of pieces) expect(piece.className).toContain("whitespace-nowrap");
     // The words between them still wrap.
     expect(text.className).not.toContain("whitespace-nowrap");
+    about(rows()[0]);
     expect(screen.getByRole("link", { name: "TKN" }).className).toContain(
       "whitespace-nowrap",
     );
+    about(rows()[1]);
     expect(screen.getByRole("link", { name: "0x0000…00bb" }).className).toContain(
       "whitespace-nowrap",
     );
@@ -425,42 +444,49 @@ describe("SuggestedChecks", () => {
     expect(screen.getByText(TRUNCATED)).toBeTruthy();
   });
 
-  it("shows nothing when a passing run suggested nothing", () => {
-    const { container } = render(<Harness state={ran({ suggestions: [] })} />);
-    expect(container.querySelector("[data-suggested-checks]")).toBeNull();
-    expect(screen.queryByRole("heading", { name: "Suggested checks" })).toBeNull();
+  it("says so when a passing run suggested nothing", () => {
+    render(<Harness state={ran({ suggestions: [] })} />);
+    expect(screen.getByRole("heading", { name: "Suggested checks" })).toBeTruthy();
+    expect(screen.getByText(NONE)).toBeTruthy();
+    expect(rows()).toHaveLength(0);
   });
 
-  it("shows nothing for a result without suggestions (older shape)", () => {
-    const { container } = render(<Harness state={ran({})} />);
-    expect(container.querySelector("[data-suggested-checks]")).toBeNull();
+  it("reads a result without suggestions (older shape) as one that suggested none", () => {
+    render(<Harness state={ran({})} />);
+    expect(screen.getByText(NONE)).toBeTruthy();
   });
 
-  it("shows nothing after a failed run or before any run", () => {
+  it("asks for step 1's simulation after a failed run or before any run", () => {
     const failed = render(
       <Harness state={ran({ success: false, error: "boom", suggestions: ALL })} />,
     );
     expect(rows()).toHaveLength(0);
+    expect(screen.getByText(BEFORE)).toBeTruthy();
     failed.unmount();
     render(<Harness state={{ status: "idle", result: null, simulated: null }} />);
     expect(rows()).toHaveLength(0);
+    expect(screen.getByText(BEFORE)).toBeTruthy();
   });
 
-  it("clears when the actions change", async () => {
+  it("keeps its rows, added or not, when the actions change, and says they are from before", async () => {
     const user = userEvent.setup();
     render(<Harness state={ran({ suggestions: ALL })} />);
     await user.click(addButton(OWNER));
-    expect(rows()).toHaveLength(2);
+    expect(screen.queryByText(STALE)).toBeNull();
     await user.click(screen.getByRole("button", { name: "another action" }));
-    expect(rows()).toHaveLength(0);
-    expect(screen.queryByRole("heading", { name: "Suggested checks" })).toBeNull();
-    expect(screen.queryByText(ADDED)).toBeNull();
+    expect(rows()).toHaveLength(3);
+    expect(screen.getByText(STALE)).toBeTruthy();
+    // The added one is still in the batch and can still be taken back.
+    expect(script()).toContain(marked(OWNER.line));
+    expect(removeButton(OWNER)).toBeTruthy();
+    await user.click(addButton(SPENT));
+    expect(script()).toContain(marked(SPENT.line));
   });
 
   it.each([
     ["the executor", { from: OTHER }],
     ["the chain", { chainId: 100 }],
-  ])("clears when %s changes", (_name, change) => {
+  ])("lists none for another %s: they were suggested for this one", (_name, change) => {
     const state = ran({ suggestions: ALL });
     const view = render(<Harness state={state} />);
     expect(rows()).toHaveLength(3);
@@ -468,5 +494,29 @@ describe("SuggestedChecks", () => {
     expect(rows()).toHaveLength(0);
     view.rerender(<Harness state={state} />);
     expect(rows()).toHaveLength(3);
+  });
+
+  it("keeps where a check comes from and its notices behind its (i), one row at a time", () => {
+    render(<Harness state={ran({ suggestions: [SPENT, OWNER] })} context="safe" />);
+    const [first, second] = rows();
+    const button = within(first).getByRole("button", { name: "About this check" });
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+    // Closed: in the page for assistive technology to be pointed at, not shown.
+    const note = document.getElementById(button.getAttribute("aria-controls")!)!;
+    expect(note.hidden).toBe(true);
+    about(first);
+    expect(button.getAttribute("aria-expanded")).toBe("true");
+    expect(note.hidden).toBe(false);
+    // Another row's (i) closes this one.
+    about(second);
+    expect(note.hidden).toBe(true);
+    // Escape, and a click outside, close it.
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(
+      document.querySelectorAll("[data-about-check]:not([hidden])"),
+    ).toHaveLength(0);
+    about(first);
+    fireEvent.mouseDown(document.body);
+    expect(note.hidden).toBe(true);
   });
 });

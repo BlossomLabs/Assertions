@@ -4,6 +4,9 @@ import { AddressLink } from "./AddressLink";
 import { ButtonIcon } from "./ButtonIcon";
 import {
   type CommandSpan,
+  splitComment,
+  unmarkSuggested,
+  withoutComment,
   addressVariable,
   commandSpans,
   isHelperLoad,
@@ -15,16 +18,25 @@ import { focusRingCls, noBreakCls } from "./ui";
  *  button: a click turns it into a field, Enter renames the variable in
  *  the whole script, Escape (or leaving the field) keeps the name. A name
  *  that is refused stays in the field with the reason beside it. */
+/** Auto-managed lines: `set` and `load`, removed with the last command
+ *  that needs them, never from a bin. */
+const isScaffolding = (span: CommandSpan): boolean =>
+  (span.module ?? "std") === "std" && (span.name === "set" || span.name === "load");
+
 function VariableName({
   name,
   onRename,
+  dim = false,
 }: {
   name: string;
   onRename?: (from: string, to: string) => { error?: string };
+  /** Not used by the commands this listing is about: drawn dimmed. */
+  dim?: boolean;
 }) {
   const [draft, setDraft] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  if (!onRename) return <span className="text-[var(--color-ink)]">${name}</span>;
+  const ink = dim ? "text-[var(--color-ink-3)]" : "text-[var(--color-ink)]";
+  if (!onRename) return <span className={ink}>${name}</span>;
   if (draft === null)
     return (
       <button
@@ -35,7 +47,7 @@ function VariableName({
         }}
         title="Rename this variable"
         aria-label={`Rename $${name}`}
-        className={`rounded text-[var(--color-ink)] underline decoration-dotted underline-offset-2 hover:text-[var(--color-bp-300)] ${focusRingCls}`}
+        className={`rounded ${ink} underline decoration-dotted underline-offset-2 hover:text-[var(--color-bp-300)] ${focusRingCls}`}
       >
         ${name}
       </button>
@@ -88,10 +100,9 @@ function VariableName({
  * can edit it. Auto-managed scaffolding (`set` and `load` lines,
  * garbage-collected when the commands referencing them go away) is shown
  * without one, and helper-module load lines are hidden altogether.
- * Variables pinned to an address (`set $usdc 0x…`) are not commands to
- * read through: they are listed once, above, as "Addresses", each name
- * with its address shortened and linked to the explorer; a name can be
- * changed there.
+ * Variables pinned to an address are listed first, as the script writes
+ * them (`set $usdc 0xA0b8…eB48`), dimmed with the rest of the scaffolding:
+ * the address shortened and linked to the explorer, the name changeable.
  */
 export function BatchList({
   script,
@@ -126,37 +137,46 @@ export function BatchList({
 }) {
   const spans = commandSpans(script);
   const addresses = spans.flatMap((span) => addressVariable(span) ?? []);
+  // This listing's own commands (the actions in step 1, the checks in step
+  // 2): a variable they use is drawn in full, any other one dimmed.
+  const own = spans.filter((span) => !isScaffolding(span) && (canRemove?.(span) ?? true));
+  const usedHere = (name: string) => {
+    const token = new RegExp(`\\$${name}(?![A-Za-z0-9_])`);
+    return own.some((span) => token.test(withoutComment(span.text)));
+  };
   return (
     <div className="rounded-lg bg-[var(--color-surface)] border border-[var(--color-ink-3)]/20 font-mono text-xs overflow-x-auto">
       {addresses.length > 0 && (
-        <div
-          role="group"
-          aria-label="Addresses"
-          className="flex flex-wrap items-baseline gap-x-4 gap-y-1 px-3 py-2 border-b border-[var(--color-ink-3)]/20 text-[var(--color-ink-2)]"
-        >
-          <span
-            aria-hidden
-            className="text-[0.625rem] font-semibold uppercase tracking-widest text-[var(--color-ink-3)]"
-          >
-            Addresses
-          </span>
+        // Written as the script writes them, dimmed like the rest of the
+        // scaffolding: the name can be changed, the address is linked.
+        <div role="group" aria-label="Addresses" className="pt-1.5">
           {addresses.map(({ name, address }) => (
-            <span key={name} className={noBreakCls}>
-              <VariableName name={name} onRename={onRename} />{" "}
-              <AddressLink link={addressLink(chainId ?? -1, address)} />
-            </span>
+            <div
+              key={name}
+              data-used={usedHere(name) || undefined}
+              className={`px-3 py-1 first:pt-1 text-[var(--color-ink-3)] ${
+                usedHere(name)
+                  ? "[&_a]:text-[var(--color-ink-2)]"
+                  : "[&_a]:text-[var(--color-ink-3)]"
+              }`}
+            >
+              <span className={noBreakCls}>
+                set <VariableName name={name} onRename={onRename} dim={!usedHere(name)} />{" "}
+                <AddressLink link={addressLink(chainId ?? -1, address)} />
+              </span>
+            </div>
           ))}
         </div>
       )}
       {spans.map((span) => {
         const t = span.text.trim();
         if (isHelperLoad(t) || addressVariable(span)) return null;
-        const scaffolding =
-          (span.module ?? "std") === "std" &&
-          (span.name === "set" || span.name === "load");
+        const scaffolding = isScaffolding(span);
         const removable = !scaffolding && (canRemove?.(span) ?? true);
         const edit = !scaffolding && onEdit ? (editable?.(span) ?? null) : null;
-        const first = t.split("\n")[0];
+        // A check is named by its code and the comment it has, less the
+        // mark a suggested one carries.
+        const first = unmarkSuggested(t).split("\n")[0];
         return (
           <div
             key={`${span.start}-${t}`}
@@ -171,7 +191,22 @@ export function BatchList({
                 removable ? "" : "text-[var(--color-ink-3)]"
               }`}
             >
-              {span.text}
+              {span.text.split("\n").some((line) => splitComment(line).comment)
+                ? span.text.split("\n").map((line, i) => {
+                    // Comments (a unit, the `# suggested` mark) are said,
+                    // dimmed.
+                    const { code, comment } = splitComment(line);
+                    return (
+                      <span key={i}>
+                        {i > 0 && "\n"}
+                        {code}
+                        {comment && (
+                          <span className="text-[var(--color-ink-3)] whitespace-nowrap">{comment}</span>
+                        )}
+                      </span>
+                    );
+                  })
+                : span.text}
             </pre>
             {edit && (
               <button
@@ -203,23 +238,7 @@ export function BatchList({
                 aria-label={`Remove command: ${first}`}
                 className="shrink-0 w-5 h-5 -my-0.5 flex items-center justify-center rounded-full text-[var(--color-err)] opacity-50 group-hover:opacity-100 hover:bg-[var(--color-err)]/10 transition-opacity"
               >
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M3 6h18" />
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                  <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                  <path d="M10 11v6" />
-                  <path d="M14 11v6" />
-                </svg>
+                <ButtonIcon name="delete" size={13} />
               </button>
             )}
           </div>

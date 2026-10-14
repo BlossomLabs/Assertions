@@ -28,11 +28,13 @@ vi.mock("../evml", () => ({
   evml: {},
   createLiveTag: (current: () => unknown) => current(),
 }));
+// The assistant: logged out unless a test logs in.
+const assistant = vi.hoisted(() => ({ hasKey: false }));
 vi.mock("../useBuilderChatAgent", () => ({
   builderChatStorage: { getApiKey: () => null },
   builderAuth: { loginWithNexus: vi.fn(), logoutNexus: vi.fn() },
   useBuilderChatAgent: () => ({
-    hasKey: false,
+    hasKey: assistant.hasKey,
     isRunning: false,
     items: [],
     error: null,
@@ -176,14 +178,29 @@ async function addAction(user: ReturnType<typeof userEvent.setup>) {
   await user.click(compose.getByRole("button", { name: "Add to batch" }));
 }
 
-/** A builder with one action whose step-1 simulation has passed. */
-async function composed(user: ReturnType<typeof userEvent.setup>) {
+/** A step-1 run that answers with `suggestions`. */
+const answering = (suggestions?: unknown[]) =>
+  fake.simulate.mockResolvedValue({
+    success: true,
+    logs: [],
+    actions: [],
+    ...(suggestions ? { suggestions } : {}),
+  } as never);
+
+const simulateActions = async (user: ReturnType<typeof userEvent.setup>) => {
+  await user.click(step(1).in.getByRole("button", { name: "Simulate batch" }));
+  await step(1).in.findByText(/Simulation passed/);
+};
+
+/** A builder with one action whose step-1 simulation has passed, having
+ *  suggested `suggestions`. */
+async function composed(user: ReturnType<typeof userEvent.setup>, suggestions?: unknown[]) {
   wallet.address = ME;
   wallet.chain = { id: 1, name: "Ethereum" };
   render(<AssertionBuilder />);
   await addAction(user);
-  await user.click(step(1).in.getByRole("button", { name: "Simulate batch" }));
-  await step(1).in.findByText(/Simulation passed/);
+  answering(suggestions);
+  await simulateActions(user);
 }
 
 const simulateProtected = async (user: ReturnType<typeof userEvent.setup>) => {
@@ -193,7 +210,17 @@ const simulateProtected = async (user: ReturnType<typeof userEvent.setup>) => {
   await step(2).in.findByText(/Simulation passed/);
 };
 
-const suggested = () => step(2).in.queryAllByRole("listitem");
+/** The box at the top of step 2. */
+const box = () => {
+  const found = document.querySelector("[data-suggested-checks]");
+  if (!found) throw new Error("no suggested checks box");
+  return within(found as HTMLElement);
+};
+const suggested = () => box().queryAllByRole("listitem");
+const removeName = (check: { description: string }) =>
+  `Remove check: ${check.description.replace(/\.\.\./g, "…")}`;
+const more = () =>
+  box().getByRole("button", { name: /Suggest more assertions/ }) as HTMLButtonElement;
 /** The commands of step 2's batch listing. */
 const batch = () =>
   [...step(2).in.queryAllByRole("button", { name: /^Remove command: / })].map((b) =>
@@ -210,102 +237,74 @@ beforeEach(() => {
   chain.decimals = {};
   chain.tokens = [];
   chain.getBlockNumber = vi.fn(async () => chain.block++);
+  assistant.hasKey = false;
 });
 
-describe("AssertionBuilder: suggested checks", () => {
-  it("asks only the protected simulation, as the executor, and offers what it suggests", async () => {
-    const user = userEvent.setup();
-    await composed(user);
-    // Step 1 simulated the actions on their own: nothing asked.
-    expect((fake.simulate.mock.calls[0][1] as { suggest?: unknown }).suggest)
-      .toBeUndefined();
-    expect(suggested()).toHaveLength(0);
+/** A line as step 1's run adds it: marked as a suggestion. */
+const marked = (line: string) => `${line}  # suggested`;
+/** A row's Keep, in the box, by the check: it makes the check yours. */
+const unmarkName = (check: { description: string }) =>
+  `Keep check: ${check.description.replace(/\.\.\./g, "…")}`;
 
-    fake.simulate.mockResolvedValue({
-      success: true,
-      logs: [],
-      actions: [],
-      suggestions: [PAUSED, OWNER, SPENT],
-    });
-    await simulateProtected(user);
-    expect(fake.simulate.mock.calls[1][0]).toBe(SCRIPT);
-    expect(fake.simulate.mock.calls[1][1]).toMatchObject({
+describe("AssertionBuilder: suggested checks", () => {
+  it("asks step 1's simulation, as the executor, and adds what it suggests, marked", async () => {
+    const user = userEvent.setup();
+    await composed(user, [PAUSED, OWNER, SPENT]);
+    expect(fake.simulate.mock.calls[0][1]).toMatchObject({
       from: ME,
-      suggest: { executor: ME },
+      // A wallet sends the batch itself, right away: exact amounts.
+      suggest: { executor: ME, exact: true },
     });
-    expect(step(2).in.getByRole("heading", { name: "Suggested checks" })).toBeTruthy();
+    expect(box().getByRole("heading", { name: "Suggested checks" })).toBeTruthy();
+    // In the batch already: the listing writes each line as the script
+    // does, its mark a dimmed comment; the chip is on its row in the box.
+    expect(batch()).toEqual([PAUSED.line, OWNER.line, SPENT.line]);
+    const comments = step(2).in.getAllByText("# suggested");
+    expect(comments).toHaveLength(3);
+    expect(comments[0].className).toContain("text-[var(--color-ink-3)]");
+    for (const check of [PAUSED, OWNER, SPENT])
+      expect(box().getByRole("button", { name: unmarkName(check) })).toBeTruthy();
+    // Listed, each to remove; no Add all.
     expect(suggested()).toHaveLength(3);
+    expect(box().getAllByRole("button", { name: /^Remove check:/ })).toHaveLength(3);
+    expect(box().queryByRole("button", { name: "Add all" })).toBeNull();
     // Sentences, with what they mention linked; no EVML until asked for.
     expect(suggested().map((row) => row.querySelector("p")?.textContent)).toEqual([
       `${short(T)} is paused`,
       `${short(T)} is owned by ${short(NEW_OWNER)}`,
       `${short(ME)} keeps at least 95 TKN (${short(T)})`,
     ]);
-    expect(step(2).in.queryByText(/assert /)).toBeNull();
-    expect(
-      within(suggested()[1]).getAllByRole("link").map((a) => a.getAttribute("href")),
-    ).toEqual([
+    const links = () =>
+      within(suggested()[1]).getAllByRole("link").map((a) => a.getAttribute("href"));
+    expect(links()).toEqual([
+      `https://etherscan.io/address/${T}`,
+      `https://etherscan.io/address/${NEW_OWNER}`,
+    ]);
+    // Where it comes from is behind its (i).
+    await user.click(
+      within(suggested()[1]).getByRole("button", { name: "About this check" }),
+    );
+    expect(links()).toEqual([
       `https://etherscan.io/address/${T}`,
       `https://etherscan.io/address/${NEW_OWNER}`,
       `https://etherscan.io/address/${T}`,
     ]);
-    // A wallet executes right away: no warning on the amount.
+    // A wallet executes right away: no notice on the amount.
     expect(step(2).in.queryByText(WARNING)).toBeNull();
-    // Nothing was added on its own.
-    expect(batch()).toEqual([]);
-  });
-
-  it("adds a suggestion to the batch, keeps the others, and wants a new simulation", async () => {
-    const user = userEvent.setup();
-    await composed(user);
-    fake.simulate.mockResolvedValue({
-      success: true,
-      logs: [],
-      actions: [],
-      suggestions: [PAUSED, OWNER, SPENT],
-    });
+    // The form that builds a check by hand is below, shown on request.
+    const boxEl = document.querySelector("[data-suggested-checks]")!;
+    const manual = box().getByRole("button", { name: "Add assertions manually" });
+    const form = document.getElementById(manual.getAttribute("aria-controls")!)!;
+    expect(form.hidden).toBe(true);
+    await user.click(manual);
+    expect(form.hidden).toBe(false);
+    expect(within(form).getByText("Build an assertion")).toBeTruthy();
+    expect(boxEl.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // The step-2 batch listing has no picture of before, actions and after.
+    expect(step(2).in.queryByText("BEFORE")).toBeNull();
+    // What is simulated carries the marks.
     await simulateProtected(user);
-
-    await user.click(
-      step(2).in.getByRole("button", { name: addName(OWNER) }),
-    );
-    expect(batch()).toEqual([OWNER.line]);
-    expect(suggested()).toHaveLength(2);
-    expect(step(2).in.queryByRole("button", { name: addName(OWNER) })).toBeNull();
-    // Its addresses are listed apart, by the names the line uses.
-    const addresses = within(step(2).in.getByRole("group", { name: "Addresses" }));
-    expect(addresses.getByText("$contract")).toBeTruthy();
-    expect(addresses.getByText("$owner")).toBeTruthy();
-    // The batch changed: its simulation is out of date, Submit waits.
-    expect(step(2).ring).toBe(
-      "Simulation of the protected batch: not run for the batch as it is now.",
-    );
-    expect(step(2).in.queryByText(/Simulation passed/)).toBeNull();
-
-    // Simulated again, with the helper's module loaded above the action.
-    await simulateProtected(user);
-    expect(fake.simulate.mock.calls[2][0]).toBe(
-      [
-        "load acl",
-        SET,
-        `set $owner ${NEW_OWNER}`,
-        ACTION,
-        OWNER.line,
-      ].join("\n"),
-    );
-    // The same answer: the one already in the batch is not offered again.
-    expect(suggested()).toHaveLength(2);
-    expect(step(2).ring).toBe("Simulation of the protected batch: passed.");
-
-    await user.click(step(2).in.getByRole("button", { name: "Add all" }));
-    expect(batch()).toEqual([OWNER.line, PAUSED.line, SPENT.line]);
-    expect(suggested()).toHaveLength(0);
-    expect(
-      step(2).in.queryByRole("heading", { name: "Suggested checks" }),
-    ).toBeNull();
-    // One variable for the contract the three checks are about.
-    await simulateProtected(user);
-    expect(fake.simulate.mock.calls[3][0]).toBe(
+    expect(fake.simulate.mock.calls.at(-1)?.[0]).toBe(
       [
         "load acl",
         "load token",
@@ -313,80 +312,117 @@ describe("AssertionBuilder: suggested checks", () => {
         `set $owner ${NEW_OWNER}`,
         `set $executor ${ME}`,
         ACTION,
-        OWNER.line,
-        PAUSED.line,
-        SPENT.line,
+        marked(PAUSED.line),
+        marked(OWNER.line),
+        marked(SPENT.line),
       ].join("\n"),
-    );
-
-    // Removing a check takes the variables only it used with it.
-    await user.click(
-      step(2).in.getByRole("button", { name: `Remove command: ${SPENT.line}` }),
-    );
-    await user.click(
-      step(2).in.getByRole("button", { name: `Remove command: ${OWNER.line}` }),
-    );
-    await simulateProtected(user);
-    expect(fake.simulate.mock.calls[4][0]).toBe(
-      [SET, ACTION, PAUSED.line].join("\n"),
     );
   });
 
-  it("confirms added suggestions at the block they were drawn from, then moves on", async () => {
+  it("removes a suggestion from its row, with the variables only it used, and adds it back", async () => {
     const user = userEvent.setup();
-    await composed(user);
-    // The actions on their own run at the chain's latest block, unread.
-    expect(chain.getBlockNumber).not.toHaveBeenCalled();
-    fake.simulate.mockResolvedValue({
-      success: true,
-      logs: [],
-      actions: [],
-      suggestions: [PAUSED, OWNER],
-    });
+    await composed(user, [PAUSED, OWNER, SPENT]);
+    await user.click(box().getByRole("button", { name: removeName(SPENT) }));
+    await user.click(box().getByRole("button", { name: removeName(OWNER) }));
+    expect(batch()).toEqual([PAUSED.line]);
     await simulateProtected(user);
-    expect(chain.getBlockNumber).toHaveBeenCalledExactlyOnceWith({ cacheTime: 0 });
-    expect(fake.simulate.mock.calls[1][1]).toMatchObject({ blockNumber: 21_234_567 });
-    expect(step(2).in.queryByText(/at block/)).toBeNull();
-
-    await user.click(
-      step(2).in.getByRole("button", { name: addName(OWNER) }),
+    expect(fake.simulate.mock.calls.at(-1)?.[0]).toBe(
+      [SET, ACTION, marked(PAUSED.line)].join("\n"),
     );
+    await user.click(box().getByRole("button", { name: addName(OWNER) }));
+    expect(batch()).toEqual([PAUSED.line, OWNER.line]);
+    expect(box().getByRole("button", { name: unmarkName(OWNER) })).toBeTruthy();
+  });
+
+  it("keeps a check as yours: the mark goes, the check stays", async () => {
+    const user = userEvent.setup();
+    await composed(user, [PAUSED, OWNER]);
+    await user.click(box().getByRole("button", { name: unmarkName(OWNER) }));
+    expect(box().queryByRole("button", { name: unmarkName(OWNER) })).toBeNull();
+    // Still listed, to remove, and to hand back.
+    expect(box().getByRole("button", { name: removeName(OWNER) })).toBeTruthy();
+    const unkeep = `Unkeep check: ${OWNER.description.replace(/\.\.\./g, "…")}`;
+    expect(box().getByRole("button", { name: unkeep })).toBeTruthy();
+    expect(batch()).toEqual([PAUSED.line, OWNER.line]);
+    await simulateProtected(user);
+    expect(fake.simulate.mock.calls.at(-1)?.[0]).toBe(
+      ["load acl", SET, `set $owner ${NEW_OWNER}`, ACTION, marked(PAUSED.line), OWNER.line].join("\n"),
+    );
+  });
+
+  it("hands a kept check back with Unkeep: the mark returns, the next run manages it", async () => {
+    const user = userEvent.setup();
+    await composed(user, [PAUSED, OWNER]);
+    const unkeep = `Unkeep check: ${OWNER.description.replace(/\.\.\./g, "…")}`;
+    await user.click(box().getByRole("button", { name: unmarkName(OWNER) }));
+    await user.click(box().getByRole("button", { name: unkeep }));
+    expect(box().queryByRole("button", { name: unkeep })).toBeNull();
+    expect(box().getByRole("button", { name: unmarkName(OWNER) })).toBeTruthy();
+    // Managed again: a run that no longer suggests it takes it out.
+    answering([PAUSED]);
+    await simulateActions(user);
+    expect(batch()).toEqual([PAUSED.line]);
+  });
+
+  it("confirms the suggested checks at the block of step 1's run, then moves on", async () => {
+    const user = userEvent.setup();
+    await composed(user, [PAUSED, OWNER]);
+    // Step 1 read the block it forked: that is what suggested.
+    expect(chain.getBlockNumber).toHaveBeenCalledExactlyOnceWith({ cacheTime: 0 });
+    expect(fake.simulate.mock.calls[0][1]).toMatchObject({ blockNumber: 21_234_567 });
     await simulateProtected(user);
     expect(chain.getBlockNumber).toHaveBeenCalledTimes(1);
-    expect(fake.simulate.mock.calls[2][1]).toMatchObject({ blockNumber: 21_234_567 });
+    expect(fake.simulate.mock.calls[1][1]).toMatchObject({ blockNumber: 21_234_567 });
     expect(step(2).in.getByText(/at block 21 234 567/)).toBeTruthy();
 
     // Another action: the batch is no longer the one those checks came from.
     await addAction(user);
     await simulateProtected(user);
     expect(chain.getBlockNumber).toHaveBeenCalledTimes(2);
-    expect(fake.simulate.mock.calls[3][1]).toMatchObject({ blockNumber: 21_234_568 });
+    expect(fake.simulate.mock.calls[2][1]).toMatchObject({ blockNumber: 21_234_568 });
     expect(step(2).in.queryByText(/at block/)).toBeNull();
   });
 
-  it("drops the suggestions when an action is added", async () => {
+  it("says so when step 1's simulation suggested nothing", async () => {
     const user = userEvent.setup();
-    await composed(user);
-    fake.simulate.mockResolvedValue({
-      success: true,
-      logs: [],
-      actions: [],
-      suggestions: [PAUSED, OWNER],
-    });
-    await simulateProtected(user);
-    expect(suggested()).toHaveLength(2);
-    await addAction(user);
+    await composed(user, []);
+    expect(box().getByText("This simulation suggested no checks.")).toBeTruthy();
     expect(suggested()).toHaveLength(0);
+    expect(batch()).toEqual([]);
   });
 
-  it("shows nothing for a simulation that answers without suggestions", async () => {
+  it("asks for step 1's simulation when step 2 is opened without one", async () => {
     const user = userEvent.setup();
-    await composed(user);
-    await simulateProtected(user);
-    expect(suggested()).toHaveLength(0);
+    wallet.address = ME;
+    wallet.chain = { id: 1, name: "Ethereum" };
+    render(<AssertionBuilder />);
+    await user.click(step(1).in.getByRole("button", { name: /Skip actions/ }));
     expect(
-      step(2).in.queryByRole("heading", { name: "Suggested checks" }),
-    ).toBeNull();
+      box().getByText("Simulate the batch in step 1 to see the checks it suggests."),
+    ).toBeTruthy();
+    expect(more().disabled).toBe(true);
+    expect(box().getByText("Simulate the batch in step 1 first.")).toBeTruthy();
+  });
+
+  it("keeps Suggest more assertions disabled until the batch is freshly simulated and the assistant logged in", async () => {
+    const user = userEvent.setup();
+    await composed(user, [PAUSED]);
+    expect(more().disabled).toBe(true);
+    expect(
+      box().getByText("Log in to Dappnode Nexus in the assistant panel to use it."),
+    ).toBeTruthy();
+    await addAction(user);
+    expect(more().disabled).toBe(true);
+    expect(
+      box().getByText("The batch changed since its last simulation: simulate it again first."),
+    ).toBeTruthy();
+  });
+
+  it("enables Suggest more assertions for a freshly simulated batch with the assistant logged in", async () => {
+    assistant.hasKey = true;
+    const user = userEvent.setup();
+    await composed(user, [PAUSED]);
+    expect(more().disabled).toBe(false);
   });
 });
 
@@ -566,24 +602,111 @@ describe("AssertionBuilder: a composed token transfer", () => {
     const user = userEvent.setup();
     render(<AssertionBuilder />);
     await addTransfer(user);
-    await user.click(step(1).in.getByRole("button", { name: "Simulate batch" }));
-    await step(1).in.findByText(/Simulation passed/);
-    fake.simulate.mockResolvedValue({ success: true, logs: [], actions: [], suggestions: [KEEPS] });
+    answering([KEEPS]);
+    await simulateActions(user);
     await simulateProtected(user);
-    await user.click(step(2).in.getByRole("button", { name: addName(KEEPS) }));
-    await simulateProtected(user);
-    expect(fake.simulate.mock.calls[2][0]).toBe(
+    expect(fake.simulate.mock.calls[1][0]).toBe(
       [
         "load token",
         `set $usdc ${USDC}`,
         `set $to ${DEAD}`,
         TRANSFER,
-        "assert @balance!($usdc $to) >= @token:amount($usdc 5)",
+        "assert @balance!($usdc $to) >= @token:amount($usdc 5)  # suggested",
       ].join("\n"),
     );
-    // Confirmed at the block it came from; nothing is offered twice.
-    expect(fake.simulate.mock.calls[2][1]).toMatchObject({ blockNumber: 21_234_567 });
-    expect(suggested()).toHaveLength(0);
+    // Confirmed at the block it came from; listed to remove.
+    expect(fake.simulate.mock.calls[1][1]).toMatchObject({ blockNumber: 21_234_567 });
+    expect(suggested()).toHaveLength(1);
+    expect(box().getByRole("button", { name: removeName(KEEPS) })).toBeTruthy();
+  });
+
+
+  describe("editing the actions after checks were suggested", () => {
+    const STALE =
+      "The actions changed since these were suggested: simulate the batch in step 1 again to update them.";
+    const KEPT = "assert @balance!($usdc $to) >= @token:amount($usdc 5)";
+
+    /** A transfer and a pause, simulated in step 1: both suggestions in. */
+    async function suggestedBoth(user: ReturnType<typeof userEvent.setup>) {
+      render(<AssertionBuilder />);
+      await addTransfer(user);
+      await addAction(user);
+      answering([KEEPS, PAUSED]);
+      await simulateActions(user);
+      expect(batch()).toEqual([KEPT, PAUSED.line]);
+    }
+
+    it("keeps the suggested checks, and the variables they use, until step 1 runs again", async () => {
+      const user = userEvent.setup();
+      await suggestedBoth(user);
+      await user.click(step(1).in.getByRole("button", { name: `Remove command: ${TRANSFER}` }));
+      expect(batch()).toEqual([KEPT, PAUSED.line]);
+      expect(suggested()).toHaveLength(2);
+      expect(box().getByText(STALE)).toBeTruthy();
+      expect(more().disabled).toBe(true);
+      await simulateProtected(user);
+      expect(fake.simulate.mock.calls.at(-1)?.[0]).toBe(
+        [
+          "load token",
+          `set $usdc ${USDC}`,
+          `set $to ${DEAD}`,
+          SET,
+          ACTION,
+          marked(KEPT),
+          marked(PAUSED.line),
+        ].join("\n"),
+      );
+    });
+
+    it("follows the next run: a suggestion it drops goes, one it keeps stays, the stale mark ends", async () => {
+      const user = userEvent.setup();
+      await suggestedBoth(user);
+      await user.click(step(1).in.getByRole("button", { name: `Remove command: ${TRANSFER}` }));
+      answering([PAUSED]);
+      await simulateActions(user);
+      expect(box().queryByText(STALE)).toBeNull();
+      // The transfer's check went with the variables only it used.
+      expect(batch()).toEqual([PAUSED.line]);
+      expect(suggested()).toHaveLength(1);
+      await simulateProtected(user);
+      expect(fake.simulate.mock.calls.at(-1)?.[0]).toBe(
+        [SET, ACTION, marked(PAUSED.line)].join("\n"),
+      );
+    });
+
+    it("leaves a check made yours, whatever the next run suggests", async () => {
+      const user = userEvent.setup();
+      await suggestedBoth(user);
+      // The transfer's check, made yours from its chip.
+      await user.click(box().getByRole("button", { name: unmarkName(KEEPS) }));
+      await user.click(step(1).in.getByRole("button", { name: `Remove command: ${TRANSFER}` }));
+      answering([]);
+      await simulateActions(user);
+      // The pause's suggestion went with the run; yours stayed.
+      expect(batch()).toEqual([KEPT]);
+    });
+
+    it("does not add back a suggestion you removed, while the run still suggests it", async () => {
+      const user = userEvent.setup();
+      await suggestedBoth(user);
+      await user.click(box().getByRole("button", { name: removeName(PAUSED) }));
+      expect(batch()).toEqual([KEPT]);
+      await addAction(user);
+      answering([KEEPS, PAUSED]);
+      await simulateActions(user);
+      expect(batch()).toEqual([KEPT]);
+      // Still listed, to add back by hand.
+      expect(box().getByRole("button", { name: addName(PAUSED) })).toBeTruthy();
+    });
+
+    it("drops the suggested checks, not yours, when the executor changes", async () => {
+      const user = userEvent.setup();
+      await suggestedBoth(user);
+      await user.click(box().getByRole("button", { name: unmarkName(PAUSED) }));
+      await user.click(step(1).in.getByText("simulate as another account"));
+      await user.type(step(1).in.getByLabelText("Account to simulate as"), NEW_OWNER);
+      expect(batch()).toEqual([PAUSED.line]);
+    });
   });
 
   it("keeps a shared recipient for the action that still uses it when the other goes", async () => {

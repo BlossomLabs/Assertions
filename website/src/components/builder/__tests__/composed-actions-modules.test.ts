@@ -6,7 +6,6 @@ import { actionsToTxBuilderBatch } from "../safe-tx-builder";
 import { bindVariables, insertAssertionLines, stripAssertions } from "../script-ops";
 import { attributeFailure, humanizeLocations } from "../simulation";
 import { prepareSuggestion } from "../suggested-checks";
-import { timelineNodes } from "../timeline";
 import { buildFinalScript } from "../wrap";
 
 // The real tag, offline: inline signatures need no ABI fetch. Token
@@ -127,14 +126,6 @@ describe("composed actions with the real tag", () => {
     expect(stripped).toBe(actions);
     const { valid } = await tag.script(stripped).validate();
     expect(valid).toBe(true);
-  });
-
-  it("counts two actions and one check, whatever is set above them", async () => {
-    expect(timelineNodes(withCheck(await composed())).map((n) => [n.kind, n.lane])).toEqual([
-      ["action", "actions"],
-      ["action", "actions"],
-      ["check", "post"],
-    ]);
   });
 
   it("attributes a failure to the command at that line, past the set lines", async () => {

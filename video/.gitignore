@@ -1,0 +1,9 @@
+node_modules/
+out/
+# Rebuilt or fetched by `pnpm build`: the narration clips (pinned on IPFS,
+# see voiceover/CID), the assembled voiceover, and the music from its source.
+voiceover/*.mp3
+voiceover/voiceover-full.*
+public/voiceover-full.wav
+music/*.ogg
+music/candidates/

@@ -1,0 +1,32 @@
+{
+  "name": "assertions-2-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "voiceover": "sh tools/fetch-voiceover.sh && python3 -I tools/build-voiceover.py",
+    "render": "remotion render src/index.ts Launch out/assertions-2-byakko.mp4",
+    "render:clean": "remotion render src/index.ts LaunchClean out/assertions-2-byakko-clean.mp4",
+    "mix": "sh tools/mix-music.sh",
+    "build": "pnpm voiceover && pnpm render && pnpm mix",
+    "still": "remotion still src/index.ts Launch",
+    "pin": "python3 -I tools/pin-voiceover.py",
+    "x": "ffmpeg -y -loglevel error -i out/assertions-2-byakko-music.mp4 -c:v libx264 -profile:v high -level:v 4.1 -pix_fmt yuv420p -r 30 -g 60 -b:v 5M -maxrate 6M -bufsize 10M -c:a aac -b:a 128k -ar 44100 -ac 2 -movflags +faststart out/assertions-2-byakko-x.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.536",
+    "@remotion/google-fonts": "^4.0.536",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.536"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "typescript": "^7.0.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

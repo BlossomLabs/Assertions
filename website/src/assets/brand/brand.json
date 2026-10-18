@@ -1,0 +1,42 @@
+{
+  "source": {
+    "fileKey": "Nj2P7hwvkNkLeahtTwjIy6",
+    "nodeId": "25:129",
+    "url": "https://www.figma.com/design/Nj2P7hwvkNkLeahtTwjIy6/Assertions?node-id=25-129",
+    "name": "Lockup / Horizontal"
+  },
+  "wordmark": "assertions.eth",
+  "typography": {
+    "fontFamily": "Outfit",
+    "fontStyle": "Bold",
+    "fontWeight": 700,
+    "letterSpacing": "0em",
+    "lineHeight": "normal"
+  },
+  "colors": {
+    "ink": "#0A1D40",
+    "brandBlue": "#1E40AF",
+    "brandBlueOpacity": 0.9,
+    "eyeWhite": "#FFFFFF"
+  },
+  "assets": {
+    "logo": {
+      "file": "assertions-lockup.svg",
+      "width": 892,
+      "height": 176,
+      "textOutlined": true,
+      "background": "transparent"
+    },
+    "eye": {
+      "file": "assertions-eye.svg",
+      "width": 176,
+      "height": 176,
+      "background": "transparent"
+    }
+  },
+  "usage": "The exported logo contains outlined lettering and requires no font download. Use Outfit at weight 700 with letter-spacing 0 to match the wordmark in live text.",
+  "adaptation": {
+    "originalWordmark": "assertion.eth",
+    "description": "Pluralized to assertions.eth and set in Outfit Bold with 0% letter spacing. The original eye and colors are preserved."
+  }
+}

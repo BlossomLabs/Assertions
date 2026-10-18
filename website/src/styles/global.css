@@ -36,6 +36,12 @@
   --color-err: #ef4444;
 }
 
+@layer base {
+  main :where(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--font-mono);
+  }
+}
+
 :root {
   --color-surface: #f0f4f8;
   --color-surface-2: #ffffff;

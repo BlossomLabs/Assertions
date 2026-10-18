@@ -45,6 +45,10 @@ samp {
   --docs-edge: color-mix(in srgb, #93c5fd 35%, transparent);
 }
 
+:where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--sl-font-mono);
+}
+
 :root[data-theme='light'] {
   /* Light palette (surface #f0f4f8, surface-2 #ffffff, surface-3 #e2eaf2,
      ink #0c1a2e, ink-2 #3a5068, ink-3 #6b8299). */

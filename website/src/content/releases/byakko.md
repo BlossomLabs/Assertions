@@ -2,7 +2,6 @@
 codename: Byakko
 version: "2.0"
 status: released
-date: "2026-10-09"
 summary: Four contracts and a documentation rewrite built around EVML. Assertions is the main contract; Operations, Collections and Expressions are its expansion packs.
 banner: byakko
 order: 2

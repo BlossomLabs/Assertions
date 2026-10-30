@@ -13,8 +13,8 @@
 //     --init-code-hash $(cast keccak <artifact .bytecode>) --starts-with a55e47
 //   (Operations: --starts-with 09e4a7e, which reads "OPERATE")
 //   (Collections: --starts-with c011ec7, which reads "COLLECT")
-//   (Expressions: --starts-with e5594e55, which reads "E(X)PRESS": no hex digit
-//    resembles X, so it is dropped rather than approximated)
+//   (Expressions: --starts-with e5594e55, which reads "EXPRESS", with 55 for
+//    the X)
 // Run it a few times and pick the best-reading address, then set salt +
 // expectedAddress in export-deploy-artifact.mjs.
 //

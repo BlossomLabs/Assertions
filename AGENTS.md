@@ -530,8 +530,9 @@ explicitly run preparation: pnpm may not run implicit pre/post hooks.
   to pass. Formatting may add braces around single-statement control bodies;
   review those changes as well as whitespace and comments.
 - Canonical salts are 32-byte values mined with `cast create2` for a vanity prefix
-  (a55e47, 09e4a7e, c011ec7, e5594e55: the contract names in hex; see
-  `website/scripts/mine-salt.mjs`) and live in `website/scripts/export-deploy-artifact.mjs`. The zero salt in Ignition
+  (a55e47 ASSERT, 09e4a7e OPERATE, c011ec7 COLLECT, e5594e55 EXPRESS: each
+  contract's verb in hex, with 5=S, 4=R, 7=T, 0=O, 9=P, 1=L, 2=N, 55=X and a-f
+  as themselves; see `website/scripts/mine-salt.mjs`) and live in `website/scripts/export-deploy-artifact.mjs`. The zero salt in Ignition
   is not the canonical deployment path. `pnpm sync:artifact` (from `website/`)
   regenerates the per-contract `src/lib/*-deployment.ts` and `*-abi.ts` modules AND
   `website/src/lib/deployments.json`, the one manifest every website consumer and

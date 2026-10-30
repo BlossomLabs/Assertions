@@ -51,7 +51,7 @@ export const CREATE2_PROXY_DEPLOY_COST = 10_000_000_000_000_000n;
 
 // Salts are 32-byte values mined with `cast create2` so each address opens
 // with its contract's name in hex (a55e47 ASSErT, 09e4a7e OPERATE, c011ec7
-// COLLECT, e5594e55 EXPRESS with the unrepresentable X dropped); see mine-salt.mjs for the command. A
+// COLLECT, e5594e55 EXPRESS with 55 for the X); see mine-salt.mjs for the command. A
 // contract is `released` when the SDK targets it: `sdkAddressExport` names the
 // constant in packages/sdk/src/onchain/addresses.ts that must equal its
 // address (check:integration asserts it). An unreleased contract is exported

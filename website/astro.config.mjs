@@ -107,6 +107,7 @@ export default defineConfig({
             { slug: 'docs' },
             { slug: 'docs/quickstart' },
             { slug: 'docs/guides/executors' },
+            { slug: 'docs/roadmap' },
           ],
         },
         {

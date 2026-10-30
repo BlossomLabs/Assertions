@@ -5,9 +5,10 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  adm-zip@<0.6.0: '>=0.6.0'
+  adm-zip@<0.6.1: '>=0.6.1'
   lodash-es@<4.18.0: '>=4.18.0'
-  undici@<6.28.0: '>=6.28.0 <7'
+  undici@<6.29.1: '>=6.29.1 <7'
+  undici@>=7 <7.30.1: '>=7.30.1 <8'
   ws@<8.21.0: '>=8.21.0 <9'
 
 importers:
@@ -565,8 +566,8 @@ packages:
       zod:
         optional: true
 
-  adm-zip@0.6.0:
-    resolution: {integrity: sha512-XleryMhbuksdKtofnWZ9Sk+4CUTbms4Mb/EU32SZwToAyZ5RgVos/ki8n+yr0LWHOGKuakbXTuuYNHLQjhddgg==}
+  adm-zip@0.6.1:
+    resolution: {integrity: sha512-Xwrja8nx9e5o2N1my4DsKCeKpdrnACyr1wtbPxBDgGzKzKyE9kRtBFA8mWldI+RVlD7CBZNWY/wQ2+ydwOR6kQ==}
     engines: {node: '>=14.0'}
 
   aes-js@4.0.0-beta.5:
@@ -856,12 +857,12 @@ packages:
   undici-types@8.9.0:
     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
 
-  undici@6.28.0:
-    resolution: {integrity: sha512-LIY910g9TI13YS95lrMFrs8Rm/u/irgHeTWoKCoteeJ04CUJ92eEfj0rVn+7VKMPBpUPiUoBKfhNyLI23EE/KA==}
+  undici@6.29.1:
+    resolution: {integrity: sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==}
     engines: {node: '>=18.17'}
 
-  undici@7.29.1:
-    resolution: {integrity: sha512-RYONW2MeafgYlkVOKYKkA/Ag7BmXqgIWCa8t1m0JcxrQg9pI9lEqRhAOruOBCbAohOa/gkCF+iPi9hrgvTzu6Q==}
+  undici@7.30.1:
+    resolution: {integrity: sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg==}
     engines: {node: '>=20.18.1'}
 
   util-deprecate@1.0.2:
@@ -916,7 +917,7 @@ snapshots:
   '@actions/http-client@4.0.1':
     dependencies:
       tunnel: 0.0.6
-      undici: 6.28.0
+      undici: 6.29.1
 
   '@actions/io@3.0.2': {}
 
@@ -1292,7 +1293,7 @@ snapshots:
       fast-equals: 5.4.1
       json-stream-stringify: 3.1.7
       rfdc: 1.4.1
-      undici: 6.28.0
+      undici: 6.29.1
     transitivePeerDependencies:
       - supports-color
 
@@ -1304,7 +1305,7 @@ snapshots:
       fast-equals: 5.4.1
       json-stream-stringify: 3.1.7
       rfdc: 1.4.1
-      undici: 6.28.0
+      undici: 6.29.1
 
   '@nomicfoundation/hardhat-utils@4.2.0':
     dependencies:
@@ -1314,7 +1315,7 @@ snapshots:
       fast-equals: 6.0.4
       json-stream-stringify: 3.1.7
       rfdc: 1.4.1
-      undici: 7.29.1
+      undici: 7.30.1
 
   '@nomicfoundation/hardhat-vendored@3.0.4': {}
 
@@ -1459,7 +1460,7 @@ snapshots:
       typescript: 6.0.3
       zod: 3.25.76
 
-  adm-zip@0.6.0: {}
+  adm-zip@0.6.1: {}
 
   aes-js@4.0.0-beta.5: {}
 
@@ -1604,7 +1605,7 @@ snapshots:
       '@nomicfoundation/hardhat-zod-utils': 3.0.5(zod@3.25.76)
       '@nomicfoundation/solidity-analyzer': 0.1.2
       '@sentry/core': 9.47.1
-      adm-zip: 0.6.0
+      adm-zip: 0.6.1
       chokidar: 5.0.0
       enquirer: 2.4.1
       ethereum-cryptography: 3.2.0
@@ -1775,9 +1776,9 @@ snapshots:
 
   undici-types@8.9.0: {}
 
-  undici@6.28.0: {}
+  undici@6.29.1: {}
 
-  undici@7.29.1: {}
+  undici@7.30.1: {}
 
   util-deprecate@1.0.2: {}
 

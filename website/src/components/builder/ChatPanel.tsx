@@ -19,10 +19,13 @@ type Agent = ReturnType<typeof useBuilderChatAgent>;
 /** Nexus OAuth only allows registered origins. When this site's origin isn't
  *  allowlisted (e.g. assertions.eth.limo), the login runs inside a broker
  *  iframe hosted on an allowlisted EVMcrispr deploy, which posts the
- *  provisioned API key back (see @evmcrispr/ai's nexus-broker). */
-const BROKER_URL = import.meta.env.PUBLIC_NEXUS_BROKER_URL as
-  | string
-  | undefined;
+ *  provisioned API key back (see @evmcrispr/ai's nexus-broker). The default
+ *  is the EVMcrispr deploy whose broker lists assertions.eth.limo, .eth.link
+ *  and localhost as allowed parents; without it every hosted login is
+ *  refused with "redirect URI is not allowed". */
+const BROKER_URL: string =
+  import.meta.env.PUBLIC_NEXUS_BROKER_URL ||
+  "https://next.evmcrispr.com/auth/nexus/broker/";
 
 /** Machine-readable `type`/`code` values that mean the key itself is dead.
  *  Only these fields are matched, never the free-form `message`: an assistant

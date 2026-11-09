@@ -14,6 +14,22 @@ vi.mock("../useBuilderChatAgent", () => ({
   useBuilderChatAgent: vi.fn(),
 }));
 
+// The panel logs in and out through the hosted Nexus broker by default. jsdom
+// never loads the broker iframe, so a stand-in client reports ready at once.
+const broker = vi.hoisted(() => ({ logout: vi.fn(async () => {}) }));
+vi.mock("@evmcrispr/ai", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@evmcrispr/ai")>()),
+  NexusBrokerClient: class {
+    iframeSrc = "about:blank";
+    constructor(private readonly options: { onReady?: () => void }) {}
+    listen() {
+      queueMicrotask(() => this.options.onReady?.());
+    }
+    logout = broker.logout;
+    dispose() {}
+  },
+}));
+
 type Agent = React.ComponentProps<typeof ChatPanel>["agent"];
 
 function fakeAgent(partial: Record<string, unknown> = {}) {
@@ -209,6 +225,7 @@ describe("ChatPanel: the chat", () => {
     render(<ChatPanel agent={agent} />);
     await user.click(screen.getByRole("button", { name: "Log out of Nexus" }));
     await vi.waitFor(() => expect(agent.clearApiKey).toHaveBeenCalledTimes(1));
+    expect(broker.logout).toHaveBeenCalledTimes(1);
   });
 });
 

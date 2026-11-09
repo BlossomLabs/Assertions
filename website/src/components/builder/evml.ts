@@ -15,7 +15,7 @@ import { createEvml, type EvmlTag, type ModuleLoader } from "@evmcrispr/core";
  *  different Module class there. At runtime Vite aliases every copy to the
  *  same checkout sources, so the cast is type-level noise only. */
 const vendored = (load: () => Promise<unknown>) => load as ModuleLoader;
-export const evml = createEvml().use(
+const MODULES = [
   {
     name: "contracts",
     load: vendored(() => import("@evmcrispr/module-contracts")),
@@ -83,7 +83,27 @@ export const evml = createEvml().use(
     load: () => import("@evmcrispr/module-aragonosx"),
     description: "Aragon OSx DAO proposals",
   },
-);
+];
+export const evml = createEvml().use(...MODULES);
+
+let preloading = false;
+/**
+ * Fetches, once per page, the code a simulation loads on first use: every
+ * module registered above (a suggesting run asks each for its events) and
+ * the simulator's fork, backend and suggestion code. In the browser these
+ * are chunks fetched one after another when a run first needs them, which
+ * through an IPFS gateway made the first run seconds slower than the next.
+ * Called when a run becomes possible; failures are left for the run to
+ * report.
+ */
+export function preloadForSimulation(): void {
+  if (preloading) return;
+  preloading = true;
+  for (const { load } of MODULES) void load().catch(() => undefined);
+  void import("@evmcrispr/module-sim")
+    .then(({ preloadSimulation }) => preloadSimulation())
+    .catch(() => undefined);
+}
 
 /**
  * A tag that forwards every call to whatever `current()` returns at call

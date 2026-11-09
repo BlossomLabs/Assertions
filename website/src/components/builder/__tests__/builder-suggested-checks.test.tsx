@@ -25,6 +25,7 @@ vi.mock("../useContractFunctions", async (importOriginal) =>
 );
 // The interpreter and its modules: the fake tag stands in for all of it.
 vi.mock("../evml", () => ({
+  preloadForSimulation: () => {},
   evml: {},
   createLiveTag: (current: () => unknown) => current(),
 }));

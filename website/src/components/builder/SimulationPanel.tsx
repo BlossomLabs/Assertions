@@ -5,7 +5,7 @@ import {
   type SimulationResult,
 } from "@evmcrispr/core";
 import { useEvmlTag } from "@evmcrispr/editor";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Address } from "viem";
 
 import { stripAssertions } from "./script-ops";
@@ -19,6 +19,7 @@ import {
   isStale,
 } from "./simulation";
 import type { ContextKind } from "./context";
+import { preloadForSimulation } from "./evml";
 import { confirmationBlock, suggestOption } from "./suggested-checks";
 import { btnPrimaryCls, noBreakCls } from "./ui";
 import { ButtonIcon } from "./ButtonIcon";
@@ -229,6 +230,10 @@ export function SimulationPanel({
 }) {
   const { state, simulate } = simulation;
   const hasScript = simKey.script.trim().length > 0;
+  // A run is now possible: fetch the code it needs before it is asked for.
+  useEffect(() => {
+    if (hasScript) preloadForSimulation();
+  }, [hasScript]);
   const running = state.status === "running";
   const stale = isStale(state, simKey);
   const result = state.result;

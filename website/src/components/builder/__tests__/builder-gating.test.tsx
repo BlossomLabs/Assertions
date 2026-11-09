@@ -24,7 +24,9 @@ vi.mock("../useContractFunctions", async (importOriginal) =>
   ),
 );
 // The interpreter and its modules: the fake tag stands in for all of it.
+const preload = vi.hoisted(() => vi.fn());
 vi.mock("../evml", () => ({
+  preloadForSimulation: preload,
   evml: {},
   createLiveTag: (current: () => unknown) => current(),
 }));
@@ -240,6 +242,16 @@ describe("AssertionBuilder: which steps are open", () => {
     // And a new batch has to pass again.
     await addAction(user);
     expect(step(2)).toMatchObject({ folded: true, hint: NOT_SIMULATED });
+  });
+
+  it("fetches what a simulation needs once there is something to simulate", async () => {
+    preload.mockClear();
+    connect();
+    const user = userEvent.setup();
+    render(<AssertionBuilder />);
+    expect(preload).not.toHaveBeenCalled();
+    await addAction(user);
+    expect(preload).toHaveBeenCalled();
   });
 
   it("keeps the assistant's API key field behind the cog", async () => {

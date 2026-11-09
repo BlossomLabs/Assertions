@@ -1,4 +1,7 @@
-import { fetchContractSource } from "@evmcrispr/sdk";
+import {
+  fetchContractSource,
+  fetchImplementationAddress,
+} from "@evmcrispr/sdk";
 import { useEffect, useState } from "react";
 import type { AbiParameter, Address } from "viem";
 import { isAddress, parseAbiItem } from "viem";
@@ -221,6 +224,7 @@ export function useContractFunctions(
   kind: "write" | "view",
 ) {
   const publicClient = usePublicClient({ chainId: 1 });
+  const chainClient = usePublicClient({ chainId });
   const [resolved, setResolved] = useState<Address | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [functions, setFunctions] = useState<ParsedFunction[] | null>(null);
@@ -265,11 +269,21 @@ export function useContractFunctions(
       }
       let fns = parseFunctions(source.abi, kind);
       let name = source.name;
-      if (source.isProxy && source.implementation) {
-        const impl = await fetchContractSource(
-          chainId,
-          source.implementation,
-        ).catch(() => null);
+      // Keyless lookups (Sourcify, the EVMcrispr API) flag a proxy but leave
+      // its implementation out, since it changes on upgrade: read it on chain.
+      const implementation = source.isProxy
+        ? (source.implementation ??
+          (chainClient
+            ? await fetchImplementationAddress(address, chainClient).catch(
+                () => undefined,
+              )
+            : undefined))
+        : undefined;
+      if (cancelled) return;
+      if (implementation) {
+        const impl = await fetchContractSource(chainId, implementation).catch(
+          () => null,
+        );
         if (cancelled) return;
         if (impl) {
           fns = parseFunctions(impl.abi, kind);
@@ -285,7 +299,7 @@ export function useContractFunctions(
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [addressInput, chainId, kind, publicClient]);
+  }, [addressInput, chainId, kind, publicClient, chainClient]);
 
   return { resolved, status, functions, contractName };
 }

@@ -29,7 +29,12 @@ export default defineConfig({
     // @evmcrispr/sdk reads VITE_ETHERSCAN_API_KEY via import.meta.env; Astro
     // only exposes PUBLIC_ by default.
     envPrefix: ['VITE_', 'PUBLIC_'],
-    resolve: { alias: local.alias },
+    // The vendored checkout installs its own React. A dependency resolved
+    // from there (@monaco-editor/react) rendered with that second copy and
+    // failed on its first hook, which blanked the builder when the EVML
+    // editor tab opened ("Cannot read properties of null (reading
+    // 'useState')"), so React always comes from the website.
+    resolve: { alias: local.alias, dedupe: ['react', 'react-dom'] },
     // Sources may live outside the Astro project root (EVMCRISPR_SRC), so Vite
     // must be allowed to serve them, and esbuild must not try to pre-bundle
     // them from node_modules.
@@ -46,8 +51,9 @@ export default defineConfig({
       // Deps imported only from the excluded @evmcrispr sources are not
       // discoverable by the startup scan; without listing them, Vite
       // re-optimizes when they first load in the browser and force-reloads
-      // the page (most visibly: opening the Monaco editor tab wiped the
-      // whole builder). Pre-bundle them eagerly instead.
+      // the page. Pre-bundle them eagerly instead (the list is in
+      // scripts/evmcrispr-sources.mjs; a pin move can add to it, and the
+      // dev log then says "optimized dependencies changed. reloading").
       include: ['monaco-editor', ...vendoredDepIds],
     },
   },

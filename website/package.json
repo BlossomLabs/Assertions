@@ -7,7 +7,7 @@
   },
   "evmcrispr": {
     "repo": "https://github.com/EVMcrispr/evmcrispr.git",
-    "commit": "6eb544b754a5187756cc962712583abfe9e8247c"
+    "commit": "f065a6b4ec30ffa331611bb123c04be899d9c409"
   },
   "scripts": {
     "prepare:evmcrispr": "node scripts/vendor-evmcrispr.mjs && node scripts/copy-monaco.mjs",

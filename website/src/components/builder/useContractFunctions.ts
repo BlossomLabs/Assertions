@@ -159,6 +159,23 @@ export function ensVarName(name: string): string {
 }
 
 /**
+ * The hoisted binding for an ENS name. On mainnet the name stays live via
+ * `@ens`; elsewhere the per-chain address is frozen in, since `@ens` reads
+ * the mainnet record. A name that did not resolve (null) stays live via
+ * `@ens` on every chain: written as is it would be no EVML argument.
+ */
+export function ensSetLine(
+  name: string,
+  address: string | null | undefined,
+  chainId: number,
+): string {
+  const varName = ensVarName(name);
+  return chainId === 1 || !address
+    ? `set ${varName} @ens(${name})`
+    : `set ${varName} ${address}`;
+}
+
+/**
  * Turn a raw form value into an EVML argument. Comma-separated (optionally
  * bracketed) values become EVML's whitespace-separated arrays; tuples are
  * written as arrays too (EVML has no tuple literal). Names that resolve via

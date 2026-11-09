@@ -13,6 +13,7 @@ import type { LineVariable } from "./script-ops";
 import { useComposeEnv } from "./useComposeEnv";
 import {
   canonicalType,
+  ensSetLine,
   ensVarName,
   inputCls,
   resolveEnsAddress,
@@ -202,22 +203,16 @@ export function AbiForm({
     setError(null);
     try {
       const sets: string[] = [];
-      // On mainnet the name stays live in the script via @ens; on other
-      // chains the per-chain address (multichain names record one per
-      // chain) is frozen in, since @ens reads the mainnet record.
-      const registerEns = (name: string, address: string): string => {
-        const varName = ensVarName(name);
-        const line =
-          chainId === 1
-            ? `set ${varName} @ens(${name})`
-            : `set ${varName} ${address}`;
+      // The same binding as the assertion form (see ensSetLine): a name
+      // that did not resolve stays live via @ens instead of being copied
+      // into the line as is.
+      const registerEns = (name: string, address: string | null): string => {
+        const line = ensSetLine(name, address, chainId);
         if (!sets.includes(line)) sets.push(line);
-        return varName;
+        return ensVarName(name);
       };
-      const ensToVar = async (name: string): Promise<string | null> => {
-        const addr = await resolveEnsAddress(publicClient, name, chainId);
-        return addr ? registerEns(name, addr) : null;
-      };
+      const ensToVar = async (name: string): Promise<string> =>
+        registerEns(name, await resolveEnsAddress(publicClient, name, chainId));
 
       // If the contract was given as an ENS name, keep the name in the
       // script (via a set line) instead of the resolved hex address.

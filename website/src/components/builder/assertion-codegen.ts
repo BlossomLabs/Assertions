@@ -14,7 +14,7 @@ import {
   resolveLens,
   settledHops,
 } from "./assertion-model";
-import { ensVarName, evmlArg } from "./useContractFunctions";
+import { ensSetLine, ensVarName, evmlArg } from "./useContractFunctions";
 
 /**
  * Renders the assertion expression tree into `assert` lines
@@ -65,14 +65,6 @@ function testName(text: string): string {
   let h = 5381;
   for (let i = 0; i < text.length; i++) h = ((h * 33) ^ text.charCodeAt(i)) >>> 0;
   return `each${h.toString(36)}`;
-}
-
-/** The hoisted binding for an ENS name: live on mainnet, frozen elsewhere. */
-function ensSetLine(name: string, address: string, chainId: number): string {
-  const varName = ensVarName(name);
-  return chainId === 1
-    ? `set ${varName} @ens(${name})`
-    : `set ${varName} ${address}`;
 }
 
 /** Address/ENS target to an EVML token (`0x…` or a registered `$var`), or
@@ -400,14 +392,8 @@ function makeCtx(options: CodegenOptions) {
     // name stays live via `set $var @ens(name)`, the same mainnet-registry
     // semantics the resolver falls back to anyway.
     ensToVar: async (name) => {
-      const varName = ensVarName(name);
-      const address = await options.resolveEns(name);
-      registerSet(
-        address
-          ? ensSetLine(name, address, options.chainId)
-          : `set ${varName} @ens(${name})`,
-      );
-      return varName;
+      registerSet(ensSetLine(name, await options.resolveEns(name), options.chainId));
+      return ensVarName(name);
     },
   };
   return { ctx, sets };

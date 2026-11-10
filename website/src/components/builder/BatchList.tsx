@@ -113,6 +113,8 @@ export function BatchList({
   onRename,
   editable,
   onEdit,
+  callKind,
+  onSwitchCallKind,
 }: {
   script: string;
   /** The chain the batch targets: whose explorer the addresses link to.
@@ -134,6 +136,12 @@ export function BatchList({
   editable?: (span: CommandSpan) => "form" | "editor" | null;
   /** Edit the command starting at this 1-based line, there. */
   onEdit?: (line: number, where: "form" | "editor") => void;
+  /** How an action runs, where it can run the other way (`callKind`):
+   *  each such row says so, and offers the switch when `onSwitchCallKind`
+   *  is given for it. */
+  callKind?: (span: CommandSpan) => "call" | "delegatecall" | null;
+  /** Run the action on this 1-based line the other way. */
+  onSwitchCallKind?: (line: number, to: "call" | "delegatecall") => void;
 }) {
   const spans = commandSpans(script);
   const addresses = spans.flatMap((span) => addressVariable(span) ?? []);
@@ -177,6 +185,8 @@ export function BatchList({
         // A check is named by its code and the comment it has, less the
         // mark a suggested one carries.
         const first = unmarkSuggested(t).split("\n")[0];
+        const kind = scaffolding ? null : (callKind?.(span) ?? null);
+        const other = kind === "call" ? "delegatecall" : "call";
         return (
           <div
             key={`${span.start}-${t}`}
@@ -208,6 +218,34 @@ export function BatchList({
                   })
                 : span.text}
             </pre>
+            {kind && (
+              // How it runs, beside edit and delete: a call by default; a
+              // delegatecall says so in words, whatever the row's hover.
+              <button
+                type="button"
+                disabled={!onSwitchCallKind}
+                onClick={() => onSwitchCallKind?.(span.start, other)}
+                title={
+                  kind === "delegatecall"
+                    ? "Runs as the Safe"
+                    : "Runs as a call. Click to run it as the Safe (delegatecall)"
+                }
+                aria-label={
+                  kind === "delegatecall"
+                    ? `Runs as the Safe, run as a call instead: ${first}`
+                    : `Run as delegatecall: ${first}`
+                }
+                aria-pressed={kind === "delegatecall"}
+                className={`shrink-0 h-5 -my-0.5 inline-flex items-center justify-center gap-1 rounded-full transition-opacity disabled:cursor-default ${
+                  kind === "delegatecall"
+                    ? "px-1.5 font-sans text-[var(--color-err)] bg-[var(--color-err)]/10 hover:bg-[var(--color-err)]/20"
+                    : "w-5 text-[var(--color-ink-2)] opacity-60 group-hover:opacity-100 hover:bg-[var(--color-ink-3)]/15"
+                } ${focusRingCls}`}
+              >
+                <ButtonIcon name={kind} size={13} />
+                {kind === "delegatecall" && <span>delegatecall</span>}
+              </button>
+            )}
             {edit && (
               <button
                 type="button"

@@ -8,6 +8,7 @@ import {
   type LucideIcon,
   Minus,
   Pencil,
+  PhoneOutgoing,
   Pin,
   PinOff,
   Play,
@@ -15,6 +16,7 @@ import {
   Settings,
   Square,
   Trash2,
+  TriangleAlert,
 } from "lucide-react";
 
 /**
@@ -40,7 +42,9 @@ export type ButtonIconName =
   | "unkeep"
   | "show"
   | "hide"
-  | "info";
+  | "info"
+  | "call"
+  | "delegatecall";
 
 const LUCIDE: Record<Exclude<ButtonIconName, "simulate">, LucideIcon> = {
   add: Plus,
@@ -65,6 +69,10 @@ const LUCIDE: Record<Exclude<ButtonIconName, "simulate">, LucideIcon> = {
   hide: EyeOff,
   // More about it.
   info: Info,
+  // How an action runs: a call, as the opcode is named; a delegatecall,
+  // the contract's code run as the Safe, flagged as the risk it is.
+  call: PhoneOutgoing,
+  delegatecall: TriangleAlert,
 };
 
 export function ButtonIcon({

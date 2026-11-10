@@ -71,7 +71,7 @@ If you are the one signing a proposal from the command line, `safe:confirm` fetc
 
 ## Delegatecalls
 
-Some actions only make sense as the Safe itself: signing a message on-chain with SignMessageLib, or moving the Safe to a new version with Safe's migration contract. In the contract form, with a Safe as the executor, tick **Delegatecall** on that action. The contract's code then runs as the Safe, on the Safe's own storage, and the line is written as `safe:delegate-exec`:
+Some actions only make sense as the Safe itself: signing a message on-chain with SignMessageLib, or moving the Safe to a new version with Safe's migration contract. Add the action as a call, then, with a Safe as the executor, press the phone icon beside its edit and delete buttons in the batch listing. The contract's code then runs as the Safe, on the Safe's own storage: the icon turns into a warning sign with the word **delegatecall**, and the line is written as `safe:delegate-exec`. Press the label again to turn it back into a call:
 
 ```evml novalidate
 load safe
@@ -81,7 +81,7 @@ set $signMessageLib 0x4FfeF8222648872B3dE295Ba1e49110E61f5b5aa
 safe:delegate-exec $signMessageLib "signMessage(bytes)" 0x1234
 ```
 
-A delegatecall sends no value, and only a Safe can make one: under any other executor the builder says so and does not simulate the batch until you change the executor or the action.
+A delegatecall sends no value, so an action that sends some does not offer it. Only a Safe can make one: under any other executor the builder says so and does not simulate the batch until you change the executor or run the action as a call.
 
 The code you delegatecall can change the Safe's owners, threshold, modules, guard, implementation or fallback handler without emitting anything. Only delegatecall audited libraries you trust. The simulation runs the delegatecall as the Safe, and its suggested checks pin all of those down as the run left them:
 

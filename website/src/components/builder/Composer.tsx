@@ -4,7 +4,13 @@ import { Suspense, useEffect, useRef, useState } from "react";
 
 import { type ActionEdit, AbiForm } from "./AbiForm";
 import { BatchList } from "./BatchList";
-import { decomposeCall } from "./compose-call";
+import { Callout } from "./Callout";
+import {
+  callKind,
+  decomposeCall,
+  hasDelegatecall,
+  switchCallKind,
+} from "./compose-call";
 import {
   type TxBuilderBatch,
   importTxBuilder,
@@ -26,7 +32,7 @@ export function Composer({
   scriptState: ReturnType<typeof useScriptState>;
   chainId: number;
   /** The batch executes through a Safe: offers the Transaction Builder
-   *  JSON import tab, and delegatecalls in the contract form. */
+   *  JSON import tab, and lets an action of the batch run as a delegatecall. */
   safeContext?: boolean;
   onDroppedChainId?: (chainId: number) => void;
   /** Passed on to the contract form: go on to assertions with no actions. */
@@ -128,7 +134,6 @@ export function Composer({
           <div ref={formRef}>
             <AbiForm
               chainId={chainId}
-              safeContext={safeContext}
               onAdd={scriptState.appendWithSets}
               onSkip={onSkipActions}
               editing={editing}
@@ -165,10 +170,30 @@ export function Composer({
                   formRef.current?.scrollIntoView?.({ block: "nearest" });
                 }}
                 onRemove={scriptState.removeCommand}
+                // A Safe may run an action as itself; under any other
+                // executor a delegatecall can only be turned back into a
+                // call.
+                callKind={(span) => {
+                  const kind = callKind(script, span.start);
+                  return kind === "call" && !safeContext ? null : kind;
+                }}
+                onSwitchCallKind={(line) => setScript(switchCallKind(script, line))}
                 // Assertions are added and removed in step 2; here they
                 // render dimmed, without a delete button.
                 canRemove={(span) => !isAssertSpan(span)}
               />
+              {safeContext && hasDelegatecall(script) && (
+                <div className="mt-2">
+                  <Callout tone="warn">
+                    A delegatecall runs the contract's code as the Safe: it
+                    can change the Safe's owners, threshold, modules, guard
+                    or implementation. Only delegatecall audited libraries
+                    you trust (MultiSend, SignMessageLib, Safe's
+                    migrations). Simulating the batch suggests checks that
+                    pin all of those down.
+                  </Callout>
+                </div>
+              )}
             </div>
           )}
         </div>

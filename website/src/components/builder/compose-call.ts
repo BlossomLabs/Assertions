@@ -24,6 +24,7 @@ import {
   commandSpans,
   isAccountName,
   isSetSpan,
+  replaceCommand,
   setTarget,
   spanAtLine,
 } from "./script-ops";
@@ -302,6 +303,40 @@ export const hasDelegatecall = (script: string): boolean =>
   commandSpans(script).some(
     (span) => span.node?.module === "safe" && span.node.name === "delegate-exec",
   );
+
+/**
+ * How the action on a 1-based line can run, for the batch listing to offer
+ * the other way: `call` for an `exec` with a signature and no options (a
+ * delegatecall sends no value), `delegatecall` for a Safe's
+ * `safe:delegate-exec`, null for anything else.
+ */
+export function callKind(script: string, line: number): "call" | "delegatecall" | null {
+  const span = spanAtLine(commandSpans(script), line);
+  const node = span?.node;
+  if (!span || !node || span.start !== span.end) return null;
+  const delegate = node.module === "safe" && node.name === "delegate-exec";
+  if (!delegate && (node.module || node.name !== "exec")) return null;
+  if (node.opts.length > 0 || node.args[1]?.type !== NodeType.StringLiteral)
+    return null;
+  return delegate ? "delegatecall" : "call";
+}
+
+/**
+ * The script with the action on a 1-based line run the other way: a call
+ * becomes the Safe's delegatecall and back, its target and arguments as
+ * they are. The `load safe` it needs comes and goes with it. Unchanged
+ * when the line is no such action (`callKind`).
+ */
+export function switchCallKind(script: string, line: number): string {
+  const kind = callKind(script, line);
+  if (!kind) return script;
+  const text = script.split("\n")[line - 1] ?? "";
+  const next =
+    kind === "call"
+      ? text.replace(/^(\s*)exec\b/, `$1${DELEGATE_EXEC}`)
+      : text.replace(/^(\s*)safe:delegate-exec\b/, "$1exec");
+  return next === text ? script : replaceCommand(script, line, next.trim());
+}
 
 /** The `exec` line for a call, with a placeholder (`$_0`, `$_1`, ...) for
  *  each address and the name each would like. */

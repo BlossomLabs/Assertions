@@ -22,6 +22,7 @@ import {
 } from "./useContractFunctions";
 import { Select } from "../ui/Select";
 import { ButtonIcon } from "./ButtonIcon";
+import { Callout } from "./Callout";
 
 /** Sentinel value for the dropdown option that reveals the manual signature input. */
 const CUSTOM_SIG = "__custom__";
@@ -36,6 +37,7 @@ export interface ActionEdit {
 
 export function AbiForm({
   chainId,
+  safeContext = false,
   onAdd,
   onSkip,
   editing = null,
@@ -43,6 +45,9 @@ export function AbiForm({
   onCancelEdit,
 }: {
   chainId: number;
+  /** The batch executes through a Safe: an action may then be a
+   *  delegatecall, the contract's code run as the Safe. */
+  safeContext?: boolean;
   /** Add the call: its line, the ENS `set` lines it needs, and the
    *  addresses it names, each to be given a variable in the script. */
   onAdd: (line: string, sets: string[], vars: LineVariable[]) => void;
@@ -66,6 +71,8 @@ export function AbiForm({
   const [error, setError] = useState<string | null>(null);
   // The unit the user wants a token amount in; token units unless switched.
   const [amountIn, setAmountIn] = useState<AmountIn>("token");
+  // Run the contract's code as the Safe instead of calling it.
+  const [delegate, setDelegate] = useState(false);
   // An edit whose function and arguments wait for the contract's ABI.
   const [loading, setLoading] = useState<ActionEdit | null>(null);
 
@@ -82,6 +89,7 @@ export function AbiForm({
     setArgs({});
     setValue("");
     setAmountIn("token");
+    setDelegate(false);
     setError(null);
     setLoading(null);
   };
@@ -95,6 +103,7 @@ export function AbiForm({
     setAddressInput(editing.call.target);
     setValue(editing.call.value);
     setAmountIn(editing.call.amountIn);
+    setDelegate(editing.call.delegate);
     setLoading(editing);
   }, [editing]);
 
@@ -230,7 +239,8 @@ export function AbiForm({
           signature: activeSig,
           inputs: activeInputs,
           values: args,
-          value,
+          value: delegate ? "" : value,
+          delegate,
           // The unit the field was shown in: token units only where the
           // field said so.
           amountIn: amount ? amountIn : "base",
@@ -398,7 +408,41 @@ export function AbiForm({
         </div>
       )}
 
-      {(selected?.payable || useManual) && resolved && activeSig && (
+      {/* Offered where a Safe executes; shown wherever an action already
+          is one, so it can be turned back into a call. */}
+      {(safeContext || delegate) && resolved && activeSig && (
+        <div>
+          <label className="flex items-start gap-2 text-sm text-[var(--color-ink-2)]">
+            <input
+              type="checkbox"
+              className="mt-0.5"
+              checked={delegate}
+              onChange={(e) => setDelegate(e.target.checked)}
+            />
+            <span>
+              Delegatecall{" "}
+              <span className="text-xs text-[var(--color-ink-3)]">
+                run this contract's code as the Safe, on the Safe's own storage
+              </span>
+            </span>
+          </label>
+          {delegate && (
+            <div className="mt-2">
+              <Callout tone="warn">
+                The code can change the Safe's owners, threshold, modules,
+                guard or implementation. Only delegatecall audited libraries
+                you trust (MultiSend, SignMessageLib, Safe's migrations).
+                Simulating the batch suggests checks that pin all of those
+                down.
+                {!safeContext &&
+                  " Only a Safe can delegatecall: choose a Safe as the executor, or untick this."}
+              </Callout>
+            </div>
+          )}
+        </div>
+      )}
+
+      {(selected?.payable || useManual) && !delegate && resolved && activeSig && (
         <div>
           <label className="block text-xs font-mono text-[var(--color-ink-3)] mb-1">
             value <span className="opacity-60">(wei, e.g. 1e18, optional)</span>

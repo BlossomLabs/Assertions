@@ -64,6 +64,9 @@ export interface CallInput {
   values: Readonly<Record<string, string>>;
   /** `--value`, as typed. */
   value?: string;
+  /** Run the contract's code as the Safe (`safe:delegate-exec`) instead of
+   *  calling it: only a Safe executor can, and it sends no value. */
+  delegate?: boolean;
   /** The unit the amount of a token call was typed in: base units (the
    *  default, what the ABI says) or the token's own. */
   amountIn?: AmountIn;
@@ -291,12 +294,23 @@ function wanted(
     : { wanted: "address", origin: "neutral" };
 }
 
+/** The command a call is written with: a call, or a Safe's delegatecall. */
+const DELEGATE_EXEC = "safe:delegate-exec";
+
+/** Whether a script has an action only a Safe can run: a delegatecall. */
+export const hasDelegatecall = (script: string): boolean =>
+  commandSpans(script).some(
+    (span) => span.node?.module === "safe" && span.node.name === "delegate-exec",
+  );
+
 /** The `exec` line for a call, with a placeholder (`$_0`, `$_1`, ...) for
  *  each address and the name each would like. */
 export async function composeCall(
   call: CallInput,
   env: ComposeEnv,
 ): Promise<{ line: string; vars: LineVariable[] }> {
+  if (call.delegate && call.value?.trim())
+    throw new Error("A delegatecall sends no value: leave value empty.");
   const vars: LineVariable[] = [];
   const refOf = (address: string, role: Parameters<typeof wanted>[1]): string => {
     const value = getAddress(address);
@@ -365,7 +379,7 @@ export async function composeCall(
   const valueOpt = call.value?.trim() ? ` --value ${call.value.trim()}` : "";
   const unit = inBaseUnits ? `${BASE_UNITS_COMMENT}${target}` : "";
   return {
-    line: `exec ${target} "${call.signature}"${argStr ? ` ${argStr}` : ""}${valueOpt}${unit}`,
+    line: `${call.delegate ? DELEGATE_EXEC : "exec"} ${target} "${call.signature}"${argStr ? ` ${argStr}` : ""}${valueOpt}${unit}`,
     vars,
   };
 }
@@ -382,6 +396,8 @@ export interface DecomposedCall {
   value: string;
   /** The unit the last argument is in. */
   amountIn: AmountIn;
+  /** Written as a Safe's delegatecall (`safe:delegate-exec`). */
+  delegate: boolean;
 }
 
 /**
@@ -395,7 +411,12 @@ export function decomposeCall(script: string, line: number): DecomposedCall | nu
   const spans = commandSpans(script);
   const span = spanAtLine(spans, line);
   const node = span?.node;
-  if (!span || !node || node.module || node.name !== "exec") return null;
+  if (!span || !node) return null;
+  const delegate = node.module === "safe" && node.name === "delegate-exec";
+  if (!delegate && (node.module || node.name !== "exec")) return null;
+  // A delegatecall takes no options: one written with any is not the
+  // form's.
+  if (delegate && node.opts.length > 0) return null;
   const lines = script.split("\n");
   const source = (n: Node): string | null => {
     if (!n.loc || n.loc.start.line !== n.loc.end.line) return null;
@@ -518,7 +539,7 @@ export function decomposeCall(script: string, line: number): DecomposedCall | nu
     if (written === null) return null;
     args.push(written);
   }
-  return { target, signature, args, value, amountIn };
+  return { target, signature, args, value, amountIn, delegate };
 }
 
 /** The component types of a tuple, split at its top-level commas. */

@@ -1,7 +1,7 @@
 import { BASE_UNITS_COMMENT } from "@evmcrispr/sdk";
 import { describe, expect, it, vi } from "vitest";
 
-import { type ComposeEnv, amountField, amountHint, composeCall, decomposeCall, tokenAmount, wantedName } from "../compose-call";
+import { type ComposeEnv, amountField, amountHint, composeCall, decomposeCall, hasDelegatecall, tokenAmount, wantedName } from "../compose-call";
 import { bindVariables, gcScaffolding, insertAssertionLines, removeCommand, stripAssertions } from "../script-ops";
 
 const USDC = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
@@ -498,7 +498,39 @@ describe("an action read back into the form", () => {
       args: [DEAD, "1.5"],
       value: "1e18",
       amountIn: "token",
+      delegate: false,
     });
+  });
+
+  it("gives back a delegatecall as one, and writes it as the Safe's", async () => {
+    const call = {
+      target: PLAIN,
+      targetRef: PLAIN,
+      signature: "signMessage(bytes)",
+      inputs: [input("_data", "bytes")],
+      values: { _data: "0x1234" },
+      delegate: true,
+    };
+    const { script, call: back } = await roundTrip(call);
+    expect(script.split("\n").at(-1)).toBe('safe:delegate-exec $contract "signMessage(bytes)" 0x1234');
+    expect(back).toEqual({
+      target: PLAIN,
+      signature: "signMessage(bytes)",
+      args: ["0x1234"],
+      value: "",
+      amountIn: "base",
+      delegate: true,
+    });
+    // The block runs on its own in a simulation: it loads what it uses.
+    expect(script.split("\n")).toContain("load safe");
+    expect(hasDelegatecall(script)).toBe(true);
+    expect(hasDelegatecall((await roundTrip({ ...call, delegate: false })).script)).toBe(false);
+  });
+
+  it("refuses a delegatecall that sends value: the Safe's code runs, nothing is sent", async () => {
+    await expect(
+      composeCall({ ...transfer(DEAD, "1", PLAIN), value: "1e18", delegate: true }, env()),
+    ).rejects.toThrow("sends no value");
   });
 
   it("gives back base units where the line holds them, and the unlimited allowance", async () => {
@@ -530,6 +562,7 @@ describe("an action read back into the form", () => {
       args: ['say "hi" # now', "true", "0xabcd", `[${DEAD}, ${ALICE}]`, `[${DEAD}, 7]`, "[]"],
       value: "",
       amountIn: "base",
+      delegate: false,
     });
   });
 
@@ -551,6 +584,7 @@ describe("an action read back into the form", () => {
     ["a signature that does not parse", `exec ${USDC} "transfer(address,uint)x" ${DEAD} 5`],
     ["more arguments than the function takes", `exec ${USDC} "transfer(address,uint256)" ${DEAD} 5 6`],
     ["a command that is no exec", `send ${USDC} --value 1`],
+    ["a delegatecall with an option", `safe:delegate-exec ${USDC} "transfer(address,uint256)" ${DEAD} 5 --value 1`],
     ["a named function with no signature", `exec ${USDC} transfer ${DEAD} 5`],
   ])("gives nothing for %s: the EVML editor is where that is edited", (_name, script) => {
     expect(decomposeCall(script, script.split("\n").length)).toBeNull();

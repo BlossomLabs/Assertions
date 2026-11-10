@@ -63,6 +63,8 @@ export type NodeKey =
   | "safeThreshold"
   | "safeIsOwner"
   | "safeGuard"
+  | "safeSingleton"
+  | "safeFallbackHandler"
   | "safeModules"
   | "safeNonce"
   | "tokenAmount"
@@ -77,6 +79,8 @@ const SAFE_KEYS: Record<SafeRead, NodeKey> = {
   threshold: "safeThreshold",
   isOwner: "safeIsOwner",
   guard: "safeGuard",
+  singleton: "safeSingleton",
+  fallbackHandler: "safeFallbackHandler",
   modules: "safeModules",
   nonce: "safeNonce",
 };
@@ -265,6 +269,8 @@ export function convertNode(node: ValueExpr, key: NodeKey): ValueExpr {
     case "safeThreshold":
     case "safeIsOwner":
     case "safeGuard":
+    case "safeSingleton":
+    case "safeFallbackHandler":
     case "safeModules":
     case "safeNonce":
       return node.kind === "safe"
@@ -506,6 +512,8 @@ const OF_SAFE: PaletteItem[] = [
   { key: "safeOwners", label: "owners", name: "the list of owners" },
   { key: "safeIsOwner", label: "is owner", name: "whether an address is an owner" },
   { key: "safeGuard", label: "guard", name: "the transaction guard, zero when none" },
+  { key: "safeSingleton", label: "singleton", name: "the code the Safe runs" },
+  { key: "safeFallbackHandler", label: "fallback handler", name: "what answers calls the Safe does not implement, zero when none" },
   { key: "safeModules", label: "modules", name: "the list of enabled modules" },
   { key: "safeNonce", label: "nonce", name: "the next transaction nonce" },
 ];

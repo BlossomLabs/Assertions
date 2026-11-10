@@ -176,6 +176,8 @@ export type SafeRead =
   | "threshold"
   | "nonce"
   | "guard"
+  | "singleton"
+  | "fallbackHandler"
   | "modules"
   | "isOwner";
 
@@ -541,6 +543,8 @@ export function inferCategory(expr: ValueExpr): Category {
         case "modules":
           return "array";
         case "guard":
+        case "singleton":
+        case "fallbackHandler":
           return "address";
         case "isOwner":
           return "bool";

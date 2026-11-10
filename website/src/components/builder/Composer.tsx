@@ -26,7 +26,7 @@ export function Composer({
   scriptState: ReturnType<typeof useScriptState>;
   chainId: number;
   /** The batch executes through a Safe: offers the Transaction Builder
-   *  JSON import tab. */
+   *  JSON import tab, and delegatecalls in the contract form. */
   safeContext?: boolean;
   onDroppedChainId?: (chainId: number) => void;
   /** Passed on to the contract form: go on to assertions with no actions. */
@@ -128,6 +128,7 @@ export function Composer({
           <div ref={formRef}>
             <AbiForm
               chainId={chainId}
+              safeContext={safeContext}
               onAdd={scriptState.appendWithSets}
               onSkip={onSkipActions}
               editing={editing}

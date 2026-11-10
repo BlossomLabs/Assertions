@@ -22,6 +22,7 @@ import { ExecutorIsSafe } from "./useIsSafe";
 import { createLiveTag, evml } from "./evml";
 import { SimRing } from "./SimRing";
 import { isFresh } from "./simulation";
+import { hasDelegatecall } from "./compose-call";
 import type { SuggestedCheck } from "./suggested-checks";
 import { simKeyFor, useSimulation } from "./SimulationPanel";
 import { SubmitStage } from "./SubmitStage";
@@ -247,11 +248,18 @@ function BuilderBody({
   const noBatchHint = ready
     ? "Add an action in step 1 first."
     : "Choose the executor in step 1 first.";
+  // A delegatecall under an executor that is no Safe: nothing past step 1
+  // can run until that changes (see ComposeStage).
+  const misplacedDelegatecall = context.kind !== "safe" && hasDelegatecall(script);
   const assertionsLocked =
-    !ready || (!skippedActions && (!hasScript || !actionsPassedOnce));
+    !ready ||
+    misplacedDelegatecall ||
+    (!skippedActions && (!hasScript || !actionsPassedOnce));
   const assertionsHint = noBatch
     ? noBatchHint
-    : "Simulate the batch in step 1 first.";
+    : misplacedDelegatecall
+      ? "Only a Safe can run a delegatecall: change the executor in step 1."
+      : "Simulate the batch in step 1 first.";
   const submitLocked = assertionsLocked || !hasScript || !protectedPassedOnce;
   const submitHint = assertionsLocked
     ? assertionsHint

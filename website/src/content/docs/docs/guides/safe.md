@@ -69,6 +69,32 @@ The Safe app shows one transaction with several calls. The assertions are calls 
 
 If you are the one signing a proposal from the command line, `safe:confirm` fetches the transaction, rebuilds it and refuses it unless it hashes back to the requested hash. It also stops on findings such as new owners, a changed threshold or a delegatecall to an unknown contract, until you name what you reviewed with an `--allow-*` option. A batch whose assertions say the owners and threshold stay the same does not need those options.
 
+## Delegatecalls
+
+Some actions only make sense as the Safe itself: signing a message on-chain with SignMessageLib, or moving the Safe to a new version with Safe's migration contract. In the contract form, with a Safe as the executor, tick **Delegatecall** on that action. The contract's code then runs as the Safe, on the Safe's own storage, and the line is written as `safe:delegate-exec`:
+
+```evml novalidate
+load safe
+
+set $signMessageLib 0x4FfeF8222648872B3dE295Ba1e49110E61f5b5aa
+
+safe:delegate-exec $signMessageLib "signMessage(bytes)" 0x1234
+```
+
+A delegatecall sends no value, and only a Safe can make one: under any other executor the builder says so and does not simulate the batch until you change the executor or the action.
+
+The code you delegatecall can change the Safe's owners, threshold, modules, guard, implementation or fallback handler without emitting anything. Only delegatecall audited libraries you trust. The simulation runs the delegatecall as the Safe, and its suggested checks pin all of those down as the run left them:
+
+```evml novalidate
+assert @safe:threshold!($safe) == 2
+assert @lang:len!(@safe:owners!($safe)) == 3
+assert @safe:guard!($safe) == $none
+assert @safe:singleton!($safe) == $singleton
+assert @safe:fallbackHandler!($safe) == $fallbackHandler
+```
+
+Keep them: with those checks in the batch, a library that touched anything that decides who controls the Safe makes the whole transaction revert. The other signers see a delegatecall flagged in the Safe app, and the Transaction Builder file cannot carry one.
+
 ## Next
 
 - [Writing assertions in EVML](/docs/evml): more checks you can add.

@@ -172,19 +172,34 @@ describe("the reads of a Safe", () => {
     expect(convertNode(owners, "arrIncludes")).toMatchObject({ kind: "arrIncludes", call: owners });
   });
 
+  it.each(["singleton", "fallbackHandler"] as const)(
+    "writes the %s as an address, compared with one",
+    async (read) => {
+      expect(inferCategory(safe(read))).toBe("address");
+      const out = await built(
+        assertion({ subject: safe(read), operator: "==", expected: literal(ACCOUNT) }),
+      );
+      expect(out.line).toMatch(new RegExp(`^assert @safe:${read}!\\(`));
+      expect(out.ok).toBe(true);
+      expect(out.loads).toEqual(["load safe"]);
+    },
+  );
+
   it("is offered on a typed address only once that address is known to be a Safe", () => {
     const keys = (node: ValueExpr, isSafe: boolean) =>
       wrapEntriesFor(node, 0, { isSafe })
         .map((e) => e.key)
         .filter((key) => key.startsWith("safe"));
     expect(keys(literal(T), false)).toEqual([]);
-    expect(keys(literal("@me"), true)).toHaveLength(6);
-    expect(keys(literal("mysafe.eth"), true)).toHaveLength(6);
+    expect(keys(literal("@me"), true)).toHaveLength(8);
+    expect(keys(literal("mysafe.eth"), true)).toHaveLength(8);
     expect(keys(literal(T), true)).toEqual([
       "safeOwners",
       "safeThreshold",
       "safeIsOwner",
       "safeGuard",
+      "safeSingleton",
+      "safeFallbackHandler",
       "safeModules",
       "safeNonce",
     ]);
@@ -221,7 +236,7 @@ describe("the reads of a Safe", () => {
         .map((e) => e.key)
         .filter((key) => key.startsWith("safe"));
     expect(keys(false)).toEqual([]);
-    expect(keys(true)).toHaveLength(6);
+    expect(keys(true)).toHaveLength(8);
   });
 
   it("is written over a call, read against the address it returns then", async () => {

@@ -1,5 +1,7 @@
 import type { Address } from "viem";
 
+import { Callout } from "./Callout";
+import { hasDelegatecall } from "./compose-call";
 import { Composer } from "./Composer";
 import { ContextSelector } from "./ContextSelector";
 import type { ExecutionContext } from "./context";
@@ -69,6 +71,9 @@ export function ComposeStage({
 }) {
   const { script } = scriptState;
   const hasScript = script.trim().length > 0;
+  // A delegatecall is a Safe's: under any other executor the batch cannot
+  // run, so it is not simulated either.
+  const misplaced = context.kind !== "safe" && hasDelegatecall(script);
 
   return (
     <div className="space-y-8">
@@ -91,7 +96,13 @@ export function ComposeStage({
           safeContext={context.kind === "safe"}
           onSkipActions={onSkipActions}
         />
-        {hasScript && (
+        {misplaced && (
+          <Callout tone="error">
+            The batch has a delegatecall, which only a Safe can make. Choose
+            a Safe as the executor, or edit those actions into calls.
+          </Callout>
+        )}
+        {hasScript && !misplaced && (
           <SimulationPanel
             label="Simulate batch"
             simKey={simKeyFor("actions-only", script, executor, chainId)}

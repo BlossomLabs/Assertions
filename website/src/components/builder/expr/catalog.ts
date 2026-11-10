@@ -394,6 +394,18 @@ const HELPER_ROLES: Record<string, HelperRole> = {
     label: "guard",
     accepts: safeAddress,
   },
+  "singleton!": {
+    role: "wrap",
+    key: "safeSingleton",
+    label: "singleton",
+    accepts: safeAddress,
+  },
+  "fallbackHandler!": {
+    role: "wrap",
+    key: "safeFallbackHandler",
+    label: "fallback handler",
+    accepts: safeAddress,
+  },
   "modules!": {
     role: "wrap",
     key: "safeModules",
@@ -521,6 +533,8 @@ const NODE_GROUP: Partial<Record<NodeKey, string>> = {
   safeThreshold: "safe",
   safeIsOwner: "safe",
   safeGuard: "safe",
+  safeSingleton: "safe",
+  safeFallbackHandler: "safe",
   safeModules: "safe",
   safeNonce: "safe",
   tokenAmount: "decimals",

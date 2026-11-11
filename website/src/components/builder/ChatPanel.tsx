@@ -117,12 +117,17 @@ function BrokerLogin({
   }, [client]);
 
   if (!client) return null;
+  // The broker draws the button itself, in this page's primary style
+  // (`theme=assertions`), so the frame is just the button's size.
+  const src = new URL(client.iframeSrc);
+  src.searchParams.set("theme", "assertions");
   return (
     <iframe
       ref={iframeRef}
-      src={client.iframeSrc}
+      src={src.toString()}
       title="Login with Dappnode Nexus"
-      className="w-full h-16 rounded-lg border border-[var(--color-ink-3)]/20"
+      className="block w-full h-9 rounded-lg"
+      style={{ colorScheme: "normal" }}
     />
   );
 }
